@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30611.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nuce.web.api", "nuce.web.api\nuce.web.api.csproj", "{8A929E8E-0C9D-4959-ACFB-88D7348156C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nuce.web.khaothi", "nuce.web.khaothi\nuce.web.khaothi.csproj", "{26D9F331-B86C-405B-8C49-0BF77D15D4F9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8A929E8E-0C9D-4959-ACFB-88D7348156C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A929E8E-0C9D-4959-ACFB-88D7348156C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A929E8E-0C9D-4959-ACFB-88D7348156C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A929E8E-0C9D-4959-ACFB-88D7348156C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26D9F331-B86C-405B-8C49-0BF77D15D4F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26D9F331-B86C-405B-8C49-0BF77D15D4F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26D9F331-B86C-405B-8C49-0BF77D15D4F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26D9F331-B86C-405B-8C49-0BF77D15D4F9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {79CF5B42-E3A1-407E-9AD6-434C5EEE6646}
+	EndGlobalSection
+EndGlobal
