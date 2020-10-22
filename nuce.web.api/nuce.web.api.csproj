@@ -30,8 +30,6 @@
     <Folder Include="Services\Core\Implements\" />
     <Folder Include="Services\Core\Interfaces\" />
     <Folder Include="Services\Core\" />
-    <Folder Include="Services\Survey\Interfaces\" />
-    <Folder Include="Services\Survey\Implements\" />
     <Folder Include="ViewModel\Survey\" />
   </ItemGroup>
 

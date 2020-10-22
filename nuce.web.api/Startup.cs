@@ -18,6 +18,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using nuce.web.api.Models.Core;
 using nuce.web.api.Models.Survey;
+using nuce.web.api.Services.Survey.Implements;
+using nuce.web.api.Services.Survey.Interfaces;
 
 namespace nuce.web.api
 {
@@ -155,6 +157,8 @@ namespace nuce.web.api
             #endregion
 
             services.AddControllers();
+
+            services.AddScoped<IAsEduSurveyCauHoiService, AsEduSurveyCauHoiService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

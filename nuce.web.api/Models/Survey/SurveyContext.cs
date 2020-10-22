@@ -22,11 +22,6 @@ namespace nuce.web.api.Models.Survey
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Data Source=INSPIRON\\SQLEXPRESS;Initial Catalog=NUCE_SURVEY;User ID=sa;Password=1234567");
-            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

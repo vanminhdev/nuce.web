@@ -10,7 +10,7 @@ namespace nuce.web.api.Models.Core
 {
     public partial class NuceCoreIdentityContext : IdentityDbContext<IdentityUser>
     {
-        public NuceCoreIdentityContext(DbContextOptions options) : base(options)
+        public NuceCoreIdentityContext(DbContextOptions<NuceCoreIdentityContext> options) : base(options)
         {
         }
 
