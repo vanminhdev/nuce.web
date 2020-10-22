@@ -22,15 +22,13 @@
 
   <ItemGroup>
     <Folder Include="Common\" />
-    <Folder Include="Controllers\KhaoThi\" />
     <Folder Include="Migrations\" />
-    <Folder Include="Models\KhaoThi\" />
     <Folder Include="Services\Core\Implements\" />
     <Folder Include="Services\Core\Interfaces\" />
     <Folder Include="Services\Core\" />
-    <Folder Include="Services\KhaoThi\Interfaces\" />
-    <Folder Include="Services\KhaoThi\Implements\" />
-    <Folder Include="ViewModel\KhaoThi\" />
+    <Folder Include="Services\Survey\Interfaces\" />
+    <Folder Include="Services\Survey\Implements\" />
+    <Folder Include="ViewModel\Survey\" />
   </ItemGroup>
   
 </Project>
