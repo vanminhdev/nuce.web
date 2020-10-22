@@ -16,7 +16,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using nuce.web.api.Models;
+using nuce.web.api.Models.Core;
 
 namespace nuce.web.api
 {
@@ -35,14 +35,14 @@ namespace nuce.web.api
         public void ConfigureServices(IServiceCollection services)
         {
             #region config db
-            services.AddDbContext<NuceSurveyIdentityContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"))
+            services.AddDbContext<NuceCoreIdentityContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("NUCE_CORE"))
             );
             #endregion
 
             #region config authentication
             services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddEntityFrameworkStores<NuceSurveyIdentityContext>()
+                .AddEntityFrameworkStores<NuceCoreIdentityContext>()
                 .AddDefaultTokenProviders();
 
             services.AddAuthentication(options =>

@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace nuce.web.api.Models
+namespace nuce.web.api.Models.Core
 {
-    public partial class NuceSurveyIdentityContext : IdentityDbContext<IdentityUser>
+    public partial class NuceCoreIdentityContext : IdentityDbContext<IdentityUser>
     {
-        public NuceSurveyIdentityContext(DbContextOptions options) : base(options)
+        public NuceCoreIdentityContext(DbContextOptions options) : base(options)
         {
         }
 
