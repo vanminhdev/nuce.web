@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using nuce.web.api.Models.Core;
+using nuce.web.api.Models.Survey;
 
 namespace nuce.web.api
 {
@@ -37,6 +38,9 @@ namespace nuce.web.api
             #region config db
             services.AddDbContext<NuceCoreIdentityContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("NUCE_CORE"))
+            );
+            services.AddDbContext<SurveyContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"))
             );
             #endregion
 
