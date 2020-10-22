@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using EduWebService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -15,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using nuce.web.api.Models.Core;
 using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
+using static EduWebService.ServiceSoapClient;
 
 namespace nuce.web.api.Controllers.Core
 {
@@ -43,7 +45,18 @@ namespace nuce.web.api.Controllers.Core
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await _userManager.FindByNameAsync(model.Username);
-            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+            bool userIsValid = false;
+            if (model.IsStudent)
+            {
+                ServiceSoapClient srvc = new ServiceSoapClient(EndpointConfiguration.ServiceSoap12);
+                var result = await srvc.authenAsync(model.Username, model.Password);
+
+                userIsValid = result != 1;
+            } else
+            {
+                userIsValid = user != null && await _userManager.CheckPasswordAsync(user, model.Password);
+            }
+            if (userIsValid)
             {
                 var userRoles = await _userManager.GetRolesAsync(user);
 
