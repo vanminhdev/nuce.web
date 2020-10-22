@@ -102,9 +102,8 @@ namespace nuce.web.api.Controllers.Core
                         return StatusCode(StatusCodes.Status500InternalServerError, new ResponseBody { Status = ResponseBody.ERROR_STATUS, Message = "Không tạo được tài khoản" });
 
                     //thêm vai trò
-                    //var role = string.IsNullOrWhiteSpace(model.Role) ? "user" : model.Role;
-                    //var resultAddRole = await _userManager.AddToRoleAsync(user, role);
-                    
+                    var resultAddRole = await _userManager.AddToRoleAsync(user, model.Role);
+
                     transaction.Commit();
                     _logger.LogInformation($"Create success user id: {user.Id}");
                     return Ok(new ResponseBody { Status = ResponseBody.SUCCESS_STATUS, Message = "Tạo tài khoản thành công!" });

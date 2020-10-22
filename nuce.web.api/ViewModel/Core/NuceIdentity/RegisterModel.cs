@@ -18,7 +18,7 @@ namespace nuce.web.api.ViewModel.Core.NuceIdentity
         [Required(AllowEmptyStrings = false)]
         public string Password { get; set; }
 
-        //[RegularExpression("admin|manager|user|^$", ErrorMessage = "Chọn 1 trong 3 vai trò admin, manager, user hoặc bỏ trống")]
-        //public string Role { get; set; }
+        [RegularExpression("Admin|Department|Faculty", ErrorMessage = "Chọn 1 trong 3 vai trò Admin, Department, Faculty")]
+        public string Role { get; set; }
     }
 }

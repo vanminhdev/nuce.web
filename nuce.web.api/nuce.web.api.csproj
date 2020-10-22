@@ -23,6 +23,7 @@
   <ItemGroup>
     <Folder Include="Common\" />
     <Folder Include="Controllers\KhaoThi\" />
+    <Folder Include="Migrations\" />
     <Folder Include="Models\KhaoThi\" />
     <Folder Include="Services\Core\Implements\" />
     <Folder Include="Services\Core\Interfaces\" />
