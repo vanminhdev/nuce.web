@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using nuce.web.api.Models.Core;
+using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
 using static EduWebService.ServiceSoapClient;
@@ -25,61 +26,29 @@ namespace nuce.web.api.Controllers.Core
     public class UserController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IConfiguration _configuration;
         private readonly NuceCoreIdentityContext _identityContext;
         private readonly ILogger<UserController> _logger;
+        private readonly IUserService _userService;
 
-        public UserController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager,
-            NuceCoreIdentityContext identityContext, IConfiguration configuration, ILogger<UserController> logger)
+        public UserController(UserManager<IdentityUser> userManager, NuceCoreIdentityContext identityContext,
+            ILogger<UserController> logger, IUserService _userService)
         {
             _userManager = userManager;
-            _roleManager = roleManager;
-            _configuration = configuration;
             _identityContext = identityContext;
             _logger = logger;
+            this._userService = _userService;
         }
 
         [HttpPost]
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            var user = await _userManager.FindByNameAsync(model.Username);
-            bool userIsValid = false;
-            if (model.IsStudent)
-            {
-                ServiceSoapClient srvc = new ServiceSoapClient(EndpointConfiguration.ServiceSoap12);
-                var result = await srvc.authenAsync(model.Username, model.Password);
-
-                userIsValid = result != 1;
-            } else
-            {
-                userIsValid = user != null && await _userManager.CheckPasswordAsync(user, model.Password);
-            }
+            var user = await _userService.FindByNameAsync(model.Username);
+            bool userIsValid = await _userService.UserIsvalidAsync(model, user);
             if (userIsValid)
             {
-                var userRoles = await _userManager.GetRolesAsync(user);
-
-                var authClaims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                };
-
-                foreach (var userRole in userRoles)
-                {
-                    authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-                }
-
-                var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-
-                var token = new JwtSecurityToken(
-                        issuer: _configuration["JWT:ValidIssuer"],
-                        audience: _configuration["JWT:ValidAudience"],
-                        expires: DateTime.Now.AddDays(1),
-                        claims: authClaims,
-                        signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-                    );
+                var authClaims = await _userService.AddClaimsAsync(model, user);
+                var token = _userService.CreateJWTToken(authClaims);
 
                 //send token to http only cookies
                 Response.Cookies.Append("JWT-token", new JwtSecurityTokenHandler().WriteToken(token),
