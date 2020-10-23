@@ -10,4 +10,10 @@ namespace nuce.web.api.Common
         Active = 1,
         Deactive = 4
     }
+
+    public enum AnswerStatus
+    {
+        Active = 1,
+        Deactive = 4
+    }
 }

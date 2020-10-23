@@ -13,7 +13,7 @@ using System.Web;
 
 namespace nuce.web.api.Services.Survey.Implements
 {
-    public class AsEduSurveyCauHoiService : IAsEduSurveyCauHoiService
+    class AsEduSurveyCauHoiService : IAsEduSurveyCauHoiService
     {
         private readonly SurveyContext _surveyContext;
 
@@ -22,7 +22,7 @@ namespace nuce.web.api.Services.Survey.Implements
             _surveyContext = surveyContext;
         }
 
-        public async Task<List<Question>> GetAllActiveStatusAsync()
+        public async Task<List<Question>> GetAllActiveStatus()
         {
             var list = await _surveyContext.AsEduSurveyCauHoi.AsNoTracking()
                 .OrderBy(q => q.Order)
@@ -31,6 +31,7 @@ namespace nuce.web.api.Services.Survey.Implements
             return
                 list.Select(q => new Question
                 {
+                    Id = q.Id.ToString(),
                     Ma = q.Ma,
                     Content = HttpUtility.HtmlDecode(q.Content),
                     Type = q.Type,
@@ -38,7 +39,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 }).ToList();
         }
 
-        public async Task<List<Question>> GetAllByStatusAsync(QuestionStatus status)
+        public async Task<List<Question>> GetAllByStatus(QuestionStatus status)
         {
             var list = await _surveyContext.AsEduSurveyCauHoi.AsNoTracking()
                 .OrderBy(q => q.Order)
@@ -70,7 +71,7 @@ namespace nuce.web.api.Services.Survey.Implements
             };
         }
 
-        public async Task CreateQuestion(Question question)
+        public async Task Create(QuestionCreate question)
         {
             var questionCreate = new AsEduSurveyCauHoi();
             try
@@ -88,7 +89,7 @@ namespace nuce.web.api.Services.Survey.Implements
             questionCreate.Content = question.Content;
             questionCreate.InsertedDate = DateTime.Now;
             questionCreate.UpdatedDate = DateTime.Now;
-            questionCreate.Order = question.Order;
+            questionCreate.Order = question.Order.Value;
             questionCreate.Level = 1;
             questionCreate.Type = question.Type;
             questionCreate.Status = (int)QuestionStatus.Active;
@@ -97,10 +98,10 @@ namespace nuce.web.api.Services.Survey.Implements
             await _surveyContext.SaveChangesAsync();
         }
 
-        public async Task UpdateQuestion(string Id, Question question)
+        public async Task Update(string id, QuestionUpdate question)
         {
             var questionUpdate = _surveyContext.AsEduSurveyCauHoi
-                .FirstOrDefault(q => q.Id.ToString() == question.Id);
+                .FirstOrDefault(q => q.Id.ToString() == id);
             if(questionUpdate == null)
             {
                 throw new RecordNotFoundException();
@@ -117,9 +118,22 @@ namespace nuce.web.api.Services.Survey.Implements
             questionUpdate.Ma = question.Ma;
             questionUpdate.Content = question.Content;
             questionUpdate.UpdatedDate = DateTime.Now;
-            questionUpdate.Order = question.Order;
+            questionUpdate.Order = question.Order.Value;
             questionUpdate.Type = question.Type;
             await _surveyContext.SaveChangesAsync();
         }
+
+        public async Task Delete(string id)
+        {
+            var question = await _surveyContext.AsEduSurveyCauHoi.FirstOrDefaultAsync(q => q.Id.ToString() == id);
+            if(question == null)
+            {
+                throw new RecordNotFoundException();
+            }
+            question.Status = (int)QuestionStatus.Deactive;
+            await _surveyContext.SaveChangesAsync();
+        }
+
+
     }
 }

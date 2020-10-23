@@ -19,39 +19,39 @@ namespace nuce.web.api.Controllers.Survey
     [Route("api/[controller]/[action]")]
     [ApiController]
     //[Authorize]
-    public class QuestionController : ControllerBase
+    public class AnswerController : ControllerBase
     {
-        private readonly ILogger<QuestionController> _logger;
-        private readonly IAsEduSurveyCauHoiService _asEduSurveyCauHoiService;
+        private readonly ILogger<AnswerController> _logger;
+        private readonly IAsEduSurveyDapAnService _asEduSurveyDapAnService;
 
-        public QuestionController(ILogger<QuestionController> logger, IAsEduSurveyCauHoiService asEduSurveyCauHoiService)
+        public AnswerController(ILogger<AnswerController> logger, IAsEduSurveyDapAnService asEduSurveyDapAnService)
         {
             _logger = logger;
-            _asEduSurveyCauHoiService = asEduSurveyCauHoiService;
+            _asEduSurveyDapAnService = asEduSurveyDapAnService;
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetByQuestionId([Required(AllowEmptyStrings = false)] string questionId)
         {
-            var questions = _asEduSurveyCauHoiService.GetAllActiveStatus().Result;
-            return Ok(questions);
+            var answers = _asEduSurveyDapAnService.GetByQuestionIdActiveStatus(questionId).Result;
+            return Ok(answers);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetById([Required(AllowEmptyStrings = false)] string id)
         {
-            var question = await _asEduSurveyCauHoiService.GetById(id);
-            if (question == null)
+            var answer = await _asEduSurveyDapAnService.GetById(id);
+            if (answer == null)
                 return NotFound(new { message = "Record not found" });
-            return Ok(question);
+            return Ok(answer);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] QuestionCreate question)
+        public async Task<IActionResult> Create([FromBody] AnswerCreate answer)
         {
             try
             {
-                await _asEduSurveyCauHoiService.Create(question);
+                await _asEduSurveyDapAnService.Create(answer);
             }
             catch (DbUpdateException e)
             {
@@ -71,24 +71,20 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([Required(AllowEmptyStrings = false)] string id, [FromBody] QuestionUpdate question)
+        public async Task<IActionResult> Update([Required(AllowEmptyStrings = false)] string id, [FromBody] AnswerUpdate answer)
         {
             try
             {
-                await _asEduSurveyCauHoiService.Update(id, question);
+                await _asEduSurveyDapAnService.Update(id, answer);
             }
-            catch(DbUpdateException e)
+            catch (DbUpdateException e)
             {
                 _logger.LogError(e, e.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
-            catch (InvalidDataException e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message});
-            }
             catch (RecordNotFoundException)
             {
-                return NotFound(new {message = "Record not found"});
+                return NotFound(new { message = "Record not found" });
             }
             catch (Exception e)
             {
@@ -99,11 +95,11 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete([Required(AllowEmptyStrings = false)]string id)
+        public async Task<IActionResult> Delete([Required(AllowEmptyStrings = false)] string id)
         {
             try
             {
-                await _asEduSurveyCauHoiService.Delete(id);
+                await _asEduSurveyDapAnService.Delete(id);
             }
             catch (RecordNotFoundException)
             {

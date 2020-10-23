@@ -6,46 +6,46 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.ViewModel.Survey
 {
-    public class Question
+    public class Answer
     {
         public string Id { get; set; }
 
-        public string Ma { get; set; }
+        public int? DapAnId { get; set; }
 
         public string Content { get; set; }
-
-        public string Type { get; set; }
 
         public int? Order { get; set; }
+
+        public string CauHoiGId { get; set; }
+
+        public int? CauHoiId { get; set; }
     }
 
-    public class QuestionCreate
+    public class AnswerCreate
     {
-
-        [Required(AllowEmptyStrings = false)]
-        public string Ma { get; set; }
+        [Required]
+        public int? DapAnId { get; set; }
 
         [Required(AllowEmptyStrings = false)]
         public string Content { get; set; }
-
-        [Required(AllowEmptyStrings = false)]
-        public string Type { get; set; }
 
         [Required]
         public int? Order { get; set; }
+
+        [Required]
+        public string CauHoiGId { get; set; }
+
+        [Required]
+        public int? CauHoiId { get; set; }
     }
 
-    public class QuestionUpdate
+    public class AnswerUpdate
     {
-
-        [Required(AllowEmptyStrings = false)]
-        public string Ma { get; set; }
+        [Required]
+        public int? DapAnId { get; set; }
 
         [Required(AllowEmptyStrings = false)]
         public string Content { get; set; }
-
-        [Required(AllowEmptyStrings = false)]
-        public string Type { get; set; }
 
         [Required]
         public int? Order { get; set; }
