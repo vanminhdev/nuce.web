@@ -18,6 +18,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using nuce.web.api.Models.Core;
 using nuce.web.api.Models.Survey;
+using nuce.web.api.Services.Core.Implements;
+using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.Services.Survey.Implements;
 using nuce.web.api.Services.Survey.Interfaces;
 
@@ -102,7 +104,7 @@ namespace nuce.web.api
             #endregion
 
             #region config cors
-            //config danh sách url allow cors
+            //config danh sï¿½ch url allow cors
             var corsUrlsSection = Configuration.GetSection("CorsUrl");
             var corsUrls = corsUrlsSection
                 .AsEnumerable()
@@ -161,6 +163,7 @@ namespace nuce.web.api
             #region config service
             services.AddScoped<IAsEduSurveyCauHoiService, AsEduSurveyCauHoiService>();
             services.AddScoped<IAsEduSurveyDapAnService, AsEduSurveyDapAnService>();
+            services.AddScoped<IUserService, UserService>();
             #endregion
         }
 
