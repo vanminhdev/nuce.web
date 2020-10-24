@@ -104,7 +104,7 @@ namespace nuce.web.api
             #endregion
 
             #region config cors
-            //config danh sách url allow cors
+            //config danh sï¿½ch url allow cors
             var corsUrlsSection = Configuration.GetSection("CorsUrl");
             var corsUrls = corsUrlsSection
                 .AsEnumerable()
@@ -160,12 +160,15 @@ namespace nuce.web.api
 
             services.AddControllers();
 
+            #region config service
             services.AddScoped<IAsEduSurveyCauHoiService, AsEduSurveyCauHoiService>();
+            services.AddScoped<IAsEduSurveyDapAnService, AsEduSurveyDapAnService>();
             services.AddScoped<IUserService, UserService>();
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -177,13 +180,14 @@ namespace nuce.web.api
                     c.RoutePrefix = "swagger";
                 });
             }
-
+            var loggingOptions = this.Configuration.GetSection("Log4NetCore").Get<Log4NetProviderOptions>();
+            loggerFactory.AddLog4Net(loggingOptions);
             app.UseHttpsRedirection();
 
             app.UseRouting();
             app.UseCors(_allowSpecificOrigins);
             
-            //app.UseAuthentication();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
