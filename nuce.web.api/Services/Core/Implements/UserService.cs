@@ -1,9 +1,10 @@
 ﻿using EduWebService;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using nuce.web.api.Common;
 using nuce.web.api.Services.Core.Interfaces;
-using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
 using System;
 using System.Collections.Generic;
@@ -38,6 +39,7 @@ namespace nuce.web.api.Services.Core.Implements
             if (model.IsStudent)
             {
                 authClaims.Add(new Claim(ClaimTypes.Role, "Student"));
+                authClaims.Add(new Claim(UserParameters.MSSV, model.Username));
             }
             else
             {
@@ -49,15 +51,22 @@ namespace nuce.web.api.Services.Core.Implements
             }
             return authClaims;
         }
-
-        public JwtSecurityToken CreateJWTToken(List<Claim> claims)
+        public JwtSecurityToken CreateJWTAccessToken(List<Claim> claims)
+        {
+            return CreateJWTToken(claims, DateTime.Now.AddDays(1));
+        }
+        public JwtSecurityToken CreateJWTRefreshToken(List<Claim> claims)
+        {
+            return CreateJWTToken(claims, DateTime.Now.AddDays(999));
+        }
+        private JwtSecurityToken CreateJWTToken(List<Claim> claims, DateTime expires)
         {
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
 
             var token = new JwtSecurityToken(
                     issuer: _configuration["JWT:ValidIssuer"],
                     audience: _configuration["JWT:ValidAudience"],
-                    expires: DateTime.Now.AddDays(1),
+                    expires: expires,
                     claims: claims,
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                 );

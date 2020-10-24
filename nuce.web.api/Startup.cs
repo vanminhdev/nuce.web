@@ -16,10 +16,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using nuce.web.api.Common;
 using nuce.web.api.Models.Core;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Services.Core.Implements;
 using nuce.web.api.Services.Core.Interfaces;
+using nuce.web.api.Services.Ctsv.Implements;
+using nuce.web.api.Services.Ctsv.Interfaces;
 using nuce.web.api.Services.Survey.Implements;
 using nuce.web.api.Services.Survey.Interfaces;
 
@@ -45,6 +48,9 @@ namespace nuce.web.api
             );
             services.AddDbContext<SurveyContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"))
+            );
+            services.AddDbContext<SurveyContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("NUCE_CTSV"))
             );
             #endregion
 
@@ -77,7 +83,7 @@ namespace nuce.web.api
                 {
                     OnMessageReceived = context =>
                     {
-                        context.Token = context.Request.Cookies["JWT-token"];
+                        context.Token = context.Request.Cookies[UserParameters.JwtAccessToken];
                         return Task.CompletedTask;
                     }
                 };
@@ -164,6 +170,10 @@ namespace nuce.web.api
             services.AddScoped<IAsEduSurveyCauHoiService, AsEduSurveyCauHoiService>();
             services.AddScoped<IAsEduSurveyDapAnService, AsEduSurveyDapAnService>();
             services.AddScoped<IUserService, UserService>();
+            #endregion
+            #region ctsv service
+            services.AddScoped<IStudentService, StudentService>();
+            services.AddScoped<ICtsvLogService, CtsvLogService>();
             #endregion
         }
 

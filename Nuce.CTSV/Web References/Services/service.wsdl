@@ -1,0 +1,1696 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="Test">
+        <s:complexType />
+      </s:element>
+      <s:element name="TestResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="TestResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getAllTKB1JoinToDk1">
+        <s:complexType />
+      </s:element>
+      <s:element name="getAllTKB1JoinToDk1Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getAllTKB1JoinToDk1Result">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getAllTKB1JoinToDk">
+        <s:complexType />
+      </s:element>
+      <s:element name="getAllTKB1JoinToDkResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getAllTKB1JoinToDkResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getTKB">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Prefix" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getTKBResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getTKBResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getTKB1">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Prefix" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getTKB1Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getTKB1Result">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getTKB_bangkytruoc">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Prefix" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getTKB_bangkytruocResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getTKB_bangkytruocResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getTKB1_bangkytruoc">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Prefix" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getTKB1_bangkytruocResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getTKB1_bangkytruocResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getToDK">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Prefix" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getToDKResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getToDKResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getToDK_bangkytruoc">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Prefix" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getToDK_bangkytruocResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getToDK_bangkytruocResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getAllToDK1">
+        <s:complexType />
+      </s:element>
+      <s:element name="getAllToDK1Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getAllToDK1Result">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="countToDK1">
+        <s:complexType />
+      </s:element>
+      <s:element name="countToDK1Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="countToDK1Result" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getAllToDK">
+        <s:complexType />
+      </s:element>
+      <s:element name="getAllToDKResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getAllToDKResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getKQDK">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="from" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="to" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getKQDKResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getKQDKResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getTongSoSVDK">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Prefix" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getTongSoSVDKResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getTongSoSVDKResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getTongSoSVDK_bangkytruoc">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Prefix" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getTongSoSVDK_bangkytruocResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getTongSoSVDK_bangkytruocResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getLichThi">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Prefix" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getLichThiResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getLichThiResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getCanBo">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Prefix" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getCanBoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getCanBoResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getAllCanBo">
+        <s:complexType />
+      </s:element>
+      <s:element name="getAllCanBoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getAllCanBoResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="countCanBo">
+        <s:complexType />
+      </s:element>
+      <s:element name="countCanBoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="countCanBoResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getKhoa">
+        <s:complexType />
+      </s:element>
+      <s:element name="getKhoaResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getKhoaResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="countKhoa">
+        <s:complexType />
+      </s:element>
+      <s:element name="countKhoaResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="countKhoaResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getBoMon">
+        <s:complexType />
+      </s:element>
+      <s:element name="getBoMonResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getBoMonResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="countBoMon">
+        <s:complexType />
+      </s:element>
+      <s:element name="countBoMonResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="countBoMonResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getMonHoc">
+        <s:complexType />
+      </s:element>
+      <s:element name="getMonHocResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getMonHocResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="countMonHoc">
+        <s:complexType />
+      </s:element>
+      <s:element name="countMonHocResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="countMonHocResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getNganh">
+        <s:complexType />
+      </s:element>
+      <s:element name="getNganhResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getNganhResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="countNganh">
+        <s:complexType />
+      </s:element>
+      <s:element name="countNganhResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="countNganhResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getLop">
+        <s:complexType />
+      </s:element>
+      <s:element name="getLopResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getLopResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="countLop">
+        <s:complexType />
+      </s:element>
+      <s:element name="countLopResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="countLopResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getSinhVien">
+        <s:complexType />
+      </s:element>
+      <s:element name="getSinhVienResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getSinhVienResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="countSinhVien">
+        <s:complexType />
+      </s:element>
+      <s:element name="countSinhVienResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="countSinhVienResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getKqdk1">
+        <s:complexType />
+      </s:element>
+      <s:element name="getKqdk1Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getKqdk1Result">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="countKqdk1">
+        <s:complexType />
+      </s:element>
+      <s:element name="countKqdk1Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="countKqdk1Result" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="countKqdk1ExistSV">
+        <s:complexType />
+      </s:element>
+      <s:element name="countKqdk1ExistSVResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="countKqdk1ExistSVResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getTkb1">
+        <s:complexType />
+      </s:element>
+      <s:element name="getTkb1Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getTkb1Result">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="countTkb1">
+        <s:complexType />
+      </s:element>
+      <s:element name="countTkb1Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="countTkb1Result" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="authen">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="masv" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="pass" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="authenResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="authenResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getMatKhauNguoiDung">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="danhsachma" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getMatKhauNguoiDungResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getMatKhauNguoiDungResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="TestSoapIn">
+    <wsdl:part name="parameters" element="tns:Test" />
+  </wsdl:message>
+  <wsdl:message name="TestSoapOut">
+    <wsdl:part name="parameters" element="tns:TestResponse" />
+  </wsdl:message>
+  <wsdl:message name="getAllTKB1JoinToDk1SoapIn">
+    <wsdl:part name="parameters" element="tns:getAllTKB1JoinToDk1" />
+  </wsdl:message>
+  <wsdl:message name="getAllTKB1JoinToDk1SoapOut">
+    <wsdl:part name="parameters" element="tns:getAllTKB1JoinToDk1Response" />
+  </wsdl:message>
+  <wsdl:message name="getAllTKB1JoinToDkSoapIn">
+    <wsdl:part name="parameters" element="tns:getAllTKB1JoinToDk" />
+  </wsdl:message>
+  <wsdl:message name="getAllTKB1JoinToDkSoapOut">
+    <wsdl:part name="parameters" element="tns:getAllTKB1JoinToDkResponse" />
+  </wsdl:message>
+  <wsdl:message name="getTKBSoapIn">
+    <wsdl:part name="parameters" element="tns:getTKB" />
+  </wsdl:message>
+  <wsdl:message name="getTKBSoapOut">
+    <wsdl:part name="parameters" element="tns:getTKBResponse" />
+  </wsdl:message>
+  <wsdl:message name="getTKB1SoapIn">
+    <wsdl:part name="parameters" element="tns:getTKB1" />
+  </wsdl:message>
+  <wsdl:message name="getTKB1SoapOut">
+    <wsdl:part name="parameters" element="tns:getTKB1Response" />
+  </wsdl:message>
+  <wsdl:message name="getTKB_bangkytruocSoapIn">
+    <wsdl:part name="parameters" element="tns:getTKB_bangkytruoc" />
+  </wsdl:message>
+  <wsdl:message name="getTKB_bangkytruocSoapOut">
+    <wsdl:part name="parameters" element="tns:getTKB_bangkytruocResponse" />
+  </wsdl:message>
+  <wsdl:message name="getTKB1_bangkytruocSoapIn">
+    <wsdl:part name="parameters" element="tns:getTKB1_bangkytruoc" />
+  </wsdl:message>
+  <wsdl:message name="getTKB1_bangkytruocSoapOut">
+    <wsdl:part name="parameters" element="tns:getTKB1_bangkytruocResponse" />
+  </wsdl:message>
+  <wsdl:message name="getToDKSoapIn">
+    <wsdl:part name="parameters" element="tns:getToDK" />
+  </wsdl:message>
+  <wsdl:message name="getToDKSoapOut">
+    <wsdl:part name="parameters" element="tns:getToDKResponse" />
+  </wsdl:message>
+  <wsdl:message name="getToDK_bangkytruocSoapIn">
+    <wsdl:part name="parameters" element="tns:getToDK_bangkytruoc" />
+  </wsdl:message>
+  <wsdl:message name="getToDK_bangkytruocSoapOut">
+    <wsdl:part name="parameters" element="tns:getToDK_bangkytruocResponse" />
+  </wsdl:message>
+  <wsdl:message name="getAllToDK1SoapIn">
+    <wsdl:part name="parameters" element="tns:getAllToDK1" />
+  </wsdl:message>
+  <wsdl:message name="getAllToDK1SoapOut">
+    <wsdl:part name="parameters" element="tns:getAllToDK1Response" />
+  </wsdl:message>
+  <wsdl:message name="countToDK1SoapIn">
+    <wsdl:part name="parameters" element="tns:countToDK1" />
+  </wsdl:message>
+  <wsdl:message name="countToDK1SoapOut">
+    <wsdl:part name="parameters" element="tns:countToDK1Response" />
+  </wsdl:message>
+  <wsdl:message name="getAllToDKSoapIn">
+    <wsdl:part name="parameters" element="tns:getAllToDK" />
+  </wsdl:message>
+  <wsdl:message name="getAllToDKSoapOut">
+    <wsdl:part name="parameters" element="tns:getAllToDKResponse" />
+  </wsdl:message>
+  <wsdl:message name="getKQDKSoapIn">
+    <wsdl:part name="parameters" element="tns:getKQDK" />
+  </wsdl:message>
+  <wsdl:message name="getKQDKSoapOut">
+    <wsdl:part name="parameters" element="tns:getKQDKResponse" />
+  </wsdl:message>
+  <wsdl:message name="getTongSoSVDKSoapIn">
+    <wsdl:part name="parameters" element="tns:getTongSoSVDK" />
+  </wsdl:message>
+  <wsdl:message name="getTongSoSVDKSoapOut">
+    <wsdl:part name="parameters" element="tns:getTongSoSVDKResponse" />
+  </wsdl:message>
+  <wsdl:message name="getTongSoSVDK_bangkytruocSoapIn">
+    <wsdl:part name="parameters" element="tns:getTongSoSVDK_bangkytruoc" />
+  </wsdl:message>
+  <wsdl:message name="getTongSoSVDK_bangkytruocSoapOut">
+    <wsdl:part name="parameters" element="tns:getTongSoSVDK_bangkytruocResponse" />
+  </wsdl:message>
+  <wsdl:message name="getLichThiSoapIn">
+    <wsdl:part name="parameters" element="tns:getLichThi" />
+  </wsdl:message>
+  <wsdl:message name="getLichThiSoapOut">
+    <wsdl:part name="parameters" element="tns:getLichThiResponse" />
+  </wsdl:message>
+  <wsdl:message name="getCanBoSoapIn">
+    <wsdl:part name="parameters" element="tns:getCanBo" />
+  </wsdl:message>
+  <wsdl:message name="getCanBoSoapOut">
+    <wsdl:part name="parameters" element="tns:getCanBoResponse" />
+  </wsdl:message>
+  <wsdl:message name="getAllCanBoSoapIn">
+    <wsdl:part name="parameters" element="tns:getAllCanBo" />
+  </wsdl:message>
+  <wsdl:message name="getAllCanBoSoapOut">
+    <wsdl:part name="parameters" element="tns:getAllCanBoResponse" />
+  </wsdl:message>
+  <wsdl:message name="countCanBoSoapIn">
+    <wsdl:part name="parameters" element="tns:countCanBo" />
+  </wsdl:message>
+  <wsdl:message name="countCanBoSoapOut">
+    <wsdl:part name="parameters" element="tns:countCanBoResponse" />
+  </wsdl:message>
+  <wsdl:message name="getKhoaSoapIn">
+    <wsdl:part name="parameters" element="tns:getKhoa" />
+  </wsdl:message>
+  <wsdl:message name="getKhoaSoapOut">
+    <wsdl:part name="parameters" element="tns:getKhoaResponse" />
+  </wsdl:message>
+  <wsdl:message name="countKhoaSoapIn">
+    <wsdl:part name="parameters" element="tns:countKhoa" />
+  </wsdl:message>
+  <wsdl:message name="countKhoaSoapOut">
+    <wsdl:part name="parameters" element="tns:countKhoaResponse" />
+  </wsdl:message>
+  <wsdl:message name="getBoMonSoapIn">
+    <wsdl:part name="parameters" element="tns:getBoMon" />
+  </wsdl:message>
+  <wsdl:message name="getBoMonSoapOut">
+    <wsdl:part name="parameters" element="tns:getBoMonResponse" />
+  </wsdl:message>
+  <wsdl:message name="countBoMonSoapIn">
+    <wsdl:part name="parameters" element="tns:countBoMon" />
+  </wsdl:message>
+  <wsdl:message name="countBoMonSoapOut">
+    <wsdl:part name="parameters" element="tns:countBoMonResponse" />
+  </wsdl:message>
+  <wsdl:message name="getMonHocSoapIn">
+    <wsdl:part name="parameters" element="tns:getMonHoc" />
+  </wsdl:message>
+  <wsdl:message name="getMonHocSoapOut">
+    <wsdl:part name="parameters" element="tns:getMonHocResponse" />
+  </wsdl:message>
+  <wsdl:message name="countMonHocSoapIn">
+    <wsdl:part name="parameters" element="tns:countMonHoc" />
+  </wsdl:message>
+  <wsdl:message name="countMonHocSoapOut">
+    <wsdl:part name="parameters" element="tns:countMonHocResponse" />
+  </wsdl:message>
+  <wsdl:message name="getNganhSoapIn">
+    <wsdl:part name="parameters" element="tns:getNganh" />
+  </wsdl:message>
+  <wsdl:message name="getNganhSoapOut">
+    <wsdl:part name="parameters" element="tns:getNganhResponse" />
+  </wsdl:message>
+  <wsdl:message name="countNganhSoapIn">
+    <wsdl:part name="parameters" element="tns:countNganh" />
+  </wsdl:message>
+  <wsdl:message name="countNganhSoapOut">
+    <wsdl:part name="parameters" element="tns:countNganhResponse" />
+  </wsdl:message>
+  <wsdl:message name="getLopSoapIn">
+    <wsdl:part name="parameters" element="tns:getLop" />
+  </wsdl:message>
+  <wsdl:message name="getLopSoapOut">
+    <wsdl:part name="parameters" element="tns:getLopResponse" />
+  </wsdl:message>
+  <wsdl:message name="countLopSoapIn">
+    <wsdl:part name="parameters" element="tns:countLop" />
+  </wsdl:message>
+  <wsdl:message name="countLopSoapOut">
+    <wsdl:part name="parameters" element="tns:countLopResponse" />
+  </wsdl:message>
+  <wsdl:message name="getSinhVienSoapIn">
+    <wsdl:part name="parameters" element="tns:getSinhVien" />
+  </wsdl:message>
+  <wsdl:message name="getSinhVienSoapOut">
+    <wsdl:part name="parameters" element="tns:getSinhVienResponse" />
+  </wsdl:message>
+  <wsdl:message name="countSinhVienSoapIn">
+    <wsdl:part name="parameters" element="tns:countSinhVien" />
+  </wsdl:message>
+  <wsdl:message name="countSinhVienSoapOut">
+    <wsdl:part name="parameters" element="tns:countSinhVienResponse" />
+  </wsdl:message>
+  <wsdl:message name="getKqdk1SoapIn">
+    <wsdl:part name="parameters" element="tns:getKqdk1" />
+  </wsdl:message>
+  <wsdl:message name="getKqdk1SoapOut">
+    <wsdl:part name="parameters" element="tns:getKqdk1Response" />
+  </wsdl:message>
+  <wsdl:message name="countKqdk1SoapIn">
+    <wsdl:part name="parameters" element="tns:countKqdk1" />
+  </wsdl:message>
+  <wsdl:message name="countKqdk1SoapOut">
+    <wsdl:part name="parameters" element="tns:countKqdk1Response" />
+  </wsdl:message>
+  <wsdl:message name="countKqdk1ExistSVSoapIn">
+    <wsdl:part name="parameters" element="tns:countKqdk1ExistSV" />
+  </wsdl:message>
+  <wsdl:message name="countKqdk1ExistSVSoapOut">
+    <wsdl:part name="parameters" element="tns:countKqdk1ExistSVResponse" />
+  </wsdl:message>
+  <wsdl:message name="getTkb1SoapIn">
+    <wsdl:part name="parameters" element="tns:getTkb1" />
+  </wsdl:message>
+  <wsdl:message name="getTkb1SoapOut">
+    <wsdl:part name="parameters" element="tns:getTkb1Response" />
+  </wsdl:message>
+  <wsdl:message name="countTkb1SoapIn">
+    <wsdl:part name="parameters" element="tns:countTkb1" />
+  </wsdl:message>
+  <wsdl:message name="countTkb1SoapOut">
+    <wsdl:part name="parameters" element="tns:countTkb1Response" />
+  </wsdl:message>
+  <wsdl:message name="authenSoapIn">
+    <wsdl:part name="parameters" element="tns:authen" />
+  </wsdl:message>
+  <wsdl:message name="authenSoapOut">
+    <wsdl:part name="parameters" element="tns:authenResponse" />
+  </wsdl:message>
+  <wsdl:message name="getMatKhauNguoiDungSoapIn">
+    <wsdl:part name="parameters" element="tns:getMatKhauNguoiDung" />
+  </wsdl:message>
+  <wsdl:message name="getMatKhauNguoiDungSoapOut">
+    <wsdl:part name="parameters" element="tns:getMatKhauNguoiDungResponse" />
+  </wsdl:message>
+  <wsdl:portType name="ServiceSoap">
+    <wsdl:operation name="Test">
+      <wsdl:input message="tns:TestSoapIn" />
+      <wsdl:output message="tns:TestSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getAllTKB1JoinToDk1">
+      <wsdl:input message="tns:getAllTKB1JoinToDk1SoapIn" />
+      <wsdl:output message="tns:getAllTKB1JoinToDk1SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getAllTKB1JoinToDk">
+      <wsdl:input message="tns:getAllTKB1JoinToDkSoapIn" />
+      <wsdl:output message="tns:getAllTKB1JoinToDkSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getTKB">
+      <wsdl:input message="tns:getTKBSoapIn" />
+      <wsdl:output message="tns:getTKBSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getTKB1">
+      <wsdl:input message="tns:getTKB1SoapIn" />
+      <wsdl:output message="tns:getTKB1SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getTKB_bangkytruoc">
+      <wsdl:input message="tns:getTKB_bangkytruocSoapIn" />
+      <wsdl:output message="tns:getTKB_bangkytruocSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getTKB1_bangkytruoc">
+      <wsdl:input message="tns:getTKB1_bangkytruocSoapIn" />
+      <wsdl:output message="tns:getTKB1_bangkytruocSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getToDK">
+      <wsdl:input message="tns:getToDKSoapIn" />
+      <wsdl:output message="tns:getToDKSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getToDK_bangkytruoc">
+      <wsdl:input message="tns:getToDK_bangkytruocSoapIn" />
+      <wsdl:output message="tns:getToDK_bangkytruocSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getAllToDK1">
+      <wsdl:input message="tns:getAllToDK1SoapIn" />
+      <wsdl:output message="tns:getAllToDK1SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="countToDK1">
+      <wsdl:input message="tns:countToDK1SoapIn" />
+      <wsdl:output message="tns:countToDK1SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getAllToDK">
+      <wsdl:input message="tns:getAllToDKSoapIn" />
+      <wsdl:output message="tns:getAllToDKSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getKQDK">
+      <wsdl:input message="tns:getKQDKSoapIn" />
+      <wsdl:output message="tns:getKQDKSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getTongSoSVDK">
+      <wsdl:input message="tns:getTongSoSVDKSoapIn" />
+      <wsdl:output message="tns:getTongSoSVDKSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getTongSoSVDK_bangkytruoc">
+      <wsdl:input message="tns:getTongSoSVDK_bangkytruocSoapIn" />
+      <wsdl:output message="tns:getTongSoSVDK_bangkytruocSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getLichThi">
+      <wsdl:input message="tns:getLichThiSoapIn" />
+      <wsdl:output message="tns:getLichThiSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getCanBo">
+      <wsdl:input message="tns:getCanBoSoapIn" />
+      <wsdl:output message="tns:getCanBoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getAllCanBo">
+      <wsdl:input message="tns:getAllCanBoSoapIn" />
+      <wsdl:output message="tns:getAllCanBoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="countCanBo">
+      <wsdl:input message="tns:countCanBoSoapIn" />
+      <wsdl:output message="tns:countCanBoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getKhoa">
+      <wsdl:input message="tns:getKhoaSoapIn" />
+      <wsdl:output message="tns:getKhoaSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="countKhoa">
+      <wsdl:input message="tns:countKhoaSoapIn" />
+      <wsdl:output message="tns:countKhoaSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getBoMon">
+      <wsdl:input message="tns:getBoMonSoapIn" />
+      <wsdl:output message="tns:getBoMonSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="countBoMon">
+      <wsdl:input message="tns:countBoMonSoapIn" />
+      <wsdl:output message="tns:countBoMonSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getMonHoc">
+      <wsdl:input message="tns:getMonHocSoapIn" />
+      <wsdl:output message="tns:getMonHocSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="countMonHoc">
+      <wsdl:input message="tns:countMonHocSoapIn" />
+      <wsdl:output message="tns:countMonHocSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getNganh">
+      <wsdl:input message="tns:getNganhSoapIn" />
+      <wsdl:output message="tns:getNganhSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="countNganh">
+      <wsdl:input message="tns:countNganhSoapIn" />
+      <wsdl:output message="tns:countNganhSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getLop">
+      <wsdl:input message="tns:getLopSoapIn" />
+      <wsdl:output message="tns:getLopSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="countLop">
+      <wsdl:input message="tns:countLopSoapIn" />
+      <wsdl:output message="tns:countLopSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getSinhVien">
+      <wsdl:input message="tns:getSinhVienSoapIn" />
+      <wsdl:output message="tns:getSinhVienSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="countSinhVien">
+      <wsdl:input message="tns:countSinhVienSoapIn" />
+      <wsdl:output message="tns:countSinhVienSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getKqdk1">
+      <wsdl:input message="tns:getKqdk1SoapIn" />
+      <wsdl:output message="tns:getKqdk1SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="countKqdk1">
+      <wsdl:input message="tns:countKqdk1SoapIn" />
+      <wsdl:output message="tns:countKqdk1SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="countKqdk1ExistSV">
+      <wsdl:input message="tns:countKqdk1ExistSVSoapIn" />
+      <wsdl:output message="tns:countKqdk1ExistSVSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getTkb1">
+      <wsdl:input message="tns:getTkb1SoapIn" />
+      <wsdl:output message="tns:getTkb1SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="countTkb1">
+      <wsdl:input message="tns:countTkb1SoapIn" />
+      <wsdl:output message="tns:countTkb1SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="authen">
+      <wsdl:input message="tns:authenSoapIn" />
+      <wsdl:output message="tns:authenSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getMatKhauNguoiDung">
+      <wsdl:input message="tns:getMatKhauNguoiDungSoapIn" />
+      <wsdl:output message="tns:getMatKhauNguoiDungSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ServiceSoap" type="tns:ServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Test">
+      <soap:operation soapAction="http://tempuri.org/Test" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAllTKB1JoinToDk1">
+      <soap:operation soapAction="http://tempuri.org/getAllTKB1JoinToDk1" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAllTKB1JoinToDk">
+      <soap:operation soapAction="http://tempuri.org/getAllTKB1JoinToDk" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getTKB">
+      <soap:operation soapAction="http://tempuri.org/getTKB" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getTKB1">
+      <soap:operation soapAction="http://tempuri.org/getTKB1" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getTKB_bangkytruoc">
+      <soap:operation soapAction="http://tempuri.org/getTKB_bangkytruoc" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getTKB1_bangkytruoc">
+      <soap:operation soapAction="http://tempuri.org/getTKB1_bangkytruoc" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getToDK">
+      <soap:operation soapAction="http://tempuri.org/getToDK" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getToDK_bangkytruoc">
+      <soap:operation soapAction="http://tempuri.org/getToDK_bangkytruoc" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAllToDK1">
+      <soap:operation soapAction="http://tempuri.org/getAllToDK1" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="countToDK1">
+      <soap:operation soapAction="http://tempuri.org/countToDK1" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAllToDK">
+      <soap:operation soapAction="http://tempuri.org/getAllToDK" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getKQDK">
+      <soap:operation soapAction="http://tempuri.org/getKQDK" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getTongSoSVDK">
+      <soap:operation soapAction="http://tempuri.org/getTongSoSVDK" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getTongSoSVDK_bangkytruoc">
+      <soap:operation soapAction="http://tempuri.org/getTongSoSVDK_bangkytruoc" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getLichThi">
+      <soap:operation soapAction="http://tempuri.org/getLichThi" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCanBo">
+      <soap:operation soapAction="http://tempuri.org/getCanBo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAllCanBo">
+      <soap:operation soapAction="http://tempuri.org/getAllCanBo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="countCanBo">
+      <soap:operation soapAction="http://tempuri.org/countCanBo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getKhoa">
+      <soap:operation soapAction="http://tempuri.org/getKhoa" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="countKhoa">
+      <soap:operation soapAction="http://tempuri.org/countKhoa" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBoMon">
+      <soap:operation soapAction="http://tempuri.org/getBoMon" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="countBoMon">
+      <soap:operation soapAction="http://tempuri.org/countBoMon" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMonHoc">
+      <soap:operation soapAction="http://tempuri.org/getMonHoc" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="countMonHoc">
+      <soap:operation soapAction="http://tempuri.org/countMonHoc" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getNganh">
+      <soap:operation soapAction="http://tempuri.org/getNganh" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="countNganh">
+      <soap:operation soapAction="http://tempuri.org/countNganh" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getLop">
+      <soap:operation soapAction="http://tempuri.org/getLop" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="countLop">
+      <soap:operation soapAction="http://tempuri.org/countLop" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getSinhVien">
+      <soap:operation soapAction="http://tempuri.org/getSinhVien" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="countSinhVien">
+      <soap:operation soapAction="http://tempuri.org/countSinhVien" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getKqdk1">
+      <soap:operation soapAction="http://tempuri.org/getKqdk1" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="countKqdk1">
+      <soap:operation soapAction="http://tempuri.org/countKqdk1" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="countKqdk1ExistSV">
+      <soap:operation soapAction="http://tempuri.org/countKqdk1ExistSV" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getTkb1">
+      <soap:operation soapAction="http://tempuri.org/getTkb1" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="countTkb1">
+      <soap:operation soapAction="http://tempuri.org/countTkb1" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="authen">
+      <soap:operation soapAction="http://tempuri.org/authen" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMatKhauNguoiDung">
+      <soap:operation soapAction="http://tempuri.org/getMatKhauNguoiDung" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ServiceSoap12" type="tns:ServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Test">
+      <soap12:operation soapAction="http://tempuri.org/Test" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAllTKB1JoinToDk1">
+      <soap12:operation soapAction="http://tempuri.org/getAllTKB1JoinToDk1" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAllTKB1JoinToDk">
+      <soap12:operation soapAction="http://tempuri.org/getAllTKB1JoinToDk" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getTKB">
+      <soap12:operation soapAction="http://tempuri.org/getTKB" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getTKB1">
+      <soap12:operation soapAction="http://tempuri.org/getTKB1" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getTKB_bangkytruoc">
+      <soap12:operation soapAction="http://tempuri.org/getTKB_bangkytruoc" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getTKB1_bangkytruoc">
+      <soap12:operation soapAction="http://tempuri.org/getTKB1_bangkytruoc" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getToDK">
+      <soap12:operation soapAction="http://tempuri.org/getToDK" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getToDK_bangkytruoc">
+      <soap12:operation soapAction="http://tempuri.org/getToDK_bangkytruoc" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAllToDK1">
+      <soap12:operation soapAction="http://tempuri.org/getAllToDK1" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="countToDK1">
+      <soap12:operation soapAction="http://tempuri.org/countToDK1" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAllToDK">
+      <soap12:operation soapAction="http://tempuri.org/getAllToDK" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getKQDK">
+      <soap12:operation soapAction="http://tempuri.org/getKQDK" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getTongSoSVDK">
+      <soap12:operation soapAction="http://tempuri.org/getTongSoSVDK" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getTongSoSVDK_bangkytruoc">
+      <soap12:operation soapAction="http://tempuri.org/getTongSoSVDK_bangkytruoc" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getLichThi">
+      <soap12:operation soapAction="http://tempuri.org/getLichThi" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCanBo">
+      <soap12:operation soapAction="http://tempuri.org/getCanBo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAllCanBo">
+      <soap12:operation soapAction="http://tempuri.org/getAllCanBo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="countCanBo">
+      <soap12:operation soapAction="http://tempuri.org/countCanBo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getKhoa">
+      <soap12:operation soapAction="http://tempuri.org/getKhoa" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="countKhoa">
+      <soap12:operation soapAction="http://tempuri.org/countKhoa" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBoMon">
+      <soap12:operation soapAction="http://tempuri.org/getBoMon" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="countBoMon">
+      <soap12:operation soapAction="http://tempuri.org/countBoMon" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMonHoc">
+      <soap12:operation soapAction="http://tempuri.org/getMonHoc" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="countMonHoc">
+      <soap12:operation soapAction="http://tempuri.org/countMonHoc" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getNganh">
+      <soap12:operation soapAction="http://tempuri.org/getNganh" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="countNganh">
+      <soap12:operation soapAction="http://tempuri.org/countNganh" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getLop">
+      <soap12:operation soapAction="http://tempuri.org/getLop" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="countLop">
+      <soap12:operation soapAction="http://tempuri.org/countLop" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getSinhVien">
+      <soap12:operation soapAction="http://tempuri.org/getSinhVien" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="countSinhVien">
+      <soap12:operation soapAction="http://tempuri.org/countSinhVien" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getKqdk1">
+      <soap12:operation soapAction="http://tempuri.org/getKqdk1" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="countKqdk1">
+      <soap12:operation soapAction="http://tempuri.org/countKqdk1" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="countKqdk1ExistSV">
+      <soap12:operation soapAction="http://tempuri.org/countKqdk1ExistSV" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getTkb1">
+      <soap12:operation soapAction="http://tempuri.org/getTkb1" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="countTkb1">
+      <soap12:operation soapAction="http://tempuri.org/countTkb1" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="authen">
+      <soap12:operation soapAction="http://tempuri.org/authen" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMatKhauNguoiDung">
+      <soap12:operation soapAction="http://tempuri.org/getMatKhauNguoiDung" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Service">
+    <wsdl:port name="ServiceSoap" binding="tns:ServiceSoap">
+      <soap:address location="http://14.177.64.71:8002/service.asmx" />
+    </wsdl:port>
+    <wsdl:port name="ServiceSoap12" binding="tns:ServiceSoap12">
+      <soap12:address location="http://14.177.64.71:8002/service.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

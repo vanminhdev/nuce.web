@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using EduWebService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -13,11 +11,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using nuce.web.api.Common;
 using nuce.web.api.Models.Core;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
-using static EduWebService.ServiceSoapClient;
 
 namespace nuce.web.api.Controllers.Core
 {
@@ -29,14 +27,18 @@ namespace nuce.web.api.Controllers.Core
         private readonly NuceCoreIdentityContext _identityContext;
         private readonly ILogger<UserController> _logger;
         private readonly IUserService _userService;
+        private readonly IConfiguration _configuration;
+
+        public object Configuration { get; private set; }
 
         public UserController(UserManager<IdentityUser> userManager, NuceCoreIdentityContext identityContext,
-            ILogger<UserController> logger, IUserService userService)
+            ILogger<UserController> logger, IUserService _userService, IConfiguration _configuration)
         {
             _userManager = userManager;
             _identityContext = identityContext;
             _logger = logger;
-            _userService = userService;
+            this._userService = _userService;
+            this._configuration = _configuration;
         }
 
         [HttpPost]
@@ -48,11 +50,15 @@ namespace nuce.web.api.Controllers.Core
             if (userIsValid)
             {
                 var authClaims = await _userService.AddClaimsAsync(model, user);
-                var token = _userService.CreateJWTToken(authClaims);
+                var accessToken = _userService.CreateJWTAccessToken(authClaims);
+                var refreshToken = _userService.CreateJWTAccessToken(authClaims);
+
                 //send token to http only cookies
-                Response.Cookies.Append("JWT-token", new JwtSecurityTokenHandler().WriteToken(token),
-                    new CookieOptions() { HttpOnly = true, Expires = token.ValidTo });
-                
+                Response.Cookies.Append(UserParameters.JwtAccessToken, new JwtSecurityTokenHandler().WriteToken(accessToken),
+                    new CookieOptions() { HttpOnly = true, Expires = accessToken.ValidTo });
+                Response.Cookies.Append(UserParameters.JwtRefreshToken, new JwtSecurityTokenHandler().WriteToken(refreshToken),
+                    new CookieOptions() { HttpOnly = true, Expires = accessToken.ValidTo });
+
                 return Ok();
             }
             return Unauthorized();
@@ -103,6 +109,7 @@ namespace nuce.web.api.Controllers.Core
         [Authorize]
         public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordModel model)
         {
+            
             var user = await _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
@@ -120,13 +127,63 @@ namespace nuce.web.api.Controllers.Core
             return Unauthorized();
         }
 
+        [HttpPost]
+        [Route("refreshToken")]
+        public async Task<IActionResult> RefreshToken()
+        {
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidAudience = _configuration["JWT:ValidAudience"],
+                ValidIssuer = _configuration["JWT:ValidIssuer"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"])),
+                ClockSkew = TimeSpan.FromDays(999) //expiration token
+            };
+
+            SecurityToken validatedToken;
+            var token = HttpContext.Request.Cookies[UserParameters.JwtRefreshToken];
+            
+            var principle = new JwtSecurityTokenHandler().ValidateToken(token, tokenValidationParameters, out validatedToken);
+
+            JwtSecurityToken jwtValidatedToken = validatedToken as JwtSecurityToken;
+
+            if (validatedToken != null && jwtValidatedToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            {
+                string username = GetClaimByKey(ClaimTypes.Name);
+                bool isStudent = !string.IsNullOrEmpty(GetCurrentStudent());
+                var model = new LoginModel { Username = username, IsStudent = isStudent };
+                var user = await _userService.FindByNameAsync(username);
+                var claims = await _userService.AddClaimsAsync(model, user);
+
+                var accessToken = _userService.CreateJWTAccessToken(claims);
+                Response.Cookies.Append(UserParameters.JwtAccessToken, new JwtSecurityTokenHandler().WriteToken(accessToken),
+                        new CookieOptions() { HttpOnly = true, Expires = accessToken.ValidTo });
+                return Ok();
+            }
+            return Unauthorized();
+        }
+
         [HttpGet]
         [Route("logout")]
-        [Authorize]
         public IActionResult Logout()
         {
             Response.Cookies.Delete("JWT-token");
             return Ok();
+        }
+
+        private string GetCurrentStudent()
+        {
+            return GetClaimByKey(UserParameters.MSSV);
+        }
+        private string GetClaimByKey(string key)
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            if (identity != null)
+            {
+                return identity.FindFirst(key) != null ? identity.FindFirst(key).Value : null;
+            }
+            return null;
         }
     }
 }

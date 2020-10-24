@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Nuce.CTSV.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Nuce_CTSV_Services_Service" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://14.177.64.71:8002/service.asmx</Value>
+    </Setting>
+    <Setting Name="Nuce_CTSV_services_direct_Service" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://localhost:8003/service.asmx</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

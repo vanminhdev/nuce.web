@@ -14,7 +14,8 @@ namespace nuce.web.api.Services.Core.Interfaces
     {
         public Task<IdentityUser> FindByNameAsync(string username);
         public Task<List<Claim>> AddClaimsAsync(LoginModel model, IdentityUser user);
-        public JwtSecurityToken CreateJWTToken(List<Claim> claims);
+        public JwtSecurityToken CreateJWTAccessToken(List<Claim> claims);
+        public JwtSecurityToken CreateJWTRefreshToken(List<Claim> claims);
         public Task<bool> UserIsvalidAsync(LoginModel model, IdentityUser user);
     }
 }
