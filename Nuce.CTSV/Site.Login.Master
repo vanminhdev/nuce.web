@@ -51,9 +51,134 @@
 
     <!-- Page level custom scripts -->
     <script src="./js/demo/datatables-demo.js"></script>
+    <!-- test -->
+    <!-- BootStrap -->
+    <link rel="stylesheet" href="./style/public/css/bootstrap.min.css" />
+
+    <!-- Bootstrap date picker -->
+    <link
+      rel="stylesheet"
+      href="./style/public/css/bootstrap-datepicker3.min.css"
+    />
+
+    <!-- Custom -->
+    <link rel="stylesheet" href="./style/public/css/util.css" />
+    <link rel="stylesheet" href="./style/public/css/style.css" />
+    <link rel="stylesheet" href="./style/public/css/responsive.css" />
 </head>
-<body class="bg-gradient-primary">
-    <form runat="server" class="user">
+<body>
+    <div class="full-height login-wrp">
+      <!-- header section -->
+      <section id="header">
+        <div class="container-fluid">
+          <div class="row justify-content-around align-items-center">
+            <div class="col-12 col-md-7">
+              <div class="row">
+                <div class="col-2">
+                  <img
+                    class="logo"
+                    src="./style/public/images/logo.png"
+                    alt="logo"
+                    srcset=""
+                  />
+                </div>
+                <div class="col-10 col-md-10 mb-3">
+                  <div
+                    class="col-12 main-title main-color font-18-sm font-32 font-28-md text-left"
+                  >
+                    trường đại học xây dựng
+                  </div>
+                  <div
+                    class="col-12 main-color sub-title font-14-sm font-25 font-22-md"
+                  >
+                    National University of Civil Engeering
+                  </div>
+                  <div class="col-12">
+                    <div class="row">
+                      <div class="col-2 pr-0"><hr class="line-label" /></div>
+                      <div class="col-10 small-title font-9-sm font-15">
+                        Cơ sở giáo dục đại học đạt chuẩn kiểm định quốc tế
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-5">
+              <div class="row">
+                <div class="col-5">
+                  <div class="row">
+                    <div class="col-3">
+                      <img
+                        src="./style/public/images/icons/hotline.png"
+                        alt="hotline icon"
+                        class="hotline-icon"
+                      />
+                    </div>
+                    <div class="col-9">
+                      <div class="row">
+                        <div class="col-12 main-color icon-title font-14-sm">
+                          Hotline
+                        </div>
+                        <div class="col-12 icon-sub-title">0869071382</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-7">
+                  <div class="row">
+                    <div class="col-3">
+                      <img
+                        src="./style/public/images/icons/email.png"
+                        alt="email icon"
+                        class="email-icon"
+                      />
+                    </div>
+                    <div class="col-9">
+                      <div class="row">
+                        <div class="col-12 main-color icon-title font-14-sm">
+                          Email
+                        </div>
+                        <div class="col-10 icon-sub-title">
+                          tuyensinhdh@nuce.edu.vn
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- end header section -->
+
+      <!-- body section -->
+      <section id="body" class="login-form">
+        <div class="container">
+            <form runat="server" class="user">
+                <asp:ContentPlaceHolder ID="MainContent" runat="server">
+                    </asp:ContentPlaceHolder>
+            </form>
+        </div>
+      </section>
+      <!-- end body section -->
+
+      <!-- footer section -->
+      <section id="footer">
+        <div class="container full-height">
+          <div class="full-height row text-center main-color align-items-end">
+            <div class="col-12 mb-2">
+              Bản quyền @2020 thuộc Đại học Xây dựng
+              <br />
+              Phát triển bởi: Khoa Công Nghê Thông Tin
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- end footer section -->
+    </div>
+<%--    <form runat="server" class="user">
         <div class="container">
             <!-- Outer Row -->
             <div class="row justify-content-center">
@@ -75,6 +200,26 @@
                 </div>
             </div>
         </div>
-    </form>
+    </form>--%>
+    <!-- Custom scripts for all pages-->
+    <script src="/js/sb-admin-2.min.js"></script>
 
+    <!-- Page level plugins -->
+    <script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="/js/demo/datatables-demo.js"></script>
+    <!-- test -->
+    <!-- Jquery -->
+    <script src="./style/public/js/jquery.min.js"></script>
+    <!-- BootStrap -->
+    <script src="./style/public/js/bootstrap.min.js"></script>
+    <!-- Bootstrap date picker -->
+    <script src="./style/public/js/bootstrap-datepicker.min.js"></script>
+    <!-- Bootstrap date picker vi -->
+    <script src="./style/public/js/bootstrap-datepicker.vi.min.js"></script>
+
+    <!-- custom -->
+    <script src="./style/public/js/main.js"></script>
 </body>

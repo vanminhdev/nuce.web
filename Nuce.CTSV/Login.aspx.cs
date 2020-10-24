@@ -298,14 +298,8 @@ namespace Nuce.CTSV
                 message = iTypeDichVu.ToString()
             });
             content = new StringContent(body, Encoding.UTF8, "application/json");
-            var writeLogRes = await httpClient.PostAsync($"{apiUrl}/api/Log/insert-log", content);
-            // retrieve cookie
-            string token = "";
-            if (Request.Cookies["JWT-token"] != null)
-            {
-                token = Request.Cookies["JWT-token"].Value;
-            }
-            // end cookie
+            await httpClient.PostAsync($"{apiUrl}/api/Log/insert-log", content);
+            
             StudentModel student = null;
             var baseAddress = new Uri(apiUrl);
             var cookieContainer = new CookieContainer();

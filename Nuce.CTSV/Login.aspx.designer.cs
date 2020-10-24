@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Nuce.CTSV {
-    
-    
-    public partial class Login {
-        
+namespace Nuce.CTSV
+{
+
+
+    public partial class Login
+    {
+
         /// <summary>
         /// txtMaDangNhap control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace Nuce.CTSV {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtMaDangNhap;
-        
+
         /// <summary>
         /// txtMatKhau control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace Nuce.CTSV {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtMatKhau;
-        
+
         /// <summary>
         /// btnDangNhap control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Nuce.CTSV {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnDangNhap;
-        
+
         /// <summary>
         /// spAlert control.
         /// </summary>
