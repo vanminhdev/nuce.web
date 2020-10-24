@@ -31,12 +31,12 @@ namespace nuce.web.api.Controllers.Core
         private readonly IUserService _userService;
 
         public UserController(UserManager<IdentityUser> userManager, NuceCoreIdentityContext identityContext,
-            ILogger<UserController> logger, IUserService _userService)
+            ILogger<UserController> logger, IUserService userService)
         {
             _userManager = userManager;
             _identityContext = identityContext;
             _logger = logger;
-            this._userService = _userService;
+            _userService = userService;
         }
 
         [HttpPost]
@@ -49,11 +49,10 @@ namespace nuce.web.api.Controllers.Core
             {
                 var authClaims = await _userService.AddClaimsAsync(model, user);
                 var token = _userService.CreateJWTToken(authClaims);
-
                 //send token to http only cookies
                 Response.Cookies.Append("JWT-token", new JwtSecurityTokenHandler().WriteToken(token),
                     new CookieOptions() { HttpOnly = true, Expires = token.ValidTo });
-
+                
                 return Ok();
             }
             return Unauthorized();
