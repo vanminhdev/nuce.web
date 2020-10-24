@@ -1,12 +1,15 @@
 ﻿using Newtonsoft.Json;
 using Nuce.CTSV.Services;
 using System;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
+using System.Web;
 using System.Web.Script.Serialization;
 using System.Web.UI;
 
@@ -227,13 +230,16 @@ namespace Nuce.CTSV
             Service sv = new Service();
             services_direct.Service sv_1 = new services_direct.Service();
             int iTypeDichVu = -1;
+            string apiUrl = ConfigurationManager.AppSettings["API_URL"];
 
             HttpClient httpClient = new HttpClient();
             string body = JsonConvert.SerializeObject(new { username = strMaSV, password = strMatKhau, isStudent = true });
             var content = new StringContent(body, Encoding.UTF8, "application/json");
+
+
             try
             {
-                var res = await httpClient.PostAsync("https://localhost:44326/api/User/login", content);
+                var res = await httpClient.PostAsync($"{apiUrl}/api/User/login", content);
                 if (res.IsSuccessStatusCode)
                 {
                     iTypeDichVu = 1;
@@ -250,6 +256,8 @@ namespace Nuce.CTSV
             {
                 iTypeDichVu = 999;
             }
+
+            #region old
             //try
             //{
             //    if (sv.authen(strMaSV, strMatKhau) <= 0)
@@ -280,40 +288,63 @@ namespace Nuce.CTSV
             //    }
             //}
             //string strSql = string.Format("SELECT * FROM [dbo].[AS_Academy_Student] where Code='{0}'", strMaSV);
-            string strSql = string.Format("SELECT * FROM [dbo].[AS_Academy_Student] where Code=@Param1 ;");
-            strSql += string.Format(@"INSERT INTO [dbo].[AS_Logs]
-           ([UserId]
-           ,[UserCode]
-           ,[Status]
-           ,[Code]
-           ,[Message]
-           ,[CreatedTime])
-     VALUES
-           (-1
-           ,'{0}'
-           ,1
-           ,'LOGIN'
-           ,'{2}'
-           ,'{1}') ;",strMaSV,DateTime.Now,iTypeDichVu);
-            SqlParameter[] sqlParams = new SqlParameter[1];
-            sqlParams[0] = new SqlParameter("@Param1", strMaSV);
-            //sqlParams[0].ParameterName = "@Param1";
-            //sqlParams[0].SqlDbType = SqlDbType.VarChar;
-            //sqlParams[0].Value = strMaSV;
-            DataTable dtData = Microsoft.ApplicationBlocks.Data.SqlHelper.ExecuteDataset(nuce.web.data.Nuce_Common.ConnectionString, CommandType.Text, strSql, sqlParams).Tables[0];
-            if (dtData != null && dtData.Rows.Count > 0)
+            #endregion
+            body = JsonConvert.SerializeObject(new
+            {
+                userId = -1,
+                userCode = strMaSV,
+                status = 1,
+                code = "LOGIN",
+                message = iTypeDichVu.ToString()
+            });
+            content = new StringContent(body, Encoding.UTF8, "application/json");
+            var writeLogRes = await httpClient.PostAsync($"{apiUrl}/api/Log/insert-log", content);
+            // retrieve cookie
+            string token = "";
+            if (Request.Cookies["JWT-token"] != null)
+            {
+                token = Request.Cookies["JWT-token"].Value;
+            }
+            // end cookie
+            StudentModel student = null;
+            var baseAddress = new Uri(apiUrl);
+            var cookieContainer = new CookieContainer();
+            using (var handler = new HttpClientHandler { CookieContainer = cookieContainer })
+            using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
+            {
+                foreach (var key in Request.Cookies.AllKeys)
+                {
+                    cookieContainer.Add(baseAddress, new Cookie(key, Request.Cookies[key].Value));
+                }
+                var message = new HttpRequestMessage(HttpMethod.Get, $"/api/Student/student/{strMaSV}");
+                
+                HttpResponseMessage studentResponse = await client.SendAsync(message);
+                if (studentResponse.IsSuccessStatusCode)
+                {
+                    var strResponse = await studentResponse.Content.ReadAsStringAsync();
+                    student = JsonConvert.DeserializeObject<StudentModel>(strResponse);
+                } else if (studentResponse.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    var endPoint = $"/api/User/refreshToken";
+                    message = new HttpRequestMessage(HttpMethod.Post, endPoint);
+                    await client.SendAsync(message);
+                }
+            }
+
+            if (student != null)
             {
                 nuce.web.model.SinhVien SinhVien = new nuce.web.model.SinhVien();
-                string strFullName = dtData.Rows[0]["FulName"].ToString();
+                string strFullName = student.FulName;
                 string[] strFullNames = strFullName.Split(new char[] { ' ' });
+
                 SinhVien.Ho = strFullName;
                 SinhVien.Ten = strFullNames[strFullNames.Length - 1];
-                //SinhVien.TrangThai = int.Parse(dtData.Rows[0]["status"].ToString());
-                SinhVien.SinhVienID = int.Parse(dtData.Rows[0]["ID"].ToString());
-                SinhVien.Email = dtData.Rows[0].IsNull("EmailNhaTruong") ? "" : dtData.Rows[0]["EmailNhaTruong"].ToString();
-                SinhVien.Mobile = dtData.Rows[0]["Mobile"].ToString();
-                SinhVien.MaSV = dtData.Rows[0]["Code"].ToString();
-                string File1 = dtData.Rows[0].IsNull("File1") ? "" : dtData.Rows[0]["File1"].ToString();
+                SinhVien.MaSV = student.Code;
+                SinhVien.SinhVienID = Convert.ToInt32(student.Id);
+                SinhVien.Email = student.EmailNhaTruong ?? "";
+                SinhVien.Mobile = student.Mobile ?? "";
+                string File1 = student.File1 ?? "";
+
                 if (!File1.Trim().Equals(""))
                 {
                     SinhVien.IMG = File1;
@@ -327,8 +358,59 @@ namespace Nuce.CTSV
             {
                 spAlert.InnerHtml = string.Format(@"<div class='alert alert-warning alert-dismissible' style='position: absolute; top: 0; right: 0;'>
                                                 <a href = '#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
-            {0}</div>", "Không tồn tại dữ liệu sinh viên");
+                {0}</div>", "Không tồn tại dữ liệu sinh viên");
             }
+        }
+        public class StudentModel
+        {
+            public long Id { get; set; }
+            public string Code { get; set; }
+            public string FulName { get; set; }
+            public long? ClassId { get; set; }
+            public string ClassCode { get; set; }
+            public string DateOfBirth { get; set; }
+            public string BirthPlace { get; set; }
+            public string Email { get; set; }
+            public string Mobile { get; set; }
+            public Guid? KeyAuthorize { get; set; }
+            public int? Status { get; set; }
+            public DateTime? CreatedDate { get; set; }
+            public DateTime? UpdatedDate { get; set; }
+            public DateTime? NgaySinh { get; set; }
+            public string DanToc { get; set; }
+            public string TonGiao { get; set; }
+            public string HkttSoNha { get; set; }
+            public string HkttPho { get; set; }
+            public string HkttPhuong { get; set; }
+            public string HkttQuan { get; set; }
+            public string HkttTinh { get; set; }
+            public string Cmt { get; set; }
+            public DateTime? CmtNgayCap { get; set; }
+            public string CmtNoiCap { get; set; }
+            public string NamTotNghiepPtth { get; set; }
+            public DateTime? NgayVaoDoan { get; set; }
+            public DateTime? NgayVaoDang { get; set; }
+            public string DiemThiPtth { get; set; }
+            public string KhuVucHktt { get; set; }
+            public string DoiTuongUuTien { get; set; }
+            public bool? DaTungLamCanBoLop { get; set; }
+            public bool? DaTungLamCanBoDoan { get; set; }
+            public bool? DaThamGiaDoiTuyenThiHsg { get; set; }
+            public string BaoTinDiaChi { get; set; }
+            public string BaoTinHoVaTen { get; set; }
+            public string BaoTinDiaChiNguoiNhan { get; set; }
+            public string BaoTinSoDienThoai { get; set; }
+            public string BaoTinEmail { get; set; }
+            public bool? LaNoiTru { get; set; }
+            public string DiaChiCuThe { get; set; }
+            public string File1 { get; set; }
+            public string File2 { get; set; }
+            public string File3 { get; set; }
+            public string Mobile1 { get; set; }
+            public string Email1 { get; set; }
+            public string GioiTinh { get; set; }
+            public string EmailNhaTruong { get; set; }
+            public bool? DaXacThucEmailNhaTruong { get; set; }
         }
     }
 }
