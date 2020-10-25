@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using nuce.web.api.Models.Ctsv;
 using nuce.web.api.Services.Ctsv.Interfaces;
 
 namespace nuce.web.api.Controllers.Ctsv
@@ -13,18 +12,18 @@ namespace nuce.web.api.Controllers.Ctsv
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class StudentController : ControllerBase
+    public class DichVuController : ControllerBase
     {
-        private readonly IStudentService _studentService;
-        public StudentController(IStudentService _studentService)
+        private readonly IDichVuService _dichVuService;
+        public DichVuController(IDichVuService _dichVuService)
         {
-            this._studentService = _studentService;
+            this._dichVuService = _dichVuService;
         }
-        [Route("{code}")]
+        [Route("student/{studentId}/type/{type}")]
         [HttpGet]
-        public IActionResult GetStudent(string code)
+        public IActionResult GetDichVu(int studentId, int type)
         {
-            return Ok(_studentService.GetStudentByCode(code));
+            return Ok(_dichVuService.GetAll(type, studentId));
         }
     }
 }

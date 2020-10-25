@@ -18,7 +18,10 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using nuce.web.api.Common;
 using nuce.web.api.Models.Core;
+using nuce.web.api.Models.Ctsv;
 using nuce.web.api.Models.Survey;
+using nuce.web.api.Repositories.Ctsv.Implements;
+using nuce.web.api.Repositories.Ctsv.Interfaces;
 using nuce.web.api.Services.Core.Implements;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.Services.Ctsv.Implements;
@@ -49,7 +52,7 @@ namespace nuce.web.api
             services.AddDbContext<SurveyContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"))
             );
-            services.AddDbContext<SurveyContext>(options =>
+            services.AddDbContext<CTSVNUCE_DATAContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("NUCE_CTSV"))
             );
             #endregion
@@ -172,8 +175,15 @@ namespace nuce.web.api
             services.AddScoped<IUserService, UserService>();
             #endregion
             #region ctsv service
+            services.AddScoped<IXacNhanRepository, XacNhanRepository>();
+            services.AddScoped<IGioiThieuRepository, GioiThieuRepository>();
+            services.AddScoped<IUuDaiGiaoDucRepository, UuDaiGiaoDucRepository>();
+            services.AddScoped<IVayVonRepository, VayVonRepository>();
+            services.AddScoped<IThueNhaRepository, ThueNhaRepository>();
+
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<ICtsvLogService, CtsvLogService>();
+            services.AddScoped<IDichVuService, DichVuService>();
             #endregion
         }
 

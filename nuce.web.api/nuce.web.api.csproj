@@ -28,6 +28,8 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <Folder Include="Repositories\Core\" />
+    <Folder Include="Repositories\Survey\" />
     <Folder Include="Services\Core\Implements\" />
     <Folder Include="Services\Core\Interfaces\" />
     <Folder Include="Services\Core\" />
