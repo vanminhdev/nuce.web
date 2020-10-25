@@ -15,7 +15,13 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
         {
             this._context = _context;
         }
-        public IQueryable<Entity> GetAll(int studentId)
+
+        public async Task AddAsync(Entity model)
+        {
+            await _context.Set<Entity>().AddAsync(model);
+        }
+
+        public IQueryable<Entity> GetAll(long studentId)
         {
             return _context.Set<Entity>().AsNoTracking().ToList()
                     .Where(item => Convert.ToInt32(item.GetType().GetProperty("StudentId").GetValue(item, null)) == studentId &&

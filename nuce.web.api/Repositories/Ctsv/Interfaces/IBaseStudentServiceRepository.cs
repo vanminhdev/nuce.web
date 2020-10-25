@@ -7,6 +7,7 @@ namespace nuce.web.api.Repositories.Ctsv.Interfaces
 {
     public interface IBaseStudentServiceRepository<Entity> where Entity: class
     {
-        public IQueryable<Entity> GetAll(int studentId);
+        public IQueryable<Entity> GetAll(long studentId);
+        public Task AddAsync(Entity model);
     }
 }

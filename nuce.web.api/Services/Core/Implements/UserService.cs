@@ -4,12 +4,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using nuce.web.api.Common;
+using nuce.web.api.Repositories.Ctsv.Interfaces;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,9 +21,17 @@ namespace nuce.web.api.Services.Core.Implements
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IConfiguration _configuration;
-        public UserService(UserManager<IdentityUser> _userManager, IConfiguration configuration)
+        private readonly HttpContext _httpContext;
+        private readonly IStudentRepository _studentRepository;
+        public UserService(UserManager<IdentityUser> _userManager,
+                IConfiguration configuration, 
+                IHttpContextAccessor httpContextAccessor,
+                IStudentRepository _studentRepository
+        )
         {
             this._userManager = _userManager;
+            this._studentRepository = _studentRepository;
+            _httpContext = httpContextAccessor.HttpContext;
             _configuration = configuration;
         }
         public async Task<List<Claim>> AddClaimsAsync(LoginModel model, IdentityUser user)
@@ -39,7 +47,7 @@ namespace nuce.web.api.Services.Core.Implements
             if (model.IsStudent)
             {
                 authClaims.Add(new Claim(ClaimTypes.Role, "Student"));
-                authClaims.Add(new Claim(UserParameters.MSSV, model.Username));
+                authClaims.Add(new Claim(UserParameters.MSSV, username));
             }
             else
             {
@@ -93,6 +101,30 @@ namespace nuce.web.api.Services.Core.Implements
                 result = user != null && await _userManager.CheckPasswordAsync(user, model.Password);
             }
             return result;
+        }
+        public string GetCurrentStudentCode()
+        {
+            return GetClaimByKey(UserParameters.MSSV);
+        }
+        public string GetClaimByKey(string key)
+        {
+            var identity = _httpContext.User.Identity as ClaimsIdentity;
+            if (identity != null)
+            {
+                return identity.FindFirst(key) != null ? identity.FindFirst(key).Value : null;
+            }
+            return null;
+        }
+
+        public long? GetCurrentStudentID()
+        {
+            string studentCode = GetCurrentStudentCode();
+            var student = _studentRepository.FindByCode(studentCode);
+            if (student != null)
+            {
+                return student.Id;
+            }
+            return null;
         }
     }
 }

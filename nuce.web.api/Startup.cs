@@ -168,6 +168,7 @@ namespace nuce.web.api
             #endregion
 
             services.AddControllers();
+            services.AddHttpContextAccessor();
 
             #region config service
             services.AddScoped<IAsEduSurveyCauHoiService, AsEduSurveyCauHoiService>();
@@ -180,6 +181,7 @@ namespace nuce.web.api
             services.AddScoped<IUuDaiGiaoDucRepository, UuDaiGiaoDucRepository>();
             services.AddScoped<IVayVonRepository, VayVonRepository>();
             services.AddScoped<IThueNhaRepository, ThueNhaRepository>();
+            services.AddScoped<IStudentRepository, StudentRepository>();
 
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<ICtsvLogService, CtsvLogService>();

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using nuce.web.api.Services.Ctsv.Interfaces;
 
@@ -19,11 +18,11 @@ namespace nuce.web.api.Controllers.Ctsv
         {
             this._dichVuService = _dichVuService;
         }
-        [Route("student/{studentId}/type/{type}")]
+        [Route("type/{type}")]
         [HttpGet]
-        public IActionResult GetDichVu(int studentId, int type)
+        public IActionResult GetDichVu(int type)
         {
-            return Ok(_dichVuService.GetAll(type, studentId));
+            return Ok(_dichVuService.GetAll(type));
         }
     }
 }
