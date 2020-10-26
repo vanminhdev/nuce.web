@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using nuce.web.api.Models.Ctsv;
 using Microsoft.AspNetCore.Identity;
-using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
 using System;
 using System.Collections.Generic;
@@ -21,5 +20,6 @@ namespace nuce.web.api.Services.Core.Interfaces
         public string GetCurrentStudentCode();
         public string GetClaimByKey(string key);
         public long? GetCurrentStudentID();
+        public AsAcademyStudent GetCurrentStudent();
     }
 }

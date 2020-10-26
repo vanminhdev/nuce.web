@@ -19,10 +19,13 @@ namespace nuce.web.api.Services.Ctsv.Implements
         private readonly IVayVonRepository _vayVonRepository;
         private readonly IThueNhaRepository _thueNhaRepository;
         private readonly IUserService _userService;
+        private readonly IUnitOfWork _unitOfWork;
 
         public DichVuService(IXacNhanRepository _xacNhanRepository, IGioiThieuRepository _gioiThieuRepository,
             IUuDaiGiaoDucRepository _uuDaiRepository, IVayVonRepository _vayVonRepository,
-            IThueNhaRepository _thueNhaRepository, IUserService _userService)
+            IThueNhaRepository _thueNhaRepository, IUserService _userService,
+            IUnitOfWork _unitOfWork
+        )
         {
             this._xacNhanRepository = _xacNhanRepository;
             this._gioiThieuRepository = _gioiThieuRepository;
@@ -30,10 +33,13 @@ namespace nuce.web.api.Services.Ctsv.Implements
             this._vayVonRepository = _vayVonRepository;
             this._thueNhaRepository = _thueNhaRepository;
             this._userService = _userService;
+            this._unitOfWork = _unitOfWork;
         }
 
         public async Task AddDichVu(DichVuModel model)
         {
+            var currentStudent = _userService.GetCurrentStudent();
+            int studentID = Convert.ToInt32(currentStudent.Id);
             var now = DateTime.Now;
             switch (model.Type)
             {
@@ -41,20 +47,103 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     AsAcademyStudentSvXacNhan xacNhan = new AsAcademyStudentSvXacNhan
                     {
                         LyDo = model.LyDo,
+                        PhanHoi = model.PhanHoi,
                         CreatedTime = now,
                         DeletedTime = now,
                         LastModifiedTime = now,
-                        MaXacNhan = model.MaXacNhan
+                        MaXacNhan = model.MaXacNhan,
+                        StudentId = studentID,
+                        StudentCode = currentStudent.Code,
+                        StudentName = currentStudent.FulName,
+                        Deleted = false,
+                        CreatedBy = studentID,
+                        LastModifiedBy = studentID,
+                        DeletedBy = -1
                     };
                     await _xacNhanRepository.AddAsync(xacNhan);
+                    await _unitOfWork.SaveAsync();
                     break;
                 case 2:
+                    AsAcademyStudentSvGioiThieu gioiThieu = new AsAcademyStudentSvGioiThieu
+                    {
+                        VeViec = model.VeViec,
+                        DenGap = model.DenGap,
+                        DonVi = model.DonVi,
+                        PhanHoi = model.PhanHoi,
+                        CreatedTime = now,
+                        DeletedTime = now,
+                        LastModifiedTime = now,
+                        MaXacNhan = model.MaXacNhan,
+                        StudentId = studentID,
+                        StudentCode = currentStudent.Code,
+                        StudentName = currentStudent.FulName,
+                        Deleted = false,
+                        CreatedBy = studentID,
+                        LastModifiedBy = studentID,
+                        DeletedBy = -1
+                    };
+                    await _gioiThieuRepository.AddAsync(gioiThieu);
+                    await _unitOfWork.SaveAsync();
                     break;
                 case 4:
+                    AsAcademyStudentSvXacNhanUuDaiTrongGiaoDuc uuDai = new AsAcademyStudentSvXacNhanUuDaiTrongGiaoDuc
+                    {
+                        KyLuat = model.KyLuat,
+                        PhanHoi = model.PhanHoi,
+                        CreatedTime = now,
+                        DeletedTime = now,
+                        LastModifiedTime = now,
+                        MaXacNhan = model.MaXacNhan,
+                        StudentId = studentID,
+                        StudentCode = currentStudent.Code,
+                        StudentName = currentStudent.FulName,
+                        Deleted = false,
+                        CreatedBy = studentID,
+                        LastModifiedBy = studentID,
+                        DeletedBy = -1
+                    };
+                    await _uuDaiRepository.AddAsync(uuDai);
+                    await _unitOfWork.SaveAsync();
                     break;
                 case 6:
+                    AsAcademyStudentSvVayVonNganHang vayVon = new AsAcademyStudentSvVayVonNganHang
+                    {
+                        ThuocDien = model.ThuocDien,
+                        ThuocDoiTuong = model.ThuocDoiTuong,
+                        PhanHoi = model.PhanHoi,
+                        CreatedTime = now,
+                        DeletedTime = now,
+                        LastModifiedTime = now,
+                        MaXacNhan = model.MaXacNhan,
+                        StudentId = studentID,
+                        StudentCode = currentStudent.Code,
+                        StudentName = currentStudent.FulName,
+                        Deleted = false,
+                        CreatedBy = studentID,
+                        LastModifiedBy = studentID,
+                        DeletedBy = -1
+                    };
+                    await _vayVonRepository.AddAsync(vayVon);
+                    await _unitOfWork.SaveAsync();
                     break;
                 case 7:
+                    AsAcademyStudentSvThueNha thueNha = new AsAcademyStudentSvThueNha
+                    {
+                        PhanHoi = model.PhanHoi,
+                        CreatedTime = now,
+                        DeletedTime = now,
+                        LastModifiedTime = now,
+                        MaXacNhan = model.MaXacNhan,
+                        StudentId = studentID,
+                        StudentCode = currentStudent.Code,
+                        StudentName = currentStudent.FulName,
+                        Deleted = false,
+                        CreatedBy = studentID,
+                        LastModifiedBy = studentID,
+                        DeletedBy = -1
+                    };
+                    await _thueNhaRepository.AddAsync(thueNha);
+                    await _unitOfWork.SaveAsync();
                     break;
                 default:
                     break;

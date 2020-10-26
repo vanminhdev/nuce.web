@@ -16,5 +16,6 @@ namespace nuce.web.api.ViewModel.Ctsv
         public string DenGap { get; set; }
         public string VeViec { get; set; }
         public string MaXacNhan { get; set; }
+        public string PhanHoi { get; set; }
     }
 }

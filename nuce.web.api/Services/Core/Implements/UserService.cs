@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using nuce.web.api.Common;
+using nuce.web.api.Models.Ctsv;
 using nuce.web.api.Repositories.Ctsv.Interfaces;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
@@ -125,6 +126,12 @@ namespace nuce.web.api.Services.Core.Implements
                 return student.Id;
             }
             return null;
+        }
+
+        public AsAcademyStudent GetCurrentStudent()
+        {
+            string studentCode = GetCurrentStudentCode();
+            return _studentRepository.FindByCode(studentCode);
         }
     }
 }
