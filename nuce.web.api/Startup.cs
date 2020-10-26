@@ -182,10 +182,12 @@ namespace nuce.web.api
             services.AddScoped<IVayVonRepository, VayVonRepository>();
             services.AddScoped<IThueNhaRepository, ThueNhaRepository>();
             services.AddScoped<IStudentRepository, StudentRepository>();
+            services.AddScoped<INewsItemsRepository, NewsItemsRepository>();
 
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<ICtsvLogService, CtsvLogService>();
             services.AddScoped<IDichVuService, DichVuService>();
+            services.AddScoped<INewsService, NewsService>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             #endregion
