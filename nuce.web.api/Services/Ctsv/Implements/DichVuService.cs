@@ -43,7 +43,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             var now = DateTime.Now;
             switch (model.Type)
             {
-                case 1:
+                case (int)Common.Ctsv.DichVu.XacNhan:
                     AsAcademyStudentSvXacNhan xacNhan = new AsAcademyStudentSvXacNhan
                     {
                         LyDo = model.LyDo,
@@ -63,7 +63,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     await _xacNhanRepository.AddAsync(xacNhan);
                     await _unitOfWork.SaveAsync();
                     break;
-                case 2:
+                case (int)Common.Ctsv.DichVu.GioiThieu:
                     AsAcademyStudentSvGioiThieu gioiThieu = new AsAcademyStudentSvGioiThieu
                     {
                         VeViec = model.VeViec,
@@ -85,7 +85,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     await _gioiThieuRepository.AddAsync(gioiThieu);
                     await _unitOfWork.SaveAsync();
                     break;
-                case 4:
+                case (int)Common.Ctsv.DichVu.UuDaiGiaoDuc:
                     AsAcademyStudentSvXacNhanUuDaiTrongGiaoDuc uuDai = new AsAcademyStudentSvXacNhanUuDaiTrongGiaoDuc
                     {
                         KyLuat = model.KyLuat,
@@ -105,7 +105,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     await _uuDaiRepository.AddAsync(uuDai);
                     await _unitOfWork.SaveAsync();
                     break;
-                case 6:
+                case (int)Common.Ctsv.DichVu.VayVonNganHang:
                     AsAcademyStudentSvVayVonNganHang vayVon = new AsAcademyStudentSvVayVonNganHang
                     {
                         ThuocDien = model.ThuocDien,
@@ -126,7 +126,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     await _vayVonRepository.AddAsync(vayVon);
                     await _unitOfWork.SaveAsync();
                     break;
-                case 7:
+                case (int)Common.Ctsv.DichVu.ThueNha:
                     AsAcademyStudentSvThueNha thueNha = new AsAcademyStudentSvThueNha
                     {
                         PhanHoi = model.PhanHoi,
@@ -155,15 +155,15 @@ namespace nuce.web.api.Services.Ctsv.Implements
             long studentId = _userService.GetCurrentStudentID() ?? 0;
             switch (dichVuType)
             {
-                case 1:
+                case (int)Common.Ctsv.DichVu.XacNhan:
                     return _xacNhanRepository.GetAll(studentId);
-                case 2:
+                case (int)Common.Ctsv.DichVu.GioiThieu:
                     return _gioiThieuRepository.GetAll(studentId);
-                case 4:
+                case (int)Common.Ctsv.DichVu.UuDaiGiaoDuc:
                     return _uuDaiRepository.GetAll(studentId);
-                case 6:
+                case (int)Common.Ctsv.DichVu.VayVonNganHang:
                     return _vayVonRepository.GetAll(studentId);
-                case 7:
+                case (int)Common.Ctsv.DichVu.ThueNha:
                     return _thueNhaRepository.GetAll(studentId);
                 default:
                     break;
