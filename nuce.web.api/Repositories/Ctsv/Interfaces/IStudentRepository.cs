@@ -9,5 +9,6 @@ namespace nuce.web.api.Repositories.Ctsv.Interfaces
     public interface IStudentRepository
     {
         public AsAcademyStudent FindByCode(string studentCode);
+        public void Update(AsAcademyStudent student);
     }
 }

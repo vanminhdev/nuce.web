@@ -14,9 +14,15 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
         {
             this._context = _context;
         }
+
         public AsAcademyStudent FindByCode(string studentCode)
         {
             return _context.AsAcademyStudent.FirstOrDefault(student => student.Code == studentCode);
+        }
+
+        public void Update(AsAcademyStudent student)
+        {
+             _context.AsAcademyStudent.Update(student);
         }
     }
 }
