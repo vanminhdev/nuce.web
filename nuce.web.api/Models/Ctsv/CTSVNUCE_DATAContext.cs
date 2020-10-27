@@ -49,7 +49,7 @@ namespace nuce.web.api.Models.Ctsv
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=CTSVNUCE_DATA;User ID=sa;Password=1234567");
+                optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=CTSVNUCE_DATA;Trusted_Connection=True;MultipleActiveResultSets=true");
             }
         }
 
@@ -651,17 +651,13 @@ namespace nuce.web.api.Models.Ctsv
 
             modelBuilder.Entity<AsAcademyStudentSvThueNha>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("AS_Academy_Student_SV_ThueNha");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.CreatedTime).HasColumnType("datetime");
 
                 entity.Property(e => e.DeletedTime).HasColumnType("datetime");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.LastModifiedTime).HasColumnType("datetime");
 
@@ -693,17 +689,13 @@ namespace nuce.web.api.Models.Ctsv
 
             modelBuilder.Entity<AsAcademyStudentSvVayVonNganHang>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("AS_Academy_Student_SV_VayVonNganHang");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.CreatedTime).HasColumnType("datetime");
 
                 entity.Property(e => e.DeletedTime).HasColumnType("datetime");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.LastModifiedTime).HasColumnType("datetime");
 
