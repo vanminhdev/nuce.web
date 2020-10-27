@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using nuce.web.api.Models.Ctsv;
 using nuce.web.api.Services.Ctsv.Interfaces;
+using nuce.web.api.ViewModel.Ctsv;
 
 namespace nuce.web.api.Controllers.Ctsv
 {
@@ -20,11 +21,23 @@ namespace nuce.web.api.Controllers.Ctsv
         {
             this._studentService = _studentService;
         }
-        [Route("student/{code}")]
+        [Route("{code}")]
         [HttpGet]
         public IActionResult GetStudent(string code)
         {
             return Ok(_studentService.GetStudentByCode(code));
+        }
+
+        [Route("basic-update")]
+        [HttpPost]
+        public async Task<IActionResult> BasicUpdate([FromBody] StudentModel model )
+        {
+            var result = await _studentService.UpdateStudentBasic(model);
+            if (result != null)
+            {
+                return BadRequest(result);
+            }
+            return Ok();
         }
     }
 }

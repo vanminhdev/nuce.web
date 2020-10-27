@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-using nuce.web.api.ViewModel;
+﻿using nuce.web.api.Models.Ctsv;
+using Microsoft.AspNetCore.Identity;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
 using System;
 using System.Collections.Generic;
@@ -17,5 +17,9 @@ namespace nuce.web.api.Services.Core.Interfaces
         public JwtSecurityToken CreateJWTAccessToken(List<Claim> claims);
         public JwtSecurityToken CreateJWTRefreshToken(List<Claim> claims);
         public Task<bool> UserIsvalidAsync(LoginModel model, IdentityUser user);
+        public string GetCurrentStudentCode();
+        public string GetClaimByKey(string key);
+        public long? GetCurrentStudentID();
+        public AsAcademyStudent GetCurrentStudent();
     }
 }

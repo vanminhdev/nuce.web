@@ -51,7 +51,7 @@ namespace nuce.web.api.Controllers.Core
             {
                 var authClaims = await _userService.AddClaimsAsync(model, user);
                 var accessToken = _userService.CreateJWTAccessToken(authClaims);
-                var refreshToken = _userService.CreateJWTAccessToken(authClaims);
+                var refreshToken = _userService.CreateJWTRefreshToken(authClaims);
 
                 //send token to http only cookies
                 Response.Cookies.Append(UserParameters.JwtAccessToken, new JwtSecurityTokenHandler().WriteToken(accessToken),
@@ -150,12 +150,12 @@ namespace nuce.web.api.Controllers.Core
 
             if (validatedToken != null && jwtValidatedToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
             {
-                string username = GetClaimByKey(ClaimTypes.Name);
-                bool isStudent = !string.IsNullOrEmpty(GetCurrentStudent());
+                string username = _userService.GetClaimByKey(ClaimTypes.Name);
+                bool isStudent = !string.IsNullOrEmpty(_userService.GetCurrentStudentCode());
                 var model = new LoginModel { Username = username, IsStudent = isStudent };
                 var user = await _userService.FindByNameAsync(username);
                 var claims = await _userService.AddClaimsAsync(model, user);
-
+                
                 var accessToken = _userService.CreateJWTAccessToken(claims);
                 Response.Cookies.Append(UserParameters.JwtAccessToken, new JwtSecurityTokenHandler().WriteToken(accessToken),
                         new CookieOptions() { HttpOnly = true, Expires = accessToken.ValidTo });
@@ -170,20 +170,6 @@ namespace nuce.web.api.Controllers.Core
         {
             Response.Cookies.Delete("JWT-token");
             return Ok();
-        }
-
-        private string GetCurrentStudent()
-        {
-            return GetClaimByKey(UserParameters.MSSV);
-        }
-        private string GetClaimByKey(string key)
-        {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            if (identity != null)
-            {
-                return identity.FindFirst(key) != null ? identity.FindFirst(key).Value : null;
-            }
-            return null;
         }
     }
 }

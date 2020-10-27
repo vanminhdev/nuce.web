@@ -1,42 +1,88 @@
 ﻿<%@ Page Title="Đăng nhập" Language="C#" MasterPageFile="~/Site.Login.Master" Async="true" AutoEventWireup="true" CodeBehind="Login.aspx.cs" Inherits="Nuce.CTSV.Login" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-
-
-    <div class="text-center" style="font-weight:900;font-size:15px; color:RGB(45,62,153);padding:5px;">
-        <div >ĐẠI HỌC XÂY DỰNG</div>
-        <div>HỆ THỐNG ĐĂNG KÝ THỦ TỤC HÀNH CHÍNH SINH VIÊN ONLINE</div>
-    </div>
-    <div class="form-group">
-        <asp:TextBox runat="server" ID="txtMaDangNhap" placeholder="Tên đăng nhập"></asp:TextBox>
-    </div>
-    <div class="form-group">
-        <asp:TextBox runat="server" ID="txtMatKhau" TextMode="Password" placeholder="Mật khẩu"></asp:TextBox>
-    </div>
-  <%--  <div class="form-group">
-        <div class="custom-control custom-checkbox small">
-            <input
-                type="checkbox"
-                class="custom-control-input"
-                id="customCheck" />
-            <label class="custom-control-label" for="customCheck">
-                Remember Me</label>
+    <style>
+        form.user .form-control-user {
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            color: #fff;
+        }
+    </style>
+    <!-- TEST -->
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="main-name font-20-sm font-32-md font-42 text-light">
+            hệ thống quản lý thông tin sinh viên
+            </div>
         </div>
-    </div>--%>
-    <asp:Button CssClass="btn btn-primary btn-user btn-block" 
+        <div id="login-container" class="col-12 col-md-6">
+            <a
+                href="/Extent/LoginWithGoogle"
+                style="display: inline-block"
+                class="btn background-main-color w-100 text-light font-14-sm font-18 login-google-btn">
+                <i class="fab fa-google-f fa-fw"></i>Login with
+                                Google
+                              </a>
+            <div class="row extra-part text-light">
+            <div class="col-5 pr-0"><hr class="extra-line" /></div>
+            <div class="col-2 pl-0 pr-0 text-center font-18">Hoặc</div>
+            <div class="col-5 pl-0"><hr class="extra-line" /></div>
+            </div>
+            <div class="input-group">
+                <label for="username" class="w-100 font-13-sm text-light"
+                    >Tên đăng nhập</label
+                >
+                <asp:TextBox runat="server" ID="txtMaDangNhap" 
+                    class="form-control custom-input"
+                    name="username"
+                    placeholder="Tên đăng nhập"></asp:TextBox>
+            </div>
+            <div class="input-group mb-3">
+                <label for="password" class="w-100 font-13-sm text-light"
+                    >Mật khẩu</label
+                >
+                <asp:TextBox runat="server" ID="txtMatKhau" 
+                        class="form-control custom-input"
+                        type="password" name="password"
+                        TextMode="Password" placeholder="Mật khẩu"></asp:TextBox>
+            </div>
+            <div class="checkbox mb-2">
+                <input
+                    type="checkbox"
+                    id="isRememberPassword"
+                    name="isRememberPassword"
+                />
+                <label for="isRememberPassword "></label>
+                <label for="isRememberPassword" class="ml-2 text-light">
+                    Ghi nhớ mật khẩu
+                </label>
+            </div>
+            <asp:Button
+                class="btn w-100 text-light font-14-sm login-btn"
                 runat="server" 
                 ID="btnDangNhap" 
+                type="button"
                 Text="Đăng nhập" OnClick="btnDangNhap_Click" />
+        </div>
+    </div>
+    <!-- END TEST  -->
+    <%--<div class="form-group">
+        <asp:TextBox runat="server" ID="txtMaDangNhap" placeholder="Tên đăng nhập"></asp:TextBox>
+    </div>--%>
+    <%--<div class="form-group">
+        <asp:TextBox runat="server" ID="txtMatKhau" TextMode="Password" placeholder="Mật khẩu"></asp:TextBox>
+    </div>--%>
+    <%--<asp:Button CssClass="btn btn-primary btn-user btn-block" 
+                runat="server" 
+                ID="btnDangNhap" 
+                Text="Đăng nhập" OnClick="btnDangNhap_Click" />--%>
     <hr />
-    <a
+    <%--<a
         href="/Extent/LoginWithGoogle"
         class="btn btn-facebook btn-user btn-block">
         <i class="fab fa-google-f fa-fw"></i>Login with
                         Google
-                      </a>
-<%--    <div class="text-center">
-        <a class="small" href="/Extent/LoginWithGoogle">Đăng nhập với Google</a>
-    </div>--%>
+                      </a>--%>
 
     <span runat="server" id="spAlert"></span>
     <script>
