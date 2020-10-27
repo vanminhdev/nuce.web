@@ -33,7 +33,11 @@ namespace nuce.web.api.Controllers.Ctsv
         {
             try
             {
-                await _dichVuService.AddDichVu(model);
+                var addDichVuResult = await _dichVuService.AddDichVu(model);
+                if (addDichVuResult != null)
+                {
+                    return BadRequest(addDichVuResult);
+                }
                 return Ok();
             }
             catch (Exception ex)

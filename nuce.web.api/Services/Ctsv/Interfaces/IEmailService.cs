@@ -1,15 +1,15 @@
 ﻿using nuce.web.api.ViewModel;
-using nuce.web.api.ViewModel.Ctsv;
+using nuce.web.api.Models.Ctsv;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using nuce.web.api.ViewModel.Ctsv;
 
 namespace nuce.web.api.Services.Ctsv.Interfaces
 {
-    public interface IDichVuService
+    public interface IEmailService
     {
-        public IQueryable GetAll(int dichVuType);
-        public Task<ResponseBody> AddDichVu(DichVuModel model);
+        public Task<ResponseBody> SendEmailNewServiceRequest(TinNhanModel tinNhan);
     }
 }

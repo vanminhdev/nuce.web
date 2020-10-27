@@ -8,6 +8,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using nuce.web.api.Services.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
+using System.Transactions;
+using nuce.web.api.ViewModel;
 
 namespace nuce.web.api.Services.Ctsv.Implements
 {
@@ -20,11 +22,12 @@ namespace nuce.web.api.Services.Ctsv.Implements
         private readonly IThueNhaRepository _thueNhaRepository;
         private readonly IUserService _userService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IEmailService _emailService;
 
         public DichVuService(IXacNhanRepository _xacNhanRepository, IGioiThieuRepository _gioiThieuRepository,
             IUuDaiGiaoDucRepository _uuDaiRepository, IVayVonRepository _vayVonRepository,
             IThueNhaRepository _thueNhaRepository, IUserService _userService,
-            IUnitOfWork _unitOfWork
+            IUnitOfWork _unitOfWork, IEmailService _emailService
         )
         {
             this._xacNhanRepository = _xacNhanRepository;
@@ -34,120 +37,152 @@ namespace nuce.web.api.Services.Ctsv.Implements
             this._thueNhaRepository = _thueNhaRepository;
             this._userService = _userService;
             this._unitOfWork = _unitOfWork;
+            this._emailService = _emailService;
         }
 
-        public async Task AddDichVu(DichVuModel model)
+        public async Task<ResponseBody> AddDichVu(DichVuModel model)
         {
             var currentStudent = _userService.GetCurrentStudent();
             int studentID = Convert.ToInt32(currentStudent.Id);
             var now = DateTime.Now;
-            switch (model.Type)
+
+            int status = 2;
+
+            bool run = true;
+
+            using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                case (int)Common.Ctsv.DichVu.XacNhan:
-                    AsAcademyStudentSvXacNhan xacNhan = new AsAcademyStudentSvXacNhan
+                switch (model.Type)
+                {
+                    case (int)Common.Ctsv.DichVu.XacNhan:
+                        AsAcademyStudentSvXacNhan xacNhan = new AsAcademyStudentSvXacNhan
+                        {
+                            LyDo = model.LyDo,
+                            PhanHoi = model.PhanHoi,
+                            CreatedTime = now,
+                            DeletedTime = now,
+                            LastModifiedTime = now,
+                            MaXacNhan = model.MaXacNhan,
+                            Status = status,
+                            StudentId = studentID,
+                            StudentCode = currentStudent.Code,
+                            StudentName = currentStudent.FulName,
+                            Deleted = false,
+                            CreatedBy = studentID,
+                            LastModifiedBy = studentID,
+                            DeletedBy = -1
+                        };
+                        await _xacNhanRepository.AddAsync(xacNhan);
+                        break;
+                    case (int)Common.Ctsv.DichVu.GioiThieu:
+                        AsAcademyStudentSvGioiThieu gioiThieu = new AsAcademyStudentSvGioiThieu
+                        {
+                            VeViec = model.VeViec,
+                            DenGap = model.DenGap,
+                            DonVi = model.DonVi,
+                            PhanHoi = model.PhanHoi,
+                            CreatedTime = now,
+                            DeletedTime = now,
+                            LastModifiedTime = now,
+                            Status = status,
+                            MaXacNhan = model.MaXacNhan,
+                            StudentId = studentID,
+                            StudentCode = currentStudent.Code,
+                            StudentName = currentStudent.FulName,
+                            Deleted = false,
+                            CreatedBy = studentID,
+                            LastModifiedBy = studentID,
+                            DeletedBy = -1
+                        };
+                        await _gioiThieuRepository.AddAsync(gioiThieu);
+                        break;
+                    case (int)Common.Ctsv.DichVu.UuDaiGiaoDuc:
+                        AsAcademyStudentSvXacNhanUuDaiTrongGiaoDuc uuDai = new AsAcademyStudentSvXacNhanUuDaiTrongGiaoDuc
+                        {
+                            KyLuat = model.KyLuat,
+                            PhanHoi = model.PhanHoi,
+                            CreatedTime = now,
+                            DeletedTime = now,
+                            Status = status,
+                            LastModifiedTime = now,
+                            MaXacNhan = model.MaXacNhan,
+                            StudentId = studentID,
+                            StudentCode = currentStudent.Code,
+                            StudentName = currentStudent.FulName,
+                            Deleted = false,
+                            CreatedBy = studentID,
+                            LastModifiedBy = studentID,
+                            DeletedBy = -1
+                        };
+                        await _uuDaiRepository.AddAsync(uuDai);
+                        break;
+                    case (int)Common.Ctsv.DichVu.VayVonNganHang:
+                        AsAcademyStudentSvVayVonNganHang vayVon = new AsAcademyStudentSvVayVonNganHang
+                        {
+                            ThuocDien = model.ThuocDien,
+                            ThuocDoiTuong = model.ThuocDoiTuong,
+                            PhanHoi = model.PhanHoi,
+                            CreatedTime = now,
+                            DeletedTime = now,
+                            LastModifiedTime = now,
+                            MaXacNhan = model.MaXacNhan,
+                            Status = status,
+                            StudentId = studentID,
+                            StudentCode = currentStudent.Code,
+                            StudentName = currentStudent.FulName,
+                            Deleted = false,
+                            CreatedBy = studentID,
+                            LastModifiedBy = studentID,
+                            DeletedBy = -1
+                        };
+                        await _vayVonRepository.AddAsync(vayVon);
+                        break;
+                    case (int)Common.Ctsv.DichVu.ThueNha:
+                        AsAcademyStudentSvThueNha thueNha = new AsAcademyStudentSvThueNha
+                        {
+                            PhanHoi = model.PhanHoi,
+                            CreatedTime = now,
+                            DeletedTime = now,
+                            LastModifiedTime = now,
+                            MaXacNhan = model.MaXacNhan,
+                            StudentId = studentID,
+                            StudentCode = currentStudent.Code,
+                            StudentName = currentStudent.FulName,
+                            Status = status,
+                            Deleted = false,
+                            CreatedBy = studentID,
+                            LastModifiedBy = studentID,
+                            DeletedBy = -1
+                        };
+                        await _thueNhaRepository.AddAsync(thueNha);
+                        break;
+                    default:
+                        run = false;
+                        break;
+                }
+                if (run)
+                {
+                    var dichVu = Common.Ctsv.DichVuDictionary[model.Type];
+                    TinNhanModel tinNhan = new TinNhanModel
                     {
-                        LyDo = model.LyDo,
-                        PhanHoi = model.PhanHoi,
-                        CreatedTime = now,
-                        DeletedTime = now,
-                        LastModifiedTime = now,
-                        MaXacNhan = model.MaXacNhan,
-                        StudentId = studentID,
                         StudentCode = currentStudent.Code,
+                        StudentEmail = currentStudent.Email,
                         StudentName = currentStudent.FulName,
-                        Deleted = false,
-                        CreatedBy = studentID,
-                        LastModifiedBy = studentID,
-                        DeletedBy = -1
+                        StudentID = studentID,
+                        TinNhanCode = dichVu.TinNhanCode,
+                        TinNhanTitle = dichVu.TieuDeTinNhan,
+                        TenDichVu = dichVu.TenDichVu
                     };
-                    await _xacNhanRepository.AddAsync(xacNhan);
-                    await _unitOfWork.SaveAsync();
-                    break;
-                case (int)Common.Ctsv.DichVu.GioiThieu:
-                    AsAcademyStudentSvGioiThieu gioiThieu = new AsAcademyStudentSvGioiThieu
+                    var result = await _emailService.SendEmailNewServiceRequest(tinNhan);
+                    if (result != null)
                     {
-                        VeViec = model.VeViec,
-                        DenGap = model.DenGap,
-                        DonVi = model.DonVi,
-                        PhanHoi = model.PhanHoi,
-                        CreatedTime = now,
-                        DeletedTime = now,
-                        LastModifiedTime = now,
-                        MaXacNhan = model.MaXacNhan,
-                        StudentId = studentID,
-                        StudentCode = currentStudent.Code,
-                        StudentName = currentStudent.FulName,
-                        Deleted = false,
-                        CreatedBy = studentID,
-                        LastModifiedBy = studentID,
-                        DeletedBy = -1
-                    };
-                    await _gioiThieuRepository.AddAsync(gioiThieu);
+                        return result;
+                    }
                     await _unitOfWork.SaveAsync();
-                    break;
-                case (int)Common.Ctsv.DichVu.UuDaiGiaoDuc:
-                    AsAcademyStudentSvXacNhanUuDaiTrongGiaoDuc uuDai = new AsAcademyStudentSvXacNhanUuDaiTrongGiaoDuc
-                    {
-                        KyLuat = model.KyLuat,
-                        PhanHoi = model.PhanHoi,
-                        CreatedTime = now,
-                        DeletedTime = now,
-                        LastModifiedTime = now,
-                        MaXacNhan = model.MaXacNhan,
-                        StudentId = studentID,
-                        StudentCode = currentStudent.Code,
-                        StudentName = currentStudent.FulName,
-                        Deleted = false,
-                        CreatedBy = studentID,
-                        LastModifiedBy = studentID,
-                        DeletedBy = -1
-                    };
-                    await _uuDaiRepository.AddAsync(uuDai);
-                    await _unitOfWork.SaveAsync();
-                    break;
-                case (int)Common.Ctsv.DichVu.VayVonNganHang:
-                    AsAcademyStudentSvVayVonNganHang vayVon = new AsAcademyStudentSvVayVonNganHang
-                    {
-                        ThuocDien = model.ThuocDien,
-                        ThuocDoiTuong = model.ThuocDoiTuong,
-                        PhanHoi = model.PhanHoi,
-                        CreatedTime = now,
-                        DeletedTime = now,
-                        LastModifiedTime = now,
-                        MaXacNhan = model.MaXacNhan,
-                        StudentId = studentID,
-                        StudentCode = currentStudent.Code,
-                        StudentName = currentStudent.FulName,
-                        Deleted = false,
-                        CreatedBy = studentID,
-                        LastModifiedBy = studentID,
-                        DeletedBy = -1
-                    };
-                    await _vayVonRepository.AddAsync(vayVon);
-                    await _unitOfWork.SaveAsync();
-                    break;
-                case (int)Common.Ctsv.DichVu.ThueNha:
-                    AsAcademyStudentSvThueNha thueNha = new AsAcademyStudentSvThueNha
-                    {
-                        PhanHoi = model.PhanHoi,
-                        CreatedTime = now,
-                        DeletedTime = now,
-                        LastModifiedTime = now,
-                        MaXacNhan = model.MaXacNhan,
-                        StudentId = studentID,
-                        StudentCode = currentStudent.Code,
-                        StudentName = currentStudent.FulName,
-                        Deleted = false,
-                        CreatedBy = studentID,
-                        LastModifiedBy = studentID,
-                        DeletedBy = -1
-                    };
-                    await _thueNhaRepository.AddAsync(thueNha);
-                    await _unitOfWork.SaveAsync();
-                    break;
-                default:
-                    break;
+                }
+                scope.Complete();
             }
+            return null;
         }
 
         public IQueryable GetAll(int dichVuType)

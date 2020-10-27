@@ -26,6 +26,7 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
             return _context.Set<Entity>().AsNoTracking().ToList()
                     .Where(item => Convert.ToInt32(item.GetType().GetProperty("StudentId").GetValue(item, null)) == studentId &&
                             !Convert.ToBoolean(item.GetType().GetProperty("Deleted").GetValue(item, null)))
+                    .OrderByDescending(item => item.GetType().GetProperty("LastModifiedTime").GetValue(item, null))
                     .AsQueryable();
         }
     }
