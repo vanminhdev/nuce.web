@@ -28,7 +28,7 @@ namespace nuce.web.manager.Pages.Admin.Core
             }
             else
             {
-                return RedirectToPage("/admin/core/login");
+                return Redirect("/admin/core/login");
             }
         }
     }

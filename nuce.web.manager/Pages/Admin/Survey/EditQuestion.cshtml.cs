@@ -65,7 +65,7 @@ namespace nuce.web.manager.Pages.Admin.Survey
             var response = await base.MakeRequestAuthorizedAsync("PUT", $"/api/question/update?id={QuestionEdit.id}", content);
             if (response.IsSuccessStatusCode)
             {
-                return RedirectToPage("/admin/survey/question");
+                return Redirect("/admin/survey/question");
             }
             else if (response.StatusCode == HttpStatusCode.NotFound)
             {

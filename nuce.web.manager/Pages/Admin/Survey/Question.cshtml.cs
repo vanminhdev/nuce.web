@@ -41,7 +41,7 @@ namespace nuce.web.manager.Pages.Admin.Survey
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                return RedirectToPage("/admin/core/login");
+                return Redirect("/admin/core/login");
             }
             return Page();
         }

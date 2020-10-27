@@ -71,7 +71,7 @@ namespace nuce.web.manager.Pages.Admin.Core
             switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:
-                    return RedirectToPage("/admin/survey/index");
+                    return Redirect("/admin/survey/index");
                 case HttpStatusCode.Unauthorized:
                     ViewData["LoginMessage"] = "Tài khoản hoặc mật khẩu không chính xác";
                     break;

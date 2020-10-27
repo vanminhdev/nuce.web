@@ -56,7 +56,7 @@ namespace nuce.web.manager.Pages.Admin.Survey
             var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/question/create", content);
             if (response.IsSuccessStatusCode)
             {
-                return RedirectToPage("/admin/survey/question");
+                return Redirect("/admin/survey/question");
             }
             else if (response.StatusCode == HttpStatusCode.BadRequest)
             {

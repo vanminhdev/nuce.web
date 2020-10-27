@@ -91,7 +91,7 @@ namespace nuce.web.manager.Pages.Base
                 if (resRefreshToken.IsSuccessStatusCode)
                 {
                     //đưa token mới vào cookie ở trình duyệt
-                    IEnumerable<Cookie> responseCookies = GetAllCookies();
+                    IEnumerable<Cookie> responseCookies = _cookieContainer.GetCookies(_apiUri).Cast<Cookie>();
                     var accessToken = responseCookies.FirstOrDefault(c => c.Name == UserParameters.JwtAccessToken);
                     var cookieOptions = new CookieOptions() { HttpOnly = true };
                     if (accessToken != null)
