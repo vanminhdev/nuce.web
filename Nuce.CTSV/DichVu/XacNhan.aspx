@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Dịch vụ sinh viên" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="XacNhan.aspx.cs" Inherits="Nuce.CTSV.XacNhan" %>
+﻿<%@ Page Title="Dịch vụ sinh viên" Language="C#" MasterPageFile="~/Site.Master" Async="true" AutoEventWireup="true" CodeBehind="XacNhan.aspx.cs" Inherits="Nuce.CTSV.XacNhan" %>
 
 <asp:Content ID="BannerContent" ContentPlaceHolderID="Banner" runat="server">
     dịch vụ

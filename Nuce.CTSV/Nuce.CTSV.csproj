@@ -2379,6 +2379,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiModels\ApiModels.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="CapNhatHoSoDayDu.aspx.cs">
       <DependentUpon>CapNhatHoSoDayDu.aspx</DependentUpon>

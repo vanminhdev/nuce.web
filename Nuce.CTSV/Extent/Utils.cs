@@ -1,10 +1,15 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Net.Mail;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Script.Serialization;
 
@@ -344,5 +349,51 @@ namespace Nuce.CTSV
 
         private List<string> m_ErrorCodes;
     }
+
+    public static class CustomizeHttp
+    {
+        private static string apiUrl = ConfigurationManager.AppSettings["API_URL"];
+
+        private static Uri baseAddress = new Uri(apiUrl);
+        private static CookieContainer cookieContainer = new CookieContainer();
+
+        private static HttpClientHandler handler = new HttpClientHandler { UseCookies = false };
+        private static HttpClient client = new HttpClient(handler) { BaseAddress = baseAddress };
+        public static async Task<HttpResponseMessage> SendRequest(HttpRequest Request, HttpMethod method, string path, string content)
+        {
+            cookieContainer = new CookieContainer();
+            string cookies = "";
+            foreach (var key in Request.Cookies.AllKeys)
+            {
+                cookieContainer.Add(baseAddress, new Cookie(key, Request.Cookies[key].Value));
+                cookies += $"{key}={Request.Cookies[key].Value};";
+            }
+            HttpRequestMessage req = new HttpRequestMessage(method, path);
+            req.Headers.Add("Cookie", cookies);
+            if (method != HttpMethod.Get)
+            {
+                req.Content = new StringContent(content, Encoding.UTF8, "application/json");
+            }
+            var firstResponse = await client.SendAsync(req);
+
+            if (firstResponse.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                var endPoint = $"/api/User/refreshToken";
+                var refreshResponse = await client.PostAsync(endPoint, new StringContent(""));
+                if (refreshResponse.IsSuccessStatusCode)
+                {
+                    firstResponse = await client.SendAsync(req);
+                    if (firstResponse.IsSuccessStatusCode)
+                    {
+                        return firstResponse;
+                    }
+                    return firstResponse;
+                }
+                return refreshResponse;
+            }
+            return firstResponse;
+        }
+    }
+
 }
 

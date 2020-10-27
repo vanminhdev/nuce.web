@@ -46,7 +46,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             int studentID = Convert.ToInt32(currentStudent.Id);
             var now = DateTime.Now;
 
-            int status = 2;
+            int status = (int)Common.Ctsv.TrangThaiYeuCau.DaGuiLenNhaTruong;
 
             bool run = true;
 

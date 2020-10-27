@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Nuce.CTSV.ApiModels;
 using Nuce.CTSV.Services;
 using System;
 using System.Configuration;
@@ -236,13 +237,19 @@ namespace Nuce.CTSV
             string body = JsonConvert.SerializeObject(new { username = strMaSV, password = strMatKhau, isStudent = true });
             var content = new StringContent(body, Encoding.UTF8, "application/json");
 
-
             try
             {
                 var res = await httpClient.PostAsync($"{apiUrl}/api/User/login", content);
                 if (res.IsSuccessStatusCode)
                 {
                     iTypeDichVu = 1;
+                    var cookies = res.Headers.GetValues("Set-Cookie");
+                    foreach (var responseCookie in cookies)
+                    {
+                        var splited = responseCookie.Split(';')[0].Split('=');
+                        Request.Cookies.Add(new HttpCookie(splited[0], splited[1]));
+                        Response.Cookies.Add(new HttpCookie(splited[0], splited[1]));
+                    }
                 }
                 else
                 {
@@ -289,16 +296,6 @@ namespace Nuce.CTSV
             //}
             //string strSql = string.Format("SELECT * FROM [dbo].[AS_Academy_Student] where Code='{0}'", strMaSV);
             #endregion
-            body = JsonConvert.SerializeObject(new
-            {
-                userId = -1,
-                userCode = strMaSV,
-                status = 1,
-                code = "LOGIN",
-                message = iTypeDichVu.ToString()
-            });
-            content = new StringContent(body, Encoding.UTF8, "application/json");
-            await httpClient.PostAsync($"{apiUrl}/api/Log/insert-log", content);
             
             StudentModel student = null;
             var baseAddress = new Uri(apiUrl);
@@ -310,18 +307,13 @@ namespace Nuce.CTSV
                 {
                     cookieContainer.Add(baseAddress, new Cookie(key, Request.Cookies[key].Value));
                 }
-                var message = new HttpRequestMessage(HttpMethod.Get, $"/api/Student/student/{strMaSV}");
-                
+
+                var message = new HttpRequestMessage(HttpMethod.Get, $"/api/Student/{strMaSV}");
                 HttpResponseMessage studentResponse = await client.SendAsync(message);
                 if (studentResponse.IsSuccessStatusCode)
                 {
                     var strResponse = await studentResponse.Content.ReadAsStringAsync();
                     student = JsonConvert.DeserializeObject<StudentModel>(strResponse);
-                } else if (studentResponse.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    var endPoint = $"/api/User/refreshToken";
-                    message = new HttpRequestMessage(HttpMethod.Post, endPoint);
-                    await client.SendAsync(message);
                 }
             }
 
@@ -355,56 +347,6 @@ namespace Nuce.CTSV
                 {0}</div>", "Không tồn tại dữ liệu sinh viên");
             }
         }
-        public class StudentModel
-        {
-            public long Id { get; set; }
-            public string Code { get; set; }
-            public string FulName { get; set; }
-            public long? ClassId { get; set; }
-            public string ClassCode { get; set; }
-            public string DateOfBirth { get; set; }
-            public string BirthPlace { get; set; }
-            public string Email { get; set; }
-            public string Mobile { get; set; }
-            public Guid? KeyAuthorize { get; set; }
-            public int? Status { get; set; }
-            public DateTime? CreatedDate { get; set; }
-            public DateTime? UpdatedDate { get; set; }
-            public DateTime? NgaySinh { get; set; }
-            public string DanToc { get; set; }
-            public string TonGiao { get; set; }
-            public string HkttSoNha { get; set; }
-            public string HkttPho { get; set; }
-            public string HkttPhuong { get; set; }
-            public string HkttQuan { get; set; }
-            public string HkttTinh { get; set; }
-            public string Cmt { get; set; }
-            public DateTime? CmtNgayCap { get; set; }
-            public string CmtNoiCap { get; set; }
-            public string NamTotNghiepPtth { get; set; }
-            public DateTime? NgayVaoDoan { get; set; }
-            public DateTime? NgayVaoDang { get; set; }
-            public string DiemThiPtth { get; set; }
-            public string KhuVucHktt { get; set; }
-            public string DoiTuongUuTien { get; set; }
-            public bool? DaTungLamCanBoLop { get; set; }
-            public bool? DaTungLamCanBoDoan { get; set; }
-            public bool? DaThamGiaDoiTuyenThiHsg { get; set; }
-            public string BaoTinDiaChi { get; set; }
-            public string BaoTinHoVaTen { get; set; }
-            public string BaoTinDiaChiNguoiNhan { get; set; }
-            public string BaoTinSoDienThoai { get; set; }
-            public string BaoTinEmail { get; set; }
-            public bool? LaNoiTru { get; set; }
-            public string DiaChiCuThe { get; set; }
-            public string File1 { get; set; }
-            public string File2 { get; set; }
-            public string File3 { get; set; }
-            public string Mobile1 { get; set; }
-            public string Email1 { get; set; }
-            public string GioiTinh { get; set; }
-            public string EmailNhaTruong { get; set; }
-            public bool? DaXacThucEmailNhaTruong { get; set; }
-        }
+        
     }
 }
