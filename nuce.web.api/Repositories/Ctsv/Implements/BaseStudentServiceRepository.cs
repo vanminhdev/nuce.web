@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static nuce.web.api.Common.Ctsv;
 
 namespace nuce.web.api.Repositories.Ctsv.Implements
 {
@@ -28,6 +29,14 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
                             !Convert.ToBoolean(item.GetType().GetProperty("Deleted").GetValue(item, null)))
                     .OrderByDescending(item => item.GetType().GetProperty("LastModifiedTime").GetValue(item, null))
                     .AsQueryable();
+        }
+
+        public bool IsDuplicated(long studentId, string reason = null)
+        {
+            return _context.Set<Entity>().AsNoTracking().ToList()
+                    .Any(item => Convert.ToInt32(item.GetType().GetProperty("StudentId").GetValue(item, null)) == studentId &&
+                            Convert.ToInt32(item.GetType().GetProperty("Status").GetValue(item, null)) < (int)TrangThaiYeuCau.DaXuLyVaCoLichHen &&
+                           (string.IsNullOrEmpty(reason) || item.GetType().GetProperty("LyDo").GetValue(item, null)?.ToString() == reason));
         }
     }
 }

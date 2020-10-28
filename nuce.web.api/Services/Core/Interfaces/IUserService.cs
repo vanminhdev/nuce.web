@@ -7,6 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using nuce.web.api.ViewModel;
 
 namespace nuce.web.api.Services.Core.Interfaces
 {
@@ -16,7 +17,7 @@ namespace nuce.web.api.Services.Core.Interfaces
         public Task<List<Claim>> AddClaimsAsync(LoginModel model, IdentityUser user);
         public JwtSecurityToken CreateJWTAccessToken(List<Claim> claims);
         public JwtSecurityToken CreateJWTRefreshToken(List<Claim> claims);
-        public Task<bool> UserIsvalidAsync(LoginModel model, IdentityUser user);
+        public Task<ResponseBody> UserIsvalidAsync(LoginModel model, IdentityUser user);
         public string GetCurrentStudentCode();
         public string GetClaimByKey(string key);
         public long? GetCurrentStudentID();

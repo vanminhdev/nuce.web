@@ -7,6 +7,7 @@ using nuce.web.api.Common;
 using nuce.web.api.Models.Ctsv;
 using nuce.web.api.Repositories.Ctsv.Interfaces;
 using nuce.web.api.Services.Core.Interfaces;
+using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
 using System;
 using System.Collections.Generic;
@@ -87,21 +88,28 @@ namespace nuce.web.api.Services.Core.Implements
             return await _userManager.FindByNameAsync(username);
         }
 
-        public async Task<bool> UserIsvalidAsync(LoginModel model, IdentityUser user)
+        public async Task<ResponseBody> UserIsvalidAsync(LoginModel model, IdentityUser user)
         {
             bool result = false;
             if (model.IsStudent)
             {
                 ServiceSoapClient srvc = new ServiceSoapClient(EndpointConfiguration.ServiceSoap12);
-                var isvalid = await srvc.authenAsync(model.Username, model.Password);
+                try
+                {
+                    var isvalid = await srvc.authenAsync(model.Username, model.Password);
 
-                result = isvalid == 1;
+                    result = isvalid == 1;
+                }
+                catch (Exception ex)
+                {
+                    return new ResponseBody { Data = false, Message = "Lỗi khi gọi service đào tạo" };
+                }
             }
             else
             {
                 result = user != null && await _userManager.CheckPasswordAsync(user, model.Password);
             }
-            return result;
+            return new ResponseBody { Data = result, Message = "Tên đăng nhập hoặc mật khẩu không chính xác" };
         }
         public string GetCurrentStudentCode()
         {

@@ -46,7 +46,9 @@ namespace nuce.web.api.Controllers.Core
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await _userService.FindByNameAsync(model.Username);
-            bool userIsValid = await _userService.UserIsvalidAsync(model, user);
+            var userIsValidResult = await _userService.UserIsvalidAsync(model, user);
+            bool userIsValid = (bool)userIsValidResult.Data;
+
             if (userIsValid)
             {
                 var authClaims = await _userService.AddClaimsAsync(model, user);
@@ -61,7 +63,7 @@ namespace nuce.web.api.Controllers.Core
 
                 return Ok();
             }
-            return Unauthorized();
+            return Unauthorized(userIsValidResult);
         }
 
         [HttpPost]
