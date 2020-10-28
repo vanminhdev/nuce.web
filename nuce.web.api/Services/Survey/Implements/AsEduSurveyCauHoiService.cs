@@ -29,11 +29,11 @@ namespace nuce.web.api.Services.Survey.Implements
                 .Where(q => q.Status != (int)QuestionStatus.Deactive)
                 .ToListAsync();
             return
-                list.Select(q => new Question
+                list.Select(q => new Question()
                 {
                     Id = q.Id.ToString(),
                     Ma = q.Ma,
-                    Content = HttpUtility.HtmlDecode(q.Content),
+                    Content = HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(q.Content)),
                     Type = q.Type,
                     Order = q.Order
                 }).ToList();

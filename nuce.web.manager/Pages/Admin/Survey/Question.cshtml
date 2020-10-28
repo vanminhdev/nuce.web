@@ -1,0 +1,57 @@
+﻿@page
+@model nuce.web.manager.Pages.Admin.Survey.QuestionModel
+@{
+    ViewData["Title"] = "Danh sách câu hỏi";
+}
+
+<div class="col-md-12 col-xs-12">
+    <div class="form_dk">
+        <b>Danh sách câu hỏi</b>
+        <div class="row">
+            <div class="col-md-12">
+                <a href='/admin/survey/createquestion'>Thêm mới</a>
+            </div>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Mã</th>
+                    <th>Nội dung</th>
+                    <th>Loại</th>
+                    <th>Thứ tự</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Questions.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            @(i + 1)
+                        </td>
+                        <td>
+                            @Model.Questions[i].ma
+                        </td>
+                        <td>
+                            @Model.Questions[i].content
+                        </td>
+                        <td>
+                            @Model.Questions[i].type
+                        </td>
+                        <td>
+                            @Model.Questions[i].order
+                        </td>
+                        <td>
+                            <a href='/admin/survey/editquestion?id=@Model.Questions[i].id'>Sửa</a>
+                        </td>
+                        <td>
+                            <a href='/admin/survey/answer?questionId=@Model.Questions[i].id'>Đáp án</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

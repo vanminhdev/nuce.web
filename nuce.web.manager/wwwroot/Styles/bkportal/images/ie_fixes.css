@@ -1,0 +1,21 @@
+#subTabs .currentTab {
+	BORDER-RIGHT: rgb(200,200,200) 1px solid; PADDING-RIGHT: 8px; BORDER-TOP: rgb(200,200,200) 1px solid; PADDING-LEFT: 8px; PADDING-BOTTOM: 4px; BORDER-LEFT: rgb(200,200,200) 1px solid; PADDING-TOP: 6px; BORDER-BOTTOM: rgb(200,200,200) 1px solid; BACKGROUND-COLOR: white
+}
+.hint UL.legend LI {
+	MARGIN-LEFT: -16px
+}
+.selectAll {
+	PADDING-TOP: 1px
+}
+.qaboomTitleBar TD {
+	BORDER-BOTTOM: #9c859c 1px solid
+}
+.featureList LI {
+	PADDING-LEFT: 7px; MARGIN-BOTTOM: 2px; MARGIN-LEFT: -7px
+}
+.tourText1 UL {
+	MARGIN-TOP: 10px; MARGIN-LEFT: 0px
+}
+.tourText1 UL LI {
+	PADDING-LEFT: 7px; MARGIN-BOTTOM: 3px
+}

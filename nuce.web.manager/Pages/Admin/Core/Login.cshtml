@@ -1,0 +1,53 @@
+﻿@page
+@model nuce.web.manager.Pages.Admin.Core.LoginModel
+@{
+    Layout = "_LayoutAdminLogin";
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<div class="col-md-6 col-xs-12">
+    <form class="form_dk" method="post">
+        <div class="title">
+            ĐĂNG NHẬP
+        </div>
+        <div class="text col-xs-12 col-md-4" style="text-align: left;">
+            Tên đăng nhập
+        </div>
+        <div class="input col-xs-12 col-md-8" style="text-align: center;">
+            <input asp-for="Input.Username" class="" />
+            <span asp-validation-for="Input.Username" class="text-danger" style="display: block;"></span>
+        </div>
+        <div class="clearfix"></div>
+        <div class="text col-xs-12 col-md-4" style="text-align: left;">
+            Mật khẩu
+        </div>
+        <div class="input col-xs-12 col-md-8" style="text-align: center;">
+            <input type="password" asp-for="Input.Password" class="" />
+            <span asp-validation-for="Input.Password" class="text-danger" style="display: block;"></span>
+        </div>
+        <div>
+            @if (ViewData["LoginMessage"] != null)
+            {
+                <span class="text-danger">@ViewData["LoginMessage"]</span>
+            }
+        </div>
+        <div class="clearfix"></div>
+        <div class="submit col-xs-12 col-md-12" style="text-align: center; padding-bottom: 9px;">
+            <input type="submit" value="Đăng nhập" />
+        </div>
+        <div class="clearfix"></div>
+    </form>
+</div>
+<div class="col-md-6 col-xs-12">
+    <div class="form_dk">
+        <div class="title">
+            CHÚ Ý
+        </div>
+        <div class="text col-xs-12 col-md-12" style="text-align: left; padding-top: 1px; padding-right: 1px;">
+            * Hệ thống quản trị<br/>
+            <%--<i style="color:red;">Nếu anh/chị đã đổi mật khẩu sau ngày 9/6/2018 thì vui lòng đăng nhập với mật khẩu trước khi thay đổi.</i><br/>--%>
+            * Khi có thắc mắc, vui lòng liên hệ Phòng KTĐB qua hotline 0912.987.567 hoặc qua email:ks.ktdb@nuce.edu.vn
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>

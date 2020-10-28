@@ -18,7 +18,7 @@ namespace nuce.web.api.Controllers.Survey
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class AnswerController : ControllerBase
     {
         private readonly ILogger<AnswerController> _logger;

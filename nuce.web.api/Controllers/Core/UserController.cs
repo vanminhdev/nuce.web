@@ -57,7 +57,7 @@ namespace nuce.web.api.Controllers.Core
                 Response.Cookies.Append(UserParameters.JwtAccessToken, new JwtSecurityTokenHandler().WriteToken(accessToken),
                     new CookieOptions() { HttpOnly = true, Expires = accessToken.ValidTo });
                 Response.Cookies.Append(UserParameters.JwtRefreshToken, new JwtSecurityTokenHandler().WriteToken(refreshToken),
-                    new CookieOptions() { HttpOnly = true, Expires = accessToken.ValidTo });
+                    new CookieOptions() { HttpOnly = true, Expires = refreshToken.ValidTo });
 
                 return Ok();
             }
@@ -147,11 +147,16 @@ namespace nuce.web.api.Controllers.Core
             var principle = new JwtSecurityTokenHandler().ValidateToken(token, tokenValidationParameters, out validatedToken);
 
             JwtSecurityToken jwtValidatedToken = validatedToken as JwtSecurityToken;
-
             if (validatedToken != null && jwtValidatedToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
             {
-                string username = _userService.GetClaimByKey(ClaimTypes.Name);
-                bool isStudent = !string.IsNullOrEmpty(_userService.GetCurrentStudentCode());
+                var claimName = jwtValidatedToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+                if (claimName == null)
+                {
+                    return Unauthorized();
+                }
+                string username = claimName.Value;
+                var claimStudent = jwtValidatedToken.Claims.FirstOrDefault(c => c.Type == UserParameters.MSSV);
+                bool isStudent = claimStudent != null;
                 var model = new LoginModel { Username = username, IsStudent = isStudent };
                 var user = await _userService.FindByNameAsync(username);
                 var claims = await _userService.AddClaimsAsync(model, user);
@@ -168,7 +173,8 @@ namespace nuce.web.api.Controllers.Core
         [Route("logout")]
         public IActionResult Logout()
         {
-            Response.Cookies.Delete("JWT-token");
+            Response.Cookies.Delete(UserParameters.JwtAccessToken);
+            Response.Cookies.Delete(UserParameters.JwtRefreshToken);
             return Ok();
         }
     }
