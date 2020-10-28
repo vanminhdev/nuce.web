@@ -17,7 +17,7 @@ namespace Nuce.CTSV
         {
             if (!IsPostBack)
             {
-                var studentResponse = await CustomizeHttp.SendRequest(Request, HttpMethod.Get, $"{ApiModels.ApiEndPoint.StudentInfo}/{m_SinhVien.MaSV}", "");
+                var studentResponse = await CustomizeHttp.SendRequest(Request, HttpMethod.Get, $"{ApiModels.ApiEndPoint.GetStudentInfo}/{m_SinhVien.MaSV}", "");
                 if (studentResponse.IsSuccessStatusCode)
                 {
                     var strResponse = await studentResponse.Content.ReadAsStringAsync();
@@ -125,7 +125,7 @@ namespace Nuce.CTSV
             if (update)
             {
                 string updateStudentContent = JsonConvert.SerializeObject(student);
-                string endpoint = ApiModels.ApiEndPoint.StudentUpdate;
+                string endpoint = ApiModels.ApiEndPoint.PutStudentUpdate;
                 var updateResponse = await CustomizeHttp.SendRequest(Request, HttpMethod.Put, endpoint, updateStudentContent);
 
                 if (!updateResponse.IsSuccessStatusCode)

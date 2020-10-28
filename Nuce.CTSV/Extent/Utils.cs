@@ -394,6 +394,10 @@ namespace Nuce.CTSV
                 return firstResponse;
             }
         }
+        public static async Task<T> DeserializeAsync<T>(HttpContent responseContent){
+            string content = await responseContent.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<T>(content);
+        }
     }
 
 }

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Cập nhật hồ sơ" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="CapNhatHoSo.aspx.cs" Inherits="Nuce.CTSV.CapNhatHoSo" %>
+﻿<%@ Page Title="Cập nhật hồ sơ" Language="C#" MasterPageFile="~/Site.Master" Async="true" AutoEventWireup="true" CodeBehind="CapNhatHoSo.aspx.cs" Inherits="Nuce.CTSV.CapNhatHoSo" %>
 <asp:Content ID="BannerContent" ContentPlaceHolderID="Banner" runat="server">
     <style>
         .service-banner {
@@ -141,11 +141,44 @@
         <div class="row mt-3">
             <div class="col-12 col-md-12">
                 <div class="form-group">
-                <div class="fw-700 font-14-sm">
-                    Địa chỉ nơi ở cụ thể <span class="sub-color">*</span>
+                    <div class="fw-700 font-14-sm">
+                        Địa chỉ nơi ở cụ thể <span class="sub-color">*</span>
+                    </div>
+                    <asp:TextBox ID="txtDiaChiCuThe" runat="server" 
+                                class="form-control mt-3" name="subject" placeholder="Địa chỉ..."></asp:TextBox>
                 </div>
-                <asp:TextBox ID="txtDiaChiCuThe" runat="server" 
-                            class="form-control mt-3" name="subject" placeholder="Địa chỉ..."></asp:TextBox>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12 col-md-12">
+                <div class="form-group">
+                    <div class="fw-700 font-14-sm">
+                        Tỉnh/thành phố <span class="sub-color">*</span>
+                    </div>
+                    <select class="form-control" onchange="CapNhatHoSo.changeTinh(this)" runat="server" id="slThanhPho">
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12 col-md-12">
+                <div class="form-group">
+                    <div class="fw-700 font-14-sm">
+                        Quận/huyện <span class="sub-color">*</span>
+                    </div>
+                    <select class="form-control" enableviewstate="true" onchange="CapNhatHoSo.changeQuan(this)" runat="server" id="slQuan">
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12 col-md-12">
+                <div class="form-group">
+                    <div class="fw-700 font-14-sm">
+                        Phường/xã <span class="sub-color">*</span>
+                    </div>
+                    <select class="form-control" enableviewstate="true" runat="server" id="slPhuong">
+                    </select>
                 </div>
             </div>
         </div>
@@ -232,8 +265,8 @@
             </div>
         </div>
     </div>
+    <script src="/js/phuong-quan-thanh-pho.js"></script>
     <script>
-
         (function ($) {
             $.fn.serializeAny = function () {
                 var ret = [];
@@ -249,21 +282,74 @@
             hienthithongbao: function () {
                 $('#myModal').modal('show');
                 $('#btnModalUpdate').hide();
-
             },
             back: function () {
                 window.location.href = "/hososinhvien";
             },
             update: function () {
-                console.log('sdsf');
                 document.getElementById("<%=btnCapNhat.ClientID %>").click();
-                console.log('sdsf', "<%=btnCapNhat.ClientID %>");
             },
             showFormUpdate: function () {
                 // alert('hi hi');
                 $('#logoutModal').modal('show');
+            },
+            initSelectForm: function(tinhValue = '', quanValue = '', phuongValue = '') {
+                let tinhOptions = '';
+                let maTinhValue = tinhList[0].MATP;
+                tinhList.forEach(item => {
+                    let selected = '';
+                    if (tinhValue === item.TENTPVN) {
+                        selected = 'selected';
+                        maTinhValue = item.MATP;
+                    }
+                    tinhOptions += `<option ${selected} data-ma-tinh="${item.MATP}" value="${item.TENTPVN}">${item.TENTPVN}</option>`;
+                });
+                $(`#<%= slThanhPho.ClientID %>`).html(tinhOptions);
 
-            }
+                let quanOptions = '';
+                let maQuanValue = quanList[0].MAQH;
+                quanList.filter(item => item.MATP === maTinhValue).forEach(item => {
+                    let selected = '';
+                    if (quanValue === item.TENQHVN) {
+                        selected = 'selected';
+                        maQuanValue = item.MAQH;
+                    }
+                    quanOptions += `<option ${selected} data-ma-tinh="${item.MATP}" data-ma-quan="${item.MAQH}" value="${item.TENQHVN}">${item.TENQHVN}</option>`;
+                });
+                $(`#<%= slQuan.ClientID %>`).html(quanOptions);
+
+                let phuongOptions = '';
+                phuongList.forEach(item => {
+                    let selected = phuongValue === item.tenpxvn ? 'selected' : '';
+                    phuongOptions += `<option ${selected} data-ma-tinh="${item.matp}" data-ma-quan="${item.maqh}" data-ma-phuong="${item.mapx}" value="${item.tenpxvn}">${item.tenpxvn}</option>`;
+                });
+                $(`#<%= slPhuong.ClientID %>`).html(phuongOptions);
+            },
+            changeTinh: function(e) {
+                const maTinh = e.options[e.selectedIndex].getAttribute('data-ma-tinh');
+
+                let quanOptions = '';
+                var filteredQuan = quanList.filter(item => item.MATP === maTinh);
+                filteredQuan.forEach(item => {
+                    quanOptions += `<option data-ma-tinh="${item.MATP}" data-ma-quan="${item.MAQH}" value="${item.TENQHVN}">${item.TENQHVN}</option>`;
+                });
+                $(`#<%= slQuan.ClientID %>`).html(quanOptions);
+
+                let phuongOptions = '';
+                phuongList.filter(item => item.maqh === filteredQuan[0].MAQH).forEach(item => {
+                    phuongOptions += `<option data-ma-tinh="${item.matp}" data-ma-quan="${item.maqh}" data-ma-phuong="${item.mapx}" value="${item.tenpxvn}">${item.tenpxvn}</option>`;
+                });
+                $(`#<%= slPhuong.ClientID %>`).html(phuongOptions);
+            },
+            changeQuan: function(e) {
+                const maQuan = e.options[e.selectedIndex].getAttribute('data-ma-quan');
+
+                let phuongOptions = '';
+                phuongList.filter(item => item.maqh === maQuan).forEach(item => {
+                    phuongOptions += `<option data-ma-tinh="${item.matp}" data-ma-quan="${item.maqh}" data-ma-phuong="${item.mapx}" value="${item.tenpxvn}">${item.tenpxvn}</option>`;
+                });
+                $(`#<%= slPhuong.ClientID %>`).html(phuongOptions);
+            },
         };
     </script>
     <span id="spScript" runat="server"></span>

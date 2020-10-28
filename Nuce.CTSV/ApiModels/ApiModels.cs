@@ -194,16 +194,75 @@ namespace Nuce.CTSV.ApiModels
         public string maXacNhan { get; set; }
         public string phanHoi { get; set; }
     }
+    public class ThiHsgModel
+    {
+        public int Id { get; set; }
+        public int StudentId { get; set; }
+        public string StudentCode { get; set; }
+        public string CapThi { get; set; }
+        public string MonThi { get; set; }
+        public string DatGiai { get; set; }
+        public int Count { get; set; }
+    }
+    public partial class QuaTrinhHocModel
+    {
+        public int Id { get; set; }
+        public int StudentId { get; set; }
+        public string StudentCode { get; set; }
+        public string ThoiGian { get; set; }
+        public string TenTruong { get; set; }
+        public int Count { get; set; }
+    }
+    public class GiaDinhModel
+    {
+        public int Id { get; set; }
+        public int StudentId { get; set; }
+        public string StudentCode { get; set; }
+        public string MoiQuanHe { get; set; }
+        public string HoVaTen { get; set; }
+        public string NamSinh { get; set; }
+        public string QuocTich { get; set; }
+        public string DanToc { get; set; }
+        public string TonGiao { get; set; }
+        public string NgheNghiep { get; set; }
+        public string ChucVu { get; set; }
+        public string NoiCongTac { get; set; }
+        public string NoiOhienNay { get; set; }
+        public int Count { get; set; }
+    }
+    public class FullStudentModel
+    {
+        public StudentModel Student { get; set; }
+        public List<GiaDinhModel> GiaDinh { get; set; }
+        public List<ThiHsgModel> ThiHSG { get; set; }
+        public List<QuaTrinhHocModel> QuaTrinhHoc { get; set; }
+    }
+    public class CapNhatHoSoModel
+    {
+        public string Email { get; set; }
+        public string Mobile { get; set; }
+        public string DiaChiBaotin { get; set; }
+        public string DiaChiNguoiNhanBaotin { get; set; }
+        public string MobileBaoTin { get; set; }
+        public string EmailBaoTin { get; set; }
+        public string HoTenBaoTin { get; set; }
+        public bool CoNoiOCuThe { get; set; }
+        public string DiaChiCuThe { get; set; }
+        public string PhuongXa { get; set; }
+        public string QuanHuyen { get; set; }
+        public string TinhThanhPho { get; set; }
+    }
     #endregion
 
     #region api
     public static class ApiEndPoint
     {
-        public static string StudentBasicUpdate = "api/Student/basic-update";
-        public static string StudentInfo = "api/Student";
-        public static string StudentUpdate = "api/Student/update";
+        public static string PostStudentBasicUpdate = "api/Student/basic-update";
+        public static string GetStudentInfo = "api/Student";
+        public static string PutStudentUpdate = "api/Student/update";
         public static string AddDichVu = "api/DichVu/add";
         public static string GetDichVu = "api/DichVu/type";
+        public static string GetFullStudent = "api/Student/full-student";
     }
     #endregion
     #region ma dich vu

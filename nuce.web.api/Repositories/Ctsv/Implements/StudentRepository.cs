@@ -1,4 +1,5 @@
-﻿using nuce.web.api.Models.Ctsv;
+﻿using Microsoft.EntityFrameworkCore;
+using nuce.web.api.Models.Ctsv;
 using nuce.web.api.Repositories.Ctsv.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
 
         public AsAcademyStudent FindByCode(string studentCode)
         {
-            return _context.AsAcademyStudent.FirstOrDefault(student => student.Code == studentCode);
+            return _context.AsAcademyStudent.AsNoTracking().FirstOrDefault(student => student.Code == studentCode);
         }
 
         public void Update(AsAcademyStudent student)

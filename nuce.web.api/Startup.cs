@@ -185,6 +185,10 @@ namespace nuce.web.api
             services.AddScoped<IStudentRepository, StudentRepository>();
             services.AddScoped<INewsItemsRepository, NewsItemsRepository>();
             services.AddScoped<ITinNhanRepository, TinNhanRepository>();
+            services.AddScoped<IGiaDinhRepository, GiaDinhRepository>();
+            services.AddScoped<IThiHsgRepository, ThiHsgRepository>();
+            services.AddScoped<IQuaTrinhHocRepository, QuaTrinhHocRepository>();
+
 
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<ICtsvLogService, CtsvLogService>();

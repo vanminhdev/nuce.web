@@ -8,16 +8,17 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Repositories.Ctsv.Implements
 {
-    public class NewsItemsRepository : INewsItemsRepository
+    public class ThiHsgRepository : IThiHsgRepository
     {
         private readonly CTSVNUCE_DATAContext _context;
-        public NewsItemsRepository(CTSVNUCE_DATAContext _context)
+        public ThiHsgRepository(CTSVNUCE_DATAContext _context)
         {
             this._context = _context;
         }
-        public IQueryable<AsNewsItems> Get()
+
+        public async Task<List<AsAcademyStudentThiHsg>> FindByCodeAsync(string studentCode)
         {
-            return _context.AsNewsItems.AsNoTracking().Where(item => item.CatId > 9 && item.CatId < 14);
+            return await _context.AsAcademyStudentThiHsg.AsNoTracking().Where(s => s.StudentCode == studentCode).ToListAsync();
         }
     }
 }
