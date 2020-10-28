@@ -30,9 +30,21 @@ namespace nuce.web.api.Controllers.Ctsv
 
         [Route("basic-update")]
         [HttpPost]
-        public async Task<IActionResult> BasicUpdate([FromBody] StudentModel model )
+        public async Task<IActionResult> BasicUpdate([FromBody] StudentModel model)
         {
             var result = await _studentService.UpdateStudentBasic(model);
+            if (result != null)
+            {
+                return BadRequest(result);
+            }
+            return Ok();
+        }
+
+        [Route("update")]
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] AsAcademyStudent student)
+        {
+            var result = await _studentService.UpdateStudent(student);
             if (result != null)
             {
                 return BadRequest(result);

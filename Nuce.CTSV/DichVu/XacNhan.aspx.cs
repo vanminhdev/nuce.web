@@ -18,12 +18,13 @@ namespace Nuce.CTSV
         {
             if (!IsPostBack)
             {
-                var studentResponse = await CustomizeHttp.SendRequest(Request, HttpMethod.Get, $"/api/DichVu/type/1", "");
-                
+                string api = $"/api/DichVu/type/{(int)ApiModels.DichVu.XacNhan}";
+                var res = await CustomizeHttp.SendRequest(Request, HttpMethod.Get, api, "");
                 List<XacNhanModel> xacNhanList = new List<XacNhanModel>();
-                if (studentResponse.IsSuccessStatusCode)
+
+                if (res.IsSuccessStatusCode)
                 {
-                    string strResponse = await studentResponse.Content.ReadAsStringAsync();
+                    string strResponse = await res.Content.ReadAsStringAsync();
                     xacNhanList = JsonConvert.DeserializeObject<List<XacNhanModel>>(strResponse);
                 }
 
@@ -44,7 +45,7 @@ namespace Nuce.CTSV
                         int status = xacNhan.Status ?? -1;
                         int ID = (int)xacNhan.Id;
                         DateTime dtNgayHenBatDau = xacNhan.NgayHenTuNgay ?? DateTime.Now;
-                        DateTime dtNgayHenDenNgay = xacNhan.NgayHenDenNgay ?? DateTime.Now;
+                        DateTime dtNgayHenDenNgay = xacNhan.NgayHenDenNgay ?? DateTime.Now.AddDays(7);
                         switch (status)
                         {
                             case 1:

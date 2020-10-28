@@ -355,43 +355,44 @@ namespace Nuce.CTSV
         private static string apiUrl = ConfigurationManager.AppSettings["API_URL"];
 
         private static Uri baseAddress = new Uri(apiUrl);
-        private static CookieContainer cookieContainer = new CookieContainer();
 
-        private static HttpClientHandler handler = new HttpClientHandler { UseCookies = false };
-        private static HttpClient client = new HttpClient(handler) { BaseAddress = baseAddress };
+        //private static HttpClientHandler handler = new HttpClientHandler { UseCookies = false };
+        //private static HttpClient client = new HttpClient(handler) { BaseAddress = baseAddress };
         public static async Task<HttpResponseMessage> SendRequest(HttpRequest Request, HttpMethod method, string path, string content)
         {
-            cookieContainer = new CookieContainer();
-            string cookies = "";
-            foreach (var key in Request.Cookies.AllKeys)
+            using (HttpClientHandler handler = new HttpClientHandler { UseCookies = false })
+            using (HttpClient client = new HttpClient(handler) { BaseAddress = baseAddress } )
             {
-                cookieContainer.Add(baseAddress, new Cookie(key, Request.Cookies[key].Value));
-                cookies += $"{key}={Request.Cookies[key].Value};";
-            }
-            HttpRequestMessage req = new HttpRequestMessage(method, path);
-            req.Headers.Add("Cookie", cookies);
-            if (method != HttpMethod.Get)
-            {
-                req.Content = new StringContent(content, Encoding.UTF8, "application/json");
-            }
-            var firstResponse = await client.SendAsync(req);
-
-            if (firstResponse.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                var endPoint = $"/api/User/refreshToken";
-                var refreshResponse = await client.PostAsync(endPoint, new StringContent(""));
-                if (refreshResponse.IsSuccessStatusCode)
+                string cookies = "";
+                foreach (var key in Request.Cookies.AllKeys)
                 {
-                    firstResponse = await client.SendAsync(req);
-                    if (firstResponse.IsSuccessStatusCode)
+                    cookies += $"{key}={Request.Cookies[key].Value};";
+                }
+                HttpRequestMessage req = new HttpRequestMessage(method, path);
+                req.Headers.Add("Cookie", cookies);
+                if (method != HttpMethod.Get)
+                {
+                    req.Content = new StringContent(content, Encoding.UTF8, "application/json");
+                }
+                var firstResponse = await client.SendAsync(req);
+
+                if (firstResponse.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    var endPoint = $"/api/User/refreshToken";
+                    var refreshResponse = await client.PostAsync(endPoint, new StringContent(""));
+                    if (refreshResponse.IsSuccessStatusCode)
                     {
+                        firstResponse = await client.SendAsync(req);
+                        if (firstResponse.IsSuccessStatusCode)
+                        {
+                            return firstResponse;
+                        }
                         return firstResponse;
                     }
-                    return firstResponse;
+                    return refreshResponse;
                 }
-                return refreshResponse;
+                return firstResponse;
             }
-            return firstResponse;
         }
     }
 

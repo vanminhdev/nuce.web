@@ -31,6 +31,35 @@ namespace nuce.web.api.Services.Ctsv.Implements
             return _studentRepository.FindByCode(studentCode);
         }
 
+        public async Task<ResponseBody> UpdateStudent(AsAcademyStudent student)
+        {
+            var currentStudent = _userService.GetCurrentStudent();
+
+            currentStudent.HkttPhuong = student.HkttPhuong;
+            currentStudent.HkttPho = student.HkttPho;
+            currentStudent.HkttQuan = student.HkttQuan;
+            currentStudent.HkttTinh = student.HkttTinh;
+            currentStudent.HkttSoNha = student.HkttSoNha;
+            currentStudent.Cmt = student.Cmt;
+            currentStudent.CmtNgayCap = student.CmtNgayCap;
+            currentStudent.CmtNoiCap = student.CmtNoiCap;
+            currentStudent.LaNoiTru = student.LaNoiTru;
+            currentStudent.Mobile = student.Mobile;
+            currentStudent.Email = student.Email;
+            currentStudent.EmailNhaTruong = student.EmailNhaTruong;
+
+            try
+            {
+                _studentRepository.Update(currentStudent);
+                await _unitOfWork.SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                return new ResponseBody { Message = "Lỗi hệ thống" };
+            }
+            return null;
+        }
+
         public async Task<ResponseBody> UpdateStudentBasic(StudentModel basicStudent)
         {
             if (!Common.Validate.IsMobile(basicStudent.Mobile.Trim()))

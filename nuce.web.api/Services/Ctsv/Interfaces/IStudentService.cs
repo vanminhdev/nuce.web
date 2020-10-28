@@ -12,5 +12,6 @@ namespace nuce.web.api.Services.Ctsv.Interfaces
     {
         public AsAcademyStudent GetStudentByCode(string studentCode);
         public Task<ResponseBody> UpdateStudentBasic(StudentModel basicStudent);
+        public Task<ResponseBody> UpdateStudent(AsAcademyStudent student);
     }
 }

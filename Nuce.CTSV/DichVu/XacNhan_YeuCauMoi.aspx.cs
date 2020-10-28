@@ -12,39 +12,24 @@ namespace Nuce.CTSV
 {
     public partial class XacNhan_YeuCauMoi : BasePage
     {
-        private string sqlPhuong = "HKTT_Phuong";
-        private string sqlQuan = "HKTT_Quan";
-        private string sqlTinh = "HKTT_Tinh";
-        private string sqlDiaChi = "DiaChiCuThe";
-        protected void Page_Load(object sender, EventArgs e)
+        private ApiModels.StudentModel student;
+        protected async void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-                string sql = $@"SELECT {sqlPhuong}, {sqlQuan}, {sqlTinh}, {sqlDiaChi} FROM dbo.AS_Academy_Student AS AAS
-                                WHERE AAS.ID = {m_SinhVien.SinhVienID}";
-                DataSet ds = SqlHelper.ExecuteDataset(Nuce_Common.ConnectionString, CommandType.Text, sql);
-                var student = ds.Tables[0];
-                string phuong = Nuce_CTSV.firstOrDefault(student.Rows, 0, sqlPhuong);
-                string quan = Nuce_CTSV.firstOrDefault(student.Rows, 0, sqlQuan);
-                string tinh = Nuce_CTSV.firstOrDefault(student.Rows, 0, sqlTinh);
-                string diachi = Nuce_CTSV.firstOrDefault(student.Rows, 0, sqlDiaChi);
+                var studentResponse = await CustomizeHttp.SendRequest(Request, HttpMethod.Get, $"{ApiModels.ApiEndPoint.StudentInfo}/{m_SinhVien.MaSV}", "");
+                if (studentResponse.IsSuccessStatusCode)
+                {
+                    var strResponse = await studentResponse.Content.ReadAsStringAsync();
+                    student = JsonConvert.DeserializeObject<ApiModels.StudentModel>(strResponse);
+                    ViewState["student"] = student;
 
-                frmPhuong.Visible = string.IsNullOrEmpty(phuong);
-                frmQuan.Visible = string.IsNullOrEmpty(quan);
-                frmTinh.Visible = string.IsNullOrEmpty(tinh);
-                frmDiaChi.Visible = string.IsNullOrEmpty(diachi);
+                    frmPhuong.Visible = string.IsNullOrEmpty(student.HkttPhuong?.Trim());
+                    frmQuan.Visible = string.IsNullOrEmpty(student.HkttQuan?.Trim());
+                    frmTinh.Visible = string.IsNullOrEmpty(student.HkttTinh?.Trim());
+                    frmDiaChi.Visible = string.IsNullOrEmpty(student.DiaChiCuThe?.Trim());
+                }
             }
-        }
-        private string updateRequiredValue(string value, string msg, string col)
-        {
-            if (string.IsNullOrEmpty(value.Trim()))
-            {
-                divThongBao.InnerHtml = msg;
-                return null;
-            }
-            return $@"UPDATE dbo.AS_Academy_Student
-                    SET	{col} = N'{value}'
-                    WHERE ID = {m_SinhVien.SinhVienID}; ";
         }
         protected async void btnCapNhat_Click(object sender, EventArgs e)
         {
@@ -64,66 +49,78 @@ namespace Nuce.CTSV
             //    return;
             //}
 
-            string sql = "";
-            string tmpSql = "";
+            student = (ApiModels.StudentModel)ViewState["student"];
 
-            if (frmPhuong.Visible)
+            bool update = false;
+
+            if (frmPhuong.Visible && string.IsNullOrEmpty(txtPhuong.Text.Trim()))
             {
-                tmpSql = updateRequiredValue(txtPhuong.Text.Trim(), "Không được để trống phường/xã", sqlPhuong);
-                if (string.IsNullOrEmpty(tmpSql))
-                {
-                    return;
-                }
-                sql += tmpSql;
+                divThongBao.InnerHtml = "Không được để trống phường/xã";
+                return;
+            } else if (frmPhuong.Visible)
+            {
+                student.HkttPhuong = txtPhuong.Text.Trim();
+                update = true;
             }
-            if (frmQuan.Visible)
+
+            if (frmQuan.Visible && string.IsNullOrEmpty(txtQuan.Text.Trim()))
             {
-                tmpSql = updateRequiredValue(txtQuan.Text.Trim(), "Không được để trống quận/huyện", sqlQuan);
-                if (string.IsNullOrEmpty(tmpSql))
-                {
-                    return;
-                }
-                sql += tmpSql;
+                divThongBao.InnerHtml = "Không được để trống quận/huyện";
+                return;
+            } else if (frmQuan.Visible)
+            {
+                student.HkttQuan = txtQuan.Text.Trim();
+                update = true;
             }
-            if (frmTinh.Visible)
+
+            if (frmTinh.Visible && string.IsNullOrEmpty(txtTinh.Text.Trim()))
             {
-                tmpSql = updateRequiredValue(txtTinh.Text.Trim(), "Không được để trống tỉnh/thành phố", sqlTinh);
-                if (string.IsNullOrEmpty(tmpSql))
-                {
-                    return;
-                }
-                sql += tmpSql;
+                divThongBao.InnerHtml = "Không được để trống tỉnh/thành phố";
+                return;
+            } else if (frmTinh.Visible)
+            {
+                student.HkttTinh = txtTinh.Text.Trim();
+                update = true;
             }
-            if (frmDiaChi.Visible)
+
+            if (frmDiaChi.Visible && string.IsNullOrEmpty(txtDiaChi.Text.Trim()))
             {
-                tmpSql = updateRequiredValue(txtDiaChi.Text.Trim(), "Không được để trống địa chỉ tạm trú", sqlDiaChi);
-                if (string.IsNullOrEmpty(tmpSql))
+                divThongBao.InnerHtml = "Không được để trống địa chỉ tạm trú";
+                return;
+            } else if (frmDiaChi.Visible)
+            {
+                student.DiaChiCuThe = txtDiaChi.Text.Trim();
+                update = true;
+            }
+
+            if (update)
+            {
+                string updateStudentContent = JsonConvert.SerializeObject(student);
+                string endpoint = ApiModels.ApiEndPoint.StudentUpdate;
+                var updateResponse = await CustomizeHttp.SendRequest(Request, HttpMethod.Put, endpoint, updateStudentContent);
+
+                if (!updateResponse.IsSuccessStatusCode)
                 {
+                    divThongBao.InnerHtml = "Không cập nhật được thông tin sinh viên";
                     return;
                 }
-                sql += tmpSql;
             }
 
             string strLyDo = txtLyDoXacNhan.Text;
-            if(strLyDo.Trim()=="")
+            if (strLyDo.Trim() == "")
             {
                 divThongBao.InnerHtml = "Không được để trống lý do";
                 return;
             }
             else
             {
-                if (Nuce_CTSV.isDuplicated(1, m_SinhVien.SinhVienID, strLyDo))
-                {
-                    divThongBao.InnerText = "Trùng yêu cầu dịch vụ";
-                    return;
-                }
-
-                var body = new
-                {
-                    type = 1,
-                    lyDo = strLyDo,
-                };
                 string strRandom = nuce.web.tienich.email.RandomString(6, false);
+                var body = new ApiModels.AddDichVuModel()
+                {
+                    type = (int)ApiModels.DichVu.XacNhan,
+                    lyDo = strLyDo.Trim(),
+                    maXacNhan = strRandom
+                };
 
                 var jsonBody = JsonConvert.SerializeObject(body);
                 var response = await CustomizeHttp.SendRequest(Request, HttpMethod.Post, "api/DichVu/add", jsonBody);
@@ -133,6 +130,10 @@ namespace Nuce.CTSV
                     divThongBao.InnerHtml = "Thêm mới dịch vụ thành công";
                     divThongBaoCapNhat.InnerHtml = "Thêm mới dịch vụ thành công";
                     spScript.InnerHtml = string.Format("<script>$('#myModalThongBao').modal();</script>");
+                } 
+                else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    divThongBao.InnerText = "Trùng yêu cầu dịch vụ";
                 }
                 else
                 {

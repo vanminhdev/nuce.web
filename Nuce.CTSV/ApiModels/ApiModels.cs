@@ -5,6 +5,7 @@ using System.Web;
 
 namespace Nuce.CTSV.ApiModels
 {
+    #region Model
     public class XacNhanModel
     {
         public long Id { get; set; }
@@ -26,7 +27,7 @@ namespace Nuce.CTSV.ApiModels
         public DateTime? NgayHenDenNgay { get; set; }
         public string MaXacNhan { get; set; }
     }
-
+    [Serializable]
     public class StudentModel
     {
         public long Id { get; set; }
@@ -78,4 +79,143 @@ namespace Nuce.CTSV.ApiModels
         public string EmailNhaTruong { get; set; }
         public bool? DaXacThucEmailNhaTruong { get; set; }
     }
+    public class StudentBasicUpdateModel
+    {
+        public string email { get; set; }
+        public string mobile { get; set; }
+        public string diaChiBaotin { get; set; }
+        public string diaChiNguoiNhanBaotin { get; set; }
+        public string mobileBaoTin { get; set; }
+        public string emailBaoTin { get; set; }
+        public string hoTenBaoTin { get; set; }
+        public bool coNoiOCuThe { get; set; }
+        public string diaChiCuThe { get; set; }
+    }
+    public class GioiThieuModel
+    {
+        public long Id { get; set; }
+        public int StudentId { get; set; }
+        public string StudentCode { get; set; }
+        public string StudentName { get; set; }
+        public int? Status { get; set; }
+        public string DonVi { get; set; }
+        public string DenGap { get; set; }
+        public string VeViec { get; set; }
+        public DateTime? CoGiaTriDenNgay { get; set; }
+        public string PhanHoi { get; set; }
+        public bool? Deleted { get; set; }
+        public int? CreatedBy { get; set; }
+        public int? LastModifiedBy { get; set; }
+        public int? DeletedBy { get; set; }
+        public DateTime? CreatedTime { get; set; }
+        public DateTime? DeletedTime { get; set; }
+        public DateTime? LastModifiedTime { get; set; }
+        public DateTime? NgayGui { get; set; }
+        public DateTime? NgayHenTuNgay { get; set; }
+        public DateTime? NgayHenDenNgay { get; set; }
+        public string MaXacNhan { get; set; }
+    }
+    public class ThueNhaModel
+    {
+        public long Id { get; set; }
+        public int StudentId { get; set; }
+        public string StudentCode { get; set; }
+        public string StudentName { get; set; }
+        public int? Status { get; set; }
+        public string LyDo { get; set; }
+        public string PhanHoi { get; set; }
+        public bool? Deleted { get; set; }
+        public int? CreatedBy { get; set; }
+        public int? LastModifiedBy { get; set; }
+        public int? DeletedBy { get; set; }
+        public DateTime? CreatedTime { get; set; }
+        public DateTime? DeletedTime { get; set; }
+        public DateTime? LastModifiedTime { get; set; }
+        public DateTime? NgayGui { get; set; }
+        public DateTime? NgayHenTuNgay { get; set; }
+        public DateTime? NgayHenDenNgay { get; set; }
+        public string MaXacNhan { get; set; }
+    }
+    public class VayVonModel
+    {
+        public long Id { get; set; }
+        public int StudentId { get; set; }
+        public string StudentCode { get; set; }
+        public string StudentName { get; set; }
+        public int? Status { get; set; }
+        public string LyDo { get; set; }
+        public string PhanHoi { get; set; }
+        public bool? Deleted { get; set; }
+        public int? CreatedBy { get; set; }
+        public int? LastModifiedBy { get; set; }
+        public int? DeletedBy { get; set; }
+        public DateTime? CreatedTime { get; set; }
+        public DateTime? DeletedTime { get; set; }
+        public DateTime? LastModifiedTime { get; set; }
+        public DateTime? NgayGui { get; set; }
+        public DateTime? NgayHenTuNgay { get; set; }
+        public DateTime? NgayHenDenNgay { get; set; }
+        public string MaXacNhan { get; set; }
+        public string ThuocDien { get; set; }
+        public string ThuocDoiTuong { get; set; }
+    }
+    public class UuDaiModel
+    {
+        public long Id { get; set; }
+        public int StudentId { get; set; }
+        public string StudentCode { get; set; }
+        public string StudentName { get; set; }
+        public int? Status { get; set; }
+        public string LyDo { get; set; }
+        public string PhanHoi { get; set; }
+        public bool? Deleted { get; set; }
+        public int? CreatedBy { get; set; }
+        public int? LastModifiedBy { get; set; }
+        public int? DeletedBy { get; set; }
+        public DateTime? CreatedTime { get; set; }
+        public DateTime? DeletedTime { get; set; }
+        public DateTime? LastModifiedTime { get; set; }
+        public DateTime? NgayGui { get; set; }
+        public DateTime? NgayHenTuNgay { get; set; }
+        public DateTime? NgayHenDenNgay { get; set; }
+        public string MaXacNhan { get; set; }
+        public string KyLuat { get; set; }
+    }
+    public class AddDichVuModel
+    {
+        public int type { get; set; }
+        public string lyDo { get; set; }
+        public string kyLuat { get; set; }
+        public string thuocDien { get; set; }
+        public string thuocDoiTuong { get; set; }
+        public string donVi { get; set; }
+        public string denGap { get; set; }
+        public string veViec { get; set; }
+        public string maXacNhan { get; set; }
+        public string phanHoi { get; set; }
+    }
+    #endregion
+
+    #region api
+    public static class ApiEndPoint
+    {
+        public static string StudentBasicUpdate = "api/Student/basic-update";
+        public static string StudentInfo = "api/Student";
+        public static string StudentUpdate = "api/Student/update";
+        public static string AddDichVu = "api/DichVu/add";
+        public static string GetDichVu = "api/DichVu/type";
+    }
+    #endregion
+    #region ma dich vu
+    public enum DichVu
+    {
+        XacNhan = 1,
+        GioiThieu = 2,
+        CapLaiThe = 3,
+        UuDaiGiaoDuc = 4,
+        MuonHocBaGoc = 5,
+        VayVonNganHang = 6,
+        ThueNha = 7,
+    }
+    #endregion
 }
