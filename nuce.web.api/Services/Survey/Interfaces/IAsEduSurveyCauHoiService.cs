@@ -10,11 +10,11 @@ namespace nuce.web.api.Services.Survey.Interfaces
 {
     public interface IAsEduSurveyCauHoiService
     {
-        public Task<List<Question>> GetAllActiveStatus();
-        public Task<List<Question>> GetAllByStatus(QuestionStatus status);
-        public Task<Question> GetById(string id);
-        public Task Create(QuestionCreate question);
-        public Task Update(string id, QuestionUpdate question);
+        public Task<List<QuestionModel>> GetAllActiveStatus();
+        public Task<List<QuestionModel>> GetAllByStatus(QuestionStatus status);
+        public Task<QuestionModel> GetById(string id);
+        public Task Create(QuestionCreateModel question);
+        public Task Update(string id, QuestionUpdateModel question);
         public Task Delete(string id);
     }
 }

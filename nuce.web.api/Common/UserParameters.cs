@@ -7,8 +7,8 @@ namespace nuce.web.api.Common
 {
     public static class UserParameters
     {
-        public static string MSSV = "Masv";
-        public static string JwtAccessToken = "JWT-token";
-        public static string JwtRefreshToken = "JWT-refresh-token";
+        public static readonly string MSSV = "Masv";
+        public static readonly string JwtAccessToken = "JWT-token";
+        public static readonly string JwtRefreshToken = "JWT-refresh-token";
     }
 }

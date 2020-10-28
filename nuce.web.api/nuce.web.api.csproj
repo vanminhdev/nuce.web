@@ -30,7 +30,6 @@
     <Folder Include="Migrations\" />
     <Folder Include="Repositories\Core\" />
     <Folder Include="Repositories\Survey\" />
-    <Folder Include="ViewModel\Survey\" />
   </ItemGroup>
 
   <ItemGroup>

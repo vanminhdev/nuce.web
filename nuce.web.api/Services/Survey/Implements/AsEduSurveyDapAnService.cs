@@ -21,7 +21,7 @@ namespace nuce.web.api.Services.Survey.Implements
             _surveyContext = surveyContext;
         }
 
-        public async Task Create(AnswerCreate answer)
+        public async Task Create(AnswerCreateModel answer)
         {
             var answerCreate = new AsEduSurveyDapAn();
             answerCreate.Id = Guid.NewGuid();
@@ -56,14 +56,14 @@ namespace nuce.web.api.Services.Survey.Implements
             await _surveyContext.SaveChangesAsync();
         }
 
-        public async Task<List<Answer>> GetByQuestionIdActiveStatus(string questionsId)
+        public async Task<List<AnswerModel>> GetByQuestionIdActiveStatus(string questionsId)
         {
             var list = await _surveyContext.AsEduSurveyDapAn.AsNoTracking()
                 .OrderBy(a => a.Order)
                 .Where(a => a.Status != (int)AnswerStatus.Deactive && a.CauHoiGid != null && a.CauHoiGid.ToString() == questionsId)
                 .ToListAsync();
             return
-                list.Select(a => new Answer
+                list.Select(a => new AnswerModel
                 {
                     Id = a.Id.ToString(),
                     DapAnId = a.DapAnId,
@@ -74,7 +74,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 }).ToList();
         }
 
-        public async Task<Answer> GetById(string id)
+        public async Task<AnswerModel> GetById(string id)
         {
             var answer = await _surveyContext.AsEduSurveyDapAn
                 .AsNoTracking()
@@ -82,7 +82,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 .FirstOrDefaultAsync();
             if (answer == null)
                 return null;
-            return new Answer
+            return new AnswerModel
             {
                 Id = answer.Id.ToString(),
                 DapAnId = answer.DapAnId,
@@ -93,7 +93,7 @@ namespace nuce.web.api.Services.Survey.Implements
             };
         }
 
-        public async Task Update(string id, AnswerUpdate answer)
+        public async Task Update(string id, AnswerUpdateModel answer)
         {
             var answerUpdate = _surveyContext.AsEduSurveyDapAn
                 .FirstOrDefault(a => a.Id.ToString() == id);

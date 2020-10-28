@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -8,10 +9,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using nuce.web.api.Common;
+using nuce.web.api.HandleException;
 using nuce.web.api.Models.Core;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.ViewModel;
@@ -23,7 +26,7 @@ namespace nuce.web.api.Controllers.Core
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly NuceCoreIdentityContext _identityContext;
         private readonly ILogger<UserController> _logger;
         private readonly IUserService _userService;
@@ -31,7 +34,7 @@ namespace nuce.web.api.Controllers.Core
 
         public object Configuration { get; private set; }
 
-        public UserController(UserManager<IdentityUser> userManager, NuceCoreIdentityContext identityContext,
+        public UserController(UserManager<ApplicationUser> userManager, NuceCoreIdentityContext identityContext,
             ILogger<UserController> logger, IUserService _userService, IConfiguration _configuration)
         {
             _userManager = userManager;
@@ -42,7 +45,7 @@ namespace nuce.web.api.Controllers.Core
         }
 
         [HttpPost]
-        [Route("login")]
+        [Route("Login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await _userService.FindByNameAsync(model.Username);
@@ -65,14 +68,14 @@ namespace nuce.web.api.Controllers.Core
         }
 
         [HttpPost]
-        [Route("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterModel model)
+        [Route("CreateUser")]
+        public async Task<IActionResult> CreateUser([FromBody] UserCreateModel model)
         {
             var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new ResponseBody { Status = ResponseBody.ERROR_STATUS, Message = "Tài khoản đã tồn tại!" });
 
-            var user = new IdentityUser()
+            var user = new ApplicationUser()
             {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
@@ -105,7 +108,7 @@ namespace nuce.web.api.Controllers.Core
         }
 
         [HttpPost]
-        [Route("changepassword")]
+        [Route("ChangePassword")]
         [Authorize]
         public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordModel model)
         {
@@ -128,7 +131,7 @@ namespace nuce.web.api.Controllers.Core
         }
 
         [HttpPost]
-        [Route("refreshToken")]
+        [Route("RefreshToken")]
         public async Task<IActionResult> RefreshToken()
         {
             var tokenValidationParameters = new TokenValidationParameters
@@ -142,9 +145,10 @@ namespace nuce.web.api.Controllers.Core
             };
 
             SecurityToken validatedToken;
-            var token = HttpContext.Request.Cookies[UserParameters.JwtRefreshToken];
-            
-            var principle = new JwtSecurityTokenHandler().ValidateToken(token, tokenValidationParameters, out validatedToken);
+            var refreshToken = HttpContext.Request.Cookies[UserParameters.JwtRefreshToken];
+            if(refreshToken == null)
+                return Unauthorized();
+            var principle = new JwtSecurityTokenHandler().ValidateToken(refreshToken, tokenValidationParameters, out validatedToken);
 
             JwtSecurityToken jwtValidatedToken = validatedToken as JwtSecurityToken;
             if (validatedToken != null && jwtValidatedToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
@@ -170,12 +174,176 @@ namespace nuce.web.api.Controllers.Core
         }
 
         [HttpGet]
-        [Route("logout")]
+        [Route("Logout")]
         public IActionResult Logout()
         {
             Response.Cookies.Delete(UserParameters.JwtAccessToken);
             Response.Cookies.Delete(UserParameters.JwtRefreshToken);
             return Ok();
+        }
+
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        [Route("GetAllUser")]
+        public async Task<IActionResult> GetAllUser(
+            [Range(1, int.MaxValue)]
+            int pageNumber = 1,
+            [Range(1, int.MaxValue)]
+            int pageSize = 20)
+        {
+            var result = await _userService.GetAllAsync(new UserFilter(), pageNumber, pageSize);
+            return Ok(result);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        [Route("GetById")]
+        public async Task<IActionResult> GetUserById([Required(AllowEmptyStrings = false)] string id)
+        {
+            try
+            {
+                var user = await _userService.GetUserByIdAsync(id);
+                return Ok(user);
+            }
+            catch (RecordNotFoundException)
+            {
+                return NotFound(new { message = "Record not found" });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut]
+        [Route("ActiveUser")]
+        public async Task<IActionResult> ActiveUser([Required(AllowEmptyStrings = false)] string id)
+        {
+            try
+            {
+                await _userService.ActiveUserAsync(id);
+            }
+            catch (RecordNotFoundException)
+            {
+                return NotFound(new { message = "Record not found" });
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            return Ok();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut]
+        [Route("DeactiveUser")]
+        public async Task<IActionResult> DeactiveUser([Required(AllowEmptyStrings = false)] string id)
+        {
+            try
+            {
+                await _userService.DeactiveUserAsync(id);
+            }
+            catch (RecordNotFoundException)
+            {
+                return NotFound(new { message = "Record not found" });
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            return Ok();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete]
+        [Route("DeleteUser")]
+        public async Task<IActionResult> DeleteUser([Required(AllowEmptyStrings = false)] string id)
+        {
+            try
+            {
+                await _userService.DeleteUserAsync(id);
+            }
+            catch (RecordNotFoundException)
+            {
+                return NotFound(new { message = "Record not found" });
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            return Ok();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut]
+        [Route("UpdateUser")]
+        public async Task<IActionResult> UpdateUser(
+            [Required(AllowEmptyStrings = false)] string id,
+            [FromBody] UserUpdateModel user)
+        {
+            try
+            {
+                await _userService.UpdateUserAsync(id, user);
+                return Ok();
+            }
+            catch (RecordNotFoundException)
+            {
+                return NotFound(new { message = "Record not found" });
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut]
+        [Route("ResetPassword")]
+        public async Task<IActionResult> ResetPassword(
+            [Required(AllowEmptyStrings = false)] string id,
+            [Required(AllowEmptyStrings = false)] string newPassword)
+        {
+            try
+            {
+                await _userService.ResetPasswordAsync(id, newPassword);
+                return Ok();
+            }
+            catch (RecordNotFoundException)
+            {
+                return NotFound(new { message = "Record not found" });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
         }
     }
 }

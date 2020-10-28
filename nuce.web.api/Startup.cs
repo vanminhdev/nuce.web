@@ -57,8 +57,8 @@ namespace nuce.web.api
             );
             #endregion
 
-            #region config authentication
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            #region config usermanager
+            services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<NuceCoreIdentityContext>()
                 .AddDefaultTokenProviders();
 
@@ -113,7 +113,7 @@ namespace nuce.web.api
             #endregion
 
             #region config cors
-            //config danh s�ch url allow cors
+            //config danh sách url allow cors
             var corsUrlsSection = Configuration.GetSection("CorsUrl");
             var corsUrls = corsUrlsSection
                 .AsEnumerable()
@@ -174,6 +174,7 @@ namespace nuce.web.api
             #region config service
             services.AddScoped<IAsEduSurveyCauHoiService, AsEduSurveyCauHoiService>();
             services.AddScoped<IAsEduSurveyDapAnService, AsEduSurveyDapAnService>();
+            services.AddScoped<IAsEduSurveyDeThiService, AsEduSurveyDeThiService>();
             services.AddScoped<IUserService, UserService>();
             #endregion
             #region ctsv service

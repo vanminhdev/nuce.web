@@ -47,7 +47,7 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] QuestionCreate question)
+        public async Task<IActionResult> Create([FromBody] QuestionCreateModel question)
         {
             try
             {
@@ -71,7 +71,7 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([Required(AllowEmptyStrings = false)] string id, [FromBody] QuestionUpdate question)
+        public async Task<IActionResult> Update([Required(AllowEmptyStrings = false)] string id, [FromBody] QuestionUpdateModel question)
         {
             try
             {
@@ -99,7 +99,7 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete([Required(AllowEmptyStrings = false)]string id)
+        public async Task<IActionResult> Delete([Required(AllowEmptyStrings = false)] string id)
         {
             try
             {
