@@ -186,7 +186,7 @@ namespace Nuce.CTSV
             {
                 spAlert.InnerHtml = string.Format(@"<div class='alert alert-warning alert-dismissible' style='position: absolute; top: 0; right: 0;'>
                                                 <a href = '#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
-            {0}</div>", "Không đúng tên đăng nhập");
+                                        {0}</div>", "Không đúng tên đăng nhập");
             }
 
             //Kiem tra ho ten xem co trung khong sau do lay trong csdl
@@ -228,21 +228,14 @@ namespace Nuce.CTSV
 
             //Kiểm tra đăng nhập
 
-            Service sv = new Service();
-            services_direct.Service sv_1 = new services_direct.Service();
-            int iTypeDichVu = -1;
-            string apiUrl = ConfigurationManager.AppSettings["API_URL"];
-
-            HttpClient httpClient = new HttpClient();
-            string body = JsonConvert.SerializeObject(new { username = strMaSV, password = strMatKhau, isStudent = true });
-            var content = new StringContent(body, Encoding.UTF8, "application/json");
-
-            try
+            using (HttpClient httpClient = new HttpClient())
             {
-                var res = await httpClient.PostAsync($"{apiUrl}/api/User/login", content);
+                string body = JsonConvert.SerializeObject(new { username = strMaSV, password = strMatKhau, isStudent = true });
+                var content = new StringContent(body, Encoding.UTF8, "application/json");
+
+                var res = await httpClient.PostAsync($"{CustomizeHttp.API_URI}/api/User/login", content);
                 if (res.IsSuccessStatusCode)
                 {
-                    iTypeDichVu = 1;
                     var cookies = res.Headers.GetValues("Set-Cookie");
                     foreach (var responseCookie in cookies)
                     {
@@ -254,14 +247,10 @@ namespace Nuce.CTSV
                 else
                 {
                     spAlert.InnerHtml = string.Format(@"<div class='alert alert-warning alert-dismissible' style='position: absolute; top: 0; right: 0;'>
-                                                <a href = '#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
-                    {0}</div>", "Thông tin đăng nhập sai");
+                                            <a href = '#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+                {0}</div>", "Thông tin đăng nhập sai");
                     return;
                 }
-            }
-            catch (Exception ex)
-            {
-                iTypeDichVu = 999;
             }
 
             #region old
@@ -298,7 +287,7 @@ namespace Nuce.CTSV
             #endregion
             
             StudentModel student = null;
-            var baseAddress = new Uri(apiUrl);
+            var baseAddress = new Uri(CustomizeHttp.API_URI);
             var cookieContainer = new CookieContainer();
             using (var handler = new HttpClientHandler { CookieContainer = cookieContainer })
             using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
@@ -308,12 +297,11 @@ namespace Nuce.CTSV
                     cookieContainer.Add(baseAddress, new Cookie(key, Request.Cookies[key].Value));
                 }
 
-                var message = new HttpRequestMessage(HttpMethod.Get, $"/api/Student/{strMaSV}");
+                var message = new HttpRequestMessage(HttpMethod.Get, $"{ApiModels.ApiEndPoint.GetStudentInfo}/{strMaSV}");
                 HttpResponseMessage studentResponse = await client.SendAsync(message);
                 if (studentResponse.IsSuccessStatusCode)
                 {
-                    var strResponse = await studentResponse.Content.ReadAsStringAsync();
-                    student = JsonConvert.DeserializeObject<StudentModel>(strResponse);
+                    student = await CustomizeHttp.DeserializeAsync<StudentModel>(studentResponse.Content);
                 }
             }
 

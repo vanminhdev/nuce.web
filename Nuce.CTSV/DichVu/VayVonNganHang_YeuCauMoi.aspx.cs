@@ -112,7 +112,7 @@ namespace Nuce.CTSV
                 divThongBao.InnerHtml = "Không được để trống ngày cấp chứng minh nhân dân";
                 return;
             }
-            else if (frmCmnd.Visible)
+            else if (frmNgayCap.Visible)
             {
                 student.CmtNgayCap = DateTime.Parse(txtNgayCap.Text.Trim());
                 update = true;

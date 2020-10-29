@@ -352,16 +352,16 @@ namespace Nuce.CTSV
 
     public static class CustomizeHttp
     {
-        private static string apiUrl = ConfigurationManager.AppSettings["API_URL"];
+        public static string API_URI = ConfigurationManager.AppSettings["API_URL"];
 
-        private static Uri baseAddress = new Uri(apiUrl);
+        public static Uri BASE_ADDRESS = new Uri(API_URI);
 
         //private static HttpClientHandler handler = new HttpClientHandler { UseCookies = false };
         //private static HttpClient client = new HttpClient(handler) { BaseAddress = baseAddress };
         public static async Task<HttpResponseMessage> SendRequest(HttpRequest Request, HttpResponse Response, HttpMethod method, string path, string content)
         {
             using (HttpClientHandler handler = new HttpClientHandler { UseCookies = false })
-            using (HttpClient client = new HttpClient(handler) { BaseAddress = baseAddress } )
+            using (HttpClient client = new HttpClient(handler) { BaseAddress = BASE_ADDRESS } )
             {
                 string cookies = "";
                 foreach (var key in Request.Cookies.AllKeys)

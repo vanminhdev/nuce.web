@@ -8,7 +8,8 @@ namespace Nuce.CTSV
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Response.Cookies["JWT-refresh-token"] == null || Response.Cookies["JWT-refresh-token"].Expires < DateTime.Now)
+            var refreshToken = Request.Cookies["JWT-refresh-token"];
+            if (refreshToken == null)
             {
                 //Chuyển đến trang đăng nhập
                 Response.Redirect(string.Format("/Login.aspx"));

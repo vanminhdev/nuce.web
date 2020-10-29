@@ -18,6 +18,7 @@ using nuce.web.api.HandleException;
 using nuce.web.api.Models.Core;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.ViewModel;
+using nuce.web.api.ViewModel.Core;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
 
 namespace nuce.web.api.Controllers.Core
@@ -31,17 +32,18 @@ namespace nuce.web.api.Controllers.Core
         private readonly ILogger<UserController> _logger;
         private readonly IUserService _userService;
         private readonly IConfiguration _configuration;
-
+        private readonly ILogService _logService;
         public object Configuration { get; private set; }
 
         public UserController(UserManager<ApplicationUser> userManager, NuceCoreIdentityContext identityContext,
-            ILogger<UserController> logger, IUserService _userService, IConfiguration _configuration)
+            ILogger<UserController> logger, IUserService _userService, IConfiguration _configuration, ILogService _logService)
         {
             _userManager = userManager;
             _identityContext = identityContext;
             _logger = logger;
             this._userService = _userService;
             this._configuration = _configuration;
+            this._logService = _logService;
         }
 
         [HttpPost]
@@ -64,6 +66,12 @@ namespace nuce.web.api.Controllers.Core
                 Response.Cookies.Append(UserParameters.JwtRefreshToken, new JwtSecurityTokenHandler().WriteToken(refreshToken),
                     new CookieOptions() { HttpOnly = true, Expires = refreshToken.ValidTo });
 
+                await _logService.WriteLog(new ActivityLogModel
+                {
+                    Username = model.Username,
+                    LogCode = ActivityLogParameters.CODE_LOGIN,
+                    LogMessage = "1"
+                });
                 return Ok();
             }
             return Unauthorized(userIsValidResult);
@@ -98,6 +106,11 @@ namespace nuce.web.api.Controllers.Core
 
                     transaction.Commit();
                     _logger.LogInformation($"Create success user id: {user.Id}");
+                    await _logService.WriteLog(new ActivityLogModel
+                    {
+                        LogCode = ActivityLogParameters.CODE_REGISTER,
+                        LogMessage = "1",
+                    });
                     return Ok(new ResponseBody { Status = ResponseBody.SUCCESS_STATUS, Message = "Tạo tài khoản thành công!" });
                 }
                 catch (Exception e)

@@ -176,6 +176,7 @@ namespace nuce.web.api
             services.AddScoped<IAsEduSurveyDapAnService, AsEduSurveyDapAnService>();
             services.AddScoped<IAsEduSurveyDeThiService, AsEduSurveyDeThiService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ILogService, LogService>();
             #endregion
             #region ctsv service
             services.AddScoped<IXacNhanRepository, XacNhanRepository>();
