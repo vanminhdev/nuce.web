@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Models.Core
 {
-    public partial class NuceCoreIdentityContext : IdentityDbContext<IdentityUser>
+    public partial class NuceCoreIdentityContext : IdentityDbContext<ApplicationUser>
     {
         public NuceCoreIdentityContext(DbContextOptions<NuceCoreIdentityContext> options) : base(options)
         {

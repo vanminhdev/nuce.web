@@ -1,0 +1,74 @@
+﻿@page
+@model nuce.web.manager.Pages.Admin.Core.UserManagerModel
+@{
+    ViewData["Title"] = "Quản lý tài khoản";
+}
+
+@section Style {
+    <link rel="stylesheet" href="~/css/pagination.css" />
+}
+
+<div class="col-md-12 col-xs-12">
+    <div class="row">
+        <div class="col-md-12" style="height: 300px">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>
+                            Tên tài khoản
+                        </th>
+                        <th>
+                            Email
+                        </th>
+                        <th>
+                            Số điện thoại
+                        </th>
+                        <th>
+                            Trạng thái
+                        </th>
+                        <th colspan="3"></th>
+                    </tr>
+                </thead>
+                <tbody id="table-user-data">
+                </tbody>
+            </table>
+            <div style="display: flex; justify-content:flex-end; align-items: center" id="table-user-page">
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/pagination.min.js"></script>
+    <script>
+        $('#table-user-page').pagination({
+            dataSource: API_URL + '/api/User/getAllUser',
+            locator: 'payLoad',
+            totalNumberLocator: function (response) {
+                return response.totalItems;
+            },
+            pageSize: 1,
+            pageNumber: 1,
+            ajax: {
+                beforeSend: function () {
+                    $('#table-user-data').html('<div style="display: flex; justify-content:center; align-items: center">Đang tải...</div>');
+                }
+            },
+            callback: function (data, pagination) {
+                var html = data.map(
+                    item =>
+                        `<tr>
+                            <td>${item.userName}</td>
+                            <td>${item.email}</td>
+                            <td>${item.phoneNumber}</td>
+                            <td>${item.status}</td>
+                            <td><a>Đổi mật khẩu</a></td>
+                            <td><a>Khoá</a></td>
+                            <td><a>Xoá</a></td>
+                        </tr>`
+                );
+                $('#table-user-data').html(html);
+            }
+        });
+    </script>
+}

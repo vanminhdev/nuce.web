@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.Extensions.Options;
+@using nuce.web.manager.Configurations;
+@inject IOptions<RazorPageConfiguration> RazorConfiguration
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -8,6 +12,7 @@
     <link href="~/Styles/StyleSheet.css" rel="stylesheet" type="text/css" />
     <link href="~/Content/plugins/angular-busy-master/dist/angular-busy.min.css" rel="stylesheet" />
     <script src="~/Scripts/modernizr-2.6.2.js"></script>
+    @RenderSection("Style", required: false)
 </head>
 <body>
     <div class="container">
@@ -129,6 +134,15 @@
         });
     </script>
 
+    <script>
+        $.ajaxSetup({
+            xhrFields: {
+                withCredentials: true
+            },
+            crossDomain: true
+        });
+        var API_URL = '@RazorConfiguration.Value.API_URL';
+    </script>
     @RenderSection("Scripts", required: false)
 
     <script>
