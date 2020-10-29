@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.Ctsv.Interfaces
 {
-    public interface ICtsvLogService
+    public interface IParameterService
     {
-        public Task WriteLog(AsLogs model);
+        public GsSetting GetByCode(string code);
+        public bool isCapNhatHoSo();
     }
 }

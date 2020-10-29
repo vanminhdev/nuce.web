@@ -151,6 +151,10 @@ namespace nuce.web.api.Services.Core.Implements
         {
             return GetClaimByKey(ClaimTypes.Name);
         }
+        public AsAcademyStudent GetStudentByEmail(string email)
+        {
+            return _studentRepository.FindByEmailNhaTruong(email);
+        }
 
         public async Task<UserPaginationModel> GetAllAsync(UserFilter filter, int pageNumber = 1, int pageSize = 20)
         {

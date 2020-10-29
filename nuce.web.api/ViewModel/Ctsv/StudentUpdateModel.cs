@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.ViewModel.Ctsv
 {
-    public class StudentModel
+    public class StudentUpdateModel
     {
         public string Email { get; set; }
         public string Mobile { get; set; }
@@ -27,5 +27,10 @@ namespace nuce.web.api.ViewModel.Ctsv
         public List<AsAcademyStudentGiaDinh> GiaDinh { get; set; }
         public List<AsAcademyStudentThiHsg> ThiHSG { get; set; }
         public List<AsAcademyStudentQuaTrinhHocTap> QuaTrinhHoc { get; set; }
+    }
+    public class StudentAllowUpdateModel
+    {
+        public AsAcademyStudent Student { get; set; }
+        public bool Enabled { get; set; }
     }
 }

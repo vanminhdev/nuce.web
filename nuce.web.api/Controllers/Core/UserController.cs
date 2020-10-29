@@ -78,6 +78,39 @@ namespace nuce.web.api.Controllers.Core
         }
 
         [HttpPost]
+        [Route("LoginStudentEduEmail")]
+        public async Task<IActionResult> LoginStudentEduEmail([FromBody] LoginModel model)
+        {
+            string email = model.Username;
+            var student = _userService.GetStudentByEmail(email);
+            if (student == null)
+            {
+                return NotFound("Sinh viên không tồn tại");
+            }
+            model.Username = student.Code;
+
+            var user = new ApplicationUser { UserName = model.Username };
+
+            var authClaims = await _userService.AddClaimsAsync(model, user);
+            var accessToken = _userService.CreateJWTAccessToken(authClaims);
+            var refreshToken = _userService.CreateJWTRefreshToken(authClaims);
+
+            //send token to http only cookies
+            Response.Cookies.Append(UserParameters.JwtAccessToken, new JwtSecurityTokenHandler().WriteToken(accessToken),
+                new CookieOptions() { HttpOnly = true, Expires = accessToken.ValidTo });
+            Response.Cookies.Append(UserParameters.JwtRefreshToken, new JwtSecurityTokenHandler().WriteToken(refreshToken),
+                new CookieOptions() { HttpOnly = true, Expires = refreshToken.ValidTo });
+
+            await _logService.WriteLog(new ActivityLogModel
+            {
+                Username = model.Username,
+                LogCode = ActivityLogParameters.CODE_LOGIN_STUDENT_EDU_EMAIL,
+                LogMessage = $"Login bằng email {email}"
+            });
+            return Ok(student);
+        }
+
+        [HttpPost]
         [Route("CreateUser")]
         public async Task<IActionResult> CreateUser([FromBody] UserCreateModel model)
         {

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Trang chủ" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Nuce.CTSV._Default" %>
+﻿<%@ Page Title="Trang chủ" Language="C#" MasterPageFile="~/Site.Master" Async="true" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Nuce.CTSV._Default" %>
 <asp:Content ID="BannerContent" ContentPlaceHolderID="Banner" runat="server">
     <style>
         .service-banner {

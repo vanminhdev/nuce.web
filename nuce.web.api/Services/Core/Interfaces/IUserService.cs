@@ -25,6 +25,7 @@ namespace nuce.web.api.Services.Core.Interfaces
         public long? GetCurrentStudentID();
         public AsAcademyStudent GetCurrentStudent();
         public string GetUserName();
+        public AsAcademyStudent GetStudentByEmail(string email);
         public Task<UserPaginationModel> GetAllAsync(UserFilter filter, int pageNumber = 1, int pageSize = 20);
         public Task<UserDetailModel> GetByIdAsync(string id);
         public Task ActiveUserAsync(string id);

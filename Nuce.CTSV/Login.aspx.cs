@@ -10,6 +10,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Script.Serialization;
 using System.Web.UI;
@@ -97,7 +98,7 @@ namespace Nuce.CTSV
                 set;
             }
         }
-        public void GetToken(string code)
+        public async Task GetToken(string code)
         {
             string poststring = "grant_type=authorization_code&code=" + code + "&client_id=" + clientid + "&client_secret=" + clientsecret + "&redirect_uri=" + redirection_url + "&scope=email profile";
             var request = (HttpWebRequest)WebRequest.Create(url);
@@ -118,9 +119,9 @@ namespace Nuce.CTSV
             string responseFromServer = streamReader.ReadToEnd();
             JavaScriptSerializer js = new JavaScriptSerializer();
             Tokenclass obj = js.Deserialize<Tokenclass>(responseFromServer);
-            GetuserProfile(obj.access_token);
+            await GetuserProfile(obj.access_token);
         }
-        public void GetuserProfile(string accesstoken)
+        public async Task GetuserProfile(string accesstoken)
         {
             string url = "https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=" + accesstoken + "";
             WebRequest request = WebRequest.Create(url);
@@ -133,45 +134,52 @@ namespace Nuce.CTSV
             response.Close();
             JavaScriptSerializer js = new JavaScriptSerializer();
             Userclass userinfo = js.Deserialize<Userclass>(responseFromServer);
-            //txtMaDangNhap.Text = userinfo.email;
-            //string strMaSV = txtMaDangNhap.Text.Trim();
-            //string strSql = string.Format("SELECT * FROM [dbo].[AS_Academy_Student] where Code='{0}'", strMaSV);
-            string strSql = string.Format("SELECT * FROM [dbo].[AS_Academy_Student] where EmailNhaTruong=@Param1 and DaXacThucEmailNhaTruong=1");
+            
+            StudentModel student = null;
+            using (HttpClient httpClient = new HttpClient())
+            {
+                string body = JsonConvert.SerializeObject(new { username = userinfo.email, password = userinfo.email, isStudent = true });
+                var content = new StringContent(body, Encoding.UTF8, "application/json");
 
-            strSql += string.Format(@"INSERT INTO [dbo].[AS_Logs]
-           ([UserId]
-           ,[UserCode]
-           ,[Status]
-           ,[Code]
-           ,[Message]
-           ,[CreatedTime])
-     VALUES
-           (-1
-           ,'{0}'
-           ,1
-           ,'LOGIN'
-           ,'{2}'
-           ,'{1}') ;", userinfo.email, DateTime.Now, 3);
-
-            SqlParameter[] sqlParams = new SqlParameter[1];
-            sqlParams[0] = new SqlParameter("@Param1", userinfo.email);
-            //sqlParams[0].ParameterName = "@Param1";
-            //sqlParams[0].SqlDbType = SqlDbType.VarChar;
-            //sqlParams[0].Value = strMaSV;
-            DataTable dtData = Microsoft.ApplicationBlocks.Data.SqlHelper.ExecuteDataset(nuce.web.data.Nuce_Common.ConnectionString, CommandType.Text, strSql, sqlParams).Tables[0];
-            if (dtData != null && dtData.Rows.Count > 0)
+                var res = await httpClient.PostAsync($"{CustomizeHttp.API_URI}/{ApiModels.ApiEndPoint.PostLoginEduEmail}", content);
+                if (res.IsSuccessStatusCode)
+                {
+                    var cookies = res.Headers.GetValues("Set-Cookie");
+                    foreach (var responseCookie in cookies)
+                    {
+                        var splited = responseCookie.Split(';')[0].Split('=');
+                        Request.Cookies.Add(new HttpCookie(splited[0], splited[1]));
+                        Response.Cookies.Add(new HttpCookie(splited[0], splited[1]));
+                    }
+                    student = await CustomizeHttp.DeserializeAsync<StudentModel>(res.Content);
+                } 
+                else if (res.StatusCode == HttpStatusCode.NotFound) {
+                    spAlert.InnerHtml = string.Format(@"<div class='alert alert-warning alert-dismissible' style='position: absolute; top: 0; right: 0;'>
+                                            <a href = '#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+                {0}</div>", "Sinh viên không tồn tại");
+                    return;
+                }
+                else
+                {
+                    spAlert.InnerHtml = string.Format(@"<div class='alert alert-warning alert-dismissible' style='position: absolute; top: 0; right: 0;'>
+                                            <a href = '#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+                {0}</div>", "Lỗi hệ thống");
+                    return;
+                }
+            }
+            if (student != null)
             {
                 nuce.web.model.SinhVien SinhVien = new nuce.web.model.SinhVien();
-                string strFullName = dtData.Rows[0]["FulName"].ToString();
+                string strFullName = student.FulName;
                 string[] strFullNames = strFullName.Split(new char[] { ' ' });
                 SinhVien.Ho = strFullName;
                 SinhVien.Ten = strFullNames[strFullNames.Length - 1];
                 //SinhVien.TrangThai = int.Parse(dtData.Rows[0]["status"].ToString());
-                SinhVien.SinhVienID = int.Parse(dtData.Rows[0]["ID"].ToString());
-                SinhVien.Email = dtData.Rows[0].IsNull("EmailNhaTruong") ? "" : dtData.Rows[0]["EmailNhaTruong"].ToString();
-                SinhVien.Mobile = dtData.Rows[0]["Mobile"].ToString();
-                SinhVien.MaSV = dtData.Rows[0]["Code"].ToString();
-                string File1 = dtData.Rows[0].IsNull("File1") ? "" : dtData.Rows[0]["File1"].ToString();
+                SinhVien.SinhVienID = (int)student.Id;
+                SinhVien.Email = student.EmailNhaTruong ?? "";
+                SinhVien.Mobile = student.Mobile ?? "";
+                SinhVien.MaSV = student.Code;
+                string File1 = student.File1 ?? "";
                 if (!File1.Trim().Equals(""))
                 {
                     SinhVien.IMG = File1;
@@ -180,7 +188,7 @@ namespace Nuce.CTSV
                     SinhVien.IMG = "/Data/images/noimage_human.png";
 
                 Session[Utils.session_sinhvien] = SinhVien;
-                Response.Redirect("/Default.aspx");
+                Response.Redirect("/dichvusinhvien.aspx");
             }
             else
             {
@@ -199,7 +207,7 @@ namespace Nuce.CTSV
             //hylprofile.NavigateUrl = userinfo.link;
         }
         #endregion
-        protected void Page_Load(object sender, EventArgs e)
+        protected async void Page_Load(object sender, EventArgs e)
         {
             //https://www.oauth.com/oauth2-servers/signing-in-with-google/verifying-the-user-info/
             //https://www.c-sharpcorner.com/Blogs/login-with-google-account-api-in-asp-net-and-get-google-plus-profile-details-in-c-sharp
@@ -209,7 +217,7 @@ namespace Nuce.CTSV
             {
                 if (Request.QueryString["code"] != null)
                 {
-                    GetToken(Request.QueryString["code"].ToString());
+                    await GetToken(Request.QueryString["code"].ToString());
                 }
             }
         }

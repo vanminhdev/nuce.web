@@ -21,6 +21,14 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
             return _context.AsAcademyStudent.AsNoTracking().FirstOrDefault(student => student.Code == studentCode);
         }
 
+        public AsAcademyStudent FindByEmailNhaTruong(string email)
+        {
+            return _context.AsAcademyStudent
+                        .AsNoTracking()
+                        .FirstOrDefault(student => student.EmailNhaTruong == email && 
+                                                (student.DaXacThucEmailNhaTruong ?? false));
+        }
+
         public void Update(AsAcademyStudent student)
         {
              _context.AsAcademyStudent.Update(student);

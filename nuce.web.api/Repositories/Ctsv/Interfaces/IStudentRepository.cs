@@ -10,5 +10,6 @@ namespace nuce.web.api.Repositories.Ctsv.Interfaces
     {
         public AsAcademyStudent FindByCode(string studentCode);
         public void Update(AsAcademyStudent student);
+        public AsAcademyStudent FindByEmailNhaTruong(string email);
     }
 }

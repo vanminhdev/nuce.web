@@ -21,6 +21,7 @@ namespace nuce.web.api.Controllers.Ctsv
         {
             this._studentService = _studentService;
         }
+
         [Route("{code}")]
         [HttpGet]
         public IActionResult GetStudent(string code)
@@ -35,9 +36,16 @@ namespace nuce.web.api.Controllers.Ctsv
             return Ok(await _studentService.GetFullStudentByCode(code));
         }
 
+        [Route("allow-update-student/{code}")]
+        [HttpGet]
+        public IActionResult GetAllowUpdateStudent(string code)
+        {
+            return Ok(_studentService.GetStudentByCodeAllowUpdate(code));
+        }
+
         [Route("basic-update")]
         [HttpPost]
-        public async Task<IActionResult> BasicUpdate([FromBody] StudentModel model)
+        public async Task<IActionResult> BasicUpdate([FromBody] StudentUpdateModel model)
         {
             var result = await _studentService.UpdateStudentBasic(model);
             if (result != null)

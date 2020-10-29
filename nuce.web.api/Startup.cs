@@ -193,11 +193,10 @@ namespace nuce.web.api
 
 
             services.AddScoped<IStudentService, StudentService>();
-            services.AddScoped<ICtsvLogService, CtsvLogService>();
             services.AddScoped<IDichVuService, DichVuService>();
             services.AddScoped<INewsService, NewsService>();
             services.AddScoped<IEmailService, EmailService>();
-
+            services.AddScoped<IParameterService, ParameterService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             #endregion
         }
