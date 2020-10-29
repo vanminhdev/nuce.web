@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace nuce.web.manager.Pages.Admin.Core
 {
-    public class ManagerUserModel : PageModel
+    public class UserManagerModel : PageModel
     {
         public void OnGet()
         {

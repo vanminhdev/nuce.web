@@ -184,15 +184,16 @@ namespace nuce.web.api.Controllers.Core
 
 
         [Authorize(Roles = "Admin")]
-        [HttpGet]
+        [HttpPost]
         [Route("GetAllUser")]
         public async Task<IActionResult> GetAllUser(
+            UserFilter filter,
             [Range(1, int.MaxValue)]
             int pageNumber = 1,
             [Range(1, int.MaxValue)]
             int pageSize = 20)
         {
-            var result = await _userService.GetAllAsync(new UserFilter(), pageNumber, pageSize);
+            var result = await _userService.GetAllAsync(filter, pageNumber, pageSize);
             return Ok(result);
         }
 
@@ -203,7 +204,7 @@ namespace nuce.web.api.Controllers.Core
         {
             try
             {
-                var user = await _userService.GetUserByIdAsync(id);
+                var user = await _userService.GetByIdAsync(id);
                 return Ok(user);
             }
             catch (RecordNotFoundException)

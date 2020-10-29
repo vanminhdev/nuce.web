@@ -143,9 +143,14 @@ namespace nuce.web.api.Services.Core.Implements
         {
             _identityContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
-            var query = _identityContext.Users;
+            var query = _identityContext.Users.Where(u => u.Status != (int)UserStatus.Deleted);
+
+            if(!string.IsNullOrWhiteSpace(filter.Username))
+            {
+                query = query.Where(u => u.UserName.Contains(filter.Username));
+            }
+
             var querySkip = query
-                .Where(u => u.Status != (int)UserStatus.Deleted)
                 .OrderBy(u => u.UserName)
                 .Skip((pageNumber - 1) * pageSize).Take(pageSize);
             var totalItem = query.Count();
@@ -166,7 +171,7 @@ namespace nuce.web.api.Services.Core.Implements
                 TotalItems = totalItem
             };
         }
-        public async Task<UserDetailModel> GetUserByIdAsync(string id)
+        public async Task<UserDetailModel> GetByIdAsync(string id)
         {
             _identityContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             var user = await _identityContext.Users.FirstOrDefaultAsync(u => u.Id == id);
@@ -261,7 +266,6 @@ namespace nuce.web.api.Services.Core.Implements
                 }
             }
         }
-
         public async Task ResetPasswordAsync(string id, string newPassword)
         {
             var userReset = await _identityContext.Users.FirstOrDefaultAsync(u => u.Id == id);
