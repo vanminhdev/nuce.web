@@ -16,7 +16,7 @@ namespace Nuce.CTSV
             if (!IsPostBack)
             {
                 var api = $"/api/DichVu/type/{(int)ApiModels.DichVu.ThueNha}";
-                var studentResponse = await CustomizeHttp.SendRequest(Request, HttpMethod.Get, api, "");
+                var studentResponse = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, api, "");
                 List<ThueNhaModel> thueNhaList = new List<ThueNhaModel>();
 
                 if (studentResponse.IsSuccessStatusCode)

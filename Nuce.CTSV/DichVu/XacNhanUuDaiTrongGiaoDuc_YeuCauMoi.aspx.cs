@@ -47,7 +47,7 @@ namespace Nuce.CTSV
                 };
 
                 var jsonBody = JsonConvert.SerializeObject(body);
-                var response = await CustomizeHttp.SendRequest(Request, HttpMethod.Post, ApiModels.ApiEndPoint.AddDichVu, jsonBody);
+                var response = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Post, ApiModels.ApiEndPoint.AddDichVu, jsonBody);
 
                 if (response.IsSuccessStatusCode)
                 {

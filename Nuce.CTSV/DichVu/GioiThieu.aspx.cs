@@ -16,7 +16,7 @@ namespace Nuce.CTSV
             if (!IsPostBack)
             {
                 var api = $"/api/DichVu/type/{(int)ApiModels.DichVu.GioiThieu}";
-                var studentResponse = await CustomizeHttp.SendRequest(Request, HttpMethod.Get, api, "");
+                var studentResponse = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, api, "");
                 List<GioiThieuModel> gioiThieuList = new List<GioiThieuModel>();
 
                 if (studentResponse.IsSuccessStatusCode)

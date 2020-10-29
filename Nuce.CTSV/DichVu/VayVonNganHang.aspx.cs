@@ -27,7 +27,7 @@ namespace Nuce.CTSV
                     { "2", "Không mồ côi" }
                 };
                 var api = $"/api/DichVu/type/{(int)ApiModels.DichVu.VayVonNganHang}";
-                var res = await CustomizeHttp.SendRequest(Request, HttpMethod.Get, api, "");
+                var res = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, api, "");
                 List<VayVonModel> vayVonList = new List<VayVonModel>();
 
                 if (res.IsSuccessStatusCode)

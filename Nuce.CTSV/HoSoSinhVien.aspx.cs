@@ -17,7 +17,7 @@ namespace Nuce.CTSV
                 //string sql = "select * from AS_Academy_Student where Status<>4 and ID=" + m_SinhVien.SinhVienID;
 
                 //DataTable dt = Microsoft.ApplicationBlocks.Data.SqlHelper.ExecuteDataset(Nuce_Common.ConnectionString, CommandType.Text, sql).Tables[0];
-                var res = await CustomizeHttp.SendRequest(Request, HttpMethod.Get, $"{ApiModels.ApiEndPoint.GetFullStudent}/{m_SinhVien.MaSV}", "");
+                var res = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, $"{ApiModels.ApiEndPoint.GetFullStudent}/{m_SinhVien.MaSV}", "");
                 ApiModels.FullStudentModel full = null;
                 
                 if (res.IsSuccessStatusCode)

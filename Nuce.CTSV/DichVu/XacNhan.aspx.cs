@@ -19,7 +19,7 @@ namespace Nuce.CTSV
             if (!IsPostBack)
             {
                 string api = $"/api/DichVu/type/{(int)ApiModels.DichVu.XacNhan}";
-                var res = await CustomizeHttp.SendRequest(Request, HttpMethod.Get, api, "");
+                var res = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, api, "");
                 List<XacNhanModel> xacNhanList = new List<XacNhanModel>();
 
                 if (res.IsSuccessStatusCode)

@@ -20,7 +20,7 @@ namespace Nuce.CTSV
                 DataTable dt1 = Microsoft.ApplicationBlocks.Data.SqlHelper.ExecuteDataset(Nuce_Common.ConnectionString, CommandType.Text, sql).Tables[0];
                 if (dt1.Rows.Count > 0)
                 {
-                    var res = await CustomizeHttp.SendRequest(Request, HttpMethod.Get, $"{ApiModels.ApiEndPoint.GetStudentInfo}/{m_SinhVien.MaSV}", "");
+                    var res = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, $"{ApiModels.ApiEndPoint.GetStudentInfo}/{m_SinhVien.MaSV}", "");
                     if (!res.IsSuccessStatusCode)
                     {
                         return;
@@ -93,7 +93,7 @@ namespace Nuce.CTSV
             };
 
             var body = JsonConvert.SerializeObject(model);
-            var response = await CustomizeHttp.SendRequest(Request, HttpMethod.Post, ApiModels.ApiEndPoint.PostStudentBasicUpdate, body);
+            var response = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Post, ApiModels.ApiEndPoint.PostStudentBasicUpdate, body);
 
             if (response.IsSuccessStatusCode)
             {
