@@ -247,9 +247,23 @@ namespace Nuce.CTSV
                     var cookies = res.Headers.GetValues("Set-Cookie");
                     foreach (var responseCookie in cookies)
                     {
-                        var splited = responseCookie.Split(';')[0].Split('=');
-                        Request.Cookies.Add(new HttpCookie(splited[0], splited[1]));
-                        Response.Cookies.Add(new HttpCookie(splited[0], splited[1]));
+                        var splited = responseCookie.Split(';');
+                        var value = splited[0].Split('=');
+                        var expires = splited[1].Split('=');
+                        var tmpCookie = new HttpCookie(value[0], value[1]);
+
+                        if (splited.Length > 1)
+                        {
+                            DateTime expireDate;
+                            bool parsed = DateTime.TryParse(expires[1], out expireDate);
+                            if (parsed)
+                            {
+                                tmpCookie.Expires = expireDate;
+                            }
+                        }
+
+                        Request.Cookies.Set(tmpCookie);
+                        Response.Cookies.Set(tmpCookie);
                     }
                 }
                 else
@@ -295,22 +309,11 @@ namespace Nuce.CTSV
             #endregion
             
             StudentModel student = null;
-            var baseAddress = new Uri(CustomizeHttp.API_URI);
-            var cookieContainer = new CookieContainer();
-            using (var handler = new HttpClientHandler { CookieContainer = cookieContainer })
-            using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
-            {
-                foreach (var key in Request.Cookies.AllKeys)
-                {
-                    cookieContainer.Add(baseAddress, new Cookie(key, Request.Cookies[key].Value));
-                }
 
-                var message = new HttpRequestMessage(HttpMethod.Get, $"{ApiModels.ApiEndPoint.GetStudentInfo}/{strMaSV}");
-                HttpResponseMessage studentResponse = await client.SendAsync(message);
-                if (studentResponse.IsSuccessStatusCode)
-                {
-                    student = await CustomizeHttp.DeserializeAsync<StudentModel>(studentResponse.Content);
-                }
+            var studentResponse = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, $"{ApiModels.ApiEndPoint.GetStudentInfo}/{strMaSV}", "");
+            if (studentResponse.IsSuccessStatusCode)
+            {
+                student = await CustomizeHttp.DeserializeAsync<StudentModel>(studentResponse.Content);
             }
 
             if (student != null)
@@ -332,7 +335,10 @@ namespace Nuce.CTSV
                     SinhVien.IMG = File1;
                 }
                 else
+                {
                     SinhVien.IMG = "/Data/images/noimage_human.png";
+                }
+
                 Session[Utils.session_sinhvien] = SinhVien;
                 Response.Redirect("/DichVuSinhVien.aspx", false);
             }

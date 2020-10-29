@@ -84,9 +84,9 @@ namespace Nuce.CTSV
                 EmailBaoTin = txtBaoTin_Email.Text.Trim(),
                 DiaChiCuThe = txtDiaChiCuThe.Text.Trim(),
                 CoNoiOCuThe = chkLaNoiTru.Checked,
-                PhuongXa = Request.Form[slPhuong.UniqueID],
-                QuanHuyen = Request.Form[slQuan.UniqueID],
-                TinhThanhPho = Request.Form[slThanhPho.UniqueID]
+                PhuongXa = Request.Form[slPhuong.UniqueID] ?? "",
+                QuanHuyen = Request.Form[slQuan.UniqueID] ?? "",
+                TinhThanhPho = Request.Form[slThanhPho.UniqueID] ?? ""
             };
 
             var body = JsonConvert.SerializeObject(model);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 
@@ -8,10 +9,17 @@ namespace Nuce.CTSV
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            var refreshToken = Request.Cookies["JWT-refresh-token"];
-            if (refreshToken == null)
+            var refreshToken = Request.Cookies["JWT-refresh-token"].Values;
+            if (refreshToken == null || Session[Utils.session_sinhvien] == null)
             {
                 //Chuyển đến trang đăng nhập
+                Session.RemoveAll();
+                foreach (var cookie in Request.Cookies.AllKeys)
+                {
+                    var clearCookie = new HttpCookie(cookie);
+                    clearCookie.Expires = DateTime.Now.AddDays(-1);
+                    Response.Cookies.Set(clearCookie);
+                }
                 Response.Redirect(string.Format("/Login.aspx"));
             }
             else

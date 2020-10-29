@@ -14,9 +14,9 @@ namespace Nuce.CTSV
             {
                 var clearCookie = new HttpCookie(cookie);
                 clearCookie.Expires = DateTime.Now.AddDays(-1);
-                Response.Cookies.Add(clearCookie);
+                Response.Cookies.Set(clearCookie);
             }
-            Response.Redirect("/Default.aspx");
+            Response.Redirect("/Login.aspx");
         }
     }
 }

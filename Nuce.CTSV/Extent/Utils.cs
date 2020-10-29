@@ -382,22 +382,23 @@ namespace Nuce.CTSV
                         var newCookies = refreshResponse.Headers.GetValues("Set-Cookie");
                         foreach (var responseCookie in newCookies)
                         {
-                            var splited = responseCookie.Split(';')[0].Split('=');
-                            if (Request.Cookies["JWT-token"] != null)
+                            var splited = responseCookie.Split(';');
+                            var value = splited[0].Split('=');
+                            var expires = splited[1].Split('=');
+                            var tmpCookie = new HttpCookie(value[0], value[1]);
+
+                            if (splited.Length > 1)
                             {
-                                Request.Cookies["JWT-token"].Value = splited[1];
-                            } else
-                            {
-                                Request.Cookies.Add(new HttpCookie(splited[0], splited[1]));
+                                DateTime expireDate;
+                                bool parsed = DateTime.TryParse(expires[1], out expireDate);
+                                if (parsed)
+                                {
+                                    tmpCookie.Expires = expireDate;
+                                }
                             }
-                            if (Response.Cookies["JWT-token"] != null)
-                            {
-                                Response.Cookies["JWT-token"].Value = splited[1];
-                            }
-                            else
-                            {
-                                Response.Cookies.Add(new HttpCookie(splited[0], splited[1]));
-                            }
+
+                            Request.Cookies.Set(tmpCookie);
+                            Response.Cookies.Set(tmpCookie);
                         }
                         cookies = "";
                         foreach (var key in Request.Cookies.AllKeys)
@@ -406,6 +407,16 @@ namespace Nuce.CTSV
                         }
                         var newReq = CreateRequest(method, path, cookies, content);
                         return await client.SendAsync(newReq);
+                    } 
+                    else
+                    {
+                        foreach (var cookie in Request.Cookies.AllKeys)
+                        {
+                            var clearCookie = new HttpCookie(cookie);
+                            clearCookie.Expires = DateTime.Now.AddDays(-1);
+                            Response.Cookies.Add(clearCookie);
+                        }
+                        Response.Redirect("/Login.aspx");
                     }
                     return refreshResponse;
                 }
@@ -428,5 +439,9 @@ namespace Nuce.CTSV
         }
     }
 
+    public static class M_SinhVien
+    {
+        public static nuce.web.model.SinhVien m_SinhVien;
+    }
 }
 
