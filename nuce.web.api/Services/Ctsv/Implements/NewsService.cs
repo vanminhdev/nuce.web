@@ -17,7 +17,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
         }
         public IQueryable<AsNewsItems> GetNewsItems()
         {
-            return _newsItemsRepository.Get();
+            return _newsItemsRepository.Get().OrderByDescending(item => item.UpdateDatetime);
         }
     }
 }

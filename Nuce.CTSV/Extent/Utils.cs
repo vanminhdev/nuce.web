@@ -1,10 +1,15 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Net.Mail;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Script.Serialization;
 
@@ -344,5 +349,84 @@ namespace Nuce.CTSV
 
         private List<string> m_ErrorCodes;
     }
+
+    public static class CustomizeHttp
+    {
+        private static string apiUrl = ConfigurationManager.AppSettings["API_URL"];
+
+        private static Uri baseAddress = new Uri(apiUrl);
+
+        //private static HttpClientHandler handler = new HttpClientHandler { UseCookies = false };
+        //private static HttpClient client = new HttpClient(handler) { BaseAddress = baseAddress };
+        public static async Task<HttpResponseMessage> SendRequest(HttpRequest Request, HttpResponse Response, HttpMethod method, string path, string content)
+        {
+            using (HttpClientHandler handler = new HttpClientHandler { UseCookies = false })
+            using (HttpClient client = new HttpClient(handler) { BaseAddress = baseAddress } )
+            {
+                string cookies = "";
+                foreach (var key in Request.Cookies.AllKeys)
+                {
+                    cookies += $"{key}={Request.Cookies[key].Value};";
+                }
+                HttpRequestMessage req = CreateRequest(method, path, cookies, content);
+                var firstResponse = await client.SendAsync(req);
+
+                if (firstResponse.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    var endPoint = $"/api/User/refreshToken";
+                    var refreshTokenRequest = new HttpRequestMessage(HttpMethod.Post, endPoint);
+                    refreshTokenRequest.Headers.Add("Cookie", cookies);
+                    var refreshResponse = await client.SendAsync(refreshTokenRequest);
+                    if (refreshResponse.IsSuccessStatusCode)
+                    {
+                        var newCookies = refreshResponse.Headers.GetValues("Set-Cookie");
+                        foreach (var responseCookie in newCookies)
+                        {
+                            var splited = responseCookie.Split(';')[0].Split('=');
+                            if (Request.Cookies["JWT-token"] != null)
+                            {
+                                Request.Cookies["JWT-token"].Value = splited[1];
+                            } else
+                            {
+                                Request.Cookies.Add(new HttpCookie(splited[0], splited[1]));
+                            }
+                            if (Response.Cookies["JWT-token"] != null)
+                            {
+                                Response.Cookies["JWT-token"].Value = splited[1];
+                            }
+                            else
+                            {
+                                Response.Cookies.Add(new HttpCookie(splited[0], splited[1]));
+                            }
+                        }
+                        cookies = "";
+                        foreach (var key in Request.Cookies.AllKeys)
+                        {
+                            cookies += $"{key}={Request.Cookies[key].Value};";
+                        }
+                        var newReq = CreateRequest(method, path, cookies, content);
+                        return await client.SendAsync(newReq);
+                    }
+                    return refreshResponse;
+                }
+                return firstResponse;
+            }
+        }
+        public static async Task<T> DeserializeAsync<T>(HttpContent responseContent){
+            string content = await responseContent.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<T>(content);
+        }
+        private static HttpRequestMessage CreateRequest(HttpMethod method, string path, string cookies, string content)
+        {
+            HttpRequestMessage req = new HttpRequestMessage(method, path);
+            req.Headers.Add("Cookie", cookies);
+            if (method != HttpMethod.Get)
+            {
+                req.Content = new StringContent(content, Encoding.UTF8, "application/json");
+            }
+            return req;
+        }
+    }
+
 }
 

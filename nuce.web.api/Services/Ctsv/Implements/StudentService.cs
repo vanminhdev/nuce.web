@@ -17,18 +17,71 @@ namespace nuce.web.api.Services.Ctsv.Implements
         private readonly IStudentRepository _studentRepository;
         private readonly IUserService _userService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IQuaTrinhHocRepository _quaTrinhHocRepository;
+        private readonly IGiaDinhRepository _giaDinhRepository;
+        private readonly IThiHsgRepository _thiHsgRepository;
         public StudentService(IStudentRepository _studentRepository,
-            IUserService _userService, IUnitOfWork _unitOfWork
+            IUserService _userService, IUnitOfWork _unitOfWork,
+            IQuaTrinhHocRepository _quaTrinhHocRepository,
+            IThiHsgRepository _thiHsgRepository,
+            IGiaDinhRepository _giaDinhRepository
         )
         {
             this._studentRepository = _studentRepository;
             this._unitOfWork = _unitOfWork;
             this._userService = _userService;
+            this._quaTrinhHocRepository = _quaTrinhHocRepository;
+            this._thiHsgRepository = _thiHsgRepository;
+            this._giaDinhRepository = _giaDinhRepository;
+        }
+
+        public async Task<FullStudentModel> GetFullStudentByCode(string studentCode)
+        {
+            var quaTrinhHoc = await _quaTrinhHocRepository.FindByCodeAsync(studentCode);
+            var giaDinh = await _giaDinhRepository.FindByCodeAsync(studentCode);
+            var thiHsg = await _thiHsgRepository.FindByCodeAsync(studentCode);
+            var student = _studentRepository.FindByCode(studentCode);
+            return new FullStudentModel
+            {
+                Student = student,
+                ThiHSG = thiHsg,
+                GiaDinh = giaDinh,
+                QuaTrinhHoc = quaTrinhHoc
+            };
         }
 
         public AsAcademyStudent GetStudentByCode(string studentCode)
         {
             return _studentRepository.FindByCode(studentCode);
+        }
+
+        public async Task<ResponseBody> UpdateStudent(AsAcademyStudent student)
+        {
+            var currentStudent = _userService.GetCurrentStudent();
+
+            currentStudent.HkttPhuong = student.HkttPhuong;
+            currentStudent.HkttPho = student.HkttPho;
+            currentStudent.HkttQuan = student.HkttQuan;
+            currentStudent.HkttTinh = student.HkttTinh;
+            currentStudent.HkttSoNha = student.HkttSoNha;
+            currentStudent.Cmt = student.Cmt;
+            currentStudent.CmtNgayCap = student.CmtNgayCap;
+            currentStudent.CmtNoiCap = student.CmtNoiCap;
+            currentStudent.LaNoiTru = student.LaNoiTru;
+            currentStudent.Mobile = student.Mobile;
+            currentStudent.Email = student.Email;
+            currentStudent.EmailNhaTruong = student.EmailNhaTruong;
+
+            try
+            {
+                _studentRepository.Update(currentStudent);
+                await _unitOfWork.SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                return new ResponseBody { Message = "Lỗi hệ thống" };
+            }
+            return null;
         }
 
         public async Task<ResponseBody> UpdateStudentBasic(StudentModel basicStudent)
@@ -55,8 +108,12 @@ namespace nuce.web.api.Services.Ctsv.Implements
             student.BaoTinEmail = basicStudent.EmailBaoTin.Trim();
             student.BaoTinSoDienThoai = basicStudent.MobileBaoTin.Trim();
             student.BaoTinDiaChiNguoiNhan = basicStudent.DiaChiNguoiNhanBaotin.Trim();
-            student.LaNoiTru = !basicStudent.CoNoiOCuThe;
+            student.LaNoiTru = basicStudent.CoNoiOCuThe;
             student.DiaChiCuThe = basicStudent.DiaChiCuThe.Trim();
+
+            student.HkttPhuong = basicStudent.PhuongXa.Trim();
+            student.HkttQuan = basicStudent.QuanHuyen.Trim();
+            student.HkttTinh = basicStudent.TinhThanhPho.Trim();
 
             _studentRepository.Update(student);
             await _unitOfWork.SaveAsync();

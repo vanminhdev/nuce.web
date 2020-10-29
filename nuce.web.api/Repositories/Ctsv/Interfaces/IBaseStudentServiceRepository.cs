@@ -9,5 +9,6 @@ namespace nuce.web.api.Repositories.Ctsv.Interfaces
     {
         public IQueryable<Entity> GetAll(long studentId);
         public Task AddAsync(Entity model);
+        public bool IsDuplicated(long studentId, string reason = null);
     }
 }

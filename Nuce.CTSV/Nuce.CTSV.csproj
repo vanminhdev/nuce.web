@@ -150,6 +150,7 @@
     <Content Include="DichVu\ThueNhaSinhVien.aspx" />
     <Content Include="DichVu\ThueNhaSinhVien_YeuCauMoi.aspx" />
     <Content Include="index.html" />
+    <Content Include="js\phuong-quan-thanh-pho.js" />
     <Content Include="TEST.aspx" />
     <Content Include="bin\Antlr3.Runtime.dll" />
     <Content Include="bin\Antlr3.Runtime.pdb" />
@@ -2379,6 +2380,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiModels\ApiModels.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="CapNhatHoSoDayDu.aspx.cs">
       <DependentUpon>CapNhatHoSoDayDu.aspx</DependentUpon>

@@ -34,6 +34,10 @@ namespace nuce.web.api.Controllers.Ctsv
             try
             {
                 var addDichVuResult = await _dichVuService.AddDichVu(model);
+                if (addDichVuResult != null && addDichVuResult.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    return Conflict(addDichVuResult);
+                }
                 if (addDichVuResult != null)
                 {
                     return BadRequest(addDichVuResult);

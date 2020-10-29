@@ -50,7 +50,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 CreatedTime = now,
                 LastModifiedTime = now,
                 DeletedTime = now,
-                Title = model.TinNhanTitle
+                Title = model.TinNhanTitle,
+                Status = 1,
+                Type = 1,
+                Deleted = false,
             };
             await _tinNhanRepository.addTinNhanAsync(tinNhan);
             return null;

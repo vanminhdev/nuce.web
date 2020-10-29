@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Dịch vụ sinh viên" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="XacNhan_YeuCauMoi.aspx.cs" Inherits="Nuce.CTSV.XacNhan_YeuCauMoi" %>
+﻿<%@ Page Title="Dịch vụ sinh viên" Language="C#" MasterPageFile="~/Site.Master" Async="true" AutoEventWireup="true" CodeBehind="XacNhan_YeuCauMoi.aspx.cs" Inherits="Nuce.CTSV.XacNhan_YeuCauMoi" %>
 
 <asp:Content ID="BannerContent" ContentPlaceHolderID="Banner" runat="server">
     dịch vụ
@@ -34,11 +34,11 @@
                     <option value="Xin đăng ký tạm trú, tạm vắng">1. Xin đăng ký tạm trú, tạm vắng</option>
                     <option value="Xin tạm hoãn nghĩa vụ quân sự">2. Xin tạm hoãn nghĩa vụ quân sự</option>
                     <option value="Xin xác nhận để người nhà thi vào bộ đội, công an.">3. Xin xác nhận để người nhà thi vào bộ đội, công an</option>
-                    <option value="Xin xác nhận để người nhà kết hôn với người trong lực lượng vũ trang: bộ đội, công an">4. Xin xác nhận để người nhà kết hôn với người trong lĩnh vực vũ trang: bộ đội, công an</option>
+                    <option value="Xin xác nhận để người nhà kết hôn với người trong lực lượng vũ trang: bộ đội, công an">4. Xin xác nhận để người nhà kết hôn với người trong lực lượng vũ trang: bộ đội, công an</option>
                     <option value="Xin xác nhận để thuê nhà ở sinh viên tại làng sinh viên Hacinco">5. Xin xác nhận để thuê nhà ở sinh viên tại làng sinh viên Hacinco</option>
                     <option value="Xin xác nhận để làm hồ sơ đi du học">6. Xin xác nhận để làm hồ sơ đi du học</option>
                     <option value="Xác nhận để làm visa đi du lịch nước ngoài">7. Xác nhận để làm visa đi du lịch nước ngoài</option>
-                    <option value="Xác nhận để được hưởng học bồng khuyến học địa phương">8. Xác nhận để được hưởng học bồng khuyến học địa phương</option>
+                    <option value="Xác nhận để được hưởng học bổng khuyến học ở địa phương">8. Xác nhận để được hưởng học bổng khuyến học ở địa phương</option>
                     <option value="Xin miễn giảm thuế thu nhập cá nhân cho người thân">9. Xin miễn giảm thuế thu nhập cá nhân cho người thân</option>
                     <option value="-1">10. Khác</option>
                 </select>

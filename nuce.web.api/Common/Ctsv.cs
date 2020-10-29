@@ -18,6 +18,14 @@ namespace nuce.web.api.Common
             ThueNha = 7,
         }
 
+        public enum TrangThaiYeuCau
+        {
+            DaGuiLenNhaTruong = 2,
+            DangXuLy = 3,
+            DaXuLyVaCoLichHen = 4,
+            TuChoi = 5,
+        }
+
         public static Dictionary<int, DichVuStructure> DichVuDictionary = new Dictionary<int, DichVuStructure>
         {
             { 1, new DichVuStructure { ID = 1, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ xin giấy xác nhận sinh viên", TenDichVu = "dịch vụ xin giấy xác nhận sinh viên", TinNhanCode = "XAC_NHAN_THEM_MOI" } },

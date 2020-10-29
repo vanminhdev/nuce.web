@@ -1,14 +1,17 @@
-﻿using nuce.web.data;
+﻿using Newtonsoft.Json;
+using nuce.web.data;
+using Nuce.CTSV.ApiModels;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Net.Http;
 using System.Web.UI;
 
 namespace Nuce.CTSV
 {
     public partial class VayVonNganHang : BasePage
     {
-        protected void Page_Load(object sender, EventArgs e)
+        protected async void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
@@ -23,35 +26,43 @@ namespace Nuce.CTSV
                     { "1", "Mồ côi" },
                     { "2", "Không mồ côi" }
                 };
-                string sql = "select top 100 * from AS_Academy_Student_SV_VayVonNganHang where Deleted<>1 and StudentID=" + m_SinhVien.SinhVienID + " order by LastModifiedTime desc";
-                DataTable dt = Microsoft.ApplicationBlocks.Data.SqlHelper.ExecuteDataset(Nuce_Common.ConnectionString, CommandType.Text, sql).Tables[0];
-                if (dt.Rows.Count > 0)
+                var api = $"/api/DichVu/type/{(int)ApiModels.DichVu.VayVonNganHang}";
+                var res = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, api, "");
+                List<VayVonModel> vayVonList = new List<VayVonModel>();
+
+                if (res.IsSuccessStatusCode)
+                {
+                    string strResponse = await res.Content.ReadAsStringAsync();
+                    vayVonList = JsonConvert.DeserializeObject<List<VayVonModel>>(strResponse);
+                }
+                if (vayVonList.Count > 0)
                 {
                     string strContent = "";
-                    for (int i = 0; i < dt.Rows.Count; i++)
+                    for (int i = 0; i < vayVonList.Count; i++)
                     {
-                        string strPhanHoi = dt.Rows[i]["PhanHoi"].ToString();
+                        var vayVon = vayVonList[i];
+                        string strPhanHoi = vayVon.PhanHoi ?? "";
                         strContent += "<tr>";
                         strContent += string.Format("<td style=\"text-align:center;\">{0}</td>", (i + 1));
-                        strContent += string.Format("<td style=\"text-align:center;\">{0:dd/MM/yyyy}</td>", DateTime.Parse(dt.Rows[i]["CreatedTime"].ToString()));
+                        strContent += string.Format("<td style=\"text-align:center;\">{0}</td>", vayVon.CreatedTime?.ToString("dd/MM/yyyy"));
                         //if(strPhanHoi.Trim()=="")
                         //    strContent += string.Format("<td>{0}</td>", dt.Rows[i]["LyDo"].ToString());
                         //else
                         //    strContent += string.Format("<td><div>{0}<div><div style='color:red;'>- Phản hồi: {1}</div></td>", dt.Rows[i]["LyDo"].ToString(),strPhanHoi);
-                        int status = int.Parse(dt.Rows[i]["Status"].ToString());
-                        int ID = int.Parse(dt.Rows[i]["ID"].ToString()); ;
-                        DateTime dtNgayHenBatDau = dt.Rows[i].IsNull("NgayHen_TuNgay") ? DateTime.Now : DateTime.Parse(dt.Rows[i]["NgayHen_TuNgay"].ToString());
-                        DateTime dtNgayHenDenNgay = dt.Rows[i].IsNull("NgayHen_DenNgay") ? DateTime.Now.AddDays(7) : DateTime.Parse(dt.Rows[i]["NgayHen_DenNgay"].ToString());
+                        int status = vayVon.Status ?? 0;
+                        var ID = vayVon.Id;
+                        DateTime dtNgayHenBatDau = vayVon.NgayHenTuNgay ?? DateTime.Now;
+                        DateTime dtNgayHenDenNgay = vayVon.NgayHenDenNgay ?? DateTime.Now.AddDays(7);
                         //dtThuocDien dt.Rows[i]["ThuocDoiTuong"].ToString()
                         string dtThuocDien = "";
                         string dtThuocDoiTuong = "";
-                        if (!string.IsNullOrEmpty(dt.Rows[i]["ThuocDien"].ToString()))
+                        if (!string.IsNullOrEmpty(vayVon.ThuocDien))
                         {
-                            dtThuocDien = dien[dt.Rows[i]["ThuocDien"].ToString()];
+                            dtThuocDien = dien[vayVon.ThuocDien];
                         }
-                        if (!string.IsNullOrEmpty(dt.Rows[i]["ThuocDoiTuong"].ToString()))
+                        if (!string.IsNullOrEmpty(vayVon.ThuocDoiTuong))
                         {
-                            dtThuocDoiTuong = doiTuong[dt.Rows[i]["ThuocDoiTuong"].ToString()];
+                            dtThuocDoiTuong = doiTuong[vayVon.ThuocDoiTuong];
                         }
                         switch (status)
                         {

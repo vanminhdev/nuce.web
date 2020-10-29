@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Vay Vốn Ngân Hàng" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="VayVonNganHang.aspx.cs" Inherits="Nuce.CTSV.VayVonNganHang" %>
+﻿<%@ Page Title="Vay Vốn Ngân Hàng" Language="C#" MasterPageFile="~/Site.Master" Async="true" AutoEventWireup="true" CodeBehind="VayVonNganHang.aspx.cs" Inherits="Nuce.CTSV.VayVonNganHang" %>
 
 <asp:Content ID="BannerContent" ContentPlaceHolderID="Banner" runat="server">
     dịch vụ

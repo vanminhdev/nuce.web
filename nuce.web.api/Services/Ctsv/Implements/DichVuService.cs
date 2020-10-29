@@ -10,6 +10,7 @@ using nuce.web.api.Services.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using System.Transactions;
 using nuce.web.api.ViewModel;
+using System.Net;
 
 namespace nuce.web.api.Services.Ctsv.Implements
 {
@@ -46,15 +47,22 @@ namespace nuce.web.api.Services.Ctsv.Implements
             int studentID = Convert.ToInt32(currentStudent.Id);
             var now = DateTime.Now;
 
-            int status = 2;
+            int status = (int)Common.Ctsv.TrangThaiYeuCau.DaGuiLenNhaTruong;
 
             bool run = true;
+            string duplicateMsg = "Trùng yêu cầu dịch vụ";
+            var duplicateCode = HttpStatusCode.Conflict;
+
 
             using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 switch (model.Type)
                 {
                     case (int)Common.Ctsv.DichVu.XacNhan:
+                        if (_xacNhanRepository.IsDuplicated(currentStudent.Id, model.LyDo))
+                        {
+                            return new ResponseBody { Message = duplicateMsg, StatusCode = duplicateCode };
+                        }
                         AsAcademyStudentSvXacNhan xacNhan = new AsAcademyStudentSvXacNhan
                         {
                             LyDo = model.LyDo,
@@ -75,6 +83,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         await _xacNhanRepository.AddAsync(xacNhan);
                         break;
                     case (int)Common.Ctsv.DichVu.GioiThieu:
+                        if (_gioiThieuRepository.IsDuplicated(currentStudent.Id))
+                        {
+                            return new ResponseBody { Message = duplicateMsg, StatusCode = duplicateCode };
+                        }
                         AsAcademyStudentSvGioiThieu gioiThieu = new AsAcademyStudentSvGioiThieu
                         {
                             VeViec = model.VeViec,
@@ -97,6 +109,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         await _gioiThieuRepository.AddAsync(gioiThieu);
                         break;
                     case (int)Common.Ctsv.DichVu.UuDaiGiaoDuc:
+                        if (_uuDaiRepository.IsDuplicated(currentStudent.Id))
+                        {
+                            return new ResponseBody { Message = duplicateMsg, StatusCode = duplicateCode };
+                        }
                         AsAcademyStudentSvXacNhanUuDaiTrongGiaoDuc uuDai = new AsAcademyStudentSvXacNhanUuDaiTrongGiaoDuc
                         {
                             KyLuat = model.KyLuat,
@@ -117,6 +133,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         await _uuDaiRepository.AddAsync(uuDai);
                         break;
                     case (int)Common.Ctsv.DichVu.VayVonNganHang:
+                        if (_vayVonRepository.IsDuplicated(currentStudent.Id))
+                        {
+                            return new ResponseBody { Message = duplicateMsg, StatusCode = duplicateCode };
+                        }
                         AsAcademyStudentSvVayVonNganHang vayVon = new AsAcademyStudentSvVayVonNganHang
                         {
                             ThuocDien = model.ThuocDien,
@@ -138,6 +158,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         await _vayVonRepository.AddAsync(vayVon);
                         break;
                     case (int)Common.Ctsv.DichVu.ThueNha:
+                        if (_thueNhaRepository.IsDuplicated(currentStudent.Id))
+                        {
+                            return new ResponseBody { Message = duplicateMsg, StatusCode = duplicateCode };
+                        }
                         AsAcademyStudentSvThueNha thueNha = new AsAcademyStudentSvThueNha
                         {
                             PhanHoi = model.PhanHoi,

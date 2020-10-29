@@ -1,35 +1,47 @@
-﻿using nuce.web.data;
+﻿using Newtonsoft.Json;
+using nuce.web.data;
+using Nuce.CTSV.ApiModels;
 using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Net.Http;
 using System.Web.UI;
 
 namespace Nuce.CTSV
 {
     public partial class ThueNhaSinhVien : BasePage
     {
-        protected void Page_Load(object sender, EventArgs e)
+        protected async void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-                string sql = "select top 100 * from AS_Academy_Student_SV_ThueNha where Deleted<>1 and StudentID=" + m_SinhVien.SinhVienID + " order by LastModifiedTime desc";
-                DataTable dt = Microsoft.ApplicationBlocks.Data.SqlHelper.ExecuteDataset(Nuce_Common.ConnectionString, CommandType.Text, sql).Tables[0];
-                if (dt.Rows.Count > 0)
+                var api = $"/api/DichVu/type/{(int)ApiModels.DichVu.ThueNha}";
+                var studentResponse = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, api, "");
+                List<ThueNhaModel> thueNhaList = new List<ThueNhaModel>();
+
+                if (studentResponse.IsSuccessStatusCode)
+                {
+                    string strResponse = await studentResponse.Content.ReadAsStringAsync();
+                    thueNhaList = JsonConvert.DeserializeObject<List<ThueNhaModel>>(strResponse);
+                }
+                if (thueNhaList.Count > 0)
                 {
                     string strContent = "";
-                    for (int i = 0; i < dt.Rows.Count; i++)
+                    for (int i = 0; i < thueNhaList.Count; i++)
                     {
-                        string strPhanHoi = dt.Rows[i]["PhanHoi"].ToString();
+                        var thueNha = thueNhaList[i];
+                        string strPhanHoi = thueNha.PhanHoi ?? "";
                         strContent += "<tr>";
                         strContent += string.Format("<td style=\"text-align:center;\">{0}</td>", (i+1));
-                        strContent += string.Format("<td style=\"text-align:center;\">{0:dd/MM/yyyy}</td>", DateTime.Parse(dt.Rows[i]["CreatedTime"].ToString()));
+                        strContent += string.Format("<td style=\"text-align:center;\">{0}</td>", thueNha.CreatedTime?.ToString("dd/MM/yyyy"));
                         //if(strPhanHoi.Trim()=="")
                         //    strContent += string.Format("<td>{0}</td>", dt.Rows[i]["LyDo"].ToString());
                         //else
                         //    strContent += string.Format("<td><div>{0}<div><div style='color:red;'>- Phản hồi: {1}</div></td>", dt.Rows[i]["LyDo"].ToString(),strPhanHoi);
-                        int status = int.Parse(dt.Rows[i]["Status"].ToString());
-                        int ID = int.Parse(dt.Rows[i]["ID"].ToString()); ;
-                        DateTime dtNgayHenBatDau = dt.Rows[i].IsNull("NgayHen_TuNgay") ? DateTime.Now : DateTime.Parse(dt.Rows[i]["NgayHen_TuNgay"].ToString());
-                        DateTime dtNgayHenDenNgay = dt.Rows[i].IsNull("NgayHen_DenNgay") ? DateTime.Now.AddDays(7) : DateTime.Parse(dt.Rows[i]["NgayHen_DenNgay"].ToString());
+                        int status = thueNha.Status ?? 0;
+                        long ID = thueNha.Id;
+                        DateTime dtNgayHenBatDau = thueNha.NgayHenTuNgay ?? DateTime.Now;
+                        DateTime dtNgayHenDenNgay = thueNha.NgayHenDenNgay ?? DateTime.Now.AddDays(7);
                         switch (status)
                         {
                             case 1:

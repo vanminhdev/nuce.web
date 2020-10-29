@@ -105,6 +105,33 @@ namespace Nuce.CTSV
         protected global::System.Web.UI.WebControls.TextBox txtDiaChiCuThe;
 
         /// <summary>
+        /// slThanhPho control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlSelect slThanhPho;
+
+        /// <summary>
+        /// slQuan control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlSelect slQuan;
+
+        /// <summary>
+        /// slPhuong control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlSelect slPhuong;
+
+        /// <summary>
         /// btnCapNhat control.
         /// </summary>
         /// <remarks>

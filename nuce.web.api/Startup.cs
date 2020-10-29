@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -167,7 +165,9 @@ namespace nuce.web.api
             });
             #endregion
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
             services.AddHttpContextAccessor();
             services.AddSingleton<IPathProvider, PathProvider>();
 
@@ -186,6 +186,10 @@ namespace nuce.web.api
             services.AddScoped<IStudentRepository, StudentRepository>();
             services.AddScoped<INewsItemsRepository, NewsItemsRepository>();
             services.AddScoped<ITinNhanRepository, TinNhanRepository>();
+            services.AddScoped<IGiaDinhRepository, GiaDinhRepository>();
+            services.AddScoped<IThiHsgRepository, ThiHsgRepository>();
+            services.AddScoped<IQuaTrinhHocRepository, QuaTrinhHocRepository>();
+
 
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<ICtsvLogService, CtsvLogService>();
