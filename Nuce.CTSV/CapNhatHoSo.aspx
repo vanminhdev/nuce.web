@@ -319,7 +319,7 @@
                 $(`#<%= slQuan.ClientID %>`).html(quanOptions);
 
                 let phuongOptions = '';
-                phuongList.forEach(item => {
+                phuongList.filter(item => item.maqh === maQuanValue).forEach(item => {
                     let selected = phuongValue === item.tenpxvn ? 'selected' : '';
                     phuongOptions += `<option ${selected} data-ma-tinh="${item.matp}" data-ma-quan="${item.maqh}" data-ma-phuong="${item.mapx}" value="${item.tenpxvn}">${item.tenpxvn}</option>`;
                 });

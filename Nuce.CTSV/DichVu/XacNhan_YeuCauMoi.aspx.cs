@@ -13,7 +13,6 @@ namespace Nuce.CTSV
 {
     public partial class XacNhan_YeuCauMoi : BasePage
     {
-        private ApiModels.StudentModel student;
         protected async void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -22,13 +21,37 @@ namespace Nuce.CTSV
                 if (studentResponse.IsSuccessStatusCode)
                 {
                     var strResponse = await studentResponse.Content.ReadAsStringAsync();
-                    student = JsonConvert.DeserializeObject<ApiModels.StudentModel>(strResponse);
+                    var student = JsonConvert.DeserializeObject<ApiModels.StudentModel>(strResponse);
                     ViewState["student"] = student;
 
-                    frmPhuong.Visible = string.IsNullOrEmpty(student.HkttPhuong?.Trim());
-                    frmQuan.Visible = string.IsNullOrEmpty(student.HkttQuan?.Trim());
-                    frmTinh.Visible = string.IsNullOrEmpty(student.HkttTinh?.Trim());
-                    frmDiaChi.Visible = string.IsNullOrEmpty(student.DiaChiCuThe?.Trim());
+                    string thongBao = "";
+
+                    if (string.IsNullOrEmpty(student.HkttTinh?.Trim()))
+                    {
+                        thongBao += " tỉnh/thành phố";
+                    }
+
+                    if (string.IsNullOrEmpty(student.HkttQuan?.Trim()))
+                    {
+                        thongBao += $"{(thongBao != "" ? "," : "")} quận/huyện";
+                    }
+
+                    if (string.IsNullOrEmpty(student.HkttPhuong?.Trim()))
+                    {
+                        thongBao += $"{(thongBao != "" ? "," : "")} phường/xã";
+                    }
+
+                    if (string.IsNullOrEmpty(student.DiaChiCuThe?.Trim()))
+                    {
+                        thongBao += $"{(thongBao != "" ? "," : "")} địa chỉ tạm trú";
+                    }
+
+                    if (!string.IsNullOrEmpty(thongBao))
+                    {
+                        divBtnContainer.Visible = false;
+                        divThongBao.InnerHtml = $"Yêu cầu cập nhật<a href=\"/capnhathoso.aspx\">{thongBao}</a>";
+                        return;
+                    }
                 }
             }
         }
@@ -49,64 +72,6 @@ namespace Nuce.CTSV
                 if (!IsCaptchaValid)
                 {
                     divThongBao.InnerHtml = "Bạn chưa xác thực Captcha";
-                    return;
-                }
-            }
-            
-
-            student = (ApiModels.StudentModel)ViewState["student"];
-
-            bool update = false;
-
-            if (frmPhuong.Visible && string.IsNullOrEmpty(txtPhuong.Text.Trim()))
-            {
-                divThongBao.InnerHtml = "Không được để trống phường/xã";
-                return;
-            } else if (frmPhuong.Visible)
-            {
-                student.HkttPhuong = txtPhuong.Text.Trim();
-                update = true;
-            }
-
-            if (frmQuan.Visible && string.IsNullOrEmpty(txtQuan.Text.Trim()))
-            {
-                divThongBao.InnerHtml = "Không được để trống quận/huyện";
-                return;
-            } else if (frmQuan.Visible)
-            {
-                student.HkttQuan = txtQuan.Text.Trim();
-                update = true;
-            }
-
-            if (frmTinh.Visible && string.IsNullOrEmpty(txtTinh.Text.Trim()))
-            {
-                divThongBao.InnerHtml = "Không được để trống tỉnh/thành phố";
-                return;
-            } else if (frmTinh.Visible)
-            {
-                student.HkttTinh = txtTinh.Text.Trim();
-                update = true;
-            }
-
-            if (frmDiaChi.Visible && string.IsNullOrEmpty(txtDiaChi.Text.Trim()))
-            {
-                divThongBao.InnerHtml = "Không được để trống địa chỉ tạm trú";
-                return;
-            } else if (frmDiaChi.Visible)
-            {
-                student.DiaChiCuThe = txtDiaChi.Text.Trim();
-                update = true;
-            }
-
-            if (update)
-            {
-                string updateStudentContent = JsonConvert.SerializeObject(student);
-                string endpoint = ApiModels.ApiEndPoint.PutStudentUpdate;
-                var updateResponse = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Put, endpoint, updateStudentContent);
-
-                if (!updateResponse.IsSuccessStatusCode)
-                {
-                    divThongBao.InnerHtml = "Không cập nhật được thông tin sinh viên";
                     return;
                 }
             }

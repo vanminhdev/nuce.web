@@ -13,7 +13,7 @@ namespace Nuce.CTSV
 {
     public partial class ThueNhaSinhVien_YeuCauMoi : BasePage
     {
-        private ApiModels.StudentModel student;
+        private StudentModel student;
         protected async void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -25,9 +25,30 @@ namespace Nuce.CTSV
                     student = JsonConvert.DeserializeObject<ApiModels.StudentModel>(strResponse);
                     ViewState["student"] = student;
 
-                    frmPhuong.Visible = string.IsNullOrEmpty(student.HkttPhuong?.Trim());
-                    frmQuan.Visible = string.IsNullOrEmpty(student.HkttQuan?.Trim());
-                    frmTinh.Visible = string.IsNullOrEmpty(student.HkttTinh?.Trim());
+                    string thongBao = "";
+
+                    if (string.IsNullOrEmpty(student.HkttTinh?.Trim()))
+                    {
+                        thongBao += " tỉnh/thành phố";
+                    }
+
+                    if (string.IsNullOrEmpty(student.HkttQuan?.Trim()))
+                    {
+                        thongBao += $"{(thongBao != "" ? "," : "")} quận/huyện";
+                    }
+
+                    if (string.IsNullOrEmpty(student.HkttPhuong?.Trim()))
+                    {
+                        thongBao += $"{(thongBao != "" ? "," : "")} phường/xã";
+                    }
+
+                    if (!string.IsNullOrEmpty(thongBao))
+                    {
+                        divBtnContainer.Visible = false;
+                        divThongBao.InnerHtml = $"Yêu cầu cập nhật<a href=\"/capnhathoso.aspx\">{thongBao}</a>";
+                        return;
+                    }
+
                     frmCmnd.Visible = string.IsNullOrEmpty(student.Cmt?.Trim());
                     frmNgayCap.Visible = student.CmtNgayCap == null;
                     frmNoiCap.Visible = string.IsNullOrEmpty(student.CmtNoiCap);
@@ -59,39 +80,6 @@ namespace Nuce.CTSV
             student = (StudentModel)ViewState["student"];
 
             bool update = false;
-
-            if (frmPhuong.Visible && string.IsNullOrEmpty(txtPhuong.Text.Trim()))
-            {
-                divThongBao.InnerHtml = "Không được để trống phường/xã";
-                return;
-            }
-            else if (frmPhuong.Visible)
-            {
-                student.HkttPhuong = txtPhuong.Text.Trim();
-                update = true;
-            }
-
-            if (frmQuan.Visible && string.IsNullOrEmpty(txtQuan.Text.Trim()))
-            {
-                divThongBao.InnerHtml = "Không được để trống quận/huyện";
-                return;
-            }
-            else if (frmQuan.Visible)
-            {
-                student.HkttQuan = txtQuan.Text.Trim();
-                update = true;
-            }
-
-            if (frmTinh.Visible && string.IsNullOrEmpty(txtTinh.Text.Trim()))
-            {
-                divThongBao.InnerHtml = "Không được để trống tỉnh/thành phố";
-                return;
-            }
-            else if (frmTinh.Visible)
-            {
-                student.HkttTinh = txtTinh.Text.Trim();
-                update = true;
-            }
 
             if (frmCmnd.Visible && string.IsNullOrEmpty(txtCmnd.Text.Trim()))
             {

@@ -37,7 +37,7 @@
                         class="service-avatar col-10"/>
                     <div
                         class="col-10 mt-2 text-center text-uppercase main-color fw-600 font-14-sm font-18-md font-18 title-service">
-                        vay vốn ngân hàng
+                        vay vốn ngân hàng chính sách - xã hội
                     </div>
                 </a>
                 <%--<a

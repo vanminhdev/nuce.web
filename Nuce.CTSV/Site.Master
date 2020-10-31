@@ -108,7 +108,7 @@
             </div>
             <div class="col-12 col-md-5">
               <div class="row">
-                <div class="col-5">
+                <div class="col-5 p-1">
                   <div class="row">
                     <div class="col-3">
                       <img
@@ -122,12 +122,12 @@
                         <div class="col-12 main-color icon-title font-14-sm">
                           Hotline
                         </div>
-                        <div class="col-12 icon-sub-title">0869071382</div>
+                        <div class="col-12 icon-sub-title">02438697004</div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-7">
+                <div class="col-7 p-1">
                   <div class="row">
                     <div class="col-3">
                       <img
@@ -142,7 +142,7 @@
                           Email
                         </div>
                         <div class="col-10 icon-sub-title">
-                          tuyensinhdh@nuce.edu.vn
+                          ctsv@nuce.edu.vn
                         </div>
                       </div>
                     </div>
@@ -212,47 +212,53 @@
           />
 
           <!-- display info user for mobile -->
-          <div
-            class="row justify-content-end user-wrp align-items-end display-mobile"
-          >
-            <div class="col-7 mt-3">
-              <div class="row">
-                <div class="col-12 mb-2">
+          <div class="display-mobile">
+            <div class="row justify-content-end user-wrp align-items-end">
+                <div class="col-7 mt-3">
                   <div class="row">
-                    <div id="divMobileUsername" runat="server" class="main-color text-uppercase fw-600 font-16-sm">
-                      minh khôi
+                    <div class="col-12 mb-2">
+                      <div class="row">
+                        <div id="divMobileUsername" runat="server" class="main-color text-uppercase fw-600 font-16-sm">
+                          minh khôi
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div id="divMobileMssv"
+                            runat="server" class="col-5 font-14-sm text-left pl-0">
+                          ID: 125998
+                        </div>
+                        <div class="col-3">|</div>
+                        <a class="row cursor-pointer" 
+                            data-toggle="modal"
+                            data-target="#logoutModal">
+                          <div class="main-color font-14-sm">Log out</div>
+                          <img
+                            src="/style/public/images/icons/logout.png"
+                            alt="logout-icon"
+                            class="logout-icon ml-3"
+                          />
+                        </a>
+                      </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div id="divMobileMssv"
-                        runat="server" class="col-5 font-14-sm text-left pl-0">
-                      ID: 125998
-                    </div>
-                    <div class="col-3">|</div>
-                    <a class="row cursor-pointer" 
-                        data-toggle="modal"
-                        data-target="#logoutModal">
-                      <div class="main-color font-14-sm">Log out</div>
-                      <img
-                        src="/style/public/images/icons/logout.png"
-                        alt="logout-icon"
-                        class="logout-icon ml-3"
-                      />
-                    </a>
+                    <button
+                       id="btnMobileCapNhatHoSo" runat="server"
+                      type="button"
+                      class="col-12 btn w-100 text-light font-14-sm login-btn"
+                      onclick="location.href='/capnhathoso.aspx';"
+                    >
+                      Cập nhật hồ sơ
+                    </button>
                   </div>
                 </div>
-                <button
-                   id="btnMobileCapNhatHoSo" runat="server"
-                  type="button"
-                  class="col-12 btn w-100 text-light font-14-sm login-btn"
-                  onclick="location.href='/capnhathoso.aspx';"
-                >
-                  Cập nhật hồ sơ
-                </button>
+              </div>
+            <div class="row ml-2 p-1">
+              <div class="col-12 mt-3 font-14 font-14-md">
+                <div class="row text-uppercase justify-content-start align-items-center">
+                  <asp:ContentPlaceHolder ID="BreadCrumMobile" runat="server"></asp:ContentPlaceHolder>
+                </div>
               </div>
             </div>
           </div>
-
           <!-- display user for large screen -->
           <div
             class="row user-wrp align-items-start justify-content-between display-lg"
@@ -313,7 +319,7 @@
 
       <!-- footer section -->
       <section id="footer">
-        <div class="container full-height">
+        <div class="container full-height mt-1">
           <div class="full-height row text-center main-color align-items-end">
             <div class="col-12 mb-2">
               Bản quyền @2020 thuộc Đại học Xây dựng

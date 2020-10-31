@@ -9,7 +9,15 @@
         <a href="/dichvusinhvien.aspx">dịch vụ</a>
         <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
     </div>
-    <div class="main-color text-decoration-none">vay vốn ngân hàng</div>
+    <div class="main-color text-decoration-none">vay vốn ngân hàng chính sách - xã hội</div>
+</asp:Content>
+
+<asp:Content ID="BreadCrumContentMobile" ContentPlaceHolderID="BreadCrumMobile" runat="server">
+    <div class="d-flex align-items-center">
+        <a href="/dichvusinhvien.aspx">dịch vụ</a>
+        <div id="circle" style="display: inline-block" class="ml-2 mr-2"></div>
+    </div>
+    <div class="main-color text-decoration-none">vay vốn ngân hàng chính sách - xã hội</div>
 </asp:Content>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">

@@ -15,6 +15,17 @@
     </div>
     <div class="main-color text-decoration-none">yêu cầu mới</div>
 </asp:Content>
+<asp:Content ID="BreadCrumContentMobile" ContentPlaceHolderID="BreadCrumMobile" runat="server">
+    <div class="d-flex align-items-center">
+        <a href="/dichvusinhvien.aspx">dịch vụ</a>
+        <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
+    </div>
+    <div class="d-flex align-items-center">
+        <a href="/dichvu/xacnhan.aspx">giấy xác nhận</a>
+        <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
+    </div>
+    <div class="main-color text-decoration-none">yêu cầu mới</div>
+</asp:Content>
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <script src='https://www.google.com/recaptcha/api.js'></script>
     <div class="col-sm-12">
@@ -43,22 +54,6 @@
                     <option value="-1">10. Khác</option>
                 </select>
             </div>
-            <div class="form-group" runat="server" id="frmPhuong">
-                <label class="font-14-sm fw-600 font-18" for="phuong">Phường/Xã:</label>
-                <asp:TextBox ID="txtPhuong" runat="server" class="form-control"></asp:TextBox>
-            </div>
-            <div class="form-group" runat="server" id="frmQuan">
-                <label class="font-14-sm fw-600 font-18" for="quan">Quận/Huyện:</label>
-                <asp:TextBox ID="txtQuan" runat="server" class="form-control"></asp:TextBox>
-            </div>
-            <div class="form-group" runat="server" id="frmTinh">
-                <label class="font-14-sm fw-600 font-18" for="tinh">Tỉnh/Thành phố:</label>
-                <asp:TextBox ID="txtTinh" runat="server" class="form-control"></asp:TextBox>
-            </div>
-            <div class="form-group" runat="server" id="frmDiaChi">
-                <label class="font-14-sm fw-600 font-18" for="diachi">Địa chỉ tạm trú:</label>
-                <asp:TextBox ID="txtDiaChi" runat="server" class="form-control"></asp:TextBox>
-            </div>
             <div class="form-group mt-3" id="frmXacNhan" style="display:none;">
                 <asp:TextBox ID="txtLyDoXacNhan" runat="server" class="form-control" TextMode="MultiLine" placeholder="Bạn hãy nhập lý do khác" Text="Xin đăng ký tạm trú, tạm vắng"></asp:TextBox>
             </div>
@@ -68,7 +63,7 @@
             </div>--%>
         </div>
 
-        <div class="col-12 col-md-3 mt-4">
+        <div class="col-12 col-md-3 mt-4" runat="server" id="divBtnContainer">
             <button type="button" id="btnModalUpdate" 
                     class="confirm-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2"
                     data-toggle="modal" data-target="#myModalUpdate">Gửi yêu cầu</button>

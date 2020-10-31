@@ -10,7 +10,19 @@
         <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
     </div>
     <div class="d-flex align-items-center">
-        <a href="/dichvu/vayvonnganhang.aspx">vay vốn ngân hàng</a>
+        <a href="/dichvu/vayvonnganhang.aspx">vay vốn ngân hàng chính sách - xã hội</a>
+        <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
+    </div>
+    <div class="main-color text-decoration-none">yêu cầu mới</div>
+</asp:Content>
+
+<asp:Content ID="BreadCrumContentMobile" ContentPlaceHolderID="BreadCrumMobile" runat="server">
+    <div class="d-flex align-items-center">
+        <a href="/dichvusinhvien.aspx">dịch vụ</a>
+        <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
+    </div>
+    <div class="d-flex align-items-center">
+        <a href="/dichvu/vayvonnganhang.aspx">vay vốn ngân hàng chính sách - xã hội</a>
         <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
     </div>
     <div class="main-color text-decoration-none">yêu cầu mới</div>
@@ -40,18 +52,6 @@
                         <option value="2">Không mồ côi</option>
                     </select>
                 </div>
-                <div class="form-group" runat="server" id="frmPhuong">
-                    <label class="font-14-sm fw-600 font-18" for="phuong">Phường/Xã:</label>
-                    <asp:TextBox ID="txtPhuong" runat="server" class="form-control"></asp:TextBox>
-                </div>
-                <div class="form-group" runat="server" id="frmQuan">
-                    <label class="font-14-sm fw-600 font-18" for="quan">Quận/Huyện:</label>
-                    <asp:TextBox ID="txtQuan" runat="server" class="form-control"></asp:TextBox>
-                </div>
-                <div class="form-group" runat="server" id="frmTinh">
-                    <label class="font-14-sm fw-600 font-18" for="tinh">Tỉnh/Thành phố:</label>
-                    <asp:TextBox ID="txtTinh" runat="server" class="form-control"></asp:TextBox>
-                </div>
                 <div class="form-group" runat="server" id="frmCmnd">
                     <label class="font-14-sm fw-600 font-18" for="cmt">Số CMT:</label>
                     <asp:TextBox ID="txtCmnd" runat="server" class="form-control"></asp:TextBox>
@@ -71,7 +71,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-md-3 mt-4">
+            <div class="col-12 col-md-3 mt-4" runat="server" id="divBtnContainer">
                 <button type="button" id="btnModalUpdate" 
                         class="confirm-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2"
                         data-toggle="modal" data-target="#myModalUpdate">Gửi yêu cầu</button>
