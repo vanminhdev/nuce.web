@@ -439,9 +439,10 @@ namespace Nuce.CTSV
         }
     }
 
-    public static class M_SinhVien
+    public static class Development
     {
-        public static nuce.web.model.SinhVien m_SinhVien;
+        private static string API_URI = ConfigurationManager.AppSettings["DEV"];
+        public static bool Enabled = API_URI == "1";
     }
 }
 

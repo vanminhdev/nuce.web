@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using nuce.web.data;
+using Nuce.CTSV.ApiModels;
 using System;
 using System.Data;
+using System.Net;
 using System.Net.Http;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
@@ -98,12 +100,16 @@ namespace Nuce.CTSV
                 spScript.InnerHtml = string.Format($"<script>CapNhatHoSo.initSelectForm('{model.TinhThanhPho}', '{model.QuanHuyen}', '{model.PhuongXa}');</script>");
                 return;
             }
-            else
+            try
+            {
+                var error = await CustomizeHttp.DeserializeAsync<ResponseBody>(response.Content);
+                divThongBao.InnerText = $"{error.Message}";
+            }
+            catch (Exception)
             {
                 divThongBao.InnerText = "Cập nhật thất bại - lỗi hệ thống";
                 return;
             }
-
         }
         #region email
         public static string Send_Email(string Subject, string Message, string EmailTo)

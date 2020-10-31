@@ -1,6 +1,7 @@
 ﻿using Microsoft.ApplicationBlocks.Data;
 using Newtonsoft.Json;
 using nuce.web.data;
+using Nuce.CTSV.ApiModels;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -20,16 +21,18 @@ namespace Nuce.CTSV
             //    divThongBao.InnerHtml = "Bạn nhập sai mã Captcha";
             //    return;
             //}
+            if (!Development.Enabled)
+            {
+                string EncodedResponse = Request.Form["g-Recaptcha-Response"];
+                bool IsCaptchaValid = (ReCaptchaClass.Validate(EncodedResponse) == "true" ? true : false);
 
-            //string EncodedResponse = Request.Form["g-Recaptcha-Response"];
-            //bool IsCaptchaValid = (ReCaptchaClass.Validate(EncodedResponse) == "true" ? true : false);
-
-            //if (!IsCaptchaValid)
-            //{
-            //    divThongBao.InnerHtml = "Bạn chưa xác thực Captcha";
-            //    return;
-            //}
-
+                if (!IsCaptchaValid)
+                {
+                    divThongBao.InnerHtml = "Bạn chưa xác thực Captcha";
+                    return;
+                }
+            }
+            
             string strKyLuat = txtKyLuat.Text;
             if (string.IsNullOrEmpty(strKyLuat.Trim()))
             {
@@ -54,15 +57,18 @@ namespace Nuce.CTSV
                     divThongBao.InnerHtml = "Thêm mới dịch vụ thành công";
                     divThongBaoCapNhat.InnerHtml = "Thêm mới dịch vụ thành công";
                     spScript.InnerHtml = string.Format("<script>$('#myModalThongBao').modal();</script>");
+                    return;
                 }
-                else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+                try
                 {
-                    divThongBao.InnerText = "Trùng yêu cầu dịch vụ";
+                    var error = await CustomizeHttp.DeserializeAsync<ResponseBody>(response.Content);
+                    divThongBao.InnerText = $"{error.Message}";
                 }
-                else
+                catch (Exception)
                 {
                     divThongBao.InnerText = "Thêm mới dịch vụ thất bại - lỗi hệ thống";
                     divThongBaoCapNhat.InnerHtml = "Cập nhật thất bại - lỗi hệ thống";
+                    return;
                 }
             }
         }

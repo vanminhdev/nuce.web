@@ -1,15 +1,10 @@
 ﻿using Newtonsoft.Json;
 using Nuce.CTSV.ApiModels;
-using Nuce.CTSV.Services;
 using System;
-using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Script.Serialization;
@@ -268,45 +263,21 @@ namespace Nuce.CTSV
                 }
                 else
                 {
-                    spAlert.InnerHtml = string.Format(@"<div class='alert alert-warning alert-dismissible' style='position: absolute; top: 0; right: 0;'>
+                    string errorTemplate = @"<div class='alert alert-warning alert-dismissible' style='position: absolute; top: 0; right: 0;'>
                                             <a href = '#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
-                {0}</div>", "Thông tin đăng nhập sai");
+                                    {0}</div>";
+                    try
+                    {
+                        var error = await CustomizeHttp.DeserializeAsync<ResponseBody>(res.Content);
+                        spAlert.InnerHtml = errorTemplate.Replace("{0}", error.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        spAlert.InnerHtml = errorTemplate.Replace("{0}", "Thông tin đăng nhập sai");
+                    }
                     return;
                 }
             }
-
-            #region old
-            //try
-            //{
-            //    if (sv.authen(strMaSV, strMatKhau) <= 0)
-            //    {
-            //        spAlert.InnerHtml = string.Format(@"<div class='alert alert-warning alert-dismissible' style='position: absolute; top: 0; right: 0;'>
-            //                                    <a href = '#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
-            //{0}</div>", "Thông tin đăng nhập sai");
-            //        return;
-            //    }
-            //    iTypeDichVu = 1;
-            //}
-            //catch (Exception ex)
-            //{
-            //    try
-            //    {
-            //        if (sv_1.authen(strMaSV, strMatKhau) <= 0)
-            //        {
-            //            spAlert.InnerHtml = string.Format(@"<div class='alert alert-warning alert-dismissible' style='position: absolute; top: 0; right: 0;'>
-            //                                    <a href = '#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
-            //{0}</div>", "Thông tin đăng nhập sai");
-            //            return;
-            //        }
-            //        iTypeDichVu = 2;
-            //    }
-            //    catch (Exception ex1)
-            //    {
-            //        iTypeDichVu = 999;
-            //    }
-            //}
-            //string strSql = string.Format("SELECT * FROM [dbo].[AS_Academy_Student] where Code='{0}'", strMaSV);
-            #endregion
             
             StudentModel student = null;
 
@@ -315,7 +286,6 @@ namespace Nuce.CTSV
             {
                 student = await CustomizeHttp.DeserializeAsync<StudentModel>(studentResponse.Content);
             }
-
             if (student != null)
             {
                 nuce.web.model.SinhVien SinhVien = new nuce.web.model.SinhVien();

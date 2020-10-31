@@ -29,6 +29,18 @@
             </div>
             <div class="col-12 col-md-4 service-avatar-wrp cursor-pointer">
                 <a
+                    href="/dichvu/vayvonnganhang.aspx"
+                    class="row justify-content-center">
+                    <img
+                        src="/Data/icons/VAY_VON.jpg"
+                        alt="service"
+                        class="service-avatar col-10"/>
+                    <div
+                        class="col-10 mt-2 text-center text-uppercase main-color fw-600 font-14-sm font-18-md font-18 title-service">
+                        vay vốn ngân hàng
+                    </div>
+                </a>
+                <%--<a
                     href="/dichvu/gioithieu.aspx"
                     class="row justify-content-center">
                 <img
@@ -39,7 +51,7 @@
                     class="col-10 mt-2 text-center text-uppercase main-color fw-600 font-14-sm font-18-md font-18 title-service">
                     giấy giới thiệu
                 </div>
-                </a>
+                </a>--%>
             </div>
             <div class="col-12 col-md-4 service-avatar-wrp cursor-pointer">
                 <a
@@ -70,18 +82,18 @@
                 </a>
             </div>
             <div class="col-12 col-md-4 service-avatar-wrp cursor-pointer">
-                <a
-                href="/dichvu/vayvonnganhang.aspx"
-                class="row justify-content-center">
-                <img
-                    src="/Data/icons/VAY_VON.jpg"
-                    alt="service"
-                    class="service-avatar col-10"/>
-                <div
-                    class="col-10 mt-2 text-center text-uppercase main-color fw-600 font-14-sm font-18-md font-18 title-service">
-                    vay vốn ngân hàng
-                </div>
-                </a>
+                <%--<a
+                    href="/dichvu/vayvonnganhang.aspx"
+                    class="row justify-content-center">
+                    <img
+                        src="/Data/icons/VAY_VON.jpg"
+                        alt="service"
+                        class="service-avatar col-10"/>
+                    <div
+                        class="col-10 mt-2 text-center text-uppercase main-color fw-600 font-14-sm font-18-md font-18 title-service">
+                        vay vốn ngân hàng
+                    </div>
+                </a>--%>
             </div>
         </div>
     </div>

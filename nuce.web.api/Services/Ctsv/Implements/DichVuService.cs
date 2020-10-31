@@ -12,6 +12,8 @@ using System.Transactions;
 using nuce.web.api.ViewModel;
 using System.Net;
 using nuce.web.api.ViewModel.Core;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace nuce.web.api.Services.Ctsv.Implements
 {
@@ -26,6 +28,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEmailService _emailService;
         private readonly ILogService _logService;
+        private readonly ILogger<DichVuService> _logger;
 
         public DichVuService(IXacNhanRepository _xacNhanRepository, IGioiThieuRepository _gioiThieuRepository,
             IUuDaiGiaoDucRepository _uuDaiRepository, IVayVonRepository _vayVonRepository,
@@ -236,6 +239,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             }
             catch (Exception ex)
             {
+                _logger.LogError("Tạo mới yêu cầu dịch vụ", $"{ex.ToString()} \n", JsonConvert.SerializeObject(model));
                 return new ResponseBody { Data = ex, Message = "Lỗi hệ thống" };
             }
             
