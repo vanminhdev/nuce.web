@@ -92,7 +92,7 @@ namespace Nuce.CTSV
             }
             else if (frmCmnd.Visible)
             {
-                student.DiaChiCuThe = txtCmnd.Text.Trim();
+                student.Cmt = txtCmnd.Text.Trim();
                 update = true;
             }
 
