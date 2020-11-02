@@ -29,21 +29,30 @@ namespace nuce.web.api.Controllers.Core
     public class UserController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly NuceCoreIdentityContext _identityContext;
         private readonly ILogger<UserController> _logger;
         private readonly IUserService _userService;
         private readonly IConfiguration _configuration;
 
-        public object Configuration { get; private set; }
-
-        public UserController(UserManager<ApplicationUser> userManager, NuceCoreIdentityContext identityContext,
-            ILogger<UserController> logger, IUserService _userService, IConfiguration _configuration)
+        public UserController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, NuceCoreIdentityContext identityContext,
+            ILogger<UserController> logger, IUserService userService, IConfiguration configuration)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _identityContext = identityContext;
             _logger = logger;
-            this._userService = _userService;
-            this._configuration = _configuration;
+            _userService = userService;
+            _configuration = configuration;
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("GetAllRole")]
+        public async Task<IActionResult> GetAllRole()
+        {
+            var roles = await _roleManager.Roles.ToListAsync();
+            return Ok(roles);
         }
 
         [HttpPost]
@@ -51,6 +60,10 @@ namespace nuce.web.api.Controllers.Core
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await _userService.FindByNameAsync(model.Username);
+            if(user.Status != (int)UserStatus.Active)
+            {
+                return Unauthorized(new { Message = "Tài khoản không được kích hoạt" });
+            }
             var userIsValidResult = await _userService.UserIsvalidAsync(model, user);
             bool userIsValid = (bool)userIsValidResult.Data;
 
@@ -77,58 +90,65 @@ namespace nuce.web.api.Controllers.Core
         {
             var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseBody { Status = ResponseBody.ERROR_STATUS, Message = "Tài khoản đã tồn tại!" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseBody { Status = ResponseBody.ERROR_STATUS, Message = "Tên tài khoản đã tồn tại!" });
 
-            var user = new ApplicationUser()
-            {
-                Email = model.Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Username
-            };
+            //tai khoan
+            var user = new ApplicationUser();
+            user.UserName = model.Username.Trim();
+            if(!string.IsNullOrWhiteSpace(model.Email))
+                user.Email = model.Email.Trim();
+            if (!string.IsNullOrWhiteSpace(model.PhoneNumber))
+                user.PhoneNumber = model.PhoneNumber.Trim();
+            user.SecurityStamp = Guid.NewGuid().ToString();
+            user.Status = (int)UserStatus.Active;
 
             using (var transaction = _identityContext.Database.BeginTransaction())
             {
                 try
                 {
                     //tạo tài khoản
-                    var result = await _userManager.CreateAsync(user, model.Password);
+                    var result = await _userManager.CreateAsync(user, model.Password.Trim());
                     if (!result.Succeeded)
                         return StatusCode(StatusCodes.Status500InternalServerError, new ResponseBody { Status = ResponseBody.ERROR_STATUS, Message = "Không tạo được tài khoản" });
 
                     //thêm vai trò
-                    var resultAddRole = await _userManager.AddToRoleAsync(user, model.Role);
+                    foreach(var role in model.Roles) {
+                        await _userManager.AddToRoleAsync(user, role);
+                    }
 
                     transaction.Commit();
                     _logger.LogInformation($"Create success user id: {user.Id}");
-                    return Ok(new ResponseBody { Status = ResponseBody.SUCCESS_STATUS, Message = "Tạo tài khoản thành công!" });
+                    return Ok(new { id = user.Id });
                 }
                 catch (Exception e)
                 {
                     transaction.Rollback();
-                    _logger.LogWarning(e, e.Message);
-                    return StatusCode(StatusCodes.Status500InternalServerError, new ResponseBody { Status = ResponseBody.ERROR_STATUS, Message = e.Message });
+                    _logger.LogError(e, e.Message);
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Tạo tài khoản không thành công" });
                 }
             }
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("ChangePassword")]
         [Authorize]
         public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordModel model)
         {
-            
             var user = await _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
-            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+            if (user != null)
             {
-                var result = await _userManager.ChangePasswordAsync(user, model.Password, model.NewPassword);
+                if(! await _userManager.CheckPasswordAsync(user, model.Password.Trim()))
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Mật khẩu cũ không đúng" });
+                }
+                var result = await _userManager.ChangePasswordAsync(user, model.Password.Trim(), model.NewPassword.Trim());
                 if (result.Succeeded)
                 {
-                    return Ok(new ResponseBody { Status = ResponseBody.SUCCESS_STATUS, Message = "Đổi mật khẩu thành công." });
+                    return Ok();
                 }
                 else
                 {
-                    return StatusCode(StatusCodes.Status500InternalServerError,
-                        new ResponseBody { Status = ResponseBody.ERROR_STATUS, Message = "Không đổi được mật khẩu." });
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không đổi được mật khẩu." });
                 }
             }
             return Unauthorized();
@@ -194,6 +214,7 @@ namespace nuce.web.api.Controllers.Core
             [FromBody] DataTableRequest request)
         {
             var filter = new UserFilter();
+            filter.Username = request.Columns.FirstOrDefault(c => c.Data == "username")?.Search.Value ?? null;
             var skip = request.Start;
             var pageSize = request.Length;
             var result = await _userService.GetAllAsync(filter, skip, pageSize);
@@ -220,12 +241,12 @@ namespace nuce.web.api.Controllers.Core
             }
             catch (RecordNotFoundException)
             {
-                return NotFound(new { message = "Record not found" });
+                return NotFound(new { message = "Không tìm thấy bản ghi" });
             }
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Có lỗi xảy ra" });
             }
         }
 
@@ -240,7 +261,7 @@ namespace nuce.web.api.Controllers.Core
             }
             catch (RecordNotFoundException)
             {
-                return NotFound(new { message = "Record not found" });
+                return NotFound(new { message = "Không tìm thấy bản ghi" });
             }
             catch (DbUpdateException e)
             {
@@ -266,7 +287,7 @@ namespace nuce.web.api.Controllers.Core
             }
             catch (RecordNotFoundException)
             {
-                return NotFound(new { message = "Record not found" });
+                return NotFound(new { message = "Không tìm thấy bản ghi" });
             }
             catch (DbUpdateException e)
             {
@@ -292,7 +313,7 @@ namespace nuce.web.api.Controllers.Core
             }
             catch (RecordNotFoundException)
             {
-                return NotFound(new { message = "Record not found" });
+                return NotFound(new { message = "Không tìm thấy bản ghi" });
             }
             catch (DbUpdateException e)
             {
@@ -321,7 +342,7 @@ namespace nuce.web.api.Controllers.Core
             }
             catch (RecordNotFoundException)
             {
-                return NotFound(new { message = "Record not found" });
+                return NotFound(new { message = "Không tìm thấy bản ghi" });
             }
             catch (DbUpdateException e)
             {
@@ -340,16 +361,64 @@ namespace nuce.web.api.Controllers.Core
         [Route("ResetPassword")]
         public async Task<IActionResult> ResetPassword(
             [Required(AllowEmptyStrings = false)] string id,
-            [Required(AllowEmptyStrings = false)] string newPassword)
+            [FromBody] ResetPasswordModel resetPassword)
         {
             try
             {
-                await _userService.ResetPasswordAsync(id, newPassword);
+                await _userService.ResetPasswordAsync(id, resetPassword.NewPassword);
                 return Ok();
             }
             catch (RecordNotFoundException)
             {
-                return NotFound(new { message = "Record not found" });
+                return NotFound(new { message = "Không tìm thấy bản ghi" });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+        }
+
+
+        [Authorize]
+        [HttpGet]
+        [Route("GetUserProfile")]
+        public async Task<IActionResult> GetUserProfile()
+        {
+            try
+            {
+                var username = _userService.GetClaimByKey(ClaimTypes.Name);
+                var user = await _userManager.FindByNameAsync(username);
+                if (user == null)
+                {
+                    return NotFound(new { message = "Không tìm thấy tài khoản" });
+                }
+                return Ok(new { user.Email, user.PhoneNumber });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+        }
+
+        [Authorize]
+        [HttpPut]
+        [Route("UpdateUserProfile")]
+        public async Task<IActionResult> UpdateUserProfile([FromBody] UserProfile profile)
+        {
+            try
+            {
+                var username = _userService.GetClaimByKey(ClaimTypes.Name);
+                var user = await _userManager.FindByNameAsync(username);
+                if (user == null)
+                {
+                    return NotFound(new { message = "Không tìm thấy tài khoản" });
+                }
+                user.Email = profile.Email;
+                user.PhoneNumber = profile.PhoneNumber;
+                await _userManager.UpdateAsync(user);
+                return Ok();
             }
             catch (Exception e)
             {

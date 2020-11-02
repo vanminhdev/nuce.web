@@ -71,9 +71,13 @@ namespace nuce.web.manager.Pages.Admin.Core
             switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:
-                    return Redirect("/admin/survey/index");
+                    Response.Cookies.Append("username", Input.Username);
+                    Response.Cookies.Append("fullname", Input.Username);
+                    return Redirect("/admin/index");
                 case HttpStatusCode.Unauthorized:
-                    ViewData["LoginMessage"] = "Tài khoản hoặc mật khẩu không chính xác";
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var message = (JsonSerializer.Deserialize<ResponseMessage>(jsonString))?.message ?? "";
+                    ViewData["LoginMessage"] = message;
                     break;
                 default:
                     break;

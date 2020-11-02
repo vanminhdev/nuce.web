@@ -42,7 +42,7 @@ namespace nuce.web.api.Controllers.Survey
         {
             var question = await _asEduSurveyCauHoiService.GetById(id);
             if (question == null)
-                return NotFound(new { message = "Record not found" });
+                return NotFound(new { message = "Không tìm thấy bản ghi" });
             return Ok(question);
         }
 
@@ -88,7 +88,7 @@ namespace nuce.web.api.Controllers.Survey
             }
             catch (RecordNotFoundException)
             {
-                return NotFound(new {message = "Record not found"});
+                return NotFound(new {message = "Không tìm thấy bản ghi"});
             }
             catch (Exception e)
             {
@@ -107,7 +107,7 @@ namespace nuce.web.api.Controllers.Survey
             }
             catch (RecordNotFoundException)
             {
-                return NotFound(new { message = "Record not found" });
+                return NotFound(new { message = "Không tìm thấy bản ghi" });
             }
             catch (DbUpdateException e)
             {

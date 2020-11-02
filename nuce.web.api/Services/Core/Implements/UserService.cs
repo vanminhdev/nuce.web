@@ -239,9 +239,9 @@ namespace nuce.web.api.Services.Core.Implements
             {
                 throw new RecordNotFoundException();
             }
-            userUpdate.UserName = user.UserName;
-            userUpdate.Email = user.Email;
-            userUpdate.PhoneNumber = user.PhoneNumber;
+            //userUpdate.UserName = user.UserName.Trim();
+            userUpdate.Email = user.Email.Trim();
+            userUpdate.PhoneNumber = user.PhoneNumber.Trim();
             //userUpdate.Status = (int)user.Status;
             var oldRoles = (await _userManager.GetRolesAsync(userUpdate)).ToList();
             var newRoles = user.Roles;
@@ -284,7 +284,7 @@ namespace nuce.web.api.Services.Core.Implements
                 throw new RecordNotFoundException();
             }
             var token = await _userManager.GeneratePasswordResetTokenAsync(userReset);
-            await _userManager.ResetPasswordAsync(userReset, token, newPassword);
+            await _userManager.ResetPasswordAsync(userReset, token, newPassword.Trim());
         }
     }
 }
