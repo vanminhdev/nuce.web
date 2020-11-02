@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -18,6 +19,7 @@ using nuce.web.api.HandleException;
 using nuce.web.api.Models.Core;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.ViewModel;
+using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
 
 namespace nuce.web.api.Controllers.Core
@@ -189,19 +191,26 @@ namespace nuce.web.api.Controllers.Core
         [HttpPost]
         [Route("GetAllUser")]
         public async Task<IActionResult> GetAllUser(
-            UserFilter filter,
-            [Range(1, int.MaxValue)]
-            int pageNumber = 1,
-            [Range(1, int.MaxValue)]
-            int pageSize = 20)
+            [FromBody] DataTableRequest request)
         {
-            var result = await _userService.GetAllAsync(filter, pageNumber, pageSize);
-            return Ok(result);
+            var filter = new UserFilter();
+            var skip = request.Start;
+            var pageSize = request.Length;
+            var result = await _userService.GetAllAsync(filter, skip, pageSize);
+            return Ok(
+                new DataTableResponse<UserModel>
+                {
+                    Draw = request.Draw++,
+                    RecordsTotal = result.RecordsTotal,
+                    RecordsFiltered = result.RecordsFiltered,
+                    Data = result.Data
+                }
+            );
         }
 
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        [Route("GetById")]
+        [Route("GetUserById")]
         public async Task<IActionResult> GetUserById([Required(AllowEmptyStrings = false)] string id)
         {
             try

@@ -1,52 +1,76 @@
-﻿@page
+﻿@page "/admin/login"
 @model nuce.web.manager.Pages.Admin.Core.LoginModel
 @{
+    Layout = "_LayoutEmpty";
     ViewData["Title"] = "Đăng nhập";
 }
 
-<div class="col-md-6 col-xs-12">
-    <form class="form_dk" method="post">
-        <div class="title">
-            ĐĂNG NHẬP
-        </div>
-        <div class="text col-xs-12 col-md-4" style="text-align: left;">
-            Tên đăng nhập
-        </div>
-        <div class="input col-xs-12 col-md-8" style="text-align: center;">
-            <input asp-for="Input.Username" class="" />
-            <span asp-validation-for="Input.Username" class="text-danger" style="display: block;"></span>
-        </div>
-        <div class="clearfix"></div>
-        <div class="text col-xs-12 col-md-4" style="text-align: left;">
-            Mật khẩu
-        </div>
-        <div class="input col-xs-12 col-md-8" style="text-align: center;">
-            <input type="password" asp-for="Input.Password" class="" />
-            <span asp-validation-for="Input.Password" class="text-danger" style="display: block;"></span>
-        </div>
-        <div>
-            @if (ViewData["LoginMessage"] != null)
-            {
-                <span class="text-danger">@ViewData["LoginMessage"]</span>
-            }
-        </div>
-        <div class="clearfix"></div>
-        <div class="submit col-xs-12 col-md-12" style="text-align: center; padding-bottom: 9px;">
-            <input type="submit" value="Đăng nhập" />
-        </div>
-        <div class="clearfix"></div>
-    </form>
-</div>
-<div class="col-md-6 col-xs-12">
-    <div class="form_dk">
-        <div class="title">
-            CHÚ Ý
-        </div>
-        <div class="text col-xs-12 col-md-12" style="text-align: left; padding-top: 1px; padding-right: 1px;">
-            * Hệ thống quản trị<br/>
-            <%--<i style="color:red;">Nếu anh/chị đã đổi mật khẩu sau ngày 9/6/2018 thì vui lòng đăng nhập với mật khẩu trước khi thay đổi.</i><br/>--%>
-            * Khi có thắc mắc, vui lòng liên hệ Phòng KTĐB qua hotline 0912.987.567 hoặc qua email:ks.ktdb@nuce.edu.vn
+<section id="body" class="login-form">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="main-name font-20-sm font-32-md font-42 text-light mb-2">
+                    hệ thống quản trị
+                </div>
+            </div>
+            <form method="post" class="col-12 col-md-6 pb-2">
+                <div class="form-group mb-1">
+                    <label for="username" class="w-100 font-13-sm text-light">Tên đăng nhập</label>
+                    <input asp-for="Input.Username" class="form-control custom-input" placeholder="Tên đăng nhập" />
+                    <span asp-validation-for="Input.Username" class="form-text" style="color: #F70000; height: 24px"></span>
+                </div>
+                <div class="form-group mb-2">
+                    <label for="password" class="w-100 font-13-sm text-light">Mật khẩu</label>
+                    <input type="password" asp-for="Input.Password" class="form-control custom-input" placeholder="Mật khẩu" />
+                    <span asp-validation-for="Input.Password" class="form-text" style="color: #F70000; height: 24px;"></span>
+                </div>
+                <button type="submit" class="btn w-100 text-light font-14-sm login-btn">
+                    Đăng nhập
+                </button>
+            </form>
         </div>
     </div>
-</div>
-<div class="clearfix"></div>
+</section>
+
+<!--<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-xs-12">
+            <form method="post">
+                <div class="title">
+                    ĐĂNG NHẬP
+                </div>
+                <div class="text col-xs-12 col-md-4" style="text-align: left;">
+                    Tên đăng nhập
+                </div>
+                <div class="input col-xs-12 col-md-8" style="text-align: center;">
+                    <input asp-for="Input.Username" class="" />
+                    <span asp-validation-for="Input.Username" class="text-danger" style="display: block;"></span>
+                </div>
+                <div class="text col-xs-12 col-md-4" style="text-align: left;">
+                    Mật khẩu
+                </div>
+                <div class="input col-xs-12 col-md-8" style="text-align: center;">
+                    <input type="password" asp-for="Input.Password" class="" />
+                    <span asp-validation-for="Input.Password" class="text-danger" style="display: block;"></span>
+                </div>
+                
+                <div class="clearfix"></div>
+                <div class="submit col-xs-12 col-md-12" style="text-align: center; padding-bottom: 9px;">
+                    <input type="submit" value="Đăng nhập" />
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6 col-xs-12">
+            <div class="form_dk">
+                <div class="title">
+                    CHÚ Ý
+                </div>
+                <div class="text col-xs-12 col-md-12" style="text-align: left; padding-top: 1px; padding-right: 1px;">
+                    * Hệ thống quản trị<br />-->
+                    @*<i style="color:red;">Nếu anh/chị đã đổi mật khẩu sau ngày 9/6/2018 thì vui lòng đăng nhập với mật khẩu trước khi thay đổi.</i><br/>*@
+                    <!--* Khi có thắc mắc, vui lòng liên hệ Phòng KTĐB qua hotline 0912.987.567 hoặc qua email:ks.ktdb@nuce.edu.vn
+                </div>
+            </div>
+        </div>
+    </div>
+</div>-->

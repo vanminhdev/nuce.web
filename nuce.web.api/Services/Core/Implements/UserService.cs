@@ -148,25 +148,27 @@ namespace nuce.web.api.Services.Core.Implements
             return _studentRepository.FindByCode(studentCode);
         }
 
-        public async Task<UserPaginationModel> GetAllAsync(UserFilter filter, int pageNumber = 1, int pageSize = 20)
+        public async Task<UserPaginationModel> GetAllAsync(UserFilter filter, int skip = 0, int pageSize = 20)
         {
             _identityContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
             var query = _identityContext.Users.Where(u => u.Status != (int)UserStatus.Deleted);
+            var recordsTotal = query.Count();
 
-            if(!string.IsNullOrWhiteSpace(filter.Username))
+            if (!string.IsNullOrWhiteSpace(filter.Username))
             {
                 query = query.Where(u => u.UserName.Contains(filter.Username));
             }
+            var recordsFiltered = query.Count();
 
             var querySkip = query
                 .OrderBy(u => u.UserName)
-                .Skip((pageNumber - 1) * pageSize).Take(pageSize);
-            var totalItem = query.Count();
-            var list = await querySkip
+                .Skip(skip).Take(pageSize);
+
+            var data = await querySkip
                 .Select(u => new UserModel {
                     Id = u.Id,
-                    UserName = u.UserName,
+                    Username = u.UserName,
                     Email = u.Email,
                     PhoneNumber = u.PhoneNumber,
                     Status = u.Status
@@ -174,16 +176,15 @@ namespace nuce.web.api.Services.Core.Implements
                 .ToListAsync();
 
             return new UserPaginationModel {
-                PayLoad = list,
-                PageNumber = pageNumber,
-                PageSize = pageSize,
-                TotalItems = totalItem
+                RecordsTotal = recordsTotal,
+                RecordsFiltered = recordsFiltered,
+                Data = data
             };
         }
         public async Task<UserDetailModel> GetByIdAsync(string id)
         {
             _identityContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            var user = await _identityContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var user = await _identityContext.Users.FirstOrDefaultAsync(u => u.Id == id && u.Status != (int)UserStatus.Deleted);
             if(user == null)
             {
                 throw new RecordNotFoundException();
@@ -194,7 +195,7 @@ namespace nuce.web.api.Services.Core.Implements
             return new UserDetailModel
             {
                 Id = user.Id,
-                UserName = user.UserName,
+                Username = user.UserName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
                 Status = user.Status,
@@ -203,7 +204,7 @@ namespace nuce.web.api.Services.Core.Implements
         }
         public async Task DeactiveUserAsync(string id)
         {
-            var user =  await _identityContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var user =  await _identityContext.Users.FirstOrDefaultAsync(u => u.Id == id && u.Status != (int)UserStatus.Deleted);
             if (user == null)
             {
                 throw new RecordNotFoundException();
@@ -213,7 +214,7 @@ namespace nuce.web.api.Services.Core.Implements
         }
         public async Task ActiveUserAsync(string id)
         {
-            var user = await _identityContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var user = await _identityContext.Users.FirstOrDefaultAsync(u => u.Id == id && u.Status != (int)UserStatus.Deleted);
             if (user == null)
             {
                 throw new RecordNotFoundException();
@@ -223,7 +224,7 @@ namespace nuce.web.api.Services.Core.Implements
         }
         public async Task DeleteUserAsync(string id)
         {
-            var user = await _identityContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var user = await _identityContext.Users.FirstOrDefaultAsync(u => u.Id == id && u.Status != (int)UserStatus.Deleted);
             if (user == null)
             {
                 throw new RecordNotFoundException();
@@ -241,7 +242,7 @@ namespace nuce.web.api.Services.Core.Implements
             userUpdate.UserName = user.UserName;
             userUpdate.Email = user.Email;
             userUpdate.PhoneNumber = user.PhoneNumber;
-            userUpdate.Status = (int)user.Status;
+            //userUpdate.Status = (int)user.Status;
             var oldRoles = (await _userManager.GetRolesAsync(userUpdate)).ToList();
             var newRoles = user.Roles;
 

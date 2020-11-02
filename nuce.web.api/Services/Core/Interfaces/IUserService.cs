@@ -24,7 +24,7 @@ namespace nuce.web.api.Services.Core.Interfaces
         public string GetClaimByKey(string key);
         public long? GetCurrentStudentID();
         public AsAcademyStudent GetCurrentStudent();
-        public Task<UserPaginationModel> GetAllAsync(UserFilter filter, int pageNumber = 1, int pageSize = 20);
+        public Task<UserPaginationModel> GetAllAsync(UserFilter filter, int skip = 0, int pageSize = 20);
         public Task<UserDetailModel> GetByIdAsync(string id);
         public Task ActiveUserAsync(string id);
         public Task DeactiveUserAsync(string id);

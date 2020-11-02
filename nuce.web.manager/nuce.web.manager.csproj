@@ -16,20 +16,4 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.9" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Pages\Admin\Survey\CreateAnswer - Copy - Copy.cshtml.cs">
-      <DependentUpon>CreateAnswer - Copy.cshtml.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Pages\Admin\Survey\CreateAnswer - Copy.cshtml.cs">
-      <DependentUpon>CreateAnswer.cshtml.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Pages\Admin\Survey\CreateQuestion - Copy.cshtml.cs">
-      <DependentUpon>CreateQuestion.cshtml.cs</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\js\" />
-  </ItemGroup>
-
 </Project>
