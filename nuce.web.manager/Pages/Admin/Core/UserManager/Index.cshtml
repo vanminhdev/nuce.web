@@ -1,0 +1,107 @@
+﻿@page "/admin/usermanager/index"
+@model nuce.web.manager.Pages.Admin.Core.UserManager.IndexModel
+@{
+    ViewData["Title"] = "Quản lý tài khoản";
+}
+
+@section Style {
+    <link rel="stylesheet" href="~/css/dataTables.bootstrap4.min.css" />
+}
+
+<div class="container">
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <form class="form-inline">
+                <div class="form-group">
+                    <label class="m-2 sr-only">Tên tài khoản</label>
+                    <input class="form-control form-control-sm m-2" id="Username" type="text" placeholder="Tên tài khoản" />
+                </div>
+                <button id="btn-search" class="btn btn-secondary btn-sm m-2">Tìm kiếm</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table id="example" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center">
+                            Tên tài khoản
+                        </th>
+                        <th class="text-center">
+                            Email
+                        </th>
+                        <th class="text-center">
+                            Số điện thoại
+                        </th>
+                        <th class="text-center" width="90">
+                            Trạng thái
+                        </th>
+                        <th class="text-center"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/jquery.dataTables.min.js"></script>
+    <script src="~/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/js/dataTables.config.js"></script>
+    <script>
+        var userTable = $('#example').DataTable({
+            processing: true,
+            serverSide: true,
+            searching: false,
+            ordering: false,
+            lengthChange: false,
+            stateSave: true,
+            pageLength: 1,
+            language: dataTableConfig.language,
+            ajax: {
+                url: API_URL + '/api/User/GetAllUser',
+                dataType: 'json',
+                contentType: 'application/json',
+                type: "POST",
+                data: function (d) {
+                    console.log(d);
+                    return JSON.stringify(d);
+                }
+            },
+            columns: [
+                {
+                    data: "username"
+                },
+                {
+                    data: "email"
+                },
+                {
+                    data: "phoneNumber"
+                },
+                {
+                    data: "status",
+                    className: "text-center",
+                    mRender: function (data, type, row) {
+                        switch (data) {
+                            case 1:
+                                return '<span class="badge badge-pill badge-success">Mở khoá</span>';
+                            case 2:
+                                return '<span class="badge badge-pill badge-secondary">Bị khoá</span>';
+                        }
+                    }
+                },
+                {
+                    data: null,
+                    mRender: function (data, type, row) {
+                        return `<a href="/admin/usermanager/detail?userId=${data.id}" >Chi tiết</a>`;
+                    }
+                }
+            ]
+        });
+        $("#btn-search").click(() => {
+            userTable.search($("#Username").val()).draw();
+        });
+    </script>
+}

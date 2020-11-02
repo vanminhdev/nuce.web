@@ -30,8 +30,12 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <Folder Include="NewFolder\" />
     <Folder Include="Repositories\Core\" />
     <Folder Include="Repositories\Survey\" />
+    <Folder Include="Resources\Core\" />
+    <Folder Include="Resources\Ctsv\" />
+    <Folder Include="Resources\Survey\" />
   </ItemGroup>
 
   <ItemGroup>

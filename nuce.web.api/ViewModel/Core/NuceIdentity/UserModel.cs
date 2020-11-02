@@ -28,7 +28,7 @@ namespace nuce.web.api.ViewModel.Core.NuceIdentity
 
     public class UserModel {
         public string Id { get; set; }
-        public string UserName { get; set; }
+        public string Username { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public int Status { get; set; }
@@ -39,7 +39,7 @@ namespace nuce.web.api.ViewModel.Core.NuceIdentity
         public List<string> Roles { get; set; }
     }
 
-    public class UserPaginationModel : Pagination<UserModel>
+    public class UserPaginationModel : PaginationModel<UserModel>
     {
     }
 
@@ -59,9 +59,9 @@ namespace nuce.web.api.ViewModel.Core.NuceIdentity
         [EmailAddress]
         public string Email { get; set; }
 
-        [Required]
-        [EnumDataType(typeof(UserStatus))]
-        public int? Status { get; set; }
+        //[Required]
+        //[EnumDataType(typeof(UserStatus))]
+        //public int? Status { get; set; }
 
         [Required]
         [Roles]

@@ -1,50 +1,239 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.Extensions.Options;
+@using nuce.web.manager.Configurations;
+@inject IOptions<RazorPageConfiguration> RazorConfiguration
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - nuce.web.client</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
+    <title>Đại Học Xây Dựng | @ViewData["Title"]</title>
+    <!-- BootStrap -->
+    <link rel="stylesheet" href="~/css/bootstrap.min.css" />
+
+    <!-- Custom -->
+    <link rel="stylesheet" href="~/css/util.css" />
+    <link rel="stylesheet" href="~/css/style.css" />
+    <link rel="stylesheet" href="~/css/responsive.css" />
+    @RenderSection("Style", required: false)
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">nuce.web.client</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
-                    </ul>
+    <div class="full-height body-wrp">
+        <!-- header section -->
+        <section id="header">
+            <div class="container-fluid header-wrp">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-12 col-md-7">
+                        <div class="row">
+                            <div class="col-2">
+                                <img class="logo"
+                                     src="~/images/logo.png"
+                                     alt="logo"
+                                     srcset="" />
+                            </div>
+                            <div class="col-10 col-md-10 mb-3">
+                                <div class="col-12 text-left main-title main-color font-18-sm font-32 font-28-md">
+                                    trường đại học xây dựng
+                                </div>
+                                <div class="col-12 main-color sub-title font-14-sm font-25 font-22-md">
+                                    National University of Civil Engeering
+                                </div>
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-2 pr-0"><hr class="line-label" /></div>
+                                        <div class="col-10 small-title font-9-sm font-15">
+                                            Cơ sở giáo dục đại học đạt chuẩn kiểm định quốc tế
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-5">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <img src="~/images/icons/hotline.png"
+                                             alt="hotline icon"
+                                             class="hotline-icon" />
+                                    </div>
+                                    <div class="col-9">
+                                        <div class="row">
+                                            <div class="col-12 main-color icon-title font-14-sm">
+                                                Hotline
+                                            </div>
+                                            <div class="col-12 icon-sub-title">0869071382</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-7">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <img src="~/images/icons/email.png"
+                                             alt="email icon"
+                                             class="email-icon" />
+                                    </div>
+                                    <div class="col-9">
+                                        <div class="row">
+                                            <div class="col-12 main-color icon-title font-14-sm">
+                                                Email
+                                            </div>
+                                            <div class="col-10 icon-sub-title">
+                                                tuyensinhdh@nuce.edu.vn
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+        </section>
+        <!-- end header section -->
+        <!-- menu section -->
+        <section id="menu">
+            <div class="container-fluid menu-wrp mt-2">
+                <hr class="menu-line" />
+                <div class="row justify-content-center">
+                    <a href="./qlydichvu.html"
+                       class="text-decoration-none col-6 col-xl-4 menu-item text-center font-18 font-10-xsm">
+                        quản lý tài khoản
+                    </a>
+                    <a href="./qlythongtinsinhvien.html"
+                       class="text-decoration-none col-6 col-xl-4 menu-item text-center font-18 font-10-xsm">
+                        Khảo thí
+                    </a>
+                    <a href="./qlytintuc.html"
+                       class="text-decoration-none col-6 col-xl-4 menu-item text-center font-18 font-10-xsm">
+                        quản lý tin tức
+                    </a>
+                </div>
+            </div>
+        </section>
+        <!-- end menu section -->
+        <section id="body">
+            <div class="container-fluid position-relative">
+                <div class="row justify-content-center banner-wrp update-profile-banner mt-3 ml-0 mr-0">
+                    <div class="col-12 text-center text-light text-uppercase banner-title font-18-sm font-42 font-32-md">
+                        hệ thống thông tin nhân viên
+                    </div>
+                    <div class="col-8 col-md-3"><hr class="banner-line" /></div>
+                    <div class="col-12 text-center text-light text-uppercase banner-title font-18-sm font-40 font-30-md">
+                        cập nhật hồ sơ
+                    </div>
+                </div>
+                <img src="~/images/person.png"
+                     alt=""
+                     class="user-avatar position-absolute" />
+            </div>
+            <!-- display info user for mobile -->
+            <div class="row justify-content-end user-wrp align-items-end display-mobile">
+                <div class="col-7 mt-3">
+                    <div class="row">
+                        <div class="col-12 mb-2">
+                            <div class="row">
+                                <div class="main-color text-uppercase fw-600 font-16-sm">
+                                    trần hoàng nam
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-5 font-14-sm text-left pl-0">
+                                    ID: 125998
+                                </div>
+                                <div class="col-3">|</div>
+                                <a href="/Admin/core/Logout" class="row cursor-pointer">
+                                    <div class="main-color font-14-sm">Log out</div>
+                                    <img src="~/images/icons/logout.png"
+                                         alt="logout-icon"
+                                         class="logout-icon ml-3" />
+                                </a>
+                            </div>
+                        </div>
+                        <button type="button"
+                                class="col-12 btn w-100 text-light font-14-sm login-btn"
+                                disabled>
+                            Cập nhật hồ sơ
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- display user for large screen -->
+            <div class="row user-wrp align-items-start justify-content-between display-lg">
+                <div class="col-7 col-md-4 col-lg-6 col-xl-4 mt-3">
+                    <div class="row">
+                        <div class="col-12 mb-2">
+                            <div class="row align-items-center">
+                                <div class="main-color text-uppercase fw-600 font-16-sm">
+                                    trần hoàng nam
+                                </div>
+                                <button type="button"
+                                        class="btn text-light font-14-sm login-btn ml-3"
+                                        onclick="location.href='./capnhathoso-qlytaikhoan.html';">
+                                    Cập nhật hồ sơ
+                                </button>
+                            </div>
+                            <div class="row mt-2 align-items-center">
+                                <div class="col-5 col-md-5 col-xl-4 font-14-sm text-left pl-0">
+                                    ID: 125998
+                                </div>
+                                <div class="col-2 pl-0 pr-0">|</div>
+                                <a href="/Admin/core/Logout" class="row cursor-pointer">
+                                    <div href="/Admin/core/Logout" class="main-color font-14-sm">Log out</div>
+                                    <img src="~/images/icons/logout.png"
+                                         alt="logout-icon"
+                                         class="logout-icon ml-3" />
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-4 pb-4">
+                @RenderBody()
+            </div>
+        </section>
+
+        <!-- footer section -->
+        <section id="footer">
+            <div class="container full-height">
+                <div class="full-height row text-center main-color align-items-end">
+                    <div class="col-12 mb-2">
+                        Bản quyền  &copy;@(DateTime.Now.Year) thuộc Đại học Xây dựng
+                        <br />
+                        Phát triển bởi: Khoa Công Nghê Thông Tin
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- end footer section -->
     </div>
+    <script src="~/js/jquery.min.js"></script>
+    <script src="~/js/popper.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script>
+        $.ajaxSetup({
+            xhrFields: {
+                withCredentials: true
+            },
+            crossDomain: true
+        });
+        var API_URL = '@RazorConfiguration.Value.API_URL';
+    </script>
+    <script>
+            //(function (i, s, o, g, r, a, m) {
+            //    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            //        (i[r].q = i[r].q || []).push(arguments)
+            //    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+            //        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+            //})(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2020 - nuce.web.client - <a asp-area="" asp-page="/Privacy">Privacy</a>
-        </div>
-    </footer>
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-
+            //ga('create', 'UA-96251558-1', 'auto');
+            //ga('send', 'pageview');
+    </script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>
