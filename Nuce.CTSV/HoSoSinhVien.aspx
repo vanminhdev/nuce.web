@@ -203,39 +203,39 @@
     </div>
 
     <div class="font-14-sm font-18 fw-700 mt-4 mb-4">
-        Quá trình học tập (Ghi rõ thời gian / trường học PTTH )
+        Quá trình học tập (Ghi rõ thời gian / trường học PTTH)
     </div>
     <div class="row font-13-sm font-16">
-    <div class="col-6 col-md-3">
-        <div class="row" id="qtht_thoigian" runat="server">
-            <div class="col-12 fw-700">Thời gian</div>
-            <div class="col-12">t1/2014 đến t3/2016</div>
-            <div class="col-12">t4/2016 đến t10/2020</div>
+        <div class="col-6 col-md-3">
+            <div class="row" id="qtht_thoigian" runat="server">
+                <div class="col-12 fw-700">Thời gian</div>
+                <div class="col-12">t1/2014 đến t3/2016</div>
+                <div class="col-12">t4/2016 đến t10/2020</div>
+            </div>
         </div>
-    </div>
-    <div class="col-6 col-md-3">
-        <div class="row" id="qtht_truong" runat="server">
-            <div class="col-12 fw-700">Trường</div>
-            <div class="col-12">Giao Thủy</div>
-            <div class="col-12">Thành phố Nam Định</div>
+        <div class="col-6 col-md-3">
+            <div class="row" id="qtht_truong" runat="server">
+                <div class="col-12 fw-700">Trường</div>
+                <div class="col-12">Giao Thủy</div>
+                <div class="col-12">Thành phố Nam Định</div>
+            </div>
         </div>
-    </div>
-    <div class="col-6 mt-2 col-md-3">
-        <div class="row">
-            <div class="col-12 fw-700">Tên hoạt động</div>
-            <div class="col-12">Đã từng làm cán bộ</div>
-            <div class="col-12">Đã từng làm cán bộ đoàn</div>
-            <div class="col-12">Đã tham gia đội tuyển thi HSG</div>
+        <div class="col-6 col-md-3">
+            <div class="row">
+                <div class="col-12 fw-700">Tên hoạt động</div>
+                <div class="col-12">Đã từng làm cán bộ</div>
+                <div class="col-12">Đã từng làm cán bộ đoàn</div>
+                <div class="col-12">Đã tham gia đội tuyển thi HSG</div>
+            </div>
         </div>
-    </div>
-    <div class="col-6 mt-2 col-md-3">
-        <div class="row">
-            <div class="col-12 fw-700">Tham gia (Có / Không)</div>
-            <div id="datunglamcanbolop" runat="server" class="col-12">Có</div>
-            <div id="datunglamcanbodoan" runat="server" class="col-12">Có</div>
-            <div id="dathamgiadoituyenthihsg" runat="server" class="col-12">Có</div>
+        <div class="col-6 col-md-3">
+            <div class="row">
+                <div class="col-12 fw-700">Tham gia (Có / Không)</div>
+                <div id="datunglamcanbolop" runat="server" class="col-12">Có</div>
+                <div id="datunglamcanbodoan" runat="server" class="col-12">Có</div>
+                <div id="dathamgiadoituyenthihsg" runat="server" class="col-12">Có</div>
+            </div>
         </div>
-    </div>
     </div>
 
     <div class="row font-13-sm font-16 mb-3 display-lg mt-2">

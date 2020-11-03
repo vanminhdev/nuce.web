@@ -5,6 +5,7 @@ using System.Net.Http;
 using Microsoft.ApplicationBlocks.Data;
 using Newtonsoft.Json;
 using nuce.web.data;
+using Nuce.CTSV.ApiModels;
 
 namespace Nuce.CTSV
 {
@@ -22,9 +23,30 @@ namespace Nuce.CTSV
                     student = JsonConvert.DeserializeObject<ApiModels.StudentModel>(strResponse);
                     ViewState["student"] = student;
 
-                    frmPhuong.Visible = string.IsNullOrEmpty(student.HkttPhuong?.Trim());
-                    frmQuan.Visible = string.IsNullOrEmpty(student.HkttQuan?.Trim());
-                    frmTinh.Visible = string.IsNullOrEmpty(student.HkttTinh?.Trim());
+                    string thongBao = "";
+
+                    if (string.IsNullOrEmpty(student.HkttTinh?.Trim()))
+                    {
+                        thongBao += " tỉnh/thành phố";
+                    }
+
+                    if (string.IsNullOrEmpty(student.HkttQuan?.Trim()))
+                    {
+                        thongBao += $"{(thongBao != "" ? "," : "")} quận/huyện";
+                    }
+
+                    if (string.IsNullOrEmpty(student.HkttPhuong?.Trim()))
+                    {
+                        thongBao += $"{(thongBao != "" ? "," : "")} phường/xã";
+                    }
+
+                    if (!string.IsNullOrEmpty(thongBao))
+                    {
+                        divBtnContainer.Visible = false;
+                        divThongBao.InnerHtml = $"Yêu cầu cập nhật<a href=\"/capnhathoso.aspx\">{thongBao}</a>";
+                        return;
+                    }
+
                     frmCmnd.Visible = string.IsNullOrEmpty(student.Cmt?.Trim());
                     frmNgayCap.Visible = student.CmtNgayCap == null;
                     frmNoiCap.Visible = string.IsNullOrEmpty(student.CmtNoiCap);
@@ -39,51 +61,22 @@ namespace Nuce.CTSV
             //    divThongBao.InnerHtml = "Bạn nhập sai mã Captcha";
             //    return;
             //}
-            //string EncodedResponse = Request.Form["g-Recaptcha-Response"];
-            //bool IsCaptchaValid = (ReCaptchaClass.Validate(EncodedResponse) == "true" ? true : false);
+            if (!Development.Enabled)
+            {
+                string EncodedResponse = Request.Form["g-Recaptcha-Response"];
+                bool IsCaptchaValid = (ReCaptchaClass.Validate(EncodedResponse) == "true" ? true : false);
 
-            //if (!IsCaptchaValid)
-            //{
-            //    divThongBao.InnerHtml = "Bạn chưa xác thực Captcha";
-            //    return;
-            //}
+                if (!IsCaptchaValid)
+                {
+                    divThongBao.InnerHtml = "Bạn chưa xác thực Captcha";
+                    return;
+                }
+            }
+            
 
             student = (ApiModels.StudentModel)ViewState["student"];
 
             bool update = false;
-
-            if (frmPhuong.Visible && string.IsNullOrEmpty(txtPhuong.Text.Trim()))
-            {
-                divThongBao.InnerHtml = "Không được để trống phường/xã";
-                return;
-            }
-            else if (frmPhuong.Visible)
-            {
-                student.HkttPhuong = txtPhuong.Text.Trim();
-                update = true;
-            }
-
-            if (frmQuan.Visible && string.IsNullOrEmpty(txtQuan.Text.Trim()))
-            {
-                divThongBao.InnerHtml = "Không được để trống quận/huyện";
-                return;
-            }
-            else if (frmQuan.Visible)
-            {
-                student.HkttQuan = txtQuan.Text.Trim();
-                update = true;
-            }
-
-            if (frmTinh.Visible && string.IsNullOrEmpty(txtTinh.Text.Trim()))
-            {
-                divThongBao.InnerHtml = "Không được để trống tỉnh/thành phố";
-                return;
-            }
-            else if (frmTinh.Visible)
-            {
-                student.HkttTinh = txtTinh.Text.Trim();
-                update = true;
-            }
 
             if (frmCmnd.Visible && string.IsNullOrEmpty(txtCmnd.Text.Trim()))
             {
@@ -92,7 +85,7 @@ namespace Nuce.CTSV
             }
             else if (frmCmnd.Visible)
             {
-                student.DiaChiCuThe = txtCmnd.Text.Trim();
+                student.Cmt = txtCmnd.Text.Trim();
                 update = true;
             }
 
@@ -112,7 +105,7 @@ namespace Nuce.CTSV
                 divThongBao.InnerHtml = "Không được để trống ngày cấp chứng minh nhân dân";
                 return;
             }
-            else if (frmCmnd.Visible)
+            else if (frmNgayCap.Visible)
             {
                 student.CmtNgayCap = DateTime.Parse(txtNgayCap.Text.Trim());
                 update = true;
@@ -154,15 +147,18 @@ namespace Nuce.CTSV
                 divThongBaoCapNhat.InnerHtml = "Thêm mới dịch vụ thành công";
                 //Response.Redirect("/dichvu/GioiThieu");
                 spScript.InnerHtml = string.Format("<script>$('#myModalThongBao').modal();</script>");
+                return;
             }
-            else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+            try
             {
-                divThongBao.InnerText = "Trùng yêu cầu dịch vụ";
+                var error = await CustomizeHttp.DeserializeAsync<ResponseBody>(response.Content);
+                divThongBao.InnerText = $"{error.Message}";
             }
-            else
+            catch (Exception)
             {
                 divThongBao.InnerText = "Thêm mới dịch vụ thất bại - lỗi hệ thống";
                 divThongBaoCapNhat.InnerHtml = "Cập nhật thất bại - lỗi hệ thống";
+                return;
             }
         }
     }

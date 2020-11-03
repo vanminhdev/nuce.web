@@ -117,7 +117,7 @@ namespace nuce.web.api.Services.Core.Implements
             {
                 result = user != null && await _userManager.CheckPasswordAsync(user, model.Password);
             }
-            return new ResponseBody { Data = result, Message = "Tên đăng nhập hoặc mật khẩu không chính xác" };
+            return new ResponseBody { Data = result, Message = "" };
         }
         public string GetCurrentStudentCode()
         {
@@ -146,6 +146,14 @@ namespace nuce.web.api.Services.Core.Implements
         {
             string studentCode = GetCurrentStudentCode();
             return _studentRepository.FindByCode(studentCode);
+        }
+        public string GetUserName()
+        {
+            return GetClaimByKey(ClaimTypes.Name);
+        }
+        public AsAcademyStudent GetStudentByEmail(string email)
+        {
+            return _studentRepository.FindByEmailNhaTruong(email);
         }
 
         public async Task<UserPaginationModel> GetAllAsync(UserFilter filter, int skip = 0, int pageSize = 20)

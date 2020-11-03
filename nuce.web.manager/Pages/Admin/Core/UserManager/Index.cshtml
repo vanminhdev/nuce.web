@@ -53,57 +53,49 @@
     <script src="~/js/jquery.dataTables.min.js"></script>
     <script src="~/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/js/dataTables.config.js"></script>
+    <script src="~/js/common/request.js"></script>
     <script>
-        var userTable = $('#user-datatable').DataTable({
-            processing: true,
-            serverSide: true,
-            ordering: false,
-            lengthChange: false,
-            stateSave: true,
-            language: dataTableConfig.language,
-            ajax: {
-                url: API_URL + '/api/User/GetAllUser',
-                dataType: 'json',
-                contentType: 'application/json',
-                type: "POST",
-                data: function (d) {
-                    console.log(d);
-                    return JSON.stringify(d);
+        var api = '/api/User/GetAllUser';
+        var tableId = 'user-datatable';
+        var method = methodDictionary.POST;
+        var columns = [
+            {
+                data: "username"
+            },
+            {
+                data: "email"
+            },
+            {
+                data: "phoneNumber"
+            },
+            {
+                data: "status",
+                className: "text-center",
+                mRender: function (data, type, row) {
+                    switch (data) {
+                        case 1:
+                            return '<span class="badge badge-pill badge-success">Mở khoá</span>';
+                        case 2:
+                            return '<span class="badge badge-pill badge-secondary">Bị khoá</span>';
+                    }
                 }
             },
-            columns: [
-                {
-                    data: "username"
-                },
-                {
-                    data: "email"
-                },
-                {
-                    data: "phoneNumber"
-                },
-                {
-                    data: "status",
-                    className: "text-center",
-                    mRender: function (data, type, row) {
-                        switch (data) {
-                            case 1:
-                                return '<span class="badge badge-pill badge-success">Mở khoá</span>';
-                            case 2:
-                                return '<span class="badge badge-pill badge-secondary">Bị khoá</span>';
-                        }
-                    }
-                },
-                {
-                    data: null,
-                    mRender: function (data, type, row) {
-                        return `<a href="/admin/usermanager/detail?userId=${data.id}" >Chi tiết</a>`;
-                    }
+            {
+                data: null,
+                mRender: function (data, type, row) {
+                    return `<a href="/admin/usermanager/detail?userId=${data.id}" >Chi tiết</a>`;
                 }
-            ]
-        });
-        $('#user-datatable_filter').hide();
-        $("#btn-search").click(() => {
+            }
+        ];
+        
+        var searchUser = function() {
             userTable.column(0).search($("#Username").val()).draw();
+        };
+        var userTable = dataTableRequest.create(api, method, tableId, columns, function() {
+            searchUser();
+        });
+        $("#btn-search").click(() => {
+            searchUser();
         });
     </script>
 }

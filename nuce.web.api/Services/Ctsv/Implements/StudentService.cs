@@ -1,4 +1,6 @@
-﻿using nuce.web.api.Models.Ctsv;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using nuce.web.api.Models.Ctsv;
 using nuce.web.api.Repositories.Ctsv.Interfaces;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.Services.Ctsv.Interfaces;
@@ -14,17 +16,23 @@ namespace nuce.web.api.Services.Ctsv.Implements
 {
     public class StudentService : IStudentService
     {
+        #region declare
         private readonly IStudentRepository _studentRepository;
         private readonly IUserService _userService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IQuaTrinhHocRepository _quaTrinhHocRepository;
         private readonly IGiaDinhRepository _giaDinhRepository;
         private readonly IThiHsgRepository _thiHsgRepository;
-        public StudentService(IStudentRepository _studentRepository,
+        private readonly IParameterService _paramService;
+        private readonly ILogger<StudentService> _logger;
+        public StudentService(
+            IStudentRepository _studentRepository,
             IUserService _userService, IUnitOfWork _unitOfWork,
             IQuaTrinhHocRepository _quaTrinhHocRepository,
             IThiHsgRepository _thiHsgRepository,
-            IGiaDinhRepository _giaDinhRepository
+            IGiaDinhRepository _giaDinhRepository,
+            IParameterService _paramService,
+            ILogger<StudentService> _logger
         )
         {
             this._studentRepository = _studentRepository;
@@ -33,7 +41,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
             this._quaTrinhHocRepository = _quaTrinhHocRepository;
             this._thiHsgRepository = _thiHsgRepository;
             this._giaDinhRepository = _giaDinhRepository;
+            this._paramService = _paramService;
+            this._logger = _logger;
         }
+        #endregion
 
         public async Task<FullStudentModel> GetFullStudentByCode(string studentCode)
         {
@@ -53,6 +64,15 @@ namespace nuce.web.api.Services.Ctsv.Implements
         public AsAcademyStudent GetStudentByCode(string studentCode)
         {
             return _studentRepository.FindByCode(studentCode);
+        }
+
+        public StudentAllowUpdateModel GetStudentByCodeAllowUpdate(string studentCode)
+        {
+            return new StudentAllowUpdateModel
+            {
+                Student = GetStudentByCode(studentCode),
+                Enabled = _paramService.isCapNhatHoSo(),
+            };
         }
 
         public async Task<ResponseBody> UpdateStudent(AsAcademyStudent student)
@@ -79,12 +99,13 @@ namespace nuce.web.api.Services.Ctsv.Implements
             }
             catch (Exception ex)
             {
+                _logger.LogError("Cập nhật thông tin SV", $"{ex.ToString()} \n", JsonConvert.SerializeObject(student));
                 return new ResponseBody { Message = "Lỗi hệ thống" };
             }
             return null;
         }
 
-        public async Task<ResponseBody> UpdateStudentBasic(StudentModel basicStudent)
+        public async Task<ResponseBody> UpdateStudentBasic(StudentUpdateModel basicStudent)
         {
             if (!Common.Validate.IsMobile(basicStudent.Mobile.Trim()))
             {
@@ -115,8 +136,16 @@ namespace nuce.web.api.Services.Ctsv.Implements
             student.HkttQuan = basicStudent.QuanHuyen.Trim();
             student.HkttTinh = basicStudent.TinhThanhPho.Trim();
 
-            _studentRepository.Update(student);
-            await _unitOfWork.SaveAsync();
+            try
+            {
+                _studentRepository.Update(student);
+                await _unitOfWork.SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Cập nhật hồ sơ SV", $"{ex.ToString()} \n", JsonConvert.SerializeObject(student));
+                return new ResponseBody { Message = "Lỗi hệ thống", Data = ex };
+            }
 
             return null;
         }

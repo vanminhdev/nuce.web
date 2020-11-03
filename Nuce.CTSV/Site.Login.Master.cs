@@ -11,7 +11,11 @@ namespace Nuce.CTSV
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            var refreshToken = Request.Cookies["JWT-refresh-token"];
+            if (refreshToken != null && Session[Utils.session_sinhvien] != null)
+            {
+                Response.Redirect("/dichvusinhvien.aspx");
+            }
         }
     }
 }

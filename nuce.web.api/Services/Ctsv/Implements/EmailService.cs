@@ -29,7 +29,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             var dir = _pathProvider.MapPath("Templates/Ctsv/template_mail_tao_yeu_cau_dich_vu.txt");
             if (!File.Exists(dir))
             {
-                return new ResponseBody { Message = "Template không tồn tại" };
+                return new ResponseBody { Message = "Template không tồn tại", StatusCode = System.Net.HttpStatusCode.NotFound };
             }
             string templateContent = File.ReadAllText(dir);
             string tinNhanContent = templateContent.Replace("[ho_ten]", model.StudentName)

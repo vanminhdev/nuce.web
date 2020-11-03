@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using nuce.web.data;
+using Nuce.CTSV.ApiModels;
 using System;
 using System.Data;
+using System.Net;
 using System.Net.Http;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
@@ -14,49 +16,46 @@ namespace Nuce.CTSV
         protected async void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
-            {
-                //Kiểm tra xem nếu chưa đến đợt cập nhật thì thông báo cho người dùng và thoát
-                string sql = "select * from GS_Setting where Code='CAP_NHAT_HO_SO' and Enabled=1";
-                DataTable dt1 = Microsoft.ApplicationBlocks.Data.SqlHelper.ExecuteDataset(Nuce_Common.ConnectionString, CommandType.Text, sql).Tables[0];
-                if (dt1.Rows.Count > 0)
+            {                
+                var res = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, $"{ApiModels.ApiEndPoint.GetAllowUpdateStudent}/{m_SinhVien.MaSV}", "");
+                if (!res.IsSuccessStatusCode)
                 {
-                    var res = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, $"{ApiModels.ApiEndPoint.GetStudentInfo}/{m_SinhVien.MaSV}", "");
-                    if (!res.IsSuccessStatusCode)
-                    {
-                        return;
-                    }
-                    var student = await CustomizeHttp.DeserializeAsync<ApiModels.StudentModel>(res.Content);
-
-                    if (student != null)
-                    {
-                        // Xử lý dữ liệu sinh viên
-                        string Email = (student.Email ?? "").Trim();
-                        string Mobile = (student.Mobile ?? "").Trim();
-                        string BaoTin_DiaChi = (student.BaoTinDiaChi ?? "").Trim();
-                        string BaoTin_HoVaTen = (student.BaoTinHoVaTen ?? "").Trim();
-                        string BaoTin_DiaChiNguoiNhan = (student.BaoTinDiaChiNguoiNhan ?? "").Trim();
-                        string BaoTin_SoDienThoai = (student.BaoTinSoDienThoai ?? "").Trim();
-                        string BaoTin_Email = (student.BaoTinEmail ?? "").Trim();
-                        bool LaNoiTru = student.LaNoiTru ?? false;
-                        string DiaChiCuThe = (student.DiaChiCuThe ?? "").Trim();
-
-                        txtEmail.Text = Email;
-                        txtMobile.Text = Mobile;
-                        txtBaoTin_DiaChi.Text = BaoTin_DiaChi;
-                        txtBaoTin_DiaChiNguoiNhan.Text = BaoTin_DiaChiNguoiNhan;
-                        txtBaoTin_HoVaTen.Text = BaoTin_HoVaTen;
-                        txtBaoTin_SoDienThoai.Text = BaoTin_SoDienThoai;
-                        txtBaoTin_Email.Text = BaoTin_Email;
-                        chkLaNoiTru.Checked = LaNoiTru;
-                        txtDiaChiCuThe.Text = DiaChiCuThe;
-
-                        spScript.InnerHtml = string.Format($"<script>CapNhatHoSo.initSelectForm('{(student.HkttTinh ?? "").Trim()}', '{(student.HkttQuan ?? "").Trim()}', '{(student.HkttPhuong ?? "").Trim()}');</script>");
-                    }
+                    return;
                 }
-                else
+                var response = await CustomizeHttp.DeserializeAsync<ApiModels.StudentAllowUpdateModel>(res.Content);
+                //Kiểm tra xem nếu chưa đến đợt cập nhật thì thông báo cho người dùng và thoát
+                if (!response.Enabled)
                 {
                     spScript.InnerHtml = string.Format("<script>CapNhatHoSo.hienthithongbao();</script>");
                     btnCapNhat.Visible = false;
+                    return;
+                }
+
+                var student = response.Student;
+                if (student != null)
+                {
+                    // Xử lý dữ liệu sinh viên
+                    string Email = (student.Email ?? "").Trim();
+                    string Mobile = (student.Mobile ?? "").Trim();
+                    string BaoTin_DiaChi = (student.BaoTinDiaChi ?? "").Trim();
+                    string BaoTin_HoVaTen = (student.BaoTinHoVaTen ?? "").Trim();
+                    string BaoTin_DiaChiNguoiNhan = (student.BaoTinDiaChiNguoiNhan ?? "").Trim();
+                    string BaoTin_SoDienThoai = (student.BaoTinSoDienThoai ?? "").Trim();
+                    string BaoTin_Email = (student.BaoTinEmail ?? "").Trim();
+                    bool LaNoiTru = student.LaNoiTru ?? false;
+                    string DiaChiCuThe = (student.DiaChiCuThe ?? "").Trim();
+
+                    txtEmail.Text = Email;
+                    txtMobile.Text = Mobile;
+                    txtBaoTin_DiaChi.Text = BaoTin_DiaChi;
+                    txtBaoTin_DiaChiNguoiNhan.Text = BaoTin_DiaChiNguoiNhan;
+                    txtBaoTin_HoVaTen.Text = BaoTin_HoVaTen;
+                    txtBaoTin_SoDienThoai.Text = BaoTin_SoDienThoai;
+                    txtBaoTin_Email.Text = BaoTin_Email;
+                    chkLaNoiTru.Checked = LaNoiTru;
+                    txtDiaChiCuThe.Text = DiaChiCuThe;
+
+                    spScript.InnerHtml = string.Format($"<script>CapNhatHoSo.initSelectForm('{(student.HkttTinh ?? "").Trim()}', '{(student.HkttQuan ?? "").Trim()}', '{(student.HkttPhuong ?? "").Trim()}');</script>");
                 }
             }
         }
@@ -87,9 +86,9 @@ namespace Nuce.CTSV
                 EmailBaoTin = txtBaoTin_Email.Text.Trim(),
                 DiaChiCuThe = txtDiaChiCuThe.Text.Trim(),
                 CoNoiOCuThe = chkLaNoiTru.Checked,
-                PhuongXa = Request.Form[slPhuong.UniqueID],
-                QuanHuyen = Request.Form[slQuan.UniqueID],
-                TinhThanhPho = Request.Form[slThanhPho.UniqueID]
+                PhuongXa = Request.Form[slPhuong.UniqueID] ?? "",
+                QuanHuyen = Request.Form[slQuan.UniqueID] ?? "",
+                TinhThanhPho = Request.Form[slThanhPho.UniqueID] ?? ""
             };
 
             var body = JsonConvert.SerializeObject(model);
@@ -101,12 +100,16 @@ namespace Nuce.CTSV
                 spScript.InnerHtml = string.Format($"<script>CapNhatHoSo.initSelectForm('{model.TinhThanhPho}', '{model.QuanHuyen}', '{model.PhuongXa}');</script>");
                 return;
             }
-            else
+            try
+            {
+                var error = await CustomizeHttp.DeserializeAsync<ResponseBody>(response.Content);
+                divThongBao.InnerText = $"{error.Message}";
+            }
+            catch (Exception)
             {
                 divThongBao.InnerText = "Cập nhật thất bại - lỗi hệ thống";
                 return;
             }
-
         }
         #region email
         public static string Send_Email(string Subject, string Message, string EmailTo)

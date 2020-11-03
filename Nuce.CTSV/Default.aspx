@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Trang chủ" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Nuce.CTSV._Default" %>
+﻿<%@ Page Title="Trang chủ" Language="C#" MasterPageFile="~/Site.Master" Async="true" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Nuce.CTSV._Default" %>
 <asp:Content ID="BannerContent" ContentPlaceHolderID="Banner" runat="server">
     <style>
         .service-banner {
@@ -11,15 +11,8 @@
     <!-- Begin Page Content -->
     <div class="container service-categories-wrp news-wrp">
         <div class="row font-13-sm new-item-wrp mb-3">
-            <div class="col-12 col-md-6">Lý do xác nhận:</div>
-            <div class="col-12 col-md-6" id="divThongBaoSinhVien" runat="server">
-                <a href="" style="display: block" class="main-color">Thông báo kiểm tra 1: 22-07-2020
-                    <img src="/style/public/images/icons/warning.png"
-                        alt=""
-                        class="ml-3"
-                    />
-                </a>
-            </div>
+            <div class="col-12 col-md-6">Thông báo:</div>
+            <div class="col-12 col-md-6" id="divThongBaoSinhVien" runat="server"></div>
         </div>
         <div class="row font-13-sm new-item-wrp mb-3">
             <div class="col-12 col-md-6">Văn bản biểu mẫu:</div>

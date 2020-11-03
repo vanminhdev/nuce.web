@@ -176,6 +176,7 @@ namespace nuce.web.api
             services.AddScoped<IAsEduSurveyDapAnService, AsEduSurveyDapAnService>();
             services.AddScoped<IAsEduSurveyDeThiService, AsEduSurveyDeThiService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ILogService, LogService>();
             #endregion
             #region ctsv service
             services.AddScoped<IXacNhanRepository, XacNhanRepository>();
@@ -192,11 +193,10 @@ namespace nuce.web.api
 
 
             services.AddScoped<IStudentService, StudentService>();
-            services.AddScoped<ICtsvLogService, CtsvLogService>();
             services.AddScoped<IDichVuService, DichVuService>();
             services.AddScoped<INewsService, NewsService>();
             services.AddScoped<IEmailService, EmailService>();
-
+            services.AddScoped<IParameterService, ParameterService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             #endregion
         }

@@ -19,6 +19,7 @@ using nuce.web.api.HandleException;
 using nuce.web.api.Models.Core;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.ViewModel;
+using nuce.web.api.ViewModel.Core;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
 
@@ -34,9 +35,10 @@ namespace nuce.web.api.Controllers.Core
         private readonly ILogger<UserController> _logger;
         private readonly IUserService _userService;
         private readonly IConfiguration _configuration;
+        private readonly ILogService _logService;
 
         public UserController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, NuceCoreIdentityContext identityContext,
-            ILogger<UserController> logger, IUserService userService, IConfiguration configuration)
+            ILogger<UserController> logger, IUserService userService, IConfiguration configuration, ILogService logService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -44,6 +46,7 @@ namespace nuce.web.api.Controllers.Core
             _logger = logger;
             _userService = userService;
             _configuration = configuration;
+            _logService = logService;
         }
 
         [HttpGet]
@@ -79,9 +82,48 @@ namespace nuce.web.api.Controllers.Core
                 Response.Cookies.Append(UserParameters.JwtRefreshToken, new JwtSecurityTokenHandler().WriteToken(refreshToken),
                     new CookieOptions() { HttpOnly = true, Expires = refreshToken.ValidTo });
 
+                await _logService.WriteLog(new ActivityLogModel
+                {
+                    Username = model.Username,
+                    LogCode = ActivityLogParameters.CODE_LOGIN,
+                    LogMessage = "1"
+                });
                 return Ok();
             }
             return Unauthorized(userIsValidResult);
+        }
+
+        [HttpPost]
+        [Route("LoginStudentEduEmail")]
+        public async Task<IActionResult> LoginStudentEduEmail([FromBody] LoginModel model)
+        {
+            string email = model.Username;
+            var student = _userService.GetStudentByEmail(email);
+            if (student == null)
+            {
+                return NotFound("Sinh viên không tồn tại");
+            }
+            model.Username = student.Code;
+
+            var user = new ApplicationUser { UserName = model.Username };
+
+            var authClaims = await _userService.AddClaimsAsync(model, user);
+            var accessToken = _userService.CreateJWTAccessToken(authClaims);
+            var refreshToken = _userService.CreateJWTRefreshToken(authClaims);
+
+            //send token to http only cookies
+            Response.Cookies.Append(UserParameters.JwtAccessToken, new JwtSecurityTokenHandler().WriteToken(accessToken),
+                new CookieOptions() { HttpOnly = true, Expires = accessToken.ValidTo });
+            Response.Cookies.Append(UserParameters.JwtRefreshToken, new JwtSecurityTokenHandler().WriteToken(refreshToken),
+                new CookieOptions() { HttpOnly = true, Expires = refreshToken.ValidTo });
+
+            await _logService.WriteLog(new ActivityLogModel
+            {
+                Username = model.Username,
+                LogCode = ActivityLogParameters.CODE_LOGIN_STUDENT_EDU_EMAIL,
+                LogMessage = $"Login bằng email {email}"
+            });
+            return Ok(student);
         }
 
         [HttpPost]
@@ -118,6 +160,11 @@ namespace nuce.web.api.Controllers.Core
 
                     transaction.Commit();
                     _logger.LogInformation($"Create success user id: {user.Id}");
+                    await _logService.WriteLog(new ActivityLogModel
+                    {
+                        LogCode = ActivityLogParameters.CODE_REGISTER,
+                        LogMessage = "1",
+                    });
                     return Ok(new { id = user.Id });
                 }
                 catch (Exception e)

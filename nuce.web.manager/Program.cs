@@ -16,11 +16,27 @@ namespace nuce.web.client
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .AddJsonFile("appsettings.Development.json")
+                .Build();
+
+            var useUrlsSection = config.GetSection("UseUrls");
+            var useUrls = useUrlsSection
+                .AsEnumerable()
+                .Where(item => item.Value != null)
+                .Select(item => item.Value)
+                .ToArray();
+
+            return Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.UseConfiguration(config);
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.UseUrls(useUrls);
                 });
+        }
     }
 }

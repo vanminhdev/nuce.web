@@ -16,6 +16,18 @@
     <div class="main-color text-decoration-none">yêu cầu mới</div>
 </asp:Content>
 
+<asp:Content ID="BreadCrumContentMobile" ContentPlaceHolderID="BreadCrumMobile" runat="server">
+    <div class="d-flex align-items-center">
+        <a href="/dichvusinhvien.aspx">dịch vụ</a>
+        <div id="circle" style="display: inline-block" class="ml-2 mr-2"></div>
+    </div>
+    <div class="d-flex align-items-center">
+        <a href="/dichvu/xacnhanuudaitronggiaoduc.aspx">ưu đãi trong giáo dục</a>
+        <div id="circle" style="display: inline-block" class="ml-2 mr-2"></div>
+    </div>
+    <div class="main-color text-decoration-none">yêu cầu mới</div>
+</asp:Content>
+
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <script src='https://www.google.com/recaptcha/api.js'></script>
     <div class="col-sm-12">

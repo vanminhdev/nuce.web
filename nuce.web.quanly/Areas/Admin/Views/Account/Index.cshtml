@@ -1,0 +1,34 @@
+﻿@model nuce.web.quanly.Areas.Admin.Models.LoginModel
+@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutEmpty.cshtml";
+}
+
+<section id="body" class="login-form">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="main-name font-20-sm font-32-md font-42 text-light mb-2">
+                    hệ thống quản trị
+                </div>
+            </div>
+            <form method="post" action="/admin/account/login" class="col-12 col-md-6 pb-2">
+                @Html.AntiForgeryToken()
+                <div class="form-group mb-1">
+                    <label for="username" class="w-100 font-13-sm text-light">Tên đăng nhập</label>
+                    @Html.TextBoxFor(m => m.Username, new { @placeholder = "Tên đăng nhập", @class = "form-control custom-input" })
+                    @Html.ValidationMessageFor(m => m.Username, "", new { @class = "form-text", @style = "color: #F70000; height: 24px" })
+                </div>
+                <div class="form-group mb-2">
+                    <label for="password" class="w-100 font-13-sm text-light">Mật khẩu</label>
+                    @Html.PasswordFor(m => m.Password, new { @placeholder = "Mật khẩu", @class = "form-control custom-input" })
+                    <span class="form-text" style="color: #F70000;">@ViewData["LoginMessage"]</span>
+                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "form-text", @style = "color: #F70000; height: 24px" })
+                </div>
+                <button type="submit" class="btn w-100 text-light font-14-sm login-btn">
+                    Đăng nhập
+                </button>
+            </form>
+        </div>
+    </div>
+</section>

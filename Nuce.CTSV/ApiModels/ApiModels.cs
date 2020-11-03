@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 
 namespace Nuce.CTSV.ApiModels
@@ -252,17 +253,59 @@ namespace Nuce.CTSV.ApiModels
         public string QuanHuyen { get; set; }
         public string TinhThanhPho { get; set; }
     }
+    public class TinTucModel
+    {
+        public int Id { get; set; }
+        public int? CatId { get; set; }
+        public string Title { get; set; }
+        public string Avatar { get; set; }
+        public string File { get; set; }
+        public string Description { get; set; }
+        public string NewContent { get; set; }
+        public string NewSource { get; set; }
+        public int TotalView { get; set; }
+        public bool? IsTinlq { get; set; }
+        public bool? IsComment { get; set; }
+        public bool? IsShared { get; set; }
+        public bool? IsHome { get; set; }
+        public double? Score { get; set; }
+        public bool ActiveFlg { get; set; }
+        public string EntryUsername { get; set; }
+        public DateTime EntryDatetime { get; set; }
+        public string UpdateUsername { get; set; }
+        public DateTime UpdateDatetime { get; set; }
+        public string MetaKeyword { get; set; }
+        public string MetaDesciption { get; set; }
+        public int Status { get; set; }
+    }
+    public class StudentAllowUpdateModel
+    {
+        public StudentModel Student { get; set; }
+        public bool Enabled { get; set; }
+    }
+    public class ResponseBody
+    {
+        public static string SUCCESS_STATUS = "success";
+        public static string ERROR_STATUS = "error";
+        public string Status { get; set; }
+        public string Message { get; set; }
+        public object Data { get; set; }
+        public HttpStatusCode StatusCode { get; set; }
+    }
     #endregion
 
     #region api
     public static class ApiEndPoint
     {
+        public static string PostLoginEduEmail = "api/User/LoginStudentEduEmail";
         public static string PostStudentBasicUpdate = "api/Student/basic-update";
         public static string GetStudentInfo = "api/Student";
         public static string PutStudentUpdate = "api/Student/update";
         public static string AddDichVu = "api/DichVu/add";
         public static string GetDichVu = "api/DichVu/type";
         public static string GetFullStudent = "api/Student/full-student";
+        public static string GetAllowUpdateStudent = "api/Student/allow-update-student";
+        public static string GetTinTuc = "api/News/get-news-items";
     }
     #endregion
     #region ma dich vu
