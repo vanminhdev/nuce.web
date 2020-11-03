@@ -1,0 +1,164 @@
+﻿@page "/admin/profile"
+@model nuce.web.manager.Pages.Admin.Core.ProfileModel
+@{
+    ViewData["Title"] = "Cập nhật thông tin";
+}
+
+<form method="post" class="container-fluid service-categories-wrp mt-2">
+    <div class="fw-700 text-uppercase font-15-sm font-25 mb-2 mt-3">
+        cập nhật thông tin tài khoản
+    </div>
+
+    <div class="fw-600 text-uppercase font-14-sm font-18 mb-2 main-color">
+        Cài đặt tài khoản
+    </div>
+
+    @if (ViewData["UpdateSuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @ViewData["UpdateSuccessMessage"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    @if (ViewData["UpdateErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @ViewData["UpdateErrorMessage"]
+            <hr>
+            <p class="mb-0">@ViewData["UpdateErrorMessageDetail"]</p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    <div class="row font-13-sm font-16">
+        <div class="col-12 form-group">
+            <div class="row">
+                <div class="col-6 col-md-3">
+                    <div class="font-14-sm font-weight-bold mb-2">
+                        Ảnh đại diện
+                    </div>
+                    <div class="custom-file">
+                        <input id="input-file"
+                               type="file"
+                               class="custom-file-input" />
+                        <label for="input-file"
+                               class="custom-file-label text-truncate text-center">
+                            <img src="~/images/icons/upload.png"
+                                 alt="upload-icon"
+                                 class="mr-1" />
+                            Chọn file
+                        </label>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <img src="~/images/person1.png"
+                         alt=""
+                         class="upload-user-avatar" />
+                </div>
+            </div>
+        </div>
+        <div class="col-12 form-group">
+            <div class="row mr-0 ml-0">
+                <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
+                    Địa chỉ email
+                </div>
+                <div class="col-12 col-md-10">
+                    <input type="text" class="form-control" asp-for="UserUpdateBind.email" />
+                    <span class="form-text text-danger" asp-validation-for="UserUpdateBind.email"></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 form-group">
+            <div class="row mr-0 ml-0">
+                <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
+                    SĐT
+                </div>
+                <div class=" col-12 col-md-10">
+                    <input type="text" class="form-control" asp-for="UserUpdateBind.phoneNumber" />
+                    <span class="form-text text-danger" asp-validation-for="UserUpdateBind.phoneNumber"></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 form-group d-flex justify-content-center">
+            <div class="col-12 col-md-3">
+                <button type="submit" asp-page-handler="UpdateUser" class="update-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2 mt-2">
+                    cập nhật
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="fw-600 text-uppercase font-14-sm font-18 mb-2 main-color">
+        Đổi mật khẩu
+    </div>
+
+    @if (ViewData["ChangePasswordSuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @ViewData["ChangePasswordSuccessMessage"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    @if (ViewData["ChangePasswordErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @ViewData["ChangePasswordErrorMessage"]
+            <hr>
+            <p class="mb-0">@ViewData["ChangePasswordErrorMessageDetail"]</p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    <div class="row justify-content-end font-16">
+        <div class="col-12 form-group">
+            <div class="row mr-0 ml-0">
+                <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
+                    Mật khẩu cũ:
+                </div>
+                <div class="col-12 col-md-10">
+                    <input type="password" class="form-control" asp-for="ChangePassword.password">
+                    <span class="form-text text-danger" asp-validation-for="ChangePassword.password"></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 form-group">
+            <div class="row mr-0 ml-0">
+                <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
+                    Mật khẩu mới:
+                </div>
+                <div class="col-12 col-md-10">
+                    <input type="password" class="form-control" asp-for="ChangePassword.newPassword">
+                    <span class="form-text text-danger" asp-validation-for="ChangePassword.newPassword"></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 form-group">
+            <div class="row mr-0 ml-0">
+                <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
+                    Xác nhận mật khẩu:
+                </div>
+                <div class="col-12 col-md-10">
+                    <input type="password" class="form-control" asp-for="ChangePassword.confirmPassword">
+                    <span class="form-text text-danger" asp-validation-for="ChangePassword.confirmPassword"></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 form-group d-flex justify-content-center">
+            <div class="col-12 col-md-3">
+                <button asp-page-handler="ChangePassword" class="update-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2 mt-2" type="submit">
+                    cập nhật
+                </button>
+            </div>
+        </div>
+    </div>
+</form>

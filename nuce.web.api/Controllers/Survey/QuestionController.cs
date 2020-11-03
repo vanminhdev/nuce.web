@@ -18,7 +18,7 @@ namespace nuce.web.api.Controllers.Survey
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class QuestionController : ControllerBase
     {
         private readonly ILogger<QuestionController> _logger;
@@ -42,12 +42,12 @@ namespace nuce.web.api.Controllers.Survey
         {
             var question = await _asEduSurveyCauHoiService.GetById(id);
             if (question == null)
-                return NotFound(new { message = "Record not found" });
+                return NotFound(new { message = "Không tìm thấy bản ghi" });
             return Ok(question);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] QuestionCreate question)
+        public async Task<IActionResult> Create([FromBody] QuestionCreateModel question)
         {
             try
             {
@@ -71,7 +71,7 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([Required(AllowEmptyStrings = false)] string id, [FromBody] QuestionUpdate question)
+        public async Task<IActionResult> Update([Required(AllowEmptyStrings = false)] string id, [FromBody] QuestionUpdateModel question)
         {
             try
             {
@@ -88,7 +88,7 @@ namespace nuce.web.api.Controllers.Survey
             }
             catch (RecordNotFoundException)
             {
-                return NotFound(new {message = "Record not found"});
+                return NotFound(new {message = "Không tìm thấy bản ghi"});
             }
             catch (Exception e)
             {
@@ -99,7 +99,7 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete([Required(AllowEmptyStrings = false)]string id)
+        public async Task<IActionResult> Delete([Required(AllowEmptyStrings = false)] string id)
         {
             try
             {
@@ -107,7 +107,7 @@ namespace nuce.web.api.Controllers.Survey
             }
             catch (RecordNotFoundException)
             {
-                return NotFound(new { message = "Record not found" });
+                return NotFound(new { message = "Không tìm thấy bản ghi" });
             }
             catch (DbUpdateException e)
             {

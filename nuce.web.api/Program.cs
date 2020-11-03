@@ -24,11 +24,19 @@ namespace nuce.web.api
                 .AddJsonFile("appsettings.Development.json")
                 .Build();
 
+            var useUrlsSection = config.GetSection("UseUrls");
+            var useUrls = useUrlsSection
+                .AsEnumerable()
+                .Where(item => item.Value != null)
+                .Select(item => item.Value)
+                .ToArray();
+
             return Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseConfiguration(config);
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.UseUrls(useUrls);
                 });
         }
     }

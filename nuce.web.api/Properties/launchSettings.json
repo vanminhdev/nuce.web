@@ -4,8 +4,8 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:63829",
-      "sslPort": 44326
+      "applicationUrl": "http://localhost:8905",
+      "sslPort": 0
     }
   },
   "profiles": {
@@ -19,7 +19,7 @@
     },
     "nuce.web.api": {
       "commandName": "Project",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5000",
       "environmentVariables": {

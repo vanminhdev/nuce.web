@@ -1,0 +1,121 @@
+﻿@using Microsoft.Extensions.Options;
+@using nuce.web.manager.Configurations;
+@inject IOptions<RazorPageConfiguration> RazorConfiguration
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đại Học Xây Dựng | @ViewData["Title"]</title>
+    <!-- BootStrap -->
+    <link rel="stylesheet" href="~/css/bootstrap.min.css" />
+
+    <!-- Custom -->
+    <link rel="stylesheet" href="~/css/util.css" />
+    <link rel="stylesheet" href="~/css/style.css" />
+    <link rel="stylesheet" href="~/css/responsive.css" />
+    @RenderSection("Style", required: false)
+</head>
+<body>
+    <div class="full-height body-wrp">
+        <!-- header section -->
+        <section id="header">
+            <div class="container-fluid header-wrp">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-12 col-md-7">
+                        <div class="row">
+                            <div class="col-2">
+                                <img class="logo"
+                                     src="~/images/logo.png"
+                                     alt="logo"
+                                     srcset="" />
+                            </div>
+                            <div class="col-10 col-md-10 mb-3">
+                                <div class="col-12 text-left main-title main-color font-18-sm font-32 font-28-md">
+                                    trường đại học xây dựng
+                                </div>
+                                <div class="col-12 main-color sub-title font-14-sm font-25 font-22-md">
+                                    National University of Civil Engeering
+                                </div>
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-2 pr-0"><hr class="line-label" /></div>
+                                        <div class="col-10 small-title font-9-sm font-15">
+                                            Cơ sở giáo dục đại học đạt chuẩn kiểm định quốc tế
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-5">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <img src="~/images/icons/hotline.png"
+                                             alt="hotline icon"
+                                             class="hotline-icon" />
+                                    </div>
+                                    <div class="col-9">
+                                        <div class="row">
+                                            <div class="col-12 main-color icon-title font-14-sm">
+                                                Hotline
+                                            </div>
+                                            <div class="col-12 icon-sub-title">0869071382</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-7">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <img src="~/images/icons/email.png"
+                                             alt="email icon"
+                                             class="email-icon" />
+                                    </div>
+                                    <div class="col-9">
+                                        <div class="row">
+                                            <div class="col-12 main-color icon-title font-14-sm">
+                                                Email
+                                            </div>
+                                            <div class="col-10 icon-sub-title">
+                                                tuyensinhdh@nuce.edu.vn
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- end header section -->
+        <section id="body">
+            <div class="pt-4 pb-4">
+                @RenderBody()
+            </div>
+        </section>
+
+        <!-- footer section -->
+        <section id="footer">
+            <div class="container full-height">
+                <div class="full-height row text-center main-color align-items-end">
+                    <div class="col-12 mb-2">
+                        Bản quyền  &copy;@(DateTime.Now.Year) thuộc Đại học Xây dựng
+                        <br />
+                        Phát triển bởi: Khoa Công Nghê Thông Tin
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- end footer section -->
+    </div>
+    <script src="~/js/jquery.min.js"></script>
+    <script src="~/js/popper.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

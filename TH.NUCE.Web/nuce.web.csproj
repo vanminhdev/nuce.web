@@ -1,0 +1,1525 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F1C6D21F-17FE-4D7D-A5CC-75438E78AF76}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>nuce.web</RootNamespace>
+    <AssemblyName>nuce.web</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <Use64BitIISExpress />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ClosedXML">
+      <HintPath>..\..\ClosedXML.dll</HintPath>
+    </Reference>
+    <Reference Include="DNN.Modules.SecurityAnalyzer">
+      <HintPath>..\TH.NUCE.Web\bin\DNN.Modules.SecurityAnalyzer.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.5.5631.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Authentication.Facebook">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Authentication.Facebook.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Authentication.Google">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Authentication.Google.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Authentication.LiveConnect">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Authentication.LiveConnect.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Authentication.Twitter">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Authentication.Twitter.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.HttpModules">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.HttpModules.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Instrumentation">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Instrumentation.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Log4Net">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Log4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Modules.CoreMessaging">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Modules.CoreMessaging.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Modules.DigitalAssets">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Modules.DigitalAssets.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Modules.Groups">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Modules.Groups.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Modules.Html">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Modules.Html.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Modules.HtmlEditorManager">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Modules.HtmlEditorManager.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Modules.Journal">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Modules.Journal.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Modules.MemberDirectory">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Modules.MemberDirectory.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Modules.MobileManagement">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Modules.MobileManagement.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Modules.PreviewProfileManagement">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Modules.PreviewProfileManagement.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Modules.RazorHost">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Modules.RazorHost.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Modules.Taxonomy">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Modules.Taxonomy.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Modules.UrlManagement">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Modules.UrlManagement.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.RadEditorProvider">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.RadEditorProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Services.Syndication">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Services.Syndication.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Web">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Web.Client">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Web.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Web.DDRMenu">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Web.DDRMenu.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.Web.Razor">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.WebControls">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.WebControls.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetNuke.WebUtility">
+      <HintPath>..\TH.NUCE.Web\bin\DotNetNuke.WebUtility.dll</HintPath>
+    </Reference>
+    <Reference Include="GemBox.Document, Version=31.0.0.1260, Culture=neutral, PublicKeyToken=b1b72c69714d4847, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\GemBox.Document.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zip.Reduced">
+      <HintPath>..\test_zip\test_zip\bin\Ionic.Zip.Reduced.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp">
+      <HintPath>..\..\itextsharp-all-5.5.9\itextsharp-dll-core\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationBlocks.Data">
+      <HintPath>..\TH.NUCE.Web\bin\Microsoft.ApplicationBlocks.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\SITES\DNN941\bin\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\TH.NUCE.Web\bin\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\TH.NUCE.Web\bin\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\TH.NUCE.Web\bin\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DesktopModules\nuce.ad.ctsv\DanhSachDichVu.ascx" />
+    <Content Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_MuonHocBaGoc.ascx" />
+    <Content Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_GiayXacNhanUuDaiTrongGiaoDuc.ascx" />
+    <Content Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_CapLaiTheSinhVien.ascx" />
+    <Content Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_GiayGioiThieu.ascx" />
+    <Content Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_VayVonNganHang.ascx" />
+    <Content Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_ThietLapThamSo.ascx" />
+    <Content Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_ThueNhaSinhVien.ascx" />
+    <Content Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_XacNhan.ascx" />
+    <Content Include="DesktopModules\nuce.ad.ctsv\QuanLyCauHinh.ascx" />
+    <Content Include="DesktopModules\nuce.ad.ctsv\StudentThiHSGEdit.ascx" />
+    <Content Include="DesktopModules\nuce.ad.ctsv\StudentQuaTrinhHocTapEdit.ascx" />
+    <Content Include="DesktopModules\nuce.ad.ctsv\StudentGiaDinhEdit.ascx" />
+    <Content Include="DesktopModules\nuce.ad.ctsv\StudentProfileEdit.ascx" />
+    <Content Include="DesktopModules\nuce.ad.ctsv\StudentSearch.ascx" />
+    <Content Include="DesktopModules\nuce.ad.news\ItemsMgmt.ascx" />
+    <Content Include="DesktopModules\nuce.ad.thichungchi\DanhSachDeTrongBoDe.ascx" />
+    <Content Include="DesktopModules\nuce.ad.thichungchi\ImportExcelNguoiThi.ascx" />
+    <Content Include="DesktopModules\nuce.ad.thichungchi\QLKhoaThi.ascx" />
+    <Content Include="DesktopModules\nuce.ad.thichungchi\QLKyThi.ascx" />
+    <Content Include="DesktopModules\nuce.ad.thichungchi\QLDanhMucThiSinh.ascx" />
+    <Content Include="DesktopModules\nuce.ad.thichungchi\QLNguoiThi.ascx" />
+    <Content Include="DesktopModules\nuce.ad.thichungchi\QLMonThi.ascx" />
+    <Content Include="DesktopModules\nuce.ad.thichungchi\QuanLyBoCauHoi.ascx" />
+    <Content Include="DesktopModules\nuce.ad.thichungchi\QuanLyBoDe.ascx" />
+    <Content Include="DesktopModules\nuce.ad.thichungchi\QuanLyCauHinhTrongBoDe.ascx" />
+    <Content Include="DesktopModules\nuce.ad.thichungchi\QuanLyCauHoi.ascx" />
+    <Content Include="DesktopModules\nuce.ad.thichungchi\QuanLyDapAn.ascx" />
+    <Content Include="DesktopModules\nuce.ad.news\CatsMgmt.ascx" />
+    <Content Include="DesktopModules\nuce.skins\NUCE_SO_Admin_Menu_Left2.ascx" />
+    <Content Include="DesktopModules\nuce.thichungchi\Thi.ascx" />
+    <Content Include="DesktopModules\nuce.web.commons\ImportExcelInLopHoc.ascx" />
+    <Content Include="DesktopModules\nuce.web.commons\QuanLyMay.ascx" />
+    <Content Include="DesktopModules\nuce.web.dt.analytics\SearchByMH.ascx" />
+    <Content Include="DesktopModules\nuce.web.dt.analytics\StatisticsNH.ascx" />
+    <Content Include="DesktopModules\nuce.web.ks.analytics\QuanLyNhom.ascx" />
+    <Content Include="DesktopModules\nuce.web.ks.analytics\SynthesizedResults.ascx" />
+    <Content Include="DesktopModules\nuce.web.ks.analytics\Search.ascx" />
+    <Content Include="DesktopModules\nuce.web.ks.cuusinhvien\QuanLySinhVien.ascx" />
+    <Content Include="DesktopModules\nuce.web.qlhpm\QuanLyCaHoc.ascx" />
+    <Content Include="DesktopModules\nuce.web.qlhpm\QuanLySinhVien.ascx" />
+    <Content Include="DesktopModules\nuce.web.qlhpm\QuanLyThongTinDotTraoDoi.ascx" />
+    <Content Include="DesktopModules\nuce.web.qlhpm\QuanLyDotTraoDoi.ascx" />
+    <Content Include="DesktopModules\nuce.web.qlpm\New_DanhSachDangKi.ascx" />
+    <Content Include="DesktopModules\nuce.web.qlpm\New_LichSuDangKi_For_GV.ascx" />
+    <Content Include="DesktopModules\nuce.web.qlpm\New_LichSuDangKi.ascx" />
+    <Content Include="DesktopModules\nuce.web.qlpm\New_DangKiLich_For_GV.ascx" />
+    <Content Include="DesktopModules\nuce.web.qlpm\New_HuyDangKiLich_For_GV.ascx" />
+    <Content Include="DesktopModules\nuce.web.qlpm\New_HuyDangKiLich.ascx" />
+    <Content Include="DesktopModules\nuce.web.qlpm\New_DangKiLich.ascx" />
+    <Content Include="DesktopModules\nuce.web.qlpm\New_LichPhongMay_For_GV.ascx" />
+    <Content Include="DesktopModules\nuce.web.qlpm\New_LichPhongMay.ascx" />
+    <Content Include="DesktopModules\nuce.web.sinhvien\Hoc.ascx" />
+    <Content Include="DesktopModules\nuce.web.sinhvien\DanhSachKiThiActive.ascx" />
+    <Content Include="DesktopModules\nuce.web.sinhvien\ThiOnline.ascx" />
+    <Content Include="DesktopModules\nuce.web.sinhvien\DangNhap.ascx" />
+    <Content Include="DesktopModules\nuce.web.sinhvien\DoiMatKhau.ascx" />
+    <Content Include="DesktopModules\nuce.skins\NUCE_SO_SinhVien_LinkInfo.ascx" />
+    <Content Include="DesktopModules\nuce.skins\NUCE_SO_SinhVien_Menu.ascx" />
+    <Content Include="DesktopModules\nuce.web.commons\images\calendar.png" />
+    <Content Include="DesktopModules\nuce.web.commons\QuanLyPhongHoc.ascx" />
+    <Content Include="DesktopModules\nuce.web.commons\QuanLyBlockHoc.ascx" />
+    <Content Include="DesktopModules\nuce.web.commons\QuanLySinhVienTrongLopHoc.ascx" />
+    <Content Include="DesktopModules\nuce.web.commons\QuanLyLopHoc.ascx" />
+    <Content Include="DesktopModules\nuce.web.commons\QuanLySinhVien.ascx" />
+    <Content Include="DesktopModules\nuce.web.commons\QuanLyLopQuanLy.ascx" />
+    <Content Include="DesktopModules\nuce.web.commons\QuanLyNamHoc.ascx" />
+    <Content Include="DesktopModules\nuce.web.commons\QuanLyMonHoc.ascx" />
+    <Content Include="DesktopModules\nuce.web.qlpm\DiemDanh.ascx" />
+    <Content Include="DesktopModules\nuce.web.qlpm\QuanLyDangKiDiemDanh.ascx" />
+    <Content Include="DesktopModules\nuce.web.qlpm\VanTaySinhVien.ascx" />
+    <Content Include="DesktopModules\nuce.web.qlpm\SuaDangKiLopHoc.ascx" />
+    <Content Include="DesktopModules\nuce.web.qlpm\LichSuDangKi.ascx" />
+    <Content Include="DesktopModules\nuce.web.qlpm\TuanTiepTheo.ascx" />
+    <Content Include="DesktopModules\nuce.web.qlpm\TuanHienTai.ascx" />
+    <Content Include="DesktopModules\nuce.web.thi\ImportExcels.ascx" />
+    <Content Include="DesktopModules\nuce.web.thi\QuanLyLopHoc.ascx" />
+    <Content Include="DesktopModules\nuce.web.thi\SuaMatKhauCuaSinhVienTrongKiThi.ascx" />
+    <Content Include="DesktopModules\nuce.web.thi\SuaGhiChuCuaSinhVienTrongKiThi.ascx" />
+    <Content Include="DesktopModules\nuce.web.thi\DanhSachLopTrongKiThiOTrangThaiKetThuc.ascx" />
+    <Content Include="DesktopModules\nuce.web.thi\DanhSachLopTrongKiThiOTrangThaiDangThi.ascx" />
+    <Content Include="DesktopModules\nuce.web.thi\DanhSachLopTrongKiThiOTrangThaiBatDau.ascx" />
+    <Content Include="DesktopModules\nuce.web.thi\QuanLyCauHinhTrongBoDe.ascx" />
+    <Content Include="DesktopModules\nuce.web.thi\images\calendar.png" />
+    <Content Include="DesktopModules\nuce.web.thi\DanhSachDeTrongBoDe.ascx" />
+    <Content Include="DesktopModules\nuce.web.thi\QuanLyDapAn.ascx" />
+    <Content Include="DesktopModules\nuce.web.thi\QuanLyMucDiem.ascx" />
+    <Content Include="DesktopModules\nuce.web.thi\QuanLyBoCauHoi.ascx" />
+    <Content Include="DesktopModules\nuce.web.thi\QuanLyCauHoi.ascx" />
+    <Content Include="DesktopModules\nuce.web.thi\QuanLyBoDe.ascx" />
+    <Content Include="DesktopModules\nuce.web.thi\QuanLyKithi.ascx" />
+    <Content Include="DesktopModules\nuce.web.thi\QuanLyThangDiem.ascx" />
+    <Content Include="DesktopModules\nuce.web.thi\ChiTietBaiThi.ascx" />
+    <Content Include="ExportPdf.aspx" />
+    <Content Include="ExportExcel.aspx" />
+    <Content Include="Handler\nuce.thichungchi\NopBai.aspx" />
+    <Content Include="Handler\nuce.thichungchi\tcc_getDanhSachBaiThi.aspx" />
+    <Content Include="Handler\nuce.thichungchi\tcc_logout.aspx" />
+    <Content Include="Handler\nuce.thichungchi\tcc_check.aspx" />
+    <Content Include="Handler\nuce.thichungchi\tcc_getUser.aspx" />
+    <Content Include="Handler\nuce.thichungchi\tcc_checklogin.aspx" />
+    <Content Include="Handler\nuce.web.commons\GetKhoa.ashx" />
+    <Content Include="Handler\nuce.web.commons\GetBoMonByKhoa.ashx" />
+    <Content Include="Handler\nuce.web.commons\GetMonHocByBoMon.ashx" />
+    <Content Include="Handler\nuce.web.commons\GetMonHoc.ashx" />
+    <Content Include="Handler\nuce.web.commons\InsertMonHoc.ashx" />
+    <Content Include="Handler\nuce.web.commons\UpdateMonHoc.ashx" />
+    <Content Include="Handler\nuce.web.commons\UpdateMonHocStatus.ashx" />
+    <Content Include="Handler\nuce.web.commons\GetNguoiDungByMonHoc.ashx" />
+    <Content Include="Handler\nuce.web.commons\GetNguoiDungByBoMon.ashx" />
+    <Content Include="Handler\nuce.web.commons\UpdateNguoDungMonHocStatus.ashx" />
+    <Content Include="Handler\nuce.web.commons\UpdateNguoDungBoMonStatus.ashx" />
+    <Content Include="Handler\nuce.web.commons\InsertNguoDungBoMon.ashx" />
+    <Content Include="Handler\nuce.web.commons\InsertNguoDungMonHoc.ashx" />
+    <Content Include="Handler\nuce.web.commons\GetMonHocNameByBoMon.ashx" />
+    <Content Include="Handler\nuce.web.commons\GetBlockNameActive.ashx" />
+    <Content Include="Handler\nuce.web.commons\GetLopHocByMonHoc.ashx" />
+    <Content Include="Handler\nuce.web.commons\InsertLopHoc.ashx" />
+    <Content Include="Handler\nuce.web.commons\UpdateLopHoc.ashx" />
+    <Content Include="Handler\nuce.web.commons\UpdateLopHocStatus.ashx" />
+    <Content Include="Handler\nuce.web.commons\GetLopHoc.ashx" />
+    <Content Include="Handler\nuce.web.commons\GetLopHocNameByStatus.ashx" />
+    <Content Include="Handler\nuce.web.commons\GetLopHocSinhVienByLopHoc.ashx" />
+    <Content Include="Handler\nuce.web.commons\UpdateLopHocSinhVienStatus.ashx" />
+    <Content Include="Handler\nuce.web.commons\InsertLopHocSinhVien.ashx" />
+    <Content Include="Handler\nuce.web.commons\GetMonHocName.ashx" />
+    <Content Include="Handler\nuce.web.commons\InsertLopHoc1.ashx" />
+    <Content Include="Handler\nuce.web.commons\UpdateLopHoc1.ashx" />
+    <Content Include="Handler\nuce.web.qlhpm\Export.aspx" />
+    <Content Include="Handler\nuce.web.qlhpm\CapNhatTrangThaiBaiNopSinhVien.aspx" />
+    <Content Include="Handler\nuce.web.qlpm\DongBoDuLieu_EduWeb.ashx" />
+    <Content Include="Handler\nuce.web.qlpm\DongBoDuLieu_EduWeb_Khoa.ashx" />
+    <Content Include="Handler\nuce.web.qlpm\DongBoDuLieu_EduWeb_BoMon.ashx" />
+    <Content Include="Handler\nuce.web.qlpm\DongBoDuLieu_EduWeb_MonHoc.ashx" />
+    <Content Include="Handler\nuce.web.qlpm\DongBoDuLieu_EduWeb_CanBo.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_getmonthi.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_getchitietmonthi.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_insertmonthi.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_updatemonthi.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_deletemonthi.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_deletekhoathi.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_getchitietkhoathi.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_getkhoathi.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_insertkhoathi.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_updatekhoathi.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_deletenguoithi.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_getchitietnguoithi.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_getnguoithi.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_getkythi.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_getBoDe.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_updatekithi.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_insertkithi.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_deletekithi.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_getnguoithibykithi.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_getnguoithitrongkithi.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_updatethisinhtrongkithi.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_getdanhmuc.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_getchitietdanhmuc.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_insertdanhmuc.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_updatedanhmuc.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_deletedanhmuc.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_resetmatkhau.ashx" />
+    <Content Include="Handler\nuce.ad.thichungchi\ad_tcc_khoataikhoan.ashx" />
+    <Content Include="Handler\nuce.ad.news\ad_news_deletecats.ashx" />
+    <Content Include="Handler\nuce.ad.news\ad_news_getchitietcats.ashx" />
+    <Content Include="Handler\nuce.ad.news\ad_news_updatecats.ashx" />
+    <Content Include="Handler\nuce.ad.news\ad_news_getcats.ashx" />
+    <Content Include="Handler\nuce.ad.news\ad_news_insertcats.ashx" />
+    <Content Include="Handler\nuce.ad.news\ad_news_getItems.ashx" />
+    <Content Include="Handler\nuce.ad.news\ad_news_deleteItems.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsearch.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_studentgiadinhget.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_studentgiadinhgetchitiet.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_studentgiadinhupdate.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_studentgiadinhinsert.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsgiadinhdelete.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsquatrinhhoctapdelete.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsquatrinhhoctapupdate.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsquatrinhhoctapinsert.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsquatrinhhoctapgetchitiet.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsquatrinhhoctapget.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsthihsgdelete.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsthihsgget.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsthihsggetchitiet.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsthihsginsert.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsthihsgupdate.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_qlch_get.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_qlch_changestatus.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_qldv_xacnhan_get.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_qldv_xacnhan_changestatus.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_qldv_thamso_get.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_qldv_thamso_update.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_qldv_loaidv_get.ashx" />
+    <Content Include="Handler\nuce.ad.ctsv\ad_ctsv_qldv_xacnhan_changestatus_selected.ashx" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="controls\address.ascx" />
+    <Content Include="controls\DnnUrlControl.ascx" />
+    <Content Include="controls\duallistcontrol.ascx" />
+    <Content Include="controls\filepickeruploader.ascx" />
+    <Content Include="controls\help.ascx" />
+    <Content Include="controls\helpbuttoncontrol.ascx" />
+    <Content Include="controls\icon_help_32px.gif" />
+    <Content Include="controls\labelcontrol.ascx" />
+    <Content Include="controls\LocaleSelectorControl.ascx" />
+    <Content Include="controls\moduleauditcontrol.ascx" />
+    <Content Include="controls\sectionheadcontrol.ascx" />
+    <Content Include="controls\skincontrol.ascx" />
+    <Content Include="controls\skinthumbnailcontrol.ascx" />
+    <Content Include="controls\texteditor.ascx" />
+    <Content Include="controls\urlcontrol.ascx" />
+    <Content Include="controls\urltrackingcontrol.ascx" />
+    <Content Include="controls\user.ascx" />
+    <Content Include="DesktopModules\nuce.web.commons\QuanLyBoMon.ascx" />
+    <Content Include="DesktopModules\nuce.web.commons\QuanLyKhoa.ascx" />
+    <Content Include="DesktopModules\nuce.web.commons\SuaThongTinTruong.ascx" />
+    <Content Include="DesktopModules\nuce.skins\NUCE_SO_Admin_Menu_Left1.ascx" />
+    <Content Include="Handler\nuce.web.sinhvien\HocUpdateStatus.aspx" />
+    <Content Include="Handler\nuce.web.sinhvien\XacThucMac.aspx" />
+    <Content Include="Handler\nuce.web.sinhvien\NopBai.aspx" />
+    <Content Include="Resources\Shared\nuce\dichVuHelper.js" />
+    <Content Include="UpdateMac.aspx" />
+    <Content Include="Resources\Shared\nuce\core.js" />
+    <Content Include="Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CoreHandlerCommonAdminCTSV.cs" />
+    <Compile Include="CoreHandlerCommonAdminNews.cs" />
+    <Compile Include="CoreHandlerCommonAdminThiChungChi.cs" />
+    <Compile Include="CoreHandlerCommonAdmin.cs" />
+    <Compile Include="CoreHandlerQLPMAdmin.cs" />
+    <Compile Include="CoreHandlerCommon.cs" />
+    <Compile Include="CoreModuleSinhVien.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CoreModuleThi.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\DanhSachDichVu.ascx.cs">
+      <DependentUpon>DanhSachDichVu.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\DanhSachDichVu.ascx.designer.cs">
+      <DependentUpon>DanhSachDichVu.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_MuonHocBaGoc.ascx.cs">
+      <DependentUpon>QuanLyDichVu_MuonHocBaGoc.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_MuonHocBaGoc.ascx.designer.cs">
+      <DependentUpon>QuanLyDichVu_MuonHocBaGoc.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_GiayXacNhanUuDaiTrongGiaoDuc.ascx.cs">
+      <DependentUpon>QuanLyDichVu_GiayXacNhanUuDaiTrongGiaoDuc.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_GiayXacNhanUuDaiTrongGiaoDuc.ascx.designer.cs">
+      <DependentUpon>QuanLyDichVu_GiayXacNhanUuDaiTrongGiaoDuc.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_CapLaiTheSinhVien.ascx.cs">
+      <DependentUpon>QuanLyDichVu_CapLaiTheSinhVien.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_CapLaiTheSinhVien.ascx.designer.cs">
+      <DependentUpon>QuanLyDichVu_CapLaiTheSinhVien.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_GiayGioiThieu.ascx.cs">
+      <DependentUpon>QuanLyDichVu_GiayGioiThieu.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_GiayGioiThieu.ascx.designer.cs">
+      <DependentUpon>QuanLyDichVu_GiayGioiThieu.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_VayVonNganHang.ascx.cs">
+      <DependentUpon>QuanLyDichVu_VayVonNganHang.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_VayVonNganHang.ascx.designer.cs">
+      <DependentUpon>QuanLyDichVu_VayVonNganHang.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_ThietLapThamSo.ascx.cs">
+      <DependentUpon>QuanLyDichVu_ThietLapThamSo.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_ThietLapThamSo.ascx.designer.cs">
+      <DependentUpon>QuanLyDichVu_ThietLapThamSo.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_ThueNhaSinhVien.ascx.cs">
+      <DependentUpon>QuanLyDichVu_ThueNhaSinhVien.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_ThueNhaSinhVien.ascx.designer.cs">
+      <DependentUpon>QuanLyDichVu_ThueNhaSinhVien.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_XacNhan.ascx.cs">
+      <DependentUpon>QuanLyDichVu_XacNhan.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\QuanLyDichVu_XacNhan.ascx.designer.cs">
+      <DependentUpon>QuanLyDichVu_XacNhan.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\QuanLyCauHinh.ascx.cs">
+      <DependentUpon>QuanLyCauHinh.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\QuanLyCauHinh.ascx.designer.cs">
+      <DependentUpon>QuanLyCauHinh.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\StudentThiHSGEdit.ascx.cs">
+      <DependentUpon>StudentThiHSGEdit.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\StudentThiHSGEdit.ascx.designer.cs">
+      <DependentUpon>StudentThiHSGEdit.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\StudentQuaTrinhHocTapEdit.ascx.cs">
+      <DependentUpon>StudentQuaTrinhHocTapEdit.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\StudentQuaTrinhHocTapEdit.ascx.designer.cs">
+      <DependentUpon>StudentQuaTrinhHocTapEdit.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\StudentGiaDinhEdit.ascx.cs">
+      <DependentUpon>StudentGiaDinhEdit.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\StudentGiaDinhEdit.ascx.designer.cs">
+      <DependentUpon>StudentGiaDinhEdit.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\StudentProfileEdit.ascx.cs">
+      <DependentUpon>StudentProfileEdit.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\StudentProfileEdit.ascx.designer.cs">
+      <DependentUpon>StudentProfileEdit.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\StudentSearch.ascx.cs">
+      <DependentUpon>StudentSearch.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.ctsv\StudentSearch.ascx.designer.cs">
+      <DependentUpon>StudentSearch.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.news\ItemsMgmt.ascx.cs">
+      <DependentUpon>ItemsMgmt.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.news\ItemsMgmt.ascx.designer.cs">
+      <DependentUpon>ItemsMgmt.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\DanhSachDeTrongBoDe.ascx.cs">
+      <DependentUpon>DanhSachDeTrongBoDe.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\DanhSachDeTrongBoDe.ascx.designer.cs">
+      <DependentUpon>DanhSachDeTrongBoDe.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\ImportExcelNguoiThi.ascx.cs">
+      <DependentUpon>ImportExcelNguoiThi.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\ImportExcelNguoiThi.ascx.designer.cs">
+      <DependentUpon>ImportExcelNguoiThi.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\QLKhoaThi.ascx.cs">
+      <DependentUpon>QLKhoaThi.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\QLKhoaThi.ascx.designer.cs">
+      <DependentUpon>QLKhoaThi.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\QLKyThi.ascx.cs">
+      <DependentUpon>QLKyThi.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\QLKyThi.ascx.designer.cs">
+      <DependentUpon>QLKyThi.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\QLDanhMucThiSinh.ascx.cs">
+      <DependentUpon>QLDanhMucThiSinh.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\QLDanhMucThiSinh.ascx.designer.cs">
+      <DependentUpon>QLDanhMucThiSinh.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\QLNguoiThi.ascx.cs">
+      <DependentUpon>QLNguoiThi.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\QLNguoiThi.ascx.designer.cs">
+      <DependentUpon>QLNguoiThi.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\QLMonThi.ascx.cs">
+      <DependentUpon>QLMonThi.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\QLMonThi.ascx.designer.cs">
+      <DependentUpon>QLMonThi.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\QuanLyBoCauHoi.ascx.cs">
+      <DependentUpon>QuanLyBoCauHoi.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\QuanLyBoCauHoi.ascx.designer.cs">
+      <DependentUpon>QuanLyBoCauHoi.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\QuanLyBoDe.ascx.cs">
+      <DependentUpon>QuanLyBoDe.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\QuanLyBoDe.ascx.designer.cs">
+      <DependentUpon>QuanLyBoDe.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\QuanLyCauHinhTrongBoDe.ascx.cs">
+      <DependentUpon>QuanLyCauHinhTrongBoDe.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\QuanLyCauHinhTrongBoDe.ascx.designer.cs">
+      <DependentUpon>QuanLyCauHinhTrongBoDe.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\QuanLyCauHoi.ascx.cs">
+      <DependentUpon>QuanLyCauHoi.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\QuanLyCauHoi.ascx.designer.cs">
+      <DependentUpon>QuanLyCauHoi.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\QuanLyDapAn.ascx.cs">
+      <DependentUpon>QuanLyDapAn.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.thichungchi\QuanLyDapAn.ascx.designer.cs">
+      <DependentUpon>QuanLyDapAn.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.news\CatsMgmt.ascx.cs">
+      <DependentUpon>CatsMgmt.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.ad.news\CatsMgmt.ascx.designer.cs">
+      <DependentUpon>CatsMgmt.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.skins\NUCE_SO_Admin_Menu_Left2.ascx.cs">
+      <DependentUpon>NUCE_SO_Admin_Menu_Left2.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.skins\NUCE_SO_Admin_Menu_Left2.ascx.designer.cs">
+      <DependentUpon>NUCE_SO_Admin_Menu_Left2.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.thichungchi\Thi.ascx.cs">
+      <DependentUpon>Thi.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.thichungchi\Thi.ascx.designer.cs">
+      <DependentUpon>Thi.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\ImportExcelInLopHoc.ascx.cs">
+      <DependentUpon>ImportExcelInLopHoc.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\ImportExcelInLopHoc.ascx.designer.cs">
+      <DependentUpon>ImportExcelInLopHoc.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\QuanLyMay.ascx.cs">
+      <DependentUpon>QuanLyMay.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\QuanLyMay.ascx.designer.cs">
+      <DependentUpon>QuanLyMay.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.dt.analytics\SearchByMH.ascx.cs">
+      <DependentUpon>SearchByMH.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.dt.analytics\SearchByMH.ascx.designer.cs">
+      <DependentUpon>SearchByMH.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.dt.analytics\StatisticsNH.ascx.cs">
+      <DependentUpon>StatisticsNH.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.dt.analytics\StatisticsNH.ascx.designer.cs">
+      <DependentUpon>StatisticsNH.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.ks.analytics\QuanLyNhom.ascx.cs">
+      <DependentUpon>QuanLyNhom.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.ks.analytics\QuanLyNhom.ascx.designer.cs">
+      <DependentUpon>QuanLyNhom.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.ks.analytics\SynthesizedResults.ascx.cs">
+      <DependentUpon>SynthesizedResults.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.ks.analytics\SynthesizedResults.ascx.designer.cs">
+      <DependentUpon>SynthesizedResults.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.ks.analytics\Search.ascx.cs">
+      <DependentUpon>Search.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.ks.analytics\Search.ascx.designer.cs">
+      <DependentUpon>Search.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.ks.cuusinhvien\QuanLySinhVien.ascx.cs">
+      <DependentUpon>QuanLySinhVien.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.ks.cuusinhvien\QuanLySinhVien.ascx.designer.cs">
+      <DependentUpon>QuanLySinhVien.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlhpm\QuanLyCaHoc.ascx.cs">
+      <DependentUpon>QuanLyCaHoc.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlhpm\QuanLyCaHoc.ascx.designer.cs">
+      <DependentUpon>QuanLyCaHoc.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlhpm\QuanLySinhVien.ascx.cs">
+      <DependentUpon>QuanLySinhVien.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlhpm\QuanLySinhVien.ascx.designer.cs">
+      <DependentUpon>QuanLySinhVien.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlhpm\QuanLyThongTinDotTraoDoi.ascx.cs">
+      <DependentUpon>QuanLyThongTinDotTraoDoi.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlhpm\QuanLyThongTinDotTraoDoi.ascx.designer.cs">
+      <DependentUpon>QuanLyThongTinDotTraoDoi.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlhpm\QuanLyDotTraoDoi.ascx.cs">
+      <DependentUpon>QuanLyDotTraoDoi.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlhpm\QuanLyDotTraoDoi.ascx.designer.cs">
+      <DependentUpon>QuanLyDotTraoDoi.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\New_DanhSachDangKi.ascx.cs">
+      <DependentUpon>New_DanhSachDangKi.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\New_DanhSachDangKi.ascx.designer.cs">
+      <DependentUpon>New_DanhSachDangKi.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\New_LichSuDangKi_For_GV.ascx.cs">
+      <DependentUpon>New_LichSuDangKi_For_GV.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\New_LichSuDangKi_For_GV.ascx.designer.cs">
+      <DependentUpon>New_LichSuDangKi_For_GV.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\New_LichSuDangKi.ascx.cs">
+      <DependentUpon>New_LichSuDangKi.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\New_LichSuDangKi.ascx.designer.cs">
+      <DependentUpon>New_LichSuDangKi.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\New_DangKiLich_For_GV.ascx.cs">
+      <DependentUpon>New_DangKiLich_For_GV.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\New_DangKiLich_For_GV.ascx.designer.cs">
+      <DependentUpon>New_DangKiLich_For_GV.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\New_HuyDangKiLich_For_GV.ascx.cs">
+      <DependentUpon>New_HuyDangKiLich_For_GV.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\New_HuyDangKiLich_For_GV.ascx.designer.cs">
+      <DependentUpon>New_HuyDangKiLich_For_GV.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\New_HuyDangKiLich.ascx.cs">
+      <DependentUpon>New_HuyDangKiLich.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\New_HuyDangKiLich.ascx.designer.cs">
+      <DependentUpon>New_HuyDangKiLich.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\New_DangKiLich.ascx.cs">
+      <DependentUpon>New_DangKiLich.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\New_DangKiLich.ascx.designer.cs">
+      <DependentUpon>New_DangKiLich.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\New_LichPhongMay_For_GV.ascx.cs">
+      <DependentUpon>New_LichPhongMay_For_GV.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\New_LichPhongMay_For_GV.ascx.designer.cs">
+      <DependentUpon>New_LichPhongMay_For_GV.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\New_LichPhongMay.ascx.cs">
+      <DependentUpon>New_LichPhongMay.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\New_LichPhongMay.ascx.designer.cs">
+      <DependentUpon>New_LichPhongMay.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.sinhvien\Hoc.ascx.cs">
+      <DependentUpon>Hoc.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.sinhvien\Hoc.ascx.designer.cs">
+      <DependentUpon>Hoc.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.sinhvien\DanhSachKiThiActive.ascx.cs">
+      <DependentUpon>DanhSachKiThiActive.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.sinhvien\DanhSachKiThiActive.ascx.designer.cs">
+      <DependentUpon>DanhSachKiThiActive.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.sinhvien\ThiOnline.ascx.cs">
+      <DependentUpon>ThiOnline.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.sinhvien\ThiOnline.ascx.designer.cs">
+      <DependentUpon>ThiOnline.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.sinhvien\DangNhap.ascx.cs">
+      <DependentUpon>DangNhap.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.sinhvien\DangNhap.ascx.designer.cs">
+      <DependentUpon>DangNhap.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.sinhvien\DoiMatKhau.ascx.cs">
+      <DependentUpon>DoiMatKhau.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.sinhvien\DoiMatKhau.ascx.designer.cs">
+      <DependentUpon>DoiMatKhau.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.skins\NUCE_SO_SinhVien_LinkInfo.ascx.cs">
+      <DependentUpon>NUCE_SO_SinhVien_LinkInfo.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.skins\NUCE_SO_SinhVien_LinkInfo.ascx.designer.cs">
+      <DependentUpon>NUCE_SO_SinhVien_LinkInfo.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.skins\NUCE_SO_SinhVien_Menu.ascx.cs">
+      <DependentUpon>NUCE_SO_SinhVien_Menu.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.skins\NUCE_SO_SinhVien_Menu.ascx.designer.cs">
+      <DependentUpon>NUCE_SO_SinhVien_Menu.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\ImportExcels.ascx.cs">
+      <DependentUpon>ImportExcels.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\ImportExcels.ascx.designer.cs">
+      <DependentUpon>ImportExcels.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\QuanLyLopHoc.ascx.cs">
+      <DependentUpon>QuanLyLopHoc.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\QuanLyLopHoc.ascx.designer.cs">
+      <DependentUpon>QuanLyLopHoc.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\SuaMatKhauCuaSinhVienTrongKiThi.ascx.cs">
+      <DependentUpon>SuaMatKhauCuaSinhVienTrongKiThi.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\SuaMatKhauCuaSinhVienTrongKiThi.ascx.designer.cs">
+      <DependentUpon>SuaMatKhauCuaSinhVienTrongKiThi.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\SuaGhiChuCuaSinhVienTrongKiThi.ascx.cs">
+      <DependentUpon>SuaGhiChuCuaSinhVienTrongKiThi.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\SuaGhiChuCuaSinhVienTrongKiThi.ascx.designer.cs">
+      <DependentUpon>SuaGhiChuCuaSinhVienTrongKiThi.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\DanhSachLopTrongKiThiOTrangThaiKetThuc.ascx.cs">
+      <DependentUpon>DanhSachLopTrongKiThiOTrangThaiKetThuc.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\DanhSachLopTrongKiThiOTrangThaiKetThuc.ascx.designer.cs">
+      <DependentUpon>DanhSachLopTrongKiThiOTrangThaiKetThuc.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\DanhSachLopTrongKiThiOTrangThaiDangThi.ascx.cs">
+      <DependentUpon>DanhSachLopTrongKiThiOTrangThaiDangThi.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\DanhSachLopTrongKiThiOTrangThaiDangThi.ascx.designer.cs">
+      <DependentUpon>DanhSachLopTrongKiThiOTrangThaiDangThi.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\DanhSachLopTrongKiThiOTrangThaiBatDau.ascx.cs">
+      <DependentUpon>DanhSachLopTrongKiThiOTrangThaiBatDau.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\DanhSachLopTrongKiThiOTrangThaiBatDau.ascx.designer.cs">
+      <DependentUpon>DanhSachLopTrongKiThiOTrangThaiBatDau.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\QuanLyCauHinhTrongBoDe.ascx.cs">
+      <DependentUpon>QuanLyCauHinhTrongBoDe.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\QuanLyCauHinhTrongBoDe.ascx.designer.cs">
+      <DependentUpon>QuanLyCauHinhTrongBoDe.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\DanhSachDeTrongBoDe.ascx.cs">
+      <DependentUpon>DanhSachDeTrongBoDe.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\DanhSachDeTrongBoDe.ascx.designer.cs">
+      <DependentUpon>DanhSachDeTrongBoDe.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\QuanLyDapAn.ascx.cs">
+      <DependentUpon>QuanLyDapAn.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\QuanLyDapAn.ascx.designer.cs">
+      <DependentUpon>QuanLyDapAn.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\QuanLyBoDe.ascx.cs">
+      <DependentUpon>QuanLyBoDe.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\QuanLyBoDe.ascx.designer.cs">
+      <DependentUpon>QuanLyBoDe.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\QuanLyKithi.ascx.cs">
+      <DependentUpon>QuanLyKithi.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\QuanLyKithi.ascx.designer.cs">
+      <DependentUpon>QuanLyKithi.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\ChiTietBaiThi.ascx.cs">
+      <DependentUpon>ChiTietBaiThi.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\ChiTietBaiThi.ascx.designer.cs">
+      <DependentUpon>ChiTietBaiThi.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExportPdf.aspx.cs">
+      <DependentUpon>ExportPdf.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExportPdf.aspx.designer.cs">
+      <DependentUpon>ExportPdf.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_qldv_thamso_update.ashx.cs">
+      <DependentUpon>ad_ctsv_qldv_thamso_update.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_qldv_thamso_get.ashx.cs">
+      <DependentUpon>ad_ctsv_qldv_thamso_get.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_qldv_xacnhan_changestatus_selected.ashx.cs">
+      <DependentUpon>ad_ctsv_qldv_xacnhan_changestatus_selected.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_qldv_xacnhan_changestatus.ashx.cs">
+      <DependentUpon>ad_ctsv_qldv_xacnhan_changestatus.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_qldv_loaidv_get.ashx.cs">
+      <DependentUpon>ad_ctsv_qldv_loaidv_get.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_qldv_xacnhan_get.ashx.cs">
+      <DependentUpon>ad_ctsv_qldv_xacnhan_get.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_qlch_get.ashx.cs">
+      <DependentUpon>ad_ctsv_qlch_get.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_qlch_changestatus.ashx.cs">
+      <DependentUpon>ad_ctsv_qlch_changestatus.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsthihsgupdate.ashx.cs">
+      <DependentUpon>ad_ctsv_studentsthihsgupdate.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsthihsginsert.ashx.cs">
+      <DependentUpon>ad_ctsv_studentsthihsginsert.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsthihsggetchitiet.ashx.cs">
+      <DependentUpon>ad_ctsv_studentsthihsggetchitiet.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsthihsgget.ashx.cs">
+      <DependentUpon>ad_ctsv_studentsthihsgget.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsthihsgdelete.ashx.cs">
+      <DependentUpon>ad_ctsv_studentsthihsgdelete.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsquatrinhhoctapget.ashx.cs">
+      <DependentUpon>ad_ctsv_studentsquatrinhhoctapget.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsquatrinhhoctapgetchitiet.ashx.cs">
+      <DependentUpon>ad_ctsv_studentsquatrinhhoctapgetchitiet.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_studentgiadinhgetchitiet.ashx.cs">
+      <DependentUpon>ad_ctsv_studentgiadinhgetchitiet.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_studentgiadinhget.ashx.cs">
+      <DependentUpon>ad_ctsv_studentgiadinhget.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsquatrinhhoctapinsert.ashx.cs">
+      <DependentUpon>ad_ctsv_studentsquatrinhhoctapinsert.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_studentgiadinhinsert.ashx.cs">
+      <DependentUpon>ad_ctsv_studentgiadinhinsert.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsquatrinhhoctapupdate.ashx.cs">
+      <DependentUpon>ad_ctsv_studentsquatrinhhoctapupdate.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsearch.ashx.cs">
+      <DependentUpon>ad_ctsv_studentsearch.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_studentgiadinhupdate.ashx.cs">
+      <DependentUpon>ad_ctsv_studentgiadinhupdate.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsquatrinhhoctapdelete.ashx.cs">
+      <DependentUpon>ad_ctsv_studentsquatrinhhoctapdelete.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.ctsv\ad_ctsv_studentsgiadinhdelete.ashx.cs">
+      <DependentUpon>ad_ctsv_studentsgiadinhdelete.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.news\ad_news_deleteItems.ashx.cs">
+      <DependentUpon>ad_news_deleteItems.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.news\ad_news_deletecats.ashx.cs">
+      <DependentUpon>ad_news_deletecats.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.news\ad_news_getchitietcats.ashx.cs">
+      <DependentUpon>ad_news_getchitietcats.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.news\ad_news_getcats.ashx.cs">
+      <DependentUpon>ad_news_getcats.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.news\ad_news_insertcats.ashx.cs">
+      <DependentUpon>ad_news_insertcats.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.news\ad_news_updatecats.ashx.cs">
+      <DependentUpon>ad_news_updatecats.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.news\ad_news_getItems.ashx.cs">
+      <DependentUpon>ad_news_getItems.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_deletekithi.ashx.cs">
+      <DependentUpon>ad_tcc_deletekithi.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_deletekhoathi.ashx.cs">
+      <DependentUpon>ad_tcc_deletekhoathi.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_deletedanhmuc.ashx.cs">
+      <DependentUpon>ad_tcc_deletedanhmuc.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_deletenguoithi.ashx.cs">
+      <DependentUpon>ad_tcc_deletenguoithi.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_getchitietkhoathi.ashx.cs">
+      <DependentUpon>ad_tcc_getchitietkhoathi.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_getchitietdanhmuc.ashx.cs">
+      <DependentUpon>ad_tcc_getchitietdanhmuc.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_getchitietnguoithi.ashx.cs">
+      <DependentUpon>ad_tcc_getchitietnguoithi.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_getchitietmonthi.ashx.cs">
+      <DependentUpon>ad_tcc_getchitietmonthi.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_deletemonthi.ashx.cs">
+      <DependentUpon>ad_tcc_deletemonthi.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_getkhoathi.ashx.cs">
+      <DependentUpon>ad_tcc_getkhoathi.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_getBoDe.ashx.cs">
+      <DependentUpon>ad_tcc_getBoDe.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_getkythi.ashx.cs">
+      <DependentUpon>ad_tcc_getkythi.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_getdanhmuc.ashx.cs">
+      <DependentUpon>ad_tcc_getdanhmuc.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_getnguoithitrongkithi.ashx.cs">
+      <DependentUpon>ad_tcc_getnguoithitrongkithi.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_getnguoithibykithi.ashx.cs">
+      <DependentUpon>ad_tcc_getnguoithibykithi.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_getnguoithi.ashx.cs">
+      <DependentUpon>ad_tcc_getnguoithi.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_insertkhoathi.ashx.cs">
+      <DependentUpon>ad_tcc_insertkhoathi.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_insertkithi.ashx.cs">
+      <DependentUpon>ad_tcc_insertkithi.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_insertdanhmuc.ashx.cs">
+      <DependentUpon>ad_tcc_insertdanhmuc.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_khoataikhoan.ashx.cs">
+      <DependentUpon>ad_tcc_khoataikhoan.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_resetmatkhau.ashx.cs">
+      <DependentUpon>ad_tcc_resetmatkhau.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_updatekhoathi.ashx.cs">
+      <DependentUpon>ad_tcc_updatekhoathi.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_updatedanhmuc.ashx.cs">
+      <DependentUpon>ad_tcc_updatedanhmuc.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_updatethisinhtrongkithi.ashx.cs">
+      <DependentUpon>ad_tcc_updatethisinhtrongkithi.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_updatekithi.ashx.cs">
+      <DependentUpon>ad_tcc_updatekithi.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_updatemonthi.ashx.cs">
+      <DependentUpon>ad_tcc_updatemonthi.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_insertmonthi.ashx.cs">
+      <DependentUpon>ad_tcc_insertmonthi.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.ad.thichungchi\ad_tcc_getmonthi.ashx.cs">
+      <DependentUpon>ad_tcc_getmonthi.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.thichungchi\NopBai.aspx.cs">
+      <DependentUpon>NopBai.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Handler\nuce.thichungchi\NopBai.aspx.designer.cs">
+      <DependentUpon>NopBai.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.thichungchi\tcc_getDanhSachBaiThi.aspx.cs">
+      <DependentUpon>tcc_getDanhSachBaiThi.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Handler\nuce.thichungchi\tcc_getDanhSachBaiThi.aspx.designer.cs">
+      <DependentUpon>tcc_getDanhSachBaiThi.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.thichungchi\tcc_logout.aspx.cs">
+      <DependentUpon>tcc_logout.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Handler\nuce.thichungchi\tcc_logout.aspx.designer.cs">
+      <DependentUpon>tcc_logout.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.thichungchi\tcc_check.aspx.cs">
+      <DependentUpon>tcc_check.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Handler\nuce.thichungchi\tcc_check.aspx.designer.cs">
+      <DependentUpon>tcc_check.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.thichungchi\tcc_getUser.aspx.cs">
+      <DependentUpon>tcc_getUser.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Handler\nuce.thichungchi\tcc_getUser.aspx.designer.cs">
+      <DependentUpon>tcc_getUser.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.thichungchi\tcc_checklogin.aspx.cs">
+      <DependentUpon>tcc_checklogin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Handler\nuce.thichungchi\tcc_checklogin.aspx.designer.cs">
+      <DependentUpon>tcc_checklogin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\GetMonHocName.ashx.cs">
+      <DependentUpon>GetMonHocName.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\InsertLopHoc1.ashx.cs">
+      <DependentUpon>InsertLopHoc1.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\UpdateLopHoc1.ashx.cs">
+      <DependentUpon>UpdateLopHoc1.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.qlhpm\Export.aspx.cs">
+      <DependentUpon>Export.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Handler\nuce.web.qlhpm\Export.aspx.designer.cs">
+      <DependentUpon>Export.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.qlhpm\CapNhatTrangThaiBaiNopSinhVien.aspx.cs">
+      <DependentUpon>CapNhatTrangThaiBaiNopSinhVien.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Handler\nuce.web.qlhpm\CapNhatTrangThaiBaiNopSinhVien.aspx.designer.cs">
+      <DependentUpon>CapNhatTrangThaiBaiNopSinhVien.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.qlpm\DongBoDuLieu_EduWeb_CanBo.ashx.cs">
+      <DependentUpon>DongBoDuLieu_EduWeb_CanBo.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.qlpm\DongBoDuLieu_EduWeb_MonHoc.ashx.cs">
+      <DependentUpon>DongBoDuLieu_EduWeb_MonHoc.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.qlpm\DongBoDuLieu_EduWeb_BoMon.ashx.cs">
+      <DependentUpon>DongBoDuLieu_EduWeb_BoMon.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.qlpm\DongBoDuLieu_EduWeb_Khoa.ashx.cs">
+      <DependentUpon>DongBoDuLieu_EduWeb_Khoa.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.qlpm\DongBoDuLieu_EduWeb.ashx.cs">
+      <DependentUpon>DongBoDuLieu_EduWeb.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.sinhvien\HocUpdateStatus.aspx.cs">
+      <DependentUpon>HocUpdateStatus.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Handler\nuce.web.sinhvien\HocUpdateStatus.aspx.designer.cs">
+      <DependentUpon>HocUpdateStatus.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.sinhvien\XacThucMac.aspx.cs">
+      <DependentUpon>XacThucMac.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Handler\nuce.web.sinhvien\XacThucMac.aspx.designer.cs">
+      <DependentUpon>XacThucMac.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.sinhvien\NopBai.aspx.cs">
+      <DependentUpon>NopBai.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Handler\nuce.web.sinhvien\NopBai.aspx.designer.cs">
+      <DependentUpon>NopBai.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="UpdateMac.aspx.cs">
+      <DependentUpon>UpdateMac.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UpdateMac.aspx.designer.cs">
+      <DependentUpon>UpdateMac.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Thi.DoKho.cs" />
+    <Compile Include="Thi.LoaiCauHoi.cs" />
+    <Compile Include="DesktopModules\nuce.web.commons\QuanLyPhongHoc.ascx.cs">
+      <DependentUpon>QuanLyPhongHoc.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\QuanLyPhongHoc.ascx.designer.cs">
+      <DependentUpon>QuanLyPhongHoc.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\QuanLyBlockHoc.ascx.cs">
+      <DependentUpon>QuanLyBlockHoc.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\QuanLyBlockHoc.ascx.designer.cs">
+      <DependentUpon>QuanLyBlockHoc.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\QuanLySinhVienTrongLopHoc.ascx.cs">
+      <DependentUpon>QuanLySinhVienTrongLopHoc.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\QuanLySinhVienTrongLopHoc.ascx.designer.cs">
+      <DependentUpon>QuanLySinhVienTrongLopHoc.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\QuanLyLopHoc.ascx.cs">
+      <DependentUpon>QuanLyLopHoc.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\QuanLyLopHoc.ascx.designer.cs">
+      <DependentUpon>QuanLyLopHoc.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\QuanLySinhVien.ascx.cs">
+      <DependentUpon>QuanLySinhVien.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\QuanLySinhVien.ascx.designer.cs">
+      <DependentUpon>QuanLySinhVien.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\QuanLyLopQuanLy.ascx.cs">
+      <DependentUpon>QuanLyLopQuanLy.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\QuanLyLopQuanLy.ascx.designer.cs">
+      <DependentUpon>QuanLyLopQuanLy.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\QuanLyNamHoc.ascx.cs">
+      <DependentUpon>QuanLyNamHoc.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\QuanLyNamHoc.ascx.designer.cs">
+      <DependentUpon>QuanLyNamHoc.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\QuanLyMonHoc.ascx.cs">
+      <DependentUpon>QuanLyMonHoc.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\QuanLyMonHoc.ascx.designer.cs">
+      <DependentUpon>QuanLyMonHoc.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\QuanLyBoMon.ascx.cs">
+      <DependentUpon>QuanLyBoMon.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\QuanLyBoMon.ascx.designer.cs">
+      <DependentUpon>QuanLyBoMon.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\QuanLyKhoa.ascx.cs">
+      <DependentUpon>QuanLyKhoa.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\QuanLyKhoa.ascx.designer.cs">
+      <DependentUpon>QuanLyKhoa.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\SuaThongTinTruong.ascx.cs">
+      <DependentUpon>SuaThongTinTruong.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.commons\SuaThongTinTruong.ascx.designer.cs">
+      <DependentUpon>SuaThongTinTruong.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.skins\NUCE_SO_Admin_Menu_Left1.ascx.cs">
+      <DependentUpon>NUCE_SO_Admin_Menu_Left1.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.skins\NUCE_SO_Admin_Menu_Left1.ascx.designer.cs">
+      <DependentUpon>NUCE_SO_Admin_Menu_Left1.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\DiemDanh.ascx.cs">
+      <DependentUpon>DiemDanh.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\DiemDanh.ascx.designer.cs">
+      <DependentUpon>DiemDanh.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\QuanLyDangKiDiemDanh.ascx.cs">
+      <DependentUpon>QuanLyDangKiDiemDanh.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\QuanLyDangKiDiemDanh.ascx.designer.cs">
+      <DependentUpon>QuanLyDangKiDiemDanh.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\VanTaySinhVien.ascx.cs">
+      <DependentUpon>VanTaySinhVien.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\VanTaySinhVien.ascx.designer.cs">
+      <DependentUpon>VanTaySinhVien.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\SuaDangKiLopHoc.ascx.cs">
+      <DependentUpon>SuaDangKiLopHoc.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\SuaDangKiLopHoc.ascx.designer.cs">
+      <DependentUpon>SuaDangKiLopHoc.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\LichSuDangKi.ascx.cs">
+      <DependentUpon>LichSuDangKi.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\LichSuDangKi.ascx.designer.cs">
+      <DependentUpon>LichSuDangKi.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\TuanTiepTheo.ascx.cs">
+      <DependentUpon>TuanTiepTheo.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\TuanTiepTheo.ascx.designer.cs">
+      <DependentUpon>TuanTiepTheo.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\TuanHienTai.ascx.cs">
+      <DependentUpon>TuanHienTai.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.qlpm\TuanHienTai.ascx.designer.cs">
+      <DependentUpon>TuanHienTai.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\QuanLyMucDiem.ascx.cs">
+      <DependentUpon>QuanLyMucDiem.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\QuanLyMucDiem.ascx.designer.cs">
+      <DependentUpon>QuanLyMucDiem.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\QuanLyBoCauHoi.ascx.cs">
+      <DependentUpon>QuanLyBoCauHoi.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\QuanLyBoCauHoi.ascx.designer.cs">
+      <DependentUpon>QuanLyBoCauHoi.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\QuanLyCauHoi.ascx.cs">
+      <DependentUpon>QuanLyCauHoi.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\QuanLyCauHoi.ascx.designer.cs">
+      <DependentUpon>QuanLyCauHoi.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\QuanLyThangDiem.ascx.cs">
+      <DependentUpon>QuanLyThangDiem.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DesktopModules\nuce.web.thi\QuanLyThangDiem.ascx.designer.cs">
+      <DependentUpon>QuanLyThangDiem.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExportExcel.aspx.cs">
+      <DependentUpon>ExportExcel.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExportExcel.aspx.designer.cs">
+      <DependentUpon>ExportExcel.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\GetBlockNameActive.ashx.cs">
+      <DependentUpon>GetBlockNameActive.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\GetLopHocSinhVienByLopHoc.ashx.cs">
+      <DependentUpon>GetLopHocSinhVienByLopHoc.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\GetLopHocNameByStatus.ashx.cs">
+      <DependentUpon>GetLopHocNameByStatus.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\GetLopHoc.ashx.cs">
+      <DependentUpon>GetLopHoc.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\GetLopHocByMonHoc.ashx.cs">
+      <DependentUpon>GetLopHocByMonHoc.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\GetMonHocNameByBoMon.ashx.cs">
+      <DependentUpon>GetMonHocNameByBoMon.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\GetNguoiDungByBoMon.ashx.cs">
+      <DependentUpon>GetNguoiDungByBoMon.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\GetNguoiDungByMonHoc.ashx.cs">
+      <DependentUpon>GetNguoiDungByMonHoc.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\GetMonHoc.ashx.cs">
+      <DependentUpon>GetMonHoc.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\InsertLopHocSinhVien.ashx.cs">
+      <DependentUpon>InsertLopHocSinhVien.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\InsertLopHoc.ashx.cs">
+      <DependentUpon>InsertLopHoc.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\InsertNguoDungMonHoc.ashx.cs">
+      <DependentUpon>InsertNguoDungMonHoc.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\InsertNguoDungBoMon.ashx.cs">
+      <DependentUpon>InsertNguoDungBoMon.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\UpdateLopHoc.ashx.cs">
+      <DependentUpon>UpdateLopHoc.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\UpdateLopHocSinhVienStatus.ashx.cs">
+      <DependentUpon>UpdateLopHocSinhVienStatus.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\UpdateLopHocStatus.ashx.cs">
+      <DependentUpon>UpdateLopHocStatus.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\UpdateNguoDungBoMonStatus.ashx.cs">
+      <DependentUpon>UpdateNguoDungBoMonStatus.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\UpdateNguoDungMonHocStatus.ashx.cs">
+      <DependentUpon>UpdateNguoDungMonHocStatus.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\UpdateMonHocStatus.ashx.cs">
+      <DependentUpon>UpdateMonHocStatus.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\UpdateMonHoc.ashx.cs">
+      <DependentUpon>UpdateMonHoc.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\InsertMonHoc.ashx.cs">
+      <DependentUpon>InsertMonHoc.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\GetMonHocByBoMon.ashx.cs">
+      <DependentUpon>GetMonHocByBoMon.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\GetBoMonByKhoa.ashx.cs">
+      <DependentUpon>GetBoMonByKhoa.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\nuce.web.commons\GetKhoa.ashx.cs">
+      <DependentUpon>GetKhoa.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Nuce.CTSV\Nuce.CTSV.csproj">
+      <Project>{7d28b4ba-c67d-439b-8923-78e6d2272e42}</Project>
+      <Name>Nuce.CTSV</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\nuce.web.data\nuce.web.data.csproj">
+      <Project>{db63cf01-5efd-47fe-b7d7-09eb4ef7c462}</Project>
+      <Name>nuce.web.data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\nuce.web.model\nuce.web.model.csproj">
+      <Project>{9eca50bf-5f67-48a5-8a42-3192e0a67417}</Project>
+      <Name>nuce.web.model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\nuce.web.tienich\nuce.web.tienich.csproj">
+      <Project>{b7617f73-9e96-4841-b802-5fe61ed00e68}</Project>
+      <Name>nuce.web.tienich</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>28915</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:28915/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

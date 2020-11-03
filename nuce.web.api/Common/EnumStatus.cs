@@ -5,6 +5,13 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Common
 {
+    public enum UserStatus
+    {
+        Active = 1,
+        Deactive = 2,
+        Deleted = 3
+    }
+
     public enum QuestionStatus
     {
         Active = 1,
@@ -16,4 +23,5 @@ namespace nuce.web.api.Common
         Active = 1,
         Deactive = 4
     }
+
 }

@@ -13,5 +13,6 @@ namespace nuce.web.api.ViewModel.Core.NuceIdentity
 
         [Required(AllowEmptyStrings = false)]
         public string Password { get; set; }
+        public bool IsStudent { get; set; }
     }
 }

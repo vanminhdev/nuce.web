@@ -22,30 +22,30 @@ namespace nuce.web.api.Services.Survey.Implements
             _surveyContext = surveyContext;
         }
 
-        public async Task<List<Question>> GetAllActiveStatus()
+        public async Task<List<QuestionModel>> GetAllActiveStatus()
         {
             var list = await _surveyContext.AsEduSurveyCauHoi.AsNoTracking()
                 .OrderBy(q => q.Order)
                 .Where(q => q.Status != (int)QuestionStatus.Deactive)
                 .ToListAsync();
             return
-                list.Select(q => new Question
+                list.Select(q => new QuestionModel()
                 {
                     Id = q.Id.ToString(),
                     Ma = q.Ma,
-                    Content = HttpUtility.HtmlDecode(q.Content),
+                    Content = HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(q.Content)),
                     Type = q.Type,
                     Order = q.Order
                 }).ToList();
         }
 
-        public async Task<List<Question>> GetAllByStatus(QuestionStatus status)
+        public async Task<List<QuestionModel>> GetAllByStatus(QuestionStatus status)
         {
             var list = await _surveyContext.AsEduSurveyCauHoi.AsNoTracking()
                 .OrderBy(q => q.Order)
                 .Where(q => q.Status == (int)status).ToListAsync();
             return
-                list.Select(q => new Question
+                list.Select(q => new QuestionModel
                 {
                     Ma = q.Ma,
                     Content = HttpUtility.HtmlDecode(q.Content),
@@ -54,7 +54,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 }).ToList();
         }
 
-        public async Task<Question> GetById(string Id)
+        public async Task<QuestionModel> GetById(string Id)
         {
             var question = await _surveyContext.AsEduSurveyCauHoi
                 .AsNoTracking()
@@ -62,7 +62,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 .FirstOrDefaultAsync();
             if (question == null)
                 return null;
-            return new Question {
+            return new QuestionModel {
                 Id = Id,
                 Ma = question.Ma,
                 Content = HttpUtility.HtmlDecode(question.Content),
@@ -71,7 +71,7 @@ namespace nuce.web.api.Services.Survey.Implements
             };
         }
 
-        public async Task Create(QuestionCreate question)
+        public async Task Create(QuestionCreateModel question)
         {
             var questionCreate = new AsEduSurveyCauHoi();
             try
@@ -98,7 +98,7 @@ namespace nuce.web.api.Services.Survey.Implements
             await _surveyContext.SaveChangesAsync();
         }
 
-        public async Task Update(string id, QuestionUpdate question)
+        public async Task Update(string id, QuestionUpdateModel question)
         {
             var questionUpdate = _surveyContext.AsEduSurveyCauHoi
                 .FirstOrDefault(q => q.Id.ToString() == id);
@@ -120,7 +120,7 @@ namespace nuce.web.api.Services.Survey.Implements
             questionUpdate.UpdatedDate = DateTime.Now;
             questionUpdate.Order = question.Order.Value;
             questionUpdate.Type = question.Type;
-            await _surveyContext.SaveChangesAsync();
+             await _surveyContext.SaveChangesAsync();
         }
 
         public async Task Delete(string id)
@@ -133,7 +133,5 @@ namespace nuce.web.api.Services.Survey.Implements
             question.Status = (int)QuestionStatus.Deactive;
             await _surveyContext.SaveChangesAsync();
         }
-
-
     }
 }

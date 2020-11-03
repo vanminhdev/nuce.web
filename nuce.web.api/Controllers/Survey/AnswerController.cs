@@ -18,7 +18,7 @@ namespace nuce.web.api.Controllers.Survey
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class AnswerController : ControllerBase
     {
         private readonly ILogger<AnswerController> _logger;
@@ -42,12 +42,12 @@ namespace nuce.web.api.Controllers.Survey
         {
             var answer = await _asEduSurveyDapAnService.GetById(id);
             if (answer == null)
-                return NotFound(new { message = "Record not found" });
+                return NotFound(new { message = "Không tìm thấy bản ghi" });
             return Ok(answer);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] AnswerCreate answer)
+        public async Task<IActionResult> Create([FromBody] AnswerCreateModel answer)
         {
             try
             {
@@ -71,7 +71,7 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([Required(AllowEmptyStrings = false)] string id, [FromBody] AnswerUpdate answer)
+        public async Task<IActionResult> Update([Required(AllowEmptyStrings = false)] string id, [FromBody] AnswerUpdateModel answer)
         {
             try
             {
@@ -84,7 +84,7 @@ namespace nuce.web.api.Controllers.Survey
             }
             catch (RecordNotFoundException)
             {
-                return NotFound(new { message = "Record not found" });
+                return NotFound(new { message = "Không tìm thấy bản ghi" });
             }
             catch (Exception e)
             {
@@ -103,7 +103,7 @@ namespace nuce.web.api.Controllers.Survey
             }
             catch (RecordNotFoundException)
             {
-                return NotFound(new { message = "Record not found" });
+                return NotFound(new { message = "Không tìm thấy bản ghi" });
             }
             catch (DbUpdateException e)
             {

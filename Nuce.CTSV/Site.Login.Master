@@ -1,0 +1,186 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Login.Master.cs" Inherits="Nuce.CTSV.LoginMaster" %>
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="HỆ THỐNG ĐĂNG KÝ THỦ TỤC HÀNH CHÍNH SINH VIÊN ONLINE" />
+    <meta name="author" content="HỆ THỐNG ĐĂNG KÝ THỦ TỤC HÀNH CHÍNH SINH VIÊN ONLINE" />
+    <meta property="og:image" content="/data/icons//logo.png" />
+    <link rel="icon" href="/data/icons//favicon-96x96.png">
+
+    <title>HỆ THỐNG ĐĂNG KÝ THỦ TỤC HÀNH CHÍNH SINH VIÊN ONLINE</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css" rel="stylesheet" type="text/css" />
+    <link
+        href="./vendor/fontawesome-free/css/all.min.css"
+        rel="stylesheet"
+        type="text/css" />
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet" />
+
+    <!-- Custom styles for this template-->
+    <link href="./css/sb-admin-2.min.css" rel="stylesheet" />
+    <style>
+        .bg-login-image {
+            background: url("https://blog.advids.co/wp-content/uploads//2017/08/student.png");
+            background-position: center;
+            background-size: cover;
+        }
+    </style>
+    <!-- Bootstrap core JavaScript-->
+    <!-- Custom styles for this page -->
+    <link
+        href="/vendor/datatables/dataTables.bootstrap4.min.css"
+        rel="stylesheet" />
+
+    <!-- Custom styles for this template -->
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet" />
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <!-- test -->
+    <!-- BootStrap -->
+    <!-- Bootstrap date picker -->
+    <link
+      rel="stylesheet"
+      href="/style/public/css/bootstrap-datepicker3.min.css"
+    />
+
+    <!-- Custom -->
+    <link rel="stylesheet" href="/style/public/css/util.css" />
+    <link rel="stylesheet" href="/style/public/css/style.css" />
+    <link rel="stylesheet" href="/style/public/css/responsive.css" />
+</head>
+<body>
+    <div class="full-height login-wrp">
+      <!-- header section -->
+      <section id="header">
+        <div class="container-fluid">
+          <div class="row justify-content-around align-items-center">
+            <div class="col-12 col-md-7">
+              <div class="row">
+                <div class="col-2">
+                  <img
+                    class="logo"
+                    src="./style/public/images/logo.png"
+                    alt="logo"
+                    srcset=""
+                  />
+                </div>
+                <div class="col-10 col-md-10 mb-3">
+                  <div
+                    class="col-12 main-title main-color font-18-sm font-32 font-28-md text-left"
+                  >
+                    trường đại học xây dựng
+                  </div>
+                  <div
+                    class="col-12 main-color sub-title font-14-sm font-25 font-22-md"
+                  >
+                    National University of Civil Engeering
+                  </div>
+                  <div class="col-12">
+                    <div class="row">
+                      <div class="col-2 pr-0"><hr class="line-label" /></div>
+                      <div class="col-10 small-title font-9-sm font-15">
+                        Cơ sở giáo dục đại học đạt chuẩn kiểm định quốc tế
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-5">
+              <div class="row">
+                <div class="col-5 p-1">
+                  <div class="row">
+                    <div class="col-3">
+                      <img
+                        src="./style/public/images/icons/hotline.png"
+                        alt="hotline icon"
+                        class="hotline-icon"
+                      />
+                    </div>
+                    <div class="col-9">
+                      <div class="row">
+                        <div class="col-12 main-color icon-title font-14-sm">
+                          Hotline
+                        </div>
+                        <div class="col-12 icon-sub-title">02438697004</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-7 p-1">
+                  <div class="row">
+                    <div class="col-3">
+                      <img
+                        src="./style/public/images/icons/email.png"
+                        alt="email icon"
+                        class="email-icon"
+                      />
+                    </div>
+                    <div class="col-9">
+                      <div class="row">
+                        <div class="col-12 main-color icon-title font-14-sm">
+                          Email
+                        </div>
+                        <div class="col-10 icon-sub-title">
+                          ctsv@nuce.edu.vn
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- end header section -->
+
+      <!-- body section -->
+      <section id="body" class="login-form">
+        <div class="container">
+            <form runat="server" class="user">
+                <asp:ContentPlaceHolder ID="MainContent" runat="server">
+                    </asp:ContentPlaceHolder>
+            </form>
+        </div>
+      </section>
+      <!-- end body section -->
+
+      <!-- footer section -->
+      <section id="footer">
+        <div class="container full-height mt-1">
+          <div class="full-height row text-center main-color align-items-end">
+            <div class="col-12 mb-2">
+              Bản quyền @2020 thuộc Đại học Xây dựng
+              <br />
+              Phát triển bởi: Khoa Công Nghê Thông Tin
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- end footer section -->
+    </div>
+    <!-- Custom scripts for all pages-->
+    <script src="/js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="/js/demo/datatables-demo.js"></script>
+
+</body>

@@ -1,0 +1,388 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="Nuce.CTSV.SiteMaster" %>
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head runat="server">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="HỆ THỐNG ĐĂNG KÝ THỦ TỤC HÀNH CHÍNH SINH VIÊN ONLINE" />
+    <meta name="author" content="HỆ THỐNG ĐĂNG KÝ THỦ TỤC HÀNH CHÍNH SINH VIÊN ONLINE" />
+    <meta property="og:image" content="/data/icons//logo.png" />
+    <link rel="icon" href="/data/icons//logo.png">
+
+    <title>HỆ THỐNG ĐĂNG KÝ THỦ TỤC HÀNH CHÍNH SINH VIÊN ONLINE</title>
+
+    <!-- Custom fonts for this template -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css" rel="stylesheet" type="text/css" />
+    <link
+        href="/vendor/fontawesome-free/css/all.min.css"
+        rel="stylesheet"
+        type="text/css" />
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet" />
+
+    <!-- Custom styles for this page -->
+    <link
+        href="/vendor/datatables/dataTables.bootstrap4.min.css"
+        rel="stylesheet" />
+
+    <!-- Custom styles for this template -->
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet" />
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <!-- test -->
+    <!-- BootStrap -->
+    <!-- Bootstrap date picker -->
+    <link
+      rel="stylesheet"
+      href="/style/public/css/bootstrap-datepicker3.min.css"
+    />
+
+    <!-- Custom -->
+    <link rel="stylesheet" href="/style/public/css/util.css" />
+    <link rel="stylesheet" href="/style/public/css/style.css" />
+    <link rel="stylesheet" href="/style/public/css/responsive.css" />
+    <style>
+        .scroll-to-top {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            display: none;
+            width: 2.75rem;
+            height: 2.75rem;
+            text-align: center;
+            color: #fff;
+            background: rgba(90, 92, 105, 0.5);
+            line-height: 46px;
+        }
+        .rounded {
+            border-radius: 0.35rem !important;
+        }
+    </style>
+</head>
+<body id="page-top">
+    <!-- test -->
+    <div class="full-height body-wrp">
+      <!-- header section -->
+      <section id="header">
+        <div class="container-fluid header-wrp">
+          <div class="row justify-content-between align-items-center">
+            <div class="col-12 col-md-7">
+              <div class="row">
+                <div class="col-2">
+                  <img
+                    class="logo"
+                    src="/style/public/images/logo.png"
+                    alt="logo"
+                  />
+                </div>
+                <div class="col-10 col-md-10 mb-3">
+                  <div
+                    class="col-12 text-left main-title main-color font-18-sm font-32 font-28-md"
+                  >
+                    trường đại học xây dựng
+                  </div>
+                  <div
+                    class="col-12 main-color sub-title font-14-sm font-25 font-22-md"
+                  >
+                    National University of Civil Engeering
+                  </div>
+                  <div class="col-12">
+                    <div class="row">
+                      <div class="col-2 pr-0"><hr class="line-label" /></div>
+                      <div class="col-10 small-title font-9-sm font-15">
+                        Cơ sở giáo dục đại học đạt chuẩn kiểm định quốc tế
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-5">
+              <div class="row">
+                <div class="col-5 p-1">
+                  <div class="row">
+                    <div class="col-3">
+                      <img
+                        src="/style/public/images/icons/hotline.png"
+                        alt="hotline icon"
+                        class="hotline-icon"
+                      />
+                    </div>
+                    <div class="col-9">
+                      <div class="row">
+                        <div class="col-12 main-color icon-title font-14-sm">
+                          Hotline
+                        </div>
+                        <div class="col-12 icon-sub-title">02438697004</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-7 p-1">
+                  <div class="row">
+                    <div class="col-3">
+                      <img
+                        src="/style/public/images/icons/email.png"
+                        alt="email icon"
+                        class="email-icon"
+                      />
+                    </div>
+                    <div class="col-9">
+                      <div class="row">
+                        <div class="col-12 main-color icon-title font-14-sm">
+                          Email
+                        </div>
+                        <div class="col-10 icon-sub-title">
+                          ctsv@nuce.edu.vn
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- end header section -->
+
+      <!-- menu section -->
+      <section id="menu">
+        <div class="container-fluid menu-wrp mt-2">
+          <hr class="menu-line" />
+          <div class="row">
+            <a id="linkDichVuSV" runat="server"
+              href="/dichvusinhvien.aspx"
+              class="text-decoration-none col-6 col-xl-3 menu-item menu-item-active text-center font-18 font-10-xsm"
+            >
+              dịch vụ
+            </a>
+            <a id="linkTinTuc" runat="server"
+              href="/default.aspx"
+              class="text-decoration-none col-6 col-xl-3 menu-item text-center font-18 font-10-xsm"
+            >
+              tin tức
+            </a>
+            <a id="linkHoSoSV" runat="server"
+              href="/hososinhvien.aspx"
+              class="text-decoration-none col-6 col-xl-3 menu-item text-center font-18 font-10-xsm"
+            >
+              hồ sơ
+            </a>
+            <a id="linkCapNhatHoSoSV" runat="server"
+              href="/capnhathoso.aspx"
+              class="text-decoration-none col-6 col-xl-3 menu-item text-center font-18 font-10-xsm"
+            >
+              cập nhật hồ sơ
+            </a>
+          </div>
+        </div>
+      </section>
+      <!-- end menu section -->
+
+      <!-- body section -->
+      <section id="body">
+        <div class="container-fluid position-relative">
+          <div
+            class="row justify-content-center banner-wrp service-banner mt-3 ml-0 mr-0"
+          >
+            <div class="col-12 text-center text-light text-uppercase banner-title font-18-sm font-42 font-32-md">
+              hệ thống thông tin nhân viên
+            </div>
+            <div class="col-8 col-md-3"><hr class="banner-line" /></div>
+            <div class="col-12 text-center text-light text-uppercase banner-title font-18-sm font-40 font-30-md">
+                <asp:ContentPlaceHolder ID="Banner" runat="server"></asp:ContentPlaceHolder>
+            </div>
+          </div>
+          <img
+            id="avatar"
+            runat="server"
+            src="/style/public/images/person.png"
+            alt=""
+            class="user-avatar position-absolute"
+          />
+
+          <!-- display info user for mobile -->
+          <div class="display-mobile">
+            <div class="row justify-content-end user-wrp align-items-end">
+                <div class="col-7 mt-3">
+                  <div class="row">
+                    <div class="col-12 mb-2">
+                      <div class="row">
+                        <div id="divMobileUsername" runat="server" class="main-color text-uppercase fw-600 font-16-sm">
+                          minh khôi
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div id="divMobileMssv"
+                            runat="server" class="col-5 font-14-sm text-left pl-0">
+                          ID: 125998
+                        </div>
+                        <div class="col-3">|</div>
+                        <a class="row cursor-pointer" 
+                            data-toggle="modal"
+                            data-target="#logoutModal">
+                          <div class="main-color font-14-sm">Log out</div>
+                          <img
+                            src="/style/public/images/icons/logout.png"
+                            alt="logout-icon"
+                            class="logout-icon ml-3"
+                          />
+                        </a>
+                      </div>
+                    </div>
+                    <button
+                       id="btnMobileCapNhatHoSo" runat="server"
+                      type="button"
+                      class="col-12 btn w-100 text-light font-14-sm login-btn"
+                      onclick="location.href='/capnhathoso.aspx';"
+                    >
+                      Cập nhật hồ sơ
+                    </button>
+                  </div>
+                </div>
+              </div>
+            <div class="row ml-2 p-1">
+              <div class="col-12 mt-3 font-14 font-14-md">
+                <div class="row text-uppercase justify-content-start align-items-center">
+                  <asp:ContentPlaceHolder ID="BreadCrumMobile" runat="server"></asp:ContentPlaceHolder>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- display user for large screen -->
+          <div
+            class="row user-wrp align-items-start justify-content-between display-lg"
+          >
+            <div class="col-7 col-md-3 col-lg-5 col-xl-3 mt-3">
+              <div class="row">
+                <div class="col-12 mb-2">
+                  <div class="row align-items-center">
+                    <div id="divLargeUsername" runat="server" class="main-color text-uppercase fw-600 font-16-sm">
+                      minh khôi
+                    </div>
+                    <button
+                        id="btnLargeCapNhatHoSo" runat="server"
+                      type="button"
+                      class="btn text-light font-14-sm login-btn ml-3"
+                      onclick="location.href='/capnhathoso.aspx';"
+                    >
+                      Cập nhật hồ sơ
+                    </button>
+                  </div>
+                  <div class="row mt-2 align-items-center">
+                    <div id="divLargeMssv" runat="server"
+                      class="col-5 col-md-5 col-xl-4 font-14-sm text-left pl-0"
+                    >
+                      ID: 125998
+                    </div>
+                    <div class="col-2 pl-0 pr-0">|</div>
+                    <a class="row cursor-pointer"
+                        data-toggle="modal"
+                        data-target="#logoutModal">
+                      <div class="main-color font-14-sm">Log out</div>
+                      <img
+                        src="/style/public/images/icons/logout.png"
+                        alt="logout-icon"
+                        class="logout-icon ml-3"
+                      />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4 col-xl-4 mt-3 font-14 font-14-md">
+                <div class="row text-uppercase justify-content-start mr-5 align-items-center">
+                    <asp:ContentPlaceHolder ID="BreadCrum" runat="server"></asp:ContentPlaceHolder>
+                </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="container-fluid service-categories-wrp">
+            <form runat="server">
+                <asp:ContentPlaceHolder ID="MainContent" runat="server">
+                </asp:ContentPlaceHolder>
+            </form>
+        </div>
+      </section>
+      <!-- end body section -->
+
+      <!-- footer section -->
+      <section id="footer">
+        <div class="container full-height mt-1">
+          <div class="full-height row text-center main-color align-items-end">
+            <div class="col-12 mb-2">
+              Bản quyền @2020 thuộc Đại học Xây dựng
+              <br />
+              Phát triển bởi: Khoa Công Nghê Thông Tin
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- end footer section -->
+    </div>
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+    <!-- Logout Modal-->
+    <div
+        class="modal fade"
+        id="logoutModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Bạn có chắc chắn muốn thoát?</h5>
+                    <button
+                        class="close"
+                        type="button"
+                        data-dismiss="modal"
+                        aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Bạn hãy chọn "Logout" dưới đây nếu thực sự muốn đăng xuất ra khỏi tài khoản hiện tại.
+         
+                </div>
+                <div class="modal-footer">
+                    <button
+                        class="btn btn-secondary"
+                        type="button"
+                        data-dismiss="modal">
+                        Thoát
+           
+                    </button>
+                    <a class="btn btn-primary" href="/Logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Custom scripts for all pages-->
+    <script src="/js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="/js/demo/datatables-demo.js"></script>
+    <!-- test -->
+   
+    <!-- end test -->
+</body>

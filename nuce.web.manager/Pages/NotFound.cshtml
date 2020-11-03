@@ -1,0 +1,10 @@
+﻿@page
+@model nuce.web.manager.Pages.NotFoundModel
+@{
+    Layout = "_LayoutEmpty";
+    ViewData["Title"] = "404 NotFound";
+}
+
+<div style="height: 400px;" class="d-flex justify-content-center align-items-center">
+    <h1>@(ViewData["Message"] ??  "Không tìm thấy tài nguyên")</h1>
+</div>

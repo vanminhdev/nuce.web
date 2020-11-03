@@ -1,0 +1,178 @@
+﻿/****** Object:  Table [dbo].[dnn_NuceCommon_BoMon]    Script Date: 9/13/2017 7:36:53 AM ******/
+DROP TABLE [dbo].[dnn_NuceCommon_BoMon]
+GO
+
+/****** Object:  Table [dbo].[dnn_NuceCommon_BoMon]    Script Date: 9/13/2017 7:36:53 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[dnn_NuceCommon_BoMon](
+	[BoMonID] [int] IDENTITY(1,1) NOT NULL,
+	[KhoaID] [int] NOT NULL,
+	[Ma] [varchar](20) NOT NULL,
+	[MaKhoa] [varchar](10) NULL,
+	[Ten] [nvarchar](100) NOT NULL,
+	[TenTiengAnh] [varchar](100) NOT NULL,
+	[DiaChi] [nvarchar](200) NOT NULL,
+	[MoTa] [nvarchar](500) NOT NULL,
+	[Type] [int] NOT NULL,
+	[Status] [int] NOT NULL,
+ CONSTRAINT [PK_dnn_NuceCommon_BoMon] PRIMARY KEY CLUSTERED 
+(
+	[BoMonID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+/****** Object:  Table [dbo].[dnn_NuceCommon_BoMon]    Script Date: 9/13/2017 7:36:53 AM ******/
+/****** Object:  Table [dbo].[dnn_NuceCommon_MonHoc]    Script Date: 9/13/2017 7:46:15 AM ******/
+DROP TABLE [dbo].[dnn_NuceCommon_MonHoc]
+GO
+
+/****** Object:  Table [dbo].[dnn_NuceCommon_MonHoc]    Script Date: 9/13/2017 7:46:15 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[dnn_NuceCommon_MonHoc](
+	[MonHocID] [int] IDENTITY(1,1) NOT NULL,
+	[BoMonID] [int] NOT NULL,
+	[Ma] [varchar](10) NOT NULL,
+	[MaBoMon] [varchar](20) NOT NULL,
+	[Ten] [nvarchar](100) NOT NULL,
+	[TenTiengAnh] [varchar](100) NOT NULL,
+	[SoTinChi] [int] NOT NULL,
+	[MoTa] [nvarchar](500) NOT NULL,
+	[Type] [int] NOT NULL,
+	[Status] [int] NOT NULL,
+ CONSTRAINT [PK_dnn_NuceCommon_MonHoc] PRIMARY KEY CLUSTERED 
+(
+	[MonHocID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+/****** Object:  Table [dbo].[dnn_NuceCommon_MonHoc]    Script Date: 9/13/2017 7:46:15 AM ******/
+
+
+USE [dnn9]
+GO
+/****** Object:  StoredProcedure [dbo].[dnn_NuceCommon_Khoa_insert]    Script Date: 9/26/2017 10:22:27 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+-- =============================================
+-- Author:		<ThangHN>
+-- Create date: <01/03/2006>
+-- Description:	<Quan ly khoa>
+-- =============================================
+CREATE PROCEDURE [dbo].[dnn_NuceCommon_Khoa_insertSyn] 
+	-- Add the parameters for the stored procedure here
+	@KhoaID int,
+	@TruongID int,
+	@Ma varchar(10),
+	@Ten nvarchar(100),
+	@TenTiengAnh nvarchar(100),
+	@DiaChi nvarchar(200),
+	@MoTa nvarchar(500)
+AS
+BEGIN
+if(not exists(select KhoaID from dbo.dnn_NuceCommon_Khoa where Ma=@Ma))
+begin
+	SET IDENTITY_INSERT sometableWithIdentity OFF
+	INSERT INTO [dbo].[dnn_NuceCommon_Khoa]
+           (KhoaID,
+			[TruongID]
+           ,[Ma]
+           ,[Ten]
+           ,[TenTiengAnh]
+           ,[DiaChi]
+           ,[MoTa]
+           ,[Type]
+           ,[Status])
+     VALUES
+           (@KhoaID,
+		   @TruongID
+           ,@Ma
+           ,@Ten
+           ,@TenTiengAnh
+           ,@DiaChi
+           ,@MoTa
+           ,1
+           ,1)
+	SET IDENTITY_INSERT sometableWithIdentity ON
+    select @KhoaID
+end
+else
+select -1
+END
+
+-- =============================================
+alter PROCEDURE [dbo].[dnn_NuceCommon_Khoa_insertSyn] 
+	-- Add the parameters for the stored procedure here
+	@KhoaID int,
+	@TruongID int,
+	@Ma varchar(10),
+	@Ten nvarchar(100),
+	@TenTiengAnh nvarchar(100),
+	@DiaChi nvarchar(200),
+	@MoTa nvarchar(500)
+AS
+BEGIN
+if(not exists(select KhoaID from dbo.dnn_NuceCommon_Khoa where Ma=@Ma))
+begin
+	SET IDENTITY_INSERT dnn_NuceCommon_Khoa OFF
+	INSERT INTO [dbo].[dnn_NuceCommon_Khoa]
+           (KhoaID,
+			[TruongID]
+           ,[Ma]
+           ,[Ten]
+           ,[TenTiengAnh]
+           ,[DiaChi]
+           ,[MoTa]
+           ,[Type]
+           ,[Status])
+     VALUES
+           (@KhoaID,
+		   @TruongID
+           ,@Ma
+           ,@Ten
+           ,@TenTiengAnh
+           ,@DiaChi
+           ,@MoTa
+           ,1
+           ,1)
+	SET IDENTITY_INSERT dnn_NuceCommon_Khoa ON
+    select @KhoaID
+end
+else
+select -1
+END
+
+
+
+===============
+

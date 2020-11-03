@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,8 +14,16 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using nuce.web.api.Common;
 using nuce.web.api.Models.Core;
+using nuce.web.api.Models.Ctsv;
 using nuce.web.api.Models.Survey;
+using nuce.web.api.Repositories.Ctsv.Implements;
+using nuce.web.api.Repositories.Ctsv.Interfaces;
+using nuce.web.api.Services.Core.Implements;
+using nuce.web.api.Services.Core.Interfaces;
+using nuce.web.api.Services.Ctsv.Implements;
+using nuce.web.api.Services.Ctsv.Interfaces;
 using nuce.web.api.Services.Survey.Implements;
 using nuce.web.api.Services.Survey.Interfaces;
 
@@ -44,10 +50,13 @@ namespace nuce.web.api
             services.AddDbContext<SurveyContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"))
             );
+            services.AddDbContext<CTSVNUCE_DATAContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("NUCE_CTSV"))
+            );
             #endregion
 
-            #region config authentication
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            #region config usermanager
+            services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<NuceCoreIdentityContext>()
                 .AddDefaultTokenProviders();
 
@@ -75,7 +84,7 @@ namespace nuce.web.api
                 {
                     OnMessageReceived = context =>
                     {
-                        context.Token = context.Request.Cookies["JWT-token"];
+                        context.Token = context.Request.Cookies[UserParameters.JwtAccessToken];
                         return Task.CompletedTask;
                     }
                 };
@@ -102,7 +111,7 @@ namespace nuce.web.api
             #endregion
 
             #region config cors
-            //config danh sách url allow cors
+            //config danh sÃ¡ch url allow cors
             var corsUrlsSection = Configuration.GetSection("CorsUrl");
             var corsUrls = corsUrlsSection
                 .AsEnumerable()
@@ -156,11 +165,39 @@ namespace nuce.web.api
             });
             #endregion
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
+            services.AddHttpContextAccessor();
+            services.AddSingleton<IPathProvider, PathProvider>();
 
             #region config service
             services.AddScoped<IAsEduSurveyCauHoiService, AsEduSurveyCauHoiService>();
             services.AddScoped<IAsEduSurveyDapAnService, AsEduSurveyDapAnService>();
+            services.AddScoped<IAsEduSurveyDeThiService, AsEduSurveyDeThiService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ILogService, LogService>();
+            #endregion
+            #region ctsv service
+            services.AddScoped<IXacNhanRepository, XacNhanRepository>();
+            services.AddScoped<IGioiThieuRepository, GioiThieuRepository>();
+            services.AddScoped<IUuDaiGiaoDucRepository, UuDaiGiaoDucRepository>();
+            services.AddScoped<IVayVonRepository, VayVonRepository>();
+            services.AddScoped<IThueNhaRepository, ThueNhaRepository>();
+            services.AddScoped<IStudentRepository, StudentRepository>();
+            services.AddScoped<INewsItemsRepository, NewsItemsRepository>();
+            services.AddScoped<ITinNhanRepository, TinNhanRepository>();
+            services.AddScoped<IGiaDinhRepository, GiaDinhRepository>();
+            services.AddScoped<IThiHsgRepository, ThiHsgRepository>();
+            services.AddScoped<IQuaTrinhHocRepository, QuaTrinhHocRepository>();
+
+
+            services.AddScoped<IStudentService, StudentService>();
+            services.AddScoped<IDichVuService, DichVuService>();
+            services.AddScoped<INewsService, NewsService>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IParameterService, ParameterService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             #endregion
         }
 
