@@ -10,10 +10,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using static nuce.web.api.Common.Ctsv;
 
 namespace nuce.web.api.Services.Ctsv.Implements
 {
     public class EmailService : IEmailService
+
     {
         private readonly ITinNhanRepository _tinNhanRepository;
         private readonly IPathProvider _pathProvider;
@@ -31,10 +33,54 @@ namespace nuce.web.api.Services.Ctsv.Implements
             {
                 return new ResponseBody { Message = "Template không tồn tại", StatusCode = System.Net.HttpStatusCode.NotFound };
             }
-            string templateContent = File.ReadAllText(dir);
+            string templateContent = await File.ReadAllTextAsync(dir);
             string tinNhanContent = templateContent.Replace("[ho_ten]", model.StudentName)
                                                 .Replace("[ten_dich_vu]", model.TenDichVu)
                                                 .Replace("[ngay_tao]", now.ToString("dd/MM/yyyy HH:mm"));
+            await SaveTinNhanAsync(model, tinNhanContent, now);
+            return null;
+        }
+
+        public async Task<ResponseBody> SendEmailUpdateStatusRequest(TinNhanModel model)
+        {
+            var now = DateTime.Now;
+            var status = model.YeuCauStatus;
+
+            bool henGap = (TrangThaiYeuCau)status == TrangThaiYeuCau.DaXuLyVaCoLichHen;
+
+            var dir = _pathProvider.MapPath("Templates/Ctsv/template_mail_cap_nhat_trang_thai.txt");
+            if (!File.Exists(dir))
+            {
+                return new ResponseBody { Message = "Template không tồn tại", StatusCode = System.Net.HttpStatusCode.NotFound };
+            }
+            string templateContent = await File.ReadAllTextAsync(dir);
+            string trangThaiYeuCau = TrangThaiYeuCauDictionary[status];
+            string tinNhanContent = templateContent.Replace("[ten_sinh_vien]", model.StudentName)
+                                                .Replace("[trang_thai_yeu_cau]", trangThaiYeuCau)
+                                                .Replace("[ten_dich_vu]", model.TenDichVu)
+                                                .Replace("[ngay_tao_gio_tao]", model.NgayTao?.ToString("dd/MM/yyyy HH:mm"));
+            string henGapContent = "";
+            if (henGap)
+            {
+                dir = _pathProvider.MapPath("Templates/Ctsv/template_content_cap_nhat_trang_thai_da_co_hen.txt");
+                if (!File.Exists(dir))
+                {
+                    return new ResponseBody { Message = "Template có hẹn không tồn tại", StatusCode = System.Net.HttpStatusCode.NotFound };
+                }
+                templateContent = await File.ReadAllTextAsync(dir);
+                henGapContent = templateContent.Replace("[gio_hen]", model.NgayHen?.Hour.ToString())
+                                                .Replace("[phut_hen]", model.NgayHen?.Minute.ToString())
+                                                .Replace("[ngay_hen]", model.NgayHen?.ToString("dd/MM/yyyy"));
+
+            }
+            tinNhanContent = tinNhanContent.Replace("[HEN_GAP]", henGapContent);
+
+            await SaveTinNhanAsync(model, tinNhanContent, now);
+            return null;
+        }
+
+        private async Task SaveTinNhanAsync(TinNhanModel model, string tinNhanContent, DateTime now)
+        {
             var tinNhan = new AsAcademyStudentTinNhan
             {
                 Content = tinNhanContent,
@@ -56,7 +102,6 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 Deleted = false,
             };
             await _tinNhanRepository.addTinNhanAsync(tinNhan);
-            return null;
         }
     }
 }

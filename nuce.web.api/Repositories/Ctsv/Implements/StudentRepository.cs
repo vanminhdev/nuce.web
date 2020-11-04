@@ -33,5 +33,9 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
         {
              _context.AsAcademyStudent.Update(student);
         }
+        public DbSet<AsAcademyStudent> GetAll()
+        {
+            return _context.AsAcademyStudent;
+        }
     }
 }
