@@ -88,5 +88,89 @@ namespace nuce.web.quanly.Areas.Admin.Controllers
                 return Redirect("/admin/account/login");
             }
         }
+
+        [HttpGet]
+        public async Task<ActionResult> ProfileDetail()
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/User/GetUserProfile");
+            return await base.HandleResponseAsync(response,
+                action200Async: async (res) =>
+                {
+                    var jsonString = await res.Content.ReadAsStringAsync();
+                    var profile = JsonConvert.DeserializeObject<Profile>(jsonString);
+                    var profileDetail = new ProfileDetail()
+                    {
+                        UpdateProfile = profile
+                    };
+                    return View(profileDetail);
+                }
+            );
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UpdateProfile(ProfileDetail profileDetail)
+        {
+            base.RemoveValidMessagePartialModel<ChangePassword>(profileDetail.Password, "Password");
+            if (!base.IsValidPartialModel<Profile>(profileDetail.UpdateProfile, "UpdateProfile"))
+            {
+                return View("ProfileDetail", profileDetail);
+            }
+            var stringContent = new StringContent(JsonConvert.SerializeObject(profileDetail.UpdateProfile), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/User/UpdateUserProfile", stringContent);
+            return await base.HandleResponseAsync(response,
+                action200: res =>
+                {
+                    ViewData["UpdateSuccessMessage"] = "Cập nhật thành công";
+                    return View("ProfileDetail", profileDetail);
+                },
+                action500Async: async res =>
+                {
+                    ViewData["UpdateErrorMessage"] = "Cập nhật không thành công";
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var resMess = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
+                    ViewData["UpdateErrorMessageDetail"] = resMess.message;
+                    return View("ProfileDetail", profileDetail);
+                },
+                action400: res =>
+                {
+                    ViewData["UpdateErrorMessage"] = "Cập nhật không thành công";
+                    ViewData["UpdateErrorMessageDetail"] = "Dữ liệu đã nhập không hợp lệ";
+                    return View("ProfileDetail", profileDetail);
+                }
+            );
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> ChangePassword(ProfileDetail profileDetail)
+        {
+            base.RemoveValidMessagePartialModel<Profile>(profileDetail.UpdateProfile, "UpdateProfile");
+            if (!base.IsValidPartialModel<ChangePassword>(profileDetail.Password, "Password"))
+            {
+                return View("ProfileDetail", profileDetail);
+            }
+            var stringContent = new StringContent(JsonConvert.SerializeObject(profileDetail.Password), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/User/ChangePassword", stringContent);
+            return await base.HandleResponseAsync(response,
+                action200: res =>
+                {
+                    ViewData["ChangePasswordSuccessMessage"] = "Đổi mật khẩu thành công";
+                    return View("ProfileDetail", profileDetail);
+                },
+                action500Async: async res =>
+                {
+                    ViewData["ChangePasswordErrorMessage"] = "Đổi mật khẩu không thành công";
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var resMess = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
+                    ViewData["ChangePasswordErrorMessageDetail"] = resMess.message;
+                    return View("ProfileDetail", profileDetail);
+                },
+                action400: res =>
+                {
+                    ViewData["ChangePasswordErrorMessage"] = "Đổi mật khẩu không thành công";
+                    ViewData["ChangePasswordErrorMessageDetail"] = "Dữ liệu đã nhập không hợp lệ";
+                    return View("ProfileDetail", profileDetail);
+                }
+            );
+        }
     }
 }

@@ -124,9 +124,12 @@
     <Compile Include="Areas\Admin\Controllers\AccountController.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\UserManagerController.cs" />
+    <Compile Include="Areas\Admin\Models\AccountModel.cs" />
     <Compile Include="Areas\Admin\Models\UserModel.cs" />
     <Compile Include="Attributes\ValidationAttributes\EmailRegexAttribute.cs" />
+    <Compile Include="Attributes\ValidationAttributes\NotContainWhiteSpaceAttribute.cs" />
     <Compile Include="Attributes\ValidationAttributes\RolesAttribute.cs" />
+    <Compile Include="Attributes\ValidationAttributes\UsernameAttribute.cs" />
     <Compile Include="Common\Definitions.cs" />
     <Compile Include="Common\EnumStatus.cs" />
     <Compile Include="Common\UserParameters.cs" />
@@ -895,6 +898,8 @@
     <Content Include="Areas\Admin\Views\UserManager\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Home\Index.cshtml" />
     <Content Include="Areas\Admin\Views\UserManager\Detail.cshtml" />
+    <Content Include="Areas\Admin\Views\UserManager\Create.cshtml" />
+    <Content Include="Areas\Admin\Views\Account\ProfileDetail.cshtml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />

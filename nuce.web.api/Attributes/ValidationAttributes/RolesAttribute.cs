@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Attributes.ValidationAttributes
 {
+    /// <summary>
+    /// Không được bỏ trống và lựa chọn hợp lệ
+    /// </summary>
     public class RolesAttribute : ValidationAttribute
     {
         public override bool IsValid(object value)

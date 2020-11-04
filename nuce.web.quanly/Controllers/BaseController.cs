@@ -119,8 +119,8 @@ namespace nuce.web.quanly.Controllers
             System.Func<HttpResponseMessage, ActionResult> action200 = null,
             System.Func<HttpResponseMessage, Task<ActionResult>> action500Async = null,
             System.Func<HttpResponseMessage, ActionResult> action500 = null,
-            System.Func<HttpResponseMessage, Task<ActionResult>> action401Async = null,
-            System.Func<HttpResponseMessage, ActionResult> action401 = null,
+            System.Func<HttpResponseMessage, Task<ActionResult>> action400Async = null,
+            System.Func<HttpResponseMessage, ActionResult> action400 = null,
             System.Func<HttpResponseMessage, Task<ActionResult>> actionDefaultAsync = null,
             System.Func<HttpResponseMessage, ActionResult> actionDefault = null)
         {
@@ -153,11 +153,11 @@ namespace nuce.web.quanly.Controllers
             }
             else if (response.StatusCode == HttpStatusCode.BadRequest)
             {
-                if (action401Async != null)
-                    return await action401Async(response);
-                if (action401 != null)
-                    return action401(response);
-                return Redirect($"/error?message={HttpUtility.UrlEncode("Dữ liệu yêu cầu không hợp lệ")}&code={(int)HttpStatusCode.BadRequest}");
+                if (action400Async != null)
+                    return await action400Async(response);
+                if (action400 != null)
+                    return action400(response);
+                return Redirect($"/error?message={HttpUtility.UrlEncode("Dữ liệu truyền vào không hợp lệ")}&code={(int)HttpStatusCode.BadRequest}");
             }
             if (actionDefaultAsync != null)
                 return await actionDefaultAsync(response);

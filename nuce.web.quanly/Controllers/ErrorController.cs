@@ -12,6 +12,7 @@ namespace nuce.web.quanly.Controllers
         {
             ViewData["Title"] = code;
             ViewData["Message"] = message;
+            ViewData["Code"] = code;
             return View();
         }
     }

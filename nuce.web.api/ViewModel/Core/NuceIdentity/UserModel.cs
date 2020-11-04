@@ -15,6 +15,7 @@ namespace nuce.web.api.ViewModel.Core.NuceIdentity
         [Required(AllowEmptyStrings = false)]
         [MinLength(1)]
         [MaxLength(30)]
+        [Username]
         public string Username { get; set; }
 
         [EmailRegex(ErrorMessage = "Email is invalid")]
@@ -26,6 +27,7 @@ namespace nuce.web.api.ViewModel.Core.NuceIdentity
         [Required(AllowEmptyStrings = false)]
         [MinLength(6)]
         [MaxLength(30)]
+        [NotContainWhiteSpace]
         public string Password { get; set; }
 
         [Roles]
@@ -79,11 +81,13 @@ namespace nuce.web.api.ViewModel.Core.NuceIdentity
         [Required(AllowEmptyStrings = false)]
         [MinLength(6)]
         [MaxLength(30)]
+        [NotContainWhiteSpace]
         public string Password { get; set; }
 
         [Required(AllowEmptyStrings = false)]
         [MinLength(6)]
         [MaxLength(30)]
+        [NotContainWhiteSpace]
         public string NewPassword { get; set; }
     }
 
@@ -92,6 +96,7 @@ namespace nuce.web.api.ViewModel.Core.NuceIdentity
         [Required(AllowEmptyStrings = false)]
         [MinLength(6)]
         [MaxLength(30)]
+        [NotContainWhiteSpace]
         public string NewPassword { get; set; }
     }
 

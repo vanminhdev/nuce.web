@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="~/content/css/util.css" />
     <link rel="stylesheet" href="~/content/css/style.css" />
     <link rel="stylesheet" href="~/content/css/responsive.css" />
+    <link rel="stylesheet" href="~/content/Site.css" />
     @RenderSection("Style", required: false)
 </head>
 <body>
@@ -149,7 +150,8 @@
                             </div>
                         </div>
                         <button type="button"
-                                class="col-12 btn w-100 text-light font-14-sm login-btn">
+                                class="col-12 btn w-100 text-light font-14-sm login-btn"
+                                onclick="location.href='/admin/account/profiledetail';">
                             Cập nhật thông tin tài khoản
                         </button>
                     </div>
@@ -167,7 +169,7 @@
                                 </div>
                                 <button type="button"
                                         class="btn text-light font-14-sm login-btn ml-3"
-                                        onclick="location.href='/admin/profile';">
+                                        onclick="location.href='/admin/account/profiledetail';">
                                     Cập nhật thông tin tài khoản
                                 </button>
                             </div>

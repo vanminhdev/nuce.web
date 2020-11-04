@@ -17,11 +17,13 @@ namespace nuce.web.quanly.Areas.Admin.Controllers
 {
     public class UserManagerController : BaseController
     {
+        [HttpGet]
         public ActionResult Index()
         {
             return View();
         }
 
+        [HttpGet]
         public async Task<ActionResult> Detail(string userId)
         {
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/User/GetUserById?id={userId}");
@@ -124,7 +126,7 @@ namespace nuce.web.quanly.Areas.Admin.Controllers
                     ViewData["ResetPasswordErrorMessageDetail"] = resMess.message;
                     return View("Detail", userDetail);
                 },
-                action401: res => {
+                action400: res => {
                     ViewData["ResetPasswordErrorMessage"] = "Khôi phục mật khẩu không thành công";
                     ViewData["ResetPasswordErrorMessageDetail"] = "Dữ liệu đã nhập không hợp lệ";
                     return View("Detail", userDetail);
@@ -161,13 +163,45 @@ namespace nuce.web.quanly.Areas.Admin.Controllers
                 {
                     return Redirect($"/admin/usermanager/detail?userId={userDetail.UserUpdateBind.id}");
                 },
-                action401: res =>
+                action400: res =>
                 {
                     return Redirect($"/admin/usermanager/detail?userId={userDetail.UserUpdateBind.id}");
                 },
                 actionDefault: res =>
                 {
                     return Redirect($"/admin/usermanager/detail?userId={userDetail.UserUpdateBind.id}");
+                }
+            );
+        }
+
+        [HttpGet]
+        public ActionResult Create()
+        {
+            return View(new UserCreate());
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateUser(UserCreate user)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("Create", user);
+            }
+            var stringContent = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/User/CreateUser", stringContent);
+            return await base.HandleResponseAsync(response,
+                action200: res =>
+                {
+                    ViewData["UpdateSuccessMessage"] = "Tạo tài khoản thành công";
+                    return View("Create", user);
+                },
+                action500Async: async res =>
+                {
+                    ViewData["UpdateErrorMessage"] = "Tạo tài khoản không thành công";
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var resMess = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
+                    ViewData["UpdateErrorMessageDetail"] = resMess.message;
+                    return View("Create", user);
                 }
             );
         }
