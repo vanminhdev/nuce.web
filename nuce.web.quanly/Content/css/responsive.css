@@ -44,6 +44,10 @@
     width: 68px;
   }
 
+  .upload-white-icon {
+    margin-right: 10px;
+  }
+
   .font-9 {
     font-size: 9px;
   }
@@ -118,10 +122,15 @@
   }
 }
 
+
 @media screen and (min-width: 576px) and (max-width: 1024px) {
   .hotline-icon {
     height: 32px;
     width: 32px;
+  }
+
+  section#header img.logo {
+    width: 80px;
   }
 
   .email-icon {
@@ -138,6 +147,10 @@
     padding-left: 16px;
     padding-right: 16px;
     margin-top: 50px;
+  }
+
+  .upload-white-icon {
+    margin-right: 2px;
   }
 
   .user-avatar {
@@ -173,7 +186,20 @@
   }
 }
 
+@media screen and (min-width: 767px) and (max-width: 1024px) {
+  .font-20-smd {
+    font-size: 20px;
+  }
+
+  .upload-white-icon {
+    margin-right: 2px;
+  }
+
+}
+
+
 @media only screen and (max-width: 576px) {
+
   html,
   body {
     font-size: 12px;
@@ -188,6 +214,10 @@
     padding-right: 14px;
   }
 
+  .upload-white-icon {
+    margin-right: 4px;
+  }
+
   .service-categories-wrp {
     padding-left: 14px;
     padding-right: 14px;
@@ -200,8 +230,7 @@
   }
 
   .service-banner {
-    background: url("../images/service-background-mobile.png")
-      rgba(0, 0, 0, 0.45);
+    background: url("../images/service-background-mobile.png") rgba(0, 0, 0, 0.45);
     background-size: cover;
   }
 
@@ -211,20 +240,17 @@
   }
 
   .profile-banner {
-    background: url("../images/profile-background-mobile.png")
-      rgba(0, 0, 0, 0.45);
+    background: url("../images/profile-background-mobile.png") rgba(0, 0, 0, 0.45);
     background-size: cover;
   }
 
   .update-profile-banner {
-    background: url("../images/update_profile-background-mobile.png")
-      rgba(0, 0, 0, 0.45);
+    background: url("../images/update_profile-background-mobile.png") rgba(0, 0, 0, 0.45);
     background-size: cover;
   }
 
   .manage-info-banner {
-    background: url("../images/service-background-mobile.png")
-      rgba(0, 0, 0, 0.45);
+    background: url("../images/service-background-mobile.png") rgba(0, 0, 0, 0.45);
     background-size: cover;
   }
 

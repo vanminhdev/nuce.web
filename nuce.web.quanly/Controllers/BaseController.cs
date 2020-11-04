@@ -103,6 +103,7 @@ namespace nuce.web.quanly.Controllers
                     {
                         Response.Cookies[UserParameters.JwtAccessToken].Value = accessToken.Value;
                         Response.Cookies[UserParameters.JwtAccessToken].HttpOnly = true;
+                        Response.Cookies[UserParameters.JwtAccessToken].Expires = accessToken.Expires;
                     }
                     //send lại request với token mới
                     _cookieContainer.Add(_apiUri, new Cookie(UserParameters.JwtAccessToken, accessToken.Value));
@@ -133,7 +134,7 @@ namespace nuce.web.quanly.Controllers
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                return Redirect("/admin/account/login");
+                return Redirect("/admin/account");
             }
             else if (response.StatusCode == HttpStatusCode.Forbidden)
             {

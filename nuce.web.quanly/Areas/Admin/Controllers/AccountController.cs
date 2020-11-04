@@ -20,7 +20,7 @@ namespace nuce.web.quanly.Areas.Admin.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            return View(new LoginModel());
         }
 
         [HttpPost]
@@ -49,12 +49,14 @@ namespace nuce.web.quanly.Areas.Admin.Controllers
             {
                 Response.Cookies[UserParameters.JwtAccessToken].Value = accessToken.Value;
                 Response.Cookies[UserParameters.JwtAccessToken].HttpOnly = true;
+                Response.Cookies[UserParameters.JwtAccessToken].Expires = accessToken.Expires;
             }
 
             if (refreshToken != null)
             {
                 Response.Cookies[UserParameters.JwtRefreshToken].Value = refreshToken.Value;
                 Response.Cookies[UserParameters.JwtRefreshToken].HttpOnly = true;
+                Response.Cookies[UserParameters.JwtRefreshToken].Expires = refreshToken.Expires;
             }
 
             switch (response.StatusCode)
@@ -85,7 +87,7 @@ namespace nuce.web.quanly.Areas.Admin.Controllers
             }
             else
             {
-                return Redirect("/admin/account/login");
+                return Redirect("/admin/account");
             }
         }
 
