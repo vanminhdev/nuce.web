@@ -268,7 +268,7 @@ namespace nuce.web.api.Controllers.Core
             return Ok(
                 new DataTableResponse<UserModel>
                 {
-                    Draw = request.Draw++,
+                    Draw = ++request.Draw,
                     RecordsTotal = result.RecordsTotal,
                     RecordsFiltered = result.RecordsFiltered,
                     Data = result.Data

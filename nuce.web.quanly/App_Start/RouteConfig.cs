@@ -16,7 +16,8 @@ namespace nuce.web.quanly
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional },
+                namespaces: new[] { "nuce.web.quanly.Controllers" }
             );
         }
     }

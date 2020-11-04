@@ -73,5 +73,20 @@ namespace nuce.web.quanly.Areas.Admin.Controllers
             }
             return View();
         }
+
+        public async Task<ActionResult> Logout(string returnUrl = null)
+        {
+            await _client.PostAsync($"{API_URL}/api/user/logout", new StringContent(""));
+            Response.Cookies[UserParameters.JwtAccessToken].Expires = DateTime.Now.AddDays(-100);
+            Response.Cookies[UserParameters.JwtRefreshToken].Expires = DateTime.Now.AddDays(-100);
+            if (returnUrl != null)
+            {
+                return Redirect(returnUrl);
+            }
+            else
+            {
+                return Redirect("/admin/account/login");
+            }
+        }
     }
 }

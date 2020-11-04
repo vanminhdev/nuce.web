@@ -1,4 +1,7 @@
-﻿using nuce.web.quanly.Common;
+﻿using Antlr.Runtime.Misc;
+using Newtonsoft.Json;
+using nuce.web.quanly.Common;
+using nuce.web.quanly.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -75,7 +78,15 @@ namespace nuce.web.quanly.Controllers
         /// <param name="content">Dùng khi sử dụng method post</param>
         protected async Task<HttpResponseMessage> MakeRequestAuthorizedAsync(string method, string requestUri, HttpContent content = null)
         {
-            _cookieContainer.Add(_apiUri, new Cookie(UserParameters.JwtAccessToken, Request.Cookies[UserParameters.JwtAccessToken].Value));
+            var accessTokenInCookie = Request.Cookies[UserParameters.JwtAccessToken];
+            if(accessTokenInCookie == null)
+            {
+                return new HttpResponseMessage()
+                {
+                    StatusCode = HttpStatusCode.Unauthorized
+                };
+            }
+            _cookieContainer.Add(_apiUri, new Cookie(UserParameters.JwtAccessToken, accessTokenInCookie.Value));
             var response = await SendRequestAsync(method, requestUri, content);
 
             if (response.StatusCode == HttpStatusCode.Unauthorized && Request.Cookies[UserParameters.JwtRefreshToken] != null)
@@ -100,6 +111,59 @@ namespace nuce.web.quanly.Controllers
             }
 
             return response;
+        }
+
+        protected async Task<ActionResult> HandleResponseAsync(
+            HttpResponseMessage response,
+            System.Func<HttpResponseMessage, Task<ActionResult>> action200Async = null,
+            System.Func<HttpResponseMessage, ActionResult> action200 = null,
+            System.Func<HttpResponseMessage, Task<ActionResult>> action500Async = null,
+            System.Func<HttpResponseMessage, ActionResult> action500 = null,
+            System.Func<HttpResponseMessage, Task<ActionResult>> action401Async = null,
+            System.Func<HttpResponseMessage, ActionResult> action401 = null,
+            System.Func<HttpResponseMessage, Task<ActionResult>> actionDefaultAsync = null,
+            System.Func<HttpResponseMessage, ActionResult> actionDefault = null)
+        {
+            if (response.IsSuccessStatusCode)
+            {
+                if (action200Async != null)
+                    return await action200Async(response);
+                if (action200 != null)
+                    return action200(response);
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return Redirect("/admin/account/login");
+            }
+            else if (response.StatusCode == HttpStatusCode.Forbidden)
+            {
+                return Redirect($"/error?message={HttpUtility.UrlEncode("Không có quyền truy cập")}&code={(int)HttpStatusCode.Forbidden}");
+            }
+            else if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return Redirect($"/error?message={HttpUtility.UrlEncode("Không tìm thấy tài nguyên")}&code={(int)HttpStatusCode.NotFound}");
+            }
+            else if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                if(action500Async != null)
+                    return await action500Async(response);
+                if (action500 != null)
+                    return action500(response);
+                return Redirect($"/error?message={HttpUtility.UrlEncode("Có lỗi xảy ra")}&code={(int)HttpStatusCode.InternalServerError}");
+            }
+            else if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                if (action401Async != null)
+                    return await action401Async(response);
+                if (action401 != null)
+                    return action401(response);
+                return Redirect($"/error?message={HttpUtility.UrlEncode("Dữ liệu yêu cầu không hợp lệ")}&code={(int)HttpStatusCode.BadRequest}");
+            }
+            if (actionDefaultAsync != null)
+                return await actionDefaultAsync(response);
+            if (actionDefault != null)
+                return actionDefault(response);
+            return View();
         }
 
         protected bool IsValidPartialModel<PartialModelType>(object partialModel, string partialModelName)
