@@ -10,20 +10,23 @@
 
 <div class="container">
     <div class="row mb-3">
-        <div class="col-md-12">
-            <form class="form-inline">
+        <div class="col-md-10">
+            <div class="form-inline">
                 <div class="form-group">
                     <label class="m-2 sr-only">Tên tài khoản</label>
-                    <input class="form-control form-control-sm m-2" id="Username" type="text" placeholder="Tên tài khoản" />
+                    <input class="form-control form-control" id="Username" type="text" placeholder="Tên tài khoản" />
                 </div>
-                <button id="btn-search" class="btn btn-secondary btn-sm m-2">Tìm kiếm</button>
-            </form>
+                <button id="btn-search" class="btn btn-secondary btn m-2">Tìm kiếm</button>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <a href="/admin/usermanager/create" class="btn update-btn text-light w-100 m-2">Tạo tài khoản</a>
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-12">
-            <table id="example" class="table table-bordered">
+            <table id="user-datatable" class="table table-bordered">
                 <thead>
                     <tr>
                         <th class="text-center">
@@ -50,10 +53,10 @@
     <script src="~/js/jquery.dataTables.min.js"></script>
     <script src="~/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/js/dataTables.config.js"></script>
-    <script src="~/js/common/request.js"></script>    
+    <script src="~/js/common/request.js"></script>
     <script>
         var api = '/api/User/GetAllUser';
-        var tableId = 'example';
+        var tableId = 'user-datatable';
         var method = methodDictionary.POST;
         var columns = [
             {
@@ -86,12 +89,11 @@
         ];
         
         var searchUser = function() {
-            userTable.search($("#Username").val()).draw();
+            userTable.column(0).search($("#Username").val()).draw();
         };
         var userTable = dataTableRequest.create(api, method, tableId, columns, function() {
             searchUser();
         });
-        
         $("#btn-search").click(() => {
             searchUser();
         });

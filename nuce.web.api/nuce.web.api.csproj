@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <IsTransformWebConfigDisabled>true</IsTransformWebConfigDisabled>
+    <UserSecretsId>5fa4fc24-cede-4d40-8625-6c7c2b82fc23</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

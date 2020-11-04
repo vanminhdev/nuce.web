@@ -1,0 +1,165 @@
+﻿@model nuce.web.quanly.Areas.Admin.Models.ProfileDetail
+@{
+    ViewData["Title"] = "Cập nhật thông tin tài khoản";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<form method="post" class="container-fluid service-categories-wrp mt-2">
+    <div class="fw-700 text-uppercase font-15-sm font-25 mb-2 mt-3">
+        Cập nhật thông tin tài khoản
+    </div>
+
+    <div class="fw-600 text-uppercase font-14-sm font-18 mb-2 main-color">
+        Cài đặt tài khoản
+    </div>
+
+    @if (ViewData["UpdateSuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @ViewData["UpdateSuccessMessage"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    @if (ViewData["UpdateErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @ViewData["UpdateErrorMessage"]
+            <hr>
+            <p class="mb-0">@ViewData["UpdateErrorMessageDetail"]</p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    <div class="row font-13-sm font-16">
+        <div class="col-12 form-group">
+            <div class="row">
+                <div class="col-6 col-md-3">
+                    <div class="font-14-sm font-weight-bold mb-2">
+                        Ảnh đại diện
+                    </div>
+                    <div class="custom-file">
+                        <input id="input-file"
+                               type="file"
+                               class="custom-file-input" />
+                        <label for="input-file"
+                               class="custom-file-label text-truncate text-center">
+                            <img src="~/content/images/icons/upload.png"
+                                 alt="upload-icon"
+                                 class="mr-1" />
+                            Chọn file
+                        </label>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <img src="~/content/images/person1.png"
+                         alt=""
+                         class="upload-user-avatar" />
+                </div>
+            </div>
+        </div>
+        <div class="col-12 form-group">
+            <div class="row mr-0 ml-0">
+                <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
+                    Địa chỉ email
+                </div>
+                <div class="col-12 col-md-10">
+                    @Html.TextBoxFor(m => m.UpdateProfile.email, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.UpdateProfile.email, "", new { @class = "form-text text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 form-group">
+            <div class="row mr-0 ml-0">
+                <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
+                    SĐT
+                </div>
+                <div class=" col-12 col-md-10">
+                    @Html.TextBoxFor(m => m.UpdateProfile.phoneNumber, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.UpdateProfile.phoneNumber, "", new { @class = "form-text text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 form-group d-flex justify-content-center">
+            <div class="col-12 col-md-3">
+                <button type="submit" formaction="/admin/Account/UpdateProfile" class="update-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2 mt-2">
+                    cập nhật
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="fw-600 text-uppercase font-14-sm font-18 mb-2 main-color">
+        Đổi mật khẩu
+    </div>
+
+    @if (ViewData["ChangePasswordSuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @ViewData["ChangePasswordSuccessMessage"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    @if (ViewData["ChangePasswordErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @ViewData["ChangePasswordErrorMessage"]
+            <hr>
+            <p class="mb-0">@ViewData["ChangePasswordErrorMessageDetail"]</p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    <div class="row justify-content-end font-16">
+        <div class="col-12 form-group">
+            <div class="row mr-0 ml-0">
+                <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
+                    Mật khẩu cũ <span class="sub-color">*</span>
+                </div>
+                <div class="col-12 col-md-10">
+                    @Html.PasswordFor(m => m.Password.password, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Password.password, "", new { @class = "form-text text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 form-group">
+            <div class="row mr-0 ml-0">
+                <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
+                    Mật khẩu mới <span class="sub-color">*</span>
+                </div>
+                <div class="col-12 col-md-10">
+                    @Html.PasswordFor(m => m.Password.newPassword, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Password.newPassword, "", new { @class = "form-text text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 form-group">
+            <div class="row mr-0 ml-0">
+                <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
+                    Xác nhận mật khẩu <span class="sub-color">*</span>
+                </div>
+                <div class="col-12 col-md-10">
+                    @Html.PasswordFor(m => m.Password.confirmPassword, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Password.confirmPassword, "", new { @class = "form-text text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 form-group d-flex justify-content-center">
+            <div class="col-12 col-md-3">
+                <button formaction="/admin/Account/ChangePassword" class="update-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2 mt-2" type="submit">
+                    cập nhật
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+

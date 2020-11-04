@@ -13,17 +13,25 @@ namespace nuce.web.api.ViewModel.Core.NuceIdentity
     public class UserCreateModel
     {
         [Required(AllowEmptyStrings = false)]
+        [MinLength(1)]
+        [MaxLength(30)]
+        [Username]
         public string Username { get; set; }
 
-        [EmailAddress]
-        [Required(AllowEmptyStrings = false)]
+        [EmailRegex(ErrorMessage = "Email is invalid")]
         public string Email { get; set; }
 
+        [Phone]
+        public string PhoneNumber { get; set; }
+
         [Required(AllowEmptyStrings = false)]
+        [MinLength(6)]
+        [MaxLength(30)]
+        [NotContainWhiteSpace]
         public string Password { get; set; }
 
-        [RegularExpression("Admin|Department|Faculty", ErrorMessage = "Chọn 1 trong 3 vai trò Admin, Department, Faculty")]
-        public string Role { get; set; }
+        [Roles]
+        public List<string> Roles { get; set; }
     }
 
     public class UserModel {
@@ -50,13 +58,13 @@ namespace nuce.web.api.ViewModel.Core.NuceIdentity
 
     public class UserUpdateModel
     {
-        [Required(AllowEmptyStrings = false)]
-        public string UserName { get; set; }
+        //[Required(AllowEmptyStrings = false)]
+        //public string UserName { get; set; }
 
         [Phone]
         public string PhoneNumber { get; set; }
 
-        [EmailAddress]
+        [EmailRegex(ErrorMessage = "Email is invalid")]
         public string Email { get; set; }
 
         //[Required]
@@ -66,5 +74,38 @@ namespace nuce.web.api.ViewModel.Core.NuceIdentity
         [Required]
         [Roles]
         public List<string> Roles { get; set; }
+    }
+
+    public class ChangePasswordModel
+    {
+        [Required(AllowEmptyStrings = false)]
+        [MinLength(6)]
+        [MaxLength(30)]
+        [NotContainWhiteSpace]
+        public string Password { get; set; }
+
+        [Required(AllowEmptyStrings = false)]
+        [MinLength(6)]
+        [MaxLength(30)]
+        [NotContainWhiteSpace]
+        public string NewPassword { get; set; }
+    }
+
+    public class ResetPasswordModel
+    {
+        [Required(AllowEmptyStrings = false)]
+        [MinLength(6)]
+        [MaxLength(30)]
+        [NotContainWhiteSpace]
+        public string NewPassword { get; set; }
+    }
+
+    public class UserProfile
+    {
+        [Phone]
+        public string PhoneNumber { get; set; }
+
+        [EmailRegex(ErrorMessage = "Email is invalid")]
+        public string Email { get; set; }
     }
 }

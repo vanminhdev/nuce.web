@@ -98,15 +98,15 @@
             <div class="container-fluid menu-wrp mt-2">
                 <hr class="menu-line" />
                 <div class="row justify-content-center">
-                    <a href="./qlydichvu.html"
+                    <a href="/admin/usermanager/index"
                        class="text-decoration-none col-6 col-xl-4 menu-item text-center font-18 font-10-xsm">
                         quản lý tài khoản
                     </a>
-                    <a href="./qlythongtinsinhvien.html"
+                    <a href="/admin"
                        class="text-decoration-none col-6 col-xl-4 menu-item text-center font-18 font-10-xsm">
                         Khảo thí
                     </a>
-                    <a href="./qlytintuc.html"
+                    <a href="/admin"
                        class="text-decoration-none col-6 col-xl-4 menu-item text-center font-18 font-10-xsm">
                         quản lý tin tức
                     </a>
@@ -118,11 +118,11 @@
             <div class="container-fluid position-relative">
                 <div class="row justify-content-center banner-wrp update-profile-banner mt-3 ml-0 mr-0">
                     <div class="col-12 text-center text-light text-uppercase banner-title font-18-sm font-42 font-32-md">
-                        hệ thống thông tin nhân viên
+                        hệ thống quản trị
                     </div>
                     <div class="col-8 col-md-3"><hr class="banner-line" /></div>
                     <div class="col-12 text-center text-light text-uppercase banner-title font-18-sm font-40 font-30-md">
-                        cập nhật hồ sơ
+                        @ViewData["Title"]
                     </div>
                 </div>
                 <img src="~/images/person.png"
@@ -135,17 +135,17 @@
                     <div class="row">
                         <div class="col-12 mb-2">
                             <div class="row">
-                                <div class="main-color text-uppercase fw-600 font-16-sm">
-                                    trần hoàng nam
+                                <div id="fullname-mobile" class="main-color text-uppercase fw-600 font-16-sm">
+                                    Name
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-5 font-14-sm text-left pl-0">
-                                    ID: 125998
+                                <div id="username-mobile" class="col-5 font-14-sm text-left pl-0">
+                                    Username
                                 </div>
                                 <div class="col-3">|</div>
-                                <a href="/Admin/core/Logout" class="row cursor-pointer">
-                                    <div class="main-color font-14-sm">Log out</div>
+                                <a href="/Admin/Logout" class="row cursor-pointer">
+                                    <div class="main-color font-14-sm">Đăng xuất</div>
                                     <img src="~/images/icons/logout.png"
                                          alt="logout-icon"
                                          class="logout-icon ml-3" />
@@ -153,9 +153,8 @@
                             </div>
                         </div>
                         <button type="button"
-                                class="col-12 btn w-100 text-light font-14-sm login-btn"
-                                disabled>
-                            Cập nhật hồ sơ
+                                class="col-12 btn w-100 text-light font-14-sm login-btn">
+                            Cập nhật thông tin tài khoản
                         </button>
                     </div>
                 </div>
@@ -167,22 +166,22 @@
                     <div class="row">
                         <div class="col-12 mb-2">
                             <div class="row align-items-center">
-                                <div class="main-color text-uppercase fw-600 font-16-sm">
-                                    trần hoàng nam
+                                <div id="fullname-large-screen" class="main-color text-uppercase fw-600 font-16-sm">
+                                    Name
                                 </div>
                                 <button type="button"
                                         class="btn text-light font-14-sm login-btn ml-3"
-                                        onclick="location.href='./capnhathoso-qlytaikhoan.html';">
-                                    Cập nhật hồ sơ
+                                        onclick="location.href='/admin/profile';">
+                                    Cập nhật thông tin tài khoản
                                 </button>
                             </div>
                             <div class="row mt-2 align-items-center">
-                                <div class="col-5 col-md-5 col-xl-4 font-14-sm text-left pl-0">
-                                    ID: 125998
+                                <div id="username-large-screen" class="col-5 col-md-5 col-xl-4 font-14-sm text-left pl-0">
+                                    Username
                                 </div>
                                 <div class="col-2 pl-0 pr-0">|</div>
-                                <a href="/Admin/core/Logout" class="row cursor-pointer">
-                                    <div href="/Admin/core/Logout" class="main-color font-14-sm">Log out</div>
+                                <a href="/Admin/Logout" class="row cursor-pointer">
+                                    <div href="/Admin/core/Logout" class="main-color font-14-sm">Đăng xuất</div>
                                     <img src="~/images/icons/logout.png"
                                          alt="logout-icon"
                                          class="logout-icon ml-3" />
@@ -212,6 +211,7 @@
         <!-- end footer section -->
     </div>
     <script src="~/js/jquery.min.js"></script>
+    <script src="~/js/jquery.cookie.min.js"></script>
     <script src="~/js/popper.min.js"></script>
     <script src="~/js/bootstrap.min.js"></script>
     <script>
@@ -233,6 +233,14 @@
 
             //ga('create', 'UA-96251558-1', 'auto');
             //ga('send', 'pageview');
+    </script>
+    <script>
+        let username = $.cookie("username");
+        let fullname = $.cookie("fullname");
+        $('#username-mobile').html(username);
+        $('#fullname-mobile').html(fullname);
+        $('#username-large-screen').html(username);
+        $('#fullname-large-screen').html(fullname);
     </script>
     @RenderSection("Scripts", required: false)
 </body>

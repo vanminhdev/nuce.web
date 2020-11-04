@@ -20,7 +20,7 @@ namespace nuce.web.manager.Pages.Base
         protected readonly IConfiguration _configuration;
         protected readonly string API_URL;
         private readonly Uri _apiUri;
-
+        protected readonly List<KeyValuePair<string, string>> _roles;
         public PageModelBase(ILogger<T> logger, IConfiguration configuration)
         {
             _logger = logger;
@@ -35,6 +35,10 @@ namespace nuce.web.manager.Pages.Base
             };
             _client = new HttpClient(_handler) {
                 BaseAddress = _apiUri
+            };
+            _roles = new List<KeyValuePair<string, string>>()
+            {
+                
             };
         }
 
@@ -104,6 +108,28 @@ namespace nuce.web.manager.Pages.Base
             }
 
             return response;
+        }
+
+        protected bool IsValidPartialModel<PartialModelType>(object partialModel, string partialModelName)
+        {
+            var tagetModel = (PartialModelType)partialModel;
+            foreach (var prop in tagetModel.GetType().GetProperties())
+            {
+                if (ModelState[$"{partialModelName}.{prop.Name}"].Errors.Count > 0)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        protected void RemoveValidMessagePartialModel<PartialModelType>(object partialModel, string partialModelName)
+        {
+            var tagetModel = (PartialModelType)partialModel;
+            foreach (var prop in tagetModel.GetType().GetProperties())
+            {
+                ModelState.Remove($"{partialModelName}.{prop.Name}");
+            }
         }
     }
 }

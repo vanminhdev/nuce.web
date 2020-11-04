@@ -29,7 +29,7 @@ namespace nuce.web.manager.Pages.Admin.Core
             }
             else
             {
-                return Redirect("/admin/core/login");
+                return Redirect("/admin/login");
             }
         }
 
@@ -44,7 +44,7 @@ namespace nuce.web.manager.Pages.Admin.Core
             }
             else
             {
-                return Redirect("/admin/core/login");
+                return Redirect("/admin/login");
             }
         }
     }

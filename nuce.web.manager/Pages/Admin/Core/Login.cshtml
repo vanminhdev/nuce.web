@@ -22,6 +22,7 @@
                 <div class="form-group mb-2">
                     <label for="password" class="w-100 font-13-sm text-light">Mật khẩu</label>
                     <input type="password" asp-for="Input.Password" class="form-control custom-input" placeholder="Mật khẩu" />
+                    <span class="form-text" style="color: #F70000;">@ViewData["LoginMessage"]</span>
                     <span asp-validation-for="Input.Password" class="form-text" style="color: #F70000; height: 24px;"></span>
                 </div>
                 <button type="submit" class="btn w-100 text-light font-14-sm login-btn">
