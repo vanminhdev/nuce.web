@@ -394,17 +394,16 @@ namespace nuce.web.api.Services.Ctsv.Implements
             return result.AsQueryable();
         }
 
-        public List<AllTypeDichVuModel> GetAllLoaiDichVuInfo()
+        public Dictionary<int, AllTypeDichVuModel> GetAllLoaiDichVuInfo()
         {
             var allDichVu = _loaiDichVuRepository.GetAllInUse();
             var quantityDictionary = new Dictionary<int, AllTypeDichVuModel>
             {
-                { (int)Common.Ctsv.DichVu.XacNhan, _xacNhanRepository.GetRequestInfo() },
-                { (int)Common.Ctsv.DichVu.ThueNha, _thueNhaRepository.GetRequestInfo() },
-                { (int)Common.Ctsv.DichVu.UuDaiGiaoDuc, _uuDaiRepository.GetRequestInfo() },
-                { (int)Common.Ctsv.DichVu.VayVonNganHang, _vayVonRepository.GetRequestInfo() },
+                { (int)DichVu.XacNhan, _xacNhanRepository.GetRequestInfo() },
+                { (int)DichVu.ThueNha, _thueNhaRepository.GetRequestInfo() },
+                { (int)DichVu.UuDaiGiaoDuc, _uuDaiRepository.GetRequestInfo() },
+                { (int)DichVu.VayVonNganHang, _vayVonRepository.GetRequestInfo() },
             };
-            var result = new List<AllTypeDichVuModel>();
             foreach (var dichVu in allDichVu)
             {
                 if (quantityDictionary.ContainsKey(dichVu.Id))
@@ -412,10 +411,9 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     var info = quantityDictionary[dichVu.Id];
                     info.TenDichVu = dichVu.Description;
                     info.LinkDichVu = dichVu.Param1;
-                    result.Add(info);
                 }
             }
-            return result;
+            return quantityDictionary;
         }
 
         public async Task<ResponseBody> UpdateRequestStatus(UpdateRequestStatusModel model)

@@ -11,7 +11,7 @@ namespace nuce.web.api.Services.Ctsv.Interfaces
     {
         public IQueryable GetAllByStudent(int dichVuType);
         public Task<ResponseBody> AddDichVu(DichVuModel model);
-        public List<AllTypeDichVuModel> GetAllLoaiDichVuInfo();
+        public Dictionary<int, AllTypeDichVuModel> GetAllLoaiDichVuInfo();
         public Task<IQueryable> GetRequestForAdmin(QuanLyDichVuDetailModel model);
         public Task<ResponseBody> UpdateRequestStatus(UpdateRequestStatusModel model);
     }

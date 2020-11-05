@@ -188,5 +188,11 @@ namespace nuce.web.quanly.Controllers
                 ModelState.Remove($"{partialModelName}.{prop.Name}");
             }
         }
+
+        protected async Task<T> DeserializeResponseAsync<T>(HttpContent responseContent)
+        {
+            string content = await responseContent.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<T>(content);
+        }
     }
 }

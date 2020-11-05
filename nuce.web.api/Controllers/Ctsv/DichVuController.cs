@@ -29,6 +29,7 @@ namespace nuce.web.api.Controllers.Ctsv
         }
 
         [Route("all-type-info")]
+        [HttpGet]
         public IActionResult GetAllLoaiDichVuInfo()
         {
             return Ok(_dichVuService.GetAllLoaiDichVuInfo());
