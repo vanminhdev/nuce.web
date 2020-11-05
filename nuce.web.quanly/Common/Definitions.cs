@@ -16,5 +16,20 @@ namespace nuce.web.quanly.Common
             { "Khoa", "Khoa" },
             { "K_CNTT", "Khoa CNTT" }
         };
+
+        public class Function
+        {
+            public string Link { get; set; }
+            public string Title { get; set; }
+        }
+
+        //public static Dictionary<string, List<Function>> Functions = new Dictionary<string, List<Function>>()
+        //{
+        //    {
+        //        "Admin", new List<Function>() {
+        //            new Function{ Link = "/usermanager/index"  }
+        //        }
+        //    }
+        //};
     }
 }

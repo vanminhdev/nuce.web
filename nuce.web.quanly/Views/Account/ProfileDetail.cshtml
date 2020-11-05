@@ -1,7 +1,7 @@
-﻿@model nuce.web.quanly.Areas.Admin.Models.ProfileDetail
+﻿@model nuce.web.quanly.Models.ProfileDetail
 @{
     ViewData["Title"] = "Cập nhật thông tin tài khoản";
-    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <form method="post" class="container-fluid service-categories-wrp mt-2">
@@ -86,7 +86,7 @@
         </div>
         <div class="col-12 form-group d-flex justify-content-center">
             <div class="col-12 col-md-3">
-                <button type="submit" formaction="/admin/Account/UpdateProfile" class="update-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2 mt-2">
+                <button type="submit" formaction="/Account/UpdateProfile" class="update-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2 mt-2">
                     cập nhật
                 </button>
             </div>
@@ -155,7 +155,7 @@
         </div>
         <div class="col-12 form-group d-flex justify-content-center">
             <div class="col-12 col-md-3">
-                <button formaction="/admin/Account/ChangePassword" class="update-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2 mt-2" type="submit">
+                <button formaction="/Account/ChangePassword" class="update-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2 mt-2" type="submit">
                     cập nhật
                 </button>
             </div>

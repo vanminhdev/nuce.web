@@ -1,6 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Quản lý tài khoản";
-    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @section Style {
@@ -19,7 +19,7 @@
             </div>
         </div>
         <div class="col-md-2">
-            <a href="/admin/usermanager/create" class="btn update-btn text-light w-100 m-2">Tạo tài khoản</a>
+            <a href="/usermanager/create" class="btn update-btn text-light w-100 m-2">Tạo tài khoản</a>
         </div>
     </div>
 
@@ -61,7 +61,7 @@
             stateSave: true,
             language: dataTableConfig.language,
             ajax: {
-                url: '/admin/UserManager/GetAllUser',
+                url: '/UserManager/GetAllUser',
                 dataType: 'json',
                 contentType: 'application/json',
                 type: "POST",
@@ -94,7 +94,7 @@
                 {
                     data: null,
                     mRender: function (data, type, row) {
-                        return `<a href="/admin/usermanager/detail?userId=${data.id}" >Chi tiết</a>`;
+                        return `<a href="/usermanager/detail?userId=${data.id}" >Chi tiết</a>`;
                     }
                 }
             ]

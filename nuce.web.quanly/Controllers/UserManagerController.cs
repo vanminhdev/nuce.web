@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using nuce.web.quanly.Areas.Admin.Models;
 using nuce.web.quanly.Controllers;
 using nuce.web.quanly.Models;
 using nuce.web.quanly.ViewModel.Base;
@@ -13,7 +12,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
-namespace nuce.web.quanly.Areas.Admin.Controllers
+namespace nuce.web.quanly.Controllers
 {
     public class UserManagerController : BaseController
     {
@@ -48,7 +47,7 @@ namespace nuce.web.quanly.Areas.Admin.Controllers
             var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/User/GetAllUser", stringContent);
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                return Redirect("/admin");
+                return Redirect("");
             }
             else if (response.StatusCode == HttpStatusCode.Forbidden)
             {
@@ -156,20 +155,20 @@ namespace nuce.web.quanly.Areas.Admin.Controllers
                 action200: res =>
                 {
                     if(action == "DeleteUser")
-                        return Redirect($"/admin/usermanager/index");
-                    return Redirect($"/admin/usermanager/detail?userId={userDetail.UserUpdateBind.id}");
+                        return Redirect($"/usermanager/index");
+                    return Redirect($"/usermanager/detail?userId={userDetail.UserUpdateBind.id}");
                 },
                 action500: res =>
                 {
-                    return Redirect($"/admin/usermanager/detail?userId={userDetail.UserUpdateBind.id}");
+                    return Redirect($"/usermanager/detail?userId={userDetail.UserUpdateBind.id}");
                 },
                 action400: res =>
                 {
-                    return Redirect($"/admin/usermanager/detail?userId={userDetail.UserUpdateBind.id}");
+                    return Redirect($"/usermanager/detail?userId={userDetail.UserUpdateBind.id}");
                 },
                 actionDefault: res =>
                 {
-                    return Redirect($"/admin/usermanager/detail?userId={userDetail.UserUpdateBind.id}");
+                    return Redirect($"/usermanager/detail?userId={userDetail.UserUpdateBind.id}");
                 }
             );
         }

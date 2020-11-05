@@ -1,7 +1,7 @@
-﻿@model nuce.web.quanly.Areas.Admin.Models.UserDetail
+﻿@model nuce.web.quanly.Models.UserDetail
 @{
     ViewBag.Title = "Thông tin tài khoản";
-    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @section Style {
@@ -9,7 +9,7 @@
 }
 
 <form method="post" class="container-fluid service-categories-wrp mt-2">
-    <a class="update-btn text-light p-2" style="text-decoration: none;" href="/admin/usermanager/index">← Quay lại danh sách</a>
+    <a class="update-btn text-light p-2" style="text-decoration: none;" href="/usermanager/index">← Quay lại danh sách</a>
 
     <div class="fw-700 text-uppercase font-15-sm font-25 mb-2 mt-3">
         cập nhật thông tin tài khoản
@@ -135,7 +135,7 @@
         </div>
         <div class="col-12 form-group d-flex justify-content-center">
             <div class="col-12 col-md-3">
-                <button type="submit" formaction="/admin/UserManager/UpdateUser" class="update-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2 mt-2">
+                <button type="submit" formaction="/UserManager/UpdateUser" class="update-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2 mt-2">
                     cập nhật
                 </button>
             </div>
@@ -196,7 +196,7 @@
         </div>
         <div class="col-12 form-group d-flex justify-content-center">
             <div class="col-12 col-md-3">
-                <button formaction="/admin/usermanager/resetpassword" class="update-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2 mt-2" type="submit">
+                <button formaction="/usermanager/resetpassword" class="update-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2 mt-2" type="submit">
                     cập nhật
                 </button>
             </div>
@@ -251,7 +251,7 @@
                 @Html.TextBoxFor(m => m.ChangeStatus, new { id = "action-user-status", type = "hidden", value = "unlock-user" })
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
-                    <button type="submit" formaction="/admin/usermanager/changestatus" class="btn btn-primary">Có</button>
+                    <button type="submit" formaction="/usermanager/changestatus" class="btn btn-primary">Có</button>
                 </div>
             </div>
         </div>

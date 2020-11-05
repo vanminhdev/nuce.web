@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace nuce.web.quanly.Areas.Admin.Models
+namespace nuce.web.quanly.Models
 {
     public class LoginModel
     {

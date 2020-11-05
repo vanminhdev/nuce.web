@@ -1,7 +1,7 @@
-﻿@model nuce.web.quanly.Areas.Admin.Models.UserCreate
+﻿@model nuce.web.quanly.Models.UserCreate
 @{
     ViewData["Title"] = "Thêm mới tài khoản";
-    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @section Style {
@@ -9,7 +9,7 @@
 }
 
 <form method="post" class="container-fluid service-categories-wrp mt-2">
-    <a class="update-btn text-light p-2" style="text-decoration: none;" href="/admin/usermanager/index">← Quay lại danh sách</a>
+    <a class="update-btn text-light p-2" style="text-decoration: none;" href="/usermanager/index">← Quay lại danh sách</a>
 
     <div class="fw-700 text-uppercase font-15-sm font-25 mb-2 mt-3">
         Nhập thông tin tài khoản
@@ -124,7 +124,7 @@
         </div>
         <div class="col-12 form-group d-flex justify-content-center">
             <div class="col-12 col-md-3">
-                <button type="submit" formaction="/admin/usermanager/createuser" class="update-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2 mt-2">
+                <button type="submit" formaction="/usermanager/createuser" class="update-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2 mt-2">
                     Tạo mới
                 </button>
             </div>

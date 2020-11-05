@@ -10,5 +10,6 @@ namespace nuce.web.quanly.Common
         public static string MSSV = "Masv";
         public static string JwtAccessToken = "JWT-token";
         public static string JwtRefreshToken = "JWT-refresh-token";
+        public static string Roles = "Roles";
     }
 }

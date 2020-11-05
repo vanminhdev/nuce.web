@@ -134,7 +134,7 @@ namespace nuce.web.quanly.Controllers
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                return Redirect("/admin/account");
+                return Redirect("/account");
             }
             else if (response.StatusCode == HttpStatusCode.Forbidden)
             {

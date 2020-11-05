@@ -99,6 +99,7 @@ namespace nuce.web.api.Services.Core.Implements
         public async Task<ResponseBody> UserIsvalidAsync(LoginModel model, ApplicationUser user)
         {
             bool result = false;
+            var message = "";
             if (model.IsStudent)
             {
                 ServiceSoapClient srvc = new ServiceSoapClient(EndpointConfiguration.ServiceSoap12);
@@ -108,16 +109,31 @@ namespace nuce.web.api.Services.Core.Implements
 
                     result = isvalid == 1;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    return new ResponseBody { Data = false, Message = "Lỗi khi gọi service đào tạo" };
+                    result = false;
+                    message = "Lỗi khi gọi service đào tạo";
                 }
             }
             else
             {
-                result = user != null && await _userManager.CheckPasswordAsync(user, model.Password);
+                if(user == null)
+                {
+                    result = false;
+                    message = "Tài khoản không tồn tại";
+                }
+                else if (user.Status != (int)UserStatus.Active)
+                {
+                    result = false;
+                    message = "Tài khoản không được kích hoạt";
+                }
+                else
+                {
+                    result = await _userManager.CheckPasswordAsync(user, model.Password);
+                    message = result ? "" : "Mật khẩu không chính xác";
+                }
             }
-            return new ResponseBody { Data = result, Message = "" };
+            return new ResponseBody { Data = result, Message = message };
         }
         public string GetCurrentStudentCode()
         {
