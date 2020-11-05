@@ -28,7 +28,7 @@ namespace nuce.web.quanly.Areas.Admin.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View();
+                return View("Index", new LoginModel());
             }
 
             var userNamePasswordJsonString = JsonConvert.SerializeObject(new
@@ -73,7 +73,7 @@ namespace nuce.web.quanly.Areas.Admin.Controllers
                 default:
                     break;
             }
-            return View();
+            return View("Index", new LoginModel());
         }
 
         public async Task<ActionResult> Logout(string returnUrl = null)

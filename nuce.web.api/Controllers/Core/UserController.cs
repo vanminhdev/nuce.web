@@ -63,10 +63,6 @@ namespace nuce.web.api.Controllers.Core
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await _userService.FindByNameAsync(model.Username);
-            if(user.Status != (int)UserStatus.Active)
-            {
-                return Unauthorized(new { Message = "Tài khoản không được kích hoạt" });
-            }
             var userIsValidResult = await _userService.UserIsvalidAsync(model, user);
             bool userIsValid = (bool)userIsValidResult.Data;
 
