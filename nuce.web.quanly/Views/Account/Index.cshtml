@@ -1,7 +1,7 @@
-﻿@model nuce.web.quanly.Areas.Admin.Models.LoginModel
+﻿@model nuce.web.quanly.Models.LoginModel
 @{
     ViewData["Title"] = "Đăng nhập";
-    Layout = "~/Areas/Admin/Views/Shared/_LayoutEmpty.cshtml";
+    Layout = "~/Views/Shared/_LayoutEmpty.cshtml";
 }
 
 <section id="body" class="login-form">
@@ -12,7 +12,7 @@
                     hệ thống quản trị
                 </div>
             </div>
-            <form method="post" action="/admin/account/login" class="col-12 col-md-6 pb-2">
+            <form method="post" action="/account/login" class="col-12 col-md-6 pb-2">
                 @Html.AntiForgeryToken()
                 <div class="form-group mb-1">
                     <label for="username" class="w-100 font-13-sm text-light">Tên đăng nhập</label>

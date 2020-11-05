@@ -1,20 +1,21 @@
 ﻿using Newtonsoft.Json;
-using nuce.web.quanly.Areas.Admin.Models;
 using nuce.web.quanly.Common;
 using nuce.web.quanly.Controllers;
 using nuce.web.quanly.Models;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Mime;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
-namespace nuce.web.quanly.Areas.Admin.Controllers
+namespace nuce.web.quanly.Controllers
 {
     public class AccountController : BaseController
     {
@@ -47,6 +48,17 @@ namespace nuce.web.quanly.Areas.Admin.Controllers
 
             if (accessToken != null)
             {
+                var handler = new JwtSecurityTokenHandler();
+                var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
+                var roles = jwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(r => r.Value).ToList();
+                string rolesString = "";
+                foreach(var item in roles)
+                {
+                    rolesString += $"{item}|";
+                }
+                Response.Cookies[UserParameters.Roles].Value = rolesString;
+                Response.Cookies[UserParameters.Roles].Value = rolesString;
+
                 Response.Cookies[UserParameters.JwtAccessToken].Value = accessToken.Value;
                 Response.Cookies[UserParameters.JwtAccessToken].HttpOnly = true;
                 Response.Cookies[UserParameters.JwtAccessToken].Expires = accessToken.Expires;
@@ -64,7 +76,7 @@ namespace nuce.web.quanly.Areas.Admin.Controllers
                 case HttpStatusCode.OK:
                     Response.Cookies["username"].Value = login.Username;
                     Response.Cookies["fullname"].Value = login.Username;
-                    return Redirect("/admin/home");
+                    return Redirect("/home");
                 case HttpStatusCode.Unauthorized:
                     var jsonString = await response.Content.ReadAsStringAsync();
                     var message = (JsonConvert.DeserializeObject<ResponseMessage>(jsonString))?.message ?? "";
@@ -87,7 +99,7 @@ namespace nuce.web.quanly.Areas.Admin.Controllers
             }
             else
             {
-                return Redirect("/admin/account");
+                return Redirect("/account");
             }
         }
 
