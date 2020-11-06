@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using nuce.web.quanly.Attributes.ActionFilter;
 using nuce.web.quanly.Controllers;
 using nuce.web.quanly.Models;
 using nuce.web.quanly.ViewModel.Base;
@@ -14,6 +15,7 @@ using System.Web.Mvc;
 
 namespace nuce.web.quanly.Controllers
 {
+    [AuthorizeActionFilter("Admin")]
     public class UserManagerController : BaseController
     {
         [HttpGet]

@@ -79,20 +79,26 @@ namespace nuce.web.quanly.Controllers
         protected async Task<HttpResponseMessage> MakeRequestAuthorizedAsync(string method, string requestUri, HttpContent content = null)
         {
             var accessTokenInCookie = Request.Cookies[UserParameters.JwtAccessToken];
-            if(accessTokenInCookie == null)
+            var refreshTokenInCookie = Request.Cookies[UserParameters.JwtRefreshToken];
+            var response = new HttpResponseMessage()
             {
-                return new HttpResponseMessage()
-                {
-                    StatusCode = HttpStatusCode.Unauthorized
-                };
+                StatusCode = HttpStatusCode.Unauthorized
+            };
+            //mất cả 2 token thì không xác thực
+            if (accessTokenInCookie == null && refreshTokenInCookie == null)
+            {
+                return response;
             }
-            _cookieContainer.Add(_apiUri, new Cookie(UserParameters.JwtAccessToken, accessTokenInCookie.Value));
-            var response = await SendRequestAsync(method, requestUri, content);
-
-            if (response.StatusCode == HttpStatusCode.Unauthorized && Request.Cookies[UserParameters.JwtRefreshToken] != null)
+            else if (accessTokenInCookie != null) //có accesstoken gửi request
+            {
+                _cookieContainer.Add(_apiUri, new Cookie(UserParameters.JwtAccessToken, accessTokenInCookie.Value));
+                response = await SendRequestAsync(method, requestUri, content);
+            }
+            //nếu access token hết hạn thì refresh
+            if (response.StatusCode == HttpStatusCode.Unauthorized && refreshTokenInCookie != null)
             {
                 //lấy token mới
-                _cookieContainer.Add(_apiUri, new Cookie(UserParameters.JwtRefreshToken, Request.Cookies[UserParameters.JwtRefreshToken].Value));
+                _cookieContainer.Add(_apiUri, new Cookie(UserParameters.JwtRefreshToken, refreshTokenInCookie.Value));
                 var resRefreshToken = await _client.PostAsync("/api/user/refreshToken", new StringContent(""));
                 if (resRefreshToken.IsSuccessStatusCode)
                 {

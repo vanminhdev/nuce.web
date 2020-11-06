@@ -1,4 +1,26 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+    var accessToken = Request.Cookies[nuce.web.quanly.Common.UserParameters.JwtAccessToken];
+    var username = "";
+    var roles = new List<string>();
+    if (accessToken != null)
+    {
+
+        var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
+
+        //username
+        var usernameClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Name);
+        if (usernameClaim != null)
+        {
+            username = usernameClaim.Value;
+        }
+
+        //role
+        roles = jwtSecurityToken.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Role).Select(r => r.Value).ToList();
+    }
+}
+
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8" />
@@ -91,35 +113,65 @@
         </section>
         <!-- end header section -->
         <!-- menu section -->
+
         <section id="menu">
             <div class="container-fluid menu-wrp mt-2">
-                <hr class="menu-line" />
+                <hr />
+                <nav class="navbar navbar-expand-lg navbar-light pl-0 pr-0">
+                    <a class="navbar-brand" href="/home"></a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
+                        <ul class="navbar-nav">
+                            @if (roles.FirstOrDefault(r => r == "Admin") != null)
+                            {
+                                <li class="nav-item dropdown dropdown-hover-show">
+                                    <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action" href="#" id="navbarDropdown-admin" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Quản trị
+                                    </a>
+                                    <div class="dropdown-menu width-100ps" aria-labelledby="navbarDropdown-admin">
+                                        <a class="dropdown-item font-18 font-10-xsm" href="/usermanager/index">Quản lý tài khoản</a>
+                                        <a class="dropdown-item font-18 font-10-xsm" href="/config/index">Cấu hình trang web</a>
+                                    </div>
+                                </li>
+                            }
+                            @if (roles.FirstOrDefault(r => r == "P_KhaoThi") != null)
+                            {
+                                <li class="nav-item dropdown dropdown-hover-show">
+                                    <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action" href="#" id="navbarDropdown-survey" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Khảo thí
+                                    </a>
+                                    <div class="dropdown-menu width-100ps" aria-labelledby="navbarDropdown-survey">
+                                        <a class="dropdown-item font-18 font-10-xsm" href="/survey/surveyround">Đợt khảo sát</a>
+                                        <a class="dropdown-item font-18 font-10-xsm" href="/survey/questionexam">Quản lý đề khảo sát</a>
+                                        <a class="dropdown-item font-18 font-10-xsm" href="/survey/question">Quản lý câu hỏi</a>
+                                    </div>
+                                </li>
+                            }
+                            @if (roles.FirstOrDefault(r => r == "P_CTSV") != null)
+                            {
+                                <li class="nav-item dropdown dropdown-hover-show">
+                                    <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action" href="#" id="navbarDropdown-ctsv" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Công tác sinh viên
+                                    </a>
+                                    <div class="dropdown-menu width-100ps" aria-labelledby="navbarDropdown-ctsv">
+                                        <a class="dropdown-item font-18 font-10-xsm" href="/">Chức năng 1</a>
+                                        <a class="dropdown-item font-18 font-10-xsm" href="/">Chức năng 2</a>
+                                    </div>
+                                </li>
+                            }
+                            @*<li class="nav-item">
+                                    <a class="nav-link menu-item text-center font-18 font-10-xsm width-action" href="#">
+                                        Link
+                                    </a>
+                                </li>*@
+                        </ul>
+                    </div>
+                </nav>
                 <div class="row justify-content-center">
-                    @{
-                        var displayFunc = new Dictionary<string, string>();
-                        var cookieRoles = Request.Cookies[nuce.web.quanly.Common.UserParameters.Roles];
-                        if (cookieRoles != null)
-                        {
-                            var rolesString = cookieRoles.Value;
-                            var roles = rolesString.Split('|').ToList();
 
-                            
-                        }
-                    }
-                    <a href="/usermanager/index"
-                       class="text-decoration-none col-6 col-xl-4 menu-item text-center font-18 font-10-xsm">
-                        quản lý tài khoản
-                    </a>
-                    <a href=""
-                       class="text-decoration-none col-6 col-xl-4 menu-item text-center font-18 font-10-xsm">
-                        Khảo thí
-                    </a>
-                    <a href=""
-                       class="text-decoration-none col-6 col-xl-4 menu-item text-center font-18 font-10-xsm">
-                        quản lý tin tức
-                    </a>
                 </div>
-
             </div>
         </section>
         <!-- end menu section -->
@@ -201,7 +253,7 @@
                     </div>
                 </div>
             </div>
-            <div class="pt-4 pb-4">
+            <div class="pt-4 pb-4" id="render-body">
                 @RenderBody()
             </div>
         </section>
@@ -245,12 +297,13 @@
         //ga('send', 'pageview');
     </script>
     <script>
-        let username = $.cookie("username");
-        let fullname = $.cookie("fullname");
+        let username = '@username';
+        let fullname = '@username';
         $('#username-mobile').html(username);
         $('#fullname-mobile').html(fullname);
         $('#username-large-screen').html(username);
         $('#fullname-large-screen').html(fullname);
+        document.getElementById("render-body").scrollIntoView();
     </script>
     @RenderSection("Scripts", required: false)
 </body>

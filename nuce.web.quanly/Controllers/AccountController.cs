@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using nuce.web.quanly.Attributes.ActionFilter;
 using nuce.web.quanly.Common;
 using nuce.web.quanly.Controllers;
 using nuce.web.quanly.Models;
@@ -21,6 +22,11 @@ namespace nuce.web.quanly.Controllers
     {
         public ActionResult Index()
         {
+            //Khi access token hết hạn thì vào trang home sẽ được cấp mới
+            if(Request.Cookies[UserParameters.JwtRefreshToken] != null)
+            {
+                return Redirect("/home");
+            }
             return View(new LoginModel());
         }
 
@@ -48,17 +54,6 @@ namespace nuce.web.quanly.Controllers
 
             if (accessToken != null)
             {
-                var handler = new JwtSecurityTokenHandler();
-                var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
-                var roles = jwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(r => r.Value).ToList();
-                string rolesString = "";
-                foreach(var item in roles)
-                {
-                    rolesString += $"{item}|";
-                }
-                Response.Cookies[UserParameters.Roles].Value = rolesString;
-                Response.Cookies[UserParameters.Roles].Value = rolesString;
-
                 Response.Cookies[UserParameters.JwtAccessToken].Value = accessToken.Value;
                 Response.Cookies[UserParameters.JwtAccessToken].HttpOnly = true;
                 Response.Cookies[UserParameters.JwtAccessToken].Expires = accessToken.Expires;
@@ -74,8 +69,6 @@ namespace nuce.web.quanly.Controllers
             switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:
-                    Response.Cookies["username"].Value = login.Username;
-                    Response.Cookies["fullname"].Value = login.Username;
                     return Redirect("/home");
                 case HttpStatusCode.Unauthorized:
                     var jsonString = await response.Content.ReadAsStringAsync();
@@ -104,6 +97,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpGet]
+        [AuthorizeActionFilter]
         public async Task<ActionResult> ProfileDetail()
         {
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/User/GetUserProfile");
@@ -122,6 +116,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter]
         public async Task<ActionResult> UpdateProfile(ProfileDetail profileDetail)
         {
             base.RemoveValidMessagePartialModel<ChangePassword>(profileDetail.Password, "Password");
@@ -155,6 +150,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter]
         public async Task<ActionResult> ChangePassword(ProfileDetail profileDetail)
         {
             base.RemoveValidMessagePartialModel<Profile>(profileDetail.UpdateProfile, "UpdateProfile");

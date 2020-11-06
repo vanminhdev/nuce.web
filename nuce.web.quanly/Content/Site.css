@@ -2,3 +2,19 @@
     background: none;
     border-color: #ced4da;
 }
+
+@media (min-width: 768px) {
+    .dropdown-hover-show:hover .dropdown-menu {
+        display: block;
+        margin-top: 0;
+    }
+
+    .width-action {
+        width: 300px;
+    }
+}
+
+.width-100ps {
+    width: 100%;
+}
+
