@@ -1,0 +1,116 @@
+﻿
+@{
+    ViewData["Title"] = "Câu hỏi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style {
+    <link rel="stylesheet" href="~/content/css/dataTables.bootstrap4.min.css" />
+}
+
+<div class="container">
+    <div class="row mb-3">
+        <div class="col-md-10">
+            <div class="form-inline m-2">
+                <div class="form-group">
+                    <input class="form-control form-control" id="ma-cauhoi" type="text" placeholder="Tìm theo mã" />
+                </div>
+                <div class="form-group m-2">
+                    <input class="form-control form-control" id="noidung" type="text" placeholder="Tìm theo nội dung" />
+                </div>
+                <div class="form-group m-2">
+                    <input class="form-control form-control" id="loai" type="text" placeholder="Tìm theo loại câu hỏi" />
+                </div>
+                <button id="btn-search" class="btn btn-secondary btn m-2">Tìm kiếm</button>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <a href="/survey/createquestion" class="btn update-btn text-light w-100 m-2">Thêm câu hỏi</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table id="id-datatable" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center">STT</th>
+                        <th class="text-center">Mã</th>
+                        <th class="text-center" width="60%">Nội dung</th>
+                        <th class="text-center">Loại</th>
+                        <th class="text-center">Thứ tự</th>
+                        <th class="text-center"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/content/js/jquery.dataTables.min.js"></script>
+    <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/content/js/dataTables.config.js"></script>
+    <script>
+        var table = $('#id-datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ordering: false,
+            lengthChange: false,
+            stateSave: true,
+            pageLength: 20,
+            language: dataTableConfig.language,
+            ajax: {
+                url: '/Survey/GetAllQuestion',
+                dataType: 'json',
+                contentType: 'application/json',
+                type: "POST",
+                data: function (d) {
+                    return JSON.stringify(d);
+                },
+            },
+            columns: [
+                {
+                    data: null,
+                    
+                },
+                {
+                    data: "ma"
+                },
+                {
+                    data: "content"
+                },
+                {
+                    data: "type"
+                },
+                {
+                    data: "order"
+                },
+                {
+                    data: null,
+                    mRender: function (data, type, row) {
+                        return `<a href="/survey/detailquestion?questionId=${data.id}">Sửa</a> | 
+                                <a href="/survey/answer?questionId=${data.id}">Đáp án</a>`;
+                    }
+                }
+            ]
+        });
+        table.on('draw.dt', function () {
+            var PageInfo = $('#id-datatable').DataTable().page.info();
+            table.column(0, { page: 'current' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1 + PageInfo.start;
+            });
+        });
+        $('#id-datatable_filter').hide();
+        $("#btn-search").click(() => {
+            table
+                .column(1).search($("#ma-cauhoi").val())
+                .column(2).search($("#noidung").val())
+                .column(3).search($("#loai").val())
+                .draw();
+        });
+        document.getElementById("footer").scrollIntoView();
+    </script>
+}
+
+
