@@ -1,0 +1,67 @@
+﻿@model nuce.web.quanly.Models.ExamQuestionsCreate
+@{
+    ViewData["Title"] = "Thêm đề khảo sát";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form method="post" class="container">
+    <div class="row mb-3">
+        <a class="update-btn text-light p-2" style="text-decoration: none;" href="/survey/examquestions">← Quay lại danh sách đề khảo sát</a>
+    </div>
+
+    @if (ViewData["CreateSuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @ViewData["CreateSuccessMessage"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    @if (ViewData["CreateErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @ViewData["CreateErrorMessage"]
+            <hr>
+            <p class="mb-0">@ViewData["CreateErrorMessageDetail"]</p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    <div class="row font-13-sm font-16">
+        <div class="col-12 form-group">
+            <div class="row mr-0 ml-0 align-items-center">
+                <div class="font-14-sm fw-600 col-12 col-md-2 pr-0 pl-0">
+                    Mã
+                </div>
+                <div class="col-12 col-md-10">
+                    @Html.TextBoxFor(m => m.Code, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Code, "", new { @class = "form-text text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 form-group">
+            <div class="row mr-0 ml-0">
+                <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
+                    Tên
+                </div>
+                <div class="col-12 col-md-10">
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Name, "", new { @class = "form-text text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 form-group d-flex justify-content-center">
+            <div class="col-12 col-md-3">
+                <button type="submit" formaction="/Survey/CreateExamQuestions" class="update-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2 mt-2">
+                    Thêm
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+

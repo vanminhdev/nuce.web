@@ -154,6 +154,8 @@
     <Compile Include="Models\AnswerModel.cs" />
     <Compile Include="Models\Base\DataTableRequest.cs" />
     <Compile Include="Models\Base\DataTableResponse.cs" />
+    <Compile Include="Models\CauHoi.cs" />
+    <Compile Include="Models\ExamQuestionModel.cs" />
     <Compile Include="Models\QuestionModel.cs" />
     <Compile Include="Models\ResponseMessage.cs" />
     <Compile Include="Models\UserModel.cs" />
@@ -899,6 +901,7 @@
     <Content Include="Content\js\jquery.cookie.min.js" />
     <Content Include="Content\js\jquery.dataTables.min.js" />
     <Content Include="Content\js\jquery.min.js" />
+    <Content Include="Content\js\jquery.validate.min.js" />
     <Content Include="Content\js\main.js" />
     <Content Include="Content\js\popper.min.js" />
     <Content Include="Content\js\tiny_mce\langs\en.js" />
@@ -1201,6 +1204,10 @@
     <Content Include="Views\Survey\DetailAnswer.cshtml" />
     <Content Include="Views\Survey\Question.cshtml" />
     <Content Include="Views\Survey\Answer.cshtml" />
+    <Content Include="Views\Survey\ExamQuestions.cshtml" />
+    <Content Include="Views\Survey\ExamStructure.cshtml" />
+    <Content Include="Views\Survey\ExamDetail.cshtml" />
+    <Content Include="Views\Survey\CreateExamQuestions.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

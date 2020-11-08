@@ -20,7 +20,7 @@ namespace nuce.web.api.Controllers.Survey
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize(Roles = "Admin,P_KhaoThi")]
+    [Authorize(Roles = "P_KhaoThi")]
     public class QuestionController : ControllerBase
     {
         private readonly ILogger<QuestionController> _logger;
@@ -81,7 +81,7 @@ namespace nuce.web.api.Controllers.Survey
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
             return Ok();
         }
@@ -109,7 +109,7 @@ namespace nuce.web.api.Controllers.Survey
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
             return Ok();
         }
@@ -133,7 +133,7 @@ namespace nuce.web.api.Controllers.Survey
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
             return Ok();
         }

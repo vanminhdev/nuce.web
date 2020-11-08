@@ -7,7 +7,7 @@ namespace nuce.web.api.HandleException
 {
     public class InvalidDataException : Exception
     {
-        public InvalidDataException(string message) : base(message)
+        public InvalidDataException(string message = "Trường đã nhập có kiểu dữ liệu không hợp lệ") : base(message)
         {
         }
     }

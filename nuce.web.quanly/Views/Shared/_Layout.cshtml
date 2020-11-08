@@ -132,7 +132,7 @@
                                     </a>
                                     <div class="dropdown-menu width-100ps" aria-labelledby="navbarDropdown-admin">
                                         <a class="dropdown-item font-18 font-10-xsm" href="/usermanager/index">Quản lý tài khoản</a>
-                                        <a class="dropdown-item font-18 font-10-xsm" href="/config/index">Cấu hình trang web</a>
+                                        @*<a class="dropdown-item font-18 font-10-xsm" href="/config/index">Cấu hình trang web</a>*@
                                     </div>
                                 </li>
                             }
@@ -143,8 +143,8 @@
                                         Khảo thí
                                     </a>
                                     <div class="dropdown-menu width-100ps" aria-labelledby="navbarDropdown-survey">
-                                        <a class="dropdown-item font-18 font-10-xsm" href="/survey/surveyround">Đợt khảo sát</a>
-                                        <a class="dropdown-item font-18 font-10-xsm" href="/survey/questionexam">Quản lý đề khảo sát</a>
+                                        @*<a class="dropdown-item font-18 font-10-xsm" href="/survey/surveyround">Đợt khảo sát</a>*@
+                                        <a class="dropdown-item font-18 font-10-xsm" href="/survey/examquestions">Quản lý đề khảo sát</a>
                                         <a class="dropdown-item font-18 font-10-xsm" href="/survey/question">Quản lý câu hỏi</a>
                                     </div>
                                 </li>
@@ -156,8 +156,8 @@
                                         Công tác sinh viên
                                     </a>
                                     <div class="dropdown-menu width-100ps" aria-labelledby="navbarDropdown-ctsv">
-                                        <a class="dropdown-item font-18 font-10-xsm" href="/">Chức năng 1</a>
-                                        <a class="dropdown-item font-18 font-10-xsm" href="/">Chức năng 2</a>
+                                        @*<a class="dropdown-item font-18 font-10-xsm" href="/">Chức năng 1</a>
+                                        <a class="dropdown-item font-18 font-10-xsm" href="/">Chức năng 2</a>*@
                                     </div>
                                 </li>
                             }
@@ -272,14 +272,23 @@
         </section>
         <!-- end footer section -->
     </div>
+    <div id="loading-screen" class="popup-fullscreen">
+        <div class="d-flex justify-content-center align-items-center">
+            <div class="loading-circle"></div>
+        </div>
+    </div>
     <script src="~/content/js/jquery.min.js"></script>
     <script src="~/content/js/jquery.cookie.min.js"></script>
+    <script src="~/content/js/jquery.validate.min.js"></script>
     <script src="~/content/js/popper.min.js"></script>
     <script src="~/content/js/bootstrap.min.js"></script>
     <script>
         $.ajaxSetup({
             xhrFields: {
                 withCredentials: true
+            },
+            complete: () => {
+                document.getElementById("render-body").scrollIntoView();
             },
             crossDomain: true
         });

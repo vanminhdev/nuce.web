@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
 using nuce.web.quanly.Attributes.ActionFilter;
+using nuce.web.quanly.Attributes.ValidationAttributes;
 using nuce.web.quanly.Models;
 using nuce.web.quanly.ViewModel.Base;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -14,7 +16,7 @@ using System.Web.Mvc;
 
 namespace nuce.web.quanly.Controllers
 {
-    [AuthorizeActionFilter("Admin,P_KhaoThi")]
+    [AuthorizeActionFilter("P_KhaoThi")]
     public class SurveyController : BaseController
     {
         [HttpGet]
@@ -125,7 +127,6 @@ namespace nuce.web.quanly.Controllers
             );
         }
         #endregion
-
 
         #region answer
         [HttpGet]
@@ -239,6 +240,135 @@ namespace nuce.web.quanly.Controllers
                 }
             );
         }
+        #endregion
+
+        #region đề khảo sát
+        [HttpGet]
+        public async Task<ActionResult> ExamQuestions()
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/ExamQuestions/GetAll");
+            return await base.HandleResponseAsync(response,
+                action200Async: async res =>
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<List<ExamQuestions>>(jsonString);
+                    return View(result);
+                }
+            );
+        }
+
+        [HttpGet]
+        public ActionResult ExamStructure(string examQuestionId)
+        {
+            ViewData["ExamQuestionId"] = examQuestionId;
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetStructure(string examQuestionId)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/ExamQuestions/GetExamStructure?examQuestionId={examQuestionId}");
+            return await base.HandleResponseAsync(response,
+                action200Async: async res =>
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<List<ExamStructure>>(jsonString);
+                    return Json(result, JsonRequestBehavior.AllowGet);
+                }
+            );
+        }
+
+        [HttpGet]
+        public ActionResult CreateExamQuestions()
+        {
+            return View(new ExamQuestionsCreate());
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateExamQuestions(ExamQuestionsCreate exam)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(exam);
+            }
+            var content = new StringContent(JsonConvert.SerializeObject(exam), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/ExamQuestions/Create", content);
+            return await base.HandleResponseAsync(response,
+                action200: res =>
+                {
+                    ViewData["CreateSuccessMessage"] = "Thêm thành công";
+                    return View(exam);
+                },
+                action500Async: async res =>
+                {
+                    ViewData["CreateErrorMessage"] = "Thêm không thành công";
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var resMess = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
+                    ViewData["CreateErrorMessageDetail"] = resMess.message;
+                    return View(exam);
+                }
+            );
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AddQuestionExam(AddQuestionExam question)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Json(new { type = "fail", message = "Thêm không thành công", detailMessage = "Dữ liệu đã nhập không hợp lệ" });
+            }
+            var content = new StringContent(JsonConvert.SerializeObject(question), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/ExamQuestions/AddQuestion", content);
+            return await base.HandleResponseAsync(response,
+                action200: res =>
+                {
+                    return Json(new { type = "success", message = "Thêm thành công" });
+                },
+                action500Async: async res =>
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var resMess = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
+                    return Json(new { type = "fail", message = "Thêm không thành công", detailMessage = resMess.message });
+                }
+            );
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GenerateExam(string examQuestionId)
+        {
+            var content = new StringContent($@"'{examQuestionId}'", Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/ExamQuestions/GenerateExam", content);
+            return await base.HandleResponseAsync(response,
+                action200: res =>
+                {
+                    return Json(new { type = "success", message = "Tạo thành công" });
+                },
+                action500Async: async res =>
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var resMess = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
+                    return Json(new { type = "fail", message = "Tạo không thành công", detailMessage = resMess.message });
+                }
+            );
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> ExamDetail(string examQuestionId)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/ExamQuestions/GetExamDetailJsonString?examQuestionId={examQuestionId}");
+            return await base.HandleResponseAsync(response,
+                action200Async: async res =>
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<List<CauHoi>>(jsonString);
+                    if (result == null)
+                        return View(new List<CauHoi>());
+                    return View(result);
+                }
+            );
+        }
+
+
         #endregion
     }
 }
