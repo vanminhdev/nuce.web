@@ -15,6 +15,7 @@ using nuce.web.api.ViewModel.Core;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using static nuce.web.api.Common.Ctsv;
+using nuce.web.api.ViewModel.Base;
 
 namespace nuce.web.api.Services.Ctsv.Implements
 {
@@ -277,7 +278,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             return null;
         }
 
-        public async Task<IQueryable> GetRequestForAdmin(QuanLyDichVuDetailModel model)
+        public async Task<DataTableResponse<QuanLyDichVuDetailResponse>> GetRequestForAdmin(QuanLyDichVuDetailModel model)
         {
             var result = new List<QuanLyDichVuDetailResponse>();
 
@@ -286,11 +287,19 @@ namespace nuce.web.api.Services.Ctsv.Implements
             string studentsIds;
             var students = new Dictionary<long, AsAcademyStudent>();
 
-            switch (model.Type)
+            int recordTotal = 0;
+            int recordFiltered = 0;
+
+            switch ((DichVu)model.Type)
             {
-                case (int)Common.Ctsv.DichVu.XacNhan:
-                    var xacNhanList = await _xacNhanRepository.GetAllForAdmin(model);
-                    if (xacNhanList.Count() > 0)
+                case DichVu.XacNhan:
+                    var xacNhanGetAll = await _xacNhanRepository.GetAllForAdmin(model);
+                    var xacNhanList = xacNhanGetAll.FinalData;
+
+                    recordFiltered = xacNhanList.Count();
+                    recordTotal = xacNhanGetAll.BeforeFilteredData.Count();
+
+                    if (recordFiltered > 0)
                     {
                         studentsIds = $",{string.Join(',', xacNhanList.Select(r => r.StudentId.ToString()))},";
 
@@ -308,8 +317,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         result.Add(item);
                     }
                     break;
-                case (int)Common.Ctsv.DichVu.GioiThieu:
-                    var gioiThieuList = await _gioiThieuRepository.GetAllForAdmin(model);
+                case DichVu.GioiThieu:
+                    var gioiThieuGetAll = await _gioiThieuRepository.GetAllForAdmin(model);
+
+                    var gioiThieuList = gioiThieuGetAll.FinalData;
+
+                    recordFiltered = gioiThieuList.Count();
+                    recordTotal = gioiThieuGetAll.BeforeFilteredData.Count();
+
                     if (gioiThieuList.Count() > 0)
                     {
                         studentsIds = $",{string.Join(',', gioiThieuList.Select(r => r.StudentId.ToString()))},";
@@ -328,9 +343,15 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         result.Add(item);
                     }
                     break;
-                case (int)Common.Ctsv.DichVu.UuDaiGiaoDuc:
-                    var uuDaiList = await _uuDaiRepository.GetAllForAdmin(model);
-                    if (uuDaiList.Count() > 0)
+                case DichVu.UuDaiGiaoDuc:
+                    var uuDaiGetAll = await _uuDaiRepository.GetAllForAdmin(model);
+
+                    var uuDaiList = uuDaiGetAll.FinalData;
+
+                    recordFiltered = uuDaiList.Count();
+                    recordTotal = uuDaiGetAll.BeforeFilteredData.Count();
+
+                    if (recordFiltered > 0)
                     {
                         studentsIds = $",{string.Join(',', uuDaiList.Select(r => r.StudentId.ToString()))},";
 
@@ -348,9 +369,15 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         result.Add(item);
                     }
                     break;
-                case (int)Common.Ctsv.DichVu.VayVonNganHang:
-                    var vayVonList = await _vayVonRepository.GetAllForAdmin(model);
-                    if (vayVonList.Count() > 0)
+                case DichVu.VayVonNganHang:
+                    var vayVonGetAll = await _vayVonRepository.GetAllForAdmin(model);
+
+                    var vayVonList = vayVonGetAll.FinalData;
+
+                    recordFiltered = vayVonList.Count();
+                    recordTotal = vayVonGetAll.BeforeFilteredData.Count();
+
+                    if (recordFiltered > 0)
                     {
                         studentsIds = $",{string.Join(',', vayVonList.Select(r => r.StudentId.ToString()))},";
 
@@ -368,9 +395,15 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         result.Add(item);
                     }
                     break;
-                case (int)Common.Ctsv.DichVu.ThueNha:
-                    var thueNhaList = await _thueNhaRepository.GetAllForAdmin(model);
-                    if (thueNhaList.Count() > 0)
+                case DichVu.ThueNha:
+                    var thueNhaGetAll = await _thueNhaRepository.GetAllForAdmin(model);
+
+                    var thueNhaList = thueNhaGetAll.FinalData;
+
+                    recordFiltered = thueNhaList.Count();
+                    recordTotal = thueNhaGetAll.BeforeFilteredData.Count();
+
+                    if (recordFiltered > 0)
                     {
                         studentsIds = $",{string.Join(',', thueNhaList.Select(r => r.StudentId.ToString()))},";
 
@@ -391,7 +424,18 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     break;
             }
 
-            return result.AsQueryable();
+            var data = result.Skip(model.Page ?? 0).Take(model.Size ?? 0);
+
+            recordTotal = result.Count();
+            recordFiltered = data.Count();
+
+            var rs = new DataTableResponse<QuanLyDichVuDetailResponse>
+            {
+                RecordsTotal = recordTotal,
+                RecordsFiltered = recordFiltered,
+                Data = data.ToList()
+            };
+            return rs;
         }
 
         public Dictionary<int, AllTypeDichVuModel> GetAllLoaiDichVuInfo()

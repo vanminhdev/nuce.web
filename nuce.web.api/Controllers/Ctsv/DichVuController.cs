@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using nuce.web.api.Services.Ctsv.Interfaces;
 using nuce.web.api.ViewModel;
+using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Ctsv;
 
 namespace nuce.web.api.Controllers.Ctsv
@@ -58,11 +63,30 @@ namespace nuce.web.api.Controllers.Ctsv
             }
         }
 
-        [Route("admin/search-request")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> SearchRequest([FromBody] QuanLyDichVuDetailModel model)
+        [Route("admin/search-request")]
+        public async Task<IActionResult> SearchRequest([FromBody] DataTableRequest request)
         {
-            return Ok(await _dichVuService.GetRequestForAdmin(model));
+            string jsonModel = request.Search.Value;
+            try
+            {
+                var arr = Encoding.UTF8.GetBytes(jsonModel);
+                var streamModel = new MemoryStream(arr);
+
+                var model = JsonConvert.DeserializeObject<QuanLyDichVuDetailModel>(jsonModel);
+                model.Page = request.Start;
+                model.Size = request.Length;
+
+                var rs = await _dichVuService.GetRequestForAdmin(model);
+                rs.Draw = ++request.Draw;
+
+                return Ok(rs);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { Data = ex, Message = "Lỗi hệ thống khi tìm kiếm" });
+            }
         }
 
         [Route("admin/update-status")]

@@ -32,15 +32,17 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
                     .AsQueryable();
         }
 
-        public async Task<IQueryable<Entity>> GetAllForAdmin(QuanLyDichVuDetailModel model)
+        public async Task<GetAllForAdminResponseRepo<Entity>> GetAllForAdmin(QuanLyDichVuDetailModel model)
         {
             DateTime dtCompare = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
             dtCompare = dtCompare.AddDays(-1 * model.DayRange);
             model.SearchText = model.SearchText?.Trim()?.ToLower();
 
-            var tmp = (await _context.Set<Entity>().AsNoTracking().ToListAsync())
-                        .Where(item => (int)getValue(item, "Status") > 1 && !Convert.ToBoolean(getValue(item, "Deleted")) &&
-                                        (
+            var beforeFilteredData = (await _context.Set<Entity>().AsNoTracking().ToListAsync())
+                        .Where(item => (int)getValue(item, "Status") > 1 && !Convert.ToBoolean(getValue(item, "Deleted")));
+
+            var finalData = beforeFilteredData
+                        .Where(item => (
                                             string.IsNullOrEmpty(model.SearchText) || 
                                             getValueString(item, "Id").Contains(model.SearchText) || 
                                             getValueString(item, "StudentCode").Contains(model.SearchText) || 
@@ -50,7 +52,11 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
                                         DateTime.Parse(getValueString(item, "LastModifiedTime")) >= dtCompare)
                         .OrderBy(r => getValue(r, "Status"))
                         .ThenByDescending(r => getValue(r, "LastModifiedTime"));
-            return tmp.AsQueryable();
+            return new GetAllForAdminResponseRepo<Entity>
+            {
+                BeforeFilteredData = beforeFilteredData.AsQueryable(),
+                FinalData = finalData.AsQueryable()
+            };
         }
 
         public bool IsDuplicated(long studentId, string reason = null)

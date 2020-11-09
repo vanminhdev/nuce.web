@@ -17,6 +17,16 @@ namespace nuce.web.quanly.Common
             { "K_CNTT", "Khoa CNTT" }
         };
 
+
+        public static Dictionary<int, string> TrangThaiYeuCauDictionary = new Dictionary<int, string>
+        {
+            { 2, "Đã gửi lên nhà trường" },
+            { 3, "Đã tiếp nhận và đang xử lý" },
+            { 4, "Đã xử lý và có lịch hẹn" },
+            { 5, "Từ chôi dịch vụ" },
+            { 6, "Hoàn thành" },
+        };
+
         public class Function
         {
             public string Link { get; set; }

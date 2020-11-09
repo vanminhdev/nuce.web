@@ -936,6 +936,7 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Error\Index.cshtml" />
     <Content Include="Views\CtsvServiceManagement\Index.cshtml" />
+    <Content Include="Views\CtsvServiceManagement\Detail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

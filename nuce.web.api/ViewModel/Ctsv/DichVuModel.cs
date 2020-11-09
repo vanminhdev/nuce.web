@@ -56,4 +56,10 @@ namespace nuce.web.api.ViewModel.Ctsv
         public bool AutoUpdateNgayHen { get; set; }
         public int Status { get; set; }
     }
+
+    public class GetAllForAdminResponseRepo<T>
+    {
+        public IQueryable<T> FinalData { get; set; }
+        public IQueryable<T> BeforeFilteredData { get; set; }
+    }
 }

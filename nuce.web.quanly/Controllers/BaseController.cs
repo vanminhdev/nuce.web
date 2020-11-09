@@ -8,6 +8,7 @@ using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -193,6 +194,11 @@ namespace nuce.web.quanly.Controllers
         {
             string content = await responseContent.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<T>(content);
+        }
+
+        protected HttpContent MakeContent(object data)
+        {
+            return new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
         }
     }
 }

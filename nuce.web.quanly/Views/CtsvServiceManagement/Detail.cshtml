@@ -1,0 +1,692 @@
+﻿
+
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    @@media only screen and (min-width: 1025px) {
+        .search-bar-wrp input {
+            padding: 16px 8px;
+        }
+    }
+</style>
+<div class="row main-content-wrp ml-0 mr-0">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-12">
+                <div class="main-color text-uppercase font-15-sm fw-600 font-25 service-title">
+                    dịch vụ xin giấy xác nhận
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4 search-bar-wrp mb-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">
+                            <img src="../../public/images/icons/search.png"
+                                 alt=""
+                                 class="search-icon" />
+                        </span>
+                    </div>
+                    <input id="txt-srvc-search"
+                           type="text"
+                           class="form-control"
+                           placeholder="Search..."
+                           aria-describedby="basic-addon1" />
+                </div>
+            </div>
+            <div class="col-4">
+                <select class="form-control" id="slChonNgay" onchange="onChangeDateRange(this);">
+                    <option value="7">Trong vòng 7 ngày</option>
+                    <option value="14">Trong vòng 14 ngày</option>
+                    <option value="21">Trong vòng 21 ngày</option>
+                    <option value="30">Trong vòng 30 ngày</option>
+                    <option value="60">Trong vòng 60 ngày</option>
+                    <option value="90">Trong vòng 90 ngày</option>
+                </select>
+            </div>
+            <div class="col-sm-4" style="text-align: right">
+                <button type="button" class="btn btn-success"
+                        onclick="">
+                    Excel
+                </button>
+                <button type="button" class="btn btn-primary"
+                        onclick="">
+                    In
+                </button>
+                <button type="button" class="btn btn-info"
+                        onclick="">
+                    Chuyển trạng thái
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <table id="qldv-detail-datatable" class="table">
+                </table>
+            </div>
+        </div>
+        <!-- Modal Chuyển trạng thái -->
+        <div class="modal fade"
+             id="update-status-modal"
+             tabindex="-1"
+             role="dialog"
+             aria-labelledby="exampleModalCenterTitle"
+             aria-hidden="true">
+            <div class="modal-dialog modal-lg"
+                 role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title font-14-sm fw-700">
+                            Chuyển trạng thái
+                        </h5>
+                        <button type="button"
+                                class="close"
+                                data-dismiss="modal"
+                                aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="">
+                            <!-- TRẠNG THÁI -->
+                            <div class="fw-700 font-13-sm">Trạng thái:</div>
+                            <select id="slUpdateStatus" 
+                                    onchange="onChangeStatus(this)" 
+                                    class="form-control mt-3">
+                                <option value="3">Đã tiếp nhận và đang xử lý</option>
+                                <option value="4">Đã xử lý và có lịch hẹn</option>
+                                <option value="5">Từ chối dịch vụ</option>
+                            </select>
+                            <!-- NGÀY HẸN -->
+                            <div id="blockNgayHen" class="mt-3">
+                                <div class="form-group m-0">
+                                    <label class="cursor-pointer">
+                                        <input type="checkbox"
+                                                id="cbNgayHen" 
+                                                onclick="onChangeOptionUpdateNgayHen(this)" />
+                                        <span class="fw-700 font-14-sm">Tự điều chỉnh ngày hẹn</span>
+                                    </label>
+                                </div>
+                                <div id="divNgayHen" class="mt-3">
+                                    <table class="table">
+                                        <tr>
+                                            <td colspan="6" class="fw-700 font-13-sm">Thời gian hẹn sinh viên:</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="6" class="fw-700 font-13-sm">Ngày giờ bắt đầu:</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-700 font-13-sm" style="border: none; text-align: center; vertical-align: middle;">ngày (dd/mm/yyyy): </td>
+                                            <td style="width: 30%; border: none;">
+                                                <input type="text" class="form-control" id="txtNgayBatDau">
+                                            </td>
+                                            <td class="fw-700 font-13-sm" style="width: 8%; border: none; text-align: center; vertical-align: middle;">Giờ:</td>
+                                            <td style="width: 12%; border: none;">
+                                                <input type="text" class="form-control" id="txtGioBatDau">
+                                            </td>
+                                            <td class="fw-700 font-13-sm" style="width: 8%; border: none; text-align: center; vertical-align: middle;">Phút:</td>
+                                            <td style="width: 12%; border: none;">
+                                                <input type="text" class="form-control" id="txtPhutBatDau">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-700 font-13-sm" colspan="6">Ngày giờ kết thúc</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-700 font-13-sm" style="width: 30%; border: none; text-align: center; vertical-align: middle;">ngày (dd/mm/yyyy): </td>
+                                            <td style="width: 30%; border: none;">
+                                                <input type="text" class="form-control" id="txtNgayKetThuc">
+                                            </td>
+                                            <td class="fw-700 font-13-sm" style="width: 8%; border: none; text-align: center; vertical-align: middle;">Giờ:</td>
+                                            <td style="width: 12%; border: none;">
+                                                <input type="text" class="form-control" id="txtGioKetThuc">
+                                            </td>
+                                            <td class="fw-700 font-13-sm" style="width: 8%; border: none; text-align: center; vertical-align: middle;">Phút:</td>
+                                            <td style="width: 12%; border: none;">
+                                                <input type="text" class="form-control" id="txtPhutKetThuc">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- PHẢN HỒI -->
+                            <div id="divPhanHoi" class="mt-3">
+                                <div class="fw-700 font-13-sm">Phản hồi:</div>
+                                <textarea class="form-control mt-3" id="PhanHoi"></textarea>
+                            </div>
+                            <button class="update-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2 mt-4"
+                                    type="button"
+                                    onclick="onUpdateStatus(this)">
+                                gửi yêu cầu
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Thông báo -->
+        <div id="myModalThongBao"
+             class="modal fade"
+             role="dialog">
+            <div class="modal-dialog modal-dialog-centered"
+                 role="document">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"
+                            id="h_noidung_thongbao">
+                        </h5>
+                        <button type="button"
+                                class="close"
+                                data-dismiss="modal"
+                                aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body text-right">
+                        <button type="button"
+                                class="update-btn text-light text-uppercase font-14-sm pt-2 pb-2 mt-4"
+                                data-dismiss="modal">
+                            Thoát
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <link href="~/content/css/bootstrap-datepicker3.min.css" rel="stylesheet" />
+
+    <script src="~/content/js/jquery.dataTables.min.js"></script>
+    <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/content/js/dataTables.config.js"></script>
+    <script src="~/content/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/content/js/bootstrap-datepicker.vi.min.js"></script>
+    <script>
+        var serviceType = @ViewData["id"];
+        var selectedYeuCau = null;
+        var statusDictionary = {
+            2:  "Đã gửi lên nhà trường",
+            3: "Đã tiếp nhận và đang xử lý",
+            4: "Đã xử lý và có lịch hẹn",
+            5: "Từ chối dịch vụ",
+            6: "Hoàn thành",
+        };
+
+        var initDatepicker = function() {
+            var date_input_ngaybatdau = $('#txtNgayBatDau'); //our date input has the name "date"
+            var date_input_ngayketthuc = $('#txtNgayKetThuc'); //our date input has the name "date"
+
+
+            var options = {
+                format: 'dd/mm/yyyy',
+                todayHighlight: true,
+                autoclose: true,
+            };
+            date_input_ngaybatdau.datepicker(options);
+            date_input_ngayketthuc.datepicker(options);
+        }
+
+        var timeToString = function(value) {
+            const actualMonth = `${value}`;
+            const prefix = actualMonth.length === 1 ? '0' : '';
+            return `${prefix}${actualMonth}`;
+        }
+
+        var convertDateTime = function(date = '') {
+            var entryDateTime = new Date(date);
+            return `${this.timeToString(entryDateTime.getDate())}/${this.timeToString(entryDateTime.getMonth() + 1)}/${entryDateTime.getFullYear()}`;
+        };
+
+        var convertNumberFromText = function(inputText) {
+            var opera1 = inputText.split('/');
+            var opera2 = inputText.split('-');
+            lopera1 = opera1.length;
+            lopera2 = opera2.length;
+            // Extract the string into month, date and year
+            if (lopera1 > 1) {
+                var pdate = inputText.split('/');
+            }
+            else if (lopera2 > 1) {
+                var pdate = inputText.split('-');
+            }
+            var dd = parseInt(pdate[0]);
+            var mm = parseInt(pdate[1]);
+            var yy = parseInt(pdate[2]);
+            return dd + mm * 31 + yy * 12 * 31;
+        };
+
+        var dataList = [];
+        var fillData = function(dichVuID) {
+            console.log(dataList);
+            if (Array.isArray(dataList)) {
+                dataList.forEach(item => {
+                    if (item.DichVu.id === `${dichVuID}`) {
+                        selectedYeuCau = {...item};
+
+                        let options = `<option value="3">Đã tiếp nhận và đang xử lý</option>
+                                <option value="4">Đã xử lý và có lịch hẹn</option>
+                                <option value="5">Từ chối dịch vụ</option>`;
+                        let status = item.DichVu.status;
+                        switch(status * 1) {
+                            case 3:
+                                options = `<option value="4">Đã xử lý và có lịch hẹn</option>
+                                        <option value="5">Từ chối dịch vụ</option>`;
+                            case 4:
+                                options = `<option value="5">Từ chối dịch vụ</option>`;
+                                status = 5;
+                                break;
+                            case 5:
+                                options = `<option value="4">Đã xử lý và có lịch hẹn</option>`; 
+                                status = 4;
+                                break;
+                            default:
+                                break;
+                        };
+                        $(`#slUpdateStatus`).html(options);
+
+                        onChangeStatus({value: status});
+                    }
+                });
+            }
+        }
+
+        var template = function(data) {
+            const dichVu = data.DichVu;
+            const student = data.Student;
+                        
+            const studentName = dichVu.studentName;
+            const studentCode = dichVu.studentCode;
+            const statusCode = Number(dichVu.status);
+            const statusName = statusDictionary[statusCode];
+            let ngayHenFrom = new Date();
+            let ngayHenTo = new Date();
+
+            if (dichVu.ngayHenTuNgay) {
+                ngayHenFrom = new Date(dichVu.ngayHenTuNgay);
+            }
+            if (dichVu.ngayHenDenNgay) {
+                ngayHenTo = new Date(dichVu.ngayHenDenNgay);
+            }
+
+            let mainContentSection = ``;
+            switch (Number(serviceType)) {
+              case 1:
+                mainContentSection = `<div class="mb-3">${dichVu.lyDo}</div>`;
+                break;
+              case 4:
+                mainContentSection = `<div class="mb-3"><b>Kỷ luật: </b>${dichVu.kyLuat}</div>`;
+                break;
+              case 6:
+                var ThuocDien = {
+                    1: 'Không miễn giảm',
+                    2: 'Giảm học phí',
+                    3: 'Miễn học phí',
+                };
+                var ThuocDoiTuong = {
+                    1: 'Mồ côi',
+                    2: 'Không mồ côi',
+                };
+                mainContentSection = `<div class="mb-3"><b>Thuộc diện: </b>${ThuocDien[dichVu.thuocDien]}<br><b>Thuộc đối tượng: </b>${ThuocDoiTuong[dichVu.thuocDoiTuong]}</div>`;
+                break;
+              case 7:
+                mainContentSection = '';
+                break;
+              default:
+                break;
+            }
+            let noteSection = '';
+
+            if ([4, 6].includes(statusCode)) {
+                noteSection += `<div class="fw-700 mb-3 mt-3" style="color:blue;">
+                              * Ngày hẹn: Từ <b>${ngayHenFrom.getHours()}</b> giờ - <b>${ngayHenFrom.getMinutes()}</b> phút - Ngày <b>${convertDateTime(dichVu.ngayHenTuNgay)}</b></br>
+                                Đến <b>${ngayHenTo.getHours()}</b> giờ - <b>${ngayHenTo.getMinutes()}</b> phút - Ngày <b>${convertDateTime(dichVu.ngayHenDenNgay)}</b></div>`;
+            } else if (statusCode === 5) {
+                noteSection += `<div class="fw-700 mb-3 mt-3" style="color:red;">- Phản hồi: ${dichVu.phanHoi || ''}</div>`;
+            }
+
+            return `
+                <div class="row font-13-sm align-items-center display-lg">
+                    <div class="col-1 mr-3">
+                      <img
+                        src="../../public/images/person.png"
+                        alt=""
+                        class="list-item-avatar"
+                      />
+                    </div>
+                    <div class="col-10">
+                      <div class="row align-items-center">
+                        <div
+                          class="text-uppercase main-color fw-600 font-14-sm mr-4"
+                        >
+                          ${studentName}
+                        </div>
+                        <div
+                          class="status-badge text-light text-center cursor-pointer"
+                          data-toggle="modal"
+                          data-target="#update-status-modal"
+                          onclick="fillData(${dichVu.id})"
+                        >
+                          Chuyển trạng thái
+                        </div>
+                      </div>
+                      <div class="row mt-2">
+                        <div>
+                          Mã sinh viên: ${studentCode} <span class="ml-2 mr-2">|</span>
+                        </div>
+                        <div>
+                          Trạng thái:
+                          <span class="main-color">
+                           ${statusName}</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Display mobile -->
+                  <div
+                    class="row font-13-sm align-items-center mb-3 display-mobile"
+                  >
+                    <div class="col-2">
+                      <img
+                        src="../../public/images/person.png"
+                        alt=""
+                        class="list-item-avatar"
+                      />
+                    </div>
+                    <div class="col-5">
+                      <div class="text-uppercase main-color fw-600 font-14-sm">
+                        ${studentName}
+                      </div>
+                      <div
+                        class="status-badge text-light text-center cursor-pointer"
+                        data-toggle="modal"
+                        data-target="#update-status-modal"
+                        onclick="fillData(${dichVu.id})"
+                      >
+                        Chuyển trạng thái
+                      </div>
+                    </div>
+                    <div class="col-12 mt-2">
+                      <div>Mã sinh viên: ${studentCode}</div>
+                      <div>
+                        Trạng thái:
+                        <span class="main-color"
+                          >${statusName}</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+                        <div class="col-12 font-13-sm">
+                  <div class="text-uppercase main-color fw-700 mb-3 mt-3">
+                    lý do
+                  </div>
+                  ${mainContentSection}
+                  ${noteSection}
+                  <div class="row ml-0 mr-0 align-items-center">
+                    <a
+                      class="print-btn col-3 text-light font-14-sm text-decoration-none cursor-pointer col-md-1"
+                    >
+                      <div class="row justify-content-center">
+                        <img
+                          src="../../public/images/icons/upload-white.png"
+                          alt=""
+                          class="mr-2 upload-white-icon"
+                        />
+                        <div>IN</div>
+                      </div>
+                    </a>
+                    <div class="col-9 col-md-11 text-right">
+                      Thời gian gửi yêu cầu:
+                      <span class="main-color">${convertDateTime(dichVu.createdTime)}</span>
+                    </div>
+                  </div>
+                </div>`;
+        };
+
+        var userTable = $('#qldv-detail-datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ordering: false,
+            lengthChange: false,
+            stateSave: true,
+            length: 50,
+            language: dataTableConfig.language,
+            ajax: {
+                url: 'SearchServiceRequest',
+                dataType: 'json',
+                contentType: 'application/json',
+                type: 'POST',
+                data: function (d) {
+                    return JSON.stringify(d);
+                },
+                dataSrc: function(json) {
+                    dataList = json.data;
+                    return json.data;
+                }
+            },
+            columns: [
+                {
+                    data: null,
+                    mRender: function (data, type, row) {
+                        return template(data);
+                    }
+                },
+            ]
+        });
+
+        var onChangeStatus = function(event) {
+            const selectedStatus = Number(event.value);
+            if (!selectedStatus) return;
+            switch (selectedStatus) {
+                case 3:
+                    $('#divPhanHoi').hide();
+                    $('#blockNgayHen').hide();
+                    break;
+                case 4:
+                    $('#divPhanHoi').hide();
+                    $('#blockNgayHen').show();
+                    break;
+                case 5:
+                    $('#divPhanHoi').show();
+                    $('#blockNgayHen').hide();
+                    break;
+                default:
+                    break;
+            }
+            $('#cbNgayHen').prop({ checked: false });
+            onChangeOptionUpdateNgayHen({ checked: false });
+        }
+
+        var onChangeOptionUpdateNgayHen = function(event) {
+            const checked = event.checked;
+            if (checked) {
+                $('#divNgayHen').show();
+                return;
+            }
+            $('#divNgayHen').hide();
+        }
+
+        var onChangeDateRange = function(event) {
+          searchData();
+        }
+
+        var searchData = function() {
+          const data = {
+              type: serviceType,
+              searchText: $("#txt-srvc-search").val() || '',
+              dayRange: $('#slChonNgay').val() || 7,
+              page: null,
+              size: null,
+          };
+          var jsonData = JSON.stringify(data);
+          userTable.search(jsonData).draw();
+        }
+
+        var getNgayHen = function(status = 0, auto = true) {
+            var result = {
+                ok: true,
+                strNgayBatDau: "01/01/1990 00:00",
+                strNgayKetThuc: "01/01/1990 00:00",
+            }
+            if (status === 4 && !auto) {
+                if (($("#txtNgayBatDau").val() == "" || $("#txtNgayKetThuc").val() == "")) {
+                    $("#edit_header_ThongBao").show();
+                    $("#edit_header_ThongBao").html("Bạn hãy chọn thời gian hẹn");
+                    result.ok = false;
+                    return result;
+                }
+                else {
+                    if (convertNumberFromText($("#txtNgayBatDau").val()) >= convertNumberFromText($("#txtNgayKetThuc").val())) {
+                        //$("#txtNgayKetThuc").focus();
+                        $("#edit_header_ThongBao").show();
+                        $("#edit_header_ThongBao").html("Bạn hãy chọn ngày hẹn KẾT THÚC lớn hơn ngày hẹn BẮT ĐẦU");
+                        result.ok = false;
+                        return result;
+                    }
+                }
+                if ($("#txtGioBatDau").val() === "" || $("#txtGioBatDau").val() === null) {
+                    console.log('jslf');
+                    $("#txtGioBatDau").val("00");
+                }
+                else {
+                    var hh = parseInt($("#txtGioBatDau").val());
+                    if (isNaN(hh))
+                        hh = 0;
+                    if (hh < 0 || hh > 24)
+                        $("#txtGioBatDau").val("00");
+                    else if (hh < 10)
+                        $("#txtGioBatDau").val("0" + hh);
+
+                    console.log('vvvv');
+                }
+                
+                if ($("#txtPhutBatDau").val() === '' || $("#txtPhutBatDau").val() === null) {
+                    console.log('sdfs');
+                    $("#txtPhutBatDau").val("00");
+                }
+                else {
+                    var mm = parseInt($("#txtPhutBatDau").val());
+                    if (isNaN(mm))
+                        mm = 0;
+                    if (mm < 0 || mm > 60)
+                        $("#txtPhutBatDau").val("00");
+                    else if (mm < 10)
+                        $("#txtPhutBatDau").val("0" + mm);
+                }
+                if ($("#txtGioKetThuc").val() === "" || $("#txtGioKetThuc").val() === null) {
+                    $("#txtGioKetThuc").val("00");
+                }
+                else {
+                    var hh = parseInt($("#txtGioKetThuc").val());
+                    if (isNaN(hh))
+                        hh = 0;
+                    if (hh < 0 || hh > 24)
+                        $("#txtGioKetThuc").val("00");
+                    else if (hh < 10)
+                        $("#txtGioKetThuc").val("0" + hh);
+                }
+                if ($("#txtPhutKetThuc").val() === "" || $("#txtPhutKetThuc").val() === null) {
+                    $("#txtPhutKetThuc").val("00");
+                }
+                else {
+                    var mm = parseInt($("#txtPhutKetThuc").val());
+                    if (isNaN(mm))
+                        mm = 0;
+                    if (mm < 0 || mm > 60)
+                        $("#txtPhutKetThuc").val("00");
+                    else if (mm < 10)
+                        $("#txtPhutKetThuc").val("0" + mm);
+                }
+            }
+            
+            if ($("#txtNgayBatDau").val() != "") {
+                const tmpNgayBatDau = $("#txtNgayBatDau").val().split('/').reverse().join('/');
+                result.strNgayBatDau = tmpNgayBatDau + " " + $("#txtGioBatDau").val() + ":" + $("#txtPhutBatDau").val();
+            }
+            if ($("#txtNgayKetThuc").val() != "") {
+                const tmpNgayKetThuc = $("#txtNgayKetThuc").val().split('/').reverse().join('/');
+                result.strNgayKetThuc = tmpNgayKetThuc + " " + $("#txtGioKetThuc").val() + ":" + $("#txtPhutKetThuc").val();
+            }
+            return result;
+        }
+
+        var onUpdateStatus = function(event) {
+            console.log('ss: ', JSON.parse(JSON.stringify(selectedYeuCau)));
+            if (!selectedYeuCau || !selectedYeuCau.DichVu.id) return;
+
+            var data = {
+                Type: serviceType,
+                RequestId: selectedYeuCau.DichVu.id,
+                PhanHoi: '',
+                NgayBatDau: '',
+                NgayKetThuc: '',
+                AutoUpdateNgayHen: true,
+                Status: $('#slUpdateStatus').val(),
+            };
+
+            if (data.Status * 1 === 4) {
+                var autoNgayHen = !$('#cbNgayHen').is(':checked');
+                var rsNgayHen = getNgayHen(data.Status * 1, autoNgayHen);
+                
+                if (!rsNgayHen.ok) {
+                    return;
+                }
+                data.AutoUpdateNgayHen = autoNgayHen;
+                data.NgayBatDau = rsNgayHen.strNgayBatDau;
+                data.NgayKetThuc = rsNgayHen.strNgayKetThuc;
+            } else if (data.Status * 1 === 5) {
+                data.PhanHoi = $('#PhanHoi').val();
+            }
+            callApiUpdateStatus(data);
+            // hide modal change status
+            $('#update-status-modal').modal('hide');
+        }
+
+        var callApiUpdateStatus = function(data) {
+            $.ajax({
+                type: 'POST',
+                url: `@Url.Action("UpdateStatus", "CtsvServiceManagement")`,
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+            }).done(res => {
+                console.log(res);
+                if (res.StatusCode === 200) {
+                    $("#h_noidung_thongbao").html("Cập nhật thành công");
+                    $('#myModalThongBao').modal();
+                    searchData();
+                } else {
+                    $("#h_noidung_thongbao").html("Lỗi hệ thống");
+                    $('#myModalThongBao').modal();    
+                }
+            }).fail(err => {
+                console.log(err);
+                $("#h_noidung_thongbao").html("Lỗi hệ thống");
+                $('#myModalThongBao').modal();
+            });
+        }
+
+        var init = function() {
+            $('#qldv-detail-datatable_filter').hide();
+            $("#txt-srvc-search").keyup((event) => {
+                if (event.keyCode === 13){
+                    searchData();
+                }
+            });
+            searchData();
+            initDatepicker();
+        }
+
+        init();
+    </script>
+}
+
+
