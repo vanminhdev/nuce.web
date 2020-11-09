@@ -17,6 +17,7 @@ using Microsoft.OpenApi.Models;
 using nuce.web.api.Common;
 using nuce.web.api.Models.Core;
 using nuce.web.api.Models.Ctsv;
+using nuce.web.api.Models.EduData;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Repositories.Ctsv.Implements;
 using nuce.web.api.Repositories.Ctsv.Interfaces;
@@ -26,6 +27,8 @@ using nuce.web.api.Services.Ctsv.Implements;
 using nuce.web.api.Services.Ctsv.Interfaces;
 using nuce.web.api.Services.Survey.Implements;
 using nuce.web.api.Services.Survey.Interfaces;
+using nuce.web.api.Services.Synchronization.Implements;
+using nuce.web.api.Services.Synchronization.Interfaces;
 
 namespace nuce.web.api
 {
@@ -52,6 +55,9 @@ namespace nuce.web.api
             );
             services.AddDbContext<CTSVNUCE_DATAContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("NUCE_CTSV"))
+            );
+            services.AddDbContext<EduDataContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"))
             );
             #endregion
 
@@ -177,6 +183,9 @@ namespace nuce.web.api
             services.AddScoped<IAsEduSurveyDeThiService, AsEduSurveyDeThiService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ILogService, LogService>();
+            #endregion
+            #region sync edu database service
+            services.AddScoped<ISyncEduDatabaseService, SyncEduDatabaseService>();
             #endregion
             #region ctsv service
             services.AddScoped<IXacNhanRepository, XacNhanRepository>();

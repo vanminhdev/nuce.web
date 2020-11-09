@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nuce.web.tienich", "nuce.we
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nuce.web.quanly", "nuce.web.quanly\nuce.web.quanly.csproj", "{3C34390E-7725-4BB0-BDFE-AA70EC4DE621}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceConnectDaoTao", "ServiceConnectDaoTao\ServiceConnectDaoTao.csproj", "{BBC54B3C-A223-4AC5-A746-852F68EB4AD2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{3C34390E-7725-4BB0-BDFE-AA70EC4DE621}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C34390E-7725-4BB0-BDFE-AA70EC4DE621}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C34390E-7725-4BB0-BDFE-AA70EC4DE621}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBC54B3C-A223-4AC5-A746-852F68EB4AD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBC54B3C-A223-4AC5-A746-852F68EB4AD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBC54B3C-A223-4AC5-A746-852F68EB4AD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBC54B3C-A223-4AC5-A746-852F68EB4AD2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -20,12 +20,9 @@ namespace nuce.web.api.Models.Survey
         public virtual DbSet<AsEduSurveyDapAn> AsEduSurveyDapAn { get; set; }
         public virtual DbSet<AsEduSurveyDeThi> AsEduSurveyDeThi { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             modelBuilder.Entity<AsEduSurveyCauHoi>(entity =>
             {
                 entity.ToTable("AS_Edu_Survey_CauHoi");

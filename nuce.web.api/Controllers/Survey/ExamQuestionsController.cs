@@ -20,12 +20,12 @@ namespace nuce.web.api.Controllers.Survey
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize(Roles = "P_KhaoThi")]
-    public class ExamQuestions : ControllerBase
+    public class ExamQuestionsController : ControllerBase
     {
-        private readonly ILogger<ExamQuestions> _logger;
+        private readonly ILogger<ExamQuestionsController> _logger;
         private readonly IAsEduSurveyDeThiService _asEduSurveyDeThiService;
 
-        public ExamQuestions(ILogger<ExamQuestions> logger, IAsEduSurveyDeThiService asEduSurveyDeThiService)
+        public ExamQuestionsController(ILogger<ExamQuestionsController> logger, IAsEduSurveyDeThiService asEduSurveyDeThiService)
         {
             _logger = logger;
             _asEduSurveyDeThiService = asEduSurveyDeThiService;

@@ -31,7 +31,6 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="NewFolder\" />
     <Folder Include="Repositories\Core\" />
     <Folder Include="Repositories\Survey\" />
     <Folder Include="Resources\Core\" />
