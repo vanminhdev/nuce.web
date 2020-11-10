@@ -10,12 +10,18 @@
             padding: 16px 8px;
         }
     }
+    .checkbox-select {
+        cursor: pointer;
+    }
+    .search-icon-wrapper {
+        padding: 3px 8px;
+    }
 </style>
 <div class="row main-content-wrp ml-0 mr-0">
     <div class="col-12">
         <div class="row">
             <div class="col-12">
-                <div class="main-color text-uppercase font-15-sm fw-600 font-25 service-title">
+                <div id="divTitle" class="main-color text-uppercase font-15-sm fw-600 font-25 service-title">
                     dịch vụ xin giấy xác nhận
                 </div>
             </div>
@@ -24,8 +30,8 @@
             <div class="col-4 search-bar-wrp mb-3">
                 <div class="input-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text" id="basic-addon1">
-                            <img src="../../public/images/icons/search.png"
+                        <span class="input-group-text search-icon-wrapper" id="basic-addon1">
+                            <img src="/content/images/icons/search.png"
                                  alt=""
                                  class="search-icon" />
                         </span>
@@ -212,11 +218,25 @@
         var serviceType = @ViewData["id"];
         var selectedYeuCau = null;
         var statusDictionary = {
-            2:  "Đã gửi lên nhà trường",
+            2: "Đã gửi lên nhà trường",
             3: "Đã tiếp nhận và đang xử lý",
             4: "Đã xử lý và có lịch hẹn",
             5: "Từ chối dịch vụ",
             6: "Hoàn thành",
+        };
+        var serviceDictionary = {
+            1: {
+                name: 'dịch vụ xin giấy xác nhận',
+            },
+            4: {
+                name: 'ưu đãi trong giáo dục',
+            },
+            6: {
+                name: 'vay vốn ngân hàng chính sách - xã hội',
+            },
+            7: {
+                name: 'thuê ktx pháp vân - tứ hiệp',
+            }
         };
 
         var initDatepicker = function() {
@@ -263,8 +283,8 @@
         };
 
         var dataList = [];
+        var selectedIndex = [];
         var fillData = function(dichVuID) {
-            console.log(dataList);
             if (Array.isArray(dataList)) {
                 dataList.forEach(item => {
                     if (item.DichVu.id === `${dichVuID}`) {
@@ -295,7 +315,46 @@
                     }
                 });
             }
-        }
+        };
+
+        var updateselectedDataIndex = function(clickIndex = 0, field = '') {
+            const isChecked = $(`#${clickIndex}-${field}`).is(':checked');
+            handleSelectedData(clickIndex, isChecked, selectedIndex);
+            const count = selectedIndex.length;
+            const maxLength = dataList.length;
+            if (count === 0) {
+                $(`#select-all`).prop({checked: false, indeterminate: false});
+                return;
+            }
+            if (count === maxLength) {
+                $(`#select-all`).prop({checked: true, indeterminate: false});
+                return;
+            }
+            $(`#select-all`).prop({
+                indeterminate: true,
+                checked: false
+            });
+        };
+
+        var handleSelectedData = function(itemIndex = 0, isChecked, selectedIndex = []) {
+            if (isChecked && !selectedIndex.includes(itemIndex)) {
+                selectedIndex.push(itemIndex);
+            } else if (!isChecked) {
+                const index = selectedIndex.indexOf(itemIndex);
+                selectedIndex.splice(index, 1);
+            }
+        };
+
+        var onSelectAll = function(selectAllId = 'select-all') {
+            const isChecked = $(`#${selectAllId}`).is(':checked');
+            for(let i = 0; i < dataList.length; i++) {
+                handleSelectedData(i, isChecked, selectedIndex);
+                $(`#${i}-select`).prop({ checked: isChecked });
+            }
+            if(!isChecked) {
+                selectedIndex = [];
+            }
+        };
 
         var template = function(data) {
             const dichVu = data.DichVu;
@@ -355,7 +414,7 @@
                 <div class="row font-13-sm align-items-center display-lg">
                     <div class="col-1 mr-3">
                       <img
-                        src="../../public/images/person.png"
+                        src="/content/images/person.png"
                         alt=""
                         class="list-item-avatar"
                       />
@@ -396,7 +455,7 @@
                   >
                     <div class="col-2">
                       <img
-                        src="../../public/images/person.png"
+                        src="/content/images/person.png"
                         alt=""
                         class="list-item-avatar"
                       />
@@ -436,7 +495,7 @@
                     >
                       <div class="row justify-content-center">
                         <img
-                          src="../../public/images/icons/upload-white.png"
+                          src="/content/images/icons/upload-white.png"
                           alt=""
                           class="mr-2 upload-white-icon"
                         />
@@ -469,13 +528,29 @@
                 },
                 dataSrc: function(json) {
                     dataList = json.data;
+                    selectedIndex = [];
+                    $(`#select-all`).prop({checked: false, indeterminate: false});
                     return json.data;
                 }
+            },
+            headerCallback: function( thead, data, start, end, display ) {
+                $(thead).find('th').eq(0).html(`<input type="checkbox" class="checkbox-select"
+                                                        id="select-all" onclick="onSelectAll()" />`);
+                $(thead).find('th').eq(0).prop({width: '50px'});
             },
             columns: [
                 {
                     data: null,
-                    mRender: function (data, type, row) {
+                    mRender: function(data, type, row, meta) {
+                        const i = meta.row;
+                        return `<input type="checkbox" id="${i}-select" 
+                                    class="checkbox-select"
+                                    onclick="updateselectedDataIndex(${i}, 'select')">`;
+                    },
+                },
+                {
+                    data: null,
+                    mRender: function(data, type, row) {
                         return template(data);
                     }
                 },
@@ -553,7 +628,6 @@
                     }
                 }
                 if ($("#txtGioBatDau").val() === "" || $("#txtGioBatDau").val() === null) {
-                    console.log('jslf');
                     $("#txtGioBatDau").val("00");
                 }
                 else {
@@ -564,8 +638,6 @@
                         $("#txtGioBatDau").val("00");
                     else if (hh < 10)
                         $("#txtGioBatDau").val("0" + hh);
-
-                    console.log('vvvv');
                 }
                 
                 if ($("#txtPhutBatDau").val() === '' || $("#txtPhutBatDau").val() === null) {
@@ -675,6 +747,7 @@
         }
 
         var init = function() {
+            $('#divTitle').html(serviceDictionary[serviceType].name);
             $('#qldv-detail-datatable_filter').hide();
             $("#txt-srvc-search").keyup((event) => {
                 if (event.keyCode === 13){
