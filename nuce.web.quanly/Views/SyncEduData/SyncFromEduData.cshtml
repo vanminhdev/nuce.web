@@ -1,0 +1,88 @@
+﻿
+@{
+    ViewData["Title"] = "Đồng bộ dữ liệu từ đào tạo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div id="message" class="col-12">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <button class="btn btn-primary" id="btn-sync-falcuty">Đồng bộ khoa</button>
+            <button class="btn btn-primary" id="btn-sync-department">Đồng bộ bộ môn</button>
+            <button class="btn btn-primary" id="btn-sync-academics">Đồng bộ ngành học</button>
+            <button class="btn btn-primary" id="btn-sync-subject">Đồng bộ môn học</button>
+            <button class="btn btn-primary" id="btn-sync-class">Đồng bộ lớp</button>
+            <button class="btn btn-primary" id="btn-sync-lecturer">Đồng bộ giảng viên</button>
+            <button class="btn btn-primary" id="btn-sync-student">Đồng bộ sinh viên</button>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        $('#btn-sync-falcuty').click(() => {
+            syncData("SyncFaculty");
+        });
+        $('#btn-sync-department').click(() => {
+            syncData("SyncDepartment");
+        });
+        $('#btn-sync-academics').click(() => {
+            syncData("SyncAcademics");
+        });
+        $('#btn-sync-subject').click(() => {
+            syncData("SyncSubject");
+        });
+        $('#btn-sync-class').click(() => {
+            syncData("SyncClass");
+        });
+        $('#btn-sync-lecturer').click(() => {
+            syncData("SyncLecturer");
+        });
+        $('#btn-sync-student').click(() => {
+            syncData("SyncStudent");
+        });
+
+        let message = $('#message');
+        function syncData(action) {
+            $('#loading-screen').show();
+            $.ajax({
+                data: { action: action },
+                dataType: 'json',
+                method: 'Post',
+                url: '/syncedudata/syncfromedudata'
+            }).done(function (data) {
+                $('#loading-screen').hide();
+                if (data.type == "success") {
+                    message.html(`\
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">\
+                                ${data.message}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                                <span aria-hidden="true">&times;</span>\
+                            </button>\
+                        </div>\
+                    `);
+                }
+                else if (data.type == "fail") {
+                    message.html(`\
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            ${data.message}
+                            <hr>
+                            <p class="mb-0">${data.detailMessage}</p>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    `);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                $('#loading-screen').hide();
+                console.log(textStatus + ': ' + errorThrown);
+            });
+        }
+    </script>
+}
