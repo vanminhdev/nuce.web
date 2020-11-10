@@ -7,7 +7,7 @@ namespace nuce.web.api.Models.Survey
     {
         public Guid Id { get; set; }
         public int DapAnId { get; set; }
-        public Guid? CauHoiGid { get; set; }
+        public Guid CauHoiGid { get; set; }
         public int CauHoiId { get; set; }
         public int SubQuestionId { get; set; }
         public string Content { get; set; }

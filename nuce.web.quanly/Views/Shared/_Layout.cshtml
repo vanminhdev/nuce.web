@@ -1,4 +1,26 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+    var accessToken = Request.Cookies[nuce.web.quanly.Common.UserParameters.JwtAccessToken];
+    var username = "";
+    var roles = new List<string>();
+    if (accessToken != null)
+    {
+
+        var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
+
+        //username
+        var usernameClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Name);
+        if (usernameClaim != null)
+        {
+            username = usernameClaim.Value;
+        }
+
+        //role
+        roles = jwtSecurityToken.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Role).Select(r => r.Value).ToList();
+    }
+}
+
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8" />
@@ -18,15 +40,14 @@
     <div class="full-height body-wrp">
         <!-- header section -->
         <section id="header">
-            <div class="container-fluid header-wrp">
+            <div class="container">
                 <div class="row justify-content-between align-items-center">
                     <div class="col-12 col-md-7">
                         <div class="row">
                             <div class="col-2">
                                 <img class="logo"
                                      src="~/content/images/logo.png"
-                                     alt="logo"
-                                     srcset="" />
+                                     alt="logo" />
                             </div>
                             <div class="col-10 col-md-10 mb-3">
                                 <div class="col-12 text-left main-title main-color font-18-sm font-32 font-28-md">
@@ -48,7 +69,7 @@
                     </div>
                     <div class="col-12 col-md-5">
                         <div class="row">
-                            <div class="col-5">
+                            <div class="col-5 p-1">
                                 <div class="row">
                                     <div class="col-3">
                                         <img src="~/content/images/icons/hotline.png"
@@ -60,12 +81,12 @@
                                             <div class="col-12 main-color icon-title font-14-sm">
                                                 Hotline
                                             </div>
-                                            <div class="col-12 icon-sub-title">0869071382</div>
+                                            <div class="col-12 icon-sub-title">02438697004</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-7">
+                            <div class="col-7 p-1">
                                 <div class="row">
                                     <div class="col-3">
                                         <img src="~/content/images/icons/email.png"
@@ -78,7 +99,7 @@
                                                 Email
                                             </div>
                                             <div class="col-10 icon-sub-title">
-                                                tuyensinhdh@nuce.edu.vn
+                                                ctsv@nuce.edu.vn
                                             </div>
                                         </div>
                                     </div>
@@ -91,35 +112,99 @@
         </section>
         <!-- end header section -->
         <!-- menu section -->
+
         <section id="menu">
             <div class="container-fluid menu-wrp mt-2">
-                <hr class="menu-line" />
+                <hr />
+                <nav class="navbar navbar-expand-lg navbar-light pl-0 pr-0">
+                    <a class="navbar-brand" href="/home"></a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
+                        <ul class="navbar-nav">
+                            @if (roles.Count == 1)
+                            {
+                                if (roles.FirstOrDefault(r => r == "Admin") != null)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action" href="/usermanager/index">
+                                            Quản lý tài khoản
+                                        </a>
+                                    </li>
+                                }
+                                if (roles.FirstOrDefault(r => r == "P_KhaoThi") != null)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action" href="/survey/examquestions">
+                                            Quản lý đề khảo sát
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action" href="/survey/question">
+                                            Quản lý câu hỏi
+                                        </a>
+                                    </li>
+                                }
+                                if (roles.FirstOrDefault(r => r == "P_CTSV") != null)
+                                {
+
+                                }
+                            }
+                            else
+                            {
+                                if (roles.FirstOrDefault(r => r == "Admin") != null)
+                                {
+                                    <li class="nav-item dropdown dropdown-hover-show">
+                                        <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action" href="#" id="navbarDropdown-admin" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Quản trị
+                                        </a>
+                                        <div class="dropdown-menu width-100ps" aria-labelledby="navbarDropdown-admin">
+                                            <a class="dropdown-item font-18 font-10-xsm" href="/usermanager/index">Quản lý tài khoản</a>
+                                            @*<a class="dropdown-item font-18 font-10-xsm" href="/config/index">Cấu hình trang web</a>*@
+                                        </div>
+                                    </li>
+                                    <li class="nav-item dropdown dropdown-hover-show">
+                                        <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action" href="#" id="navbarDropdown-admin" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Đồng bộ dữ liệu
+                                        </a>
+                                        <div class="dropdown-menu width-100ps" aria-labelledby="navbarDropdown-admin">
+                                            <a class="dropdown-item font-18 font-10-xsm" href="/usermanager/index">Quản lý tài khoản</a>
+                                        </div>
+                                    </li>
+                                }
+                                if (roles.FirstOrDefault(r => r == "P_KhaoThi") != null)
+                                {
+                                    <li class="nav-item dropdown dropdown-hover-show">
+                                        <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action" href="#" id="navbarDropdown-survey" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Khảo thí
+                                        </a>
+                                        <div class="dropdown-menu width-100ps" aria-labelledby="navbarDropdown-survey">
+                                            @*<a class="dropdown-item font-18 font-10-xsm" href="/survey/surveyround">Đợt khảo sát</a>*@
+                                            <a class="dropdown-item font-18 font-10-xsm" href="/survey/examquestions">Quản lý đề khảo sát</a>
+                                            <a class="dropdown-item font-18 font-10-xsm" href="/survey/question">Quản lý câu hỏi</a>
+                                        </div>
+                                    </li>
+                                }
+                                if (roles.FirstOrDefault(r => r == "P_CTSV") != null)
+                                {
+                                    <li class="nav-item dropdown dropdown-hover-show">
+                                        <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action" href="#" id="navbarDropdown-ctsv" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Công tác sinh viên
+                                        </a>
+                                        <div class="dropdown-menu width-100ps" aria-labelledby="navbarDropdown-ctsv">
+                                            @*<a class="dropdown-item font-18 font-10-xsm" href="/">Chức năng 1</a>
+                        <a class="dropdown-item font-18 font-10-xsm" href="/">Chức năng 2</a>*@
+                                        </div>
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                </nav>
                 <div class="row justify-content-center">
-                    @{
-                        var displayFunc = new Dictionary<string, string>();
-                        var cookieRoles = Request.Cookies[nuce.web.quanly.Common.UserParameters.Roles];
-                        if (cookieRoles != null)
-                        {
-                            var rolesString = cookieRoles.Value;
-                            var roles = rolesString.Split('|').ToList();
 
-                            
-                        }
-                    }
-                    <a href="/usermanager/index"
-                       class="text-decoration-none col-6 col-xl-4 menu-item text-center font-18 font-10-xsm">
-                        quản lý tài khoản
-                    </a>
-                    <a href=""
-                       class="text-decoration-none col-6 col-xl-4 menu-item text-center font-18 font-10-xsm">
-                        Khảo thí
-                    </a>
-                    <a href=""
-                       class="text-decoration-none col-6 col-xl-4 menu-item text-center font-18 font-10-xsm">
-                        quản lý tin tức
-                    </a>
                 </div>
-
             </div>
         </section>
         <!-- end menu section -->
@@ -201,7 +286,7 @@
                     </div>
                 </div>
             </div>
-            <div class="pt-4 pb-4">
+            <div class="pt-4 pb-4" id="render-body">
                 @RenderBody()
             </div>
         </section>
@@ -220,14 +305,23 @@
         </section>
         <!-- end footer section -->
     </div>
+    <div id="loading-screen" class="popup-fullscreen">
+        <div class="d-flex justify-content-center align-items-center">
+            <div class="loading-circle"></div>
+        </div>
+    </div>
     <script src="~/content/js/jquery.min.js"></script>
     <script src="~/content/js/jquery.cookie.min.js"></script>
+    <script src="~/content/js/jquery.validate.min.js"></script>
     <script src="~/content/js/popper.min.js"></script>
     <script src="~/content/js/bootstrap.min.js"></script>
     <script>
         $.ajaxSetup({
             xhrFields: {
                 withCredentials: true
+            },
+            complete: () => {
+                document.getElementById("render-body").scrollIntoView();
             },
             crossDomain: true
         });
@@ -245,12 +339,13 @@
         //ga('send', 'pageview');
     </script>
     <script>
-        let username = $.cookie("username");
-        let fullname = $.cookie("fullname");
+        let username = '@username';
+        let fullname = '@username';
         $('#username-mobile').html(username);
         $('#fullname-mobile').html(fullname);
         $('#username-large-screen').html(username);
         $('#fullname-large-screen').html(fullname);
+        document.getElementById("render-body").scrollIntoView();
     </script>
     @RenderSection("Scripts", required: false)
 </body>

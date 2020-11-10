@@ -33,13 +33,31 @@ namespace nuce.web.quanly.Common
             public string Title { get; set; }
         }
 
-        //public static Dictionary<string, List<Function>> Functions = new Dictionary<string, List<Function>>()
-        //{
-        //    {
-        //        "Admin", new List<Function>() {
-        //            new Function{ Link = "/usermanager/index"  }
-        //        }
-        //    }
-        //};
+        public class RoleFunc
+        {
+            public string FuncType { get; set; }
+            public string FuncName { get; set; }
+        }
+
+        public static Dictionary<string, List<RoleFunc>> RoleFunction = new Dictionary<string, List<RoleFunc>>()
+        {
+            {
+                "Admin", new List<RoleFunc>() {
+                    new RoleFunc { FuncType = "QuanTri", FuncName = "QuanLyTaiKhoan" },
+                    new RoleFunc { FuncType = "QuanTri", FuncName = "CauHinhTrangWeb" }
+                }
+            },
+            {
+                "P_KhaoThi", new List<RoleFunc>() {
+                    new RoleFunc { FuncType = "KhaoThi", FuncName = "QuanLyDotKhaoThi" },
+                    new RoleFunc { FuncType = "KhaoThi", FuncName = "QuanLyCauHoi" }
+                }
+            },
+            {
+                "P_CTSV", new List<RoleFunc>() {
+                    
+                }
+            },
+        };
     }
 }

@@ -11,14 +11,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
+using nuce.web.api.Models.Survey;
 using nuce.web.api.Services.Survey.Interfaces;
+using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey;
 
 namespace nuce.web.api.Controllers.Survey
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "P_KhaoThi")]
     public class QuestionController : ControllerBase
     {
         private readonly ILogger<QuestionController> _logger;
@@ -30,11 +32,25 @@ namespace nuce.web.api.Controllers.Survey
             _asEduSurveyCauHoiService = asEduSurveyCauHoiService;
         }
 
-        [HttpGet]
-        public IActionResult GetAll()
+        [HttpPost]
+        public async Task<IActionResult> GetAll([FromBody] DataTableRequest request)
         {
-            var questions = _asEduSurveyCauHoiService.GetAllActiveStatus().Result;
-            return Ok(questions);
+            var filter = new QuestionFilter();
+            filter.Ma = request.Columns.FirstOrDefault(c => c.Data == "ma")?.Search.Value ?? null;
+            filter.Content = request.Columns.FirstOrDefault(c => c.Data == "content")?.Search.Value ?? null;
+            filter.Type = request.Columns.FirstOrDefault(c => c.Data == "type")?.Search.Value ?? null;
+            var skip = request.Start;
+            var pageSize = request.Length;
+            var result = await _asEduSurveyCauHoiService.GetAllActiveStatus(filter, skip, pageSize);
+            return Ok(
+                new DataTableResponse<QuestionModel>
+                {
+                    Draw = ++request.Draw,
+                    RecordsTotal = result.RecordsTotal,
+                    RecordsFiltered = result.RecordsFiltered,
+                    Data = result.Data
+                }
+            );
         }
 
         [HttpGet]
@@ -65,7 +81,7 @@ namespace nuce.web.api.Controllers.Survey
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
             return Ok();
         }
@@ -93,7 +109,7 @@ namespace nuce.web.api.Controllers.Survey
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
             return Ok();
         }
@@ -117,7 +133,7 @@ namespace nuce.web.api.Controllers.Survey
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
             return Ok();
         }

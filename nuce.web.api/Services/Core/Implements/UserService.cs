@@ -175,8 +175,8 @@ namespace nuce.web.api.Services.Core.Implements
         public async Task<UserPaginationModel> GetAllAsync(UserFilter filter, int skip = 0, int pageSize = 20)
         {
             _identityContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-
-            var query = _identityContext.Users.Where(u => u.Status != (int)UserStatus.Deleted);
+            var currentUsernameWorking = GetUserName();
+            var query = _identityContext.Users.Where(u => u.Status != (int)UserStatus.Deleted && u.UserName != currentUsernameWorking);
             var recordsTotal = query.Count();
 
             if (!string.IsNullOrWhiteSpace(filter.Username))
@@ -228,7 +228,7 @@ namespace nuce.web.api.Services.Core.Implements
         }
         public async Task DeactiveUserAsync(string id)
         {
-            var user =  await _identityContext.Users.FirstOrDefaultAsync(u => u.Id == id && u.Status != (int)UserStatus.Deleted);
+            var user =  await _identityContext.Users.FirstOrDefaultAsync(u => u.Id == id && u.Status != (int)UserStatus.Deleted && u.UserName != GetUserName());
             if (user == null)
             {
                 throw new RecordNotFoundException();
@@ -238,7 +238,7 @@ namespace nuce.web.api.Services.Core.Implements
         }
         public async Task ActiveUserAsync(string id)
         {
-            var user = await _identityContext.Users.FirstOrDefaultAsync(u => u.Id == id && u.Status != (int)UserStatus.Deleted);
+            var user = await _identityContext.Users.FirstOrDefaultAsync(u => u.Id == id && u.Status != (int)UserStatus.Deleted && u.UserName != GetUserName());
             if (user == null)
             {
                 throw new RecordNotFoundException();
@@ -248,7 +248,7 @@ namespace nuce.web.api.Services.Core.Implements
         }
         public async Task DeleteUserAsync(string id)
         {
-            var user = await _identityContext.Users.FirstOrDefaultAsync(u => u.Id == id && u.Status != (int)UserStatus.Deleted);
+            var user = await _identityContext.Users.FirstOrDefaultAsync(u => u.Id == id && u.Status != (int)UserStatus.Deleted && u.UserName != GetUserName());
             if (user == null)
             {
                 throw new RecordNotFoundException();
@@ -258,7 +258,7 @@ namespace nuce.web.api.Services.Core.Implements
         }
         public async Task UpdateUserAsync(string id, UserUpdateModel user)
         {
-            var userUpdate = await _identityContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var userUpdate = await _identityContext.Users.FirstOrDefaultAsync(u => u.Id == id && u.UserName != GetUserName());
             if (userUpdate == null)
             {
                 throw new RecordNotFoundException();
@@ -302,7 +302,7 @@ namespace nuce.web.api.Services.Core.Implements
         }
         public async Task ResetPasswordAsync(string id, string newPassword)
         {
-            var userReset = await _identityContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var userReset = await _identityContext.Users.FirstOrDefaultAsync(u => u.Id == id && u.UserName != GetUserName());
             if (userReset == null)
             {
                 throw new RecordNotFoundException();

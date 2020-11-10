@@ -22,21 +22,49 @@ namespace nuce.web.api.Services.Survey.Implements
             _surveyContext = surveyContext;
         }
 
-        public async Task<List<QuestionModel>> GetAllActiveStatus()
+        public async Task<QuestionPaginationModel> GetAllActiveStatus(QuestionFilter filter, int skip = 0, int pageSize = 20)
         {
-            var list = await _surveyContext.AsEduSurveyCauHoi.AsNoTracking()
-                .OrderBy(q => q.Order)
-                .Where(q => q.Status != (int)QuestionStatus.Deactive)
-                .ToListAsync();
-            return
-                list.Select(q => new QuestionModel()
+            _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            var query = _surveyContext.AsEduSurveyCauHoi.Where(q => q.Status != (int)QuestionStatus.Deactive);
+            var recordsTotal = query.Count();
+
+            if (!string.IsNullOrWhiteSpace(filter.Ma))
+            {
+                query = query.Where(u => u.Ma.Contains(filter.Ma));
+            }
+            if (!string.IsNullOrWhiteSpace(filter.Content))
+            {
+                filter.Content = HttpUtility.HtmlEncode(filter.Content);
+                query = query.Where(u => u.Content.Contains(filter.Content));
+            }
+            if (!string.IsNullOrWhiteSpace(filter.Type))
+            {
+                query = query.Where(u => u.Type.Contains(filter.Type));
+            }
+
+            var recordsFiltered = query.Count();
+
+            var querySkip = query
+                .OrderBy(u => u.Order)
+                .Skip(skip).Take(pageSize);
+
+            var data = await querySkip
+                .Select(q => new QuestionModel
                 {
                     Id = q.Id.ToString(),
                     Ma = q.Ma,
                     Content = HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(q.Content)),
                     Type = q.Type,
                     Order = q.Order
-                }).ToList();
+                })
+                .ToListAsync();
+
+            return new QuestionPaginationModel
+            {
+                RecordsTotal = recordsTotal,
+                RecordsFiltered = recordsFiltered,
+                Data = data
+            };
         }
 
         public async Task<List<QuestionModel>> GetAllByStatus(QuestionStatus status)

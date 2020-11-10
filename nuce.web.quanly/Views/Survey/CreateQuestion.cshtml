@@ -1,0 +1,107 @@
+﻿@model nuce.web.quanly.Models.QuestionCreate
+@{
+    ViewData["Title"] = "Thêm câu hỏi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form method="post" class="container-fluid service-categories-wrp mt-2">
+    <a class="update-btn text-light p-2" style="text-decoration: none;" href="/survey/question">← Quay lại danh sách</a>
+
+    <div class="fw-700 text-uppercase font-15-sm font-25 mb-2 mt-3">
+        Thêm câu hỏi
+    </div>
+
+    @if (ViewData["UpdateSuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @ViewData["UpdateSuccessMessage"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    @if (ViewData["UpdateErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @ViewData["UpdateErrorMessage"]
+            <hr>
+            <p class="mb-0">@ViewData["UpdateErrorMessageDetail"]</p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+<div class="row font-13-sm font-16">
+    <div class="col-12 form-group">
+        <div class="row mr-0 ml-0 align-items-center">
+            <div class="font-14-sm fw-600 col-12 col-md-2 pr-0 pl-0">
+                Mã
+            </div>
+            <div class="col-12 col-md-10">
+                @Html.TextBoxFor(m => m.ma, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.ma, "", new { @class = "form-text text-danger" })
+            </div>
+        </div>
+    </div>
+    <div class="col-12 form-group">
+        <div class="row mr-0 ml-0">
+            <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
+                Nội dung
+            </div>
+            <div class="col-12 col-md-10">
+                @Html.TextAreaFor(m => m.content, new { @id = "content" })
+                @Html.ValidationMessageFor(m => m.content, "", new { @class = "form-text text-danger" })
+            </div>
+        </div>
+    </div>
+    <div class="col-12 form-group">
+        <div class="row mr-0 ml-0">
+            <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
+                Loại câu hỏi
+            </div>
+            <div class=" col-12 col-md-10">
+                @Html.TextBoxFor(m => m.type, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.type, "", new { @class = "form-text text-danger" })
+            </div>
+        </div>
+    </div>
+    <div class="col-12 form-group">
+        <div class="row mr-0 ml-0">
+            <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
+                Thứ tự
+            </div>
+            <div class=" col-12 col-md-10">
+                @Html.TextBoxFor(m => m.order, new { @class = "form-control", @type = "number" })
+                @Html.ValidationMessageFor(m => m.order, "", new { @class = "form-text text-danger" })
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 form-group d-flex justify-content-center">
+        <div class="col-12 col-md-3">
+            <button type="submit" formaction="/Survey/CreateQuestionSubmit" class="update-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2 mt-2">
+                Thêm
+            </button>
+        </div>
+    </div>
+</div>
+</form>
+
+@section Scripts {
+    @*<script type="text/javascript" src="~/content/js/tiny_mce/tiny_mce.js"></script>
+        <script type="text/javascript" language="javascript">
+            tinyMCE.init({
+                mode: "textareas",
+                encoding: 'xml'
+            });
+        </script>*@
+    <script src="https://cdn.tiny.cloud/1/7kx0ud503sqh7se57iao9whndipt7k0wu0j9y2381lnywnis/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: '#content',
+            encoding: 'xml'
+        });
+    </script>
+}

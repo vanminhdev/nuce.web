@@ -1,0 +1,160 @@
+﻿@*@model List<nuce.web.quanly.Models.ExamStructure>*@
+@{
+    ViewData["Title"] = "Cấu trúc đề thi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid service-categories-wrp mt-2">
+    <div class="row mb-4">
+        <div class="col-12">
+            <a class="update-btn text-light p-2" style="text-decoration: none;" href="/survey/examquestions">← Quay lại danh sách đề khảo sát</a>
+        </div>
+    </div>
+    <div class="row">
+        <div id="message" class="col-12">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <form id="form-add-question" class="row">
+                <div class="col-3 d-flex align-items-center">
+                    <div class="form-group width-100ps">
+                        <input id="ma-cau-hoi" class="form-control form-control width-100ps" type="number" placeholder="Mã câu hỏi cần thêm"
+                               required data-msg="Mã không được bỏ trống" />
+                    </div>
+                </div>
+                <div class="col-3 d-flex align-items-center">
+                    <div class="form-group width-100ps">
+                        <input id="thu-tu-them" class="form-control form-control" type="number" placeholder="Thứ tự thêm"
+                               required data-msg="Thứ tự không được bỏ trống" />
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="form-group">
+                        <button type="button" id="btn-add-question" class="btn update-btn text-light w-100 m-2">Thêm câu hỏi</button>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="form-group">
+                        <button type="button" id="btn-generate-exam" class="btn update-btn text-light w-100 m-2">Tạo đề</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table id="id-datatable" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center">STT</th>
+                        <th class="text-center">Mã</th>
+                        <th class="text-center" width="60%">Nội dung</th>
+                        <th class="text-center">Loại</th>
+                        <th class="text-center">Thứ tự</th>
+                        @*<th></th>*@
+                    </tr>
+                </thead>
+                <tbody id="tbody-data">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @*<td class="text-center">
+            <a href="/survey/DeleteQuestionInExam?questionId=@Model[i].questionId">Xoá</a>
+        </td>*@
+<script>
+    function loadDataTable() {
+        $.ajax({
+            dataType: 'json',
+            method: 'Get',
+            url: '/Survey/GetStructure?examQuestionId=' + '@ViewData["ExamQuestionId"]'
+        }).done(function (data) {
+            let htmlstr = "";
+            if (data.length === 0) {
+                htmlstr = "<tr><td class='text-center' colspan='100%'>Danh sách trống</td></tr>";
+            }
+            for (let i = 0; i < data.length; i++) {
+                htmlstr += `\
+            <tr>\
+                <td class="text-center">${i + 1}</td>\
+                <td class="text-center">${data[i].ma}</td>\
+                <td>${data[i].content}</td>\
+                <td class="text-center">${data[i].type}</td>\
+                <td class="text-center">${data[i].order}</td>\
+            </tr>`;
+            }
+            $('#tbody-data').html(htmlstr);
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            console.log(textStatus + ': ' + errorThrown);
+        });
+    }
+    loadDataTable();
+    let form = $('#form-add-question');
+    form.validate({
+        errorElement: 'span',
+        errorClass: 'text-danger pt-1'
+    });
+
+    let message = $('#message');
+    function showMessage(data) {
+        if (data.type == "success") {
+            loadDataTable();
+            message.html(`\
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">\
+                                ${data.message}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                                <span aria-hidden="true">&times;</span>\
+                            </button>\
+                        </div>\
+                    `);
+        }
+        else if (data.type == "fail") {
+            message.html(`\
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            ${data.message}
+                            <hr>
+                            <p class="mb-0">${data.detailMessage}</p>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    `);
+        }
+    }
+
+    $('#btn-add-question').click(() => {
+        if (form.valid()) {
+            let objData = { examQuestionId: '@ViewData["ExamQuestionId"]', maCauHoi: $('#ma-cau-hoi').val(), order: $('#thu-tu-them').val() };
+            $.ajax({
+                data: objData,
+                dataType: 'json',
+                method: 'Post',
+                url: '/Survey/AddQuestionExam'
+            }).done(function (data) {
+                showMessage(data);
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus + ': ' + errorThrown);
+            });
+        }
+    });
+    $('#btn-generate-exam').click(() => {
+        $('#loading-screen').show();
+        $.ajax({
+            data: { examQuestionId: '@ViewData["ExamQuestionId"]'},
+            dataType: 'json',
+            method: 'Post',
+            url: '/Survey/GenerateExam'
+        }).done(function (data) {
+            $('#loading-screen').hide();
+            showMessage(data);
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            $('#loading-screen').hide();
+            console.log(textStatus + ': ' + errorThrown);
+        });
+    });
+</script>
+}

@@ -80,20 +80,26 @@ namespace nuce.web.quanly.Controllers
         protected async Task<HttpResponseMessage> MakeRequestAuthorizedAsync(string method, string requestUri, HttpContent content = null)
         {
             var accessTokenInCookie = Request.Cookies[UserParameters.JwtAccessToken];
-            if(accessTokenInCookie == null)
+            var refreshTokenInCookie = Request.Cookies[UserParameters.JwtRefreshToken];
+            var response = new HttpResponseMessage()
             {
-                return new HttpResponseMessage()
-                {
-                    StatusCode = HttpStatusCode.Unauthorized
-                };
+                StatusCode = HttpStatusCode.Unauthorized
+            };
+            //mất cả 2 token thì không xác thực
+            if (accessTokenInCookie == null && refreshTokenInCookie == null)
+            {
+                return response;
             }
-            _cookieContainer.Add(_apiUri, new Cookie(UserParameters.JwtAccessToken, accessTokenInCookie.Value));
-            var response = await SendRequestAsync(method, requestUri, content);
-
-            if (response.StatusCode == HttpStatusCode.Unauthorized && Request.Cookies[UserParameters.JwtRefreshToken] != null)
+            else if (accessTokenInCookie != null) //có accesstoken gửi request
+            {
+                _cookieContainer.Add(_apiUri, new Cookie(UserParameters.JwtAccessToken, accessTokenInCookie.Value));
+                response = await SendRequestAsync(method, requestUri, content);
+            }
+            //nếu access token hết hạn thì refresh
+            if (response.StatusCode == HttpStatusCode.Unauthorized && refreshTokenInCookie != null)
             {
                 //lấy token mới
-                _cookieContainer.Add(_apiUri, new Cookie(UserParameters.JwtRefreshToken, Request.Cookies[UserParameters.JwtRefreshToken].Value));
+                _cookieContainer.Add(_apiUri, new Cookie(UserParameters.JwtRefreshToken, refreshTokenInCookie.Value));
                 var resRefreshToken = await _client.PostAsync("/api/user/refreshToken", new StringContent(""));
                 if (resRefreshToken.IsSuccessStatusCode)
                 {
@@ -139,11 +145,11 @@ namespace nuce.web.quanly.Controllers
             }
             else if (response.StatusCode == HttpStatusCode.Forbidden)
             {
-                return Redirect($"/error?message={HttpUtility.UrlEncode("Không có quyền truy cập")}&code={(int)HttpStatusCode.Forbidden}");
+                return Redirect($"/error?message={HttpUtility.UrlEncode("CallAPI: Không có quyền truy cập")}&code={(int)HttpStatusCode.Forbidden}");
             }
             else if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                return Redirect($"/error?message={HttpUtility.UrlEncode("Không tìm thấy tài nguyên")}&code={(int)HttpStatusCode.NotFound}");
+                return Redirect($"/error?message={HttpUtility.UrlEncode("CallAPI: Không tìm thấy tài nguyên")}&code={(int)HttpStatusCode.NotFound}");
             }
             else if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
@@ -151,7 +157,7 @@ namespace nuce.web.quanly.Controllers
                     return await action500Async(response);
                 if (action500 != null)
                     return action500(response);
-                return Redirect($"/error?message={HttpUtility.UrlEncode("Có lỗi xảy ra")}&code={(int)HttpStatusCode.InternalServerError}");
+                return Redirect($"/error?message={HttpUtility.UrlEncode("CallAPI: Có lỗi xảy ra")}&code={(int)HttpStatusCode.InternalServerError}");
             }
             else if (response.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -159,7 +165,7 @@ namespace nuce.web.quanly.Controllers
                     return await action400Async(response);
                 if (action400 != null)
                     return action400(response);
-                return Redirect($"/error?message={HttpUtility.UrlEncode("Dữ liệu truyền vào không hợp lệ")}&code={(int)HttpStatusCode.BadRequest}");
+                return Redirect($"/error?message={HttpUtility.UrlEncode("CallAPI: Dữ liệu truyền vào không hợp lệ")}&code={(int)HttpStatusCode.BadRequest}");
             }
             if (actionDefaultAsync != null)
                 return await actionDefaultAsync(response);

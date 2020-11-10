@@ -1443,11 +1443,11 @@ namespace EduWebService
         {
             if ((endpointConfiguration == EndpointConfiguration.ServiceSoap))
             {
-                return new System.ServiceModel.EndpointAddress("http://14.177.64.71:8002/service.asmx");
+                return new System.ServiceModel.EndpointAddress("http://localhost:57068/service.asmx");
             }
             if ((endpointConfiguration == EndpointConfiguration.ServiceSoap12))
             {
-                return new System.ServiceModel.EndpointAddress("http://14.177.64.71:8002/service.asmx");
+                return new System.ServiceModel.EndpointAddress("http://localhost:57068/service.asmx");
             }
             throw new System.InvalidOperationException(string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration));
         }
