@@ -225,5 +225,65 @@ namespace nuce.web.api.Controllers.Synchronization
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
         }
+
+        [HttpPut]
+        public async Task<IActionResult> SyncClassRoom()
+        {
+            try
+            {
+                await _syncEduDatabaseService.SyncClassRoom();
+                return Ok();
+            }
+            catch (RecordNotFoundException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể cập nhật dữ liệu đồng bộ lớp học phần" });
+            }
+            catch (CallEduWebServiceException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo" });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> SyncLecturerClass()
+        {
+            try
+            {
+                await _syncEduDatabaseService.SyncLecturerClass();
+                return Ok();
+            }
+            catch (RecordNotFoundException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể cập nhật dữ liệu đồng bộ lớp môn học giảng viên" });
+            }
+            catch (CallEduWebServiceException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo" });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+        }
     }
 }

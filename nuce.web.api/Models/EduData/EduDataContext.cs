@@ -17,11 +17,22 @@ namespace nuce.web.api.Models.EduData
 
         public virtual DbSet<AsAcademyAcademics> AsAcademyAcademics { get; set; }
         public virtual DbSet<AsAcademyClass> AsAcademyClass { get; set; }
+        public virtual DbSet<AsAcademyClassRoom> AsAcademyClassRoom { get; set; }
         public virtual DbSet<AsAcademyDepartment> AsAcademyDepartment { get; set; }
         public virtual DbSet<AsAcademyFaculty> AsAcademyFaculty { get; set; }
         public virtual DbSet<AsAcademyLecturer> AsAcademyLecturer { get; set; }
+        public virtual DbSet<AsAcademyLecturerClassRoom> AsAcademyLecturerClassRoom { get; set; }
         public virtual DbSet<AsAcademyStudent> AsAcademyStudent { get; set; }
         public virtual DbSet<AsAcademySubject> AsAcademySubject { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseSqlServer("Data Source=inspiron\\sqlexpress;Initial Catalog=NUCE_SURVEY;Integrated Security=True");
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -67,6 +78,35 @@ namespace nuce.web.api.Models.EduData
                 entity.Property(e => e.SchoolYear)
                     .HasMaxLength(50)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<AsAcademyClassRoom>(entity =>
+            {
+                entity.ToTable("AS_Academy_ClassRoom");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.ClassCode)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Code)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ExamAttemptDate).HasMaxLength(100);
+
+                entity.Property(e => e.GroupCode)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.SemesterId).HasColumnName("SemesterID");
+
+                entity.Property(e => e.SubjectCode)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.SubjectId).HasColumnName("SubjectID");
             });
 
             modelBuilder.Entity<AsAcademyDepartment>(entity =>
@@ -141,6 +181,27 @@ namespace nuce.web.api.Models.EduData
                 entity.Property(e => e.FullName).HasMaxLength(200);
 
                 entity.Property(e => e.NameOrder).HasMaxLength(30);
+            });
+
+            modelBuilder.Entity<AsAcademyLecturerClassRoom>(entity =>
+            {
+                entity.ToTable("AS_Academy_Lecturer_ClassRoom");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.ClassRoomCode)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ClassRoomId).HasColumnName("ClassRoomID");
+
+                entity.Property(e => e.LecturerCode)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LecturerId).HasColumnName("LecturerID");
+
+                entity.Property(e => e.SemesterId).HasColumnName("SemesterID");
             });
 
             modelBuilder.Entity<AsAcademyStudent>(entity =>

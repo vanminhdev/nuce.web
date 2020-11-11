@@ -11,17 +11,29 @@
     </div>
     <div class="row">
         <div class="col-12">
-            <button class="btn btn-primary" id="btn-sync-falcuty">Đồng bộ khoa</button>
-            <button class="btn btn-primary" id="btn-sync-department">Đồng bộ bộ môn</button>
-            <button class="btn btn-primary" id="btn-sync-academics">Đồng bộ ngành học</button>
-            <button class="btn btn-primary" id="btn-sync-subject">Đồng bộ môn học</button>
-            <button class="btn btn-primary" id="btn-sync-class">Đồng bộ lớp</button>
-            <button class="btn btn-primary" id="btn-sync-lecturer">Đồng bộ giảng viên</button>
-            <button class="btn btn-primary" id="btn-sync-student">Đồng bộ sinh viên</button>
+            <button class="btn btn-primary m-2" id="btn-sync-falcuty">Đồng bộ khoa</button>
+            <i class="fas fa-long-arrow-alt-right"></i>
+            <button class="btn btn-primary m-2" id="btn-sync-department">Đồng bộ bộ môn</button>
+            <i class="fas fa-long-arrow-alt-right"></i>
+            <button class="btn btn-primary m-2" id="btn-sync-academics">Đồng bộ ngành học</button>
+            <i class="fas fa-long-arrow-alt-right"></i>
+            <button class="btn btn-primary m-2" id="btn-sync-subject">Đồng bộ môn học</button>
+            <i class="fas fa-long-arrow-alt-right"></i>
+            <button class="btn btn-primary m-2" id="btn-sync-class">Đồng bộ lớp</button>
+            <i class="fas fa-long-arrow-alt-right"></i>
+            <button class="btn btn-primary m-2" id="btn-sync-lecturer">Đồng bộ giảng viên</button>
+            <i class="fas fa-long-arrow-alt-right"></i>
+            <button class="btn btn-primary m-2" id="btn-sync-student">Đồng bộ sinh viên</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            
         </div>
     </div>
 </div>
-
+<div style="height:300px">
+</div>
 
 @section Scripts {
     <script>
@@ -54,7 +66,8 @@
                 data: { action: action },
                 dataType: 'json',
                 method: 'Post',
-                url: '/syncedudata/syncfromedudata'
+                url: '/syncedudata/syncfromedudata',
+                timeout: 3000000
             }).done(function (data) {
                 $('#loading-screen').hide();
                 if (data.type == "success") {
@@ -82,6 +95,7 @@
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 $('#loading-screen').hide();
                 console.log(textStatus + ': ' + errorThrown);
+                console.log(jqXHR);
             });
         }
     </script>

@@ -5,7 +5,7 @@
 			Log
 	1.2. context edu data: những dữ liệu lấy từ đào tạo
 		- cli: 
-			dotnet ef dbcontext scaffold "Data Source=inspiron\sqlexpress;Initial Catalog=NUCE_SURVEY;Integrated Security=True" Microsoft.EntityFrameworkCore.SqlServer -o Models/EduData -c EduDataContext -f -t AS_Academy_Faculty -t AS_Academy_Department -t AS_Academy_Academics -t AS_Academy_Subject
+			dotnet ef dbcontext scaffold "Data Source=inspiron\sqlexpress;Initial Catalog=NUCE_SURVEY;Integrated Security=True" Microsoft.EntityFrameworkCore.SqlServer -o Models/EduData -c EduDataContext -f -t AS_Academy_Faculty -t AS_Academy_Department -t AS_Academy_Academics -t AS_Academy_Subject -t AS_Academy_Class -t AS_Academy_Lecturer -t AS_Academy_Student -t AS_Academy_ClassRoom -t AS_Academy_Lecturer_ClassRoom
 		- gồm các bảng:
 			AS_Academy_faculty
 			AS_Academy_

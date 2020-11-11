@@ -14,5 +14,11 @@ namespace nuce.web.api.Services.Synchronization.Interfaces
         public Task SyncClass();
         public Task SyncLecturer();
         public Task SyncStudent();
+        /// <summary>
+        /// đồng bộ lớp học phần
+        /// </summary>
+        /// <returns></returns>
+        public Task SyncClassRoom();
+        public Task SyncLecturerClass();
     }
 }
