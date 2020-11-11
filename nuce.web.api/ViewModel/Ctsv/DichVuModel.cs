@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static nuce.web.api.Common.Ctsv;
 
 namespace nuce.web.api.ViewModel.Ctsv
 {
@@ -61,5 +62,25 @@ namespace nuce.web.api.ViewModel.Ctsv
     {
         public IQueryable<T> FinalData { get; set; }
         public IQueryable<T> BeforeFilteredData { get; set; }
+    }
+
+    public class ExportModel
+    {
+        public List<DichVuExport> DichVuList { get; set; }
+        public DichVu DichVuType { get; set; }
+    }
+
+    public class DichVuExport
+    {
+        public int ID { get; set; }
+    }
+
+    public class StudentDichVuModel
+    {
+        public AsAcademyStudent Student { get; set; }
+        public AsAcademyClass AcademyClass { get; set; }
+        public AsAcademyFaculty Faculty { get; set; }
+        public AsAcademyDepartment Department { get; set; }
+        public AsAcademyAcademics Academics { get; set; }
     }
 }

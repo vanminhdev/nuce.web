@@ -59,7 +59,7 @@
                     Excel
                 </button>
                 <button type="button" class="btn btn-primary"
-                        onclick="">
+                        onclick="onExportWord()">
                     In
                 </button>
                 <button type="button" class="btn btn-info"
@@ -492,6 +492,7 @@
                   <div class="row ml-0 mr-0 align-items-center">
                     <a
                       class="print-btn col-3 text-light font-14-sm text-decoration-none cursor-pointer col-md-1"
+                      onclick="onExportWord(${dichVu.id})"
                     >
                       <div class="row justify-content-center">
                         <img
@@ -605,6 +606,29 @@
           userTable.search(jsonData).draw();
         }
 
+        var onExportWord = function(id) {            
+            $.ajax({
+                type: 'POST',
+                url: `@Url.Action("ExportFile", "CtsvServiceManagement")`,
+                data: JSON.stringify({
+                    DichVuList: [{
+                        ID: id
+                    }],
+                    ExportType: 'word',
+                    DichVuType: serviceType
+                }),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function(res) {
+                    window.location = `/CtsvServiceManagement/DownloadFile?id=${res.fileId}`;
+                },
+            }).done(res => {
+                console.log('done: ', res);
+            }).fail(res => {
+                console.log(res);
+            });
+        };
+
         var getNgayHen = function(status = 0, auto = true) {
             var result = {
                 ok: true,
@@ -688,10 +712,9 @@
                 result.strNgayKetThuc = tmpNgayKetThuc + " " + $("#txtGioKetThuc").val() + ":" + $("#txtPhutKetThuc").val();
             }
             return result;
-        }
+        };
 
         var onUpdateStatus = function(event) {
-            console.log('ss: ', JSON.parse(JSON.stringify(selectedYeuCau)));
             if (!selectedYeuCau || !selectedYeuCau.DichVu.id) return;
 
             var data = {
@@ -720,7 +743,7 @@
             callApiUpdateStatus(data);
             // hide modal change status
             $('#update-status-modal').modal('hide');
-        }
+        };
 
         var callApiUpdateStatus = function(data) {
             $.ajax({

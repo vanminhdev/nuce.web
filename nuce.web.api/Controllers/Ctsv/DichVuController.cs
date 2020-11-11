@@ -1,13 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
+using GemBox.Document;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.Services.Ctsv.Interfaces;
 using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Base;
@@ -21,6 +23,7 @@ namespace nuce.web.api.Controllers.Ctsv
     public class DichVuController : ControllerBase
     {
         private readonly IDichVuService _dichVuService;
+        
         public DichVuController(IDichVuService _dichVuService)
         {
             this._dichVuService = _dichVuService;
@@ -33,6 +36,7 @@ namespace nuce.web.api.Controllers.Ctsv
             return Ok(_dichVuService.GetAllByStudent(type));
         }
 
+        [Authorize(Roles = "Admin")]
         [Route("all-type-info")]
         [HttpGet]
         public IActionResult GetAllLoaiDichVuInfo()
@@ -89,6 +93,7 @@ namespace nuce.web.api.Controllers.Ctsv
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [Route("admin/update-status")]
         [HttpPut]
         public async Task<IActionResult> UpdateRequestStatus([FromBody] UpdateRequestStatusModel model)
@@ -106,6 +111,15 @@ namespace nuce.web.api.Controllers.Ctsv
             {
                 return BadRequest(new ResponseBody { Message = "Lỗi hệ thống", Data = ex });
             }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [Route("admin/export-word")]
+        [HttpPost]
+        public async Task<FileStreamResult> ExportWord([FromBody] ExportModel model)
+        {
+            var result = await _dichVuService.ExportWordAsync(model.DichVuType, model.DichVuList[0].ID);
+            return new FileStreamResult(new MemoryStream(result), "application/octet-stream");
         }
     }
 }

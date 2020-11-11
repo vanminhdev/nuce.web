@@ -86,4 +86,16 @@ namespace nuce.web.quanly.Models
         public int Status { get; set; }
     }
 
+    public class ExportModel
+    {
+        public List<DichVuExport> DichVuList { get; set; }
+        public string ExportType { get; set; }
+        public int DichVuType { get; set; }
+    }
+
+    public class DichVuExport
+    {
+        public int ID { get; set; }
+    }
+
 }

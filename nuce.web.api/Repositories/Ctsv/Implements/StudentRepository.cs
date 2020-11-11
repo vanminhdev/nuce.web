@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using nuce.web.api.Models.Ctsv;
 using nuce.web.api.Repositories.Ctsv.Interfaces;
+using nuce.web.api.ViewModel.Ctsv;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +37,30 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
         public DbSet<AsAcademyStudent> GetAll()
         {
             return _context.AsAcademyStudent;
+        }
+        public async Task<StudentDichVuModel> GetStudentDichVuInfoAsync(string studentCode)
+        {
+            var result = await _context.AsAcademyStudent.AsNoTracking()
+                        .Join(_context.AsAcademyClass.AsNoTracking(),
+                                student => student.ClassId,
+                                aClass => aClass.Id,
+                                (student, aClass) => new { student, aClass })
+                        .Join(_context.AsAcademyFaculty.AsNoTracking(),
+                               tmp => tmp.aClass.FacultyId,
+                               faculty => faculty.Id,
+                               (tmp, faculty) => new { tmp.student, tmp.aClass, faculty })
+                        .Join(_context.AsAcademyAcademics.AsNoTracking(),
+                                tmp => tmp.aClass.AcademicsId,
+                                academic => academic.Id,
+                                (tmp, academic) => new StudentDichVuModel
+                                {
+                                    Student = tmp.student,
+                                    AcademyClass = tmp.aClass,
+                                    Faculty = tmp.faculty,
+                                    Academics = academic
+                                })
+                        .FirstOrDefaultAsync(s => s.Student.Code == studentCode);
+            return result;
         }
     }
 }

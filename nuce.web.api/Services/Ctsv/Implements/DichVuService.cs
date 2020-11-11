@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using nuce.web.api.Services.Core.Interfaces;
-using Microsoft.AspNetCore.Http;
 using System.Transactions;
 using nuce.web.api.ViewModel;
 using System.Net;
@@ -16,6 +15,12 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using static nuce.web.api.Common.Ctsv;
 using nuce.web.api.ViewModel.Base;
+using GemBox.Document;
+using GemBox.Document.Tables;
+using GemBox.Document.Drawing;
+using System.Globalization;
+using GemBox.Document.CustomMarkups;
+using System.IO.Compression;
 
 namespace nuce.web.api.Services.Ctsv.Implements
 {
@@ -30,17 +35,20 @@ namespace nuce.web.api.Services.Ctsv.Implements
         private readonly ILoaiDichVuRepository _loaiDichVuRepository;
         private readonly IStudentRepository _studentRepository;
 
+        private readonly IThamSoDichVuService _thamSoDichVuService;
         private readonly IUserService _userService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEmailService _emailService;
         private readonly ILogService _logService;
+        private readonly IPathProvider _pathProvider;
         private readonly ILogger<DichVuService> _logger;
 
         public DichVuService(IXacNhanRepository _xacNhanRepository, IGioiThieuRepository _gioiThieuRepository,
             IUuDaiGiaoDucRepository _uuDaiRepository, IVayVonRepository _vayVonRepository,
             IThueNhaRepository _thueNhaRepository, IUserService _userService,
             IUnitOfWork _unitOfWork, IEmailService _emailService, ILogService _logService,
-            ILoaiDichVuRepository _loaiDichVuRepository, IStudentRepository _studentRepository
+            ILoaiDichVuRepository _loaiDichVuRepository, IStudentRepository _studentRepository,
+            IThamSoDichVuService _thamSoDichVuService, IPathProvider _pathProvider
         )
         {
             this._xacNhanRepository = _xacNhanRepository;
@@ -51,6 +59,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
             this._loaiDichVuRepository = _loaiDichVuRepository;
             this._studentRepository = _studentRepository;
 
+            this._pathProvider = _pathProvider;
+            this._thamSoDichVuService = _thamSoDichVuService;
             this._userService = _userService;
             this._unitOfWork = _unitOfWork;
             this._emailService = _emailService;
@@ -623,6 +633,1743 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 return new ResponseBody { Data = ex, Message = "Lỗi hệ thống" };
             }
             return null;
+        }
+
+        public async Task<byte[]> ExportWordListAsync(DichVu dichVu, List<DichVuExport> dichVuList)
+        {
+            //var zip = new ZipFile();
+            return null;
+        }
+
+        public async Task<byte[]> ExportWordAsync(DichVu dichVu, int id)
+        {
+            switch (dichVu)
+            {
+                case DichVu.XacNhan:
+                    return await DocumentToByteAsync(await ExportWordXacNhan(id));
+                case DichVu.UuDaiGiaoDuc:
+                    return await DocumentToByteAsync(await ExportWordUuDai(id));
+                case DichVu.VayVonNganHang:
+                    return await DocumentToByteAsync(await ExportWordVayVon(id));
+                case DichVu.ThueNha:
+                    return await DocumentToByteAsync(await ExportWordThueNha(id));
+                default:
+                    break;
+            }
+            return null;
+        }
+
+        private async Task<byte[]> DocumentToByteAsync(DocumentModel document)
+        {
+            var dir = _pathProvider.MapPath($"Templates/Ctsv/{DateTime.Now.ToFileTime()}.docx");
+            document.Save(dir);
+            byte[] byteArr = await System.IO.File.ReadAllBytesAsync(dir);
+            System.IO.File.Delete(dir);
+            return byteArr;
+        }
+
+        private async Task<DocumentModel> ExportWordXacNhan(int id)
+        {
+            var xacNhan = await _xacNhanRepository.FindByIdAsync(id);
+            if (xacNhan == null)
+            {
+                throw new Exception("Yêu cầu không tồn tại");
+            }
+            var studentInfo = await _studentRepository.GetStudentDichVuInfoAsync(xacNhan.StudentCode);
+            if (studentInfo == null)
+            {
+                throw new Exception("Sinh viên không tồn tại");
+            }
+
+            var paramSet = _thamSoDichVuService.GetParameters(DichVu.XacNhan)
+                                .ToDictionary(x => x.Name, x => x.Value);
+
+            string desChucDanhNguoiKy = paramSet["ChucDanhNguoiKy"].Replace("\r", "_").Replace("\n", "_");
+            string desTenNguoiKy = paramSet["TenNguoiKy"].Replace("\r", "_").Replace("\n", "_");
+
+            DateTime NgaySinh;
+            string tmpNgaySinh = studentInfo.Student.DateOfBirth ?? "1/1/1980";
+            try
+            {
+                NgaySinh = DateTime.ParseExact(tmpNgaySinh, "dd/MM/yy", CultureInfo.InvariantCulture);
+            }
+            catch (Exception)
+            {
+                NgaySinh = DateTime.Parse(tmpNgaySinh);
+            }
+
+            string HKTT_Pho = studentInfo.Student.HkttPho ?? "";
+            string HKTT_Phuong = studentInfo.Student.HkttPhuong ?? "";
+            string HKTT_Quan = studentInfo.Student.HkttQuan ?? "";
+            string HKTT_Tinh = studentInfo.Student.HkttTinh ?? "";
+            string MaSV = studentInfo.Student.Code.ToString();
+            string HoVaTen = studentInfo.Student.FulName;
+            string Class = studentInfo.Student.ClassCode ?? "";
+            string TenKhoa = studentInfo.Faculty.Name ?? "";
+            string HeDaoTao = "Chính quy";
+            string NienKhoa = studentInfo.AcademyClass.SchoolYear;
+            string LyDoXacNhan = xacNhan.LyDo ?? "";
+
+            //ComponentInfo.SetLicense("DTZX-HTZ5-B7Q6-2GA6");
+            ComponentInfo.SetLicense("FREE-LIMITED-KEY");
+            DocumentModel document = new DocumentModel();
+            document.DefaultCharacterFormat.Size = 12;
+            document.DefaultCharacterFormat.FontName = "Times New Roman";
+
+            Section section;
+            section = new Section(document);
+            #region Cộng hòa xã hội chủ nghĩa việt nam
+            Table table = new Table(document);
+            table.TableFormat.PreferredWidth = new TableWidth(100, TableWidthUnit.Percentage);
+            table.TableFormat.Alignment = HorizontalAlignment.Center;
+            var tableBorders = table.TableFormat.Borders;
+            tableBorders.SetBorders(MultipleBorderTypes.All, BorderStyle.None, Color.Empty, 0);
+            table.Columns.Add(new TableColumn() { PreferredWidth = 35 });
+            table.Columns.Add(new TableColumn() { PreferredWidth = 65 });
+            TableRow rowT1 = new TableRow(document);
+            table.Rows.Add(rowT1);
+
+            rowT1.Cells.Add(new TableCell(document, new Paragraph(document, new Run(document, string.Format("{0}", "BỘ GIÁO DỤC VÀ ĐÀO TẠO"))
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Size = 12
+                }
+            }
+            )
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = HorizontalAlignment.Center
+                }
+            })
+            {
+                CellFormat = new TableCellFormat()
+                {
+                    VerticalAlignment = VerticalAlignment.Center
+                }
+            }
+            );
+            rowT1.Cells.Add(new TableCell(document, new Paragraph(document, new Run(document, string.Format("{0}", "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM"))
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Bold = true,
+                    Size = 12
+                }
+            }
+           )
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = HorizontalAlignment.Center
+                }
+            })
+            {
+                CellFormat = new TableCellFormat()
+                {
+                    VerticalAlignment = VerticalAlignment.Center
+                }
+            }
+           );
+            TableRow rowT2 = new TableRow(document);
+            table.Rows.Add(rowT2);
+
+            rowT2.Cells.Add(new TableCell(document, new Paragraph(document, new Run(document, string.Format("{0}", "TRƯỜNG ĐẠI HỌC XÂY DỰNG"))
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Bold = true,
+                    Size = 12
+                }
+            }
+            )
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = HorizontalAlignment.Center
+                }
+            })
+            {
+                CellFormat = new TableCellFormat()
+                {
+                    VerticalAlignment = VerticalAlignment.Center
+                }
+            }
+            );
+            rowT2.Cells.Add(new TableCell(document, new Paragraph(document, new Run(document, string.Format("{0}", "Độc lập – Tự do – Hạnh phúc"))
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Bold = true,
+                    Size = 12
+                }
+            }
+           )
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = HorizontalAlignment.Center
+                }
+            })
+            {
+                CellFormat = new TableCellFormat()
+                {
+                    VerticalAlignment = VerticalAlignment.Center
+                }
+            }
+           );
+            var paragraph = new Paragraph(document);
+
+            var horizontalLine1 = new Shape(document, ShapeType.Line, GemBox.Document.Layout.Floating(
+                 new HorizontalPosition(1, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
+                new VerticalPosition(3.5, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
+                new Size(125, 0)));
+            horizontalLine1.Outline.Width = 1;
+            horizontalLine1.Outline.Fill.SetSolid(Color.Black);
+            paragraph.Inlines.Add(horizontalLine1);
+
+            var horizontalLine2 = new Shape(document, ShapeType.Line, GemBox.Document.Layout.Floating(
+                new HorizontalPosition(8.78, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
+               new VerticalPosition(3.5, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
+               new Size(151, 0)));
+            horizontalLine2.Outline.Width = 1;
+            horizontalLine2.Outline.Fill.SetSolid(Color.Black);
+            paragraph.Inlines.Add(horizontalLine2);
+
+            section.Blocks.Add(table);
+            section.Blocks.Add(paragraph);
+            #endregion
+            #region TieuDe
+            Paragraph paragraphTieuDe = new Paragraph(document,
+            //new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+            new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+            new Run(document, string.Format("{0}", "GIẤY XÁC NHẬN"))
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Bold = true,
+                    Size = 16
+                }
+            }
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new Run(document, "TRƯỜNG ĐẠI HỌC XÂY DỰNG")
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Bold = true,
+                    Size = 14
+                }
+            }
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new Run(document, "XÁC NHẬN")
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Bold = true,
+                    Size = 14
+                }
+            }
+          )
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = HorizontalAlignment.Center,
+                    LineSpacing = 1.15
+                }
+            };
+            section.Blocks.Add(paragraphTieuDe);
+            #endregion
+            #region NoiDung
+            Paragraph paragraphNoiDung = new Paragraph(document,
+           // new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+           new Run(document, string.Format("{0}", "Anh (chị): "))
+           {
+               CharacterFormat = new CharacterFormat()
+               {
+                   Size = 13
+               }
+           }
+           , new Run(document, string.Format("{0}", HoVaTen))
+           {
+               CharacterFormat = new CharacterFormat()
+               {
+                   Bold = true,
+                   Size = 13
+               }
+           }
+           , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+           , new Run(document, "Sinh ngày: ")
+           {
+               CharacterFormat = new CharacterFormat()
+               {
+                   Size = 13
+               }
+           }
+            , new Run(document, string.Format("{0} ", NgaySinh.Day))
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Bold = true,
+                    Size = 13
+                }
+            }
+             , new Run(document, "tháng ")
+             {
+                 CharacterFormat = new CharacterFormat()
+                 {
+                     Size = 13
+                 }
+             }
+            , new Run(document, string.Format("{0} ", NgaySinh.Month))
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Bold = true,
+                    Size = 13
+                }
+            }
+             , new Run(document, "năm ")
+             {
+                 CharacterFormat = new CharacterFormat()
+                 {
+                     Size = 13
+                 }
+             }
+            , new Run(document, string.Format("{0}", NgaySinh.Year))
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Bold = true,
+                    Size = 13
+                }
+            }
+           , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+           , new Run(document, "Hộ khẩu thường trú: ")
+           {
+               CharacterFormat = new CharacterFormat()
+               {
+                   Size = 13
+               }
+           }
+           //, new Run(document, string.Format("Số {0}, Phố {1}, Phường (Xã) {2}, Quận (Huyện) {3}, Thành Phố (Tỉnh) {4} ", HKTT_SoNha, HKTT_Pho, HKTT_Phuong, HKTT_Quan, HKTT_Tinh))
+           , new Run(document, string.Format("{0}, {1}, {2}, {3} ", HKTT_Pho, HKTT_Phuong, HKTT_Quan, HKTT_Tinh))
+           {
+               CharacterFormat = new CharacterFormat()
+               {
+                   Bold = true,
+                   Size = 13
+               }
+           }
+             //  , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+             //, new Run(document, "Địa chỉ tạm trú: ")
+             //{
+             //    CharacterFormat = new CharacterFormat()
+             //    {
+             //        Size = 13
+             //    }
+             //}
+             //, new Run(document, string.Format("{0}", LaNoiTru ? DiaChiCuThe + ", Ký túc xá Đại học Xây dựng" : DiaChiCuThe))
+             //{
+             //    CharacterFormat = new CharacterFormat()
+             //    {
+             //        Bold = true,
+             //        Size = 13
+             //    }
+             //}
+             , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+              , new Run(document, "Hiện đang là sinh viên của trường:   ")
+              {
+                  CharacterFormat = new CharacterFormat()
+                  {
+                      Size = 13
+                  }
+              }
+         , new Run(document, "   MSSV:")
+         {
+             CharacterFormat = new CharacterFormat()
+             {
+                 Size = 13
+             }
+         }
+         , new Run(document, string.Format(" {0} ", MaSV))
+         {
+             CharacterFormat = new CharacterFormat()
+             {
+                 Bold = true,
+                 Size = 13
+             }
+         }
+         , new Run(document, "   Lớp:")
+         {
+             CharacterFormat = new CharacterFormat()
+             {
+                 Size = 13
+             }
+         }
+         , new Run(document, string.Format(" {0} ", Class))
+         {
+             CharacterFormat = new CharacterFormat()
+             {
+                 Bold = true,
+                 Size = 13
+             }
+         }
+          , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+           , new Run(document, "Khoa: ")
+           {
+               CharacterFormat = new CharacterFormat()
+               {
+                   Size = 13
+               }
+           }
+         , new Run(document, string.Format(" {0} ", TenKhoa))
+         {
+             CharacterFormat = new CharacterFormat()
+             {
+                 Bold = true,
+                 Size = 13
+             }
+         }
+          , new Run(document, " Khóa học: ")
+          {
+              CharacterFormat = new CharacterFormat()
+              {
+                  Size = 13
+              }
+          }
+         , new Run(document, string.Format(" {0} ", NienKhoa))
+         {
+             CharacterFormat = new CharacterFormat()
+             {
+                 Bold = true,
+                 Size = 13
+             }
+         }
+         , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+          , new Run(document, "Hệ đào tạo: ")
+          {
+              CharacterFormat = new CharacterFormat()
+              {
+                  Size = 13
+              }
+          }
+         , new Run(document, string.Format(" {0} ", HeDaoTao))
+         {
+             CharacterFormat = new CharacterFormat()
+             {
+                 Bold = true,
+                 Size = 13
+             }
+         }
+          , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+             , new Run(document, "Lý do xác nhận: ")
+             {
+                 CharacterFormat = new CharacterFormat()
+                 {
+                     Size = 13
+                 }
+             }
+         , new Run(document, string.Format(" {0} ", LyDoXacNhan.Replace("\n", "").Replace("\r", "")))
+         {
+             CharacterFormat = new CharacterFormat()
+             {
+                 Bold = true,
+                 Size = 13
+             }
+         }
+           , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+             , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+         )
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = GemBox.Document.HorizontalAlignment.Left,
+                    LineSpacing = 1.5
+                }
+            };
+            section.Blocks.Add(paragraphNoiDung);
+            #endregion
+            #region Chu ky
+            Table tableCK = new Table(document);
+            tableCK.TableFormat.PreferredWidth = new TableWidth(100, TableWidthUnit.Percentage);
+            tableCK.TableFormat.Alignment = HorizontalAlignment.Center;
+            tableCK.TableFormat.AutomaticallyResizeToFitContents = false;
+            var tableBordersCK = tableCK.TableFormat.Borders;
+            tableBordersCK.SetBorders(MultipleBorderTypes.All, BorderStyle.None, Color.Empty, 0);
+            tableCK.Columns.Add(new TableColumn(45));
+            tableCK.Columns.Add(new TableColumn(55));
+            TableRow rowT1CK = new TableRow(document);
+            tableCK.Rows.Add(rowT1CK);
+
+            rowT1CK.Cells.Add(new TableCell(document, new Paragraph(document, new Run(document, string.Format("{0}", " ")))));
+
+            rowT1CK.Cells.Add(new TableCell(document, new Paragraph(document,
+                new Run(document, string.Format("Hà Nội, ngày {0} tháng {1} năm {2}", DateTime.Now.Day, DateTime.Now.Month, DateTime.Now.Year))
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Italic = true,
+                        Size = 13
+                    }
+                }
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new Run(document, desChucDanhNguoiKy)
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Bold = true,
+                    Size = 13
+                }
+            }
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new Run(document, desTenNguoiKy)
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Bold = true,
+                    Size = 13
+                }
+            }
+           )
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = HorizontalAlignment.Center
+                }
+            })
+            {
+                CellFormat = new TableCellFormat()
+                {
+                    VerticalAlignment = VerticalAlignment.Center
+                }
+            }
+           );
+            section.Blocks.Add(tableCK);
+            #endregion
+            document.Sections.Add(section);
+            document.Content.Replace(desChucDanhNguoiKy, paramSet["ChucDanhNguoiKy"]);
+            document.Content.Replace(desTenNguoiKy, paramSet["TenNguoiKy"]);
+
+            return document;
+        }
+
+        private async Task<DocumentModel> ExportWordUuDai(int id)
+        {
+            var uuDai = await _uuDaiRepository.FindByIdAsync(id);
+            if (uuDai == null)
+            {
+                throw new Exception("Yêu cầu không tồn tại");
+            }
+            var studentInfo = await _studentRepository.GetStudentDichVuInfoAsync(uuDai.StudentCode);
+            if (studentInfo == null)
+            {
+                throw new Exception("Sinh viên không tồn tại");
+            }
+
+            var paramSet = _thamSoDichVuService.GetParameters(DichVu.UuDaiGiaoDuc)
+                                .ToDictionary(x => x.Name, x => x.Value);
+
+            string ChucDanhNguoiKy = paramSet["ChucDanhNguoiKy"];
+            string TenNguoiKy = paramSet["TenNguoiKy"];
+
+            string desChucDanhNguoiKy = ChucDanhNguoiKy.Replace("\r", "_").Replace("\n", "_");
+            string desTenNguoiKy = TenNguoiKy.Replace("\r", "_").Replace("\n", "_");
+            DateTime NgaySinh;
+            string tmpNgaySinh = studentInfo.Student.DateOfBirth ?? "1/1/1980";
+            try
+            {
+                NgaySinh = DateTime.ParseExact(tmpNgaySinh, "dd/MM/yy", CultureInfo.InvariantCulture);
+            }
+            catch (Exception)
+            {
+                NgaySinh = DateTime.Parse(tmpNgaySinh);
+            }
+
+            string HKTT_SoNha = studentInfo.Student.HkttSoNha ?? "";
+            string HKTT_Pho = studentInfo.Student.HkttPho ?? "";
+            string HKTT_Phuong = studentInfo.Student.HkttPhuong ?? "";
+            string HKTT_Quan = studentInfo.Student.HkttQuan ?? "";
+            string HKTT_Tinh = studentInfo.Student.HkttTinh ?? "";
+            string MaSV = studentInfo.Student.Code.ToString();
+            string HoVaTen = studentInfo.Student.FulName;
+            string Class = studentInfo.Student.ClassCode ?? "";
+            string TenKhoa = studentInfo.Faculty.Name ?? "";
+            string NienKhoa = studentInfo.AcademyClass.SchoolYear;
+            string DiaChiCuThe = studentInfo.Student.DiaChiCuThe ?? "";
+
+            ComponentInfo.SetLicense("FREE-LIMITED-KEY");
+            DocumentModel document = new DocumentModel();
+            document.DefaultCharacterFormat.Size = 12;
+            document.DefaultCharacterFormat.FontName = "Times New Roman";
+            Section section;
+            section = new Section(document);
+
+            int commonFontSize = 14;
+            #region Mẫu số
+            Paragraph paragraphMauSo = new Paragraph(
+                document,
+                new Run(document, "Mẫu số 02/ƯĐGD")
+                {
+                    CharacterFormat = new CharacterFormat { Bold = true, Size = 13 }
+                })
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = HorizontalAlignment.Right,
+                    LineSpacing = 1.25
+                }
+            };
+            section.Blocks.Add(paragraphMauSo);
+            #endregion
+
+            #region TieuDe
+            Paragraph paragraphTieuDe = new Paragraph(document,
+             new Run(document, string.Format("{0}", "GIẤY XÁC NHẬN"))
+             {
+                 CharacterFormat = new CharacterFormat()
+                 {
+                     Bold = true,
+                     Size = 13
+                 }
+             },
+             new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+            new Run(document, string.Format("{0}", "(Ban hành kèm theo Thông tư số 36/2015/TT-BLĐTBXH ngày 28 tháng 9 năm 2015 của Bộ Lao động-Thương binh và Xã hội)"))
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Italic = true,
+                    Size = 13
+                }
+            },
+            new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+            new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+            new Run(document, string.Format("{0}", "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM"))
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Bold = true,
+                    Size = 13
+                }
+            },
+             new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+             new Run(document, string.Format("{0}", "Độc lập - Tự do - Hạnh phúc"))
+             {
+                 CharacterFormat = new CharacterFormat()
+                 {
+                     Bold = true,
+                     Size = 13
+                 }
+             })
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = GemBox.Document.HorizontalAlignment.Center,
+                    LineSpacing = 1.25
+                }
+            };
+            var horizontalLine1 = new Shape(document, ShapeType.Line, GemBox.Document.Layout.Floating(
+                 new HorizontalPosition(5.2, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
+                new VerticalPosition(7.5, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
+                new Size(155, 0)));
+            horizontalLine1.Outline.Width = 1;
+            horizontalLine1.Outline.Fill.SetSolid(Color.Black);
+            paragraphTieuDe.Inlines.Add(horizontalLine1);
+            section.Blocks.Add(paragraphTieuDe);
+            #endregion
+            #region Giay xac nhan
+            Paragraph paragraphXacNhan = new Paragraph(document,
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new Run(document, string.Format("{0}", "GIẤY XÁC NHẬN"))
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Bold = true,
+                        Size = 14,
+                    }
+                }
+                , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+                , new Run(document, "(Dùng cho các cơ sở giáo dục nghề nghiệp, giáo dục đại học xác nhận)")
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Bold = true,
+                        Size = 14
+                    }
+                }
+                 , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+              )
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = GemBox.Document.HorizontalAlignment.Center,
+                    LineSpacing = 1.25
+                }
+            };
+            section.Blocks.Add(paragraphXacNhan);
+            #endregion
+            #region NoiDung
+            Paragraph paragraphNoiDung = new Paragraph(document,
+           // new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+           new Run(document, string.Format("{0}", "Trường: "))
+           {
+               CharacterFormat = new CharacterFormat()
+               {
+                   Size = commonFontSize
+               }
+           }
+           , new SpecialCharacter(document, SpecialCharacterType.Tab)
+           , new Run(document, string.Format("{0}", "ĐẠI HỌC XÂY DỰNG"))
+           {
+               CharacterFormat = new CharacterFormat()
+               {
+                   Bold = true,
+                   Size = commonFontSize
+               }
+           }
+           , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+           , new Run(document, "Xác nhận anh/chị: ")
+           {
+               CharacterFormat = new CharacterFormat()
+               {
+                   Size = commonFontSize
+               }
+           }
+            , new Run(document, string.Format("{0} ", HoVaTen))
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Size = commonFontSize,
+                    Bold = true,
+                }
+            }
+            )
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = GemBox.Document.HorizontalAlignment.Left,
+                    LineSpacing = 1.25,
+                    SpaceAfter = 0
+                }
+            };
+            section.Blocks.Add(paragraphNoiDung);
+            #endregion
+            #region Hien la sinh vien
+            Table tableNoiDung = new Table(document);
+            tableNoiDung.TableFormat.PreferredWidth = new TableWidth(100, TableWidthUnit.Percentage);
+            tableNoiDung.TableFormat.Alignment = GemBox.Document.HorizontalAlignment.Center;
+            tableNoiDung.TableFormat.AutomaticallyResizeToFitContents = false;
+            var tableBordersNoiDung = tableNoiDung.TableFormat.Borders;
+            tableBordersNoiDung.SetBorders(MultipleBorderTypes.All, BorderStyle.None, Color.Empty, 0);
+            tableNoiDung.Columns.Add(new TableColumn(40));
+            tableNoiDung.Columns.Add(new TableColumn(60));
+            TableRow rowT1NoiDung = new TableRow(document);
+            tableNoiDung.Rows.Add(rowT1NoiDung);
+
+            rowT1NoiDung.Cells.Add(new TableCell(document, new Paragraph(document,
+                new Run(document, "Hiện là sinh viên năm thứ: ")
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Size = commonFontSize
+                    }
+                }
+                , new Run(document, string.Format("{0} ", getNamThu(NienKhoa)))
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Size = commonFontSize,
+                        Bold = true,
+                    }
+                },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new Run(document, "Mã số sinh viên: ") { CharacterFormat = new CharacterFormat { Size = commonFontSize } },
+                new Run(document, $"{MaSV}   ")
+                {
+                    CharacterFormat = new CharacterFormat { Size = commonFontSize, Bold = true }
+                },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new Run(document, "Khoa: ")
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Size = commonFontSize
+                    }
+                }
+                , new Run(document, string.Format("{0}", TenKhoa))
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Bold = true,
+                        Size = commonFontSize
+                    }
+                },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new Run(document, "Hình thức đào tạo: ")
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Size = commonFontSize
+                    }
+                }
+                , new Run(document, "Chính quy")
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Bold = true,
+                        Size = commonFontSize
+                    }
+                }
+            )
+            {
+                ParagraphFormat = new ParagraphFormat
+                {
+                    LineSpacing = 1.25,
+                }
+            }));
+
+            rowT1NoiDung.Cells.Add(new TableCell(document, new Paragraph(document,
+                new Run(document, "Học kỳ: ")
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Size = commonFontSize
+                    }
+                }
+                , new Run(document, string.Format("{0} ", "1"))
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Size = commonFontSize,
+                        Bold = true,
+                    }
+                }
+                , new SpecialCharacter(document, SpecialCharacterType.Tab)
+                 , new Run(document, "Năm học: ")
+                 {
+                     CharacterFormat = new CharacterFormat()
+                     {
+                         Size = commonFontSize
+                     }
+                 }
+                , new Run(document, string.Format("{0} - {1}", DateTime.Now.Year, DateTime.Now.Year + 1))
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Size = commonFontSize,
+                        Bold = true,
+                    }
+                },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new Run(document, "Lớp: ") { CharacterFormat = new CharacterFormat { Size = commonFontSize } },
+                new Run(document, Class)
+                {
+                    CharacterFormat = new CharacterFormat { Size = commonFontSize, Bold = true }
+                }
+                , new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new Run(document, "Khoá học: ")
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Size = commonFontSize
+                    }
+                },
+                new Run(document, NienKhoa)
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Bold = true,
+                        Size = commonFontSize
+                    }
+                },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new Run(document, "Thời gian khoá học: ")
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Size = commonFontSize
+                    }
+                },
+                new Run(document, getThoiGianKhoaHoc(NienKhoa))
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Bold = true,
+                        Size = commonFontSize
+                    }
+                },
+                new Run(document, " (năm);")
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Size = commonFontSize
+                    }
+                }
+            )
+            {
+                ParagraphFormat = new ParagraphFormat
+                {
+                    LineSpacing = 1.25,
+                }
+            }));
+
+            section.Blocks.Add(tableNoiDung);
+            #endregion
+            #region Đề nghị
+            Paragraph paragraphDeNghi = new Paragraph(
+                document,
+                new Run(document, "Đề nghị Phòng Lao động-Thương binh và Xã hội xem xét, giải quyết chế độ ưu đãi trong giáo dục đào tạo cho anh/chị")
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Size = commonFontSize
+                    },
+                },
+                new Run(document, string.Format(" {0} ", HoVaTen)) { CharacterFormat = new CharacterFormat() { Size = commonFontSize, Bold = true } },
+                new Run(document, "theo quy định và chế độ hiện hành.") { CharacterFormat = new CharacterFormat() { Size = commonFontSize } },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak))
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = HorizontalAlignment.Left,
+                    LineSpacing = 1.25
+                }
+            };
+            section.Blocks.Add(paragraphDeNghi);
+            #endregion
+            #region Chu ky
+            Table tableCK = new Table(document);
+            tableCK.TableFormat.PreferredWidth = new TableWidth(100, TableWidthUnit.Percentage);
+            tableCK.TableFormat.Alignment = GemBox.Document.HorizontalAlignment.Center;
+            tableCK.TableFormat.AutomaticallyResizeToFitContents = false;
+            var tableBordersCK = tableCK.TableFormat.Borders;
+            tableBordersCK.SetBorders(MultipleBorderTypes.All, BorderStyle.None, Color.Empty, 0);
+            tableCK.Columns.Add(new TableColumn(45));
+            tableCK.Columns.Add(new TableColumn(55));
+            TableRow rowT1CK = new TableRow(document);
+            tableCK.Rows.Add(rowT1CK);
+
+            rowT1CK.Cells.Add(new TableCell(document, new Paragraph(document, new Run(document, string.Format("{0}", " ")))));
+
+            rowT1CK.Cells.Add(new TableCell(document, new Paragraph(document,
+                new Run(document, string.Format("Hà Nội, ngày {0} tháng {1} năm {2}", DateTime.Now.Day, DateTime.Now.Month, DateTime.Now.Year))
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Italic = true,
+                        Size = 13
+                    }
+                }
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new Run(document, desChucDanhNguoiKy)
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Bold = true,
+                    Size = 12
+                }
+            }
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new Run(document, desTenNguoiKy)
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Bold = true,
+                    Size = 13
+                }
+            }
+           )
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = GemBox.Document.HorizontalAlignment.Center
+                }
+            })
+            {
+                CellFormat = new TableCellFormat()
+                {
+                    VerticalAlignment = GemBox.Document.VerticalAlignment.Center
+                }
+            }
+           );
+            section.Blocks.Add(tableCK);
+            #endregion
+            document.Sections.Add(section);
+            document.Content.Replace(desChucDanhNguoiKy, ChucDanhNguoiKy);
+            document.Content.Replace(desTenNguoiKy, TenNguoiKy);
+            return document;
+        }
+
+        private async Task<DocumentModel> ExportWordVayVon(int id)
+        {
+            var vayVon = await _vayVonRepository.FindByIdAsync(id);
+            if (vayVon == null)
+            {
+                throw new Exception("Yêu cầu không tồn tại");
+            }
+            var studentInfo = await _studentRepository.GetStudentDichVuInfoAsync(vayVon.StudentCode);
+            if (studentInfo == null)
+            {
+                throw new Exception("Sinh viên không tồn tại");
+            }
+
+            var paramSet = _thamSoDichVuService.GetParameters(DichVu.VayVonNganHang)
+                                .ToDictionary(x => x.Name, x => x.Value);
+
+            string ChucDanhNguoiKy = paramSet["ChucDanhNguoiKy"];
+            string TenNguoiKy = paramSet["TenNguoiKy"];
+            string desChucDanhNguoiKy = ChucDanhNguoiKy?.Replace("\r", "_").Replace("\n", "_");
+            string desTenNguoiKy = TenNguoiKy?.Replace("\r", "_").Replace("\n", "_");
+
+            string hocPhi = paramSet["HocPhiThang"]?.Replace("\r", "_").Replace("\n", "_");
+            string stkNhaTruong = paramSet["TaiKhoanTruong"]?.Replace("\r", "_").Replace("\n", "_");
+            string nganHangNhaTruong = paramSet["NganHangTruong"]?.Replace("\r", "_").Replace("\n", "_");
+
+            DateTime NgaySinh;
+            string tmpNgaySinh = studentInfo.Student.DateOfBirth ?? "1/1/1980";
+            try
+            {
+                NgaySinh = DateTime.ParseExact(tmpNgaySinh, "dd/MM/yy", CultureInfo.InvariantCulture);
+            }
+            catch (Exception)
+            {
+                NgaySinh = DateTime.Parse(tmpNgaySinh);
+            }
+            DateTime? CmtNgayCap = studentInfo.Student.CmtNgayCap;
+
+            string MaSV = studentInfo.Student.Code.ToString();
+            string HoVaTen = studentInfo.Student.FulName;
+            string Class = studentInfo.Student.ClassCode ?? "";
+            string TenKhoa = studentInfo.Faculty.Name ?? "";
+            string NienKhoa = studentInfo.AcademyClass.SchoolYear;
+            string LoaiDaoTao = "Chính quy";
+            string cmt = studentInfo.Student.Cmt ?? "";
+            string cmtNoiCap = studentInfo.Student.CmtNoiCap ?? "";
+            string cmtNgayCap = CmtNgayCap == null ? "" : CmtNgayCap?.ToString("dd/MM/yyyy");
+            string nghanhHoc = studentInfo.Academics.Name ?? "";
+            string thuocDien = vayVon.ThuocDien ?? "";
+            string thuocDoiTuong = vayVon.ThuocDoiTuong ?? "";
+            string gioiTinh = studentInfo.Student.GioiTinh;
+            gioiTinh = getGender(gioiTinh);
+            string matruong = "XD1";
+            string tenTruong = "TRƯỜNG ĐẠI HỌC XÂY DỰNG";
+            string heDaoTao = "ĐẠI HỌC";
+            string khoa = getKhoa(Class);
+            string namNhapHoc = getNamNhapHoc(NienKhoa);
+            string namRaTruong = getNamRaTruong(NienKhoa);
+
+            var Dien = new Dictionary<string, string>
+                {
+                    {"1", "☐" },
+                    {"2", "☐" },
+                    {"3", "☐" },
+                };
+            Dien[thuocDien] = "☒";
+
+            var DoiTuong = new Dictionary<string, string>
+                {
+                    {"1", "☐" },
+                    {"2", "☐" },
+                    {"3", "☐" },
+                };
+            DoiTuong[thuocDoiTuong] = "☒";
+
+            var GioiTinh = new Dictionary<string, string>
+                {
+                    {"Nam", "☐" },
+                    {"Nữ", "☐" },
+                };
+            GioiTinh[gioiTinh] = "☒";
+
+            ComponentInfo.SetLicense("FREE-LIMITED-KEY");
+            DocumentModel document = new DocumentModel();
+            document.DefaultCharacterFormat.Size = 12;
+            document.DefaultCharacterFormat.FontName = "Times New Roman";
+
+            Section section;
+            section = new Section(document);
+            var pageSetup = section.PageSetup;
+            #region Cộng hòa xã hội chủ nghĩa việt nam
+            Table table = new Table(document);
+            table.TableFormat.PreferredWidth = new TableWidth(100, TableWidthUnit.Percentage);
+            table.TableFormat.Alignment = GemBox.Document.HorizontalAlignment.Center;
+            var tableBorders = table.TableFormat.Borders;
+            tableBorders.SetBorders(MultipleBorderTypes.All, BorderStyle.None, Color.Empty, 0);
+            table.Columns.Add(new TableColumn() { PreferredWidth = 35 });
+            table.Columns.Add(new TableColumn() { PreferredWidth = 65 });
+            TableRow rowT1 = new TableRow(document);
+            table.Rows.Add(rowT1);
+
+            rowT1.Cells.Add(new TableCell(document, new Paragraph(document, new Run(document, string.Format("{0}", "BỘ GIÁO DỤC VÀ ĐÀO TẠO"))
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Size = 12
+                }
+            }
+            )
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = GemBox.Document.HorizontalAlignment.Center
+                }
+            })
+            {
+                CellFormat = new TableCellFormat()
+                {
+                    VerticalAlignment = GemBox.Document.VerticalAlignment.Center
+                }
+            }
+            );
+            rowT1.Cells.Add(new TableCell(document, new Paragraph(document, new Run(document, string.Format("{0}", "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM"))
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Bold = true,
+                    Size = 12
+                }
+            }
+           )
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = GemBox.Document.HorizontalAlignment.Center
+                }
+            })
+            {
+                CellFormat = new TableCellFormat()
+                {
+                    VerticalAlignment = GemBox.Document.VerticalAlignment.Center
+                }
+            }
+           );
+            TableRow rowT2 = new TableRow(document);
+            table.Rows.Add(rowT2);
+
+            rowT2.Cells.Add(new TableCell(document, new Paragraph(document, new Run(document, string.Format("{0}", "TRƯỜNG ĐẠI HỌC XÂY DỰNG"))
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Bold = true,
+                    Size = 12
+                }
+            }
+            )
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = GemBox.Document.HorizontalAlignment.Center
+                }
+            })
+            {
+                CellFormat = new TableCellFormat()
+                {
+                    VerticalAlignment = GemBox.Document.VerticalAlignment.Center
+                }
+            }
+            );
+            rowT2.Cells.Add(new TableCell(document, new Paragraph(document, new Run(document, string.Format("{0}", "Độc lập – Tự do – Hạnh phúc"))
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Bold = true,
+                    Size = 12
+                }
+            }
+           )
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = GemBox.Document.HorizontalAlignment.Center
+                }
+            })
+            {
+                CellFormat = new TableCellFormat()
+                {
+                    VerticalAlignment = GemBox.Document.VerticalAlignment.Center
+                }
+            }
+           );
+            var paragraph = new Paragraph(document);
+
+            var horizontalLine1 = new Shape(document, ShapeType.Line, GemBox.Document.Layout.Floating(
+                 new HorizontalPosition(1.45, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
+                new VerticalPosition(3.5, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
+                new Size(80, 0)));
+            horizontalLine1.Outline.Width = 1;
+            horizontalLine1.Outline.Fill.SetSolid(Color.Black);
+            paragraph.Inlines.Add(horizontalLine1);
+
+            var horizontalLine2 = new Shape(document, ShapeType.Line, GemBox.Document.Layout.Floating(
+                new HorizontalPosition(8.78, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
+               new VerticalPosition(3.5, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
+               new Size(151, 0)));
+            horizontalLine2.Outline.Width = 1;
+            horizontalLine2.Outline.Fill.SetSolid(Color.Black);
+            paragraph.Inlines.Add(horizontalLine2);
+
+            section.Blocks.Add(table);
+            section.Blocks.Add(paragraph);
+            #endregion
+            #region TieuDe
+            Paragraph paragraphTieuDe = new Paragraph(document,
+            //new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+            new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+            new Run(document, string.Format("{0}", "GIẤY XÁC NHẬN"))
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Bold = true,
+                    Size = 18
+                }
+            }
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+          )
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = GemBox.Document.HorizontalAlignment.Center,
+                    LineSpacing = 1.15
+                }
+            };
+            section.Blocks.Add(paragraphTieuDe);
+            #endregion
+            #region NoiDung
+            Paragraph paragraphNoiDung = new Paragraph(document,
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Họ và tên sinh viên: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new Run(document, HoVaTen) { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Ngày sinh: ") { CharacterFormat = new CharacterFormat { Size = 13, } },
+                new Run(document, $"{NgaySinh.ToString("dd/MM/yyyy")}  ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new Run(document, "Giới tính:    ") { CharacterFormat = new CharacterFormat { Size = 13, } },
+                new Run(document, "Nam: ") { CharacterFormat = new CharacterFormat { Size = 13, } },
+                new InlineContentControl(document, ContentControlType.CheckBox,
+                    new Run(document, GioiTinh["Nam"]) { CharacterFormat = new CharacterFormat { Size = 13, FontName = document.DefaultCharacterFormat.FontName } }),
+                new Run(document, "   Nữ: ") { CharacterFormat = new CharacterFormat { Size = 13, } },
+                new InlineContentControl(document, ContentControlType.CheckBox,
+                    new Run(document, GioiTinh["Nữ"]) { CharacterFormat = new CharacterFormat { Size = 13, FontName = document.DefaultCharacterFormat.FontName } }),
+                //new Field(document, FieldType.FormCheckBox) { FormData = { Name = "Nữ" } },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "CMND số: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new Run(document, $"{cmt} ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new Run(document, "ngày cấp: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new Run(document, $"{cmtNgayCap} ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new Run(document, "Nơi cấp: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new Run(document, $"{cmtNoiCap}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Mã trường theo học (mã quy ước trong  tuyển sinh ĐH): ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new Run(document, matruong) { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Tên trường: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new Run(document, tenTruong) { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Ngành học: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new Run(document, nghanhHoc) { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Hệ đào tạo (Đại học, cao đẳng, dạy nghề): ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new Run(document, heDaoTao) { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Khoá: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new Run(document, $"{khoa}  ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new Run(document, "Loại hình đào tạo: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new Run(document, $"{LoaiDaoTao}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Lớp: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new Run(document, $"{Class}  ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new Run(document, "Mã số SV: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new Run(document, $"{MaSV}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Khoa/Ban: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new Run(document, $"{TenKhoa}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Ngày nhập học:...../...../") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new Run(document, $"{namNhapHoc} ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new Run(document, "Thời gian ra trường (tháng/năm):...../...../") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new Run(document, $"{namRaTruong}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "- Số tiền học phí hàng tháng: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new Run(document, $"{hocPhi}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new Run(document, " đồng") { CharacterFormat = new CharacterFormat { Size = 13 } }
+            )
+            { ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Left, LineSpacing = 1.25, SpaceAfter = 0 } };
+            section.Blocks.Add(paragraphNoiDung);
+            #endregion
+            #region Thuoc Dien/Doi Tuong
+            Table tableDienDoiTuong = new Table(document);
+            tableDienDoiTuong.TableFormat.PreferredWidth = new TableWidth(100, TableWidthUnit.Percentage);
+            tableDienDoiTuong.TableFormat.Alignment = GemBox.Document.HorizontalAlignment.Center;
+            tableDienDoiTuong.TableFormat.AutomaticallyResizeToFitContents = false;
+            var tblDienDoiTuongBorder = tableDienDoiTuong.TableFormat.Borders;
+            tblDienDoiTuongBorder.SetBorders(MultipleBorderTypes.All, BorderStyle.None, Color.Empty, 0);
+            tableDienDoiTuong.Columns.Add(new TableColumn(30));
+            tableDienDoiTuong.Columns.Add(new TableColumn(40));
+            tableDienDoiTuong.Columns.Add(new TableColumn(30));
+            TableRow rowDien = new TableRow(document);
+            tableDienDoiTuong.Rows.Add(rowDien);
+            TableRow rowDoiTuong = new TableRow(document);
+            tableDienDoiTuong.Rows.Add(rowDoiTuong);
+            rowDien.Cells.Add(
+                new TableCell(document, new Paragraph(document,
+                    new SpecialCharacter(document, SpecialCharacterType.Tab),
+                    new Run(document, "Thuộc diện:") { CharacterFormat = new CharacterFormat { Size = 13 } }
+                )
+                { ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Left, LineSpacing = 1.25 } })
+            );
+            rowDoiTuong.Cells.Add(
+                new TableCell(document, new Paragraph(document,
+                    new SpecialCharacter(document, SpecialCharacterType.Tab),
+                    new Run(document, "Thuộc đối tượng:") { CharacterFormat = new CharacterFormat { Size = 13 } }
+                )
+                { ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Left, LineSpacing = 1.25 } })
+            );
+            rowDien.Cells.Add(
+                new TableCell(document, new Paragraph(document,
+                    //new SpecialCharacter(document, SpecialCharacterType.Tab),
+                    new Run(document, "- Không miễn giảm") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                    new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                    //new SpecialCharacter(document, SpecialCharacterType.Tab),
+                    new Run(document, "- Giảm học phí") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                    new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                    //new SpecialCharacter(document, SpecialCharacterType.Tab),
+                    new Run(document, "- Miễn học phí") { CharacterFormat = new CharacterFormat { Size = 13 } }
+                )
+                { ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Left, LineSpacing = 1.25 } })
+            );
+            rowDien.Cells.Add(
+                new TableCell(document, new Paragraph(document,
+                    //new SpecialCharacter(document, SpecialCharacterType.Tab),
+                    new InlineContentControl(document, ContentControlType.CheckBox,
+                    new Run(document, $"{Dien["1"]}") { CharacterFormat = new CharacterFormat { Size = 13, FontName = document.DefaultCharacterFormat.FontName } }),
+                    new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                    //new SpecialCharacter(document, SpecialCharacterType.Tab),
+                    new InlineContentControl(document, ContentControlType.CheckBox,
+                    new Run(document, $"{Dien["2"]}") { CharacterFormat = new CharacterFormat { Size = 13, FontName = document.DefaultCharacterFormat.FontName } }),
+                    new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                    //new SpecialCharacter(document, SpecialCharacterType.Tab),
+                    new InlineContentControl(document, ContentControlType.CheckBox,
+                    new Run(document, $"{Dien["3"]}") { CharacterFormat = new CharacterFormat { Size = 13, FontName = document.DefaultCharacterFormat.FontName } })
+                )
+                { ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Left, LineSpacing = 1.25 } })
+            );
+            rowDoiTuong.Cells.Add(
+                new TableCell(document, new Paragraph(document,
+                    //new SpecialCharacter(document, SpecialCharacterType.Tab),
+                    new Run(document, "- Mồ côi") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                    new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                    //new SpecialCharacter(document, SpecialCharacterType.Tab),
+                    new Run(document, "- Không mồ côi") { CharacterFormat = new CharacterFormat { Size = 13 } }
+                )
+                { ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Left, LineSpacing = 1.25 } })
+            );
+            rowDoiTuong.Cells.Add(
+                new TableCell(document, new Paragraph(document,
+                    //new SpecialCharacter(document, SpecialCharacterType.Tab),
+                    new InlineContentControl(document, ContentControlType.CheckBox,
+                    new Run(document, $"{DoiTuong["1"]}") { CharacterFormat = new CharacterFormat { Size = 13, FontName = document.DefaultCharacterFormat.FontName } }),
+                    new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                    //new SpecialCharacter(document, SpecialCharacterType.Tab),
+                    new InlineContentControl(document, ContentControlType.CheckBox,
+                    new Run(document, $"{DoiTuong["2"]}") { CharacterFormat = new CharacterFormat { Size = 13, FontName = document.DefaultCharacterFormat.FontName } })
+                )
+                { ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Left, LineSpacing = 1.25 } })
+            );
+            section.Blocks.Add(tableDienDoiTuong);
+            #endregion
+            #region Ket
+            Paragraph paragraphKet = new Paragraph(document,
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "- Trong thời gian theo học tại trường, anh (chị) ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new Run(document, $"{HoVaTen} ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new Run(document, "không bị xử phạt hành chính trở lên về các hành vi: cờ bạc, nghiện hút, trộm cắp, buôn lậu.") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, $"- Số tài khoản của nhà trường: {stkNhaTruong}, tại ngân hàng{nganHangNhaTruong}") { CharacterFormat = new CharacterFormat { Size = 13 } }
+            )
+            { ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Left, LineSpacing = 1.25 } };
+            section.Blocks.Add(paragraphKet);
+            #endregion
+            #region Chu ky
+            Table tableCK = new Table(document);
+            tableCK.TableFormat.PreferredWidth = new TableWidth(100, TableWidthUnit.Percentage);
+            tableCK.TableFormat.Alignment = GemBox.Document.HorizontalAlignment.Center;
+            tableCK.TableFormat.AutomaticallyResizeToFitContents = false;
+            var tableBordersCK = tableCK.TableFormat.Borders;
+            tableBordersCK.SetBorders(MultipleBorderTypes.All, BorderStyle.None, Color.Empty, 0);
+            tableCK.Columns.Add(new TableColumn(45));
+            tableCK.Columns.Add(new TableColumn(55));
+            TableRow rowT1CK = new TableRow(document);
+            tableCK.Rows.Add(rowT1CK);
+
+            rowT1CK.Cells.Add(new TableCell(document, new Paragraph(document, new Run(document, string.Format("{0}", " ")))));
+
+            rowT1CK.Cells.Add(new TableCell(document, new Paragraph(document,
+                new Run(document, string.Format("Hà Nội, ngày {0} tháng {1} năm {2}", DateTime.Now.Day, DateTime.Now.Month, DateTime.Now.Year))
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Italic = true,
+                        Size = 13
+                    }
+                }
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+            new Run(document, desChucDanhNguoiKy)
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Bold = true,
+                    Size = 13
+                }
+            }
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new Run(document, desTenNguoiKy) { CharacterFormat = new CharacterFormat { Bold = true } }
+           )
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = GemBox.Document.HorizontalAlignment.Center
+                }
+            })
+            {
+                CellFormat = new TableCellFormat()
+                {
+                    VerticalAlignment = GemBox.Document.VerticalAlignment.Center
+                }
+            }
+           );
+            section.Blocks.Add(tableCK);
+            #endregion
+            document.Sections.Add(section);
+            document.Content.Replace(desChucDanhNguoiKy, ChucDanhNguoiKy);
+            document.Content.Replace(desTenNguoiKy, TenNguoiKy);
+
+            return document;
+        }
+
+        private async Task<DocumentModel> ExportWordThueNha(int id)
+        {
+            var thueNha = await _thueNhaRepository.FindByIdAsync(id);
+            if (thueNha == null)
+            {
+                throw new Exception("Yêu cầu không tồn tại");
+            }
+            var studentInfo = await _studentRepository.GetStudentDichVuInfoAsync(thueNha.StudentCode);
+            if (studentInfo == null)
+            {
+                throw new Exception("Sinh viên không tồn tại");
+            }
+            var paramSet = _thamSoDichVuService.GetParameters(DichVu.ThueNha)
+                                .ToDictionary(x => x.Name, x => x.Value);
+
+            string ChucDanhNguoiKy = paramSet["ChucDanhNguoiKy"];
+            string TenNguoiKy = paramSet["TenNguoiKy"];
+
+            string desChucDanhNguoiKy = ChucDanhNguoiKy.Replace("\r", "_").Replace("\n", "_");
+            string desTenNguoiKy = TenNguoiKy.Replace("\r", "_").Replace("\n", "_");
+
+            DateTime? CmtNgayCap = studentInfo.Student.CmtNgayCap;
+
+            string MaSV = studentInfo.Student.Code.ToString();
+            string HoVaTen = studentInfo.Student.FulName;
+            string Class = studentInfo.Student.ClassCode ?? "";
+            string TenKhoa = studentInfo.Faculty.Name ?? "";
+            string NienKhoa = studentInfo.AcademyClass.SchoolYear;
+            string doiTuongUuTien = studentInfo.Student.DoiTuongUuTien ?? "";
+            string cmt = studentInfo.Student.Cmt ?? "";
+            string cmtNoiCap = studentInfo.Student.CmtNoiCap ?? "";
+            string cmtNgayCap = CmtNgayCap == null ? "" : CmtNgayCap?.ToString("dd/MM/yyyy");
+            string gioiTinh = studentInfo.Student.GioiTinh;
+            gioiTinh = getGender(gioiTinh);
+            string HKTT_Phuong = studentInfo.Student.HkttPhuong ?? "";
+            string HKTT_Quan = studentInfo.Student.HkttQuan ?? "";
+            string HKTT_Tinh = studentInfo.Student.HkttTinh ?? "";
+
+
+            //ComponentInfo.SetLicense("DTZX-HTZ5-B7Q6-2GA6");
+            ComponentInfo.SetLicense("FREE-LIMITED-KEY");
+            DocumentModel document = new DocumentModel();
+            document.DefaultCharacterFormat.Size = 13;
+            document.DefaultCharacterFormat.FontName = "Times New Roman";
+
+            Section section;
+            section = new Section(document);
+            var pageSetup = section.PageSetup;
+            #region Cộng hòa xã hội chủ nghĩa việt nam
+            var paragraph = new Paragraph(document,
+                new Run(document, "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new Run(document, "Độc lập - Tự do - Hạnh phúc") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } }
+            )
+            { ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Center } };
+
+
+            var horizontalLine1 = new Shape(document, ShapeType.Line, GemBox.Document.Layout.Floating(
+                 new HorizontalPosition(5.2, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
+                new VerticalPosition(3.8, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
+                new Size(160, 0)));
+            horizontalLine1.Outline.Width = 1;
+            horizontalLine1.Outline.Fill.SetSolid(Color.Black);
+            paragraph.Inlines.Add(horizontalLine1);
+
+            section.Blocks.Add(paragraph);
+            #endregion
+            #region TieuDe
+            Paragraph paragraphTieuDe = new Paragraph(document,
+            //new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+            new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+            new Run(document, string.Format("{0}", "ĐƠN ĐỀ NGHỊ THUÊ NHÀ Ở SINH VIÊN"))
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Bold = true,
+                    Size = 14
+                }
+            }
+          )
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = GemBox.Document.HorizontalAlignment.Center,
+                    LineSpacing = 1.15
+                }
+            };
+            section.Blocks.Add(paragraphTieuDe);
+            #endregion
+            #region NoiDung
+            Paragraph paragraphNoiDung = new Paragraph(document,
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Kính gửi: Ban Quản lý vận hành Khu nhà ở sinh viên Pháp Vân – Tứ Hiệp."),
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Tên tôi là: "),
+                new Run(document, HoVaTen) { CharacterFormat = new CharacterFormat { Bold = true } },
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "(Nam/Nữ):  "),
+                new Run(document, gioiTinh) { CharacterFormat = new CharacterFormat { Bold = true } },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "CMTND số: "),
+                new Run(document, cmt) { CharacterFormat = new CharacterFormat { Bold = true } },
+                new Run(document, "  cấp ngày: "),
+                new Run(document, cmtNgayCap) { CharacterFormat = new CharacterFormat { Bold = true } },
+                new Run(document, "  nơi cấp: "),
+                new Run(document, cmtNoiCap) { CharacterFormat = new CharacterFormat { Bold = true } },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Hộ khẩu thường trú: "),
+                new Run(document, $"{HKTT_Phuong}, {HKTT_Quan}, {HKTT_Tinh}") { CharacterFormat = new CharacterFormat { Bold = true } },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Sinh viên, học sinh năm thứ: "),
+                new Run(document, $"{getNamThu(NienKhoa)}") { CharacterFormat = new CharacterFormat { Bold = true } },
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Lớp: "),
+                new Run(document, Class) { CharacterFormat = new CharacterFormat { Bold = true } },
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Khoá: "),
+                new Run(document, NienKhoa) { CharacterFormat = new CharacterFormat { Bold = true } },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Ngành (khoa): "),
+                new Run(document, TenKhoa) { CharacterFormat = new CharacterFormat { Bold = true } },
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Trường: "),
+                new Run(document, "Đại học Xây dựng") { CharacterFormat = new CharacterFormat { Bold = true } },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Số thẻ sinh viên, học viên (nếu có): "),
+                new Run(document, MaSV) { CharacterFormat = new CharacterFormat { Bold = true } },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Đối tượng ưu tiên (nếu có): "),
+                new Run(document, doiTuongUuTien) { CharacterFormat = new CharacterFormat { Bold = true } }
+            )
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = GemBox.Document.HorizontalAlignment.Left,
+                    LineSpacing = 1.5,
+                    SpaceAfter = 0
+                }
+            };
+            section.Blocks.Add(paragraphNoiDung);
+            #endregion
+            #region Tôi đã
+
+            Paragraph paragraphToiDa = new Paragraph(document,
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Tôi làm đơn này đề nghị: "),
+                new Run(document, "BQL vận hành Khu nhà ở sinh viên Pháp Vân – Tứ Hiệp") { CharacterFormat = new CharacterFormat { Bold = true } },
+                new Run(document, " xét duyệt cho tôi được thuê nhà ở tại Khu nhà ở sinh viên Pháp Vân – Tứ Hiệp."),
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Tôi đã đọc Bản nội quy sử dụng nhà ở sinh viên và cam kết tuân thủ nội quy sử dụng nhà ở sinh viên; cam kết trả tiền thuê nhà đầy đủ, đúng thời hạn khi được thuê nhà ở."),
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new Run(document, "Tôi cam đoan những lời kê khai trong đơn là đúng sự thật, tôi xin chịu trách nhiệm trước pháp luật về các nội dung kê khai."),
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+             )
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = GemBox.Document.HorizontalAlignment.Left,
+                    LineSpacing = 1.25,
+                    SpaceAfter = 0
+                }
+            };
+            section.Blocks.Add(paragraphToiDa);
+            #endregion
+            #region Chu ky
+            Table tableCK = new Table(document);
+            tableCK.TableFormat.PreferredWidth = new TableWidth(100, TableWidthUnit.Percentage);
+            tableCK.TableFormat.Alignment = GemBox.Document.HorizontalAlignment.Center;
+            tableCK.TableFormat.AutomaticallyResizeToFitContents = false;
+            var tableBordersCK = tableCK.TableFormat.Borders;
+            tableBordersCK.SetBorders(MultipleBorderTypes.All, BorderStyle.None, Color.Empty, 0);
+            tableCK.Columns.Add(new TableColumn(55));
+            tableCK.Columns.Add(new TableColumn(45));
+            TableRow rowT1CK = new TableRow(document);
+            tableCK.Rows.Add(rowT1CK);
+
+            rowT1CK.Cells.Add(new TableCell(document, new Paragraph(document,
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new Run(document, desChucDanhNguoiKy)
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Bold = true,
+                        Size = 13
+                    }
+                }
+                , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+                , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+                , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+                , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+                , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+                , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+                , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+                , new Run(document, desTenNguoiKy) { CharacterFormat = new CharacterFormat { Bold = true } }
+            )
+            {
+                ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Center }
+            }));
+
+            rowT1CK.Cells.Add(new TableCell(document, new Paragraph(document,
+                new Run(document, string.Format("Hà Nội, ngày {0} tháng {1} năm {2}", DateTime.Now.Day, DateTime.Now.Month, DateTime.Now.Year))
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Italic = true,
+                        Size = 13
+                    }
+                }
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+            new Run(document, "Người viết đơn") { CharacterFormat = new CharacterFormat { Bold = true, Size = 13 } },
+            new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+            new Run(document, "(Ký và ghi rõ họ tên)") { CharacterFormat = new CharacterFormat { Italic = true, Size = 12 } }
+           )
+            {
+                ParagraphFormat = new ParagraphFormat()
+                {
+                    Alignment = GemBox.Document.HorizontalAlignment.Center
+                }
+            })
+           //{
+           //    CellFormat = new TableCellFormat()
+           //    {
+           //        VerticalAlignment = GemBox.Document.VerticalAlignment.Center
+           //    }
+           //}
+           );
+            section.Blocks.Add(tableCK);
+            #endregion
+            document.Sections.Add(section);
+            document.Content.Replace(desChucDanhNguoiKy, ChucDanhNguoiKy);
+            document.Content.Replace(desTenNguoiKy, TenNguoiKy);
+            return document;
+        }
+
+        private string getGender(string gender)
+        {
+            if (string.IsNullOrEmpty(gender?.Trim()))
+            {
+                return "Nam";
+            }
+            if (gender.Trim() == "N")
+            {
+                return "Nữ";
+            }
+            return "";
+        }
+
+        private string getKhoa(string classCode)
+        {
+            return $"K{classCode.Substring(0, 2)}";
+        }
+
+        private string getNamNhapHoc(string NienKhoa)
+        {
+            string[] strNamhocs = NienKhoa.Split(new char[] { '-' });
+            return strNamhocs[0].Trim();
+        }
+
+        private string getNamRaTruong(string NienKhoa)
+        {
+            string[] strNamhocs = NienKhoa.Split(new char[] { '-' });
+            return strNamhocs[1].Trim();
+        }
+
+        private string getNamThu(string NienKhoa)
+        {
+            string[] strNamhocs = NienKhoa.Split(new char[] { '-' });
+            string nambatdau = strNamhocs[0].Trim();
+            int iNamBatDau = int.Parse(nambatdau);
+            int iNamHienTai = DateTime.Now.Year;
+            if (DateTime.Now.Month > 8)
+                iNamHienTai++;
+            int iReturn = iNamHienTai - iNamBatDau;
+            iReturn = iReturn > 5 ? 5 : iReturn;
+            return iReturn.ToString();
+        }
+
+        private string getThoiGianKhoaHoc(string NienKhoa)
+        {
+            string[] strNamhocs = NienKhoa.Split(new char[] { '-' });
+            string nambatdau = strNamhocs[0].Trim();
+            string namKetThuc = strNamhocs[1].Trim();
+            int iNamBatDau = int.Parse(nambatdau);
+            int iNamKetThuc = int.Parse(namKetThuc);
+            return (iNamKetThuc - iNamBatDau).ToString();
         }
     }
 }

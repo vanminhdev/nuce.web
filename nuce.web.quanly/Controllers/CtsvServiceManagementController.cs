@@ -53,6 +53,53 @@ namespace nuce.web.quanly.Controllers
             return Json(response);
         }
 
+        private static Dictionary<string, string> exportApiSet = new Dictionary<string, string>
+        {
+            { "word", "api/dichVu/admin/export-word" },
+        };
+
+        [HttpPost]
+        public async Task<ActionResult> ExportFile(ExportModel model)
+        {
+            if (!exportApiSet.ContainsKey(model.ExportType))
+            {
+                return null;
+            }
+            string api = exportApiSet[model.ExportType];
+            var stringContent = base.MakeContent(new { model.DichVuList, model.DichVuType });
+            var response = await base.MakeRequestAuthorizedAsync("post", api, stringContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var byteFile = await response.Content.ReadAsByteArrayAsync();
+                string id = Guid.NewGuid().ToString();
+                TempData[id] = byteFile;
+                return Json(new
+                {
+                    fileId = id
+                });
+            }
+            else if (response.StatusCode == HttpStatusCode.Forbidden)
+            {
+                return Redirect($"/notfound?message={HttpUtility.UrlEncode("Không có quyền truy cập")}");
+            }
+            return null;
+        }
+
+        [HttpGet]
+        public ActionResult DownloadFile(string id)
+        {
+            if (TempData[id] != null)
+            {
+                byte[] data = (byte[])TempData[id];
+                return File(data, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", $"{DateTime.Now.ToFileTime()}.docx");
+            }
+            else
+            {
+                return new EmptyResult();
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult> SearchServiceRequest(DataTableRequest request)
         {
@@ -70,28 +117,14 @@ namespace nuce.web.quanly.Controllers
             }
             else if (response.IsSuccessStatusCode)
             {
-                try
+                var res = await base.DeserializeResponseAsync<DataTableResponse<QuanLyDichVuDetailModel>>(response.Content);
+                return Json(new
                 {
-                    var res = await base.DeserializeResponseAsync<DataTableResponse<QuanLyDichVuDetailModel>>(response.Content);
-                    return Json(new
-                    {
-                        draw = res.Draw,
-                        recordsTotal = res.RecordsTotal,
-                        recordsFiltered = res.RecordsFiltered,
-                        data = res.Data
-                    });
-                }
-                catch (Exception ex)
-                {
-                    return Json(new
-                    {
-                        draw = ++request.Draw,
-                        recordsTotal = 0,
-                        recordsFiltered = 0,
-                        data = new List<object>()
-                    });
-                }
-                
+                    draw = res.Draw,
+                    recordsTotal = res.RecordsTotal,
+                    recordsFiltered = res.RecordsFiltered,
+                    data = res.Data
+                });                
             }
             return Json(new
             {
