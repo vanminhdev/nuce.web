@@ -53,19 +53,26 @@ namespace nuce.web.quanly.Controllers
             return Json(response);
         }
 
-        private static Dictionary<string, string> exportApiSet = new Dictionary<string, string>
+        private static Dictionary<string, string> ExportApiSet = new Dictionary<string, string>
         {
             { "word", "api/dichVu/admin/export-word" },
+            { "word-list", "api/dichVu/admin/export-word-list" }
+        };
+
+        private static Dictionary<string, string> MimeTypeSet = new Dictionary<string, string>
+        {
+            { "docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document" },
+            { "zip", "application/zip" }
         };
 
         [HttpPost]
         public async Task<ActionResult> ExportFile(ExportModel model)
         {
-            if (!exportApiSet.ContainsKey(model.ExportType))
+            if (!ExportApiSet.ContainsKey(model.ExportType))
             {
                 return null;
             }
-            string api = exportApiSet[model.ExportType];
+            string api = ExportApiSet[model.ExportType];
             var stringContent = base.MakeContent(new { model.DichVuList, model.DichVuType });
             var response = await base.MakeRequestAuthorizedAsync("post", api, stringContent);
 
@@ -87,12 +94,12 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpGet]
-        public ActionResult DownloadFile(string id)
+        public ActionResult DownloadFile(string id, string format)
         {
             if (TempData[id] != null)
             {
                 byte[] data = (byte[])TempData[id];
-                return File(data, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", $"{DateTime.Now.ToFileTime()}.docx");
+                return File(data, MimeTypeSet[format] ?? "", $"{DateTime.Now.ToFileTime()}.{format}");
             }
             else
             {

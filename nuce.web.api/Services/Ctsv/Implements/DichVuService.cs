@@ -21,6 +21,7 @@ using GemBox.Document.Drawing;
 using System.Globalization;
 using GemBox.Document.CustomMarkups;
 using System.IO.Compression;
+using System.IO;
 
 namespace nuce.web.api.Services.Ctsv.Implements
 {
@@ -637,38 +638,70 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
         public async Task<byte[]> ExportWordListAsync(DichVu dichVu, List<DichVuExport> dichVuList)
         {
-            //var zip = new ZipFile();
-            return null;
+            List<string> dirs = new List<string>();
+            foreach (var yeuCau in dichVuList)
+            {
+                var exportResult = await GetExportOutput(dichVu, yeuCau.ID);
+                string dir = exportResult.filePath;
+                exportResult.document.Save(dir);
+                dirs.Add(dir);
+            }
+
+            string zipname = _pathProvider.MapPath($"Templates/Ctsv/{dichVu.ToString()}_{Guid.NewGuid().ToString()}.zip");
+            var zip = ZipFile.Open(zipname, ZipArchiveMode.Create);
+            foreach (var dir in dirs)
+            {
+                zip.CreateEntryFromFile(dir, Path.GetFileName(dir), CompressionLevel.Optimal);
+                File.Delete(dir);
+            }
+            zip.Dispose();
+            byte[] byteArr = await File.ReadAllBytesAsync(zipname);
+            File.Delete(zipname);
+            return byteArr;
         }
 
         public async Task<byte[]> ExportWordAsync(DichVu dichVu, int id)
         {
+            var exportOutput = await GetExportOutput(dichVu, id);
+            if (exportOutput != null)
+            {
+                return await DocumentToByteAsync(exportOutput.document, exportOutput.filePath);
+            }
+            return null;
+        }
+
+        private async Task<ExportFileOutputModel> GetExportOutput(DichVu dichVu, int id)
+        {
             switch (dichVu)
             {
                 case DichVu.XacNhan:
-                    return await DocumentToByteAsync(await ExportWordXacNhan(id));
+                    return await ExportWordXacNhan(id);
                 case DichVu.UuDaiGiaoDuc:
-                    return await DocumentToByteAsync(await ExportWordUuDai(id));
+                    return await ExportWordUuDai(id);
                 case DichVu.VayVonNganHang:
-                    return await DocumentToByteAsync(await ExportWordVayVon(id));
+                    return await ExportWordVayVon(id);
                 case DichVu.ThueNha:
-                    return await DocumentToByteAsync(await ExportWordThueNha(id));
+                    return await ExportWordThueNha(id);
                 default:
                     break;
             }
             return null;
         }
 
-        private async Task<byte[]> DocumentToByteAsync(DocumentModel document)
+        private async Task<byte[]> DocumentToByteAsync(DocumentModel document, string filePath)
         {
-            var dir = _pathProvider.MapPath($"Templates/Ctsv/{DateTime.Now.ToFileTime()}.docx");
-            document.Save(dir);
-            byte[] byteArr = await System.IO.File.ReadAllBytesAsync(dir);
-            System.IO.File.Delete(dir);
+            if (string.IsNullOrEmpty(filePath))
+            {
+                string fileName = Guid.NewGuid().ToString();
+                filePath = _pathProvider.MapPath($"Templates/Ctsv/{fileName}.docx");
+            }
+            document.Save(filePath);
+            byte[] byteArr = await File.ReadAllBytesAsync(filePath);
+            File.Delete(filePath);
             return byteArr;
         }
 
-        private async Task<DocumentModel> ExportWordXacNhan(int id)
+        private async Task<ExportFileOutputModel> ExportWordXacNhan(int id)
         {
             var xacNhan = await _xacNhanRepository.FindByIdAsync(id);
             if (xacNhan == null)
@@ -1157,10 +1190,11 @@ namespace nuce.web.api.Services.Ctsv.Implements
             document.Content.Replace(desChucDanhNguoiKy, paramSet["ChucDanhNguoiKy"]);
             document.Content.Replace(desTenNguoiKy, paramSet["TenNguoiKy"]);
 
-            return document;
+            string filePath = filePath = _pathProvider.MapPath($"Templates/Ctsv/xacnhan_{studentInfo.Student.Code}_{DateTime.Now.ToFileTime()}.docx");
+            return new ExportFileOutputModel { document = document, filePath = filePath };
         }
 
-        private async Task<DocumentModel> ExportWordUuDai(int id)
+        private async Task<ExportFileOutputModel> ExportWordUuDai(int id)
         {
             var uuDai = await _uuDaiRepository.FindByIdAsync(id);
             if (uuDai == null)
@@ -1609,10 +1643,12 @@ namespace nuce.web.api.Services.Ctsv.Implements
             document.Sections.Add(section);
             document.Content.Replace(desChucDanhNguoiKy, ChucDanhNguoiKy);
             document.Content.Replace(desTenNguoiKy, TenNguoiKy);
-            return document;
+
+            string filePath = _pathProvider.MapPath($"Templates/Ctsv/uudai_{studentInfo.Student.Code}_{DateTime.Now.ToFileTime()}.docx");
+            return new ExportFileOutputModel { document = document, filePath = filePath };
         }
 
-        private async Task<DocumentModel> ExportWordVayVon(int id)
+        private async Task<ExportFileOutputModel> ExportWordVayVon(int id)
         {
             var vayVon = await _vayVonRepository.FindByIdAsync(id);
             if (vayVon == null)
@@ -2072,10 +2108,11 @@ namespace nuce.web.api.Services.Ctsv.Implements
             document.Content.Replace(desChucDanhNguoiKy, ChucDanhNguoiKy);
             document.Content.Replace(desTenNguoiKy, TenNguoiKy);
 
-            return document;
+            string filePath = _pathProvider.MapPath($"Templates/Ctsv/vayvon_{studentInfo.Student.Code}_{DateTime.Now.ToFileTime()}.docx");
+            return new ExportFileOutputModel { document = document, filePath = filePath };
         }
 
-        private async Task<DocumentModel> ExportWordThueNha(int id)
+        private async Task<ExportFileOutputModel> ExportWordThueNha(int id)
         {
             var thueNha = await _thueNhaRepository.FindByIdAsync(id);
             if (thueNha == null)
@@ -2316,7 +2353,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
             document.Sections.Add(section);
             document.Content.Replace(desChucDanhNguoiKy, ChucDanhNguoiKy);
             document.Content.Replace(desTenNguoiKy, TenNguoiKy);
-            return document;
+            string filePath = _pathProvider.MapPath($"Templates/Ctsv/thuektx_{studentInfo.Student.Code}_{DateTime.Now.ToFileTime()}.docx");
+            return new ExportFileOutputModel { document = document, filePath = filePath };
         }
 
         private string getGender(string gender)

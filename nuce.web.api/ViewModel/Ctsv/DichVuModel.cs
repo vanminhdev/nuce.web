@@ -1,4 +1,5 @@
-﻿using nuce.web.api.Models.Ctsv;
+﻿using GemBox.Document;
+using nuce.web.api.Models.Ctsv;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,5 +83,11 @@ namespace nuce.web.api.ViewModel.Ctsv
         public AsAcademyFaculty Faculty { get; set; }
         public AsAcademyDepartment Department { get; set; }
         public AsAcademyAcademics Academics { get; set; }
+    }
+
+    public class ExportFileOutputModel
+    {
+        public DocumentModel document { get; set; }
+        public string filePath { get; set; }
     }
 }

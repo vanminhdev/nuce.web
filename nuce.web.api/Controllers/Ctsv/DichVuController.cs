@@ -121,5 +121,14 @@ namespace nuce.web.api.Controllers.Ctsv
             var result = await _dichVuService.ExportWordAsync(model.DichVuType, model.DichVuList[0].ID);
             return new FileStreamResult(new MemoryStream(result), "application/octet-stream");
         }
+
+        [Authorize(Roles = "Admin")]
+        [Route("admin/export-word-list")]
+        [HttpPost]
+        public async Task<FileStreamResult> ExportWordList([FromBody] ExportModel model)
+        {
+            var result = await _dichVuService.ExportWordListAsync(model.DichVuType, model.DichVuList);
+            return new FileStreamResult(new MemoryStream(result), "application/octet-stream");
+        }
     }
 }

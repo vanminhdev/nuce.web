@@ -59,7 +59,7 @@
                     Excel
                 </button>
                 <button type="button" class="btn btn-primary"
-                        onclick="onExportWord()">
+                        onclick="onExportWordList()">
                     In
                 </button>
                 <button type="button" class="btn btn-info"
@@ -606,27 +606,35 @@
           userTable.search(jsonData).draw();
         }
 
-        var onExportWord = function(id) {            
-            $.ajax({
-                type: 'POST',
-                url: `@Url.Action("ExportFile", "CtsvServiceManagement")`,
-                data: JSON.stringify({
-                    DichVuList: [{
-                        ID: id
-                    }],
-                    ExportType: 'word',
-                    DichVuType: serviceType
-                }),
-                dataType: 'json',
-                contentType: 'application/json',
-                success: function(res) {
-                    window.location = `/CtsvServiceManagement/DownloadFile?id=${res.fileId}`;
-                },
-            }).done(res => {
-                console.log('done: ', res);
-            }).fail(res => {
-                console.log(res);
+        var onExportWord = function(id) {
+            callApiExport({
+                DichVuList: [{
+                    ID: id
+                }],
+                ExportType: 'word',
+                DichVuType: serviceType
+            }, 'docx');      
+        };
+
+        var onExportWordList = function() {
+            const selectedData = [];
+            if (selectedIndex.length < 1) {
+                $("#h_noidung_thongbao").html("Không có yêu cầu dịch vụ nào được chọn");
+                $('#myModalThongBao').modal();
+                return;
+            }
+            dataList.forEach((item, index) => {
+                if (selectedIndex.includes(index)) {
+                    selectedData.push({
+                        ID: item.DichVu.id,
+                    });
+                }
             });
+            callApiExport({
+                DichVuList: selectedData,
+                ExportType: 'word-list',
+                DichVuType: serviceType
+            }, 'zip');
         };
 
         var getNgayHen = function(status = 0, auto = true) {
@@ -766,6 +774,23 @@
                 console.log(err);
                 $("#h_noidung_thongbao").html("Lỗi hệ thống");
                 $('#myModalThongBao').modal();
+            });
+        }
+
+        var callApiExport = function(data, format) {
+            $.ajax({
+                type: 'POST',
+                url: `@Url.Action("ExportFile", "CtsvServiceManagement")`,
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function(res) {
+                    window.location = `/CtsvServiceManagement/DownloadFile?id=${res.fileId}&format=${format}`;
+                },
+            }).done(res => {
+                console.log('done: ', res);
+            }).fail(res => {
+                console.log(res);
             });
         }
 
