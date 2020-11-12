@@ -10,6 +10,11 @@
             padding: 16px 8px;
         }
     }
+    @@media only screen and (min-width: 1025px){
+        .main-content-wrp {
+            margin-top: 0;
+        }
+    }
     .checkbox-select {
         cursor: pointer;
     }
@@ -21,6 +26,9 @@
     <div class="col-12">
         <div class="row">
             <div class="col-12">
+                <a class="update-btn text-light p-2 mb-3" 
+                    style="text-decoration: none; display: inline-block" 
+                    href="/ctsvservicemanagement/index">← Quay lại danh sách</a>
                 <div id="divTitle" class="main-color text-uppercase font-15-sm fw-600 font-25 service-title">
                     dịch vụ xin giấy xác nhận
                 </div>
@@ -70,7 +78,7 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <table id="qldv-detail-datatable" class="table">
+                <table id="qldv-detail-datatable" data-page-length='25' class="table">
                 </table>
             </div>
         </div>
@@ -177,13 +185,13 @@
         <div id="myModalThongBao"
              class="modal fade"
              role="dialog">
-            <div class="modal-dialog modal-dialog-centered"
+            <div class="modal-dialog"
                  role="document">
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title"
-                            id="h_noidung_thongbao">
+                        <h5 class="modal-title font-14-sm fw-700">
+                            Thông báo
                         </h5>
                         <button type="button"
                                 class="close"
@@ -192,9 +200,12 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body text-right">
+                    <div class="modal-body" style="text-align: center;">
+                        <p id="h_noidung_thongbao"></p>
+                    </div>
+                    <div class="modal-footer text-right">
                         <button type="button"
-                                class="update-btn text-light text-uppercase font-14-sm pt-2 pb-2 mt-4"
+                                class="btn btn-default"
                                 data-dismiss="modal">
                             Thoát
                         </button>
@@ -208,8 +219,8 @@
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
+                        <h4 class="modal-title font-14-sm fw-700">Xác nhận</h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title" style="text-align: center;">Xác nhận</h4>
                     </div>
                     <div class="modal-body" style="text-align: center;">
                         <p id="h-confirm-content"></p>
@@ -541,7 +552,7 @@
             ordering: false,
             lengthChange: false,
             stateSave: true,
-            length: 50,
+            deferLoading: 0,
             language: dataTableConfig.language,
             ajax: {
                 url: 'SearchServiceRequest',
@@ -561,7 +572,7 @@
             headerCallback: function( thead, data, start, end, display ) {
                 $(thead).find('th').eq(0).html(`<input type="checkbox" class="checkbox-select"
                                                         id="select-all" onclick="onSelectAll()" />`);
-                $(thead).find('th').eq(0).prop({width: '50px'});
+                $(thead).find('th').eq(0).prop({style: 'width: 4%'});
             },
             columns: [
                 {
@@ -584,6 +595,7 @@
 
         var showConfirm = function() {
             if (selectedDataIsValid()) {
+                $('#h-confirm-content').html('Bạn có muốn chuyển tất cả các yêu cầu được chọn sang trạng thái ĐÃ XỬ LÝ VÀ CÓ LỊCH HẸN không?');
                 $('#myModalConfirm').modal('show');
             }
         }
@@ -626,15 +638,15 @@
         }
 
         var searchData = function() {
-          const data = {
-              type: serviceType,
-              searchText: $("#txt-srvc-search").val() || '',
-              dayRange: $('#slChonNgay').val() || 7,
-              page: null,
-              size: null,
-          };
-          var jsonData = JSON.stringify(data);
-          userTable.search(jsonData).draw();
+            const data = {
+                type: serviceType,
+                searchText: $("#txt-srvc-search").val() || '',
+                dayRange: $('#slChonNgay').val() || 7,
+                page: null,
+                size: null,
+            };
+            var jsonData = JSON.stringify(data);
+            userTable.page.len(50).search(jsonData).draw();
         }
 
         var onExportWord = function(id) {

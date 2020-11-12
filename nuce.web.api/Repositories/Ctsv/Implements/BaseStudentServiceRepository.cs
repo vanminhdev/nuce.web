@@ -38,7 +38,7 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
             dtCompare = dtCompare.AddDays(-1 * model.DayRange);
             model.SearchText = model.SearchText?.Trim()?.ToLower();
 
-            var beforeFilteredData = (await _context.Set<Entity>().AsNoTracking().ToListAsync())
+            var beforeFilteredData = (await _context.Set<Entity>().AsNoTracking().AsEnumerable())
                                         .Where(item => (int)getValue(item, "Status") > 1 && !Convert.ToBoolean(getValue(item, "Deleted")));
 
             var finalData = beforeFilteredData

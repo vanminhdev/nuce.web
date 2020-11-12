@@ -394,7 +394,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             var rs = new DataTableResponse<QuanLyDichVuDetailResponse>
             {
                 RecordsTotal = recordTotal,
-                RecordsFiltered = recordFiltered,
+                RecordsFiltered = recordTotal,
                 Data = data.ToList()
             };
             return rs;
@@ -421,7 +421,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             }
             return quantityDictionary;
         }
-
+        #region Update Status
         public async Task<ResponseBody> UpdateRequestStatus(UpdateRequestStatusModel model)
         {
             var ngayHen = getUpdateStatusNgayHen(model);
@@ -541,11 +541,11 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 {
                     if (earlierThanFriday)
                     {
-                        fromDate = DateTime.Parse(string.Format("{0}/{1}/{2} 10:00:00 AM", DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day, DateTime.Now.AddDays(1).Year));
+                        fromDate = DateTime.Parse(string.Format("{0}/{1}/{2} 10:00:00 AM", DateTime.Now.AddDays(1).Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day));
                     }
                     else
                     {
-                        fromDate = DateTime.Parse(string.Format("{0}/{1}/{2} 10:00:00 AM", DateTime.Now.AddDays(8 - dayOfWeek).Month, DateTime.Now.AddDays(8 - dayOfWeek).Day, DateTime.Now.AddDays(8 - dayOfWeek).Year));
+                        fromDate = DateTime.Parse(string.Format("{0}/{1}/{2} 10:00:00 AM", DateTime.Now.AddDays(8 - dayOfWeek).Year, DateTime.Now.AddDays(8 - dayOfWeek).Month, DateTime.Now.AddDays(8 - dayOfWeek).Day));
                     }
                 }
                 else
@@ -553,11 +553,11 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     //Cap nhat vào buổi chiều
                     if (earlierThanFriday)
                     {
-                        fromDate = DateTime.Parse(string.Format("{0}/{1}/{2} 4:00:00 PM", DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day, DateTime.Now.AddDays(1).Year));
+                        fromDate = DateTime.Parse(string.Format("{0}/{1}/{2} 4:00:00 PM", DateTime.Now.AddDays(1).Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day));
                     }
                     else
                     {
-                        fromDate = DateTime.Parse(string.Format("{0}/{1}/{2} 10:00:00 AM", DateTime.Now.AddDays(8 - dayOfWeek).Month, DateTime.Now.AddDays(8 - dayOfWeek).Day, DateTime.Now.AddDays(8 - dayOfWeek).Year));
+                        fromDate = DateTime.Parse(string.Format("{0}/{1}/{2} 10:00:00 AM", DateTime.Now.AddDays(8 - dayOfWeek).Year, DateTime.Now.AddDays(8 - dayOfWeek).Month, DateTime.Now.AddDays(8 - dayOfWeek).Day));
                     }
                 }
                 toDate = fromDate?.AddMonths(1);
@@ -658,6 +658,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             }
             return anyAction;
         }
+        #endregion
 
         #region Export Excel
         public async Task<byte[]> ExportExcelAsync(DichVu loaiDichVu, List<DichVuExport> dichVuList)
