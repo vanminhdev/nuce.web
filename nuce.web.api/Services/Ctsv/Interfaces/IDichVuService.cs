@@ -4,6 +4,7 @@ using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Ctsv;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using static nuce.web.api.Common.Ctsv;
@@ -19,5 +20,6 @@ namespace nuce.web.api.Services.Ctsv.Interfaces
         public Task<ResponseBody> UpdateRequestStatus(UpdateRequestStatusModel model);
         public Task<byte[]> ExportWordAsync(DichVu dichVu, int id);
         public Task<byte[]> ExportWordListAsync(DichVu dichVu, List<DichVuExport> dichVuList);
+        public Task<byte[]> ExportExcelAsync(DichVu loaiDichVu, List<DichVuExport> dichVuList);
     }
 }

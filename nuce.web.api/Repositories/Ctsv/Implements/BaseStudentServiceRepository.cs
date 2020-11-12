@@ -25,7 +25,7 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
 
         public IQueryable<Entity> GetAll(long studentId)
         {
-            return _context.Set<Entity>().AsNoTracking().ToList()
+            return _context.Set<Entity>().AsNoTracking().AsEnumerable()
                     .Where(item => Convert.ToInt32(item.GetType().GetProperty("StudentId").GetValue(item, null)) == studentId &&
                             !Convert.ToBoolean(item.GetType().GetProperty("Deleted").GetValue(item, null)))
                     .OrderByDescending(item => item.GetType().GetProperty("LastModifiedTime").GetValue(item, null))
@@ -39,14 +39,14 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
             model.SearchText = model.SearchText?.Trim()?.ToLower();
 
             var beforeFilteredData = (await _context.Set<Entity>().AsNoTracking().ToListAsync())
-                        .Where(item => (int)getValue(item, "Status") > 1 && !Convert.ToBoolean(getValue(item, "Deleted")));
+                                        .Where(item => (int)getValue(item, "Status") > 1 && !Convert.ToBoolean(getValue(item, "Deleted")));
 
             var finalData = beforeFilteredData
                         .Where(item => (
-                                            string.IsNullOrEmpty(model.SearchText) || 
-                                            getValueString(item, "Id").Contains(model.SearchText) || 
-                                            getValueString(item, "StudentCode").Contains(model.SearchText) || 
-                                            getValueString(item, "StudentName").Contains(model.SearchText) || 
+                                            string.IsNullOrEmpty(model.SearchText) ||
+                                            getValueString(item, "Id").Contains(model.SearchText) ||
+                                            getValueString(item, "StudentCode").Contains(model.SearchText) ||
+                                            getValueString(item, "StudentName").Contains(model.SearchText) ||
                                             getValueString(item, "PhanHoi").Contains(model.SearchText)
                                         ) &&
                                         DateTime.Parse(getValueString(item, "LastModifiedTime")) >= dtCompare)
@@ -54,17 +54,50 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
                         .ThenByDescending(r => getValue(r, "LastModifiedTime"));
             return new GetAllForAdminResponseRepo<Entity>
             {
-                BeforeFilteredData = beforeFilteredData.AsQueryable(),
                 FinalData = finalData.AsQueryable()
             };
         }
 
         public bool IsDuplicated(long studentId, string reason = null)
         {
-            return _context.Set<Entity>().AsNoTracking().ToList()
+            return _context.Set<Entity>().AsNoTracking().AsEnumerable()
                     .Any(item => Convert.ToInt32(item.GetType().GetProperty("StudentId").GetValue(item, null)) == studentId &&
                             Convert.ToInt32(item.GetType().GetProperty("Status").GetValue(item, null)) < (int)TrangThaiYeuCau.DaXuLyVaCoLichHen &&
                            (string.IsNullOrEmpty(reason) || item.GetType().GetProperty("LyDo").GetValue(item, null)?.ToString() == reason));
+        }
+
+        public async Task<IEnumerable<YeuCauDichVuStudentModel<Entity>>> GetYeuCauDichVuStudent(List<long> ids)
+        {
+            var year = _context.AsAcademyYear.AsNoTracking().AsEnumerable()
+                            .OrderByDescending(yr => yr.Id)
+                            .FirstOrDefault(yr => (yr.Enabled ?? false) || (yr.IsCurrent ?? false));
+            var result =  (await _context.Set<Entity>().AsNoTracking().ToListAsync())
+                        .Where(e => ids.Contains((long)getValue(e, "Id")))
+                        .Join(_context.AsAcademyStudent.AsNoTracking(),
+                                e => getValueString(e, "StudentId"),
+                                student => student.Id.ToString(),
+                                (entity, student) => new { entity, student })
+                        .Join(_context.AsAcademyClass.AsNoTracking(),
+                                tmp => tmp.student.ClassId,
+                                aClass => aClass.Id,
+                                (tmp, aClass) => new { tmp.student, tmp.entity, aClass })
+                        .Join(_context.AsAcademyFaculty.AsNoTracking(),
+                               tmp => tmp.aClass.FacultyId,
+                               faculty => faculty.Id,
+                               (tmp, faculty) => new { tmp.entity, tmp.student, tmp.aClass, faculty })
+                        .Join(_context.AsAcademyAcademics.AsNoTracking(),
+                                tmp => tmp.aClass.AcademicsId,
+                                academic => academic.Id,
+                                (tmp, academic) => new YeuCauDichVuStudentModel<Entity>
+                                {
+                                    Year = year,
+                                    Student = tmp.student,
+                                    AcademyClass = tmp.aClass,
+                                    Faculty = tmp.faculty,
+                                    Academics = academic,
+                                    YeuCauDichVu = tmp.entity
+                                });
+            return result;
         }
 
         public AllTypeDichVuModel GetRequestInfo()
@@ -88,9 +121,9 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
                     case (int)TrangThaiYeuCau.DangXuLy:
                         result.DangXuLy++;
                         break;
-                    case (int)Common.Ctsv.TrangThaiYeuCau.HoanThanh:
-                    case (int)Common.Ctsv.TrangThaiYeuCau.TuChoi:
-                    case (int)Common.Ctsv.TrangThaiYeuCau.DaXuLyVaCoLichHen:
+                    case (int)TrangThaiYeuCau.HoanThanh:
+                    case (int)TrangThaiYeuCau.TuChoi:
+                    case (int)TrangThaiYeuCau.DaXuLyVaCoLichHen:
                         result.DaXuLy++;
                         break;
                     default:

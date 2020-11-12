@@ -55,7 +55,7 @@
             </div>
             <div class="col-sm-4" style="text-align: right">
                 <button type="button" class="btn btn-success"
-                        onclick="">
+                        onclick="onExportExcel()">
                     Excel
                 </button>
                 <button type="button" class="btn btn-primary"
@@ -617,6 +617,30 @@
         };
 
         var onExportWordList = function() {
+            const data = getDataToExportMultiYeuCau();
+            if (data.length < 1 ) {
+                return;
+            }
+            callApiExport({
+                DichVuList: data,
+                ExportType: 'word-list',
+                DichVuType: serviceType
+            }, 'zip');
+        };
+
+        var onExportExcel = function() {
+            const data = getDataToExportMultiYeuCau();
+            if (data.length < 1 ) {
+                return;
+            }
+            callApiExport({
+                DichVuList: data,
+                ExportType: 'excel',
+                DichVuType: serviceType
+            }, 'xlsx');
+        }
+
+        var getDataToExportMultiYeuCau = function() {
             const selectedData = [];
             if (selectedIndex.length < 1) {
                 $("#h_noidung_thongbao").html("Không có yêu cầu dịch vụ nào được chọn");
@@ -630,12 +654,8 @@
                     });
                 }
             });
-            callApiExport({
-                DichVuList: selectedData,
-                ExportType: 'word-list',
-                DichVuType: serviceType
-            }, 'zip');
-        };
+            return selectedData;
+        }
 
         var getNgayHen = function(status = 0, auto = true) {
             var result = {

@@ -83,6 +83,12 @@ namespace nuce.web.api.ViewModel.Ctsv
         public AsAcademyFaculty Faculty { get; set; }
         public AsAcademyDepartment Department { get; set; }
         public AsAcademyAcademics Academics { get; set; }
+        public AsAcademyYear Year { get; set; }
+    }
+
+    public class YeuCauDichVuStudentModel<T> : StudentDichVuModel
+    {
+        public T YeuCauDichVu { get; set; }
     }
 
     public class ExportFileOutputModel

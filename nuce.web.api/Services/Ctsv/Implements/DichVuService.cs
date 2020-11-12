@@ -22,6 +22,8 @@ using System.Globalization;
 using GemBox.Document.CustomMarkups;
 using System.IO.Compression;
 using System.IO;
+using ClosedXML.Excel;
+using Microsoft.EntityFrameworkCore;
 
 namespace nuce.web.api.Services.Ctsv.Implements
 {
@@ -49,7 +51,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
             IThueNhaRepository _thueNhaRepository, IUserService _userService,
             IUnitOfWork _unitOfWork, IEmailService _emailService, ILogService _logService,
             ILoaiDichVuRepository _loaiDichVuRepository, IStudentRepository _studentRepository,
-            IThamSoDichVuService _thamSoDichVuService, IPathProvider _pathProvider
+            IThamSoDichVuService _thamSoDichVuService, IPathProvider _pathProvider,
+            ILogger<DichVuService> _logger
         )
         {
             this._xacNhanRepository = _xacNhanRepository;
@@ -66,6 +69,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             this._unitOfWork = _unitOfWork;
             this._emailService = _emailService;
             this._logService = _logService;
+            this._logger = _logger;
         }
         #endregion
 
@@ -292,11 +296,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
         public async Task<DataTableResponse<QuanLyDichVuDetailResponse>> GetRequestForAdmin(QuanLyDichVuDetailModel model)
         {
             var result = new List<QuanLyDichVuDetailResponse>();
-
-            object yeuCauDichVu = null;
-
-            string studentsIds;
-            var students = new Dictionary<long, AsAcademyStudent>();
+            List<AsAcademyStudent> studentList = await _studentRepository.GetAll().AsNoTracking().ToListAsync();
 
             int recordTotal = 0;
             int recordFiltered = 0;
@@ -307,22 +307,12 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     var xacNhanGetAll = await _xacNhanRepository.GetAllForAdmin(model);
                     var xacNhanList = xacNhanGetAll.FinalData;
 
-                    recordFiltered = xacNhanList.Count();
-                    recordTotal = xacNhanGetAll.BeforeFilteredData.Count();
-
-                    if (recordFiltered > 0)
-                    {
-                        studentsIds = $",{string.Join(',', xacNhanList.Select(r => r.StudentId.ToString()))},";
-
-                        yeuCauDichVu = xacNhanList;
-                        students = _studentRepository.GetAll().Where(s => studentsIds.Contains(("," + s.Id.ToString() + ","))).ToDictionary(s => s.Id, s => s);
-                    }
-
                     foreach (var yeuCau in xacNhanList)
                     {
+                        var student = studentList.FirstOrDefault(s => s.Code == yeuCau.StudentCode);
                         var item = new QuanLyDichVuDetailResponse()
                         {
-                            Student = students[yeuCau.StudentId],
+                            Student = student,
                             DichVu = yeuCau
                         };
                         result.Add(item);
@@ -333,22 +323,12 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
                     var gioiThieuList = gioiThieuGetAll.FinalData;
 
-                    recordFiltered = gioiThieuList.Count();
-                    recordTotal = gioiThieuGetAll.BeforeFilteredData.Count();
-
-                    if (gioiThieuList.Count() > 0)
-                    {
-                        studentsIds = $",{string.Join(',', gioiThieuList.Select(r => r.StudentId.ToString()))},";
-
-                        yeuCauDichVu = gioiThieuList;
-                        students = _studentRepository.GetAll().Where(s => studentsIds.Contains(("," + s.Id.ToString() + ","))).ToDictionary(s => s.Id, s => s);
-                    }
-
                     foreach (var yeuCau in gioiThieuList)
                     {
+                        var student = studentList.FirstOrDefault(s => s.Code == yeuCau.StudentCode);
                         var item = new QuanLyDichVuDetailResponse()
                         {
-                            Student = students[yeuCau.StudentId],
+                            Student = student,
                             DichVu = yeuCau
                         };
                         result.Add(item);
@@ -359,22 +339,12 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
                     var uuDaiList = uuDaiGetAll.FinalData;
 
-                    recordFiltered = uuDaiList.Count();
-                    recordTotal = uuDaiGetAll.BeforeFilteredData.Count();
-
-                    if (recordFiltered > 0)
-                    {
-                        studentsIds = $",{string.Join(',', uuDaiList.Select(r => r.StudentId.ToString()))},";
-
-                        yeuCauDichVu = uuDaiList;
-                        students = _studentRepository.GetAll().Where(s => studentsIds.Contains(("," + s.Id.ToString() + ","))).ToDictionary(s => s.Id, s => s);
-                    }
-
                     foreach (var yeuCau in uuDaiList)
                     {
+                        var student = studentList.FirstOrDefault(s => s.Code == yeuCau.StudentCode);
                         var item = new QuanLyDichVuDetailResponse()
                         {
-                            Student = students[yeuCau.StudentId],
+                            Student = student,
                             DichVu = yeuCau
                         };
                         result.Add(item);
@@ -385,22 +355,12 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
                     var vayVonList = vayVonGetAll.FinalData;
 
-                    recordFiltered = vayVonList.Count();
-                    recordTotal = vayVonGetAll.BeforeFilteredData.Count();
-
-                    if (recordFiltered > 0)
-                    {
-                        studentsIds = $",{string.Join(',', vayVonList.Select(r => r.StudentId.ToString()))},";
-
-                        yeuCauDichVu = vayVonList;
-                        students = _studentRepository.GetAll().Where(s => studentsIds.Contains(("," + s.Id.ToString() + ","))).ToDictionary(s => s.Id, s => s);
-                    }
-
                     foreach (var yeuCau in vayVonList)
                     {
+                        var student = studentList.FirstOrDefault(s => s.Code == yeuCau.StudentCode);
                         var item = new QuanLyDichVuDetailResponse()
                         {
-                            Student = students[yeuCau.StudentId],
+                            Student = student,
                             DichVu = yeuCau
                         };
                         result.Add(item);
@@ -411,21 +371,12 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
                     var thueNhaList = thueNhaGetAll.FinalData;
 
-                    recordFiltered = thueNhaList.Count();
-                    recordTotal = thueNhaGetAll.BeforeFilteredData.Count();
-
-                    if (recordFiltered > 0)
-                    {
-                        studentsIds = $",{string.Join(',', thueNhaList.Select(r => r.StudentId.ToString()))},";
-
-                        yeuCauDichVu = thueNhaList;
-                        students = _studentRepository.GetAll().Where(s => studentsIds.Contains(("," + s.Id.ToString() + ","))).ToDictionary(s => s.Id, s => s);
-                    }
                     foreach (var yeuCau in thueNhaList)
                     {
+                        var student = studentList.FirstOrDefault(s => s.Code == yeuCau.StudentCode);
                         var item = new QuanLyDichVuDetailResponse()
                         {
-                            Student = students[yeuCau.StudentId],
+                            Student = student,
                             DichVu = yeuCau
                         };
                         result.Add(item);
@@ -630,12 +581,473 @@ namespace nuce.web.api.Services.Ctsv.Implements
             }
             catch (Exception ex)
             {
-                //_logger.LogError("Cập nhật trạng thái yêu cầu dịch vụ", $"{ex.ToString()} \n", JsonConvert.SerializeObject(model));
+                _logger.LogError("Cập nhật trạng thái yêu cầu dịch vụ", $"{ex.ToString()} \n", JsonConvert.SerializeObject(model));
                 return new ResponseBody { Data = ex, Message = "Lỗi hệ thống" };
             }
             return null;
         }
 
+        #region Export Excel
+        public async Task<byte[]> ExportExcelAsync(DichVu loaiDichVu, List<DichVuExport> dichVuList)
+        {
+            switch (loaiDichVu)
+            {
+                case DichVu.XacNhan:
+                    return await ExportExcelXacNhan(dichVuList);
+                case DichVu.UuDaiGiaoDuc:
+                    return await ExportExcelUuDai(dichVuList);
+                case DichVu.VayVonNganHang:
+                    return await ExportExcelVayVon(dichVuList);
+                case DichVu.ThueNha:
+                    return await ExportExcelThueNha(dichVuList);
+                default:
+                    break;
+            }
+            return null;
+        }
+
+        private async Task<byte[]> ExportExcelXacNhan(List<DichVuExport> dichVuList)
+        {
+            List<long> ids = new List<long>();
+            foreach (var item in dichVuList)
+            {
+                ids.Add(item.ID);
+            }
+            var yeuCauList = (await _xacNhanRepository.GetYeuCauDichVuStudent(ids)).ToList();
+
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                var style = XLWorkbook.DefaultStyle;
+                var ws = wb.Worksheets.Add("Sheet1");
+                ws.Style.Font.SetFontSize(12);
+                ws.Style.Font.SetFontName("Times New Roman");
+
+                int i = 0;
+                int firstRow = 1;
+                #region title
+                setStyle(ws, firstRow, ++i, "Mã số SV");
+                setStyle(ws, firstRow, ++i, "Họ và tên");
+                setStyle(ws, firstRow, ++i, "Ngày sinh");
+                setStyle(ws, firstRow, ++i, "Email");
+                setStyle(ws, firstRow, ++i, "Xã");
+                setStyle(ws, firstRow, ++i, "Huyện");
+                setStyle(ws, firstRow, ++i, "Tỉnh");
+                setStyle(ws, firstRow, ++i, "Lớp");
+                setStyle(ws, firstRow, ++i, "Niên khóa");
+                setStyle(ws, firstRow, ++i, "Khoa quản lý");
+                setStyle(ws, firstRow, ++i, "Số điện thoại");
+                setStyle(ws, firstRow, ++i, "Hệ đào tạo");
+                setStyle(ws, firstRow, ++i, "Lý do xác nhận");
+                ws.Cell(firstRow, i).Style.Fill.SetBackgroundColor(XLColor.White);
+
+                setStyle(ws, firstRow, ++i, "Ngày ký");
+                setStyle(ws, firstRow, ++i, "Tháng ký");
+                setStyle(ws, firstRow, ++i, "Năm ký");
+
+                ws.Row(firstRow).Height = 32;
+
+                int colNum = i;
+                #endregion
+                #region value
+                int recordLen = yeuCauList.Count;
+                int col = 0;
+                for (int j = 0; j < recordLen; j++)
+                {
+                    var yeuCau = yeuCauList[j];
+                    DateTime ngaySinh = convertStudentDateOfBirth(yeuCau.Student.DateOfBirth);
+                    string studentCode = yeuCau.YeuCauDichVu.StudentCode ?? "";
+                    string studentName = yeuCau.YeuCauDichVu.StudentName ?? "";
+                    string email = yeuCau.Student.EmailNhaTruong ?? "";
+                    string phuong = yeuCau.Student.HkttPhuong ?? "";
+                    string quan = yeuCau.Student.HkttQuan ?? "";
+                    string tinh = yeuCau.Student.HkttTinh ?? "";
+                    string classCode = yeuCau.Student.ClassCode ?? "";
+                    string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
+                    string tenKhoa = yeuCau.Faculty.Name ?? "";
+                    string mobile = yeuCau.Student.Mobile ?? "";
+
+                    string lyDo = yeuCau.YeuCauDichVu.LyDo ?? "";
+                    DateTime now = DateTime.Now;
+                    int row = j + 2;
+
+                    col = 0;
+                    ws.Cell(row, ++col).SetValue(studentCode);
+                    ws.Cell(row, ++col).SetValue(studentName);
+                    ws.Cell(row, ++col).SetValue(ngaySinh.ToString("dd/MM/yyyy"));
+                    ws.Cell(row, ++col).SetValue(email);
+                    ws.Cell(row, ++col).SetValue(phuong);
+                    ws.Cell(row, ++col).SetValue(quan);
+                    ws.Cell(row, ++col).SetValue(tinh);
+                    ws.Cell(row, ++col).SetValue(classCode);
+                    ws.Cell(row, ++col).SetValue(nienKhoa);
+                    ws.Cell(row, ++col).SetValue(tenKhoa);
+                    ws.Cell(row, ++col).SetValue(mobile);
+                    ws.Cell(row, ++col).SetValue("Chính quy");
+                    ws.Cell(row, ++col).SetValue(lyDo);
+                    ws.Cell(row, ++col).SetValue(now.Day);
+                    ws.Cell(row, ++col).SetValue(now.Month);
+                    ws.Cell(row, ++col).SetValue(now.Year);
+                }
+                for (int j = 0; j < col; j++)
+                {
+                    ws.Column(j + 1).AdjustToContents();
+                }
+                #endregion
+                string file = _pathProvider.MapPath($"Templates/Ctsv/xacnhan_{Guid.NewGuid().ToString()}.xlsx");
+                wb.SaveAs(file);
+                return await FileToByteAsync(file);
+            }
+        }
+
+        private async Task<byte[]> ExportExcelUuDai(List<DichVuExport> dichVuList)
+        {
+            List<long> ids = new List<long>();
+            foreach (var item in dichVuList)
+            {
+                ids.Add(item.ID);
+            }
+            var yeuCauList = (await _uuDaiRepository.GetYeuCauDichVuStudent(ids)).ToList();
+
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                var style = XLWorkbook.DefaultStyle;
+                var ws = wb.Worksheets.Add("Sheet1");
+                ws.Style.Font.SetFontSize(12);
+                ws.Style.Font.SetFontName("Times New Roman");
+
+                string namHoc = "";
+                if (yeuCauList.Any())
+                {
+                    var schoolYearFrom = yeuCauList[0].Year.FromYear;
+                    var schoolYearTo = yeuCauList[0].Year.ToYear;
+
+                    namHoc = $"{schoolYearFrom?.Year.ToString()}-{schoolYearTo?.Year.ToString()}";
+                }                
+                int i = 0;
+                int firstRow = 1;
+                #region title
+                setStyle(ws, firstRow, ++i, "Mã số SV");
+                setStyle(ws, firstRow, ++i, "Họ và tên");
+                setStyle(ws, firstRow, ++i, "Ngày sinh");
+                setStyle(ws, firstRow, ++i, "Email");
+                setStyle(ws, firstRow, ++i, "Xã");
+                setStyle(ws, firstRow, ++i, "Huyện");
+                setStyle(ws, firstRow, ++i, "Tỉnh");
+                setStyle(ws, firstRow, ++i, "Lớp");
+                setStyle(ws, firstRow, ++i, "Niên khóa");
+                setStyle(ws, firstRow, ++i, "Khoa quản lý");
+                setStyle(ws, firstRow, ++i, "Số điện thoại");
+                setStyle(ws, firstRow, ++i, "Hệ đào tạo");
+                setStyle(ws, firstRow, ++i, "Năm thứ");
+                ws.Cell(firstRow, i).Style.Fill.SetBackgroundColor(XLColor.White);
+                setStyle(ws, firstRow, ++i, "Học Kỳ");
+                ws.Cell(firstRow, i).Style.Fill.SetBackgroundColor(XLColor.White);
+                setStyle(ws, firstRow, ++i, "Năm học");
+                ws.Cell(firstRow, i).Style.Fill.SetBackgroundColor(XLColor.White);
+                setStyle(ws, firstRow, ++i, "Thời gian khóa học \n (bao nhiêu năm)");
+                ws.Cell(firstRow, i).Style.Fill.SetBackgroundColor(XLColor.White);
+                ws.Cell(firstRow, i).Style.Alignment.WrapText = true;
+                setStyle(ws, firstRow, ++i, "Kỷ luật");
+                ws.Cell(firstRow, i).Style.Fill.SetBackgroundColor(XLColor.White);
+
+                setStyle(ws, firstRow, ++i, "Ngày ký");
+                setStyle(ws, firstRow, ++i, "Tháng ký");
+                setStyle(ws, firstRow, ++i, "Năm ký");
+
+                ws.Row(firstRow).Height = 32;
+
+                int colNum = i;
+                #endregion
+                #region value
+                int recordLen = yeuCauList.Count;
+                int col = 0;
+                for (int j = 0; j < recordLen; j++)
+                {
+                    var yeuCau = yeuCauList[j];
+                    DateTime ngaySinh = convertStudentDateOfBirth(yeuCau.Student.DateOfBirth);
+                    string studentCode = yeuCau.YeuCauDichVu.StudentCode ?? "";
+                    string studentName = yeuCau.YeuCauDichVu.StudentName ?? "";
+                    string email = yeuCau.Student.EmailNhaTruong ?? "";
+                    string phuong = yeuCau.Student.HkttPhuong ?? "";
+                    string quan = yeuCau.Student.HkttQuan ?? "";
+                    string tinh = yeuCau.Student.HkttTinh ?? "";
+                    string classCode = yeuCau.Student.ClassCode ?? "";
+                    string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
+                    string tenKhoa = yeuCau.Faculty.Name ?? "";
+                    string mobile = yeuCau.Student.Mobile ?? "";
+
+                    string kyLuat = yeuCau.YeuCauDichVu.KyLuat ?? "Không";
+                    string namThu = getNamThu(nienKhoa);
+                    string hocKy = "1";
+                    string thoiGianKhoaHoc = getThoiGianKhoaHoc(nienKhoa);
+                    DateTime now = DateTime.Now;
+                    int row = j + 2;
+
+                    col = 0;
+                    ws.Cell(row, ++col).SetValue(studentCode);
+                    ws.Cell(row, ++col).SetValue(studentName);
+                    ws.Cell(row, ++col).SetValue(ngaySinh.ToString("dd/MM/yyyy"));
+                    ws.Cell(row, ++col).SetValue(email);
+                    ws.Cell(row, ++col).SetValue(phuong);
+                    ws.Cell(row, ++col).SetValue(quan);
+                    ws.Cell(row, ++col).SetValue(tinh);
+                    ws.Cell(row, ++col).SetValue(classCode);
+                    ws.Cell(row, ++col).SetValue(nienKhoa);
+                    ws.Cell(row, ++col).SetValue(tenKhoa);
+                    ws.Cell(row, ++col).SetValue(mobile);
+                    ws.Cell(row, ++col).SetValue("Chính quy");
+                    ws.Cell(row, ++col).SetValue(namThu);
+                    ws.Cell(row, col).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+                    ws.Cell(row, ++col).SetValue(hocKy);
+                    ws.Cell(row, col).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+                    ws.Cell(row, ++col).SetValue(namHoc);
+                    ws.Cell(row, col).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+                    ws.Cell(row, ++col).SetValue(thoiGianKhoaHoc);
+                    ws.Cell(row, col).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+                    ws.Cell(row, ++col).SetValue(kyLuat);
+                    ws.Cell(row, col).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+                    ws.Cell(row, ++col).SetValue(now.Day);
+                    ws.Cell(row, ++col).SetValue(now.Month);
+                    ws.Cell(row, ++col).SetValue(now.Year);
+                }
+                for (int j = 0; j < col; j++)
+                {
+                    ws.Column(j + 1).AdjustToContents();
+                }
+                string file = _pathProvider.MapPath($"Templates/Ctsv/uudai_{Guid.NewGuid().ToString()}.xlsx");
+                wb.SaveAs(file);
+                return await FileToByteAsync(file);
+                #endregion
+            }
+        }
+
+        private async Task<byte[]> ExportExcelVayVon(List<DichVuExport> dichVuList)
+        {
+            List<long> ids = new List<long>();
+            foreach (var item in dichVuList)
+            {
+                ids.Add(item.ID);
+            }
+            var yeuCauList = (await _vayVonRepository.GetYeuCauDichVuStudent(ids)).ToList();
+
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                var style = XLWorkbook.DefaultStyle;
+                var ws = wb.Worksheets.Add("Sheet1");
+                ws.Style.Font.SetFontSize(12);
+                ws.Style.Font.SetFontName("Times New Roman");
+
+                
+                var hocPhiThangRow = _thamSoDichVuService.GetParameters(DichVu.VayVonNganHang).FirstOrDefault(p => p.Name == "HocPhiThang");
+                string hocPhiThang = hocPhiThangRow != null ? hocPhiThangRow.Value : "";
+
+                int i = 0;
+                int firstRow = 1;
+                #region title
+                initHeaderCell(ws, firstRow, ++i, "Mã số SV");
+                initHeaderCell(ws, firstRow, ++i, "Họ và tên");
+                initHeaderCell(ws, firstRow, ++i, "Ngày sinh");
+                initHeaderCell(ws, firstRow, ++i, "Giới tính");
+                initHeaderCell(ws, firstRow, ++i, "Lớp");
+                initHeaderCell(ws, firstRow, ++i, "Khoa/Ban quản lý");
+                initHeaderCell(ws, firstRow, ++i, "Số CMTND");
+                initHeaderCell(ws, firstRow, ++i, "Ngày cấp");
+                initHeaderCell(ws, firstRow, ++i, "Nơi cấp");
+                initHeaderCell(ws, firstRow, ++i, "Mã trường");
+                initHeaderCell(ws, firstRow, ++i, "Tên trường");
+                initHeaderCell(ws, firstRow, ++i, "Ngành học");
+                initHeaderCell(ws, firstRow, ++i, "Hệ đào tạo");
+                initHeaderCell(ws, firstRow, ++i, "Khoá");
+                initHeaderCell(ws, firstRow, ++i, "Loại hình đào tạo");
+                initHeaderCell(ws, firstRow, ++i, "Năm nhập học");
+                initHeaderCell(ws, firstRow, ++i, "Thời gian ra trường");
+                initHeaderCell(ws, firstRow, ++i, "Số tiền học phí hàng tháng");
+                initHeaderCell(ws, firstRow, ++i, "Ngày ký");
+                initHeaderCell(ws, firstRow, ++i, "Tháng ký");
+                initHeaderCell(ws, firstRow, ++i, "Năm ký");
+                initHeaderCell(ws, firstRow, ++i, "Số điện thoại");
+
+                ws.Row(firstRow).Height = 32;
+                string tenTruong = "ĐẠI HỌC XÂY DỰNG";
+
+                int colNum = i;
+                #endregion
+                #region value
+                int recordLen = yeuCauList.Count;
+                int col = 0;
+                for (int j = 0; j < recordLen; j++)
+                {
+                    var yeuCau = yeuCauList[j];
+
+                    DateTime? cmtNgayCap = yeuCau.Student.CmtNgayCap;
+                    DateTime ngaySinh = convertStudentDateOfBirth(yeuCau.Student.DateOfBirth);
+                    string studentCode = yeuCau.YeuCauDichVu.StudentCode ?? "";
+                    string studentName = yeuCau.YeuCauDichVu.StudentName ?? "";
+                    string email = yeuCau.Student.EmailNhaTruong ?? "";
+                    string phuong = yeuCau.Student.HkttPhuong ?? "";
+                    string quan = yeuCau.Student.HkttQuan ?? "";
+                    string tinh = yeuCau.Student.HkttTinh ?? "";
+                    string classCode = yeuCau.Student.ClassCode ?? "";
+                    string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
+                    string tenKhoa = yeuCau.Faculty.Name ?? "";
+                    string mobile = yeuCau.Student.Mobile ?? "";
+                    string gioiTinh = yeuCau.Student.GioiTinh ?? "";
+                    gioiTinh = getGender(gioiTinh);
+                    string cmtNoiCap = yeuCau.Student.CmtNoiCap ?? "";
+                    string cmt = yeuCau.Student.Cmt ?? "";
+                    string soDienThoai = mobile;
+                    string nganhHoc = yeuCau.Academics.Name ?? "";
+                    DateTime now = DateTime.Now;
+                    int row = j + 2;
+
+                    col = 0;
+                    ws.Cell(row, ++col).SetValue(studentCode);
+                    ws.Cell(row, ++col).SetValue(studentName);
+                    ws.Cell(row, ++col).SetValue(ngaySinh.ToString("dd/MM/yyyy"));
+                    ws.Cell(row, ++col).SetValue(gioiTinh);
+                    ws.Cell(row, ++col).SetValue(classCode);
+                    ws.Cell(row, ++col).SetValue(tenKhoa);
+                    ws.Cell(row, ++col).SetValue(cmt);
+                    ws.Cell(row, ++col).SetValue(cmtNgayCap?.ToString("dd/MM/yyyy"));
+                    ws.Cell(row, ++col).SetValue(cmtNoiCap);
+                    ws.Cell(row, ++col).SetValue("XD1");
+                    ws.Cell(row, ++col).SetValue(tenTruong);
+                    ws.Cell(row, ++col).SetValue(nganhHoc);
+                    ws.Cell(row, ++col).SetValue("ĐẠI HỌC");
+                    ws.Cell(row, ++col).SetValue(getKhoa(classCode));
+                    ws.Cell(row, ++col).SetValue("Chính quy");
+                    ws.Cell(row, ++col).SetValue(getNamNhapHoc(nienKhoa));
+                    ws.Cell(row, ++col).SetValue(getNamRaTruong(nienKhoa));
+                    ws.Cell(row, ++col).SetValue(hocPhiThang);
+                    ws.Cell(row, ++col).SetValue(now.Day);
+                    ws.Cell(row, ++col).SetValue(now.Month);
+                    ws.Cell(row, ++col).SetValue(now.Year);
+                    ws.Cell(row, ++col).SetValue(soDienThoai);
+                }
+                for (int j = 0; j < col; j++)
+                {
+                    ws.Column(j + 1).AdjustToContents();
+                }
+                #endregion
+                string file = _pathProvider.MapPath($"Templates/Ctsv/vayvon_{Guid.NewGuid().ToString()}.xlsx");
+                wb.SaveAs(file);
+                return await FileToByteAsync(file);
+            }
+        }
+
+        private async Task<byte[]> ExportExcelThueNha(List<DichVuExport> dichVuList)
+        {
+            List<long> ids = new List<long>();
+            foreach (var item in dichVuList)
+            {
+                ids.Add(item.ID);
+            }
+            var yeuCauList = (await _thueNhaRepository.GetYeuCauDichVuStudent(ids)).ToList();
+
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                var style = XLWorkbook.DefaultStyle;
+                var ws = wb.Worksheets.Add("Sheet1");
+                ws.Style.Font.SetFontSize(12);
+                ws.Style.Font.SetFontName("Times New Roman");
+
+                int i = 0;
+                int firstRow = 1;
+                #region title
+                setStyle(ws, firstRow, ++i, "Mã số SV");
+                setStyle(ws, firstRow, ++i, "Họ và tên");
+                setStyle(ws, firstRow, ++i, "Ngày sinh");
+                setStyle(ws, firstRow, ++i, "Email");
+                setStyle(ws, firstRow, ++i, "Xã");
+                setStyle(ws, firstRow, ++i, "Huyện");
+                setStyle(ws, firstRow, ++i, "Tỉnh");
+                setStyle(ws, firstRow, ++i, "Lớp");
+                setStyle(ws, firstRow, ++i, "Niên khóa");
+                setStyle(ws, firstRow, ++i, "Khoa quản lý");
+                setStyle(ws, firstRow, ++i, "Số điện thoại");
+                setStyle(ws, firstRow, ++i, "Hệ đào tạo");
+
+                setStyleUniqueCol(ws, firstRow, ++i, "Năm thứ");
+                setStyleUniqueCol(ws, firstRow, ++i, "Giới tính");
+                setStyleUniqueCol(ws, firstRow, ++i, "Đối tượng\nưu tiên");
+                ws.Cell(firstRow, i).Style.Alignment.WrapText = true;
+                setStyleUniqueCol(ws, firstRow, ++i, "Số CMTND");
+                setStyleUniqueCol(ws, firstRow, ++i, "Cấp\nngày/tháng/năm");
+                ws.Cell(firstRow, i).Style.Alignment.WrapText = true;
+                setStyleUniqueCol(ws, firstRow, ++i, "Nơi cấp");
+
+                setStyle(ws, firstRow, ++i, "Ngày ký");
+                setStyle(ws, firstRow, ++i, "Tháng ký");
+                setStyle(ws, firstRow, ++i, "Năm ký");
+
+                ws.Row(firstRow).Height = 32;
+
+                int colNum = i;
+                #endregion
+                #region value
+                int recordLen = yeuCauList.Count;
+                int col = 0;
+                for (int j = 0; j < recordLen; j++)
+                {
+                    var yeuCau = yeuCauList[j];
+                    DateTime? cmtNgayCap = yeuCau.Student.CmtNgayCap;
+                    DateTime ngaySinh = convertStudentDateOfBirth(yeuCau.Student.DateOfBirth);
+                    string studentCode = yeuCau.YeuCauDichVu.StudentCode ?? "";
+                    string studentName = yeuCau.YeuCauDichVu.StudentName ?? "";
+                    string email = yeuCau.Student.EmailNhaTruong ?? "";
+                    string phuong = yeuCau.Student.HkttPhuong ?? "";
+                    string quan = yeuCau.Student.HkttQuan ?? "";
+                    string tinh = yeuCau.Student.HkttTinh ?? "";
+                    string classCode = yeuCau.Student.ClassCode ?? "";
+                    string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
+                    string tenKhoa = yeuCau.Faculty.Name ?? "";
+                    string mobile = yeuCau.Student.Mobile ?? "";
+                    string gioiTinh = yeuCau.Student.GioiTinh ?? "";
+                    gioiTinh = getGender(gioiTinh);
+                    string cmtNoiCap = yeuCau.Student.CmtNoiCap ?? "";
+                    string cmt = yeuCau.Student.Cmt ?? "";
+                    string soDienThoai = mobile;
+                    string nganhHoc = yeuCau.Academics.Name ?? "";
+                    string doiTuongUuTien = yeuCau.Student.DoiTuongUuTien ?? "";
+                    DateTime now = DateTime.Now;
+                    int row = j + 2;
+
+                    col = 0;
+                    ws.Cell(row, ++col).SetValue(studentCode);
+                    ws.Cell(row, ++col).SetValue(studentName);
+                    ws.Cell(row, ++col).SetValue(ngaySinh.ToString("dd/MM/yyyy"));
+                    ws.Cell(row, ++col).SetValue(email);
+                    ws.Cell(row, ++col).SetValue(phuong);
+                    ws.Cell(row, ++col).SetValue(quan);
+                    ws.Cell(row, ++col).SetValue(tinh);
+                    ws.Cell(row, ++col).SetValue(classCode);
+                    ws.Cell(row, ++col).SetValue(nienKhoa);
+                    ws.Cell(row, ++col).SetValue(tenKhoa);
+                    ws.Cell(row, ++col).SetValue(mobile);
+                    ws.Cell(row, ++col).SetValue("Chính quy");
+                    ws.Cell(row, ++col).SetValue(getNamThu(nienKhoa));
+                    ws.Cell(row, ++col).SetValue(gioiTinh);
+                    ws.Cell(row, ++col).SetValue(doiTuongUuTien);
+                    ws.Cell(row, ++col).SetValue(cmt);
+                    ws.Cell(row, ++col).SetValue(cmtNgayCap?.ToString("dd/MM/yyyy"));
+                    ws.Cell(row, ++col).SetValue(cmtNoiCap);
+                    ws.Cell(row, ++col).SetValue(now.Day);
+                    ws.Cell(row, ++col).SetValue(now.Month);
+                    ws.Cell(row, ++col).SetValue(now.Year);
+                }
+                for (int j = 0; j < col; j++)
+                {
+                    ws.Column(j + 1).AdjustToContents();
+                }
+                #endregion
+                string file = _pathProvider.MapPath($"Templates/Ctsv/vayvon_{Guid.NewGuid().ToString()}.xlsx");
+                wb.SaveAs(file);
+                return await FileToByteAsync(file);
+            }
+        }
+        #endregion
+
+        #region Export Word (docx & zip)
         public async Task<byte[]> ExportWordListAsync(DichVu dichVu, List<DichVuExport> dichVuList)
         {
             List<string> dirs = new List<string>();
@@ -662,12 +1074,20 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
         public async Task<byte[]> ExportWordAsync(DichVu dichVu, int id)
         {
-            var exportOutput = await GetExportOutput(dichVu, id);
-            if (exportOutput != null)
+            try
             {
-                return await DocumentToByteAsync(exportOutput.document, exportOutput.filePath);
+                var exportOutput = await GetExportOutput(dichVu, id);
+                if (exportOutput != null)
+                {
+                    return await DocumentToByteAsync(exportOutput.document, exportOutput.filePath);
+                }
+                return null;
             }
-            return null;
+            catch (Exception ex)
+            {
+                _logger.LogError("hihi: ", ex.Message, " |||| \n", ex.ToString());
+                throw ex;
+            }
         }
 
         private async Task<ExportFileOutputModel> GetExportOutput(DichVu dichVu, int id)
@@ -687,20 +1107,6 @@ namespace nuce.web.api.Services.Ctsv.Implements
             }
             return null;
         }
-
-        private async Task<byte[]> DocumentToByteAsync(DocumentModel document, string filePath)
-        {
-            if (string.IsNullOrEmpty(filePath))
-            {
-                string fileName = Guid.NewGuid().ToString();
-                filePath = _pathProvider.MapPath($"Templates/Ctsv/{fileName}.docx");
-            }
-            document.Save(filePath);
-            byte[] byteArr = await File.ReadAllBytesAsync(filePath);
-            File.Delete(filePath);
-            return byteArr;
-        }
-
         private async Task<ExportFileOutputModel> ExportWordXacNhan(int id)
         {
             var xacNhan = await _xacNhanRepository.FindByIdAsync(id);
@@ -2357,6 +2763,27 @@ namespace nuce.web.api.Services.Ctsv.Implements
             return new ExportFileOutputModel { document = document, filePath = filePath };
         }
 
+        #endregion
+
+        #region Helper
+        private async Task<byte[]> FileToByteAsync(string filePath)
+        {
+            byte[] byteArr = await File.ReadAllBytesAsync(filePath);
+            File.Delete(filePath);
+            return byteArr;
+        }
+
+        private async Task<byte[]> DocumentToByteAsync(DocumentModel document, string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath))
+            {
+                string fileName = Guid.NewGuid().ToString();
+                filePath = _pathProvider.MapPath($"Templates/Ctsv/{fileName}.docx");
+            }
+            document.Save(filePath);
+            return await FileToByteAsync(filePath);
+        }
+
         private string getGender(string gender)
         {
             if (string.IsNullOrEmpty(gender?.Trim()))
@@ -2409,5 +2836,42 @@ namespace nuce.web.api.Services.Ctsv.Implements
             int iNamKetThuc = int.Parse(namKetThuc);
             return (iNamKetThuc - iNamBatDau).ToString();
         }
+
+        private void setStyle(IXLWorksheet ws, int row, int col, string value)
+        {
+            initHeaderCell(ws, row, col, value);
+            ws.Cell(row, col).Style.Fill.SetBackgroundColor(XLColor.Yellow);
+        }
+
+        private void setStyleUniqueCol(IXLWorksheet ws, int row, int col, string value)
+        {
+            initHeaderCell(ws, row, col, value);
+            ws.Cell(row, col).Style.Fill.SetBackgroundColor(XLColor.White);
+        }
+
+        private void initHeaderCell(IXLWorksheet ws, int row, int col, string value)
+        {
+            ws.Cell(row, col).SetValue(value);
+            ws.Cell(row, col).Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+            ws.Cell(row, col).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            ws.Cell(row, col).Style.Font.Bold = true;
+        }
+
+        private DateTime convertStudentDateOfBirth(string dateOfBirth)
+        {
+            DateTime NgaySinh;
+            string tmpNgaySinh = dateOfBirth ?? "1/1/1980";
+            try
+            {
+                NgaySinh = DateTime.ParseExact(tmpNgaySinh, "dd/MM/yy", CultureInfo.InvariantCulture);
+            }
+            catch (Exception)
+            {
+                NgaySinh = DateTime.Parse(tmpNgaySinh);
+            }
+            return NgaySinh;
+        }
+
+        #endregion
     }
 }

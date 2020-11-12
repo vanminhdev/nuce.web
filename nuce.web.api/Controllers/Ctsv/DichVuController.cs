@@ -130,5 +130,14 @@ namespace nuce.web.api.Controllers.Ctsv
             var result = await _dichVuService.ExportWordListAsync(model.DichVuType, model.DichVuList);
             return new FileStreamResult(new MemoryStream(result), "application/octet-stream");
         }
+
+        [Authorize(Roles = "Admin")]
+        [Route("admin/export-excel")]
+        [HttpPost]
+        public async Task<FileStreamResult> ExportExcel([FromBody] ExportModel model)
+        {
+            var result = await _dichVuService.ExportExcelAsync(model.DichVuType, model.DichVuList);
+            return new FileStreamResult(new MemoryStream(result), "application/octet-stream");
+        }
     }
 }

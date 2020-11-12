@@ -14,5 +14,6 @@ namespace nuce.web.api.Repositories.Ctsv.Interfaces
         public bool IsDuplicated(long studentId, string reason = null);
         public AllTypeDichVuModel GetRequestInfo();
         public Task<Entity> FindByIdAsync(long id);
+        public Task<IEnumerable<YeuCauDichVuStudentModel<Entity>>> GetYeuCauDichVuStudent(List<long> ids);
     }
 }

@@ -56,13 +56,15 @@ namespace nuce.web.quanly.Controllers
         private static Dictionary<string, string> ExportApiSet = new Dictionary<string, string>
         {
             { "word", "api/dichVu/admin/export-word" },
-            { "word-list", "api/dichVu/admin/export-word-list" }
+            { "word-list", "api/dichVu/admin/export-word-list" },
+            { "excel", "api/dichVu/admin/export-excel" }
         };
 
         private static Dictionary<string, string> MimeTypeSet = new Dictionary<string, string>
         {
             { "docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document" },
-            { "zip", "application/zip" }
+            { "zip", "application/zip" },
+            { "xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" },
         };
 
         [HttpPost]
