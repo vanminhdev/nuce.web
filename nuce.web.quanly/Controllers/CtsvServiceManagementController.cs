@@ -53,6 +53,24 @@ namespace nuce.web.quanly.Controllers
             return Json(response);
         }
 
+        [HttpPost]
+        public async Task<ActionResult> UpdateMultiStatus(UpdateMultiStatusModel model)
+        {
+            string api = "api/dichVu/admin/update-status/multi/four";
+            var stringContent = base.MakeContent(model);
+            var response = await base.MakeRequestAuthorizedAsync("put", api, stringContent);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized || response.StatusCode == HttpStatusCode.Forbidden)
+            {
+                return Redirect($"/notfound?message={HttpUtility.UrlEncode("Không có quyền truy cập")}");
+            }
+            else if (response.IsSuccessStatusCode)
+            {
+                return Json(response);
+            }
+            return Json(response);
+        }
+
         private static Dictionary<string, string> ExportApiSet = new Dictionary<string, string>
         {
             { "word", "api/dichVu/admin/export-word" },

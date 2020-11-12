@@ -53,8 +53,8 @@ namespace nuce.web.api.ViewModel.Ctsv
         public int Type { get; set; }
         public int RequestID { get; set; }
         public string PhanHoi { get; set; }
-        public DateTime? NgayBatDau { get; set; }
-        public DateTime? NgayKetThuc { get; set; }
+        public DateTime? NgayHenBatDau { get; set; }
+        public DateTime? NgayHenKetThuc { get; set; }
         public bool AutoUpdateNgayHen { get; set; }
         public int Status { get; set; }
     }
@@ -95,5 +95,17 @@ namespace nuce.web.api.ViewModel.Ctsv
     {
         public DocumentModel document { get; set; }
         public string filePath { get; set; }
+    }
+
+    public class UpdateStatusMultiFourModel
+    {
+        public DichVu LoaiDichVu { get; set; }
+        public List<DichVuExport> YeuCauList { get; set; }
+    }
+
+    public class GetUpdateStatusNgayHenModel
+    {
+        public DateTime? NgayHenBatDau { get; set; }
+        public DateTime? NgayHenKetThuc { get; set; }
     }
 }

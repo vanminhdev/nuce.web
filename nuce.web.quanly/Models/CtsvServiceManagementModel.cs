@@ -80,10 +80,16 @@ namespace nuce.web.quanly.Models
         public int Type { get; set; }
         public int RequestId { get; set; }
         public string PhanHoi { get; set; }
-        public string NgayBatDau { get; set; }
-        public string NgayKetThuc { get; set; }
+        public string NgayHenBatDau { get; set; }
+        public string NgayHenKetThuc { get; set; }
         public bool AutoUpdateNgayHen { get; set; }
         public int Status { get; set; }
+    }
+
+    public class UpdateMultiStatusModel
+    {
+        public int LoaiDichVu { get; set; }
+        public List<DichVuExport> YeuCauList { get; set; }
     }
 
     public class ExportModel

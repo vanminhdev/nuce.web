@@ -63,7 +63,7 @@
                     In
                 </button>
                 <button type="button" class="btn btn-info"
-                        onclick="">
+                        onclick="showConfirm()">
                     Chuyển trạng thái
                 </button>
             </div>
@@ -202,6 +202,27 @@
                 </div>
             </div>
         </div>
+        <!-- Modal confirm -->
+        <div id="myModalConfirm" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title" style="text-align: center;">Xác nhận</h4>
+                    </div>
+                    <div class="modal-body" style="text-align: center;">
+                        <p id="h-confirm-content"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Thoát</button>
+                        <button id="btn-activate" type="button" 
+                                onclick="onUpdateMultiStatus()"
+                                class="btn btn-primary">Xác nhận</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -293,11 +314,14 @@
                         let options = `<option value="3">Đã tiếp nhận và đang xử lý</option>
                                 <option value="4">Đã xử lý và có lịch hẹn</option>
                                 <option value="5">Từ chối dịch vụ</option>`;
-                        let status = item.DichVu.status;
-                        switch(status * 1) {
+                        let status = item.DichVu.status * 1;
+                        console.log('status: ', status);
+                        switch(status) {
                             case 3:
                                 options = `<option value="4">Đã xử lý và có lịch hẹn</option>
                                         <option value="5">Từ chối dịch vụ</option>`;
+                                status =4;
+                                break;
                             case 4:
                                 options = `<option value="5">Từ chối dịch vụ</option>`;
                                 status = 5;
@@ -558,8 +582,15 @@
             ]
         });
 
+        var showConfirm = function() {
+            if (selectedDataIsValid()) {
+                $('#myModalConfirm').modal('show');
+            }
+        }
+
         var onChangeStatus = function(event) {
             const selectedStatus = Number(event.value);
+            console.log('sfsf: ', selectedStatus, event.value);
             if (!selectedStatus) return;
             switch (selectedStatus) {
                 case 3:
@@ -641,12 +672,11 @@
         }
 
         var getDataToExportMultiYeuCau = function() {
-            const selectedData = [];
-            if (selectedIndex.length < 1) {
-                $("#h_noidung_thongbao").html("Không có yêu cầu dịch vụ nào được chọn");
-                $('#myModalThongBao').modal();
+            if (!selectedDataIsValid()) {
                 return;
             }
+            const selectedData = [];            
+
             dataList.forEach((item, index) => {
                 if (selectedIndex.includes(index)) {
                     selectedData.push({
@@ -655,6 +685,15 @@
                 }
             });
             return selectedData;
+        }
+
+        var selectedDataIsValid = function(){
+            if (selectedIndex.length < 1) {
+                $("#h_noidung_thongbao").html("Không có yêu cầu dịch vụ nào được chọn");
+                $('#myModalThongBao').modal();
+                return false;
+            }
+            return true;
         }
 
         var getNgayHen = function(status = 0, auto = true) {
@@ -749,8 +788,8 @@
                 Type: serviceType,
                 RequestId: selectedYeuCau.DichVu.id,
                 PhanHoi: '',
-                NgayBatDau: '',
-                NgayKetThuc: '',
+                NgayHenBatDau: '',
+                NgayHenKetThuc: '',
                 AutoUpdateNgayHen: true,
                 Status: $('#slUpdateStatus').val(),
             };
@@ -763,8 +802,8 @@
                     return;
                 }
                 data.AutoUpdateNgayHen = autoNgayHen;
-                data.NgayBatDau = rsNgayHen.strNgayBatDau;
-                data.NgayKetThuc = rsNgayHen.strNgayKetThuc;
+                data.NgayHenBatDau = rsNgayHen.strNgayBatDau;
+                data.NgayHenKetThuc = rsNgayHen.strNgayKetThuc;
             } else if (data.Status * 1 === 5) {
                 data.PhanHoi = $('#PhanHoi').val();
             }
@@ -773,10 +812,47 @@
             $('#update-status-modal').modal('hide');
         };
 
+        var onUpdateMultiStatus = function() {
+            const data = getDataToExportMultiYeuCau();
+            if (data.length < 1) {
+                return;
+            }
+            $('#myModalConfirm').modal('hide');
+            const body = {
+                LoaiDichVu: serviceType,
+                YeuCauList: data,
+            };
+            callApiUpdateMultiStatus(body);
+        };
+
         var callApiUpdateStatus = function(data) {
             $.ajax({
                 type: 'POST',
                 url: `@Url.Action("UpdateStatus", "CtsvServiceManagement")`,
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+            }).done(res => {
+                console.log(res);
+                if (res.StatusCode === 200) {
+                    $("#h_noidung_thongbao").html("Cập nhật thành công");
+                    $('#myModalThongBao').modal();
+                    searchData();
+                } else {
+                    $("#h_noidung_thongbao").html("Lỗi hệ thống");
+                    $('#myModalThongBao').modal();    
+                }
+            }).fail(err => {
+                console.log(err);
+                $("#h_noidung_thongbao").html("Lỗi hệ thống");
+                $('#myModalThongBao').modal();
+            });
+        }
+
+        var callApiUpdateMultiStatus = function(data) {
+            $.ajax({
+                type: 'POST',
+                url: `@Url.Action("UpdateMultiStatus", "CtsvServiceManagement")`,
                 data: JSON.stringify(data),
                 dataType: 'json',
                 contentType: 'application/json',

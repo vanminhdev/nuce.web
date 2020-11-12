@@ -114,6 +114,22 @@ namespace nuce.web.api.Controllers.Ctsv
         }
 
         [Authorize(Roles = "Admin")]
+        [Route("admin/update-status/multi/four")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateStatusMultiFour([FromBody] UpdateStatusMultiFourModel model)
+        {
+            try
+            {
+                await _dichVuService.UpdateMultiRequestToFourStatus(model.LoaiDichVu, model.YeuCauList);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { Message = ex.Message, Data = ex });
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
         [Route("admin/export-word")]
         [HttpPost]
         public async Task<FileStreamResult> ExportWord([FromBody] ExportModel model)

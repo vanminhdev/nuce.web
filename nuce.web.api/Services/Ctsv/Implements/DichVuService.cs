@@ -424,37 +424,116 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
         public async Task<ResponseBody> UpdateRequestStatus(UpdateRequestStatusModel model)
         {
+            var ngayHen = getUpdateStatusNgayHen(model);
+            var fromDate = ngayHen.NgayHenBatDau;
+            var toDate = ngayHen.NgayHenKetThuc;
+
+            try
+            {
+                using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                {
+                    var run = await updateStatusAsync((DichVu)model.Type, new UpdateRequestStatusModel
+                    {
+                        NgayHenBatDau = fromDate,
+                        NgayHenKetThuc = toDate,
+                        PhanHoi = model.PhanHoi,
+                        Status = model.Status,
+                        RequestID = model.RequestID,
+                        Type = model.Type
+                    });
+                    if (run)
+                    {
+                        await _unitOfWork.SaveAsync();
+                    }
+                    scope.Complete();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Cập nhật trạng thái yêu cầu dịch vụ", $"{ex.ToString()} \n", JsonConvert.SerializeObject(model));
+                return new ResponseBody { Data = ex, Message = "Lỗi hệ thống" };
+            }
+            return null;
+        }
+
+        public async Task UpdateMultiRequestToFourStatus(DichVu loaiDichVu, List<DichVuExport> dichVuList)
+        {
+            int status = (int)TrangThaiYeuCau.DaXuLyVaCoLichHen;
+
+            var ngayHen = getUpdateStatusNgayHen(new UpdateRequestStatusModel
+            {
+                AutoUpdateNgayHen = true,
+                Status = status,
+            });
+            var fromDate = ngayHen.NgayHenBatDau;
+            var toDate = ngayHen.NgayHenKetThuc;
+
+            int count = 0;
+            try
+            {
+                using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                {
+                    foreach (var item in dichVuList)
+                    {
+                        bool run = await updateStatusAsync(loaiDichVu, new UpdateRequestStatusModel
+                        {
+                            RequestID = item.ID,
+                            NgayHenBatDau = fromDate,
+                            NgayHenKetThuc = toDate,
+                            PhanHoi = null,
+                            Status = status,
+                            Type = (int)loaiDichVu,
+                        });
+                        if (run)
+                        {
+                            count++;
+                        }
+                    }
+                    if (count > 0)
+                    {
+                        await _unitOfWork.SaveAsync();
+                    }
+                    scope.Complete();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Cập nhật các yêu cầu lên trạng thái 4", $"{ex.ToString()} \n", JsonConvert.SerializeObject(new { loaiDichVu, dichVuList }));
+                throw ex;
+            }
+        }
+
+        private GetUpdateStatusNgayHenModel getUpdateStatusNgayHen(UpdateRequestStatusModel model)
+        {
             DateTime now = DateTime.Now;
             var dayOfWeek = (int)now.DayOfWeek;
             bool earlierThanFriday = now.DayOfWeek < DayOfWeek.Friday;
             bool isMorning = now.Hour <= 13;
             bool daXuLyCoLichHen = (TrangThaiYeuCau)model.Status == TrangThaiYeuCau.DaXuLyVaCoLichHen;
 
-            DateTime? ngayTao = DateTime.Now;
-            AsAcademyStudent student = null;
-            #region ngay hen
             DateTime? fromDate = null;
             DateTime? toDate = null;
             if (daXuLyCoLichHen && !model.AutoUpdateNgayHen)
             {
-                if (model.NgayBatDau == null)
+                if (model.NgayHenBatDau == null)
                 {
-                    return new ResponseBody { Message = "Ngày bắt đầu không được trống" };
+                    throw new Exception("Ngày bắt đầu không được trống");
+
                 }
-                else if (model.NgayKetThuc == null)
+                else if (model.NgayHenKetThuc == null)
                 {
-                    return new ResponseBody { Message = "Ngày kết thúc không được trống" };
+                    throw new Exception("Ngày kết thúc không được trống");
                 }
-                else if (model.NgayBatDau < now)
+                else if (model.NgayHenBatDau < now)
                 {
-                    return new ResponseBody { Message = "Ngày bắt đầu không được nhỏ hơn hiện tại" };
+                    throw new Exception("Ngày bắt đầu không được nhỏ hơn hiện tại");
                 }
-                else if (model.NgayBatDau > model.NgayKetThuc)
+                else if (model.NgayHenBatDau > model.NgayHenKetThuc)
                 {
-                    return new ResponseBody { Message = "Ngày bắt đầu không được lớn hơn ngày kết thúc" };
+                    throw new Exception("Ngày bắt đầu không được lớn hơn ngày kết thúc");
                 }
-                fromDate = model.NgayBatDau;
-                toDate = model.NgayKetThuc;
+                fromDate = model.NgayHenBatDau;
+                toDate = model.NgayHenKetThuc;
             }
             else if (daXuLyCoLichHen && model.AutoUpdateNgayHen)
             {
@@ -483,108 +562,101 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 }
                 toDate = fromDate?.AddMonths(1);
             }
+            return new GetUpdateStatusNgayHenModel { NgayHenBatDau = fromDate, NgayHenKetThuc = toDate };
+        }
+
+        private async Task<bool> updateStatusAsync(DichVu loaiDichVu, UpdateRequestStatusModel model)
+        {
+            bool anyAction = false;
+
+            AsAcademyStudent student = null;
+            DateTime? ngayTao = DateTime.Now;
+            #region dich vu
+            switch (loaiDichVu)
+            {
+                case DichVu.XacNhan:
+                    var xacNhan = await _xacNhanRepository.FindByIdAsync(model.RequestID);
+                    xacNhan.Status = model.Status;
+                    xacNhan.NgayHenTuNgay = model.NgayHenBatDau;
+                    xacNhan.NgayHenDenNgay = model.NgayHenKetThuc;
+                    xacNhan.PhanHoi = model.PhanHoi;
+                    ngayTao = xacNhan.CreatedTime;
+
+                    student = _studentRepository.FindByCode(xacNhan.StudentCode);
+                    break;
+                case DichVu.GioiThieu:
+                    var gioiThieu = await _gioiThieuRepository.FindByIdAsync(model.RequestID);
+                    gioiThieu.Status = model.Status;
+                    gioiThieu.NgayHenTuNgay = model.NgayHenBatDau;
+                    gioiThieu.NgayHenDenNgay = model.NgayHenKetThuc;
+                    gioiThieu.PhanHoi = model.PhanHoi;
+                    ngayTao = gioiThieu.CreatedTime;
+
+                    student = _studentRepository.FindByCode(gioiThieu.StudentCode);
+                    break;
+                case DichVu.ThueNha:
+                    var thueNha = await _thueNhaRepository.FindByIdAsync(model.RequestID);
+                    thueNha.Status = model.Status;
+                    thueNha.NgayHenTuNgay = model.NgayHenBatDau;
+                    thueNha.NgayHenDenNgay = model.NgayHenKetThuc;
+                    thueNha.PhanHoi = model.PhanHoi;
+                    ngayTao = thueNha.CreatedTime;
+
+                    student = _studentRepository.FindByCode(thueNha.StudentCode);
+                    break;
+                case DichVu.UuDaiGiaoDuc:
+                    var uuDai = await _uuDaiRepository.FindByIdAsync(model.RequestID);
+                    uuDai.Status = model.Status;
+                    uuDai.PhanHoi = model.PhanHoi;
+                    uuDai.NgayHenTuNgay = model.NgayHenBatDau;
+                    uuDai.NgayHenDenNgay = model.NgayHenKetThuc;
+                    ngayTao = uuDai.CreatedTime;
+
+                    student = _studentRepository.FindByCode(uuDai.StudentCode);
+                    break;
+                case DichVu.VayVonNganHang:
+                    var vayVon = await _vayVonRepository.FindByIdAsync(model.RequestID);
+                    vayVon.Status = model.Status;
+                    vayVon.PhanHoi = model.PhanHoi;
+                    vayVon.NgayHenTuNgay = model.NgayHenBatDau;
+                    vayVon.NgayHenDenNgay = model.NgayHenKetThuc;
+                    ngayTao = vayVon.CreatedTime;
+
+                    student = _studentRepository.FindByCode(vayVon.StudentCode);
+                    break;
+                default:
+                    break;
+            }
             #endregion
-            bool run = true;
-
-            try
+            if (student != null)
             {
-                using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                #region email
+                var dichVu = DichVuDictionary[(int)loaiDichVu];
+                var trangThai = TrangThaiYeuCauDictionary[model.Status];
+                string tinNhanTitle = $"Thông báo về việc {trangThai} {dichVu.TenDichVu}";
+                string tinNhanCode = $"{dichVu.TinNhanCode}_CHUYENTRANGTHAI_{model.Status}";
+                TinNhanModel tinNhan = new TinNhanModel
                 {
-                    #region dich vu
-                    switch ((DichVu)model.Type)
-                    {
-                        case DichVu.XacNhan:
-                            var xacNhan = await _xacNhanRepository.FindByIdAsync(model.RequestID);
-                            xacNhan.PhanHoi = model.PhanHoi;
-                            xacNhan.Status = model.Status;
-                            xacNhan.NgayHenTuNgay = fromDate;
-                            xacNhan.NgayHenDenNgay = toDate;
-                            ngayTao = xacNhan.CreatedTime;
-
-                            student = _studentRepository.FindByCode(xacNhan.StudentCode);
-                            break;
-                        case DichVu.GioiThieu:
-                            var gioiThieu = await _gioiThieuRepository.FindByIdAsync(model.RequestID);
-                            gioiThieu.PhanHoi = model.PhanHoi;
-                            gioiThieu.Status = model.Status;
-                            gioiThieu.NgayHenTuNgay = fromDate;
-                            gioiThieu.NgayHenDenNgay = toDate;
-                            ngayTao = gioiThieu.CreatedTime;
-
-                            student = _studentRepository.FindByCode(gioiThieu.StudentCode);
-                            break;
-                        case DichVu.ThueNha:
-                            var thueNha = await _thueNhaRepository.FindByIdAsync(model.RequestID);
-                            thueNha.PhanHoi = model.PhanHoi;
-                            thueNha.Status = model.Status;
-                            thueNha.NgayHenTuNgay = fromDate;
-                            thueNha.NgayHenDenNgay = toDate;
-                            ngayTao = thueNha.CreatedTime;
-
-                            student = _studentRepository.FindByCode(thueNha.StudentCode);
-                            break;
-                        case DichVu.UuDaiGiaoDuc:
-                            var uuDai = await _uuDaiRepository.FindByIdAsync(model.RequestID);
-                            uuDai.PhanHoi = model.PhanHoi;
-                            uuDai.Status = model.Status;
-                            uuDai.NgayHenTuNgay = fromDate;
-                            uuDai.NgayHenDenNgay = toDate;
-                            ngayTao = uuDai.CreatedTime;
-
-                            student = _studentRepository.FindByCode(uuDai.StudentCode);
-                            break;
-                        case DichVu.VayVonNganHang:
-                            var vayVon = await _vayVonRepository.FindByIdAsync(model.RequestID);
-                            vayVon.PhanHoi = model.PhanHoi;
-                            vayVon.Status = model.Status;
-                            vayVon.NgayHenTuNgay = fromDate;
-                            vayVon.NgayHenDenNgay = toDate;
-                            ngayTao = vayVon.CreatedTime;
-
-                            student = _studentRepository.FindByCode(vayVon.StudentCode);
-                            break;
-                        default:
-                            run = false;
-                            break;
-                    }
-                    #endregion
-                    if (run)
-                    {
-                        #region email
-                        var dichVu = DichVuDictionary[model.Type];
-                        var trangThai = TrangThaiYeuCauDictionary[model.Status];
-                        string tinNhanTitle = $"Thông báo về việc {trangThai} {dichVu.TenDichVu}";
-                        string tinNhanCode = $"{dichVu.TinNhanCode}_CHUYENTRANGTHAI_{model.Status}";
-                        TinNhanModel tinNhan = new TinNhanModel
-                        {
-                            StudentCode = student.Code,
-                            StudentEmail = student.EmailNhaTruong,
-                            StudentName = student.FulName,
-                            StudentID = (int)student.Id,
-                            TinNhanCode = tinNhanCode,
-                            TinNhanTitle = tinNhanTitle,
-                            TenDichVu = dichVu.TenDichVu,
-                            YeuCauStatus = model.Status,
-                            NgayHen = fromDate,
-                            NgayTao = ngayTao
-                        };
-                        var sendEmailRs = await _emailService.SendEmailUpdateStatusRequest(tinNhan);
-                        if (sendEmailRs != null)
-                        {
-                            return sendEmailRs;
-                        }
-                        #endregion
-                        await _unitOfWork.SaveAsync();
-                    }
-                    scope.Complete();
+                    StudentCode = student.Code,
+                    StudentEmail = student.EmailNhaTruong,
+                    StudentName = student.FulName,
+                    StudentID = (int)student.Id,
+                    TinNhanCode = tinNhanCode,
+                    TinNhanTitle = tinNhanTitle,
+                    TenDichVu = dichVu.TenDichVu,
+                    YeuCauStatus = model.Status,
+                    NgayHen = model.NgayHenBatDau,
+                    NgayTao = ngayTao,
+                };
+                var sendEmailRs = await _emailService.SendEmailUpdateStatusRequest(tinNhan);
+                if (sendEmailRs != null)
+                {
+                    throw new Exception(sendEmailRs.Message);
                 }
+                anyAction = true;
+                #endregion
             }
-            catch (Exception ex)
-            {
-                _logger.LogError("Cập nhật trạng thái yêu cầu dịch vụ", $"{ex.ToString()} \n", JsonConvert.SerializeObject(model));
-                return new ResponseBody { Data = ex, Message = "Lỗi hệ thống" };
-            }
-            return null;
+            return anyAction;
         }
 
         #region Export Excel
@@ -2762,7 +2834,6 @@ namespace nuce.web.api.Services.Ctsv.Implements
             string filePath = _pathProvider.MapPath($"Templates/Ctsv/thuektx_{studentInfo.Student.Code}_{DateTime.Now.ToFileTime()}.docx");
             return new ExportFileOutputModel { document = document, filePath = filePath };
         }
-
         #endregion
 
         #region Helper

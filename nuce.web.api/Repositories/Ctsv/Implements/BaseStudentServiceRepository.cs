@@ -133,6 +133,11 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
             return result;
         }
 
+        public async Task<Entity> FindByIdAsync(long id)
+        {
+            return await _context.Set<Entity>().FindAsync(id);
+        }
+
         private object getValue(Entity entity, string field)
         {
             return entity.GetType().GetProperty(field).GetValue(entity, null);
@@ -144,9 +149,5 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
             return value != null ? value.ToString().ToLower() : "";
         }
 
-        public async Task<Entity> FindByIdAsync(long id)
-        {
-            return await _context.Set<Entity>().FindAsync(id);
-        }
     }
 }
