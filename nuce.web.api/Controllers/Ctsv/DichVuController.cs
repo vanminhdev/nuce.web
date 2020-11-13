@@ -50,20 +50,16 @@ namespace nuce.web.api.Controllers.Ctsv
         {
             try
             {
-                var addDichVuResult = await _dichVuService.AddDichVu(model);
-                if (addDichVuResult != null && addDichVuResult.StatusCode == System.Net.HttpStatusCode.Conflict)
-                {
-                    return Conflict(addDichVuResult);
-                }
-                if (addDichVuResult != null)
-                {
-                    return BadRequest(addDichVuResult);
-                }
+                await _dichVuService.AddDichVu(model);
                 return Ok();
+            }
+            catch (DuplicateWaitObjectException ex)
+            {
+                return Conflict(new ResponseBody { Data = ex, StatusCode = HttpStatusCode.Conflict, Message = "Trùng yêu cầu dịch vụ" });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest(new ResponseBody { Data = ex, Message = ex.Message ?? "Lỗi hệ thống" });
             }
         }
 

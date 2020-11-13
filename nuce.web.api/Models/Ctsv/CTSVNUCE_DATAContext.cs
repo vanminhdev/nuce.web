@@ -31,6 +31,7 @@ namespace nuce.web.api.Models.Ctsv
         public virtual DbSet<AsAcademyStudentSvThietLapThamSoDichVu> AsAcademyStudentSvThietLapThamSoDichVu { get; set; }
         public virtual DbSet<AsAcademyStudentSvThueNha> AsAcademyStudentSvThueNha { get; set; }
         public virtual DbSet<AsAcademyStudentSvVayVonNganHang> AsAcademyStudentSvVayVonNganHang { get; set; }
+        public virtual DbSet<AsAcademyStudentSvVeXeBus> AsAcademyStudentSvVeXeBus { get; set; }
         public virtual DbSet<AsAcademyStudentSvXacNhan> AsAcademyStudentSvXacNhan { get; set; }
         public virtual DbSet<AsAcademyStudentSvXacNhanUuDaiTrongGiaoDuc> AsAcademyStudentSvXacNhanUuDaiTrongGiaoDuc { get; set; }
         public virtual DbSet<AsAcademyStudentThiHsg> AsAcademyStudentThiHsg { get; set; }
@@ -46,7 +47,7 @@ namespace nuce.web.api.Models.Ctsv
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -723,6 +724,53 @@ namespace nuce.web.api.Models.Ctsv
                 entity.Property(e => e.ThuocDien).HasMaxLength(10);
 
                 entity.Property(e => e.ThuocDoiTuong).HasMaxLength(10);
+            });
+
+            modelBuilder.Entity<AsAcademyStudentSvVeXeBus>(entity =>
+            {
+                entity.ToTable("AS_Academy_Student_SV_VeXeBus");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CreatedTime).HasColumnType("datetime");
+
+                entity.Property(e => e.DeletedTime).HasColumnType("datetime");
+
+                entity.Property(e => e.LastModifiedTime).HasColumnType("datetime");
+
+                entity.Property(e => e.MaXacNhan)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.NgayGui).HasColumnType("datetime");
+
+                entity.Property(e => e.NgayHenDenNgay)
+                    .HasColumnName("NgayHen_DenNgay")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.NgayHenTuNgay)
+                    .HasColumnName("NgayHen_TuNgay")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.StudentCode)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.StudentId).HasColumnName("StudentID");
+
+                entity.Property(e => e.StudentName)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.TuyenCode)
+                    .HasColumnName("Tuyen_Code")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TuyenName).HasColumnName("Tuyen_Name");
+
+                entity.Property(e => e.TuyenType).HasColumnName("Tuyen_Type");
             });
 
             modelBuilder.Entity<AsAcademyStudentSvXacNhan>(entity =>

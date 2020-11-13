@@ -109,7 +109,7 @@ namespace nuce.web.api.Services.Core.Implements
 
                     result = isvalid == 1;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     result = false;
                     message = "Lỗi khi gọi service đào tạo";

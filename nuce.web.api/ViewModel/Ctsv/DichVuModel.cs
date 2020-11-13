@@ -20,6 +20,10 @@ namespace nuce.web.api.ViewModel.Ctsv
         public string VeViec { get; set; }
         public string MaXacNhan { get; set; }
         public string PhanHoi { get; set; }
+        public int VeBusTuyenType { get; set; }
+        public string VeBusTuyenCode { get; set; }
+        public string VeBusTuyenName { get; set; }
+        public string VeBusNoiNhanThe { get; set; }
     }
 
     public class AllTypeDichVuModel

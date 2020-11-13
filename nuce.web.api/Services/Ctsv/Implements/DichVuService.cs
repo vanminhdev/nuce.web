@@ -37,6 +37,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
         private readonly IThueNhaRepository _thueNhaRepository;
         private readonly ILoaiDichVuRepository _loaiDichVuRepository;
         private readonly IStudentRepository _studentRepository;
+        private readonly IVeXeBusRepository _veXeBusRepository;
 
         private readonly IThamSoDichVuService _thamSoDichVuService;
         private readonly IUserService _userService;
@@ -52,7 +53,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             IUnitOfWork _unitOfWork, IEmailService _emailService, ILogService _logService,
             ILoaiDichVuRepository _loaiDichVuRepository, IStudentRepository _studentRepository,
             IThamSoDichVuService _thamSoDichVuService, IPathProvider _pathProvider,
-            ILogger<DichVuService> _logger
+            ILogger<DichVuService> _logger, IVeXeBusRepository _veXeBusRepository
         )
         {
             this._xacNhanRepository = _xacNhanRepository;
@@ -60,6 +61,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             this._uuDaiRepository = _uuDaiRepository;
             this._vayVonRepository = _vayVonRepository;
             this._thueNhaRepository = _thueNhaRepository;
+            this._veXeBusRepository = _veXeBusRepository;
             this._loaiDichVuRepository = _loaiDichVuRepository;
             this._studentRepository = _studentRepository;
 
@@ -73,25 +75,23 @@ namespace nuce.web.api.Services.Ctsv.Implements
         }
         #endregion
 
-        public async Task<ResponseBody> AddDichVu(DichVuModel model)
+        public async Task AddDichVu(DichVuModel model)
         {
             var currentStudent = _userService.GetCurrentStudent();
             if (currentStudent == null)
             {
-                return new ResponseBody { Message = "Sinh viên không tồn tại trong hệ thống" };
+                throw new Exception("Sinh viên không tồn tại trong hệ thống");
             }
 
             if (!(currentStudent.DaXacThucEmailNhaTruong ?? false))
             {
-                return new ResponseBody { Message = "Chưa xác thực email nhà trường" };
+                throw new Exception("Chưa xác thực email nhà trường");
             }
 
             int studentID = Convert.ToInt32(currentStudent.Id);
             var now = DateTime.Now;
 
-            int requestStatus = (int)Common.Ctsv.TrangThaiYeuCau.DaGuiLenNhaTruong;
-            string duplicateMsg = "Trùng yêu cầu dịch vụ";
-            var duplicateCode = HttpStatusCode.Conflict;
+            int requestStatus = (int)TrangThaiYeuCau.DaGuiLenNhaTruong;
 
             bool run = true;
 
@@ -100,12 +100,12 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 #region thêm yêu cầu và gửi mail
                 using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                 {
-                    switch (model.Type)
+                    switch ((DichVu)model.Type)
                     {
-                        case (int)Common.Ctsv.DichVu.XacNhan:
+                        case DichVu.XacNhan:
                             if (_xacNhanRepository.IsDuplicated(currentStudent.Id, model.LyDo))
                             {
-                                return new ResponseBody { Message = duplicateMsg, StatusCode = duplicateCode };
+                                throw new DuplicateWaitObjectException();
                             }
                             AsAcademyStudentSvXacNhan xacNhan = new AsAcademyStudentSvXacNhan
                             {
@@ -126,10 +126,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
                             };
                             await _xacNhanRepository.AddAsync(xacNhan);
                             break;
-                        case (int)Common.Ctsv.DichVu.GioiThieu:
+                        case DichVu.GioiThieu:
                             if (_gioiThieuRepository.IsDuplicated(currentStudent.Id))
                             {
-                                return new ResponseBody { Message = duplicateMsg, StatusCode = duplicateCode };
+                                throw new DuplicateWaitObjectException();
                             }
                             AsAcademyStudentSvGioiThieu gioiThieu = new AsAcademyStudentSvGioiThieu
                             {
@@ -152,10 +152,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
                             };
                             await _gioiThieuRepository.AddAsync(gioiThieu);
                             break;
-                        case (int)Common.Ctsv.DichVu.UuDaiGiaoDuc:
+                        case DichVu.UuDaiGiaoDuc:
                             if (_uuDaiRepository.IsDuplicated(currentStudent.Id))
                             {
-                                return new ResponseBody { Message = duplicateMsg, StatusCode = duplicateCode };
+                                throw new DuplicateWaitObjectException();
                             }
                             AsAcademyStudentSvXacNhanUuDaiTrongGiaoDuc uuDai = new AsAcademyStudentSvXacNhanUuDaiTrongGiaoDuc
                             {
@@ -176,10 +176,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
                             };
                             await _uuDaiRepository.AddAsync(uuDai);
                             break;
-                        case (int)Common.Ctsv.DichVu.VayVonNganHang:
+                        case DichVu.VayVonNganHang:
                             if (_vayVonRepository.IsDuplicated(currentStudent.Id))
                             {
-                                return new ResponseBody { Message = duplicateMsg, StatusCode = duplicateCode };
+                                throw new DuplicateWaitObjectException();
                             }
                             AsAcademyStudentSvVayVonNganHang vayVon = new AsAcademyStudentSvVayVonNganHang
                             {
@@ -201,10 +201,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
                             };
                             await _vayVonRepository.AddAsync(vayVon);
                             break;
-                        case (int)Common.Ctsv.DichVu.ThueNha:
+                        case DichVu.ThueNha:
                             if (_thueNhaRepository.IsDuplicated(currentStudent.Id))
                             {
-                                return new ResponseBody { Message = duplicateMsg, StatusCode = duplicateCode };
+                                throw new DuplicateWaitObjectException();
                             }
                             AsAcademyStudentSvThueNha thueNha = new AsAcademyStudentSvThueNha
                             {
@@ -223,6 +223,46 @@ namespace nuce.web.api.Services.Ctsv.Implements
                                 DeletedBy = -1
                             };
                             await _thueNhaRepository.AddAsync(thueNha);
+                            break;
+                        case DichVu.VeBus:
+                            if (!Enum.IsDefined(typeof(DichVuXeBusLoaiTuyen), model.VeBusTuyenType))
+                            {
+                                throw new Exception("Loại tuyến không hợp lệ");
+                            }
+                            bool isMotTuyen = (DichVuXeBusLoaiTuyen)model.VeBusTuyenType == DichVuXeBusLoaiTuyen.MotTuyen;
+                            if (isMotTuyen && (string.IsNullOrEmpty(model.VeBusTuyenCode) || string.IsNullOrEmpty(model.VeBusTuyenName)))
+                            {
+                                throw new Exception("Tuyến xe không được để trống");
+                            }
+                            if (string.IsNullOrEmpty(model.VeBusNoiNhanThe))
+                            {
+                                throw new Exception("Nơi nhận thẻ không được để trống");
+                            }
+                            if (_veXeBusRepository.IsDuplicated(currentStudent.Id))
+                            {
+                                throw new DuplicateWaitObjectException();
+                            }
+                            AsAcademyStudentSvVeXeBus veXeBus = new AsAcademyStudentSvVeXeBus
+                            {
+                                PhanHoi = model.PhanHoi,
+                                CreatedTime = now,
+                                DeletedTime = now,
+                                LastModifiedTime = now,
+                                MaXacNhan = model.MaXacNhan,
+                                StudentId = studentID,
+                                StudentCode = currentStudent.Code,
+                                StudentName = currentStudent.FulName,
+                                Status = requestStatus,
+                                Deleted = false,
+                                CreatedBy = studentID,
+                                LastModifiedBy = studentID,
+                                DeletedBy = -1,
+                                TuyenType = model.VeBusTuyenType,
+                                TuyenCode = model.VeBusTuyenCode,
+                                TuyenName = model.VeBusTuyenName,
+                                NoiNhanThe = model.VeBusNoiNhanThe
+                            };
+                            await _veXeBusRepository.AddAsync(veXeBus);
                             break;
                         default:
                             run = false;
@@ -244,7 +284,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         var result = await _emailService.SendEmailNewServiceRequest(tinNhan);
                         if (result != null)
                         {
-                            return result;
+                            throw new Exception(result.Message);
                         }
                         await _unitOfWork.SaveAsync();
                     }
@@ -254,7 +294,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 #region log
                 if (run)
                 {
-                    var dichVu = Common.Ctsv.DichVuDictionary[model.Type];
+                    var dichVu = DichVuDictionary[model.Type];
                     await _logService.WriteLog(new ActivityLogModel
                     {
                         LogCode = dichVu.LogCodeSendEmail,
@@ -266,10 +306,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
             catch (Exception ex)
             {
                 _logger.LogError("Tạo mới yêu cầu dịch vụ", $"{ex.ToString()} \n", JsonConvert.SerializeObject(model));
-                return new ResponseBody { Data = ex, Message = "Lỗi hệ thống" };
+                throw ex;
             }
-            
-            return null;
         }
 
         public IQueryable GetAllByStudent(int dichVuType)
@@ -382,6 +420,21 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         result.Add(item);
                     }
                     break;
+                case DichVu.VeBus:
+                    var veXeBusGetAll = await _veXeBusRepository.GetAllForAdmin(model);
+                    var veXeBusList = veXeBusGetAll.FinalData;
+
+                    foreach (var yeuCau in veXeBusList)
+                    {
+                        var student = studentList.FirstOrDefault(s => s.Code == yeuCau.StudentCode);
+                        var item = new QuanLyDichVuDetailResponse()
+                        {
+                            Student = student,
+                            DichVu = yeuCau
+                        };
+                        result.Add(item);
+                    }
+                    break;
                 default:
                     break;
             }
@@ -409,6 +462,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 { (int)DichVu.ThueNha, _thueNhaRepository.GetRequestInfo() },
                 { (int)DichVu.UuDaiGiaoDuc, _uuDaiRepository.GetRequestInfo() },
                 { (int)DichVu.VayVonNganHang, _vayVonRepository.GetRequestInfo() },
+                { (int)DichVu.VeBus, _veXeBusRepository.GetRequestInfo() }
             };
             foreach (var dichVu in allDichVu)
             {
@@ -623,6 +677,16 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ngayTao = vayVon.CreatedTime;
 
                     student = _studentRepository.FindByCode(vayVon.StudentCode);
+                    break;
+                case DichVu.VeBus:
+                    var veBus = await _veXeBusRepository.FindByIdAsync(model.RequestID);
+                    veBus.Status = model.Status;
+                    veBus.PhanHoi = model.PhanHoi;
+                    veBus.NgayHenTuNgay = model.NgayHenBatDau;
+                    veBus.NgayHenDenNgay = model.NgayHenKetThuc;
+                    ngayTao = veBus.CreatedTime;
+
+                    student = _studentRepository.FindByCode(veBus.StudentCode);
                     break;
                 default:
                     break;

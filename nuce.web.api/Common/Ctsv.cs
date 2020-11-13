@@ -16,6 +16,7 @@ namespace nuce.web.api.Common
             MuonHocBaGoc = 5,
             VayVonNganHang = 6,
             ThueNha = 7,
+            VeBus = 8
         }
 
         public enum TrangThaiYeuCau
@@ -27,6 +28,12 @@ namespace nuce.web.api.Common
             HoanThanh = 6,
         }
 
+        public enum DichVuXeBusLoaiTuyen
+        {
+            MotTuyen = 1,
+            LienTuyen = 2
+        }
+
         public static Dictionary<int, DichVuStructure> DichVuDictionary = new Dictionary<int, DichVuStructure>
         {
             { 1, new DichVuStructure { ID = 1, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ xin giấy xác nhận sinh viên", TenDichVu = "dịch vụ xin giấy xác nhận sinh viên", TinNhanCode = "XAC_NHAN", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_XAC_NHAN" } },
@@ -35,7 +42,8 @@ namespace nuce.web.api.Common
             { 4, new DichVuStructure { ID = 4, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ ưu đãi trong giáo dục", TenDichVu = "dịch vụ xin xác nhận ưu đãi trong giáo dục", TinNhanCode = "UU_DAI", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_UU_DAI" } },
             { 5, new DichVuStructure { ID = 5, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ mượn học bạ gốc", TenDichVu = "dịch vụ mượn học bạ gốc", TinNhanCode = "MUON_HOC_BA_GOC", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_MUON_HOC_BA_GOC" } },
             { 6, new DichVuStructure { ID = 6, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ vay vốn ngân hàng chính sách - xã hội", TenDichVu = "dịch vụ vay vốn ngân hàng chính sách - xã hội", TinNhanCode = "VAY_VON", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_XAC_NHAN_VAY_VON" } },
-            { 7, new DichVuStructure { ID = 7, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ thuê ký túc xá Pháp Vân - Tứ Hiệp", TenDichVu = "dịch vụ thuê ký túc xá Pháp Vân - Tứ Hiệp", TinNhanCode = "THUE_KTX", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_THUE_KTX" } }
+            { 7, new DichVuStructure { ID = 7, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ thuê ký túc xá Pháp Vân - Tứ Hiệp", TenDichVu = "dịch vụ thuê ký túc xá Pháp Vân - Tứ Hiệp", TinNhanCode = "THUE_KTX", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_THUE_KTX" } },
+            { 8, new DichVuStructure { ID = 8, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ làm vé tháng xe bus", TenDichVu = "dịch vụ làm vé tháng xe bus", TinNhanCode = "VE_XE_BUS", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_VE_XE_BUS" } }
         };
 
         public static Dictionary<int, string> TrangThaiYeuCauDictionary = new Dictionary<int, string>
