@@ -139,6 +139,7 @@
     <Compile Include="Controllers\CtsvServiceManagementController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\SurveyController.cs" />
+    <Compile Include="Controllers\SyncEduDataController.cs" />
     <Compile Include="Controllers\UserManagerController.cs" />
     <Compile Include="Attributes\ValidationAttributes\EmailRegexAttribute.cs" />
     <Compile Include="Attributes\ValidationAttributes\NotContainWhiteSpaceAttribute.cs" />
@@ -1213,6 +1214,8 @@
     <Content Include="Views\Survey\ExamStructure.cshtml" />
     <Content Include="Views\Survey\ExamDetail.cshtml" />
     <Content Include="Views\Survey\CreateExamQuestions.cshtml" />
+    <Content Include="Views\SyncEduData\Index.cshtml" />
+    <Content Include="Views\SyncEduData\SyncFromEduData.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
