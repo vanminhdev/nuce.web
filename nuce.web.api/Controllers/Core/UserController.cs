@@ -50,6 +50,13 @@ namespace nuce.web.api.Controllers.Core
         }
 
         [HttpGet]
+        [Route("HelloWorld")]
+        public IActionResult HelloWorld()
+        {
+            return Ok(new { message = "Hello world!!" });
+        }
+
+        [HttpGet]
         [Authorize]
         [Route("GetAllRole")]
         public async Task<IActionResult> GetAllRole()

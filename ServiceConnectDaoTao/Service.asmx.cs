@@ -1,6 +1,11 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Web.Script.Serialization;
+using System.Web.Script.Services;
 using System.Web.Services;
 
 namespace ServiceConnectDaoTao
@@ -362,7 +367,26 @@ on a.MaDK=b.MaDK");
             return dataTable;
         }
         [WebMethod]
-        public DataTable getAllToDK1()
+        public DataTable getAllToDKKyHienTai()
+        {
+            //Execute select command
+            string strSql = string.Format(@"select * from [dbo].[ToDK]");
+            DataTable dataTable = new DataTable();
+            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["eduwebConnectionString"].ConnectionString);
+            SqlCommand cmd = new SqlCommand(strSql, conn);
+            conn.Open();
+
+            // create data adapter
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            // this will query your database and return the result to your datatable
+            da.Fill(dataTable);
+            conn.Close();
+            da.Dispose();
+            dataTable.TableName = "dataToDangKy";
+            return dataTable;
+        }
+        [WebMethod]
+        public DataTable getAllToDKKyTruoc()
         {
             //Execute select command
             string strSql = string.Format(@"select * from [dbo].[todk1]");
@@ -408,23 +432,62 @@ on a.MaDK=b.MaDK");
             dataTable.TableName = "dataToDangKy";
             return dataTable;
         }
+        
+        //private class KQDK
+        //{
+        //    public string MaSV { get; set; }
+        //    public string MaMH { get; set; }
+        //    public string MaDK { get; set; }
+        //}
+
         [WebMethod]
-        public DataTable getKQDK(int from,int to)
+        //[ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public DataTable getKQDKKyHienTai(int skip, int take)
         {
             //Execute select command
-            string strSql = string.Format(@"select * from (SELECT ROW_NUMBER() OVER ( ORDER BY [MaDK],MaSV) AS RowNum,[MaSV],[MaMH],[MaDK] FROM  [dbo].[KQDK1]) a where RowNum>={0} and RowNum<={1}", from,to);
             DataTable dataTable = new DataTable();
+            dataTable.TableName = "dataKQDK";
+            //string strSql = string.Format(@"select * from (SELECT ROW_NUMBER() OVER ( ORDER BY [MaDK],MaSV) AS RowNum,[MaSV],[MaMH],[MaDK] FROM  [dbo].[KQDK1]) a where RowNum>={0} and RowNum<={1}", from, to);
+
+            string strSql = $"select [MaSV],[MaMH],[MaDK] from [dbo].[KQDK] order by [dbo].[KQDK].Guid offset {skip} rows fetch next {take} rows only";
             SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["eduwebConnectionString"].ConnectionString);
             SqlCommand cmd = new SqlCommand(strSql, conn);
+            cmd.CommandTimeout = 0;
             conn.Open();
 
             // create data adapter
             SqlDataAdapter da = new SqlDataAdapter(cmd);
+            //var result = new List<object>();
+            //var arr = new object[take];
+            //using (SqlDataReader oReader = cmd.ExecuteReader())
+            //{
+            //    int i = 0;
+            //    while (oReader.Read())
+            //    {
+            //        //arr[i++] = new
+            //        //{
+            //        //    MaSV = oReader["MaSV"].ToString(),
+            //        //    MaMH = oReader["MaMH"].ToString(),
+            //        //    MaDK = oReader["MaDK"].ToString()
+            //        //};
+            //        result.Add(new
+            //        {
+            //            MaSV = oReader["MaSV"].ToString(),
+            //            MaMH = oReader["MaMH"].ToString(),
+            //            MaDK = oReader["MaDK"].ToString()
+            //        });
+            //    }
+            //}
+
             // this will query your database and return the result to your datatable
             da.Fill(dataTable);
-            conn.Close();
             da.Dispose();
-            dataTable.TableName = "dataKQDK";
+            conn.Close();
+
+            //JavaScriptSerializer js = new JavaScriptSerializer();
+            //Context.Response.Write(js.Serialize(result));
+            //Context.Response.Write(js.Serialize(arr));
+
             return dataTable;
         }
         [WebMethod]
@@ -747,13 +810,25 @@ on a.MaDK=b.MaDK");
             return (int)Microsoft.ApplicationBlocks.Data.SqlHelper.ExecuteScalar(strConnectionString, CommandType.Text, strSql);
         }
         [WebMethod]
-        public DataTable getKqdk1()
+        public DataTable getKQDKKyTruoc(int skip, int take)
         {
-            string strConnectionString = ConfigurationManager.ConnectionStrings["eduwebConnectionString"].ConnectionString;
             //Execute select command
-            string strSql = string.Format(@"select * from [dbo].[todk1]
-  ");
-            return Microsoft.ApplicationBlocks.Data.SqlHelper.ExecuteDataset(strConnectionString, CommandType.Text, strSql).Tables[0];
+            DataTable dataTable = new DataTable();
+            dataTable.TableName = "dataKQDK";
+            string strSql = $"select [MaSV],[MaMH],[MaDK] from [dbo].[KQDK1] order by [dbo].[KQDK1].Guid offset {skip} rows fetch next {take} rows only";
+            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["eduwebConnectionString"].ConnectionString);
+            SqlCommand cmd = new SqlCommand(strSql, conn);
+            cmd.CommandTimeout = 0;
+            conn.Open();
+
+            // create data adapter
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+
+            // this will query your database and return the result to your datatable
+            da.Fill(dataTable);
+            da.Dispose();
+            conn.Close();
+            return dataTable;
         }
         [WebMethod]
         public int countKqdk1()

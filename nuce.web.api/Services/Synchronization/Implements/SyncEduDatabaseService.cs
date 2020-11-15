@@ -26,6 +26,21 @@ namespace nuce.web.api.Services.Synchronization.Implements
             _eduDataContext = eduDataContext;
         }
 
+        /// <summary>
+        /// Nếu có kì học là IsCurrent và Enabled thì trả về Id kì học đó nếu không thì trả về -1
+        /// </summary>
+        /// <returns></returns>
+        private async Task<int> GetCurrentSemesterId()
+        {
+            var semesterId = -1;
+            var semester = await _eduDataContext.AsAcademySemester.FirstOrDefaultAsync(s => s.IsCurrent == true && s.Enabled == true);
+            if (semester != null)
+            {
+                semesterId = semester.Id;
+            }
+            return semesterId;
+        }
+
         public async Task SyncAcademics()
         {
             var transaction = _eduDataContext.Database.BeginTransaction();
@@ -44,9 +59,10 @@ namespace nuce.web.api.Services.Synchronization.Implements
                     temp = item.GetElementsByTagName("loainganh");
                     var loainganh = temp.Count > 0 ? temp[0].InnerText : null;
 
+                    
                     _eduDataContext.AsAcademyAcademics.Add(new AsAcademyAcademics
                     {
-                        SemesterId = 1,
+                        SemesterId = await GetCurrentSemesterId(),
                         Code = maNganh,
                         Name = tenNg
                     });
@@ -130,7 +146,6 @@ namespace nuce.web.api.Services.Synchronization.Implements
             }
         }
 
-
         private class ThoiKhoaBieuJoinToDangKy
         {
             public string MaDK { get; set; }
@@ -163,7 +178,7 @@ namespace nuce.web.api.Services.Synchronization.Implements
         }
         #endregion
 
-        public async Task SyncLecturerClass()
+        public async Task SyncLastLecturerClassRoom()
         {
             var transaction = _eduDataContext.Database.BeginTransaction();
             try
@@ -286,7 +301,157 @@ namespace nuce.web.api.Services.Synchronization.Implements
                             //thêm mới -> sinh Id mới
                             _eduDataContext.AsAcademyLecturerClassRoom.Add(new AsAcademyLecturerClassRoom
                             {
-                                SemesterId = 1,
+                                SemesterId = await GetCurrentSemesterId(),
+                                ClassRoomId = lopId,
+                                ClassRoomCode = strMaDK,
+                                LecturerId = canBoId,
+                                LecturerCode = strMaCB
+                            });
+                        }
+                    }
+                }
+                #endregion
+
+                await _eduDataContext.SaveChangesAsync();
+                transaction.Commit();
+            }
+            catch (DbUpdateException e)
+            {
+                await transaction.RollbackAsync();
+                throw e;
+            }
+            catch (Exception e)
+            {
+                await transaction.RollbackAsync();
+                var message = UtilsException.GetMainMessage(e);
+                throw new CallEduWebServiceException(message);
+            }
+        }
+
+        public async Task SyncCurrentLecturerClassRoom()
+        {
+            var transaction = _eduDataContext.Database.BeginTransaction();
+            try
+            {
+                var result = await srvc.getAllTKB1JoinToDkAsync();
+                XmlNodeList listNode = result.Any1.GetElementsByTagName("dataTKB");
+                XmlNodeList nodeFoundByTagName = null;
+
+                #region Xử lý chuẩn hoá dữ liệu
+                var list_ThoiKhoaBieu_Join_DangKy1_V1 = new List<ThoiKhoaBieuJoinToDangKy>();
+                foreach (XmlElement item in listNode)
+                {
+                    var tkbJoinDangKy = new ThoiKhoaBieuJoinToDangKy();
+                    nodeFoundByTagName = item.GetElementsByTagName("MaDK");
+                    tkbJoinDangKy.MaDK = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+
+                    nodeFoundByTagName = item.GetElementsByTagName("MaCB");
+                    tkbJoinDangKy.MaCB = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+
+                    nodeFoundByTagName = item.GetElementsByTagName("Thu");
+                    tkbJoinDangKy.Thu = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+
+                    nodeFoundByTagName = item.GetElementsByTagName("TietDB");
+                    tkbJoinDangKy.TietDB = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+
+                    nodeFoundByTagName = item.GetElementsByTagName("SoTiet");
+                    tkbJoinDangKy.SoTiet = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+
+                    nodeFoundByTagName = item.GetElementsByTagName("MaMH");
+                    tkbJoinDangKy.MaMH = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+
+                    nodeFoundByTagName = item.GetElementsByTagName("TuanHoc");
+                    tkbJoinDangKy.TuanHoc = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+
+                    nodeFoundByTagName = item.GetElementsByTagName("MaPH");
+                    string MaPH = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+                    if (!string.IsNullOrWhiteSpace(MaPH))
+                    {
+                        if (!MaPH.Equals("XMH"))
+                        {
+                            string[] roomArr = new string[2];
+
+                            if (MaPH.Contains(" "))
+                                roomArr = MaPH.Split(' ').ToArray();
+                            else if (MaPH.Contains("."))
+                                roomArr = MaPH.Split('.').ToArray();
+                            else if (MaPH.Contains("-"))
+                                roomArr = MaPH.Split('-').ToArray();
+                            else if (MaPH.Contains("_"))
+                                roomArr = MaPH.Split('_').ToArray();
+                            else
+                            {
+                                roomArr[0] = MaPH;
+                                roomArr[1] = "";
+                            }
+                            //throw new ArgumentException("TKB chứa ký tự không hợp lệ : " + JsonConvert.SerializeObject(sched));
+
+                            if (!roomArr[0].All(Char.IsDigit)) // VD H1.101
+                            {
+                                MaPH = string.Concat(roomArr[1], ".", roomArr[0]); // => 101.H1
+                            }
+                        }
+                    }
+                    tkbJoinDangKy.MaPH = MaPH;
+                    list_ThoiKhoaBieu_Join_DangKy1_V1.Add(tkbJoinDangKy);
+                }
+                #endregion
+
+                #region Xử lý chuẩn hoá dữ liệu điền thông tin thêm vào giảng viên
+                var list_ThoiKhoaBieu_Join_DangKy_V2 = new List<ThoiKhoaBieuJoinToDangKy>();
+                foreach (var item in list_ThoiKhoaBieu_Join_DangKy1_V1)
+                {
+                    var tkbJoinDK = new ThoiKhoaBieuJoinToDangKy();
+                    tkbJoinDK.MaDK = item.MaDK;
+                    tkbJoinDK.Thu = item.Thu;
+                    tkbJoinDK.TietDB = item.TietDB;
+                    tkbJoinDK.SoTiet = item.SoTiet;
+                    tkbJoinDK.MaPH = item.MaPH;
+                    tkbJoinDK.TuanHoc = item.TuanHoc;
+                    tkbJoinDK.MaMH = item.MaMH;
+                    string strMaCB = item.MaCB;
+                    if (string.IsNullOrWhiteSpace(strMaCB))
+                    {
+                        //Xử lý tìm cán bộ tương ứng và có mã cán bộ khác trắng
+                        tkbJoinDK.MaCB = getCanBoTrongLopGhepTuongUng(list_ThoiKhoaBieu_Join_DangKy1_V1,
+                            item.MaMH, item.Thu, item.TietDB, item.MaPH, item.TuanHoc);
+                    }
+                    else
+                        tkbJoinDK.MaCB = strMaCB;
+                    list_ThoiKhoaBieu_Join_DangKy_V2.Add(tkbJoinDK);
+                }
+                #endregion
+
+                #region xử lý chèn vào csdl
+                long lopId = -1;
+                long canBoId = -1;
+                list_ThoiKhoaBieu_Join_DangKy_V2 = list_ThoiKhoaBieu_Join_DangKy_V2.Distinct((x, y) => {
+                    if (x.MaDK == y.MaDK && x.MaCB == y.MaCB)
+                        return true;
+                    return false;
+                }).ToList();
+                foreach (var item in list_ThoiKhoaBieu_Join_DangKy_V2)
+                {
+                    var strMaDK = item.MaDK.Replace(" ", "");
+                    var strMaCB = item.MaCB;
+                    if (!string.IsNullOrWhiteSpace(strMaDK) && !string.IsNullOrWhiteSpace(strMaCB))
+                    {
+                        var lop = await _eduDataContext.AsAcademyCClassRoom.FirstOrDefaultAsync(c => c.Code == strMaDK);
+                        var canBo = await _eduDataContext.AsAcademyLecturer.FirstOrDefaultAsync(c => c.Code == strMaCB);
+
+                        if (lop != null && canBo != null)
+                        {
+                            lopId = lop.Id;
+                            canBoId = canBo.Id;
+
+                            //xoá lớp học phần có mã đăng ký cụ thể vd 010211LOP21
+                            var listLecturerClassRoom = await _eduDataContext.AsAcademyCLecturerClassRoom.Where(lc => lc.ClassRoomCode == strMaDK).ToListAsync();
+                            _eduDataContext.AsAcademyCLecturerClassRoom.RemoveRange(listLecturerClassRoom);
+
+                            //thêm mới -> sinh Id mới
+                            _eduDataContext.AsAcademyCLecturerClassRoom.Add(new AsAcademyCLecturerClassRoom
+                            {
+                                SemesterId = await GetCurrentSemesterId(),
                                 ClassRoomId = lopId,
                                 ClassRoomCode = strMaDK,
                                 LecturerId = canBoId,
@@ -336,7 +501,7 @@ namespace nuce.web.api.Services.Synchronization.Implements
 
                     _eduDataContext.AsAcademyDepartment.Add(new AsAcademyDepartment
                     {
-                        SemesterId = 1,
+                        SemesterId = await GetCurrentSemesterId(),
                         Code = maBM,
                         Name = tenBM,
                         FacultyId = khoa.Id,
@@ -386,7 +551,7 @@ namespace nuce.web.api.Services.Synchronization.Implements
                     {
                         Code = maKH,
                         Name = tenKhoa,
-                        SemesterId = 1,
+                        SemesterId = await GetCurrentSemesterId(),
                         COrder = order + 1
                     });
                 }
@@ -566,7 +731,7 @@ namespace nuce.web.api.Services.Synchronization.Implements
 
                     _eduDataContext.AsAcademySubject.Add(new AsAcademySubject
                     {
-                        SemesterId = 1,
+                        SemesterId = await GetCurrentSemesterId(),
                         Code = MaMH,
                         Name = TenMH,
                         DepartmentId = boMonId,
@@ -575,11 +740,6 @@ namespace nuce.web.api.Services.Synchronization.Implements
                 }
                 await _eduDataContext.SaveChangesAsync();
                 transaction.Commit();
-            }
-            catch (RecordNotFoundException e)
-            {
-                await transaction.RollbackAsync();
-                throw e;
             }
             catch (DbUpdateException e)
             {
@@ -594,13 +754,14 @@ namespace nuce.web.api.Services.Synchronization.Implements
             }
         }
 
-        public async Task SyncClassRoom()
+        public async Task SyncLastClassRoom()
         {
             var transaction = _eduDataContext.Database.BeginTransaction();
             try
             {
-                //không truncate table class room nên khi đồng bộ dữ liệu mới dữ liệu cũ nếu không có code trùng thì k bị ảnh hưởng
-                var result = await srvc.getAllToDK1Async();
+                //nếu không truncate table class room nên khi đồng bộ dữ liệu mới dữ liệu cũ nếu không có code trùng thì k bị ảnh hưởng
+                //_eduDataContext.Database.ExecuteSqlRaw("TRUNCATE TABLE AS_Academy_ClassRoom");
+                var result = await srvc.getAllToDKKyTruocAsync();
                 XmlNodeList listData = result.Any1.GetElementsByTagName("dataToDangKy");
                 XmlNodeList nodeFoundByTagName = null;
                 int monHocId = -1;
@@ -625,7 +786,7 @@ namespace nuce.web.api.Services.Synchronization.Implements
                     {
                         _eduDataContext.AsAcademyClassRoom.Add(new AsAcademyClassRoom
                         {
-                            SemesterId = 1,
+                            SemesterId = await GetCurrentSemesterId(),
                             Code = MaDK,
                             GroupCode = MaNh,
                             ClassCode = Malop,
@@ -658,6 +819,318 @@ namespace nuce.web.api.Services.Synchronization.Implements
                 var message = UtilsException.GetMainMessage(e);
                 throw new CallEduWebServiceException(message);
             }
+        }
+
+        public async Task SyncCurrentClassRoom()
+        {
+            var transaction = _eduDataContext.Database.BeginTransaction();
+            try
+            {
+                //_eduDataContext.Database.ExecuteSqlRaw("TRUNCATE TABLE AS_Academy_C_ClassRoom");
+                var result = await srvc.getAllToDKKyHienTaiAsync();
+                XmlNodeList listData = result.Any1.GetElementsByTagName("dataToDangKy");
+                XmlNodeList nodeFoundByTagName = null;
+                int monHocId = -1;
+                foreach (XmlElement item in listData) //3602
+                {
+                    nodeFoundByTagName = item.GetElementsByTagName("MaMH");
+                    string MaMH = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null; //mã môn học vd: 010211 của môn nào đó
+                    nodeFoundByTagName = item.GetElementsByTagName("MaDK");
+                    string MaDK = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null; //mã đăng ký vd: 010211LOP21
+                    nodeFoundByTagName = item.GetElementsByTagName("MaNh");
+                    string MaNh = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null; //mã nhóm vd: LOP21
+                    nodeFoundByTagName = item.GetElementsByTagName("Malop");
+                    string Malop = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null; //mã lớp vd: LOP21, 61XD1
+                    nodeFoundByTagName = item.GetElementsByTagName("Malop");
+                    string ExamAttemptDate = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+
+                    var monHoc = await _eduDataContext.AsAcademySubject.FirstOrDefaultAsync(f => f.Code == MaMH);
+                    monHocId = monHoc != null ? monHoc.Id : -1;
+
+                    var lopHocPhan = await _eduDataContext.AsAcademyCClassRoom.FirstOrDefaultAsync(f => f.Code == MaDK);
+                    if (lopHocPhan == null) // thêm vào nếu chưa có
+                    {
+                        _eduDataContext.AsAcademyCClassRoom.Add(new AsAcademyCClassRoom
+                        {
+                            SemesterId = await GetCurrentSemesterId(),
+                            Code = MaDK,
+                            GroupCode = MaNh,
+                            ClassCode = Malop,
+                            SubjectId = monHocId,
+                            SubjectCode = MaMH,
+                            ExamAttemptDate = ExamAttemptDate
+                        });
+                    }
+                    else // nếu có rồi thì cập nhật
+                    {
+                        lopHocPhan.SemesterId = 1;
+                        lopHocPhan.GroupCode = MaNh;
+                        lopHocPhan.ClassCode = Malop;
+                        lopHocPhan.SubjectId = monHocId;
+                        lopHocPhan.SubjectCode = MaMH;
+                        lopHocPhan.ExamAttemptDate = ExamAttemptDate;
+                    }
+                }
+                await _eduDataContext.SaveChangesAsync();
+                transaction.Commit();
+            }
+            catch (DbUpdateException e)
+            {
+                await transaction.RollbackAsync();
+                throw e;
+            }
+            catch (Exception e)
+            {
+                await transaction.RollbackAsync();
+                var message = UtilsException.GetMainMessage(e);
+                throw new CallEduWebServiceException(message);
+            }
+        }
+
+        public async Task<string> SyncCurrentStudentClassRoom()
+        {
+            var transaction = _eduDataContext.Database.BeginTransaction();
+            var message = "";
+            int page = 1;
+            int pageSize = 500;
+            try
+            {
+                //_eduDataContext.Database.ExecuteSqlRaw("TRUNCATE TABLE AS_Academy_Student_ClassRoom");
+                //_eduDataContext.Database.ExecuteSqlRaw("TRUNCATE TABLE AS_Academy_C_Student_ClassRoom");
+                XmlNodeList listData = null;
+                XmlNodeList temp = null;
+                while (true)
+                {
+                    var result = await srvc.getKQDKKyHienTaiAsync((page - 1) * pageSize, pageSize);
+                    listData = result.Any1.GetElementsByTagName("dataKQDK");
+                    if (listData.Count > 0)
+                    {
+                        message += string.Format("---{0}---{1}", page, listData.Count);
+                        foreach (XmlElement item in listData)
+                        {
+                            temp = item.GetElementsByTagName("MaSV");
+                            string strMaSV = temp.Count > 0 ? temp[0].InnerText.Trim() : null;
+                            temp = item.GetElementsByTagName("MaDK");
+                            string strMaDK = temp.Count > 0 ? temp[0].InnerText.Trim() : null;
+
+                            var classRoom = await _eduDataContext.AsAcademyClassRoom.FirstOrDefaultAsync(c => c.Code == strMaDK);
+                            var classRoomId = classRoom != null ? classRoom.Id : -1;
+
+                            var student = await _eduDataContext.AsAcademyStudent.FirstOrDefaultAsync(c => c.Code == strMaSV);
+                            var studentId = student != null ? student.Id : -1;
+
+                            var studentClassRoom = await _eduDataContext.AsAcademyStudentClassRoom
+                                .FirstOrDefaultAsync(sc => sc.StudentCode == strMaSV && sc.ClassRoomId == classRoomId);
+
+                            // nuce.web.data.Nuce_DanhGiaGiangVien.InsertAcademy_C_Student_ClassRoom(1, strMaSV, strMaDK);
+                            // nuce.web.data.Nuce_DanhGiaGiangVien.InsertAcademy_Student_ClassRoom(1, strMaSV, strMaDK);
+                            if (studentClassRoom == null)
+                            {
+                                _eduDataContext.AsAcademyCStudentClassRoom.Add(new AsAcademyCStudentClassRoom
+                                {
+                                    ClassRoomId = classRoomId,
+                                    StudentId = studentId,
+                                    StudentCode = strMaSV,
+                                    SemesterId = await GetCurrentSemesterId()
+                                });
+                            }
+                        }
+                        page++;
+                    }
+                    else
+                        break;
+                }
+                await _eduDataContext.SaveChangesAsync();
+                transaction.Commit();
+            }
+            catch (DbUpdateException e)
+            {
+                await transaction.RollbackAsync();
+                throw e;
+            }
+            catch (Exception e)
+            {
+                await transaction.RollbackAsync();
+                var errMessage = UtilsException.GetMainMessage(e);
+                throw new CallEduWebServiceException(errMessage);
+            }
+            return message;
+        }
+
+        public async Task<string> SyncUpdateFromDateEndDateCurrentClassRoom()
+        {
+            var transaction = _eduDataContext.Database.BeginTransaction();
+            var message = "";
+            try
+            {
+                var result = await srvc.getAllTKB1JoinToDkAsync();
+                XmlNodeList listData = result.Any1.GetElementsByTagName("dataTKB");
+                XmlNodeList nodeFoundByTagName = null;
+
+                DateTime dtNgayBatDau = new DateTime(2019, 8, 5);
+                foreach (XmlElement item in listData)
+                {
+                    nodeFoundByTagName = item.GetElementsByTagName("MaDK");
+                    string MaDK = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null; //mã đăng ký vd: 010211LOP21
+
+                    nodeFoundByTagName = item.GetElementsByTagName("TuanHoc");
+                    string TuanHoc = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText : "";
+
+                    DateTime Ngaytg = DateTime.Now.AddYears(1);
+                    DateTime NgayBD = DateTime.Now.AddYears(1);
+                    DateTime NgayKT = DateTime.Now.AddYears(-1);
+                    for (int j = 0; j < TuanHoc.Length; j++)
+                    {
+                        if (TuanHoc[j].ToString().Trim().Replace(" ", "") != "")
+                        {
+                            //Ngaytg = dtNgayBatDau.AddDays((j + 20) * 7);
+                            Ngaytg = dtNgayBatDau.AddDays(j * 7);
+                            if (Ngaytg < NgayBD)
+                                NgayBD = Ngaytg;
+                            NgayKT = Ngaytg;
+                        }
+                    }
+
+                    DateTime CFromDate = new DateTime(2026, 12, 30);
+                    DateTime CEndDate = new DateTime(2006, 12, 30);
+
+                    var CurrClassRoom = await _eduDataContext.AsAcademyCClassRoom.FirstOrDefaultAsync(cc => cc.Code == MaDK);
+                    if (CurrClassRoom != null)
+                    {
+                        CFromDate = CurrClassRoom.FromDate ?? NgayBD;
+                        CEndDate = CurrClassRoom.EndDate ?? NgayKT;
+                    }
+
+                    if (CFromDate > NgayBD)
+                        CFromDate = NgayBD;
+                    if (CEndDate < NgayKT)
+                        CEndDate = NgayKT;
+
+                    CurrClassRoom.FromDate = CFromDate;
+                    CurrClassRoom.EndDate = CEndDate;
+                }
+                await _eduDataContext.SaveChangesAsync();
+                transaction.Commit();
+            }
+            catch (DbUpdateException e)
+            {
+                await transaction.RollbackAsync();
+                throw e;
+            }
+            catch (Exception e)
+            {
+                await transaction.RollbackAsync();
+                var errMessage = UtilsException.GetMainMessage(e);
+                throw new CallEduWebServiceException(errMessage);
+            }
+            return message;
+        }
+
+        public async Task<string> SyncQAWeek()
+        {
+            var transaction = _eduDataContext.Database.BeginTransaction();
+            var message = "";
+            try
+            {
+                _eduDataContext.Database.ExecuteSqlRaw("TRUNCATE TABLE AS_Edu_QA_Week");
+                var listCurrClassRoom = await _eduDataContext.AsAcademyCClassRoom.Where(cc => cc.FromDate != null).ToListAsync();
+                foreach(var currClassRoom in listCurrClassRoom)
+                {
+                    var iId = currClassRoom.Id;
+                    DateTime FromDate = currClassRoom.FromDate.Value;
+                    DateTime EndDate = currClassRoom.EndDate.Value;
+                    int total = ((EndDate - FromDate).Days / 7) + 1; //sô tuần
+                    for (int j = 1; j < total + 1; j++)
+                    {
+
+                        //nuce.web.data.Nuce_DanhGiaGiangVien.UpdateAS_Edu_QA_Week(iID, j, total, FromDate, FromDate.AddDays(7));
+                        FromDate = FromDate.AddDays(7);
+                    }
+                }
+
+                await _eduDataContext.SaveChangesAsync();
+                transaction.Commit();
+            }
+            catch (DbUpdateException e)
+            {
+                await transaction.RollbackAsync();
+                throw e;
+            }
+            catch (Exception e)
+            {
+                await transaction.RollbackAsync();
+                var errMessage = UtilsException.GetMainMessage(e);
+                throw new CallEduWebServiceException(errMessage);
+            }
+            return message;
+        }
+
+        public async Task<string> SyncLastStudentClassRoom()
+        {
+            var transaction = _eduDataContext.Database.BeginTransaction();
+            var message = "";
+            int page = 1;
+            int pageSize = 500;
+            try
+            {
+                //_eduDataContext.Database.ExecuteSqlRaw("TRUNCATE TABLE AS_Academy_Student_ClassRoom");
+                //_eduDataContext.Database.ExecuteSqlRaw("TRUNCATE TABLE AS_Academy_C_Student_ClassRoom");
+                XmlNodeList listData = null;
+                XmlNodeList temp = null;
+                while (true)
+                {
+                    var result = await srvc.getKQDKKyTruocAsync((page - 1) * pageSize, pageSize);
+                    listData = result.Any1.GetElementsByTagName("dataKQDK");
+                    if (listData.Count > 0)
+                    {
+                        message += string.Format("---{0}---{1}", page, listData.Count);
+                        foreach (XmlElement item in listData)
+                        {
+                            temp = item.GetElementsByTagName("MaSV");
+                            string strMaSV = temp.Count > 0 ? temp[0].InnerText.Trim() : null;
+                            temp = item.GetElementsByTagName("MaDK");
+                            string strMaDK = temp.Count > 0 ? temp[0].InnerText.Trim() : null;
+
+                            var classRoom = await _eduDataContext.AsAcademyClassRoom.FirstOrDefaultAsync(c => c.Code == strMaDK);
+                            var classRoomId = classRoom != null ? classRoom.Id : -1;
+
+                            var student = await _eduDataContext.AsAcademyStudent.FirstOrDefaultAsync(c => c.Code == strMaSV);
+                            var studentId = student != null ? student.Id : -1;
+
+                            var studentClassRoom = await _eduDataContext.AsAcademyStudentClassRoom
+                                .FirstOrDefaultAsync(sc => sc.StudentCode == strMaSV && sc.ClassRoomId == classRoomId);
+
+                            if (studentClassRoom == null)
+                            {
+                                _eduDataContext.AsAcademyStudentClassRoom.Add(new AsAcademyStudentClassRoom
+                                {
+                                    ClassRoomId = classRoomId,
+                                    StudentId = studentId,
+                                    StudentCode = strMaSV,
+                                    SemesterId = await GetCurrentSemesterId()
+                                });
+                            }
+                        }
+                        page++;
+                    }
+                    else
+                        break;
+                }
+                await _eduDataContext.SaveChangesAsync();
+                transaction.Commit();
+            }
+            catch (DbUpdateException e)
+            {
+                await transaction.RollbackAsync();
+                throw e;
+            }
+            catch (Exception e)
+            {
+                await transaction.RollbackAsync();
+                var errMessage = UtilsException.GetMainMessage(e);
+                throw new CallEduWebServiceException(errMessage);
+            }
+            return message;
         }
     }
 }

@@ -42,7 +42,7 @@ namespace nuce.web.api.Controllers.Synchronization
             catch (CallEduWebServiceException e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo", detailMessage = e.Message });
             }
             catch (Exception e)
             {
@@ -72,7 +72,7 @@ namespace nuce.web.api.Controllers.Synchronization
             catch (CallEduWebServiceException e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo", detailMessage = e.Message });
             }
             catch (Exception e)
             {
@@ -97,7 +97,7 @@ namespace nuce.web.api.Controllers.Synchronization
             catch (CallEduWebServiceException e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo", detailMessage = e.Message });
             }
             catch (Exception e)
             {
@@ -114,11 +114,6 @@ namespace nuce.web.api.Controllers.Synchronization
                 await _syncEduDatabaseService.SyncSubject();
                 return Ok();
             }
-            catch (RecordNotFoundException e)
-            {
-                _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
-            }
             catch (DbUpdateException e)
             {
                 _logger.LogError(e, e.Message);
@@ -127,7 +122,7 @@ namespace nuce.web.api.Controllers.Synchronization
             catch (CallEduWebServiceException e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo", detailMessage = e.Message });
             }
             catch (Exception e)
             {
@@ -144,11 +139,6 @@ namespace nuce.web.api.Controllers.Synchronization
                 await _syncEduDatabaseService.SyncClass();
                 return Ok();
             }
-            catch (RecordNotFoundException e)
-            {
-                _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
-            }
             catch (DbUpdateException e)
             {
                 _logger.LogError(e, e.Message);
@@ -157,7 +147,7 @@ namespace nuce.web.api.Controllers.Synchronization
             catch (CallEduWebServiceException e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo", detailMessage = e.Message });
             }
             catch (Exception e)
             {
@@ -174,11 +164,6 @@ namespace nuce.web.api.Controllers.Synchronization
                 await _syncEduDatabaseService.SyncLecturer();
                 return Ok();
             }
-            catch (RecordNotFoundException e)
-            {
-                _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
-            }
             catch (DbUpdateException e)
             {
                 _logger.LogError(e, e.Message);
@@ -187,7 +172,7 @@ namespace nuce.web.api.Controllers.Synchronization
             catch (CallEduWebServiceException e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo", detailMessage = e.Message });
             }
             catch (Exception e)
             {
@@ -204,11 +189,6 @@ namespace nuce.web.api.Controllers.Synchronization
                 await _syncEduDatabaseService.SyncStudent();
                 return Ok();
             }
-            catch (RecordNotFoundException e)
-            {
-                _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
-            }
             catch (DbUpdateException e)
             {
                 _logger.LogError(e, e.Message);
@@ -217,7 +197,33 @@ namespace nuce.web.api.Controllers.Synchronization
             catch (CallEduWebServiceException e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo", detailMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+        }
+
+        #region kỳ trước
+        [HttpPut]
+        public async Task<IActionResult> SyncLastClassRoom()
+        {
+            try
+            {
+                await _syncEduDatabaseService.SyncLastClassRoom();
+                return Ok();
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể cập nhật dữ liệu đồng bộ lớp môn học kỳ trước" });
+            }
+            catch (CallEduWebServiceException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo", detailMessage = e.Message });
             }
             catch (Exception e)
             {
@@ -227,27 +233,22 @@ namespace nuce.web.api.Controllers.Synchronization
         }
 
         [HttpPut]
-        public async Task<IActionResult> SyncClassRoom()
+        public async Task<IActionResult> SyncLastLecturerClassRoom()
         {
             try
             {
-                await _syncEduDatabaseService.SyncClassRoom();
+                await _syncEduDatabaseService.SyncLastLecturerClassRoom();
                 return Ok();
-            }
-            catch (RecordNotFoundException e)
-            {
-                _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
             catch (DbUpdateException e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể cập nhật dữ liệu đồng bộ lớp học phần" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể cập nhật dữ liệu đồng bộ lớp môn học giảng viên kỳ trước" });
             }
             catch (CallEduWebServiceException e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo", detailMessage = e.Message });
             }
             catch (Exception e)
             {
@@ -257,27 +258,22 @@ namespace nuce.web.api.Controllers.Synchronization
         }
 
         [HttpPut]
-        public async Task<IActionResult> SyncLecturerClass()
+        public async Task<IActionResult> SyncLastStudentClassRoom()
         {
             try
             {
-                await _syncEduDatabaseService.SyncLecturerClass();
-                return Ok();
-            }
-            catch (RecordNotFoundException e)
-            {
-                _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+                var message = await _syncEduDatabaseService.SyncLastStudentClassRoom();
+                return Ok(new { message });
             }
             catch (DbUpdateException e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể cập nhật dữ liệu đồng bộ lớp môn học giảng viên" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể cập nhật dữ liệu đồng bộ lớp môn học sinh viên kỳ trước" });
             }
             catch (CallEduWebServiceException e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo", detailMessage = e.Message });
             }
             catch (Exception e)
             {
@@ -285,5 +281,108 @@ namespace nuce.web.api.Controllers.Synchronization
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
         }
+        #endregion
+
+        #region kỳ hiện tại
+        [HttpPut]
+        public async Task<IActionResult> SyncCurrentClassRoom()
+        {
+            try
+            {
+                await _syncEduDatabaseService.SyncCurrentClassRoom();
+                return Ok();
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể cập nhật dữ liệu đồng bộ lớp môn học kỳ hiện tại", detailMessage = e.Message });
+            }
+            catch (CallEduWebServiceException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo", detailMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> SyncCurrentLecturerClassRoom()
+        {
+            try
+            {
+                await _syncEduDatabaseService.SyncCurrentLecturerClassRoom();
+                return Ok();
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể cập nhật dữ liệu đồng bộ lớp môn học giảng viên kỳ hiện tại", detailMessage = e.Message });
+            }
+            catch (CallEduWebServiceException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo", detailMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> SyncCurrentStudentClassRoom()
+        {
+            try
+            {
+                var message = await _syncEduDatabaseService.SyncCurrentStudentClassRoom();
+                return Ok(new { message });
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể cập nhật dữ liệu đồng bộ lớp môn học sinh viên kỳ hiện tại", detailMessage = e.Message });
+            }
+            catch (CallEduWebServiceException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo", detailMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> SyncUpdateFromDateEndDateCurrentClassRoom()
+        {
+            try
+            {
+                var message = await _syncEduDatabaseService.SyncUpdateFromDateEndDateCurrentClassRoom();
+                return Ok(new { message });
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể cập nhật dữ liệu đồng bộ thời gian bắt đầu và kết thúc tuần của lớp môn học kỳ hiện tại", detailMessage = e.Message });
+            }
+            catch (CallEduWebServiceException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo", detailMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+        }
+        #endregion
     }
 }
