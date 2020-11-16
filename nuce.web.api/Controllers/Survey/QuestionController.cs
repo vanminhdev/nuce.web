@@ -36,12 +36,15 @@ namespace nuce.web.api.Controllers.Survey
         public async Task<IActionResult> GetAll([FromBody] DataTableRequest request)
         {
             var filter = new QuestionFilter();
-            filter.Ma = request.Columns.FirstOrDefault(c => c.Data == "ma")?.Search.Value ?? null;
-            filter.Content = request.Columns.FirstOrDefault(c => c.Data == "content")?.Search.Value ?? null;
-            filter.Type = request.Columns.FirstOrDefault(c => c.Data == "type")?.Search.Value ?? null;
+            if(request.Columns != null)
+            {
+                filter.Ma = request.Columns.FirstOrDefault(c => c.Data == "ma")?.Search.Value ?? null;
+                filter.Content = request.Columns.FirstOrDefault(c => c.Data == "content")?.Search.Value ?? null;
+                filter.Type = request.Columns.FirstOrDefault(c => c.Data == "type")?.Search.Value ?? null;
+            }
             var skip = request.Start;
-            var pageSize = request.Length;
-            var result = await _asEduSurveyCauHoiService.GetAllActiveStatus(filter, skip, pageSize);
+            var take = request.Length;
+            var result = await _asEduSurveyCauHoiService.GetAllActiveStatus(filter, skip, take);
             return Ok(
                 new DataTableResponse<QuestionModel>
                 {

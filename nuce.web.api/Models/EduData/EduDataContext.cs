@@ -321,7 +321,7 @@ namespace nuce.web.api.Models.EduData
                     .HasMaxLength(255)
                     .IsUnicode(false);
 
-                entity.Property(e => e.FulName).HasMaxLength(200);
+                entity.Property(e => e.FullName).HasMaxLength(200);
 
                 entity.Property(e => e.KeyAuthorize).HasColumnName("keyAuthorize");
 

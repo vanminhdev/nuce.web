@@ -22,7 +22,7 @@ namespace nuce.web.api.Services.Survey.Implements
             _surveyContext = surveyContext;
         }
 
-        public async Task<QuestionPaginationModel> GetAllActiveStatus(QuestionFilter filter, int skip = 0, int pageSize = 20)
+        public async Task<QuestionPaginationModel> GetAllActiveStatus(QuestionFilter filter, int skip = 0, int take = 20)
         {
             _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             var query = _surveyContext.AsEduSurveyCauHoi.Where(q => q.Status != (int)QuestionStatus.Deactive);
@@ -46,7 +46,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             var querySkip = query
                 .OrderBy(u => u.Order)
-                .Skip(skip).Take(pageSize);
+                .Skip(skip).Take(take);
 
             var data = await querySkip
                 .Select(q => new QuestionModel
@@ -108,7 +108,7 @@ namespace nuce.web.api.Services.Survey.Implements
             }
             catch
             {
-                throw new InvalidDataException("'Ma' must be a number");
+                throw new InvalidDataException("Mã phải ở dạng số");
             }
             questionCreate.Id = Guid.NewGuid();
             questionCreate.BoCauHoiId = -1;
@@ -141,7 +141,7 @@ namespace nuce.web.api.Services.Survey.Implements
             }
             catch
             {
-                throw new InvalidDataException("'Ma' must be a number");
+                throw new InvalidDataException("Mã phải là ở dạng số");
             }
             questionUpdate.Ma = question.Ma;
             questionUpdate.Content = question.Content;

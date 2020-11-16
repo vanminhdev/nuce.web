@@ -27,8 +27,8 @@ using nuce.web.api.Services.Ctsv.Implements;
 using nuce.web.api.Services.Ctsv.Interfaces;
 using nuce.web.api.Services.Survey.Implements;
 using nuce.web.api.Services.Survey.Interfaces;
-using nuce.web.api.Services.Synchronization.Implements;
-using nuce.web.api.Services.Synchronization.Interfaces;
+using nuce.web.api.Services.EduData.Implements;
+using nuce.web.api.Services.EduData.Interfaces;
 
 namespace nuce.web.api
 {
@@ -143,7 +143,7 @@ namespace nuce.web.api
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "API V1"
+                    Title = "NUCE API"
                 });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {

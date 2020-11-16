@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -9,7 +10,11 @@ namespace nuce.web.api.ViewModel.Base
     {
         public List<DataTableColumn> Columns { get; set; }
         public int Draw { get; set; }
+
+        [Range(0, int.MaxValue)]
         public int Start { get; set; }
+
+        [Range(1, int.MaxValue)]
         public int Length { get; set; }
         public DataTableSearch Search { get; set; }
     }

@@ -1,9 +1,12 @@
-﻿using System;
+﻿using nuce.web.api.Models.EduData;
+using nuce.web.api.ViewModel.Base;
+using nuce.web.api.ViewModel.EduData;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace nuce.web.api.Services.Synchronization.Interfaces
+namespace nuce.web.api.Services.EduData.Interfaces
 {
     public interface ISyncEduDatabaseService
     {
@@ -64,5 +67,35 @@ namespace nuce.web.api.Services.Synchronization.Interfaces
         /// </summary>
         /// <returns></returns>
         public Task<string> SyncQAWeek();
+
+        public Task<PaginationModel<AsAcademyCClassRoom>> GetCurrentClassRoom(ClassRoomFilter filter, int skip = 0, int take = 20);
+        
+        public Task<PaginationModel<AsAcademyCLecturerClassRoom>> GetCurrentLecturerClassRoom(LecturerClassRoomFilter filter, int skip = 0, int take = 20);
+        
+        public Task<PaginationModel<AsAcademyCStudentClassRoom>> GetCurrentStudentClassRoom(StudentClassRoomFilter filter, int skip = 0, int take = 20);
+
+
+        public Task<PaginationModel<AsAcademyClassRoom>> GetLastClassRoom(ClassRoomFilter filter, int skip, int take);
+
+        public Task<PaginationModel<AsAcademyLecturerClassRoom>> GetLastLecturerClassRoom(LecturerClassRoomFilter filter, int skip, int take);
+
+        public Task<PaginationModel<AsAcademyStudentClassRoom>> GetLastStudentClassRoom(StudentClassRoomFilter filter, int skip, int take);
+
+
+        public Task<List<AsAcademyFaculty>> GetAllFaculties();
+
+        public Task<List<AsAcademyDepartment>> GetAllDepartments();
+
+        public Task<List<AsAcademyAcademics>> GetAllAcademics();
+
+        public Task<PaginationModel<AsAcademySubject>> GetSubject(SubjectFilter filter, int skip = 0, int take = 20);
+
+        public Task<PaginationModel<AsAcademyClass>> GetClass(ClassFilter filter, int skip, int take);
+
+        public Task<PaginationModel<AsAcademyLecturer>> GetLecturer(LecturerFilter filter, int skip, int take);
+        
+        public Task<PaginationModel<AsAcademyStudent>> GetStudent(StudentFilter filter, int skip, int take);
+
+        public Task TruncateTable(string tableName);
     }
 }
