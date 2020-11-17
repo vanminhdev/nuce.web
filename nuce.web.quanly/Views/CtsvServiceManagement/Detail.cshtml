@@ -259,17 +259,33 @@
         var serviceDictionary = {
             1: {
                 name: 'dịch vụ xin giấy xác nhận',
+                key: 'XAC_NHAN',
             },
             4: {
                 name: 'ưu đãi trong giáo dục',
+                key: 'UU_DAI',
             },
             6: {
                 name: 'vay vốn ngân hàng chính sách - xã hội',
+                key: 'VAY_VON',
             },
             7: {
                 name: 'thuê ktx pháp vân - tứ hiệp',
-            }
+                key: 'THUE_KTX',
+            },
+            8: {
+                name: 'làm vé tháng xe bus',
+                key: 'VE_XE_BUS',
+            },
         };
+        var getDichVuEnum = function() {
+            const result = {};
+            Object.keys(serviceDictionary).forEach(key => {
+                result[serviceDictionary[key].key] = key * 1;
+            });
+            return result;
+        };
+        var dichVuEnum = getDichVuEnum();
 
         var initDatepicker = function() {
             var date_input_ngaybatdau = $('#txtNgayBatDau'); //our date input has the name "date"
@@ -326,7 +342,6 @@
                                 <option value="4">Đã xử lý và có lịch hẹn</option>
                                 <option value="5">Từ chối dịch vụ</option>`;
                         let status = item.DichVu.status * 1;
-                        console.log('status: ', status);
                         switch(status) {
                             case 3:
                                 options = `<option value="4">Đã xử lý và có lịch hẹn</option>
@@ -411,29 +426,37 @@
 
             let mainContentSection = ``;
             switch (Number(serviceType)) {
-              case 1:
-                mainContentSection = `<div class="mb-3">${dichVu.lyDo}</div>`;
-                break;
-              case 4:
-                mainContentSection = `<div class="mb-3"><b>Kỷ luật: </b>${dichVu.kyLuat}</div>`;
-                break;
-              case 6:
-                var ThuocDien = {
-                    1: 'Không miễn giảm',
-                    2: 'Giảm học phí',
-                    3: 'Miễn học phí',
-                };
-                var ThuocDoiTuong = {
-                    1: 'Mồ côi',
-                    2: 'Không mồ côi',
-                };
-                mainContentSection = `<div class="mb-3"><b>Thuộc diện: </b>${ThuocDien[dichVu.thuocDien]}<br><b>Thuộc đối tượng: </b>${ThuocDoiTuong[dichVu.thuocDoiTuong]}</div>`;
-                break;
-              case 7:
-                mainContentSection = '';
-                break;
-              default:
-                break;
+                case dichVuEnum.XAC_NHAN:
+                    mainContentSection = `<div class="mb-3">${dichVu.lyDo}</div>`;
+                    break;
+                case dichVuEnum.UU_DAI:
+                    mainContentSection = `<div class="mb-3"><b>Kỷ luật: </b>${dichVu.kyLuat}</div>`;
+                    break;
+                case dichVuEnum.VAY_VON:
+                    var ThuocDien = {
+                        1: 'Không miễn giảm',
+                        2: 'Giảm học phí',
+                        3: 'Miễn học phí',
+                    };
+                    var ThuocDoiTuong = {
+                        1: 'Mồ côi',
+                        2: 'Không mồ côi',
+                    };
+                    mainContentSection = `<div class="mb-3"><b>Thuộc diện: </b>${ThuocDien[dichVu.thuocDien]}<br><b>Thuộc đối tượng: </b>${ThuocDoiTuong[dichVu.thuocDoiTuong]}</div>`;
+                    break;
+                case dichVuEnum.THUE_KTX:
+                    mainContentSection = '';
+                    break;
+                case dichVuEnum.VE_XE_BUS:
+                    if (dichVu.tuyenType === '1') {
+                        mainContentSection = `<div>Loại tuyến: Một tuyến</div><div>Số tuyến: ${dichVu.tuyenCode || ''}</div>`;
+                    } else if (dichVu.tuyenType === '2') {
+                        mainContentSection = `<div>Loại tuyến: Liên tuyến</div>`;
+                    }
+                    mainContentSection += `<div>Nơi nhận thẻ: ${dichVu.noiNhanThe}</div>`;
+                    break;
+                default:
+                    break;
             }
             let noteSection = '';
 
@@ -519,8 +542,8 @@
                     </div>
                   </div>
                         <div class="col-12 font-13-sm">
-                  <div class="text-uppercase main-color fw-700 mb-3 mt-3">
-                    lý do
+                  <div class="text-uppercase main-color fw-700 mb-0 mt-3">
+                    nội dung
                   </div>
                   ${mainContentSection}
                   ${noteSection}
@@ -602,9 +625,9 @@
 
         var onChangeStatus = function(event) {
             const selectedStatus = Number(event.value);
-            console.log('sfsf: ', selectedStatus, event.value);
             if (!selectedStatus) return;
             switch (selectedStatus) {
+                case 2:
                 case 3:
                     $('#divPhanHoi').hide();
                     $('#blockNgayHen').hide();
@@ -744,7 +767,6 @@
                 }
                 
                 if ($("#txtPhutBatDau").val() === '' || $("#txtPhutBatDau").val() === null) {
-                    console.log('sdfs');
                     $("#txtPhutBatDau").val("00");
                 }
                 else {
@@ -838,6 +860,7 @@
         };
 
         var callApiUpdateStatus = function(data) {
+            $('#loading-screen').show();
             $.ajax({
                 type: 'POST',
                 url: `@Url.Action("UpdateStatus", "CtsvServiceManagement")`,
@@ -845,7 +868,7 @@
                 dataType: 'json',
                 contentType: 'application/json',
             }).done(res => {
-                console.log(res);
+                $('#loading-screen').hide();
                 if (res.StatusCode === 200) {
                     $("#h_noidung_thongbao").html("Cập nhật thành công");
                     $('#myModalThongBao').modal();
@@ -855,13 +878,14 @@
                     $('#myModalThongBao').modal();    
                 }
             }).fail(err => {
-                console.log(err);
+                $('#loading-screen').hide();
                 $("#h_noidung_thongbao").html("Lỗi hệ thống");
                 $('#myModalThongBao').modal();
             });
         }
 
         var callApiUpdateMultiStatus = function(data) {
+            $('#loading-screen').show();
             $.ajax({
                 type: 'POST',
                 url: `@Url.Action("UpdateMultiStatus", "CtsvServiceManagement")`,
@@ -869,7 +893,7 @@
                 dataType: 'json',
                 contentType: 'application/json',
             }).done(res => {
-                console.log(res);
+                $('#loading-screen').hide();
                 if (res.StatusCode === 200) {
                     $("#h_noidung_thongbao").html("Cập nhật thành công");
                     $('#myModalThongBao').modal();
@@ -879,7 +903,7 @@
                     $('#myModalThongBao').modal();    
                 }
             }).fail(err => {
-                console.log(err);
+                $('#loading-screen').hide();
                 $("#h_noidung_thongbao").html("Lỗi hệ thống");
                 $('#myModalThongBao').modal();
             });
@@ -896,9 +920,7 @@
                     window.location = `/CtsvServiceManagement/DownloadFile?id=${res.fileId}&format=${format}`;
                 },
             }).done(res => {
-                console.log('done: ', res);
             }).fail(res => {
-                console.log(res);
             });
         }
 

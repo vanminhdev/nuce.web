@@ -24,7 +24,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <Use64BitIISExpress />
+    <Use64BitIISExpress>false</Use64BitIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -149,6 +149,8 @@
     <Content Include="DichVu\VayVonNganHang_YeuCauMoi.aspx" />
     <Content Include="DichVu\ThueNhaSinhVien.aspx" />
     <Content Include="DichVu\ThueNhaSinhVien_YeuCauMoi.aspx" />
+    <Content Include="DichVu\VeXeBus.aspx" />
+    <Content Include="DichVu\VeXeBus_YeuCauMoi.aspx" />
     <Content Include="index.html" />
     <Content Include="js\phuong-quan-thanh-pho.js" />
     <Content Include="TEST.aspx" />
@@ -2423,6 +2425,20 @@
     </Compile>
     <Compile Include="DichVu\ThueNhaSinhVien_YeuCauMoi.aspx.designer.cs">
       <DependentUpon>ThueNhaSinhVien_YeuCauMoi.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="DichVu\VeXeBus.aspx.cs">
+      <DependentUpon>VeXeBus.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DichVu\VeXeBus.aspx.designer.cs">
+      <DependentUpon>VeXeBus.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="DichVu\VeXeBus_YeuCauMoi.aspx.cs">
+      <DependentUpon>VeXeBus_YeuCauMoi.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DichVu\VeXeBus_YeuCauMoi.aspx.designer.cs">
+      <DependentUpon>VeXeBus_YeuCauMoi.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>

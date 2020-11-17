@@ -9,9 +9,11 @@ using System.Web.Mvc;
 using nuce.web.quanly.ViewModel.Base;
 using System.Net.Http;
 using System.Net;
+using nuce.web.quanly.Attributes.ActionFilter;
 
 namespace nuce.web.quanly.Controllers
 {
+    [AuthorizeActionFilter("P_CTSV")]
     public class CtsvServiceManagementController : BaseController
     {
         // GET: Admin/CtsvServiceManagement
@@ -93,7 +95,8 @@ namespace nuce.web.quanly.Controllers
                 return null;
             }
             string api = ExportApiSet[model.ExportType];
-            var stringContent = base.MakeContent(new { model.DichVuList, model.DichVuType });
+            var body = new { model.DichVuList, model.DichVuType };
+            var stringContent = base.MakeContent(body);
             var response = await base.MakeRequestAuthorizedAsync("post", api, stringContent);
 
             if (response.IsSuccessStatusCode)

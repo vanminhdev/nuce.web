@@ -10,11 +10,11 @@ namespace nuce.web.quanly.Common
         public static Dictionary<string, string> Roles = new Dictionary<string, string>()
         {
             { "Admin", "Quản trị" },
-            { "PhongBan", "Phòng ban" },
+            //{ "PhongBan", "Phòng ban" },
             { "P_KhaoThi", "Phòng khảo thí" },
             { "P_CTSV", "Phòng công tác sinh viên" },
-            { "Khoa", "Khoa" },
-            { "K_CNTT", "Khoa CNTT" }
+            //{ "Khoa", "Khoa" },
+            //{ "K_CNTT", "Khoa CNTT" }
         };
 
 

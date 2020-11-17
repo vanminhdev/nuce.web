@@ -149,7 +149,11 @@
                                 }
                                 if (roles.FirstOrDefault(r => r == "P_CTSV") != null)
                                 {
-
+                                    <li class="nav-item">
+                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action" href="/ctsvservicemanagement">
+                                            Quản lý dịch vụ
+                                        </a>
+                                    </li>
                                 }
                             }
                             else
@@ -165,14 +169,14 @@
                                             @*<a class="dropdown-item font-18 font-10-xsm" href="/config/index">Cấu hình trang web</a>*@
                                         </div>
                                     </li>
-                                    <li class="nav-item dropdown dropdown-hover-show">
+                                    @*<li class="nav-item dropdown dropdown-hover-show">
                                         <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action" href="#" id="navbarDropdown-sync" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             Đồng bộ dữ liệu
                                         </a>
                                         <div class="dropdown-menu width-100ps" aria-labelledby="navbarDropdown-sync">
                                             <a class="dropdown-item font-18 font-10-xsm" href="/syncedudata/syncfromedudata">Đồng bộ dữ liệu từ đào tạo</a>
                                         </div>
-                                    </li>
+                                    </li>*@
                                 }
                                 if (roles.FirstOrDefault(r => r == "P_KhaoThi") != null)
                                 {
@@ -194,8 +198,7 @@
                                             Công tác sinh viên
                                         </a>
                                         <div class="dropdown-menu width-100ps" aria-labelledby="navbarDropdown-ctsv">
-                                            @*<a class="dropdown-item font-18 font-10-xsm" href="/">Chức năng 1</a>
-                                            <a class="dropdown-item font-18 font-10-xsm" href="/">Chức năng 2</a>*@
+                                            <a class="dropdown-item font-18 font-10-xsm" href="/ctsvservicemanagement">Quản lý dịch vụ</a>
                                         </div>
                                     </li>
                                 }

@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using nuce.web.api.Services.Core.Interfaces;
 using System.Transactions;
 using nuce.web.api.ViewModel;
-using System.Net;
 using nuce.web.api.ViewModel.Core;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -24,6 +23,17 @@ using System.IO.Compression;
 using System.IO;
 using ClosedXML.Excel;
 using Microsoft.EntityFrameworkCore;
+using DocumentFormat.OpenXml.Wordprocessing;
+using GemboxRun = GemBox.Document.Run;
+using GemboxParagraph = GemBox.Document.Paragraph;
+using GemboxTable = GemBox.Document.Tables.Table;
+using GemboxColor = GemBox.Document.Color;
+using GemboxTableWidth = GemBox.Document.Tables.TableWidth;
+using GemboxTableRow = GemBox.Document.Tables.TableRow;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml;
+using OXRun = DocumentFormat.OpenXml.Wordprocessing.Run;
+using OXInline = DocumentFormat.OpenXml.Drawing.Wordprocessing.Inline;
 
 namespace nuce.web.api.Services.Ctsv.Implements
 {
@@ -313,18 +323,20 @@ namespace nuce.web.api.Services.Ctsv.Implements
         public IQueryable GetAllByStudent(int dichVuType)
         {
             long studentId = _userService.GetCurrentStudentID() ?? 0;
-            switch (dichVuType)
+            switch ((DichVu)dichVuType)
             {
-                case (int)Common.Ctsv.DichVu.XacNhan:
+                case DichVu.XacNhan:
                     return _xacNhanRepository.GetAll(studentId);
-                case (int)Common.Ctsv.DichVu.GioiThieu:
+                case DichVu.GioiThieu:
                     return _gioiThieuRepository.GetAll(studentId);
-                case (int)Common.Ctsv.DichVu.UuDaiGiaoDuc:
+                case DichVu.UuDaiGiaoDuc:
                     return _uuDaiRepository.GetAll(studentId);
-                case (int)Common.Ctsv.DichVu.VayVonNganHang:
+                case DichVu.VayVonNganHang:
                     return _vayVonRepository.GetAll(studentId);
-                case (int)Common.Ctsv.DichVu.ThueNha:
+                case DichVu.ThueNha:
                     return _thueNhaRepository.GetAll(studentId);
+                case DichVu.VeBus:
+                    return _veXeBusRepository.GetAll(studentId);
                 default:
                     break;
             }
@@ -504,7 +516,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             }
             catch (Exception ex)
             {
-                _logger.LogError("Cập nhật trạng thái yêu cầu dịch vụ", $"{ex.ToString()} \n", JsonConvert.SerializeObject(model));
+                _logger.LogError($"Cập nhật trạng thái yêu cầu dịch vụ \n {ex.Message}");
                 return new ResponseBody { Data = ex, Message = "Lỗi hệ thống" };
             }
             return null;
@@ -552,7 +564,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             }
             catch (Exception ex)
             {
-                _logger.LogError("Cập nhật các yêu cầu lên trạng thái 4", $"{ex.ToString()} \n", JsonConvert.SerializeObject(new { loaiDichVu, dichVuList }));
+                _logger.LogError($"Cập nhật các yêu cầu lên trạng thái 4 {ex.ToString()}");
                 throw ex;
             }
         }
@@ -1192,7 +1204,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
             {
                 var exportResult = await GetExportOutput(dichVu, yeuCau.ID);
                 string dir = exportResult.filePath;
-                exportResult.document.Save(dir);
+                if (exportResult.document != null)
+                {
+                    exportResult.document.Save(dir);
+                }
                 dirs.Add(dir);
             }
 
@@ -1214,9 +1229,13 @@ namespace nuce.web.api.Services.Ctsv.Implements
             try
             {
                 var exportOutput = await GetExportOutput(dichVu, id);
-                if (exportOutput != null)
+                if (exportOutput == null) return null;
+                if (exportOutput.document != null)
                 {
                     return await DocumentToByteAsync(exportOutput.document, exportOutput.filePath);
+                } else if (exportOutput.document == null)
+                {
+                    return await FileToByteAsync(exportOutput.filePath);
                 }
                 return null;
             }
@@ -1239,11 +1258,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     return await ExportWordVayVon(id);
                 case DichVu.ThueNha:
                     return await ExportWordThueNha(id);
+                case DichVu.VeBus:
+                    return await ExportWordVeXeBus(id);
                 default:
                     break;
             }
             return null;
         }
+
         private async Task<ExportFileOutputModel> ExportWordXacNhan(int id)
         {
             var xacNhan = await _xacNhanRepository.FindByIdAsync(id);
@@ -1295,17 +1317,17 @@ namespace nuce.web.api.Services.Ctsv.Implements
             Section section;
             section = new Section(document);
             #region Cộng hòa xã hội chủ nghĩa việt nam
-            Table table = new Table(document);
-            table.TableFormat.PreferredWidth = new TableWidth(100, TableWidthUnit.Percentage);
+            GemboxTable table = new GemboxTable(document);
+            table.TableFormat.PreferredWidth = new GemboxTableWidth(100, TableWidthUnit.Percentage);
             table.TableFormat.Alignment = HorizontalAlignment.Center;
             var tableBorders = table.TableFormat.Borders;
-            tableBorders.SetBorders(MultipleBorderTypes.All, BorderStyle.None, Color.Empty, 0);
+            tableBorders.SetBorders(MultipleBorderTypes.All, BorderStyle.None, GemboxColor.Empty, 0);
             table.Columns.Add(new TableColumn() { PreferredWidth = 35 });
             table.Columns.Add(new TableColumn() { PreferredWidth = 65 });
-            TableRow rowT1 = new TableRow(document);
+            GemboxTableRow rowT1 = new GemboxTableRow(document);
             table.Rows.Add(rowT1);
 
-            rowT1.Cells.Add(new TableCell(document, new Paragraph(document, new Run(document, string.Format("{0}", "BỘ GIÁO DỤC VÀ ĐÀO TẠO"))
+            rowT1.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document, new GemboxRun(document, string.Format("{0}", "BỘ GIÁO DỤC VÀ ĐÀO TẠO"))
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -1326,7 +1348,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 }
             }
             );
-            rowT1.Cells.Add(new TableCell(document, new Paragraph(document, new Run(document, string.Format("{0}", "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM"))
+            rowT1.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document, new GemboxRun(document, string.Format("{0}", "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM"))
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -1348,10 +1370,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 }
             }
            );
-            TableRow rowT2 = new TableRow(document);
+            GemboxTableRow rowT2 = new GemboxTableRow(document);
             table.Rows.Add(rowT2);
 
-            rowT2.Cells.Add(new TableCell(document, new Paragraph(document, new Run(document, string.Format("{0}", "TRƯỜNG ĐẠI HỌC XÂY DỰNG"))
+            rowT2.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document, new GemboxRun(document, string.Format("{0}", "TRƯỜNG ĐẠI HỌC XÂY DỰNG"))
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -1373,7 +1395,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 }
             }
             );
-            rowT2.Cells.Add(new TableCell(document, new Paragraph(document, new Run(document, string.Format("{0}", "Độc lập – Tự do – Hạnh phúc"))
+            rowT2.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document, new GemboxRun(document, string.Format("{0}", "Độc lập – Tự do – Hạnh phúc"))
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -1395,14 +1417,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 }
             }
            );
-            var paragraph = new Paragraph(document);
+            var paragraph = new GemboxParagraph(document);
 
             var horizontalLine1 = new Shape(document, ShapeType.Line, GemBox.Document.Layout.Floating(
                  new HorizontalPosition(1, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
                 new VerticalPosition(3.5, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
                 new Size(125, 0)));
             horizontalLine1.Outline.Width = 1;
-            horizontalLine1.Outline.Fill.SetSolid(Color.Black);
+            horizontalLine1.Outline.Fill.SetSolid(GemboxColor.Black);
             paragraph.Inlines.Add(horizontalLine1);
 
             var horizontalLine2 = new Shape(document, ShapeType.Line, GemBox.Document.Layout.Floating(
@@ -1410,17 +1432,17 @@ namespace nuce.web.api.Services.Ctsv.Implements
                new VerticalPosition(3.5, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
                new Size(151, 0)));
             horizontalLine2.Outline.Width = 1;
-            horizontalLine2.Outline.Fill.SetSolid(Color.Black);
+            horizontalLine2.Outline.Fill.SetSolid(GemboxColor.Black);
             paragraph.Inlines.Add(horizontalLine2);
 
             section.Blocks.Add(table);
             section.Blocks.Add(paragraph);
             #endregion
             #region TieuDe
-            Paragraph paragraphTieuDe = new Paragraph(document,
+            GemboxParagraph paragraphTieuDe = new GemboxParagraph(document,
             //new SpecialCharacter(document, SpecialCharacterType.LineBreak),
             new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-            new Run(document, string.Format("{0}", "GIẤY XÁC NHẬN"))
+            new GemboxRun(document, string.Format("{0}", "GIẤY XÁC NHẬN"))
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -1429,7 +1451,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 }
             }
             , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-            , new Run(document, "TRƯỜNG ĐẠI HỌC XÂY DỰNG")
+            , new GemboxRun(document, "TRƯỜNG ĐẠI HỌC XÂY DỰNG")
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -1438,7 +1460,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 }
             }
             , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-            , new Run(document, "XÁC NHẬN")
+            , new GemboxRun(document, "XÁC NHẬN")
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -1457,16 +1479,16 @@ namespace nuce.web.api.Services.Ctsv.Implements
             section.Blocks.Add(paragraphTieuDe);
             #endregion
             #region NoiDung
-            Paragraph paragraphNoiDung = new Paragraph(document,
+            GemboxParagraph paragraphNoiDung = new GemboxParagraph(document,
            // new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-           new Run(document, string.Format("{0}", "Anh (chị): "))
+           new GemboxRun(document, string.Format("{0}", "Anh (chị): "))
            {
                CharacterFormat = new CharacterFormat()
                {
                    Size = 13
                }
            }
-           , new Run(document, string.Format("{0}", HoVaTen))
+           , new GemboxRun(document, string.Format("{0}", HoVaTen))
            {
                CharacterFormat = new CharacterFormat()
                {
@@ -1475,14 +1497,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                }
            }
            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-           , new Run(document, "Sinh ngày: ")
+           , new GemboxRun(document, "Sinh ngày: ")
            {
                CharacterFormat = new CharacterFormat()
                {
                    Size = 13
                }
            }
-            , new Run(document, string.Format("{0} ", NgaySinh.Day))
+            , new GemboxRun(document, string.Format("{0} ", NgaySinh.Day))
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -1490,14 +1512,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     Size = 13
                 }
             }
-             , new Run(document, "tháng ")
+             , new GemboxRun(document, "tháng ")
              {
                  CharacterFormat = new CharacterFormat()
                  {
                      Size = 13
                  }
              }
-            , new Run(document, string.Format("{0} ", NgaySinh.Month))
+            , new GemboxRun(document, string.Format("{0} ", NgaySinh.Month))
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -1505,14 +1527,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     Size = 13
                 }
             }
-             , new Run(document, "năm ")
+             , new GemboxRun(document, "năm ")
              {
                  CharacterFormat = new CharacterFormat()
                  {
                      Size = 13
                  }
              }
-            , new Run(document, string.Format("{0}", NgaySinh.Year))
+            , new GemboxRun(document, string.Format("{0}", NgaySinh.Year))
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -1521,7 +1543,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 }
             }
            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-           , new Run(document, "Hộ khẩu thường trú: ")
+           , new GemboxRun(document, "Hộ khẩu thường trú: ")
            {
                CharacterFormat = new CharacterFormat()
                {
@@ -1529,7 +1551,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                }
            }
            //, new Run(document, string.Format("Số {0}, Phố {1}, Phường (Xã) {2}, Quận (Huyện) {3}, Thành Phố (Tỉnh) {4} ", HKTT_SoNha, HKTT_Pho, HKTT_Phuong, HKTT_Quan, HKTT_Tinh))
-           , new Run(document, string.Format("{0}, {1}, {2}, {3} ", HKTT_Pho, HKTT_Phuong, HKTT_Quan, HKTT_Tinh))
+           , new GemboxRun(document, string.Format("{0}, {1}, {2}, {3} ", HKTT_Pho, HKTT_Phuong, HKTT_Quan, HKTT_Tinh))
            {
                CharacterFormat = new CharacterFormat()
                {
@@ -1554,21 +1576,21 @@ namespace nuce.web.api.Services.Ctsv.Implements
              //    }
              //}
              , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-              , new Run(document, "Hiện đang là sinh viên của trường:   ")
+              , new GemboxRun(document, "Hiện đang là sinh viên của trường:   ")
               {
                   CharacterFormat = new CharacterFormat()
                   {
                       Size = 13
                   }
               }
-         , new Run(document, "   MSSV:")
+         , new GemboxRun(document, "   MSSV:")
          {
              CharacterFormat = new CharacterFormat()
              {
                  Size = 13
              }
          }
-         , new Run(document, string.Format(" {0} ", MaSV))
+         , new GemboxRun(document, string.Format(" {0} ", MaSV))
          {
              CharacterFormat = new CharacterFormat()
              {
@@ -1576,14 +1598,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                  Size = 13
              }
          }
-         , new Run(document, "   Lớp:")
+         , new GemboxRun(document, "   Lớp:")
          {
              CharacterFormat = new CharacterFormat()
              {
                  Size = 13
              }
          }
-         , new Run(document, string.Format(" {0} ", Class))
+         , new GemboxRun(document, string.Format(" {0} ", Class))
          {
              CharacterFormat = new CharacterFormat()
              {
@@ -1592,14 +1614,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
              }
          }
           , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-           , new Run(document, "Khoa: ")
+           , new GemboxRun(document, "Khoa: ")
            {
                CharacterFormat = new CharacterFormat()
                {
                    Size = 13
                }
            }
-         , new Run(document, string.Format(" {0} ", TenKhoa))
+         , new GemboxRun(document, string.Format(" {0} ", TenKhoa))
          {
              CharacterFormat = new CharacterFormat()
              {
@@ -1607,14 +1629,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                  Size = 13
              }
          }
-          , new Run(document, " Khóa học: ")
+          , new GemboxRun(document, " Khóa học: ")
           {
               CharacterFormat = new CharacterFormat()
               {
                   Size = 13
               }
           }
-         , new Run(document, string.Format(" {0} ", NienKhoa))
+         , new GemboxRun(document, string.Format(" {0} ", NienKhoa))
          {
              CharacterFormat = new CharacterFormat()
              {
@@ -1623,14 +1645,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
              }
          }
          , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-          , new Run(document, "Hệ đào tạo: ")
+          , new GemboxRun(document, "Hệ đào tạo: ")
           {
               CharacterFormat = new CharacterFormat()
               {
                   Size = 13
               }
           }
-         , new Run(document, string.Format(" {0} ", HeDaoTao))
+         , new GemboxRun(document, string.Format(" {0} ", HeDaoTao))
          {
              CharacterFormat = new CharacterFormat()
              {
@@ -1639,14 +1661,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
              }
          }
           , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-             , new Run(document, "Lý do xác nhận: ")
+             , new GemboxRun(document, "Lý do xác nhận: ")
              {
                  CharacterFormat = new CharacterFormat()
                  {
                      Size = 13
                  }
              }
-         , new Run(document, string.Format(" {0} ", LyDoXacNhan.Replace("\n", "").Replace("\r", "")))
+         , new GemboxRun(document, string.Format(" {0} ", LyDoXacNhan.Replace("\n", "").Replace("\r", "")))
          {
              CharacterFormat = new CharacterFormat()
              {
@@ -1667,21 +1689,21 @@ namespace nuce.web.api.Services.Ctsv.Implements
             section.Blocks.Add(paragraphNoiDung);
             #endregion
             #region Chu ky
-            Table tableCK = new Table(document);
-            tableCK.TableFormat.PreferredWidth = new TableWidth(100, TableWidthUnit.Percentage);
+            GemboxTable tableCK = new GemboxTable(document);
+            tableCK.TableFormat.PreferredWidth = new GemboxTableWidth(100, TableWidthUnit.Percentage);
             tableCK.TableFormat.Alignment = HorizontalAlignment.Center;
             tableCK.TableFormat.AutomaticallyResizeToFitContents = false;
             var tableBordersCK = tableCK.TableFormat.Borders;
-            tableBordersCK.SetBorders(MultipleBorderTypes.All, BorderStyle.None, Color.Empty, 0);
+            tableBordersCK.SetBorders(MultipleBorderTypes.All, BorderStyle.None, GemboxColor.Empty, 0);
             tableCK.Columns.Add(new TableColumn(45));
             tableCK.Columns.Add(new TableColumn(55));
-            TableRow rowT1CK = new TableRow(document);
+            GemboxTableRow rowT1CK = new GemboxTableRow(document);
             tableCK.Rows.Add(rowT1CK);
 
-            rowT1CK.Cells.Add(new TableCell(document, new Paragraph(document, new Run(document, string.Format("{0}", " ")))));
+            rowT1CK.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document, new GemboxRun(document, string.Format("{0}", " ")))));
 
-            rowT1CK.Cells.Add(new TableCell(document, new Paragraph(document,
-                new Run(document, string.Format("Hà Nội, ngày {0} tháng {1} năm {2}", DateTime.Now.Day, DateTime.Now.Month, DateTime.Now.Year))
+            rowT1CK.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document,
+                new GemboxRun(document, string.Format("Hà Nội, ngày {0} tháng {1} năm {2}", DateTime.Now.Day, DateTime.Now.Month, DateTime.Now.Year))
                 {
                     CharacterFormat = new CharacterFormat()
                     {
@@ -1690,7 +1712,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     }
                 }
             , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-            , new Run(document, desChucDanhNguoiKy)
+            , new GemboxRun(document, desChucDanhNguoiKy)
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -1705,7 +1727,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
             , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
             , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-            , new Run(document, desTenNguoiKy)
+            , new GemboxRun(document, desTenNguoiKy)
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -1790,9 +1812,9 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
             int commonFontSize = 14;
             #region Mẫu số
-            Paragraph paragraphMauSo = new Paragraph(
+            GemboxParagraph paragraphMauSo = new GemboxParagraph(
                 document,
-                new Run(document, "Mẫu số 02/ƯĐGD")
+                new GemboxRun(document, "Mẫu số 02/ƯĐGD")
                 {
                     CharacterFormat = new CharacterFormat { Bold = true, Size = 13 }
                 })
@@ -1807,8 +1829,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
             #endregion
 
             #region TieuDe
-            Paragraph paragraphTieuDe = new Paragraph(document,
-             new Run(document, string.Format("{0}", "GIẤY XÁC NHẬN"))
+            GemboxParagraph paragraphTieuDe = new GemboxParagraph(document,
+             new GemboxRun(document, string.Format("{0}", "GIẤY XÁC NHẬN"))
              {
                  CharacterFormat = new CharacterFormat()
                  {
@@ -1817,7 +1839,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                  }
              },
              new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-            new Run(document, string.Format("{0}", "(Ban hành kèm theo Thông tư số 36/2015/TT-BLĐTBXH ngày 28 tháng 9 năm 2015 của Bộ Lao động-Thương binh và Xã hội)"))
+            new GemboxRun(document, string.Format("{0}", "(Ban hành kèm theo Thông tư số 36/2015/TT-BLĐTBXH ngày 28 tháng 9 năm 2015 của Bộ Lao động-Thương binh và Xã hội)"))
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -1827,7 +1849,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             },
             new SpecialCharacter(document, SpecialCharacterType.LineBreak),
             new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-            new Run(document, string.Format("{0}", "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM"))
+            new GemboxRun(document, string.Format("{0}", "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM"))
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -1836,7 +1858,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 }
             },
              new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-             new Run(document, string.Format("{0}", "Độc lập - Tự do - Hạnh phúc"))
+             new GemboxRun(document, string.Format("{0}", "Độc lập - Tự do - Hạnh phúc"))
              {
                  CharacterFormat = new CharacterFormat()
                  {
@@ -1856,14 +1878,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 new VerticalPosition(7.5, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
                 new Size(155, 0)));
             horizontalLine1.Outline.Width = 1;
-            horizontalLine1.Outline.Fill.SetSolid(Color.Black);
+            horizontalLine1.Outline.Fill.SetSolid(GemboxColor.Black);
             paragraphTieuDe.Inlines.Add(horizontalLine1);
             section.Blocks.Add(paragraphTieuDe);
             #endregion
             #region Giay xac nhan
-            Paragraph paragraphXacNhan = new Paragraph(document,
+            GemboxParagraph paragraphXacNhan = new GemboxParagraph(document,
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new Run(document, string.Format("{0}", "GIẤY XÁC NHẬN"))
+                new GemboxRun(document, string.Format("{0}", "GIẤY XÁC NHẬN"))
                 {
                     CharacterFormat = new CharacterFormat()
                     {
@@ -1872,7 +1894,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     }
                 }
                 , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-                , new Run(document, "(Dùng cho các cơ sở giáo dục nghề nghiệp, giáo dục đại học xác nhận)")
+                , new GemboxRun(document, "(Dùng cho các cơ sở giáo dục nghề nghiệp, giáo dục đại học xác nhận)")
                 {
                     CharacterFormat = new CharacterFormat()
                     {
@@ -1892,9 +1914,9 @@ namespace nuce.web.api.Services.Ctsv.Implements
             section.Blocks.Add(paragraphXacNhan);
             #endregion
             #region NoiDung
-            Paragraph paragraphNoiDung = new Paragraph(document,
+            GemboxParagraph paragraphNoiDung = new GemboxParagraph(document,
            // new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-           new Run(document, string.Format("{0}", "Trường: "))
+           new GemboxRun(document, string.Format("{0}", "Trường: "))
            {
                CharacterFormat = new CharacterFormat()
                {
@@ -1902,7 +1924,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                }
            }
            , new SpecialCharacter(document, SpecialCharacterType.Tab)
-           , new Run(document, string.Format("{0}", "ĐẠI HỌC XÂY DỰNG"))
+           , new GemboxRun(document, string.Format("{0}", "ĐẠI HỌC XÂY DỰNG"))
            {
                CharacterFormat = new CharacterFormat()
                {
@@ -1911,14 +1933,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                }
            }
            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-           , new Run(document, "Xác nhận anh/chị: ")
+           , new GemboxRun(document, "Xác nhận anh/chị: ")
            {
                CharacterFormat = new CharacterFormat()
                {
                    Size = commonFontSize
                }
            }
-            , new Run(document, string.Format("{0} ", HoVaTen))
+            , new GemboxRun(document, string.Format("{0} ", HoVaTen))
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -1938,26 +1960,26 @@ namespace nuce.web.api.Services.Ctsv.Implements
             section.Blocks.Add(paragraphNoiDung);
             #endregion
             #region Hien la sinh vien
-            Table tableNoiDung = new Table(document);
-            tableNoiDung.TableFormat.PreferredWidth = new TableWidth(100, TableWidthUnit.Percentage);
+            GemboxTable tableNoiDung = new GemboxTable(document);
+            tableNoiDung.TableFormat.PreferredWidth = new GemboxTableWidth(100, TableWidthUnit.Percentage);
             tableNoiDung.TableFormat.Alignment = GemBox.Document.HorizontalAlignment.Center;
             tableNoiDung.TableFormat.AutomaticallyResizeToFitContents = false;
             var tableBordersNoiDung = tableNoiDung.TableFormat.Borders;
-            tableBordersNoiDung.SetBorders(MultipleBorderTypes.All, BorderStyle.None, Color.Empty, 0);
+            tableBordersNoiDung.SetBorders(MultipleBorderTypes.All, BorderStyle.None, GemboxColor.Empty, 0);
             tableNoiDung.Columns.Add(new TableColumn(40));
             tableNoiDung.Columns.Add(new TableColumn(60));
-            TableRow rowT1NoiDung = new TableRow(document);
+            GemboxTableRow rowT1NoiDung = new GemboxTableRow(document);
             tableNoiDung.Rows.Add(rowT1NoiDung);
 
-            rowT1NoiDung.Cells.Add(new TableCell(document, new Paragraph(document,
-                new Run(document, "Hiện là sinh viên năm thứ: ")
+            rowT1NoiDung.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document,
+                new GemboxRun(document, "Hiện là sinh viên năm thứ: ")
                 {
                     CharacterFormat = new CharacterFormat()
                     {
                         Size = commonFontSize
                     }
                 }
-                , new Run(document, string.Format("{0} ", getNamThu(NienKhoa)))
+                , new GemboxRun(document, string.Format("{0} ", getNamThu(NienKhoa)))
                 {
                     CharacterFormat = new CharacterFormat()
                     {
@@ -1966,20 +1988,20 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     }
                 },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new Run(document, "Mã số sinh viên: ") { CharacterFormat = new CharacterFormat { Size = commonFontSize } },
-                new Run(document, $"{MaSV}   ")
+                new GemboxRun(document, "Mã số sinh viên: ") { CharacterFormat = new CharacterFormat { Size = commonFontSize } },
+                new GemboxRun(document, $"{MaSV}   ")
                 {
                     CharacterFormat = new CharacterFormat { Size = commonFontSize, Bold = true }
                 },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new Run(document, "Khoa: ")
+                new GemboxRun(document, "Khoa: ")
                 {
                     CharacterFormat = new CharacterFormat()
                     {
                         Size = commonFontSize
                     }
                 }
-                , new Run(document, string.Format("{0}", TenKhoa))
+                , new GemboxRun(document, string.Format("{0}", TenKhoa))
                 {
                     CharacterFormat = new CharacterFormat()
                     {
@@ -1988,14 +2010,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     }
                 },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new Run(document, "Hình thức đào tạo: ")
+                new GemboxRun(document, "Hình thức đào tạo: ")
                 {
                     CharacterFormat = new CharacterFormat()
                     {
                         Size = commonFontSize
                     }
                 }
-                , new Run(document, "Chính quy")
+                , new GemboxRun(document, "Chính quy")
                 {
                     CharacterFormat = new CharacterFormat()
                     {
@@ -2011,15 +2033,15 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 }
             }));
 
-            rowT1NoiDung.Cells.Add(new TableCell(document, new Paragraph(document,
-                new Run(document, "Học kỳ: ")
+            rowT1NoiDung.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document,
+                new GemboxRun(document, "Học kỳ: ")
                 {
                     CharacterFormat = new CharacterFormat()
                     {
                         Size = commonFontSize
                     }
                 }
-                , new Run(document, string.Format("{0} ", "1"))
+                , new GemboxRun(document, string.Format("{0} ", "1"))
                 {
                     CharacterFormat = new CharacterFormat()
                     {
@@ -2028,14 +2050,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     }
                 }
                 , new SpecialCharacter(document, SpecialCharacterType.Tab)
-                 , new Run(document, "Năm học: ")
+                 , new GemboxRun(document, "Năm học: ")
                  {
                      CharacterFormat = new CharacterFormat()
                      {
                          Size = commonFontSize
                      }
                  }
-                , new Run(document, string.Format("{0} - {1}", DateTime.Now.Year, DateTime.Now.Year + 1))
+                , new GemboxRun(document, string.Format("{0} - {1}", DateTime.Now.Year, DateTime.Now.Year + 1))
                 {
                     CharacterFormat = new CharacterFormat()
                     {
@@ -2044,20 +2066,20 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     }
                 },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new Run(document, "Lớp: ") { CharacterFormat = new CharacterFormat { Size = commonFontSize } },
-                new Run(document, Class)
+                new GemboxRun(document, "Lớp: ") { CharacterFormat = new CharacterFormat { Size = commonFontSize } },
+                new GemboxRun(document, Class)
                 {
                     CharacterFormat = new CharacterFormat { Size = commonFontSize, Bold = true }
                 }
                 , new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new Run(document, "Khoá học: ")
+                new GemboxRun(document, "Khoá học: ")
                 {
                     CharacterFormat = new CharacterFormat()
                     {
                         Size = commonFontSize
                     }
                 },
-                new Run(document, NienKhoa)
+                new GemboxRun(document, NienKhoa)
                 {
                     CharacterFormat = new CharacterFormat()
                     {
@@ -2066,14 +2088,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     }
                 },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new Run(document, "Thời gian khoá học: ")
+                new GemboxRun(document, "Thời gian khoá học: ")
                 {
                     CharacterFormat = new CharacterFormat()
                     {
                         Size = commonFontSize
                     }
                 },
-                new Run(document, getThoiGianKhoaHoc(NienKhoa))
+                new GemboxRun(document, getThoiGianKhoaHoc(NienKhoa))
                 {
                     CharacterFormat = new CharacterFormat()
                     {
@@ -2081,7 +2103,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         Size = commonFontSize
                     }
                 },
-                new Run(document, " (năm);")
+                new GemboxRun(document, " (năm);")
                 {
                     CharacterFormat = new CharacterFormat()
                     {
@@ -2099,17 +2121,17 @@ namespace nuce.web.api.Services.Ctsv.Implements
             section.Blocks.Add(tableNoiDung);
             #endregion
             #region Đề nghị
-            Paragraph paragraphDeNghi = new Paragraph(
+            GemboxParagraph paragraphDeNghi = new GemboxParagraph(
                 document,
-                new Run(document, "Đề nghị Phòng Lao động-Thương binh và Xã hội xem xét, giải quyết chế độ ưu đãi trong giáo dục đào tạo cho anh/chị")
+                new GemboxRun(document, "Đề nghị Phòng Lao động-Thương binh và Xã hội xem xét, giải quyết chế độ ưu đãi trong giáo dục đào tạo cho anh/chị")
                 {
                     CharacterFormat = new CharacterFormat()
                     {
                         Size = commonFontSize
                     },
                 },
-                new Run(document, string.Format(" {0} ", HoVaTen)) { CharacterFormat = new CharacterFormat() { Size = commonFontSize, Bold = true } },
-                new Run(document, "theo quy định và chế độ hiện hành.") { CharacterFormat = new CharacterFormat() { Size = commonFontSize } },
+                new GemboxRun(document, string.Format(" {0} ", HoVaTen)) { CharacterFormat = new CharacterFormat() { Size = commonFontSize, Bold = true } },
+                new GemboxRun(document, "theo quy định và chế độ hiện hành.") { CharacterFormat = new CharacterFormat() { Size = commonFontSize } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak))
             {
                 ParagraphFormat = new ParagraphFormat()
@@ -2121,21 +2143,21 @@ namespace nuce.web.api.Services.Ctsv.Implements
             section.Blocks.Add(paragraphDeNghi);
             #endregion
             #region Chu ky
-            Table tableCK = new Table(document);
-            tableCK.TableFormat.PreferredWidth = new TableWidth(100, TableWidthUnit.Percentage);
+            GemboxTable tableCK = new GemboxTable(document);
+            tableCK.TableFormat.PreferredWidth = new GemboxTableWidth(100, TableWidthUnit.Percentage);
             tableCK.TableFormat.Alignment = GemBox.Document.HorizontalAlignment.Center;
             tableCK.TableFormat.AutomaticallyResizeToFitContents = false;
             var tableBordersCK = tableCK.TableFormat.Borders;
-            tableBordersCK.SetBorders(MultipleBorderTypes.All, BorderStyle.None, Color.Empty, 0);
+            tableBordersCK.SetBorders(MultipleBorderTypes.All, BorderStyle.None, GemboxColor.Empty, 0);
             tableCK.Columns.Add(new TableColumn(45));
             tableCK.Columns.Add(new TableColumn(55));
-            TableRow rowT1CK = new TableRow(document);
+            GemboxTableRow rowT1CK = new GemboxTableRow(document);
             tableCK.Rows.Add(rowT1CK);
 
-            rowT1CK.Cells.Add(new TableCell(document, new Paragraph(document, new Run(document, string.Format("{0}", " ")))));
+            rowT1CK.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document, new GemboxRun(document, string.Format("{0}", " ")))));
 
-            rowT1CK.Cells.Add(new TableCell(document, new Paragraph(document,
-                new Run(document, string.Format("Hà Nội, ngày {0} tháng {1} năm {2}", DateTime.Now.Day, DateTime.Now.Month, DateTime.Now.Year))
+            rowT1CK.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document,
+                new GemboxRun(document, string.Format("Hà Nội, ngày {0} tháng {1} năm {2}", DateTime.Now.Day, DateTime.Now.Month, DateTime.Now.Year))
                 {
                     CharacterFormat = new CharacterFormat()
                     {
@@ -2144,7 +2166,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     }
                 }
             , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-            , new Run(document, desChucDanhNguoiKy)
+            , new GemboxRun(document, desChucDanhNguoiKy)
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -2159,7 +2181,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
             , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
             , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-            , new Run(document, desTenNguoiKy)
+            , new GemboxRun(document, desTenNguoiKy)
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -2281,17 +2303,17 @@ namespace nuce.web.api.Services.Ctsv.Implements
             section = new Section(document);
             var pageSetup = section.PageSetup;
             #region Cộng hòa xã hội chủ nghĩa việt nam
-            Table table = new Table(document);
-            table.TableFormat.PreferredWidth = new TableWidth(100, TableWidthUnit.Percentage);
+            GemboxTable table = new GemboxTable(document);
+            table.TableFormat.PreferredWidth = new GemboxTableWidth(100, TableWidthUnit.Percentage);
             table.TableFormat.Alignment = GemBox.Document.HorizontalAlignment.Center;
             var tableBorders = table.TableFormat.Borders;
-            tableBorders.SetBorders(MultipleBorderTypes.All, BorderStyle.None, Color.Empty, 0);
+            tableBorders.SetBorders(MultipleBorderTypes.All, BorderStyle.None, GemboxColor.Empty, 0);
             table.Columns.Add(new TableColumn() { PreferredWidth = 35 });
             table.Columns.Add(new TableColumn() { PreferredWidth = 65 });
-            TableRow rowT1 = new TableRow(document);
+            GemboxTableRow rowT1 = new GemboxTableRow(document);
             table.Rows.Add(rowT1);
 
-            rowT1.Cells.Add(new TableCell(document, new Paragraph(document, new Run(document, string.Format("{0}", "BỘ GIÁO DỤC VÀ ĐÀO TẠO"))
+            rowT1.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document, new GemboxRun(document, string.Format("{0}", "BỘ GIÁO DỤC VÀ ĐÀO TẠO"))
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -2312,7 +2334,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 }
             }
             );
-            rowT1.Cells.Add(new TableCell(document, new Paragraph(document, new Run(document, string.Format("{0}", "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM"))
+            rowT1.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document, new GemboxRun(document, string.Format("{0}", "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM"))
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -2334,10 +2356,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 }
             }
            );
-            TableRow rowT2 = new TableRow(document);
+            GemboxTableRow rowT2 = new GemboxTableRow(document);
             table.Rows.Add(rowT2);
 
-            rowT2.Cells.Add(new TableCell(document, new Paragraph(document, new Run(document, string.Format("{0}", "TRƯỜNG ĐẠI HỌC XÂY DỰNG"))
+            rowT2.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document, new GemboxRun(document, string.Format("{0}", "TRƯỜNG ĐẠI HỌC XÂY DỰNG"))
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -2359,7 +2381,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 }
             }
             );
-            rowT2.Cells.Add(new TableCell(document, new Paragraph(document, new Run(document, string.Format("{0}", "Độc lập – Tự do – Hạnh phúc"))
+            rowT2.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document, new GemboxRun(document, string.Format("{0}", "Độc lập – Tự do – Hạnh phúc"))
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -2381,14 +2403,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 }
             }
            );
-            var paragraph = new Paragraph(document);
+            var paragraph = new GemboxParagraph(document);
 
             var horizontalLine1 = new Shape(document, ShapeType.Line, GemBox.Document.Layout.Floating(
                  new HorizontalPosition(1.45, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
                 new VerticalPosition(3.5, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
                 new Size(80, 0)));
             horizontalLine1.Outline.Width = 1;
-            horizontalLine1.Outline.Fill.SetSolid(Color.Black);
+            horizontalLine1.Outline.Fill.SetSolid(GemboxColor.Black);
             paragraph.Inlines.Add(horizontalLine1);
 
             var horizontalLine2 = new Shape(document, ShapeType.Line, GemBox.Document.Layout.Floating(
@@ -2396,17 +2418,17 @@ namespace nuce.web.api.Services.Ctsv.Implements
                new VerticalPosition(3.5, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
                new Size(151, 0)));
             horizontalLine2.Outline.Width = 1;
-            horizontalLine2.Outline.Fill.SetSolid(Color.Black);
+            horizontalLine2.Outline.Fill.SetSolid(GemboxColor.Black);
             paragraph.Inlines.Add(horizontalLine2);
 
             section.Blocks.Add(table);
             section.Blocks.Add(paragraph);
             #endregion
             #region TieuDe
-            Paragraph paragraphTieuDe = new Paragraph(document,
+            GemboxParagraph paragraphTieuDe = new GemboxParagraph(document,
             //new SpecialCharacter(document, SpecialCharacterType.LineBreak),
             new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-            new Run(document, string.Format("{0}", "GIẤY XÁC NHẬN"))
+            new GemboxRun(document, string.Format("{0}", "GIẤY XÁC NHẬN"))
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -2426,187 +2448,187 @@ namespace nuce.web.api.Services.Ctsv.Implements
             section.Blocks.Add(paragraphTieuDe);
             #endregion
             #region NoiDung
-            Paragraph paragraphNoiDung = new Paragraph(document,
+            GemboxParagraph paragraphNoiDung = new GemboxParagraph(document,
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Họ và tên sinh viên: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
-                new Run(document, HoVaTen) { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new GemboxRun(document, "Họ và tên sinh viên: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new GemboxRun(document, HoVaTen) { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Ngày sinh: ") { CharacterFormat = new CharacterFormat { Size = 13, } },
-                new Run(document, $"{NgaySinh.ToString("dd/MM/yyyy")}  ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
-                new Run(document, "Giới tính:    ") { CharacterFormat = new CharacterFormat { Size = 13, } },
-                new Run(document, "Nam: ") { CharacterFormat = new CharacterFormat { Size = 13, } },
+                new GemboxRun(document, "Ngày sinh: ") { CharacterFormat = new CharacterFormat { Size = 13, } },
+                new GemboxRun(document, $"{NgaySinh.ToString("dd/MM/yyyy")}  ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new GemboxRun(document, "Giới tính:    ") { CharacterFormat = new CharacterFormat { Size = 13, } },
+                new GemboxRun(document, "Nam: ") { CharacterFormat = new CharacterFormat { Size = 13, } },
                 new InlineContentControl(document, ContentControlType.CheckBox,
-                    new Run(document, GioiTinh["Nam"]) { CharacterFormat = new CharacterFormat { Size = 13, FontName = document.DefaultCharacterFormat.FontName } }),
-                new Run(document, "   Nữ: ") { CharacterFormat = new CharacterFormat { Size = 13, } },
+                    new GemboxRun(document, GioiTinh["Nam"]) { CharacterFormat = new CharacterFormat { Size = 13, FontName = document.DefaultCharacterFormat.FontName } }),
+                new GemboxRun(document, "   Nữ: ") { CharacterFormat = new CharacterFormat { Size = 13, } },
                 new InlineContentControl(document, ContentControlType.CheckBox,
-                    new Run(document, GioiTinh["Nữ"]) { CharacterFormat = new CharacterFormat { Size = 13, FontName = document.DefaultCharacterFormat.FontName } }),
+                    new GemboxRun(document, GioiTinh["Nữ"]) { CharacterFormat = new CharacterFormat { Size = 13, FontName = document.DefaultCharacterFormat.FontName } }),
                 //new Field(document, FieldType.FormCheckBox) { FormData = { Name = "Nữ" } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "CMND số: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
-                new Run(document, $"{cmt} ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
-                new Run(document, "ngày cấp: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
-                new Run(document, $"{cmtNgayCap} ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
-                new Run(document, "Nơi cấp: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
-                new Run(document, $"{cmtNoiCap}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new GemboxRun(document, "CMND số: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new GemboxRun(document, $"{cmt} ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new GemboxRun(document, "ngày cấp: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new GemboxRun(document, $"{cmtNgayCap} ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new GemboxRun(document, "Nơi cấp: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new GemboxRun(document, $"{cmtNoiCap}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Mã trường theo học (mã quy ước trong  tuyển sinh ĐH): ") { CharacterFormat = new CharacterFormat { Size = 13 } },
-                new Run(document, matruong) { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new GemboxRun(document, "Mã trường theo học (mã quy ước trong  tuyển sinh ĐH): ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new GemboxRun(document, matruong) { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Tên trường: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
-                new Run(document, tenTruong) { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new GemboxRun(document, "Tên trường: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new GemboxRun(document, tenTruong) { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Ngành học: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
-                new Run(document, nghanhHoc) { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new GemboxRun(document, "Ngành học: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new GemboxRun(document, nghanhHoc) { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Hệ đào tạo (Đại học, cao đẳng, dạy nghề): ") { CharacterFormat = new CharacterFormat { Size = 13 } },
-                new Run(document, heDaoTao) { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new GemboxRun(document, "Hệ đào tạo (Đại học, cao đẳng, dạy nghề): ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new GemboxRun(document, heDaoTao) { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Khoá: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
-                new Run(document, $"{khoa}  ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
-                new Run(document, "Loại hình đào tạo: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
-                new Run(document, $"{LoaiDaoTao}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new GemboxRun(document, "Khoá: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new GemboxRun(document, $"{khoa}  ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new GemboxRun(document, "Loại hình đào tạo: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new GemboxRun(document, $"{LoaiDaoTao}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Lớp: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
-                new Run(document, $"{Class}  ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
-                new Run(document, "Mã số SV: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
-                new Run(document, $"{MaSV}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new GemboxRun(document, "Lớp: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new GemboxRun(document, $"{Class}  ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new GemboxRun(document, "Mã số SV: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new GemboxRun(document, $"{MaSV}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Khoa/Ban: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
-                new Run(document, $"{TenKhoa}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new GemboxRun(document, "Khoa/Ban: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new GemboxRun(document, $"{TenKhoa}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Ngày nhập học:...../...../") { CharacterFormat = new CharacterFormat { Size = 13 } },
-                new Run(document, $"{namNhapHoc} ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
-                new Run(document, "Thời gian ra trường (tháng/năm):...../...../") { CharacterFormat = new CharacterFormat { Size = 13 } },
-                new Run(document, $"{namRaTruong}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new GemboxRun(document, "Ngày nhập học:...../...../") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new GemboxRun(document, $"{namNhapHoc} ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new GemboxRun(document, "Thời gian ra trường (tháng/năm):...../...../") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new GemboxRun(document, $"{namRaTruong}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "- Số tiền học phí hàng tháng: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
-                new Run(document, $"{hocPhi}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
-                new Run(document, " đồng") { CharacterFormat = new CharacterFormat { Size = 13 } }
+                new GemboxRun(document, "- Số tiền học phí hàng tháng: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new GemboxRun(document, $"{hocPhi}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new GemboxRun(document, " đồng") { CharacterFormat = new CharacterFormat { Size = 13 } }
             )
             { ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Left, LineSpacing = 1.25, SpaceAfter = 0 } };
             section.Blocks.Add(paragraphNoiDung);
             #endregion
             #region Thuoc Dien/Doi Tuong
-            Table tableDienDoiTuong = new Table(document);
-            tableDienDoiTuong.TableFormat.PreferredWidth = new TableWidth(100, TableWidthUnit.Percentage);
+            GemboxTable tableDienDoiTuong = new GemboxTable(document);
+            tableDienDoiTuong.TableFormat.PreferredWidth = new GemboxTableWidth(100, TableWidthUnit.Percentage);
             tableDienDoiTuong.TableFormat.Alignment = GemBox.Document.HorizontalAlignment.Center;
             tableDienDoiTuong.TableFormat.AutomaticallyResizeToFitContents = false;
             var tblDienDoiTuongBorder = tableDienDoiTuong.TableFormat.Borders;
-            tblDienDoiTuongBorder.SetBorders(MultipleBorderTypes.All, BorderStyle.None, Color.Empty, 0);
+            tblDienDoiTuongBorder.SetBorders(MultipleBorderTypes.All, BorderStyle.None, GemboxColor.Empty, 0);
             tableDienDoiTuong.Columns.Add(new TableColumn(30));
             tableDienDoiTuong.Columns.Add(new TableColumn(40));
             tableDienDoiTuong.Columns.Add(new TableColumn(30));
-            TableRow rowDien = new TableRow(document);
+            GemboxTableRow rowDien = new GemboxTableRow(document);
             tableDienDoiTuong.Rows.Add(rowDien);
-            TableRow rowDoiTuong = new TableRow(document);
+            GemboxTableRow rowDoiTuong = new GemboxTableRow(document);
             tableDienDoiTuong.Rows.Add(rowDoiTuong);
             rowDien.Cells.Add(
-                new TableCell(document, new Paragraph(document,
+                new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document,
                     new SpecialCharacter(document, SpecialCharacterType.Tab),
-                    new Run(document, "Thuộc diện:") { CharacterFormat = new CharacterFormat { Size = 13 } }
+                    new GemboxRun(document, "Thuộc diện:") { CharacterFormat = new CharacterFormat { Size = 13 } }
                 )
                 { ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Left, LineSpacing = 1.25 } })
             );
             rowDoiTuong.Cells.Add(
-                new TableCell(document, new Paragraph(document,
+                new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document,
                     new SpecialCharacter(document, SpecialCharacterType.Tab),
-                    new Run(document, "Thuộc đối tượng:") { CharacterFormat = new CharacterFormat { Size = 13 } }
+                    new GemboxRun(document, "Thuộc đối tượng:") { CharacterFormat = new CharacterFormat { Size = 13 } }
                 )
                 { ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Left, LineSpacing = 1.25 } })
             );
             rowDien.Cells.Add(
-                new TableCell(document, new Paragraph(document,
+                new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document,
                     //new SpecialCharacter(document, SpecialCharacterType.Tab),
-                    new Run(document, "- Không miễn giảm") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                    new GemboxRun(document, "- Không miễn giảm") { CharacterFormat = new CharacterFormat { Size = 13 } },
                     new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                     //new SpecialCharacter(document, SpecialCharacterType.Tab),
-                    new Run(document, "- Giảm học phí") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                    new GemboxRun(document, "- Giảm học phí") { CharacterFormat = new CharacterFormat { Size = 13 } },
                     new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                     //new SpecialCharacter(document, SpecialCharacterType.Tab),
-                    new Run(document, "- Miễn học phí") { CharacterFormat = new CharacterFormat { Size = 13 } }
+                    new GemboxRun(document, "- Miễn học phí") { CharacterFormat = new CharacterFormat { Size = 13 } }
                 )
                 { ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Left, LineSpacing = 1.25 } })
             );
             rowDien.Cells.Add(
-                new TableCell(document, new Paragraph(document,
+                new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document,
                     //new SpecialCharacter(document, SpecialCharacterType.Tab),
                     new InlineContentControl(document, ContentControlType.CheckBox,
-                    new Run(document, $"{Dien["1"]}") { CharacterFormat = new CharacterFormat { Size = 13, FontName = document.DefaultCharacterFormat.FontName } }),
+                    new GemboxRun(document, $"{Dien["1"]}") { CharacterFormat = new CharacterFormat { Size = 13, FontName = document.DefaultCharacterFormat.FontName } }),
                     new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                     //new SpecialCharacter(document, SpecialCharacterType.Tab),
                     new InlineContentControl(document, ContentControlType.CheckBox,
-                    new Run(document, $"{Dien["2"]}") { CharacterFormat = new CharacterFormat { Size = 13, FontName = document.DefaultCharacterFormat.FontName } }),
+                    new GemboxRun(document, $"{Dien["2"]}") { CharacterFormat = new CharacterFormat { Size = 13, FontName = document.DefaultCharacterFormat.FontName } }),
                     new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                     //new SpecialCharacter(document, SpecialCharacterType.Tab),
                     new InlineContentControl(document, ContentControlType.CheckBox,
-                    new Run(document, $"{Dien["3"]}") { CharacterFormat = new CharacterFormat { Size = 13, FontName = document.DefaultCharacterFormat.FontName } })
+                    new GemboxRun(document, $"{Dien["3"]}") { CharacterFormat = new CharacterFormat { Size = 13, FontName = document.DefaultCharacterFormat.FontName } })
                 )
                 { ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Left, LineSpacing = 1.25 } })
             );
             rowDoiTuong.Cells.Add(
-                new TableCell(document, new Paragraph(document,
+                new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document,
                     //new SpecialCharacter(document, SpecialCharacterType.Tab),
-                    new Run(document, "- Mồ côi") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                    new GemboxRun(document, "- Mồ côi") { CharacterFormat = new CharacterFormat { Size = 13 } },
                     new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                     //new SpecialCharacter(document, SpecialCharacterType.Tab),
-                    new Run(document, "- Không mồ côi") { CharacterFormat = new CharacterFormat { Size = 13 } }
+                    new GemboxRun(document, "- Không mồ côi") { CharacterFormat = new CharacterFormat { Size = 13 } }
                 )
                 { ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Left, LineSpacing = 1.25 } })
             );
             rowDoiTuong.Cells.Add(
-                new TableCell(document, new Paragraph(document,
+                new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document,
                     //new SpecialCharacter(document, SpecialCharacterType.Tab),
                     new InlineContentControl(document, ContentControlType.CheckBox,
-                    new Run(document, $"{DoiTuong["1"]}") { CharacterFormat = new CharacterFormat { Size = 13, FontName = document.DefaultCharacterFormat.FontName } }),
+                    new GemboxRun(document, $"{DoiTuong["1"]}") { CharacterFormat = new CharacterFormat { Size = 13, FontName = document.DefaultCharacterFormat.FontName } }),
                     new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                     //new SpecialCharacter(document, SpecialCharacterType.Tab),
                     new InlineContentControl(document, ContentControlType.CheckBox,
-                    new Run(document, $"{DoiTuong["2"]}") { CharacterFormat = new CharacterFormat { Size = 13, FontName = document.DefaultCharacterFormat.FontName } })
+                    new GemboxRun(document, $"{DoiTuong["2"]}") { CharacterFormat = new CharacterFormat { Size = 13, FontName = document.DefaultCharacterFormat.FontName } })
                 )
                 { ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Left, LineSpacing = 1.25 } })
             );
             section.Blocks.Add(tableDienDoiTuong);
             #endregion
             #region Ket
-            Paragraph paragraphKet = new Paragraph(document,
+            GemboxParagraph paragraphKet = new GemboxParagraph(document,
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "- Trong thời gian theo học tại trường, anh (chị) ") { CharacterFormat = new CharacterFormat { Size = 13 } },
-                new Run(document, $"{HoVaTen} ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
-                new Run(document, "không bị xử phạt hành chính trở lên về các hành vi: cờ bạc, nghiện hút, trộm cắp, buôn lậu.") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new GemboxRun(document, "- Trong thời gian theo học tại trường, anh (chị) ") { CharacterFormat = new CharacterFormat { Size = 13 } },
+                new GemboxRun(document, $"{HoVaTen} ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new GemboxRun(document, "không bị xử phạt hành chính trở lên về các hành vi: cờ bạc, nghiện hút, trộm cắp, buôn lậu.") { CharacterFormat = new CharacterFormat { Size = 13 } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, $"- Số tài khoản của nhà trường: {stkNhaTruong}, tại ngân hàng{nganHangNhaTruong}") { CharacterFormat = new CharacterFormat { Size = 13 } }
+                new GemboxRun(document, $"- Số tài khoản của nhà trường: {stkNhaTruong}, tại ngân hàng{nganHangNhaTruong}") { CharacterFormat = new CharacterFormat { Size = 13 } }
             )
             { ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Left, LineSpacing = 1.25 } };
             section.Blocks.Add(paragraphKet);
             #endregion
             #region Chu ky
-            Table tableCK = new Table(document);
-            tableCK.TableFormat.PreferredWidth = new TableWidth(100, TableWidthUnit.Percentage);
+            GemboxTable tableCK = new GemboxTable(document);
+            tableCK.TableFormat.PreferredWidth = new GemboxTableWidth(100, TableWidthUnit.Percentage);
             tableCK.TableFormat.Alignment = GemBox.Document.HorizontalAlignment.Center;
             tableCK.TableFormat.AutomaticallyResizeToFitContents = false;
             var tableBordersCK = tableCK.TableFormat.Borders;
-            tableBordersCK.SetBorders(MultipleBorderTypes.All, BorderStyle.None, Color.Empty, 0);
+            tableBordersCK.SetBorders(MultipleBorderTypes.All, BorderStyle.None, GemboxColor.Empty, 0);
             tableCK.Columns.Add(new TableColumn(45));
             tableCK.Columns.Add(new TableColumn(55));
-            TableRow rowT1CK = new TableRow(document);
+            GemboxTableRow rowT1CK = new GemboxTableRow(document);
             tableCK.Rows.Add(rowT1CK);
 
-            rowT1CK.Cells.Add(new TableCell(document, new Paragraph(document, new Run(document, string.Format("{0}", " ")))));
+            rowT1CK.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document, new GemboxRun(document, string.Format("{0}", " ")))));
 
-            rowT1CK.Cells.Add(new TableCell(document, new Paragraph(document,
-                new Run(document, string.Format("Hà Nội, ngày {0} tháng {1} năm {2}", DateTime.Now.Day, DateTime.Now.Month, DateTime.Now.Year))
+            rowT1CK.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document,
+                new GemboxRun(document, string.Format("Hà Nội, ngày {0} tháng {1} năm {2}", DateTime.Now.Day, DateTime.Now.Month, DateTime.Now.Year))
                 {
                     CharacterFormat = new CharacterFormat()
                     {
@@ -2615,7 +2637,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     }
                 }
             , new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-            new Run(document, desChucDanhNguoiKy)
+            new GemboxRun(document, desChucDanhNguoiKy)
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -2630,7 +2652,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
             , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
             , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-            , new Run(document, desTenNguoiKy) { CharacterFormat = new CharacterFormat { Bold = true } }
+            , new GemboxRun(document, desTenNguoiKy) { CharacterFormat = new CharacterFormat { Bold = true } }
            )
             {
                 ParagraphFormat = new ParagraphFormat()
@@ -2704,10 +2726,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
             section = new Section(document);
             var pageSetup = section.PageSetup;
             #region Cộng hòa xã hội chủ nghĩa việt nam
-            var paragraph = new Paragraph(document,
-                new Run(document, "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+            var paragraph = new GemboxParagraph(document,
+                new GemboxRun(document, "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new Run(document, "Độc lập - Tự do - Hạnh phúc") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } }
+                new GemboxRun(document, "Độc lập - Tự do - Hạnh phúc") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } }
             )
             { ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Center } };
 
@@ -2717,16 +2739,16 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 new VerticalPosition(3.8, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
                 new Size(160, 0)));
             horizontalLine1.Outline.Width = 1;
-            horizontalLine1.Outline.Fill.SetSolid(Color.Black);
+            horizontalLine1.Outline.Fill.SetSolid(GemboxColor.Black);
             paragraph.Inlines.Add(horizontalLine1);
 
             section.Blocks.Add(paragraph);
             #endregion
             #region TieuDe
-            Paragraph paragraphTieuDe = new Paragraph(document,
+            GemboxParagraph paragraphTieuDe = new GemboxParagraph(document,
             //new SpecialCharacter(document, SpecialCharacterType.LineBreak),
             new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-            new Run(document, string.Format("{0}", "ĐƠN ĐỀ NGHỊ THUÊ NHÀ Ở SINH VIÊN"))
+            new GemboxRun(document, string.Format("{0}", "ĐƠN ĐỀ NGHỊ THUÊ NHÀ Ở SINH VIÊN"))
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -2745,54 +2767,54 @@ namespace nuce.web.api.Services.Ctsv.Implements
             section.Blocks.Add(paragraphTieuDe);
             #endregion
             #region NoiDung
-            Paragraph paragraphNoiDung = new Paragraph(document,
+            GemboxParagraph paragraphNoiDung = new GemboxParagraph(document,
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Kính gửi: Ban Quản lý vận hành Khu nhà ở sinh viên Pháp Vân – Tứ Hiệp."),
+                new GemboxRun(document, "Kính gửi: Ban Quản lý vận hành Khu nhà ở sinh viên Pháp Vân – Tứ Hiệp."),
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Tên tôi là: "),
-                new Run(document, HoVaTen) { CharacterFormat = new CharacterFormat { Bold = true } },
+                new GemboxRun(document, "Tên tôi là: "),
+                new GemboxRun(document, HoVaTen) { CharacterFormat = new CharacterFormat { Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "(Nam/Nữ):  "),
-                new Run(document, gioiTinh) { CharacterFormat = new CharacterFormat { Bold = true } },
+                new GemboxRun(document, "(Nam/Nữ):  "),
+                new GemboxRun(document, gioiTinh) { CharacterFormat = new CharacterFormat { Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "CMTND số: "),
-                new Run(document, cmt) { CharacterFormat = new CharacterFormat { Bold = true } },
-                new Run(document, "  cấp ngày: "),
-                new Run(document, cmtNgayCap) { CharacterFormat = new CharacterFormat { Bold = true } },
-                new Run(document, "  nơi cấp: "),
-                new Run(document, cmtNoiCap) { CharacterFormat = new CharacterFormat { Bold = true } },
+                new GemboxRun(document, "CMTND số: "),
+                new GemboxRun(document, cmt) { CharacterFormat = new CharacterFormat { Bold = true } },
+                new GemboxRun(document, "  cấp ngày: "),
+                new GemboxRun(document, cmtNgayCap) { CharacterFormat = new CharacterFormat { Bold = true } },
+                new GemboxRun(document, "  nơi cấp: "),
+                new GemboxRun(document, cmtNoiCap) { CharacterFormat = new CharacterFormat { Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Hộ khẩu thường trú: "),
-                new Run(document, $"{HKTT_Phuong}, {HKTT_Quan}, {HKTT_Tinh}") { CharacterFormat = new CharacterFormat { Bold = true } },
+                new GemboxRun(document, "Hộ khẩu thường trú: "),
+                new GemboxRun(document, $"{HKTT_Phuong}, {HKTT_Quan}, {HKTT_Tinh}") { CharacterFormat = new CharacterFormat { Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Sinh viên, học sinh năm thứ: "),
-                new Run(document, $"{getNamThu(NienKhoa)}") { CharacterFormat = new CharacterFormat { Bold = true } },
+                new GemboxRun(document, "Sinh viên, học sinh năm thứ: "),
+                new GemboxRun(document, $"{getNamThu(NienKhoa)}") { CharacterFormat = new CharacterFormat { Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Lớp: "),
-                new Run(document, Class) { CharacterFormat = new CharacterFormat { Bold = true } },
+                new GemboxRun(document, "Lớp: "),
+                new GemboxRun(document, Class) { CharacterFormat = new CharacterFormat { Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Khoá: "),
-                new Run(document, NienKhoa) { CharacterFormat = new CharacterFormat { Bold = true } },
+                new GemboxRun(document, "Khoá: "),
+                new GemboxRun(document, NienKhoa) { CharacterFormat = new CharacterFormat { Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Ngành (khoa): "),
-                new Run(document, TenKhoa) { CharacterFormat = new CharacterFormat { Bold = true } },
+                new GemboxRun(document, "Ngành (khoa): "),
+                new GemboxRun(document, TenKhoa) { CharacterFormat = new CharacterFormat { Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Trường: "),
-                new Run(document, "Đại học Xây dựng") { CharacterFormat = new CharacterFormat { Bold = true } },
+                new GemboxRun(document, "Trường: "),
+                new GemboxRun(document, "Đại học Xây dựng") { CharacterFormat = new CharacterFormat { Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Số thẻ sinh viên, học viên (nếu có): "),
-                new Run(document, MaSV) { CharacterFormat = new CharacterFormat { Bold = true } },
+                new GemboxRun(document, "Số thẻ sinh viên, học viên (nếu có): "),
+                new GemboxRun(document, MaSV) { CharacterFormat = new CharacterFormat { Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Đối tượng ưu tiên (nếu có): "),
-                new Run(document, doiTuongUuTien) { CharacterFormat = new CharacterFormat { Bold = true } }
+                new GemboxRun(document, "Đối tượng ưu tiên (nếu có): "),
+                new GemboxRun(document, doiTuongUuTien) { CharacterFormat = new CharacterFormat { Bold = true } }
             )
             {
                 ParagraphFormat = new ParagraphFormat()
@@ -2806,17 +2828,17 @@ namespace nuce.web.api.Services.Ctsv.Implements
             #endregion
             #region Tôi đã
 
-            Paragraph paragraphToiDa = new Paragraph(document,
+            GemboxParagraph paragraphToiDa = new GemboxParagraph(document,
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Tôi làm đơn này đề nghị: "),
-                new Run(document, "BQL vận hành Khu nhà ở sinh viên Pháp Vân – Tứ Hiệp") { CharacterFormat = new CharacterFormat { Bold = true } },
-                new Run(document, " xét duyệt cho tôi được thuê nhà ở tại Khu nhà ở sinh viên Pháp Vân – Tứ Hiệp."),
+                new GemboxRun(document, "Tôi làm đơn này đề nghị: "),
+                new GemboxRun(document, "BQL vận hành Khu nhà ở sinh viên Pháp Vân – Tứ Hiệp") { CharacterFormat = new CharacterFormat { Bold = true } },
+                new GemboxRun(document, " xét duyệt cho tôi được thuê nhà ở tại Khu nhà ở sinh viên Pháp Vân – Tứ Hiệp."),
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Tôi đã đọc Bản nội quy sử dụng nhà ở sinh viên và cam kết tuân thủ nội quy sử dụng nhà ở sinh viên; cam kết trả tiền thuê nhà đầy đủ, đúng thời hạn khi được thuê nhà ở."),
+                new GemboxRun(document, "Tôi đã đọc Bản nội quy sử dụng nhà ở sinh viên và cam kết tuân thủ nội quy sử dụng nhà ở sinh viên; cam kết trả tiền thuê nhà đầy đủ, đúng thời hạn khi được thuê nhà ở."),
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
-                new Run(document, "Tôi cam đoan những lời kê khai trong đơn là đúng sự thật, tôi xin chịu trách nhiệm trước pháp luật về các nội dung kê khai."),
+                new GemboxRun(document, "Tôi cam đoan những lời kê khai trong đơn là đúng sự thật, tôi xin chịu trách nhiệm trước pháp luật về các nội dung kê khai."),
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak)
              )
             {
@@ -2830,20 +2852,20 @@ namespace nuce.web.api.Services.Ctsv.Implements
             section.Blocks.Add(paragraphToiDa);
             #endregion
             #region Chu ky
-            Table tableCK = new Table(document);
-            tableCK.TableFormat.PreferredWidth = new TableWidth(100, TableWidthUnit.Percentage);
+            GemboxTable tableCK = new GemboxTable(document);
+            tableCK.TableFormat.PreferredWidth = new GemboxTableWidth(100, TableWidthUnit.Percentage);
             tableCK.TableFormat.Alignment = GemBox.Document.HorizontalAlignment.Center;
             tableCK.TableFormat.AutomaticallyResizeToFitContents = false;
             var tableBordersCK = tableCK.TableFormat.Borders;
-            tableBordersCK.SetBorders(MultipleBorderTypes.All, BorderStyle.None, Color.Empty, 0);
+            tableBordersCK.SetBorders(MultipleBorderTypes.All, BorderStyle.None, GemboxColor.Empty, 0);
             tableCK.Columns.Add(new TableColumn(55));
             tableCK.Columns.Add(new TableColumn(45));
-            TableRow rowT1CK = new TableRow(document);
+            GemboxTableRow rowT1CK = new GemboxTableRow(document);
             tableCK.Rows.Add(rowT1CK);
 
-            rowT1CK.Cells.Add(new TableCell(document, new Paragraph(document,
+            rowT1CK.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document,
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new Run(document, desChucDanhNguoiKy)
+                new GemboxRun(document, desChucDanhNguoiKy)
                 {
                     CharacterFormat = new CharacterFormat()
                     {
@@ -2858,14 +2880,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
                 , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
                 , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-                , new Run(document, desTenNguoiKy) { CharacterFormat = new CharacterFormat { Bold = true } }
+                , new GemboxRun(document, desTenNguoiKy) { CharacterFormat = new CharacterFormat { Bold = true } }
             )
             {
                 ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Center }
             }));
 
-            rowT1CK.Cells.Add(new TableCell(document, new Paragraph(document,
-                new Run(document, string.Format("Hà Nội, ngày {0} tháng {1} năm {2}", DateTime.Now.Day, DateTime.Now.Month, DateTime.Now.Year))
+            rowT1CK.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document,
+                new GemboxRun(document, string.Format("Hà Nội, ngày {0} tháng {1} năm {2}", DateTime.Now.Day, DateTime.Now.Month, DateTime.Now.Year))
                 {
                     CharacterFormat = new CharacterFormat()
                     {
@@ -2874,9 +2896,9 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     }
                 }
             , new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-            new Run(document, "Người viết đơn") { CharacterFormat = new CharacterFormat { Bold = true, Size = 13 } },
+            new GemboxRun(document, "Người viết đơn") { CharacterFormat = new CharacterFormat { Bold = true, Size = 13 } },
             new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-            new Run(document, "(Ký và ghi rõ họ tên)") { CharacterFormat = new CharacterFormat { Italic = true, Size = 12 } }
+            new GemboxRun(document, "(Ký và ghi rõ họ tên)") { CharacterFormat = new CharacterFormat { Italic = true, Size = 12 } }
            )
             {
                 ParagraphFormat = new ParagraphFormat()
@@ -2898,6 +2920,75 @@ namespace nuce.web.api.Services.Ctsv.Implements
             document.Content.Replace(desTenNguoiKy, TenNguoiKy);
             string filePath = _pathProvider.MapPath($"Templates/Ctsv/thuektx_{studentInfo.Student.Code}_{DateTime.Now.ToFileTime()}.docx");
             return new ExportFileOutputModel { document = document, filePath = filePath };
+        }
+
+        private async Task<ExportFileOutputModel> ExportWordVeXeBus(int id)
+        {
+            var veXeBus = await _veXeBusRepository.FindByIdAsync(id);
+            if (veXeBus == null)
+            {
+                throw new Exception("Yêu cầu không tồn tại");
+            }
+            var studentInfo = await _studentRepository.GetStudentDichVuInfoAsync(veXeBus.StudentCode);
+            if (studentInfo == null)
+            {
+                throw new Exception("Sinh viên không tồn tại");
+            }
+
+            string filePath = _pathProvider.MapPath($"Templates/Ctsv/ve_xe_bus.docx");
+            string destination = _pathProvider.MapPath($"Templates/Ctsv/bus-{DateTime.Now.ToFileTime()}.docx");
+            string newImgPath = $"Templates/Ctsv/ex.png";
+
+            var loaiTuyen = (DichVuXeBusLoaiTuyen)veXeBus.TuyenType;
+            string motTuyen = "";
+            string lienTuyen = "";
+            if (loaiTuyen == DichVuXeBusLoaiTuyen.MotTuyen)
+            {
+                motTuyen = veXeBus.TuyenCode ?? "";
+            } else if (loaiTuyen == DichVuXeBusLoaiTuyen.LienTuyen)
+            {
+                lienTuyen = "x";
+            }
+
+            var ngaySinh = convertStudentDateOfBirth(studentInfo.Student.DateOfBirth);
+
+            byte[] templateBytes = await File.ReadAllBytesAsync(filePath);
+            using (MemoryStream templateStream = new MemoryStream())
+            {
+                templateStream.Write(templateBytes, 0, templateBytes.Length);
+                using (WordprocessingDocument doc = WordprocessingDocument.Open(templateStream, true))
+                {
+                    doc.ChangeDocumentType(WordprocessingDocumentType.Document);
+                    var mainPart = doc.MainDocumentPart;
+                    #region handle text
+                    var textList = mainPart.Document.Descendants<Text>();
+                    foreach (var text in textList)
+                    {
+                        replaceTextTemplate(text, "<ho_ten>", studentInfo.Student.FulName);
+                        replaceTextTemplate(text, "<sdt>", studentInfo.Student.Mobile);
+                        replaceTextTemplate(text, "<nam_sinh>", ngaySinh.ToString("dd/MM/yyyy"));
+                        replaceTextTemplate(text, "<ma_lop>", studentInfo.Student.ClassCode);
+                        replaceTextTemplate(text, "<ten_khoa>", studentInfo.Faculty.Name);
+                        replaceTextTemplate(text, "<mot_tuyen>", motTuyen);
+                        replaceTextTemplate(text, "<lien_tuyen>", lienTuyen);
+                        replaceTextTemplate(text, "<noi_nhan>", veXeBus.NoiNhanThe);
+                    }
+                    #endregion
+                    #region handle filled image in shape
+                    var docList = mainPart.Document.Descendants<DocumentFormat.OpenXml.Drawing.Wordprocessing.DocProperties>().ToList();
+                    var tmp = docList.Where(p => p.Name.Value.Contains("SHAPE_FILL") && p.Parent is DocumentFormat.OpenXml.Drawing.Wordprocessing.Anchor);
+                    
+                    foreach (var el in tmp)
+                    {
+                        replaceShapeFilledImageTemplate(el, mainPart, newImgPath);
+                    }
+                    #endregion
+
+                    mainPart.Document.Save();
+                }
+                await File.WriteAllBytesAsync(destination, templateStream.ToArray());
+            }
+            return new ExportFileOutputModel { document = null, filePath = destination };
         }
         #endregion
 
@@ -3006,6 +3097,26 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 NgaySinh = DateTime.Parse(tmpNgaySinh);
             }
             return NgaySinh;
+        }
+
+        private void replaceTextTemplate(Text model, string oldValue, string newValue)
+        {
+            if (model.Text.Contains(oldValue))
+            {
+                model.Text = model.Text.Replace(oldValue, newValue);
+            }
+        }
+
+        private void replaceShapeFilledImageTemplate(DocumentFormat.OpenXml.Drawing.Wordprocessing.DocProperties docPropertyElement, MainDocumentPart mainPart, string newImagePath)
+        {
+            var anchor = (DocumentFormat.OpenXml.Drawing.Wordprocessing.Anchor)docPropertyElement.Parent;
+            var fill = anchor.Descendants<DocumentFormat.OpenXml.Drawing.BlipFill>().FirstOrDefault();
+            if (fill != null)
+            {
+                ImagePart newImg = mainPart.AddImagePart(ImagePartType.Png);
+                newImg.FeedData(File.Open(_pathProvider.MapPath(newImagePath), FileMode.Open, FileAccess.Read));
+                fill.Blip.Embed = mainPart.GetIdOfPart(newImg);
+            }
         }
 
         #endregion

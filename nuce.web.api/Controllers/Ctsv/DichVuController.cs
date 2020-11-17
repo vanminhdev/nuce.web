@@ -36,7 +36,7 @@ namespace nuce.web.api.Controllers.Ctsv
             return Ok(_dichVuService.GetAllByStudent(type));
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "P_CTSV")]
         [Route("all-type-info")]
         [HttpGet]
         public IActionResult GetAllLoaiDichVuInfo()
@@ -63,7 +63,7 @@ namespace nuce.web.api.Controllers.Ctsv
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "P_CTSV")]
         [HttpPost]
         [Route("admin/search-request")]
         public async Task<IActionResult> SearchRequest([FromBody] DataTableRequest request)
@@ -89,7 +89,7 @@ namespace nuce.web.api.Controllers.Ctsv
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "P_CTSV")]
         [Route("admin/update-status")]
         [HttpPut]
         public async Task<IActionResult> UpdateRequestStatus([FromBody] UpdateRequestStatusModel model)
@@ -109,7 +109,7 @@ namespace nuce.web.api.Controllers.Ctsv
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "P_CTSV")]
         [Route("admin/update-status/multi/four")]
         [HttpPut]
         public async Task<IActionResult> UpdateStatusMultiFour([FromBody] UpdateStatusMultiFourModel model)
@@ -125,7 +125,7 @@ namespace nuce.web.api.Controllers.Ctsv
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "P_CTSV")]
         [Route("admin/export-word")]
         [HttpPost]
         public async Task<FileStreamResult> ExportWord([FromBody] ExportModel model)
@@ -134,7 +134,7 @@ namespace nuce.web.api.Controllers.Ctsv
             return new FileStreamResult(new MemoryStream(result), "application/octet-stream");
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "P_CTSV")]
         [Route("admin/export-word-list")]
         [HttpPost]
         public async Task<FileStreamResult> ExportWordList([FromBody] ExportModel model)
@@ -143,7 +143,7 @@ namespace nuce.web.api.Controllers.Ctsv
             return new FileStreamResult(new MemoryStream(result), "application/octet-stream");
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "P_CTSV")]
         [Route("admin/export-excel")]
         [HttpPost]
         public async Task<FileStreamResult> ExportExcel([FromBody] ExportModel model)
