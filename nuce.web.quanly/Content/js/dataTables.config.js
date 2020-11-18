@@ -2,9 +2,9 @@
     language: {
         "decimal": "",
         "emptyTable": "Không có dữ liệu",
-        "info": "Từ _START_ tới _END_ trong _TOTAL_ bản ghi",
+        "info": "Từ _START_ tới _END_ trong _TOTAL_",
         "infoEmpty": "",
-        "infoFiltered": "(filtered from _MAX_ total entries)",
+        "infoFiltered": "(Lọc từ _MAX_)",
         "infoPostFix": "",
         "thousands": ",",
         "lengthMenu": "Xem dạng _MENU_ bản ghi",

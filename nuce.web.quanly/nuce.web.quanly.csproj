@@ -156,6 +156,7 @@
     <Compile Include="Models\Base\DataTableRequest.cs" />
     <Compile Include="Models\Base\DataTableResponse.cs" />
     <Compile Include="Models\CauHoi.cs" />
+    <Compile Include="Models\EduDataModel.cs" />
     <Compile Include="Models\ExamQuestionModel.cs" />
     <Compile Include="Models\QuestionModel.cs" />
     <Compile Include="Models\ResponseMessage.cs" />

@@ -7,6 +7,12 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.ViewModel.EduData
 {
+    public class AcademicsFilter
+    {
+        public string Code { get; set; }
+        public string Name { get; set; }
+    }
+
     public class StudentFilter
     {
         public string Code { get; set; }

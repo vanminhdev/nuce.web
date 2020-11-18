@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.EntityFrameworkCore.Storage;
 using nuce.web.api.HandleException;
 using nuce.web.api.Models.EduData;
 using nuce.web.api.Models.Survey;
@@ -12,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Xml;
 using System.Xml.Linq;
 using static EduWebService.ServiceSoapClient;
@@ -93,7 +95,6 @@ namespace nuce.web.api.Services.EduData.Implements
                 throw new CallEduWebServiceException(message);
             }
         }
-
         public async Task SyncClass()
         {
             var transaction = _eduDataContext.Database.BeginTransaction();
@@ -733,7 +734,7 @@ namespace nuce.web.api.Services.EduData.Implements
 
                             if (lecturerClassRoom == null)
                             {
-                                _eduDataContext.AsAcademyCLecturerClassRoom.Add(new AsAcademyCLecturerClassRoom
+                                _eduDataContext.AsAcademyLecturerClassRoom.Add(new AsAcademyLecturerClassRoom
                                 {
                                     SemesterId = await GetCurrentSemesterId(),
                                     ClassRoomId = lopId,
@@ -773,18 +774,17 @@ namespace nuce.web.api.Services.EduData.Implements
 
         public async Task<string> SyncLastStudentClassRoom()
         {
-            var transaction = _eduDataContext.Database.BeginTransaction();
+            IDbContextTransaction transaction = null;
             var message = "";
             int page = 1;
             int pageSize = 500;
             try
             {
-                //_eduDataContext.Database.ExecuteSqlRaw("TRUNCATE TABLE AS_Academy_Student_ClassRoom");
-                //_eduDataContext.Database.ExecuteSqlRaw("TRUNCATE TABLE AS_Academy_C_Student_ClassRoom");
                 XmlNodeList listData = null;
                 XmlNodeList temp = null;
                 while (true)
                 {
+                    transaction = _eduDataContext.Database.BeginTransaction();
                     var result = await srvc.getKQDKKyTruocAsync((page - 1) * pageSize, pageSize);
                     listData = result.Any1.GetElementsByTagName("dataKQDK");
                     if (listData.Count > 0)
@@ -816,30 +816,25 @@ namespace nuce.web.api.Services.EduData.Implements
                                     SemesterId = await GetCurrentSemesterId()
                                 });
                             }
-                            else
-                            {
-                                studentClassRoom.ClassRoomId = classRoomId;
-                                studentClassRoom.StudentId = studentId;
-                                studentClassRoom.StudentCode = strMaSV;
-                                studentClassRoom.SemesterId = await GetCurrentSemesterId();
-                            }
                         }
                         page++;
+                        await _eduDataContext.SaveChangesAsync();
+                        transaction.Commit();
                     }
                     else
                         break;
                 }
-                await _eduDataContext.SaveChangesAsync();
-                transaction.Commit();
             }
             catch (DbUpdateException e)
             {
-                await transaction.RollbackAsync();
+                if (transaction != null)
+                    await transaction.RollbackAsync();
                 throw e;
             }
             catch (Exception e)
             {
-                await transaction.RollbackAsync();
+                if (transaction != null)
+                    await transaction.RollbackAsync();
                 var errMessage = UtilsException.GetMainMessage(e);
                 throw new CallEduWebServiceException(errMessage);
             }
@@ -1079,18 +1074,17 @@ namespace nuce.web.api.Services.EduData.Implements
 
         public async Task<string> SyncCurrentStudentClassRoom()
         {
-            var transaction = _eduDataContext.Database.BeginTransaction();
+            IDbContextTransaction transaction = null;
             var message = "";
             int page = 1;
             int pageSize = 500;
             try
             {
-                //_eduDataContext.Database.ExecuteSqlRaw("TRUNCATE TABLE AS_Academy_Student_ClassRoom");
-                //_eduDataContext.Database.ExecuteSqlRaw("TRUNCATE TABLE AS_Academy_C_Student_ClassRoom");
                 XmlNodeList listData = null;
                 XmlNodeList temp = null;
                 while (true)
                 {
+                    transaction = _eduDataContext.Database.BeginTransaction();
                     var result = await srvc.getKQDKKyHienTaiAsync((page - 1) * pageSize, pageSize);
                     listData = result.Any1.GetElementsByTagName("dataKQDK");
                     if (listData.Count > 0)
@@ -1121,31 +1115,26 @@ namespace nuce.web.api.Services.EduData.Implements
                                     StudentCode = strMaSV,
                                     SemesterId = await GetCurrentSemesterId()
                                 });
-                            } 
-                            else
-                            {
-                                studentClassRoom.ClassRoomId = classRoomId;
-                                studentClassRoom.StudentId = studentId;
-                                studentClassRoom.StudentCode = strMaSV;
-                                studentClassRoom.SemesterId = await GetCurrentSemesterId();
                             }
                         }
                         page++;
+                        await _eduDataContext.SaveChangesAsync();
+                        transaction.Commit();
                     }
                     else
                         break;
                 }
-                await _eduDataContext.SaveChangesAsync();
-                transaction.Commit();
             }
             catch (DbUpdateException e)
             {
-                await transaction.RollbackAsync();
+                if (transaction != null)
+                    await transaction.RollbackAsync();
                 throw e;
             }
             catch (Exception e)
             {
-                await transaction.RollbackAsync();
+                if (transaction != null)
+                    await transaction.RollbackAsync();
                 var errMessage = UtilsException.GetMainMessage(e);
                 throw new CallEduWebServiceException(errMessage);
             }
@@ -1274,15 +1263,15 @@ namespace nuce.web.api.Services.EduData.Implements
             }
             if (!string.IsNullOrWhiteSpace(filter.GroupCode))
             {
-                query = query.Where(u => u.Code.Contains(filter.GroupCode));
+                query = query.Where(u => u.GroupCode.Contains(filter.GroupCode));
             }
             if (!string.IsNullOrWhiteSpace(filter.ClassCode))
             {
-                query = query.Where(u => u.Code.Contains(filter.ClassCode));
+                query = query.Where(u => u.ClassCode.Contains(filter.ClassCode));
             }
             if (!string.IsNullOrWhiteSpace(filter.SubjectCode))
             {
-                query = query.Where(u => u.Code.Contains(filter.SubjectCode));
+                query = query.Where(u => u.SubjectCode.Contains(filter.SubjectCode));
             }
 
             var recordsFiltered = query.Count();
@@ -1313,7 +1302,7 @@ namespace nuce.web.api.Services.EduData.Implements
             }
             if (!string.IsNullOrWhiteSpace(filter.LecturerCode))
             {
-                query = query.Where(u => u.ClassRoomCode.Contains(filter.LecturerCode));
+                query = query.Where(u => u.LecturerCode.Contains(filter.LecturerCode));
             }
 
             var recordsFiltered = query.Count();
@@ -1373,15 +1362,15 @@ namespace nuce.web.api.Services.EduData.Implements
             }
             if (!string.IsNullOrWhiteSpace(filter.GroupCode))
             {
-                query = query.Where(u => u.Code.Contains(filter.GroupCode));
+                query = query.Where(u => u.GroupCode.Contains(filter.GroupCode));
             }
             if (!string.IsNullOrWhiteSpace(filter.ClassCode))
             {
-                query = query.Where(u => u.Code.Contains(filter.ClassCode));
+                query = query.Where(u => u.ClassCode.Contains(filter.ClassCode));
             }
             if (!string.IsNullOrWhiteSpace(filter.SubjectCode))
             {
-                query = query.Where(u => u.Code.Contains(filter.SubjectCode));
+                query = query.Where(u => u.SubjectCode.Contains(filter.SubjectCode));
             }
 
             var recordsFiltered = query.Count();
@@ -1412,7 +1401,7 @@ namespace nuce.web.api.Services.EduData.Implements
             }
             if (!string.IsNullOrWhiteSpace(filter.LecturerCode))
             {
-                query = query.Where(u => u.ClassRoomCode.Contains(filter.LecturerCode));
+                query = query.Where(u => u.LecturerCode.Contains(filter.LecturerCode));
             }
 
             var recordsFiltered = query.Count();
@@ -1472,10 +1461,36 @@ namespace nuce.web.api.Services.EduData.Implements
             return await _eduDataContext.AsAcademyDepartment.ToListAsync();
         }
 
-        public async Task<List<AsAcademyAcademics>> GetAllAcademics()
+        public async Task<PaginationModel<AsAcademyAcademics>> GetAcademics(AcademicsFilter filter, int skip = 0, int take = 20)
         {
             _eduDataContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            return await _eduDataContext.AsAcademyAcademics.ToListAsync();
+            IQueryable<AsAcademyAcademics> query = _eduDataContext.AsAcademyAcademics;
+            var recordsTotal = query.Count();
+
+            if (!string.IsNullOrWhiteSpace(filter.Code))
+            {
+                query = query.Where(u => u.Code.Contains(filter.Code));
+            }
+            if (!string.IsNullOrWhiteSpace(filter.Name))
+            {
+                query = query.Where(u => u.Name.Contains(filter.Name));
+            }
+
+            var recordsFiltered = query.Count();
+
+            var querySkip = query
+                .OrderBy(u => u.Id)
+                .Skip(skip).Take(take);
+
+            var data = await querySkip.ToListAsync();
+
+            return new PaginationModel<AsAcademyAcademics>
+            {
+                RecordsTotal = recordsTotal,
+                RecordsFiltered = recordsFiltered,
+                Data = data
+            };
+
         }
 
         public async Task<PaginationModel<AsAcademySubject>> GetSubject(SubjectFilter filter, int skip = 0, int take = 20)
@@ -1490,11 +1505,11 @@ namespace nuce.web.api.Services.EduData.Implements
             }
             if (!string.IsNullOrWhiteSpace(filter.Name))
             {
-                query = query.Where(u => u.Code.Contains(filter.Name));
+                query = query.Where(u => u.Name.Contains(filter.Name));
             }
             if (!string.IsNullOrWhiteSpace(filter.DepartmentCode))
             {
-                query = query.Where(u => u.Code.Contains(filter.DepartmentCode));
+                query = query.Where(u => u.DepartmentCode.Contains(filter.DepartmentCode));
             }
 
             var recordsFiltered = query.Count();
@@ -1525,7 +1540,7 @@ namespace nuce.web.api.Services.EduData.Implements
             }
             if (!string.IsNullOrWhiteSpace(filter.Name))
             {
-                query = query.Where(u => u.Code.Contains(filter.Name));
+                query = query.Where(u => u.Name.Contains(filter.Name));
             }
 
             var recordsFiltered = query.Count();
@@ -1556,11 +1571,11 @@ namespace nuce.web.api.Services.EduData.Implements
             }
             if (!string.IsNullOrWhiteSpace(filter.FullName))
             {
-                query = query.Where(u => u.Code.Contains(filter.FullName));
+                query = query.Where(u => u.FullName.Contains(filter.FullName));
             }
             if (!string.IsNullOrWhiteSpace(filter.DepartmentCode))
             {
-                query = query.Where(u => u.Code.Contains(filter.DepartmentCode));
+                query = query.Where(u => u.DepartmentCode.Contains(filter.DepartmentCode));
             }
 
             var recordsFiltered = query.Count();
@@ -1591,11 +1606,11 @@ namespace nuce.web.api.Services.EduData.Implements
             }
             if (!string.IsNullOrWhiteSpace(filter.FullName))
             {
-                query = query.Where(u => u.Code.Contains(filter.FullName));
+                query = query.Where(u => u.FullName.Contains(filter.FullName));
             }
             if (!string.IsNullOrWhiteSpace(filter.ClassCode))
             {
-                query = query.Where(u => u.Code.Contains(filter.ClassCode));
+                query = query.Where(u => u.ClassCode.Contains(filter.ClassCode));
             }
 
             var recordsFiltered = query.Count();

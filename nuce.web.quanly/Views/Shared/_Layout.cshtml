@@ -119,9 +119,9 @@
                 <hr />
                 <nav class="navbar navbar-expand-lg navbar-light pl-0 pr-0">
                     @*<a class="navbar-brand" href="/home"></a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>*@
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>*@
                     <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
                         <ul class="navbar-nav row">
                             @if (roles.Count == 1)
@@ -195,7 +195,7 @@
                                         </a>
                                         <div class="dropdown-menu width-100ps" aria-labelledby="navbarDropdown-ctsv">
                                             @*<a class="dropdown-item font-18 font-10-xsm" href="/">Chức năng 1</a>
-                                            <a class="dropdown-item font-18 font-10-xsm" href="/">Chức năng 2</a>*@
+                                                <a class="dropdown-item font-18 font-10-xsm" href="/">Chức năng 2</a>*@
                                         </div>
                                     </li>
                                 }
@@ -311,6 +311,7 @@
             <div class="loading-circle"></div>
         </div>
     </div>
+
     <script src="~/content/js/jquery.min.js"></script>
     <script src="~/content/js/jquery.cookie.min.js"></script>
     <script src="~/content/js/jquery.validate.min.js"></script>
@@ -347,6 +348,28 @@
         $('#username-large-screen').html(username);
         $('#fullname-large-screen').html(fullname);
         document.getElementById("render-body").scrollIntoView();
+    </script>
+    <script>
+        $('.clear-input').each(function () {
+            let self = $(this);
+            self.click(function () {
+                //tìm 2 cấp
+                self.parent().parent().find('input').each(function () {
+                    $(this).val('');
+                });
+                //tìm 1 cấp
+                self.parent().find('input').each(function () {
+                    $(this).val('');
+                });
+            });
+        });
+
+        function dateString(today) {
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0');
+            var yyyy = today.getFullYear();
+            return dd + '/' + mm + '/' + yyyy;
+        }
     </script>
     @RenderSection("Scripts", required: false)
 </body>

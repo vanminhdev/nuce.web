@@ -228,11 +228,27 @@ namespace nuce.web.api.Controllers.EduData
             return Ok(result);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllAcademics()
+        [HttpPost]
+        public async Task<IActionResult> GetAcademics([FromBody] DataTableRequest request)
         {
-            var result = await _syncEduDatabaseService.GetAllAcademics();
-            return Ok(result);
+            var filter = new AcademicsFilter();
+            if (request.Columns != null)
+            {
+                filter.Code = request.Columns.FirstOrDefault(c => c.Data == "code")?.Search.Value ?? null;
+                filter.Name = request.Columns.FirstOrDefault(c => c.Data == "name")?.Search.Value ?? null;
+            }
+            var skip = request.Start;
+            var take = request.Length;
+            var result = await _syncEduDatabaseService.GetAcademics(filter, skip, take);
+            return Ok(
+                new DataTableResponse<AsAcademyAcademics>
+                {
+                    Draw = ++request.Draw,
+                    RecordsTotal = result.RecordsTotal,
+                    RecordsFiltered = result.RecordsFiltered,
+                    Data = result.Data
+                }
+            );
         }
 
         [HttpPost]
@@ -466,7 +482,7 @@ namespace nuce.web.api.Controllers.EduData
             var filter = new StudentClassRoomFilter();
             if (request.Columns != null)
             {
-                filter.StudentCode = request.Columns.FirstOrDefault(c => c.Data == "StudentCode")?.Search.Value ?? null;
+                filter.StudentCode = request.Columns.FirstOrDefault(c => c.Data == "studentCode")?.Search.Value ?? null;
             }
             var skip = request.Start;
             var take = request.Length;
@@ -640,7 +656,7 @@ namespace nuce.web.api.Controllers.EduData
             var filter = new StudentClassRoomFilter();
             if (request.Columns != null)
             {
-                filter.StudentCode = request.Columns.FirstOrDefault(c => c.Data == "StudentCode")?.Search.Value ?? null;
+                filter.StudentCode = request.Columns.FirstOrDefault(c => c.Data == "studentCode")?.Search.Value ?? null;
             }
             var skip = request.Start;
             var take = request.Length;
@@ -664,6 +680,25 @@ namespace nuce.web.api.Controllers.EduData
             [NotContainWhiteSpace]
             string tableName)
         {
+            switch (tableName)
+            {
+                case "AS_Academy_Faculty":
+                case "AS_Academy_Department":
+                case "AS_Academy_Academics":
+                case "AS_Academy_Subject":
+                case "AS_Academy_Class":
+                case "AS_Academy_Lecturer":
+                case "AS_Academy_Student":
+                case "AS_Academy_ClassRoom":
+                case "AS_Academy_Lecturer_ClassRoom":
+                case "AS_Academy_Student_ClassRoom":
+                case "AS_Academy_C_ClassRoom":
+                case "AS_Academy_C_Lecturer_ClassRoom":
+                case "AS_Academy_C_Student_ClassRoom":
+                    break;
+                default:
+                    return StatusCode(StatusCodes.Status400BadRequest, new { message = "Tên bảng không hợp lệ" });
+            }
             try
             {
                 await _syncEduDatabaseService.TruncateTable(tableName);

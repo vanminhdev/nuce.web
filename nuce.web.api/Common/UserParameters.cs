@@ -18,5 +18,7 @@ namespace nuce.web.api.Common
         public static readonly string CODE_REGISTER = "REGISTER";
         public static readonly string CODE_CHANGE_PASSWORD = "CHANGE_PASSWORD";
         public static readonly string CODE_LOGOUT = "LOG_OUT";
+        public static readonly string CODE_BACKUP_DATABASE = "CODE_BACKUP_DATABASE";
+        public static readonly string CODE_RESTORE_DATABASE = "CODE_RESTORE_DATABASE";
     }
 }

@@ -183,6 +183,7 @@ namespace nuce.web.api
             services.AddScoped<IAsEduSurveyDeThiService, AsEduSurveyDeThiService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ILogService, LogService>();
+            services.AddScoped<IManagerBackupService, ManagerBackUpService>();
             #endregion
             #region sync edu database service
             services.AddScoped<ISyncEduDatabaseService, SyncEduDatabaseService>();

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using nuce.web.quanly.Attributes.ActionFilter;
 using nuce.web.quanly.Models;
 using nuce.web.quanly.ViewModel.Base;
 using System;
@@ -12,6 +13,7 @@ using System.Web.Mvc;
 
 namespace nuce.web.quanly.Controllers
 {
+    [AuthorizeActionFilter("Admin")]
     public class SyncEduDataController : BaseController
     {
         [HttpGet]
@@ -38,9 +40,16 @@ namespace nuce.web.quanly.Controllers
                 case "SyncClass":
                 case "SyncLecturer":
                 case "SyncStudent":
+                case "SyncLastClassRoom":
+                case "SyncLastLecturerClassRoom":
+                case "SyncLastStudentClassRoom":
+                case "SyncCurrentClassRoom":
+                case "SyncCurrentLecturerClassRoom":
+                case "SyncCurrentStudentClassRoom":
+                case "SyncUpdateFromDateEndDateCurrentClassRoom":
                     break;
                 default:
-                    return Json(new { type = "fail", message = "Hành động không hợp lệ", detailMessage = "" },JsonRequestBehavior.AllowGet);
+                    return Json(new { type = "error", message = "Hành động không hợp lệ", detailMessage = "" },JsonRequestBehavior.AllowGet);
             }
 
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/SyncEduData/{action}");
@@ -53,12 +62,117 @@ namespace nuce.web.quanly.Controllers
                 {
                     var jsonString = await response.Content.ReadAsStringAsync();
                     var resMess = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
-                    return Json(new { type = "fail", message = "Đồng bộ không thành công", detailMessage = resMess.message }, JsonRequestBehavior.AllowGet);
+                    return Json(new { type = "error", message = "Đồng bộ không thành công", detailMessage = resMess.message }, JsonRequestBehavior.AllowGet);
                 }
             );
         }
 
-        private async Task<ActionResult> GetDataApi(DataTableRequest request, string apiUri)
+        public async Task<ActionResult> TruncateTable(string action)
+        {
+            string tableName = "";
+            switch (action)
+            {
+                case "SyncFaculty":
+                    tableName = "AS_Academy_Faculty";
+                    break;
+                case "SyncDepartment":
+                    tableName = "AS_Academy_Department";
+                    break;
+                case "SyncAcademics":
+                    tableName = "AS_Academy_Academics";
+                    break;
+                case "SyncSubject":
+                    tableName = "AS_Academy_Subject";
+                    break;
+                case "SyncClass":
+                    tableName = "AS_Academy_Class";
+                    break;
+                case "SyncLecturer":
+                    tableName = "AS_Academy_Lecturer";
+                    break;
+                case "SyncStudent":
+                    tableName = "AS_Academy_Student";
+                    break;
+                case "SyncLastClassRoom":
+                    tableName = "AS_Academy_ClassRoom";
+                    break;
+                case "SyncLastLecturerClassRoom":
+                    tableName = "AS_Academy_Lecturer_ClassRoom";
+                    break;
+                case "SyncLastStudentClassRoom":
+                    tableName = "AS_Academy_Student_ClassRoom";
+                    break;
+                case "SyncCurrentClassRoom":
+                    tableName = "AS_Academy_C_ClassRoom";
+                    break;
+                case "SyncCurrentLecturerClassRoom":
+                    tableName = "AS_Academy_C_Lecturer_ClassRoom";
+                    break;
+                case "SyncCurrentStudentClassRoom":
+                    tableName = "AS_Academy_C_Student_ClassRoom";
+                    break;
+                default:
+                    return Json(new { type = "error", message = "Hành động không hợp lệ", detailMessage = "" }, JsonRequestBehavior.AllowGet);
+            }
+
+            var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/SyncEduData/TruncateTable?tableName={tableName}");
+            return await base.HandleResponseAsync(response,
+                action200: res =>
+                {
+                    return Json(new { type = "success", message = "Xoá thành công" }, JsonRequestBehavior.AllowGet);
+                },
+                action400Async: async res =>
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var resMess = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
+                    return Json(new { type = "error", message = "Xoá không thành công", detailMessage = resMess.message }, JsonRequestBehavior.AllowGet);
+                },
+                action500Async: async res =>
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var resMess = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
+                    return Json(new { type = "error", message = "Xoá không thành công", detailMessage = resMess.message }, JsonRequestBehavior.AllowGet);
+                }
+            );
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetAllFaculties()
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Get", "/api/SyncEduData/GetAllFaculties");
+            return await base.HandleResponseAsync(response,
+                action200Async: async res =>
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var data = JsonConvert.DeserializeObject<List<AsAcademyFaculty>>(jsonString);
+                    return Json(new { data }, JsonRequestBehavior.AllowGet);
+                },
+                action500: res =>
+                {
+                    return Json(new { type = "error", message = "không lấy được dữ liệu" }, JsonRequestBehavior.AllowGet);
+                }
+            );
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetAllDepartments()
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Get", "/api/SyncEduData/GetAllDepartments");
+            return await base.HandleResponseAsync(response,
+                action200Async: async res =>
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var data = JsonConvert.DeserializeObject<List<AsAcademyDepartment>>(jsonString);
+                    return Json(new { data }, JsonRequestBehavior.AllowGet);
+                },
+                action500: res =>
+                {
+                    return Json(new { type = "error", message = "không lấy được dữ liệu" }, JsonRequestBehavior.AllowGet);
+                }
+            );
+        }
+
+        private async Task<ActionResult> GetDataApi<T>(DataTableRequest request, string apiUri)
         {
             var stringContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
             var response = await base.MakeRequestAuthorizedAsync("Post", apiUri, stringContent);
@@ -66,7 +180,7 @@ namespace nuce.web.quanly.Controllers
                 action200Async: async res =>
                 {
                     var jsonString = await response.Content.ReadAsStringAsync();
-                    var data = JsonConvert.DeserializeObject<DataTableResponse<Question>>(jsonString);
+                    var data = JsonConvert.DeserializeObject<DataTableResponse<T>>(jsonString);
                     return Json(new
                     {
                         draw = data.Draw,
@@ -79,9 +193,69 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        public async Task<ActionResult> GetAcademics(DataTableRequest request)
+        {
+            return await GetDataApi<AsAcademyAcademics>(request, "/api/SyncEduData/GetAcademics");
+        }
+
+        [HttpPost]
         public async Task<ActionResult> GetSubject(DataTableRequest request)
         {
-            return await GetDataApi(request, "/api/SyncEduData/GetSubject");
+            return await GetDataApi<AsAcademySubject>(request, "/api/SyncEduData/GetSubject");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetClass(DataTableRequest request)
+        {
+            return await GetDataApi<AsAcademyClass>(request, "/api/SyncEduData/GetClass");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetLecturer(DataTableRequest request)
+        {
+            return await GetDataApi<AsAcademyLecturer>(request, "/api/SyncEduData/GetLecturer");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetStudent(DataTableRequest request)
+        {
+            return await GetDataApi<AsAcademyStudent>(request, "/api/SyncEduData/GetStudent");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetLastClassRoom(DataTableRequest request)
+        {
+            return await GetDataApi<AsAcademyClassRoom>(request, "/api/SyncEduData/GetLastClassRoom");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetLastLecturerClassRoom(DataTableRequest request)
+        {
+            return await GetDataApi<AsAcademyLecturerClassRoom>(request, "/api/SyncEduData/GetLastLecturerClassRoom");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetLastStudentClassRoom(DataTableRequest request)
+        {
+            return await GetDataApi<AsAcademyStudentClassRoom>(request, "/api/SyncEduData/GetLastStudentClassRoom");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetCurrentClassRoom(DataTableRequest request)
+        {
+            return await GetDataApi<AsAcademyCClassRoom>(request, "/api/SyncEduData/GetCurrentClassRoom");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetCurrentLecturerClassRoom(DataTableRequest request)
+        {
+            return await GetDataApi<AsAcademyCLecturerClassRoom>(request, "/api/SyncEduData/GetCurrentLecturerClassRoom");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetCurrentStudentClassRoom(DataTableRequest request)
+        {
+            return await GetDataApi<AsAcademyCStudentClassRoom>(request, "/api/SyncEduData/GetCurrentStudentClassRoom");
         }
     }
 }

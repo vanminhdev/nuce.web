@@ -14,8 +14,6 @@ namespace nuce.web.api.Models.Core
         {
             modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole[] {
                 new IdentityRole{Id = "Admin", Name = "Admin", NormalizedName = "Admin" },
-                new IdentityRole{Id = "Department", Name = "Department", NormalizedName = "Department" },
-                new IdentityRole{Id = "Faculty", Name = "Faculty", NormalizedName = "Faculty" },
             });
         }
     }

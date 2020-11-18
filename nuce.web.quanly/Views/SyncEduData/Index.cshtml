@@ -1,4 +1,4 @@
-﻿
+﻿ 
 @{
     ViewData["Title"] = "Đồng bộ dữ liệu";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -6,46 +6,652 @@
 
 @section Style {
     <link rel="stylesheet" href="~/content/css/dataTables.bootstrap4.min.css" />
+    <style>
+        @@media (min-width: 768px) {
+            .btn-sync-small-text {
+                font-size: 10px;
+            }
+        }
+    </style>
 }
 
-<div class="container">
-    <div class="row mb-3">
-        <div class="col-md-10">
-            <div class="form-inline m-2">
-                <div class="form-group">
-                    <input class="form-control form-control" id="ma-cauhoi" type="text" placeholder="Tìm theo mã" />
+<div class="ml-1 mr-1 ml-md-5 mr-md-5">
+    <div class="row" style="font-size: 12px">
+        <div class="col-12 col-md-6">
+            <div class="row mb-3">
+                <div class="col-12">
+                    <h3 id="datatable-faculty-header" class="text-center text-dark">Khoa</h3>
                 </div>
-                <div class="form-group m-2">
-                    <input class="form-control form-control" id="noidung" type="text" placeholder="Tìm theo nội dung" />
+                <div id="message-faculty" class="col-12">
                 </div>
-                <div class="form-group m-2">
-                    <input class="form-control form-control" id="loai" type="text" placeholder="Tìm theo loại câu hỏi" />
+                <div class="col-12">
+                    <div class="form-row">
+                        <div class="col-12 col-md mb-2">
+                            <button id="btn-sync-faculty" class="btn btn-primary btn-sm w-100">Đồng bộ</button>
+                        </div>
+                        <div class="col col-md">
+                        </div>
+                        <div class="col col-md">
+                        </div>
+                        <div class="col-12 col-md mb-2">
+                            <buttom id="btn-delete-faculty" class="btn btn-danger btn-sm w-100">Xoá</buttom>
+                        </div>
+                    </div>
                 </div>
-                <button id="btn-search" class="btn btn-secondary btn m-2">Tìm kiếm</button>
+                <div class="col-12">
+                    <table id="datatable-faculty" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Id</th>
+                                <th class="text-center" width="15%">Mã kỳ học</th>
+                                <th class="text-center">Mã</th>
+                                <th class="text-center" width="55%">Tên</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <h3 id="datatable-department-header" class="text-center text-dark">Bộ môn</h3>
+                </div>
+                <div id="message-department" class="col-12">
+                </div>
+                <div class="col-12">
+                    <div class="form-row">
+                        <div class="col-12 col-md mb-2">
+                            <button id="btn-sync-department" class="btn btn-primary btn-sm w-100">Đồng bộ</button>
+                        </div>
+                        <div class="col col-md">
+                        </div>
+                        <div class="col col-md">
+                        </div>
+                        <div class="col-12 col-md mb-2">
+                            <buttom id="btn-delete-department" class="btn btn-danger btn-sm w-100">Xoá</buttom>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <table id="datatable-department" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Id</th>
+                                <th class="text-center" width="15%">Mã kỳ học</th>
+                                <th class="text-center">Mã</th>
+                                <th class="text-center" width="35%">Tên</th>
+                                <th class="text-center">Id Khoa</th>
+                                <th class="text-center">Mã khoa</th>
+                                <th class="text-center">Trưởng bộ môn</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <h3 id="datatable-academics-header" class="text-center text-dark">Ngành học</h3>
+                </div>
+                <div id="message-academics" class="col-12">
+                </div>
+                <div class="col-12">
+                    <div class="form-row">
+                        <div class="col-12 col-md mb-2">
+                            <button id="btn-sync-academics" class="btn btn-primary btn-sm w-100">Đồng bộ</button>
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="code-academics" class="form-control form-control-sm" type="text" placeholder="Mã" />
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="name-academics" class="form-control form-control-sm" type="text" placeholder="Tên" />
+                        </div>
+                        <div class="col-12 col-md mb-2 d-flex flex-row">
+                            <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
+                                <i class="fas fa-redo"></i>
+                            </div>
+                            <div class="w-75">
+                                <button id="btn-search-academics" class="btn btn-secondary btn-sm w-100">Tìm kiếm</button>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md mb-2">
+                            <buttom id="btn-delete-academics" class="btn btn-danger btn-sm w-100">Xoá</buttom>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <table id="datatable-academics" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Id</th>
+                                <th class="text-center" width="15%">Mã kỳ học</th>
+                                <th class="text-center">Mã</th>
+                                <th class="text-center" width="55%">Tên</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <h3 id="datatable-subject-header" class="text-center text-dark">Môn học</h3>
+                </div>
+                <div id="message-subject" class="col-12">
+                </div>
+                <div class="col-12">
+                    <div class="form-row">
+                        <div class="col-12 col-md mb-2">
+                            <button id="btn-sync-subject" class="btn btn-primary btn-sm w-100">Đồng bộ</button>
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input class="form-control form-control-sm" id="code-subject" type="text" placeholder="Mã" />
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input class="form-control form-control-sm" id="name-subject" type="text" placeholder="Tên" />
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input class="form-control form-control-sm" id="department-code-subject" type="text" placeholder="Mã bộ môn" />
+                        </div>
+                        <div class="col-12 col-md mb-2 d-flex flex-row">
+                            <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
+                                <i class="fas fa-redo"></i>
+                            </div>
+                            <div class="w-75">
+                                <button id="btn-search-subject" class="btn btn-secondary btn-sm w-100">Tìm kiếm</button>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md mb-2">
+                            <buttom id="btn-delete-subject" class="btn btn-danger btn-sm w-100">Xoá</buttom>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <table id="datatable-subject" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Id</th>
+                                <th class="text-center">Id kỳ học</th>
+                                <th class="text-center">Mã</th>
+                                <th class="text-center" width="40%">Tên</th>
+                                <th class="text-center">Id bộ môn</th>
+                                <th class="text-center">Mã bộ môn</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <h3 id="datatable-current-classroom-header" class="text-center text-dark">Lớp môn học kỳ hiện tại</h3>
+                </div>
+                <div id="message-current-classroom" class="col-12">
+                </div>
+                <div class="col-12">
+                    <div class="form-row">
+                        <div class="col-12 col-md mb-2">
+                            <button id="btn-sync-current-classroom" class="btn btn-primary btn-sm w-100">Đồng bộ</button>
+                        </div>
+                        <div class="col-12 col-md mb-2">
+                            <button id="btn-update-from-end-current-classroom" class="btn btn-primary btn-sm w-100 h-100 btn-sync-small-text">Cập nhật tuần</button>
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="code-current-classroom" class="form-control form-control-sm" type="text" placeholder="Mã" />
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="group-code-current-classroom" class="form-control form-control-sm" type="text" placeholder="Mã nhóm" />
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="class-code-current-classroom" class="form-control form-control-sm" type="text" placeholder="Mã lớp" />
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="subject-code-current-classroom" class="form-control form-control-sm" type="text" placeholder="Mã môn" />
+                        </div>
+                        <div class="col-12 col-md mb-2 d-flex flex-row">
+                            <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
+                                <i class="fas fa-redo"></i>
+                            </div>
+                            <div class="w-75">
+                                <button id="btn-search-current-classroom" class="btn btn-secondary btn-sm w-100 h-100 btn-sync-small-text">Tìm kiếm</button>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md mb-2">
+                            <buttom id="btn-delete-current-classroom" class="btn btn-danger btn-sm w-100">Xoá</buttom>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <table id="datatable-current-classroom" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Id</th>
+                                <th class="text-center">Id kỳ</th>
+                                <th class="text-center">Mã</th>
+                                <th class="text-center">Mã nhóm</th>
+                                <th class="text-center">Mã lớp</th>
+                                <th class="text-center">Id môn</th>
+                                <th class="text-center">Mã môn</th>
+                                @*<th class="text-center">Ngày thi</th>*@
+                                <th class="text-center">Từ ngày</th>
+                                <th class="text-center">Đến ngày</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <h3 id="datatable-current-lecturer-classroom-header" class="text-center text-dark">Lớp môn học giảng viên kỳ hiện tại</h3>
+                </div>
+                <div id="message-current-lecturer-classroom" class="col-12">
+                </div>
+                <div class="col-12">
+                    <div class="form-row">
+                        <div class="col-12 col-md mb-2">
+                            <button id="btn-sync-current-lecturer-classroom" class="btn btn-primary btn-sm w-100">Đồng bộ</button>
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="code-current-lecturer-classroom" class="form-control form-control-sm" type="text" placeholder="Mã" />
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="classroom-code-current-lecturer-classroom" class="form-control form-control-sm" type="text" placeholder="Mã lớp môn học" />
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="lecturer-code-current-lecturer-classroom" class="form-control form-control-sm" type="text" placeholder="Mã giảng viên" />
+                        </div>
+                        <div class="col-12 col-md mb-2 d-flex flex-row">
+                            <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
+                                <i class="fas fa-redo"></i>
+                            </div>
+                            <div class="w-75">
+                                <button id="btn-search-current-lecturer-classroom" class="btn btn-secondary btn-sm w-100">Tìm kiếm</button>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md mb-2">
+                            <buttom id="btn-delete-current-lecturer-classroom" class="btn btn-danger btn-sm w-100">Xoá</buttom>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <table id="datatable-current-lecturer-classroom" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Id</th>
+                                <th class="text-center">Id kỳ</th>
+                                <th class="text-center">Id lớp MH</th>
+                                <th class="text-center">Mã lớp MH</th>
+                                <th class="text-center">Id giảng viên</th>
+                                <th class="text-center">Mã giảng viên</th>
+                                <th class="text-center">Mẫu</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <h3 id="datatable-current-student-classroom-header" class="text-center text-dark">Lớp môn học sinh viên kỳ hiện tại</h3>
+                </div>
+                <div id="message-current-student-classroom" class="col-12">
+                </div>
+                <div class="col-12">
+                    <div class="form-row">
+                        <div class="col-12 col-md mb-2">
+                            <button id="btn-sync-current-student-classroom" class="btn btn-primary btn-sm w-100">Đồng bộ</button>
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="code-current-student-classroom" class="form-control form-control-sm" type="text" placeholder="Mã sinh viên" />
+                        </div>
+                        <div class="col-12 col-md mb-2 d-flex flex-row">
+                            <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
+                                <i class="fas fa-redo"></i>
+                            </div>
+                            <div class="w-75">
+                                <button id="btn-search-current-student-classroom" class="btn btn-secondary btn-sm w-100">Tìm kiếm</button>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md mb-2">
+                            <buttom id="btn-delete-current-student-classroom" class="btn btn-danger btn-sm w-100">Xoá</buttom>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <table id="datatable-current-student-classroom" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Id</th>
+                                <th class="text-center">Id kỳ</th>
+                                <th class="text-center">Id lớp</th>
+                                <th class="text-center">Id SV</th>
+                                <th class="text-center">Mã SV</th>
+                                <th class="text-center">Loại</th>
+                                <th class="text-center">Trạng thái</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
             </div>
         </div>
-        <div class="col-md-2">
-            <a href="/survey/createquestion" class="btn update-btn text-light w-100 m-2">Thêm câu hỏi</a>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <table id="id-datatable" class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th class="text-center">STT</th>
-                        <th class="text-center">Mã</th>
-                        <th class="text-center" width="60%">Nội dung</th>
-                        <th class="text-center">Loại</th>
-                        <th class="text-center">Thứ tự</th>
-                        <th class="text-center"></th>
-                    </tr>
-                </thead>
-            </table>
+        <div class="col-12 col-md-6">
+            <div class="row mb-3">
+                <div class="col-12">
+                    <h3 id="datatable-class-header" class="text-center text-dark">Lớp quản lý</h3>
+                </div>
+                <div id="message-class" class="col-12">
+                </div>
+                <div class="col-12">
+                    <div class="form-row">
+                        <div class="col-12 col-md mb-2">
+                            <button id="btn-sync-class" class="btn btn-primary btn-sm w-100">Đồng bộ</button>
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="code-class" class="form-control form-control-sm" type="text" placeholder="Mã" />
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="name-class" class="form-control form-control-sm" type="text" placeholder="Tên" />
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="faculty-code-class" class="form-control form-control-sm" type="text" placeholder="Mã khoa" />
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="academics-code-class" class="form-control form-control-sm" type="text" placeholder="Mã ngành" />
+                        </div>
+                        <div class="col-12 col-md mb-2 d-flex flex-row">
+                            <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
+                                <i class="fas fa-redo"></i>
+                            </div>
+                            <div class="w-75">
+                                <button id="btn-search-class" class="btn btn-secondary btn-sm w-100">Tìm kiếm</button>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md mb-2">
+                            <buttom id="btn-delete-class" class="btn btn-danger btn-sm w-100">Xoá</buttom>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <table id="datatable-class" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Id</th>
+                                <th class="text-center">Mã</th>
+                                <th class="text-center" width="38%">Tên</th>
+                                <th class="text-center">Id bộ môn</th>
+                                <th class="text-center">Mã bộ môn</th>
+                                <th class="text-center">Id ngành</th>
+                                <th class="text-center">Mã ngành</th>
+                                <th class="text-center">Niên khoá</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <h3 id="datatable-lecturer-header" class="text-center text-dark">Giảng viên</h3>
+                </div>
+                <div id="message-lecturer" class="col-12">
+                </div>
+                <div class="col-12">
+                    <div class="form-row">
+                        <div class="col-12 col-md mb-2">
+                            <button id="btn-sync-lecturer" class="btn btn-primary btn-sm w-100">Đồng bộ</button>
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="code-lecturer" class="form-control form-control-sm" type="text" placeholder="Mã" />
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="name-lecturer" class="form-control form-control-sm" type="text" placeholder="Tên" />
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="department-code-lecturer" class="form-control form-control-sm" type="text" placeholder="Mã bộ môn" />
+                        </div>
+                        <div class="col-12 col-md mb-2 d-flex flex-row">
+                            <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
+                                <i class="fas fa-redo"></i>
+                            </div>
+                            <div class="w-75">
+                                <button id="btn-search-lecturer" class="btn btn-secondary btn-sm w-100">Tìm kiếm</button>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md mb-2">
+                            <buttom id="btn-delete-lecturer" class="btn btn-danger btn-sm w-100">Xoá</buttom>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <table id="datatable-lecturer" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Id</th>
+                                <th class="text-center">Mã</th>
+                                <th class="text-center" width="25%">Tên</th>
+                                <th class="text-center">Id bộ môn</th>
+                                <th class="text-center">Mã bộ môn</th>
+                                <th class="text-center">Ngày sinh</th>
+                                <th class="text-center">Name Order</th>
+                                <th class="text-center">Email</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <h3 id="datatable-student-header" class="text-center text-dark">Sinh viên</h3>
+                </div>
+                <div id="message-student" class="col-12">
+                </div>
+                <div class="col-12">
+                    <div class="form-row">
+                        <div class="col-12 col-md mb-2">
+                            <button id="btn-sync-student" class="btn btn-primary btn-sm w-100">Đồng bộ</button>
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="code-student" class="form-control form-control-sm" type="text" placeholder="Mã" />
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="name-student" class="form-control form-control-sm" type="text" placeholder="Tên" />
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="class-code-student" class="form-control form-control-sm" type="text" placeholder="Mã lớp" />
+                        </div>
+                        <div class="col-12 col-md mb-2 d-flex flex-row">
+                            <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
+                                <i class="fas fa-redo"></i>
+                            </div>
+                            <div class="w-75">
+                                <button id="btn-search-student" class="btn btn-secondary btn-sm w-100">Tìm kiếm</button>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md mb-2">
+                            <buttom id="btn-delete-student" class="btn btn-danger btn-sm w-100">Xoá</buttom>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 w-100">
+                    <table id="datatable-student" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Id</th>
+                                <th class="text-center">Mã</th>
+                                <th class="text-center" width="35%">Tên</th>
+                                <th class="text-center">Id lớp</th>
+                                <th class="text-center">Mã lớp</th>
+                                @*<th class="text-center">Ngày sinh</th>*@
+                                @*<th class="text-center">Nơi sinh</th>*@
+                                <th class="text-center">Email</th>
+                                <th class="text-center">Điện thoại</th>
+                                @*<th class="text-center">Key</th>*@
+                                <th class="text-center">Trạng thái</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <h3 id="datatable-last-classroom-header" class="text-center text-dark">Lớp môn học kỳ trước</h3>
+                </div>
+                <div id="message-last-classroom" class="col-12">
+                </div>
+                <div class="col-12">
+                    <div class="form-row">
+                        <div class="col-12 col-md mb-2">
+                            <button id="btn-sync-last-classroom" class="btn btn-primary btn-sm w-100">Đồng bộ</button>
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="code-last-classroom" class="form-control form-control-sm" type="text" placeholder="Mã" />
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="group-code-last-classroom" class="form-control form-control-sm" type="text" placeholder="Mã nhóm" />
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="class-code-last-classroom" class="form-control form-control-sm" type="text" placeholder="Mã lớp" />
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="subject-code-last-classroom" class="form-control form-control-sm" type="text" placeholder="Mã môn" />
+                        </div>
+                        <div class="col-12 col-md mb-2 d-flex flex-row">
+                            <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
+                                <i class="fas fa-redo"></i>
+                            </div>
+                            <div class="w-75">
+                                <button id="btn-search-last-classroom" class="btn btn-secondary btn-sm w-100">Tìm kiếm</button>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md mb-2">
+                            <buttom id="btn-delete-last-classroom" class="btn btn-danger btn-sm w-100">Xoá</buttom>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <table id="datatable-last-classroom" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Id</th>
+                                <th class="text-center">Id kỳ</th>
+                                <th class="text-center">Mã</th>
+                                <th class="text-center">Mã nhóm</th>
+                                <th class="text-center">Mã lớp</th>
+                                <th class="text-center">Id môn</th>
+                                <th class="text-center">Mã môn</th>
+                                @*<th class="text-center">Ngày thi</th>*@
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <h3 id="datatable-last-lecturer-classroom-header" class="text-center text-dark">Lớp môn học giảng viên kỳ trước</h3>
+                </div>
+                <div id="message-last-lecturer-classroom" class="col-12">
+                </div>
+                <div class="col-12">
+                    <div class="form-row">
+                        <div class="col-12 col-md mb-2">
+                            <button id="btn-sync-last-lecturer-classroom" class="btn btn-primary btn-sm w-100">Đồng bộ</button>
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="code-last-lecturer-classroom" class="form-control form-control-sm" type="text" placeholder="Mã" />
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="classroom-code-last-lecturer-classroom" class="form-control form-control-sm" type="text" placeholder="Mã lớp môn học" />
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="lecturer-code-last-lecturer-classroom" class="form-control form-control-sm" type="text" placeholder="Mã giảng viên" />
+                        </div>
+                        <div class="col-12 col-md mb-2 d-flex flex-row">
+                            <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
+                                <i class="fas fa-redo"></i>
+                            </div>
+                            <div class="w-75">
+                                <button id="btn-search-last-lecturer-classroom" class="btn btn-secondary btn-sm w-100">Tìm kiếm</button>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md mb-2">
+                            <buttom id="btn-delete-last-lecturer-classroom" class="btn btn-danger btn-sm w-100">Xoá</buttom>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <table id="datatable-last-lecturer-classroom" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Id</th>
+                                <th class="text-center">Id kỳ</th>
+                                <th class="text-center">Id lớp MH</th>
+                                <th class="text-center">Mã lớp MH</th>
+                                <th class="text-center">Id giảng viên</th>
+                                <th class="text-center">Mã giảng viên</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <h3 id="datatable-last-student-classroom-header" class="text-center text-dark">Lớp môn học sinh viên kỳ trước</h3>
+                </div>
+                <div id="message-last-student-classroom" class="col-12">
+                </div>
+                <div class="col-12">
+                    <div class="form-row">
+                        <div class="col-12 col-md mb-2">
+                            <button id="btn-sync-last-student-classroom" class="btn btn-primary btn-sm w-100">Đồng bộ</button>
+                        </div>
+                        <div class="col-6 col-md mb-2">
+                            <input id="code-last-student-classroom" class="form-control form-control-sm" type="text" placeholder="Mã sinh viên" />
+                        </div>
+                        <div class="col-12 col-md mb-2 d-flex flex-row">
+                            <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
+                                <i class="fas fa-redo"></i>
+                            </div>
+                            <div class="w-75">
+                                <button id="btn-search-last-student-classroom" class="btn btn-secondary btn-sm w-100">Tìm kiếm</button>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md mb-2">
+                            <buttom id="btn-delete-last-student-classroom" class="btn btn-danger btn-sm w-100">Xoá</buttom>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <table id="datatable-last-student-classroom" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Id</th>
+                                <th class="text-center">Id kỳ</th>
+                                <th class="text-center">Id lớp</th>
+                                <th class="text-center">Id SV</th>
+                                <th class="text-center">Mã SV</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modal-yes-no" tabindex="-1" role="dialog" aria-labelledby="modal-yes-no" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-yes-no-title">Xoá dữ liệu</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-yes-no-content">
+                Xác nhận xoá dữ liệu?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
+                <button id="choose-yes" type="button" formaction="/usermanager/changestatus" class="btn btn-primary">Có</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 @section Scripts {
@@ -53,56 +659,591 @@
     <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/content/js/dataTables.config.js"></script>
     <script>
-        var table = $('#id-datatable').DataTable({
+        let tableFacuty = $('#datatable-faculty').DataTable({
             processing: true,
-            serverSide: true,
+            serverSide: false,
             ordering: false,
             lengthChange: false,
-            stateSave: true,
-            pageLength: 20,
+            stateSave: false,
+            pageLength: 15,
             language: dataTableConfig.language,
             ajax: {
-                url: '/Survey/GetAllQuestion',
+                url: '/SyncEduData/GetAllFaculties',
                 dataType: 'json',
                 contentType: 'application/json',
-                type: "POST",
-                data: function (d) {
-                    return JSON.stringify(d);
-                },
+                type: "Post",
+                complete: () => {}
             },
             columns: [
                 {
-                    data: null,
+                    data: "id"
                 },
                 {
-                    data: "ma"
+                    data: "semesterId"
                 },
                 {
-                    data: "content"
+                    data: "code"
                 },
                 {
-                    data: "type"
+                    data: "name"
                 },
-                {
-                    data: "order"
-                }
             ]
         });
-        table.on('draw.dt', function () {
-            var PageInfo = $('#id-datatable').DataTable().page.info();
-            table.column(0, { page: 'current' }).nodes().each(function (cell, i) {
-                cell.innerHTML = i + 1 + PageInfo.start;
-            });
+        $(`#datatable-faculty_filter`).hide();
+        $(`#btn-sync-faculty`).click(() => {
+            syncData("SyncFaculty", "datatable-faculty", "message-faculty");
+        });
+        $(`#btn-delete-faculty`).click(() => {
+            truncateTable("SyncFaculty", "datatable-faculty", "message-faculty");
         });
 
+        let tableDepartment = $('#datatable-department').DataTable({
+            processing: true,
+            serverSide: false,
+            ordering: false,
+            lengthChange: false,
+            stateSave: false,
+            pageLength: 15,
+            language: dataTableConfig.language,
+            ajax: {
+                url: '/SyncEduData/GetAllDepartments',
+                dataType: 'json',
+                contentType: 'application/json',
+                type: "Post",
+                complete: () => { }
+            },
+            columns: [
+                {
+                    data: "id"
+                },
+                {
+                    data: "semesterId"
+                },
+                {
+                    data: "code"
+                },
+                {
+                    data: "name"
+                },
+                {
+                    data: "facultyId"
+                },
+                {
+                    data: "facultyCode"
+                },
+                {
+                    data: "chefsDepartmentCode"
+                },
+            ]
+        });
+        $(`#datatable-department_filter`).hide();
+        $(`#btn-sync-department`).click(() => {
+            syncData("SyncDepartment", "datatable-department", "message-department");
+        });
+        $(`#btn-delete-department`).click(() => {
+            truncateTable("SyncDepartment", "datatable-department", "message-department");
+        });
 
-        $('#id-datatable_filter').hide();
-        $("#btn-search").click(() => {
-            table
-                .column(1).search($("#ma-cauhoi").val())
-                .column(2).search($("#noidung").val())
-                .column(3).search($("#loai").val())
+        function syncData(action, idDataTable, idMessage) {
+            let message = $('#' + idMessage);
+            $('#loading-screen').show();
+            $.ajax({
+                data: { action: action },
+                dataType: 'json',
+                method: 'Post',
+                url: '/syncedudata/syncfromedudata',
+                timeout: 0,
+                complete: () => {
+                    //document.getElementById(idDataTable).scrollIntoView();
+                }
+            }).done(function (data) {
+                $('#loading-screen').hide();
+                if (data.type == "success") {
+                    $('#' + idDataTable).DataTable().ajax.reload();
+                    message.html(`\
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">\
+                                    ${data.message}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                                    <span aria-hidden="true">&times;</span>\
+                                </button>\
+                            </div>\
+                        `);
+                }
+                else if (data.type == "error") {
+                    message.html(`\
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                ${data.message}
+                                <hr>
+                                <p class="mb-0">${data.detailMessage}</p>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        `);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                $('#loading-screen').hide();
+                console.log(textStatus + ': ' + errorThrown);
+                console.log(jqXHR);
+            });
+        }
+        function truncateTable(action, idDataTable, idMessage) {
+            $('#modal-yes-no').modal('show');
+            $("#choose-yes").off("click"); //xoá event cũ
+            $('#choose-yes').click(() => {
+                $('#modal-yes-no').modal('hide');
+                let message = $('#' + idMessage);
+                $('#loading-screen').show();
+                $.ajax({
+                    data: { action: action },
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/syncedudata/TruncateTable',
+                    timeout: 3000000,
+                    complete: () => {
+                        //document.getElementById(idDataTable + '-header').scrollIntoView();
+                    }
+                }).done(function (data) {
+                    $('#loading-screen').hide();
+                    if (data.type == "success") {
+                        $('#' + idDataTable).DataTable().ajax.reload();
+                        message.html(`\
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">\
+                                    ${data.message}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                                    <span aria-hidden="true">&times;</span>\
+                                </button>\
+                            </div>\
+                        `);
+                    }
+                    else if (data.type == "error") {
+                        message.html(`\
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                ${data.message}
+                                <hr>
+                                <p class="mb-0">${data.detailMessage}</p>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        `);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    $('#loading-screen').hide();
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+        }
+        function initDataTable(idTable, columns, actionUrl, idBtnSync, idBtnDelete, actionSync, idMessage) {
+            let table = $('#' + idTable).DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: false,
+                lengthChange: false,
+                stateSave: false,
+                pageLength: 15,
+                language: dataTableConfig.language,
+                ajax: {
+                    url: actionUrl,
+                    dataType: 'json',
+                    async: false,
+                    timeout: 300000000,
+                    contentType: 'application/json',
+                    type: "POST",
+                    data: function (d) {
+                        return JSON.stringify(d);
+                    },
+                    complete: () => {
+                        //document.getElementById(idTable + '-header').scrollIntoView();
+                    }
+                },
+                columns: columns
+            });
+            $(`#${idTable}_filter`).hide();
+            $(`#${idBtnSync}`).click(() => {
+                syncData(actionSync, idTable, idMessage);
+            });
+            $(`#${idBtnDelete}`).click(() => {
+                truncateTable(actionSync, idTable, idMessage);
+            });
+        }
+
+        let academicsColumns = [
+            {
+                data: "id"
+            },
+            {
+                data: "semesterId"
+            },
+            {
+                data: "code"
+            },
+            {
+                data: "name"
+            },
+        ];
+        initDataTable("datatable-academics", academicsColumns, "/SyncEduData/GetAcademics", "btn-sync-academics", "btn-delete-academics", "SyncAcademics", "message-academics");
+        $("#btn-search-academics").click(() => {
+            $('#datatable-academics').DataTable()
+                .column(2).search($("#code-academics").val())
+                .column(3).search($("#name-academics").val())
                 .draw();
         });
+
+        let subjectColumns = [
+            {
+                data: "id"
+            },
+            {
+                data: "semesterId"
+            },
+            {
+                data: "code"
+            },
+            {
+                data: "name"
+            },
+            {
+                data: "departmentId"
+            },
+            {
+                data: "departmentCode"
+            },
+        ];
+        initDataTable("datatable-subject", subjectColumns, "/SyncEduData/GetSubject", "btn-sync-subject", "btn-delete-subject", "SyncSubject", "message-subject");
+        $("#btn-search-subject").click(() => {
+            $('#datatable-subject').DataTable()
+                .column(2).search($("#code-subject").val())
+                .column(3).search($("#name-subject").val())
+                .column(5).search($("#department-code-subject").val())
+                .draw();
+        });
+
+        let classColumns = [
+            {
+                data: "id"
+            },
+            {
+                data: "code"
+            },
+            {
+                data: "name"
+            },
+            {
+                data: "facultyId"
+            },
+            {
+                data: "facultyCode"
+            },
+            {
+                data: "academicsId"
+            },
+            {
+                data: "academicsCode"
+            },
+            {
+                data: "schoolYear"
+            },
+        ];
+        initDataTable("datatable-class", classColumns, "/SyncEduData/GetClass", "btn-sync-class", "btn-delete-class", "SyncClass", "message-class");
+        $("#btn-search-class").click(() => {
+            $('#datatable-class').DataTable()
+                .column(1).search($("#code-class").val())
+                .column(2).search($("#name-class").val())
+                .column(4).search($("#faculty-code-class").val())
+                .column(6).search($("#academics-code-class").val())
+                .draw();
+        });
+
+        let lecturerColumns = [
+            {
+                data: "id"
+            },
+            {
+                data: "code"
+            },
+            {
+                data: "fullName"
+            },
+            {
+                data: "departmentId"
+            },
+            {
+                data: "departmentCode"
+            },
+            {
+                data: "dateOfBirth"
+            },
+            {
+                data: "nameOrder"
+            },
+            {
+                data: "email"
+            },
+        ];
+        initDataTable("datatable-lecturer", lecturerColumns, "/SyncEduData/GetLecturer", "btn-sync-lecturer", "btn-delete-lecturer", "SyncLecturer", "message-lecturer");
+        $("#btn-search-lecturer").click(() => {
+            $('#datatable-lecturer').DataTable()
+                .column(1).search($("#code-lecturer").val())
+                .column(2).search($("#name-lecturer").val())
+                .column(4).search($("#department-code-lecturer").val())
+                .draw();
+        });
+
+        let studentColumns = [
+            {
+                data: "id"
+            },
+            {
+                data: "code"
+            },
+            {
+                data: "fullName"
+            },
+            {
+                data: "classId"
+            },
+            {
+                data: "classCode"
+            },
+            //{
+            //    data: "dateOfBirth"
+            //},
+            //{
+            //    data: "birthPlace",
+            //},
+            {
+                data: "email"
+            },
+            {
+                data: "mobile"
+            },
+            //{
+            //    data: "keyAuthorize"
+            //},
+            {
+                data: "status"
+            },
+        ];
+        initDataTable("datatable-student", studentColumns, "/SyncEduData/GetStudent", "btn-sync-student", "btn-delete-student", "SyncStudent", "message-student");
+        $("#btn-search-student").click(() => {
+            $('#datatable-student').DataTable()
+                .column(1).search($("#code-student").val())
+                .column(2).search($("#name-student").val())
+                .column(4).search($("#class-code-student").val())
+                .draw();
+        });
+
+        let currentClassroomColumns = [
+            {
+                data: "id"
+            },
+            {
+                data: "semesterId"
+            },
+            {
+                data: "code"
+            },
+            {
+                data: "groupCode"
+            },
+            {
+                data: "classCode"
+            },
+            {
+                data: "subjectId"
+            },
+            {
+                data: "subjectCode",
+            },
+            //{
+            //    data: "examAttemptDate"
+            //},
+            {
+                data: null,
+                render: function (data) {
+                    if (data.fromDate == null || data.fromDate === "") {
+                        return '';
+                    }
+
+                    let regex = /(\d+)/g;
+                    return dateString(new Date(+data.fromDate.match(regex)[0]));
+                }
+            },
+            {
+                data: null,
+                render: function (data) {
+                    if (data.endDate == null || data.endDate === "") {
+                        return '';
+                    }
+
+                    let regex = /(\d+)/g;
+                    return dateString(new Date(+data.endDate.match(regex)[0]));
+                }
+            },
+        ];
+        initDataTable("datatable-current-classroom", currentClassroomColumns, "/SyncEduData/GetCurrentClassRoom", "btn-sync-current-classroom", "btn-delete-current-classroom", "SyncCurrentClassRoom", "message-current-classroom");
+        $("#btn-search-current-classroom").click(() => {
+            $('#datatable-current-classroom').DataTable()
+                .column(2).search($("#code-current-classroom").val())
+                .column(3).search($("#group-code-current-classroom").val())
+                .column(4).search($("#class-code-current-classroom").val())
+                .column(6).search($("#subject-code-current-classroom").val())
+                .draw();
+        });
+        $('#btn-update-from-end-current-classroom').click(() => {
+            syncData("SyncUpdateFromDateEndDateCurrentClassRoom", "datatable-current-classroom", "message-current-classroom");
+        });
+
+        let currentLecturerClassroomColumns = [
+            {
+                data: "id"
+            },
+            {
+                data: "semesterId"
+            },
+            {
+                data: "classRoomId"
+            },
+            {
+                data: "classRoomCode"
+            },
+            {
+                data: "lecturerId"
+            },
+            {
+                data: "lecturerCode"
+            },
+            {
+                data: "template",
+            }
+        ];
+        initDataTable("datatable-current-lecturer-classroom", currentLecturerClassroomColumns, "/SyncEduData/GetCurrentLecturerClassRoom", "btn-sync-current-lecturer-classroom", "btn-delete-current-lecturer-classroom", "SyncCurrentLecturerClassRoom", "message-current-lecturer-classroom");
+        $("#btn-search-current-lecturer-classroom").click(() => {
+            $('#datatable-current-lecturer-classroom').DataTable()
+                .column(3).search($("#classroom-code-current-lecturer-classroom").val())
+                .column(5).search($("#lecturer-code-current-lecturer-classroom").val())
+                .draw();
+        });
+
+        let currentStudentClassroomColumns = [
+            {
+                data: "id"
+            },
+            {
+                data: "semesterId"
+            },
+            {
+                data: "classRoomId"
+            },
+            {
+                data: "studentId"
+            },
+            {
+                data: "studentCode"
+            },
+            {
+                data: "type"
+            },
+            {
+                data: "status",
+            }
+        ];
+        initDataTable("datatable-current-student-classroom", currentStudentClassroomColumns, "/SyncEduData/GetCurrentStudentClassRoom", "btn-sync-current-student-classroom", "btn-delete-current-student-classroom", "SyncCurrentStudentClassRoom", "message-current-student-classroom");
+        $("#btn-search-current-student-classroom").click(() => {
+            $('#datatable-current-student-classroom').DataTable()
+                .column(4).search($("#code-current-student-classroom").val())
+                .draw();
+        });
+
+
+        let lastClassroomColumns = [
+            {
+                data: "id"
+            },
+            {
+                data: "semesterId"
+            },
+            {
+                data: "code"
+            },
+            {
+                data: "groupCode"
+            },
+            {
+                data: "classCode"
+            },
+            {
+                data: "subjectId"
+            },
+            {
+                data: "subjectCode",
+            }
+        ];
+        initDataTable("datatable-last-classroom", lastClassroomColumns, "/SyncEduData/GetLastClassRoom", "btn-sync-last-classroom", "btn-delete-last-classroom", "SyncLastClassRoom", "message-last-classroom");
+        $("#btn-search-last-classroom").click(() => {
+            $('#datatable-last-classroom').DataTable()
+                .column(2).search($("#code-last-classroom").val())
+                .column(3).search($("#group-code-last-classroom").val())
+                .column(4).search($("#class-code-last-classroom").val())
+                .column(6).search($("#subject-code-last-classroom").val())
+                .draw();
+        });
+
+        let lastLecturerClassroomColumns = [
+            {
+                data: "id"
+            },
+            {
+                data: "semesterId"
+            },
+            {
+                data: "classRoomId"
+            },
+            {
+                data: "classRoomCode"
+            },
+            {
+                data: "lecturerId"
+            },
+            {
+                data: "lecturerCode"
+            }
+        ];
+        initDataTable("datatable-last-lecturer-classroom", lastLecturerClassroomColumns, "/SyncEduData/GetLastLecturerClassRoom", "btn-sync-last-lecturer-classroom", "btn-delete-last-lecturer-classroom", "SyncLastLecturerClassRoom", "message-last-lecturer-classroom");
+        $("#btn-search-last-lecturer-classroom").click(() => {
+            $('#datatable-current-lecturer-classroom').DataTable()
+                .column(3).search($("#classroom-code-last-lecturer-classroom").val())
+                .column(5).search($("#lecturer-code-last-lecturer-classroom").val())
+                .draw();
+        });
+
+        let lastStudentClassroomColumns = [
+            {
+                data: "id"
+            },
+            {
+                data: "semesterId"
+            },
+            {
+                data: "classRoomId"
+            },
+            {
+                data: "studentId"
+            },
+            {
+                data: "studentCode"
+            }
+        ];
+        initDataTable("datatable-last-student-classroom", lastStudentClassroomColumns, "/SyncEduData/GetLastStudentClassRoom", "btn-sync-last-student-classroom", "btn-delete-last-student-classroom", "SyncLastStudentClassRoom", "message-last-student-classroom");
+        $("#btn-search-last-student-classroom").click(() => {
+            $('#datatable-last-student-classroom').DataTable()
+                .column(4).search($("#code-last-student-classroom").val())
+                .draw();
+        });
+
+
+
     </script>
 }

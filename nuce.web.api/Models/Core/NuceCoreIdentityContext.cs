@@ -15,6 +15,7 @@ namespace nuce.web.api.Models.Core
         }
 
         public virtual DbSet<ActiviyLogs> ActiviyLogs { get; set; }
+        public virtual DbSet<ManagerBackup> ManagerBackup { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,6 +35,24 @@ namespace nuce.web.api.Models.Core
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<ManagerBackup>(entity =>
+            {
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.DatabaseName)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Date)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Path)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Type).HasDefaultValueSql("((1))");
+            });
 
             OnModelCreatingPartial(modelBuilder);
         }

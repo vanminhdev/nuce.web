@@ -17,4 +17,10 @@ namespace nuce.web.api.Common
             { "K_CNTT", "Khoa CNTT" }
         };
     }
+
+    public enum BackupTypeDefination
+    {
+        BACKUP = 1,
+        RESTORE = 2
+    }
 }

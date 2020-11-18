@@ -86,7 +86,7 @@ namespace nuce.web.api.Services.EduData.Interfaces
 
         public Task<List<AsAcademyDepartment>> GetAllDepartments();
 
-        public Task<List<AsAcademyAcademics>> GetAllAcademics();
+        public Task<PaginationModel<AsAcademyAcademics>> GetAcademics(AcademicsFilter filter, int skip = 0, int take = 20);
 
         public Task<PaginationModel<AsAcademySubject>> GetSubject(SubjectFilter filter, int skip = 0, int take = 20);
 
