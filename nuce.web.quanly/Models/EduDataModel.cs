@@ -5,6 +5,14 @@ using System.Web;
 
 namespace nuce.web.quanly.Models
 {
+    public class HistoryBackup
+    {
+        public Guid id { get; set; }
+        public string databaseName { get; set; }
+        public int type { get; set; }
+        public DateTime date { get; set; }
+    }
+
     public class AsAcademyFaculty
     {
         public int id { get; set; }

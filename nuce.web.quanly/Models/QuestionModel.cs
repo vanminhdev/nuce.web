@@ -10,7 +10,7 @@ namespace nuce.web.quanly.Models
     public class Question
     {
         public string id { get; set; }
-        public string ma { get; set; }
+        public string code { get; set; }
         public string content { get; set; }
         public string type { get; set; }
         public int? order { get; set; }
@@ -19,7 +19,7 @@ namespace nuce.web.quanly.Models
     public class QuestionCreate
     {
         [Required(AllowEmptyStrings = false, ErrorMessage = "Mã không được để trống")]
-        public string ma { get; set; }
+        public string code { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Nội dung không được để trống")]
         public string content { get; set; }
@@ -40,7 +40,7 @@ namespace nuce.web.quanly.Models
         [Required(AllowEmptyStrings = false, ErrorMessage = "Mã không được để trống")]
         [OnlyNumber(ErrorMessage = "Mã phải ở dạng số")]
         [NotContainWhiteSpace(ErrorMessage = "Mã không được chứa khoảng trắng")]
-        public string ma { get; set; }
+        public string code { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Nội dung không được để trống")]
         public string content { get; set; }

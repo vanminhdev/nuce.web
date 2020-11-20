@@ -10,17 +10,26 @@ namespace nuce.web.api.Common
         public static Dictionary<string, string> Roles = new Dictionary<string, string>()
         {
             { "Admin", "Quản trị" },
-            { "PhongBan", "Phòng ban" },
             { "P_KhaoThi", "Phòng khảo thí" },
             { "P_CTSV", "Phòng công tác sinh viên" },
-            { "Khoa", "Khoa" },
             { "K_CNTT", "Khoa CNTT" }
         };
     }
 
-    public enum BackupTypeDefination
+    public enum BackupType
     {
-        BACKUP = 1,
-        RESTORE = 2
+        Backup = 1,
+        Restore = 2
+    }
+
+    /// <summary>
+    /// Loại đợt khảo sát
+    /// </summary>
+    public enum SurveyRoundType
+    {
+        /// <summary>
+        /// Đánh giá chất lượng giảng dạy
+        /// </summary>
+        RatingTeachingQuality = 1
     }
 }

@@ -2,6 +2,7 @@
 using nuce.web.quanly.Attributes.ActionFilter;
 using nuce.web.quanly.Attributes.ValidationAttributes;
 using nuce.web.quanly.Models;
+using nuce.web.quanly.Models.JsonData;
 using nuce.web.quanly.ViewModel.Base;
 using System;
 using System.Collections.Generic;
@@ -169,8 +170,8 @@ namespace nuce.web.quanly.Controllers
 
             return View(new AnswerCreateOfQuestion {
                 AnswerBind = new AnswerCreate() {
-                    cauHoiGId = questionId,
-                    cauHoiId = int.Parse(question.ma)
+                    cauHoiId = questionId,
+                    cauHoiCode = question.code
                 },
                 QuestionContent = HttpUtility.UrlEncode(question.content),
                 QuestionId = questionId
@@ -360,9 +361,9 @@ namespace nuce.web.quanly.Controllers
                 action200Async: async res =>
                 {
                     var jsonString = await response.Content.ReadAsStringAsync();
-                    var result = JsonConvert.DeserializeObject<List<CauHoi>>(jsonString);
+                    var result = JsonConvert.DeserializeObject<List<QuestionJson>>(jsonString);
                     if (result == null)
-                        return View(new List<CauHoi>());
+                        return View(new List<QuestionJson>());
                     return View(result);
                 }
             );

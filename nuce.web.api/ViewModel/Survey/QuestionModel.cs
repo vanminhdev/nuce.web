@@ -10,20 +10,16 @@ namespace nuce.web.api.ViewModel.Survey
 {
     public class QuestionFilter
     {
-        public string Ma { get; set; }
+        public string Code { get; set; }
         public string Content { get; set; }
         public string Type { get; set; }
-    }
-
-    public class QuestionPaginationModel : PaginationModel<QuestionModel>
-    {
     }
 
     public class QuestionModel
     {
         public string Id { get; set; }
 
-        public string Ma { get; set; }
+        public string Code { get; set; }
 
         public string Content { get; set; }
 
@@ -36,9 +32,8 @@ namespace nuce.web.api.ViewModel.Survey
     {
 
         [Required(AllowEmptyStrings = false)]
-        [OnlyNumber]
         [NotContainWhiteSpace]
-        public string Ma { get; set; }
+        public string Code { get; set; }
 
         [Required(AllowEmptyStrings = false)]
         public string Content { get; set; }
@@ -54,9 +49,8 @@ namespace nuce.web.api.ViewModel.Survey
     {
 
         [Required(AllowEmptyStrings = false)]
-        [OnlyNumber]
         [NotContainWhiteSpace]
-        public string Ma { get; set; }
+        public string Code { get; set; }
 
         [Required(AllowEmptyStrings = false)]
         public string Content { get; set; }

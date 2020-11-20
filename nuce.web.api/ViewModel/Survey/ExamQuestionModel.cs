@@ -28,7 +28,7 @@ namespace nuce.web.api.ViewModel.Survey
 
     public class ExamStructure
     {
-        public string Ma { get; set; }
+        public string Code { get; set; }
         public string Content { get; set; }
         public string Type { get; set; }
         public int Order { get; set; }
@@ -42,8 +42,7 @@ namespace nuce.web.api.ViewModel.Survey
         public string ExamQuestionId { get; set; }
 
         [Required]
-        [OnlyNumber(ErrorMessage = "Mã phải ở dạng số")]
-        public string MaCauHoi { get; set; }
+        public string QuestionCode { get; set; }
 
         [Required]
         public int? Order { get; set; }

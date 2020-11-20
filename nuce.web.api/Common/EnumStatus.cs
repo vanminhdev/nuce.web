@@ -9,19 +9,25 @@ namespace nuce.web.api.Common
     {
         Active = 1,
         Deactive = 2,
-        Deleted = 3
+        Deleted = 4 
     }
 
     public enum QuestionStatus
     {
         Active = 1,
-        Deactive = 4
+        Deleted = 4
     }
 
     public enum AnswerStatus
     {
         Active = 1,
-        Deactive = 4
+        Deleted = 4
     }
 
+    public enum SurveyRoundStatus
+    {
+        Active = 1,
+        Deactive = 2,
+        Deleted = 4,
+    }
 }

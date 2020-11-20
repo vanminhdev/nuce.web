@@ -155,9 +155,10 @@
     <Compile Include="Models\AnswerModel.cs" />
     <Compile Include="Models\Base\DataTableRequest.cs" />
     <Compile Include="Models\Base\DataTableResponse.cs" />
-    <Compile Include="Models\CauHoi.cs" />
     <Compile Include="Models\EduDataModel.cs" />
     <Compile Include="Models\ExamQuestionModel.cs" />
+    <Compile Include="Models\JsonData\AnswerJson.cs" />
+    <Compile Include="Models\JsonData\QuestionJson.cs" />
     <Compile Include="Models\QuestionModel.cs" />
     <Compile Include="Models\ResponseMessage.cs" />
     <Compile Include="Models\UserModel.cs" />
@@ -1211,7 +1212,7 @@
     <Content Include="Views\Survey\ExamDetail.cshtml" />
     <Content Include="Views\Survey\CreateExamQuestions.cshtml" />
     <Content Include="Views\SyncEduData\Index.cshtml" />
-    <Content Include="Views\SyncEduData\SyncFromEduData.cshtml" />
+    <Content Include="Views\SyncEduData\Backup.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

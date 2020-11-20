@@ -18,7 +18,7 @@ namespace nuce.web.api.ViewModel.Core.NuceIdentity
         [Username]
         public string Username { get; set; }
 
-        [EmailRegex(ErrorMessage = "Email is invalid")]
+        [EmailRegex(ErrorMessage = "Email không hợp lệ")]
         public string Email { get; set; }
 
         [Phone]
@@ -47,10 +47,6 @@ namespace nuce.web.api.ViewModel.Core.NuceIdentity
         public List<string> Roles { get; set; }
     }
 
-    public class UserPaginationModel : PaginationModel<UserModel>
-    {
-    }
-
     public class UserFilter
     {
         public string Username { get; set; }
@@ -64,7 +60,7 @@ namespace nuce.web.api.ViewModel.Core.NuceIdentity
         [Phone]
         public string PhoneNumber { get; set; }
 
-        [EmailRegex(ErrorMessage = "Email is invalid")]
+        [EmailRegex(ErrorMessage = "Email không hợp lệ")]
         public string Email { get; set; }
 
         //[Required]
@@ -105,7 +101,7 @@ namespace nuce.web.api.ViewModel.Core.NuceIdentity
         [Phone]
         public string PhoneNumber { get; set; }
 
-        [EmailRegex(ErrorMessage = "Email is invalid")]
+        [EmailRegex(ErrorMessage = "Email không hợp lệ")]
         public string Email { get; set; }
     }
 }

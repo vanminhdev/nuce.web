@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using nuce.web.api.ViewModel;
 using Microsoft.AspNetCore.Mvc.Filters;
 using nuce.web.api.Models.Core;
+using nuce.web.api.ViewModel.Base;
 
 namespace nuce.web.api.Services.Core.Interfaces
 {
@@ -26,7 +27,7 @@ namespace nuce.web.api.Services.Core.Interfaces
         public AsAcademyStudent GetCurrentStudent();
         public string GetUserName();
         public AsAcademyStudent GetStudentByEmail(string email);
-        public Task<UserPaginationModel> GetAllAsync(UserFilter filter, int skip = 0, int pageSize = 20);
+        public Task<PaginationModel<UserModel>> GetAllAsync(UserFilter filter, int skip = 0, int pageSize = 20);
         public Task<UserDetailModel> GetByIdAsync(string id);
         public Task ActiveUserAsync(string id);
         public Task DeactiveUserAsync(string id);

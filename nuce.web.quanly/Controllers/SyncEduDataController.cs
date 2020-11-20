@@ -22,12 +22,7 @@ namespace nuce.web.quanly.Controllers
             return View();
         }
 
-        [HttpGet]
-        public ActionResult SyncFromEduData()
-        {
-            return View();
-        }
-
+        #region đồng bộ db khảo thí
         [HttpPost]
         public async Task<ActionResult> SyncFromEduData(string action)
         {
@@ -172,90 +167,83 @@ namespace nuce.web.quanly.Controllers
             );
         }
 
-        private async Task<ActionResult> GetDataApi<T>(DataTableRequest request, string apiUri)
-        {
-            var stringContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-            var response = await base.MakeRequestAuthorizedAsync("Post", apiUri, stringContent);
-            return await base.HandleResponseAsync(response,
-                action200Async: async res =>
-                {
-                    var jsonString = await response.Content.ReadAsStringAsync();
-                    var data = JsonConvert.DeserializeObject<DataTableResponse<T>>(jsonString);
-                    return Json(new
-                    {
-                        draw = data.Draw,
-                        recordsTotal = data.RecordsTotal,
-                        recordsFiltered = data.RecordsFiltered,
-                        data = data.Data
-                    });
-                }
-            );
-        }
-
         [HttpPost]
         public async Task<ActionResult> GetAcademics(DataTableRequest request)
         {
-            return await GetDataApi<AsAcademyAcademics>(request, "/api/SyncEduData/GetAcademics");
+            return await GetDataTabeFromApi<AsAcademyAcademics>(request, "/api/SyncEduData/GetAcademics");
         }
 
         [HttpPost]
         public async Task<ActionResult> GetSubject(DataTableRequest request)
         {
-            return await GetDataApi<AsAcademySubject>(request, "/api/SyncEduData/GetSubject");
+            return await GetDataTabeFromApi<AsAcademySubject>(request, "/api/SyncEduData/GetSubject");
         }
 
         [HttpPost]
         public async Task<ActionResult> GetClass(DataTableRequest request)
         {
-            return await GetDataApi<AsAcademyClass>(request, "/api/SyncEduData/GetClass");
+            return await GetDataTabeFromApi<AsAcademyClass>(request, "/api/SyncEduData/GetClass");
         }
 
         [HttpPost]
         public async Task<ActionResult> GetLecturer(DataTableRequest request)
         {
-            return await GetDataApi<AsAcademyLecturer>(request, "/api/SyncEduData/GetLecturer");
+            return await GetDataTabeFromApi<AsAcademyLecturer>(request, "/api/SyncEduData/GetLecturer");
         }
 
         [HttpPost]
         public async Task<ActionResult> GetStudent(DataTableRequest request)
         {
-            return await GetDataApi<AsAcademyStudent>(request, "/api/SyncEduData/GetStudent");
+            return await GetDataTabeFromApi<AsAcademyStudent>(request, "/api/SyncEduData/GetStudent");
         }
 
         [HttpPost]
         public async Task<ActionResult> GetLastClassRoom(DataTableRequest request)
         {
-            return await GetDataApi<AsAcademyClassRoom>(request, "/api/SyncEduData/GetLastClassRoom");
+            return await GetDataTabeFromApi<AsAcademyClassRoom>(request, "/api/SyncEduData/GetLastClassRoom");
         }
 
         [HttpPost]
         public async Task<ActionResult> GetLastLecturerClassRoom(DataTableRequest request)
         {
-            return await GetDataApi<AsAcademyLecturerClassRoom>(request, "/api/SyncEduData/GetLastLecturerClassRoom");
+            return await GetDataTabeFromApi<AsAcademyLecturerClassRoom>(request, "/api/SyncEduData/GetLastLecturerClassRoom");
         }
 
         [HttpPost]
         public async Task<ActionResult> GetLastStudentClassRoom(DataTableRequest request)
         {
-            return await GetDataApi<AsAcademyStudentClassRoom>(request, "/api/SyncEduData/GetLastStudentClassRoom");
+            return await GetDataTabeFromApi<AsAcademyStudentClassRoom>(request, "/api/SyncEduData/GetLastStudentClassRoom");
         }
 
         [HttpPost]
         public async Task<ActionResult> GetCurrentClassRoom(DataTableRequest request)
         {
-            return await GetDataApi<AsAcademyCClassRoom>(request, "/api/SyncEduData/GetCurrentClassRoom");
+            return await GetDataTabeFromApi<AsAcademyCClassRoom>(request, "/api/SyncEduData/GetCurrentClassRoom");
         }
 
         [HttpPost]
         public async Task<ActionResult> GetCurrentLecturerClassRoom(DataTableRequest request)
         {
-            return await GetDataApi<AsAcademyCLecturerClassRoom>(request, "/api/SyncEduData/GetCurrentLecturerClassRoom");
+            return await GetDataTabeFromApi<AsAcademyCLecturerClassRoom>(request, "/api/SyncEduData/GetCurrentLecturerClassRoom");
         }
 
         [HttpPost]
         public async Task<ActionResult> GetCurrentStudentClassRoom(DataTableRequest request)
         {
-            return await GetDataApi<AsAcademyCStudentClassRoom>(request, "/api/SyncEduData/GetCurrentStudentClassRoom");
+            return await GetDataTabeFromApi<AsAcademyCStudentClassRoom>(request, "/api/SyncEduData/GetCurrentStudentClassRoom");
+        }
+        #endregion
+
+        [HttpGet]
+        public ActionResult Backup()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> BackupHistory(DataTableRequest request)
+        {
+            return await GetDataTabeFromApi<HistoryBackup>(request, "/api/ManagerBackup/GetHistoryBackup");
         }
     }
 }

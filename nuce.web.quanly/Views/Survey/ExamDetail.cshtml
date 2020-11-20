@@ -1,5 +1,5 @@
 ﻿@using nuce.web.quanly.Models
-@model List<nuce.web.quanly.Models.CauHoi>
+@model List<nuce.web.quanly.Models.JsonData.QuestionJson>
 @{
     ViewData["Title"] = "Nội dung đề khảo sát";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -14,32 +14,23 @@
         @if(Model.Count == 0)
         {
             <div class="col-12">
-                <h2 class="text-center">Đề khảo sát trống</h2>
+                <h2 class="text-center text-dark">Đề khảo sát trống</h2>
             </div>
         }
 
         @for (var i = 0; i < Model.Count; i++)
         {
             <div class="col-12">
-                <h5>
+                <h5 class="text-dark">
                     Câu@(i + 1). @Html.Raw(HttpUtility.HtmlDecode(Model[i].Content))
                 </h5>
-                <p class="mb-1">Đáp án:</p>
-                <div class="ml-4">
-                    @for (int j = 1; j <= Model[i].SoCauTraLoi ; j++)
+                <p class="mb-1 text-dark">Đáp án:</p>
+                <div class="ml-4 d-flex flex-row">
+                    @foreach (var answer in Model[i].Answers)
                     {
-                        string str = (string)(Model[i].GetType().GetProperty($"A{j}").GetValue(Model[i]));
-                        if (str != null)
-                        {
-                            <p>
-                                @Html.Raw(HttpUtility.HtmlDecode(str))
-                            </p>
-                        }
-
-                        if(j == 15)
-                        {
-                            break;
-                        }
+                        <p class="text-dark w-25">
+                            @Html.Raw(HttpUtility.HtmlDecode(answer.Content))
+                        </p>
                     }
                 </div>
             </div>

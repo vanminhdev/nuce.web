@@ -15,8 +15,16 @@
 			AS_Academy_
 	1.4. context survey: những dữ liệu liên quan đến khảo thí như câu hỏi,...
 		- gồm các bảng:
+		- cli:
+			dotnet ef dbcontext scaffold "Data Source=.\sqlexpress;Initial Catalog=NUCE_SURVEY;Integrated Security=True" Microsoft.EntityFrameworkCore.SqlServer -o Models/Survey -c SurveyContext -f -t AS_Edu_Survey_BaiKhaoSat -t AS_Edu_Survey_BaiKhaoSat_SinhVien -t AS_Edu_Survey_CauHoi -t AS_Edu_Survey_CauTrucDe -t AS_Edu_Survey_DapAn -t AS_Edu_Survey_DeThi -t AS_Edu_Survey_DotKhaoSat
+		- thư mục jsondata: là các model đưa dữ liệu đã query về dạng json string
+			
 	1.5. context Ctsv: công tác sinh viên
 
 2. công cụ
 	dotnet tool install --global dotnet-ef
 	dotnet tool update --global dotnet-ef
+
+3. xem database diagram
+	-lỗi dbo
+		use [YourDatabaseName] EXEC sp_changedbowner 'sa'

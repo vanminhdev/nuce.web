@@ -10,21 +10,21 @@ namespace nuce.web.api.ViewModel.Survey
     {
         public string Id { get; set; }
 
-        public int? DapAnId { get; set; }
+        public string Code { get; set; }
 
         public string Content { get; set; }
 
         public int? Order { get; set; }
 
-        public string CauHoiGId { get; set; }
+        public string CauHoiId { get; set; }
 
-        public int? CauHoiId { get; set; }
+        public string CauHoiCode { get; set; }
     }
 
     public class AnswerCreateModel
     {
-        [Required]
-        public int? DapAnId { get; set; }
+        [Required(AllowEmptyStrings = false)]
+        public string Code { get; set; }
 
         [Required(AllowEmptyStrings = false)]
         public string Content { get; set; }
@@ -33,16 +33,16 @@ namespace nuce.web.api.ViewModel.Survey
         public int? Order { get; set; }
 
         [Required]
-        public string CauHoiGId { get; set; }
+        public string CauHoiId { get; set; }
 
         [Required]
-        public int? CauHoiId { get; set; }
+        public string CauHoiCode { get; set; }
     }
 
     public class AnswerUpdateModel
     {
-        [Required]
-        public int? DapAnId { get; set; }
+        [Required(AllowEmptyStrings = false)]
+        public string Code { get; set; }
 
         [Required(AllowEmptyStrings = false)]
         public string Content { get; set; }

@@ -37,8 +37,9 @@
 
     <div class="row font-13-sm font-16">
         @Html.TextBoxFor(m => m.QuestionId, new { @type = "hidden" })
+        @Html.TextBoxFor(m => m.AnswerBind.cauHoiCode, new { @type = "hidden" })
         @Html.TextBoxFor(m => m.QuestionContent, new { @type = "hidden" })
-        @Html.TextBoxFor(m => m.AnswerBind.cauHoiGId, new { @type = "hidden" })
+        @Html.TextBoxFor(m => m.AnswerBind.cauHoiId, new { @type = "hidden" })
         @Html.TextBoxFor(m => m.AnswerBind.cauHoiId, new { @type = "hidden" })
         <div class="col-12 form-group">
             <div class="row mr-0 ml-0 align-items-center">
@@ -46,8 +47,8 @@
                     Mã
                 </div>
                 <div class="col-12 col-md-10">
-                    @Html.TextBoxFor(m => m.AnswerBind.dapAnId, new { @class = "form-control" })
-                    @Html.ValidationMessageFor(m => m.AnswerBind.dapAnId, "", new { @class = "form-text text-danger" })
+                    @Html.TextBoxFor(m => m.AnswerBind.code, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.AnswerBind.code, "", new { @class = "form-text text-danger" })
                 </div>
             </div>
         </div>

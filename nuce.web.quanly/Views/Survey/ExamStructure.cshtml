@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container-fluid service-categories-wrp mt-2">
+<div class="container-fluid service-categories-wrp mt-2" style="font-size: 13px">
     <div class="row mb-4">
         <div class="col-12">
             <a class="update-btn text-light p-2" style="text-decoration: none;" href="/survey/examquestions">← Quay lại danh sách đề khảo sát</a>
@@ -81,7 +81,7 @@
                 htmlstr += `\
             <tr>\
                 <td class="text-center">${i + 1}</td>\
-                <td class="text-center">${data[i].ma}</td>\
+                <td class="text-center">${data[i].code}</td>\
                 <td>${data[i].content}</td>\
                 <td class="text-center">${data[i].type}</td>\
                 <td class="text-center">${data[i].order}</td>\
@@ -128,7 +128,7 @@
 
     $('#btn-add-question').click(() => {
         if (form.valid()) {
-            let objData = { examQuestionId: '@ViewData["ExamQuestionId"]', maCauHoi: $('#ma-cau-hoi').val(), order: $('#thu-tu-them').val() };
+            let objData = { examQuestionId: '@ViewData["ExamQuestionId"]', questionCode: $('#ma-cau-hoi').val(), order: $('#thu-tu-them').val() };
             $.ajax({
                 data: objData,
                 dataType: 'json',

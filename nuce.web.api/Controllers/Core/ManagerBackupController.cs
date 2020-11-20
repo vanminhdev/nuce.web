@@ -5,7 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
+using nuce.web.api.Models.Core;
 using nuce.web.api.Services.Core.Interfaces;
+using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Core;
 using System;
 using System.Collections.Generic;
@@ -32,7 +34,32 @@ namespace nuce.web.api.Controllers.Core
         }
 
         [HttpPost]
-        public async Task<IActionResult> BackupDataBaseSurvey()
+        public async Task<IActionResult> GetHistoryBackup([FromBody] DataTableRequest request)
+        {
+            var filter = new ManagerBackupFilter();
+            if (request.Columns != null)
+            {
+                filter.DatabaseName = request.Columns.FirstOrDefault(c => c.Data == "databaseName" || c.Name == "databaseName")?.Search.Value ?? null;
+                var typeStr = request.Columns.FirstOrDefault(c => c.Data == "type" || c.Name == "type");
+                if(typeStr != null && typeStr.Search.Value != null)
+                    filter.Type = int.Parse(typeStr.Search.Value);
+            }
+            var skip = request.Start;
+            var take = request.Length;
+            var result = await _managerBackupService.HistoryBackup(filter, skip, take);
+            return Ok(
+                new DataTableResponse<ManagerBackup>
+                {
+                    Draw = ++request.Draw,
+                    RecordsTotal = result.RecordsTotal,
+                    RecordsFiltered = result.RecordsFiltered,
+                    Data = result.Data
+                }
+            );
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> BackupDatabaseSurvey()
         {
             try
             {
@@ -59,7 +86,7 @@ namespace nuce.web.api.Controllers.Core
         }
 
         [HttpPut]
-        public async Task<IActionResult> RestoreDataBaseSurvey()
+        public async Task<IActionResult> RestoreDatabaseSurvey()
         {
             try
             {

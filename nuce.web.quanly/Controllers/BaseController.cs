@@ -2,12 +2,14 @@
 using Newtonsoft.Json;
 using nuce.web.quanly.Common;
 using nuce.web.quanly.Models;
+using nuce.web.quanly.ViewModel.Base;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -193,6 +195,26 @@ namespace nuce.web.quanly.Controllers
             {
                 ModelState.Remove($"{partialModelName}.{prop.Name}");
             }
+        }
+
+        protected async Task<ActionResult> GetDataTabeFromApi<T>(DataTableRequest request, string apiUri)
+        {
+            var stringContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+            var response = await MakeRequestAuthorizedAsync("Post", apiUri, stringContent);
+            return await HandleResponseAsync(response,
+                action200Async: async res =>
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var data = JsonConvert.DeserializeObject<DataTableResponse<T>>(jsonString);
+                    return Json(new
+                    {
+                        draw = data.Draw,
+                        recordsTotal = data.RecordsTotal,
+                        recordsFiltered = data.RecordsFiltered,
+                        data = data.Data
+                    });
+                }
+            );
         }
     }
 }

@@ -6,10 +6,9 @@ namespace nuce.web.api.Models.Survey
     public partial class AsEduSurveyCauHoi
     {
         public Guid Id { get; set; }
-        public int CauHoiId { get; set; }
         public int BoCauHoiId { get; set; }
         public int DoKhoId { get; set; }
-        public string Ma { get; set; }
+        public string Code { get; set; }
         public string Content { get; set; }
         public string Image { get; set; }
         public string MediaUrl { get; set; }

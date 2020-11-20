@@ -61,7 +61,7 @@ namespace nuce.web.api.Controllers.Survey
         {
             try
             {
-                await _asEduSurveyDeThiService.AddQuestion(data.ExamQuestionId, data.MaCauHoi, data.Order.Value);
+                await _asEduSurveyDeThiService.AddQuestion(data.ExamQuestionId, data.QuestionCode, data.Order.Value);
             }
             catch (RecordNotFoundException)
             {
@@ -70,12 +70,12 @@ namespace nuce.web.api.Controllers.Survey
             catch (DbUpdateException e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Thêm không thành công", detailMessage = e.Message });
             }
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Có lỗi xảy ra", detailMessage = e.Message });
             }
             return Ok();
         }
@@ -98,12 +98,12 @@ namespace nuce.web.api.Controllers.Survey
             catch (DbUpdateException e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Tạo không thành công", detailMessage = e.Message });
             }
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Có lỗi xảy ra", detailMessage = e.Message });
             }
             return Ok();
         }
@@ -126,7 +126,7 @@ namespace nuce.web.api.Controllers.Survey
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Có lỗi xảy ra", detailMessage = e.Message });
             }
         }
 
@@ -140,12 +140,12 @@ namespace nuce.web.api.Controllers.Survey
             catch (DbUpdateException e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Tạo không thành công", detailMessage = e.Message });
             }
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Có lỗi xảy ra", detailMessage = e.Message });
             }
             return Ok();
         }

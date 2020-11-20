@@ -28,7 +28,7 @@ namespace nuce.web.quanly.Models
 
     public class ExamStructure
     {
-        public string ma { get; set; }
+        public string code { get; set; }
         public string content { get; set; }
         public string type { get; set; }
         public int order { get; set; }
@@ -43,7 +43,7 @@ namespace nuce.web.quanly.Models
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Mã không được để trống")]
         [OnlyNumber(ErrorMessage = "Mã phải ở dạng số")]
-        public string maCauHoi { get; set; }
+        public string questionCode { get; set; }
 
         [Required(ErrorMessage = "Số thứ tự không được để trống")]
         public int? order { get; set; }

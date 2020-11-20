@@ -13,7 +13,7 @@ namespace nuce.web.quanly.Models
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Mã không được để trống")]
         [OnlyNumber(ErrorMessage = "Mã phải ở dạng số")]
-        public int? dapAnId { get; set; }
+        public int? code { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Nội dung không được để trống")]
         public string content { get; set; }
@@ -21,9 +21,9 @@ namespace nuce.web.quanly.Models
         [Required(ErrorMessage = "Số thứ tự không được để trống")]
         public int? order { get; set; }
 
-        public string cauHoiGId { get; set; }
+        public string cauHoiId { get; set; }
         
-        public int? cauHoiId { get; set; }
+        public string cauHoiCode { get; set; }
     }
 
     public class AnswerOfQuestion
@@ -43,7 +43,7 @@ namespace nuce.web.quanly.Models
     public class AnswerCreate
     {
         [Required(AllowEmptyStrings = false, ErrorMessage = "Mã không được để trống")]
-        public int? dapAnId { get; set; }
+        public string code { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Nội dung không được để trống")]
         public string content { get; set; }
@@ -51,11 +51,11 @@ namespace nuce.web.quanly.Models
         [Required(ErrorMessage = "Số thứ tự không được để trống")]
         public int? order { get; set; }
 
-        [Required(AllowEmptyStrings = false)]
-        public string cauHoiGId { get; set; }
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Id câu hỏi không được để trống")]
+        public string cauHoiId { get; set; }
 
-        [Required]
-        public int? cauHoiId { get; set; }
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Mã câu hỏi không được để trống")]
+        public string cauHoiCode { get; set; }
     }
 
     public class AnswerCreateOfQuestion

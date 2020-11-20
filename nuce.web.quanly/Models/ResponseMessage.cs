@@ -8,5 +8,6 @@ namespace nuce.web.quanly.Models
     public class ResponseMessage
     {
         public string message { get; set; }
+        public string detailMessage { get; set; }
     }
 }
