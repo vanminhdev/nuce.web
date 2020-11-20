@@ -1,4 +1,5 @@
-﻿using nuce.web.api.Models.Ctsv;
+﻿using Microsoft.AspNetCore.Http;
+using nuce.web.api.Models.Ctsv;
 using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Ctsv;
 using System;
@@ -15,5 +16,6 @@ namespace nuce.web.api.Services.Ctsv.Interfaces
         public Task<FullStudentModel> GetFullStudentByCode(string studentCode);
         public Task<ResponseBody> UpdateStudentBasic(StudentUpdateModel basicStudent);
         public Task<ResponseBody> UpdateStudent(AsAcademyStudent student);
+        public Task UpdateStudentImage(IFormFile formFile, string studentCode);
     }
 }

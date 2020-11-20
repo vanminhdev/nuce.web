@@ -1178,6 +1178,7 @@
     <Content Include="Views\UserManager\Detail.cshtml" />
     <Content Include="Views\UserManager\Create.cshtml" />
     <Content Include="Views\Account\ProfileDetail.cshtml" />
+    <None Include="Properties\PublishProfiles\nuce.web.quanly.pubxml" />
     <None Include="Properties\PublishProfiles\server test.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using nuce.web.api.Models.Ctsv;
 using nuce.web.api.Services.Ctsv.Interfaces;
+using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Ctsv;
 
 namespace nuce.web.api.Controllers.Ctsv
@@ -65,6 +67,21 @@ namespace nuce.web.api.Controllers.Ctsv
                 return BadRequest(result);
             }
             return Ok();
+        }
+
+        [Route("upload-avatar/{studentCode}")]
+        [HttpPost]
+        public async Task<IActionResult> UploadAvatar([FromForm] IFormFile file, string studentCode)
+        {
+            try
+            {
+                await _studentService.UpdateStudentImage(file, studentCode);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { Message = ex.Message, Data = ex });
+            }
         }
     }
 }

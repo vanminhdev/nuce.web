@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using nuce.web.api.Models.Ctsv;
 using nuce.web.api.Repositories.Ctsv.Interfaces;
@@ -8,6 +9,7 @@ using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Ctsv;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -25,6 +27,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
         private readonly IThiHsgRepository _thiHsgRepository;
         private readonly IParameterService _paramService;
         private readonly ILogger<StudentService> _logger;
+        private readonly IPathProvider _pathProvider;
+        private readonly IUploadFile _uploadFile;
         public StudentService(
             IStudentRepository _studentRepository,
             IUserService _userService, IUnitOfWork _unitOfWork,
@@ -32,7 +36,9 @@ namespace nuce.web.api.Services.Ctsv.Implements
             IThiHsgRepository _thiHsgRepository,
             IGiaDinhRepository _giaDinhRepository,
             IParameterService _paramService,
-            ILogger<StudentService> _logger
+            ILogger<StudentService> _logger,
+            IPathProvider _pathProvider,
+            IUploadFile _uploadFile
         )
         {
             this._studentRepository = _studentRepository;
@@ -43,6 +49,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
             this._giaDinhRepository = _giaDinhRepository;
             this._paramService = _paramService;
             this._logger = _logger;
+            this._pathProvider = _pathProvider;
+            this._uploadFile = _uploadFile;
         }
         #endregion
 
@@ -148,6 +156,44 @@ namespace nuce.web.api.Services.Ctsv.Implements
             }
 
             return null;
+        }
+
+        public async Task UpdateStudentImage(IFormFile formFile, string studentCode)
+        {
+            if (!_uploadFile.isValidImage(formFile))
+            {
+                throw new Exception("Ảnh không hợp lệ");
+            }
+            // 1mb
+            long maxSize = 1024 * 1024;
+            if (!_uploadFile.isValidSize(formFile, maxSize))
+            {
+                throw new Exception("Dung lượng phải nhỏ hơn 1MB");
+            }
+
+            var student = _studentRepository.FindByCode(studentCode);
+            if (student == null)
+            {
+                throw new Exception("Sinh viên không tồn tại");
+            }
+            string dir = "Resources/Students";
+            string mappedDir = _pathProvider.MapPath(dir);
+            Directory.CreateDirectory(mappedDir);
+            string newFileName = $"ava_{studentCode}{Path.GetExtension(formFile.FileName).ToLower()}";
+            string filePath = _pathProvider.MapPath($"{dir}/{newFileName}");
+
+            try
+            {
+                await _uploadFile.SaveFileAsync(formFile, filePath);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            student.File1 = $"Resources/Students/{newFileName}";
+            _studentRepository.Update(student);
+            await _unitOfWork.SaveAsync();
         }
     }
 }
