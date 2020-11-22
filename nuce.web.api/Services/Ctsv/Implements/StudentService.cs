@@ -158,7 +158,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             return null;
         }
 
-        public async Task UpdateStudentImage(IFormFile formFile, string studentCode)
+        public async Task<string> UpdateStudentImage(IFormFile formFile, string studentCode)
         {
             if (!_uploadFile.isValidImage(formFile))
             {
@@ -188,12 +188,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
             }
             catch (Exception ex)
             {
+                _logger.LogError($"{studentCode} || {ex.Message} || {ex.ToString()} ");
                 throw ex;
             }
 
             student.File1 = $"Resources/Students/{newFileName}";
             _studentRepository.Update(student);
             await _unitOfWork.SaveAsync();
+            return student.File1;
         }
     }
 }

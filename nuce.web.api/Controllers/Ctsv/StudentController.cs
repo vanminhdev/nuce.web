@@ -75,8 +75,8 @@ namespace nuce.web.api.Controllers.Ctsv
         {
             try
             {
-                await _studentService.UpdateStudentImage(file, studentCode);
-                return Ok();
+                string imgPath = await _studentService.UpdateStudentImage(file, studentCode);
+                return Ok(imgPath);
             }
             catch (Exception ex)
             {

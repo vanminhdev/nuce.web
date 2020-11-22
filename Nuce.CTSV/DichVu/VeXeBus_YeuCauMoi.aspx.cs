@@ -1,13 +1,7 @@
-﻿using Microsoft.ApplicationBlocks.Data;
-using Newtonsoft.Json;
-using nuce.web.data;
+﻿using Newtonsoft.Json;
 using Nuce.CTSV.ApiModels;
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using System.Net.Http;
-using System.Web.UI;
 
 namespace Nuce.CTSV
 {
@@ -21,29 +15,13 @@ namespace Nuce.CTSV
                 if (studentResponse.IsSuccessStatusCode)
                 {
                     var strResponse = await studentResponse.Content.ReadAsStringAsync();
-                    var student = JsonConvert.DeserializeObject<ApiModels.StudentModel>(strResponse);
-                    ViewState["student"] = student;
+                    var student = JsonConvert.DeserializeObject<StudentModel>(strResponse);
 
                     string thongBao = "";
 
-                    if (string.IsNullOrEmpty(student.HkttTinh?.Trim()))
+                    if (string.IsNullOrEmpty(student.File1?.Trim()))
                     {
-                        thongBao += " tỉnh/thành phố";
-                    }
-
-                    if (string.IsNullOrEmpty(student.HkttQuan?.Trim()))
-                    {
-                        thongBao += $"{(thongBao != "" ? "," : "")} quận/huyện";
-                    }
-
-                    if (string.IsNullOrEmpty(student.HkttPhuong?.Trim()))
-                    {
-                        thongBao += $"{(thongBao != "" ? "," : "")} phường/xã";
-                    }
-
-                    if (string.IsNullOrEmpty(student.DiaChiCuThe?.Trim()))
-                    {
-                        thongBao += $"{(thongBao != "" ? "," : "")} địa chỉ tạm trú";
+                        thongBao += " ảnh đại diện";
                     }
 
                     if (!string.IsNullOrEmpty(thongBao))

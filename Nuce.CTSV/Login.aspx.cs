@@ -281,7 +281,7 @@ namespace Nuce.CTSV
             
             StudentModel student = null;
 
-            var studentResponse = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, $"{ApiModels.ApiEndPoint.GetStudentInfo}/{strMaSV}", "");
+            var studentResponse = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, $"{ApiEndPoint.GetStudentInfo}/{strMaSV}", "");
             if (studentResponse.IsSuccessStatusCode)
             {
                 student = await CustomizeHttp.DeserializeAsync<StudentModel>(studentResponse.Content);
@@ -302,7 +302,7 @@ namespace Nuce.CTSV
 
                 if (!File1.Trim().Equals(""))
                 {
-                    SinhVien.IMG = File1;
+                    SinhVien.IMG = $"{CustomizeHttp.API_URI}/{File1}";
                 }
                 else
                 {

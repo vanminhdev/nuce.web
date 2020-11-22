@@ -24,7 +24,7 @@ namespace nuce.web.api.Services.Core.Implements
         }
         public bool isValidImage(IFormFile file)
         {
-            if (!IMAGE_MIMETYPE.Contains(file.ContentType.ToLower()))
+            if (!string.IsNullOrEmpty(file.ContentType) && !IMAGE_MIMETYPE.Contains(file.ContentType.ToLower()))
             {
                 return false;
             }

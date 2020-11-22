@@ -24,15 +24,6 @@ namespace Nuce.CTSV
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divThongBao;
 
         /// <summary>
-        /// txtKyLuat control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtKyLuat;
-
-        /// <summary>
         /// btnCapNhat control.
         /// </summary>
         /// <remarks>

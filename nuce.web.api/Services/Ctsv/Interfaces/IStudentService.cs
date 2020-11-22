@@ -16,6 +16,6 @@ namespace nuce.web.api.Services.Ctsv.Interfaces
         public Task<FullStudentModel> GetFullStudentByCode(string studentCode);
         public Task<ResponseBody> UpdateStudentBasic(StudentUpdateModel basicStudent);
         public Task<ResponseBody> UpdateStudent(AsAcademyStudent student);
-        public Task UpdateStudentImage(IFormFile formFile, string studentCode);
+        public Task<string> UpdateStudentImage(IFormFile formFile, string studentCode);
     }
 }

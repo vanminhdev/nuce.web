@@ -322,6 +322,13 @@ namespace Nuce.CTSV.ApiModels
         public object Data { get; set; }
         public HttpStatusCode StatusCode { get; set; }
     }
+    public class UploadFileModel
+    {
+        public string FileName { get; set; }
+        public string Key { get; set; }
+        public byte[] Content { get; set; }
+        public string ContentType { get; set; }
+    }
     #endregion
 
     #region api
@@ -336,6 +343,7 @@ namespace Nuce.CTSV.ApiModels
         public static string GetFullStudent = "api/Student/full-student";
         public static string GetAllowUpdateStudent = "api/Student/allow-update-student";
         public static string GetTinTuc = "api/News/get-news-items";
+        public static string UploadStudentImage = "api/Student/upload-avatar";
     }
     #endregion
     #region ma dich vu

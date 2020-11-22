@@ -1,4 +1,4 @@
-﻿
+﻿@using System.Configuration;
 
 @{
     ViewBag.Title = "Detail";
@@ -10,14 +10,17 @@
             padding: 16px 8px;
         }
     }
-    @@media only screen and (min-width: 1025px){
+
+    @@media only screen and (min-width: 1025px) {
         .main-content-wrp {
             margin-top: 0;
         }
     }
+
     .checkbox-select {
         cursor: pointer;
     }
+
     .search-icon-wrapper {
         padding: 3px 8px;
     }
@@ -26,9 +29,9 @@
     <div class="col-12">
         <div class="row">
             <div class="col-12">
-                <a class="update-btn text-light p-2 mb-3" 
-                    style="text-decoration: none; display: inline-block" 
-                    href="/ctsvservicemanagement/index">← Quay lại danh sách</a>
+                <a class="update-btn text-light p-2 mb-3"
+                   style="text-decoration: none; display: inline-block"
+                   href="/ctsvservicemanagement/index">← Quay lại danh sách</a>
                 <div id="divTitle" class="main-color text-uppercase font-15-sm fw-600 font-25 service-title">
                     dịch vụ xin giấy xác nhận
                 </div>
@@ -107,8 +110,8 @@
                         <form action="">
                             <!-- TRẠNG THÁI -->
                             <div class="fw-700 font-13-sm">Trạng thái:</div>
-                            <select id="slUpdateStatus" 
-                                    onchange="onChangeStatus(this)" 
+                            <select id="slUpdateStatus"
+                                    onchange="onChangeStatus(this)"
                                     class="form-control mt-3">
                                 <option value="3">Đã tiếp nhận và đang xử lý</option>
                                 <option value="4">Đã xử lý và có lịch hẹn</option>
@@ -119,8 +122,8 @@
                                 <div class="form-group m-0">
                                     <label class="cursor-pointer">
                                         <input type="checkbox"
-                                                id="cbNgayHen" 
-                                                onclick="onChangeOptionUpdateNgayHen(this)" />
+                                               id="cbNgayHen"
+                                               onclick="onChangeOptionUpdateNgayHen(this)" />
                                         <span class="fw-700 font-14-sm">Tự điều chỉnh ngày hẹn</span>
                                     </label>
                                 </div>
@@ -227,9 +230,11 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Thoát</button>
-                        <button id="btn-activate" type="button" 
+                        <button id="btn-activate" type="button"
                                 onclick="onUpdateMultiStatus()"
-                                class="btn btn-primary">Xác nhận</button>
+                                class="btn btn-primary">
+                            Xác nhận
+                        </button>
                     </div>
                 </div>
             </div>
@@ -353,7 +358,7 @@
                                 status = 5;
                                 break;
                             case 5:
-                                options = `<option value="4">Đã xử lý và có lịch hẹn</option>`; 
+                                options = `<option value="4">Đã xử lý và có lịch hẹn</option>`;
                                 status = 4;
                                 break;
                             default:
@@ -409,11 +414,16 @@
         var template = function(data) {
             const dichVu = data.DichVu;
             const student = data.Student;
-                        
+
             const studentName = dichVu.studentName;
             const studentCode = dichVu.studentCode;
             const statusCode = Number(dichVu.status);
             const statusName = statusDictionary[statusCode];
+            let studentAva = '/content/images/person.png';
+
+            if (student.file1) {
+                studentAva = `@ConfigurationManager.AppSettings.Get("API_URL")/${student.file1}`;
+            };
             let ngayHenFrom = new Date();
             let ngayHenTo = new Date();
 
@@ -472,7 +482,7 @@
                 <div class="row font-13-sm align-items-center display-lg">
                     <div class="col-1 mr-3">
                       <img
-                        src="/content/images/person.png"
+                        src="${studentAva}"
                         alt=""
                         class="list-item-avatar"
                       />
@@ -602,7 +612,7 @@
                     data: null,
                     mRender: function(data, type, row, meta) {
                         const i = meta.row;
-                        return `<input type="checkbox" id="${i}-select" 
+                        return `<input type="checkbox" id="${i}-select"
                                     class="checkbox-select"
                                     onclick="updateselectedDataIndex(${i}, 'select')">`;
                     },
@@ -679,7 +689,7 @@
                 }],
                 ExportType: 'word',
                 DichVuType: serviceType
-            }, 'docx');      
+            }, 'docx');
         };
 
         var onExportWordList = function() {
@@ -710,7 +720,7 @@
             if (!selectedDataIsValid()) {
                 return;
             }
-            const selectedData = [];            
+            const selectedData = [];
 
             dataList.forEach((item, index) => {
                 if (selectedIndex.includes(index)) {
@@ -765,7 +775,7 @@
                     else if (hh < 10)
                         $("#txtGioBatDau").val("0" + hh);
                 }
-                
+
                 if ($("#txtPhutBatDau").val() === '' || $("#txtPhutBatDau").val() === null) {
                     $("#txtPhutBatDau").val("00");
                 }
@@ -803,7 +813,7 @@
                         $("#txtPhutKetThuc").val("0" + mm);
                 }
             }
-            
+
             if ($("#txtNgayBatDau").val() != "") {
                 const tmpNgayBatDau = $("#txtNgayBatDau").val().split('/').reverse().join('/');
                 result.strNgayBatDau = tmpNgayBatDau + " " + $("#txtGioBatDau").val() + ":" + $("#txtPhutBatDau").val();
@@ -831,7 +841,7 @@
             if (data.Status * 1 === 4) {
                 var autoNgayHen = !$('#cbNgayHen').is(':checked');
                 var rsNgayHen = getNgayHen(data.Status * 1, autoNgayHen);
-                
+
                 if (!rsNgayHen.ok) {
                     return;
                 }
@@ -875,7 +885,7 @@
                     searchData();
                 } else {
                     $("#h_noidung_thongbao").html("Lỗi hệ thống");
-                    $('#myModalThongBao').modal();    
+                    $('#myModalThongBao').modal();
                 }
             }).fail(err => {
                 $('#loading-screen').hide();
@@ -900,7 +910,7 @@
                     searchData();
                 } else {
                     $("#h_noidung_thongbao").html("Lỗi hệ thống");
-                    $('#myModalThongBao').modal();    
+                    $('#myModalThongBao').modal();
                 }
             }).fail(err => {
                 $('#loading-screen').hide();

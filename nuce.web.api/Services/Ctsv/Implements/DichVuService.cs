@@ -476,6 +476,15 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 { (int)DichVu.VayVonNganHang, _vayVonRepository.GetRequestInfo() },
                 { (int)DichVu.VeBus, _veXeBusRepository.GetRequestInfo() }
             };
+
+            var SumDichVu = new AllTypeDichVuModel
+            {
+                DangXuLy = 0,
+                DaXuLy = 0,
+                MoiGui = 0,
+                TongSo = 0,
+            };
+
             foreach (var dichVu in allDichVu)
             {
                 if (quantityDictionary.ContainsKey(dichVu.Id))
@@ -483,8 +492,16 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     var info = quantityDictionary[dichVu.Id];
                     info.TenDichVu = dichVu.Description;
                     info.LinkDichVu = dichVu.Param1;
+
+                    SumDichVu.DaXuLy += info.DaXuLy;
+                    SumDichVu.DangXuLy += info.DangXuLy;
+                    SumDichVu.MoiGui += info.MoiGui;
+                    SumDichVu.TongSo += info.TongSo;
                 }
             }
+
+            quantityDictionary.Add(-1, SumDichVu);
+
             return quantityDictionary;
         }
         #region Update Status
@@ -749,6 +766,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     return await ExportExcelVayVon(dichVuList);
                 case DichVu.ThueNha:
                     return await ExportExcelThueNha(dichVuList);
+                case DichVu.VeBus:
+                    return await ExportExcelVeXeBus(dichVuList);
                 default:
                     break;
             }
@@ -1180,6 +1199,105 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(cmt);
                     ws.Cell(row, ++col).SetValue(cmtNgayCap?.ToString("dd/MM/yyyy"));
                     ws.Cell(row, ++col).SetValue(cmtNoiCap);
+                    ws.Cell(row, ++col).SetValue(now.Day);
+                    ws.Cell(row, ++col).SetValue(now.Month);
+                    ws.Cell(row, ++col).SetValue(now.Year);
+                }
+                for (int j = 0; j < col; j++)
+                {
+                    ws.Column(j + 1).AdjustToContents();
+                }
+                #endregion
+                string file = _pathProvider.MapPath($"Templates/Ctsv/vayvon_{Guid.NewGuid().ToString()}.xlsx");
+                wb.SaveAs(file);
+                return await FileToByteAsync(file);
+            }
+        }
+        private async Task<byte[]> ExportExcelVeXeBus(List<DichVuExport> dichVuList)
+        {
+            List<long> ids = new List<long>();
+            foreach (var item in dichVuList)
+            {
+                ids.Add(item.ID);
+            }
+            var yeuCauList = (await _veXeBusRepository.GetYeuCauDichVuStudent(ids)).ToList();
+
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                var style = XLWorkbook.DefaultStyle;
+                var ws = wb.Worksheets.Add("Sheet1");
+                ws.Style.Font.SetFontSize(12);
+                ws.Style.Font.SetFontName("Times New Roman");
+
+                int i = 0;
+                int firstRow = 1;
+                #region title
+                setStyle(ws, firstRow, ++i, "Mã số SV");
+                setStyle(ws, firstRow, ++i, "Họ và tên");
+                setStyle(ws, firstRow, ++i, "Ngày sinh");
+                setStyle(ws, firstRow, ++i, "Email");
+                setStyle(ws, firstRow, ++i, "Xã");
+                setStyle(ws, firstRow, ++i, "Huyện");
+                setStyle(ws, firstRow, ++i, "Tỉnh");
+                setStyle(ws, firstRow, ++i, "Lớp");
+                setStyle(ws, firstRow, ++i, "Niên khóa");
+                setStyle(ws, firstRow, ++i, "Khoa quản lý");
+                setStyle(ws, firstRow, ++i, "Số điện thoại");
+                setStyle(ws, firstRow, ++i, "Hệ đào tạo");
+
+                setStyleUniqueCol(ws, firstRow, ++i, "Liên tuyến");
+                setStyleUniqueCol(ws, firstRow, ++i, "Số tuyến");
+                setStyleUniqueCol(ws, firstRow, ++i, "Nơi nộp đơn và nhận thẻ");
+
+                setStyle(ws, firstRow, ++i, "Ngày ký");
+                setStyle(ws, firstRow, ++i, "Tháng ký");
+                setStyle(ws, firstRow, ++i, "Năm ký");
+
+                ws.Row(firstRow).Height = 32;
+
+                int colNum = i;
+                #endregion
+                #region value
+                int recordLen = yeuCauList.Count;
+                int col = 0;
+                for (int j = 0; j < recordLen; j++)
+                {
+                    var yeuCau = yeuCauList[j];
+                    DateTime ngaySinh = convertStudentDateOfBirth(yeuCau.Student.DateOfBirth);
+                    string studentCode = yeuCau.YeuCauDichVu.StudentCode ?? "";
+                    string studentName = yeuCau.YeuCauDichVu.StudentName ?? "";
+                    string email = yeuCau.Student.EmailNhaTruong ?? "";
+                    string phuong = yeuCau.Student.HkttPhuong ?? "";
+                    string quan = yeuCau.Student.HkttQuan ?? "";
+                    string tinh = yeuCau.Student.HkttTinh ?? "";
+                    string classCode = yeuCau.Student.ClassCode ?? "";
+                    string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
+                    string tenKhoa = yeuCau.Faculty.Name ?? "";
+                    string mobile = yeuCau.Student.Mobile ?? "";
+                    string lienTuyen = (DichVuXeBusLoaiTuyen)yeuCau.YeuCauDichVu.TuyenType == DichVuXeBusLoaiTuyen.LienTuyen ? "x" : "";
+                    string soTuyen = yeuCau.YeuCauDichVu.TuyenCode;
+                    string noiNhanThe = yeuCau.YeuCauDichVu.NoiNhanThe;
+                    DateTime now = DateTime.Now;
+                    int row = j + 2;
+
+                    col = 0;
+                    ws.Cell(row, ++col).SetValue(studentCode);
+                    ws.Cell(row, ++col).SetValue(studentName);
+                    ws.Cell(row, ++col).SetValue(ngaySinh.ToString("dd/MM/yyyy"));
+                    ws.Cell(row, ++col).SetValue(email);
+                    ws.Cell(row, ++col).SetValue(phuong);
+                    ws.Cell(row, ++col).SetValue(quan);
+                    ws.Cell(row, ++col).SetValue(tinh);
+                    ws.Cell(row, ++col).SetValue(classCode);
+                    ws.Cell(row, ++col).SetValue(nienKhoa);
+                    ws.Cell(row, ++col).SetValue(tenKhoa);
+                    ws.Cell(row, ++col).SetValue(mobile);
+                    ws.Cell(row, ++col).SetValue("Chính quy");
+
+                    ws.Cell(row, ++col).SetValue(lienTuyen);
+                    ws.Cell(row, ++col).SetValue(soTuyen);
+                    ws.Cell(row, ++col).SetValue(noiNhanThe);
+
                     ws.Cell(row, ++col).SetValue(now.Day);
                     ws.Cell(row, ++col).SetValue(now.Month);
                     ws.Cell(row, ++col).SetValue(now.Year);
@@ -2937,7 +3055,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
             string filePath = _pathProvider.MapPath($"Templates/Ctsv/ve_xe_bus.docx");
             string destination = _pathProvider.MapPath($"Templates/Ctsv/bus-{DateTime.Now.ToFileTime()}.docx");
-            string newImgPath = $"Templates/Ctsv/ex.png";
+            string newImgPath = _pathProvider.MapPath($"{studentInfo.Student.File1}");
 
             var loaiTuyen = (DichVuXeBusLoaiTuyen)veXeBus.TuyenType;
             string motTuyen = "";
@@ -2975,12 +3093,15 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     }
                     #endregion
                     #region handle filled image in shape
-                    var docList = mainPart.Document.Descendants<DocumentFormat.OpenXml.Drawing.Wordprocessing.DocProperties>().ToList();
-                    var tmp = docList.Where(p => p.Name.Value.Contains("SHAPE_FILL") && p.Parent is DocumentFormat.OpenXml.Drawing.Wordprocessing.Anchor);
-                    
-                    foreach (var el in tmp)
+                    if (!string.IsNullOrEmpty(newImgPath))
                     {
-                        replaceShapeFilledImageTemplate(el, mainPart, newImgPath);
+                        var docList = mainPart.Document.Descendants<DocumentFormat.OpenXml.Drawing.Wordprocessing.DocProperties>().ToList();
+                        var tmp = docList.Where(p => p.Name.Value.Contains("SHAPE_FILL") && p.Parent is DocumentFormat.OpenXml.Drawing.Wordprocessing.Anchor);
+
+                        foreach (var el in tmp)
+                        {
+                            replaceShapeFilledImageTemplate(el, mainPart, newImgPath);
+                        }
                     }
                     #endregion
 

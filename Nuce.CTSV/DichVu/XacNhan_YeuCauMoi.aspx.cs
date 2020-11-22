@@ -22,7 +22,6 @@ namespace Nuce.CTSV
                 {
                     var strResponse = await studentResponse.Content.ReadAsStringAsync();
                     var student = JsonConvert.DeserializeObject<ApiModels.StudentModel>(strResponse);
-                    ViewState["student"] = student;
 
                     string thongBao = "";
 

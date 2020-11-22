@@ -66,10 +66,14 @@
         .rounded {
             border-radius: 0.35rem !important;
         }
+        @media only screen and (min-width: 1025px) {
+            .service-categories-wrp {
+                margin-top: 5px;
+            }
+        }
     </style>
 </head>
 <body id="page-top">
-    <!-- test -->
     <div class="full-height body-wrp">
       <!-- header section -->
       <section id="header">
@@ -205,8 +209,7 @@
           </div>
           <img
             id="avatar"
-            runat="server"
-            src="/style/public/images/person.png"
+            src="http://localhost:8086/Resources/Students/ava_114759.png"
             alt=""
             class="user-avatar position-absolute"
           />
@@ -308,7 +311,7 @@
           </div>
         </div>
 
-        <div class="container-fluid service-categories-wrp">
+        <div id="content" class="container-fluid service-categories-wrp">
             <form runat="server">
                 <asp:ContentPlaceHolder ID="MainContent" runat="server">
                 </asp:ContentPlaceHolder>
@@ -333,7 +336,7 @@
     </div>
 
     <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
+    <a id="scrollTop" class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
     <!-- Logout Modal-->
@@ -373,6 +376,21 @@
             </div>
         </div>
     </div>
+    <script>
+        var img = '<%= ((nuce.web.model.SinhVien)Session[Nuce.CTSV.Utils.session_sinhvien]).IMG %>';
+        var apiURL = '<%= Nuce.CTSV.CustomizeHttp.API_URI %>';
+        $('#avatar').attr('src', `${img}?<%= DateTime.Now.ToFileTime() %>`);
+
+        $('body').scroll(function () {
+	        if ($(this).scrollTop() > 100) {
+		        $("#scrollTop").fadeIn(400);
+	        } else {
+		        $('#scrollTop').fadeOut(400);
+	        }     
+        });
+
+        $('html,body').animate({scrollTop: $(`#content`).offset().top}, 'slow');
+    </script>
     <!-- Custom scripts for all pages-->
     <script src="/js/sb-admin-2.min.js"></script>
 
