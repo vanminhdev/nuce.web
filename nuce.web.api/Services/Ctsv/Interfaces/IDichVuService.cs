@@ -22,5 +22,6 @@ namespace nuce.web.api.Services.Ctsv.Interfaces
         public Task<byte[]> ExportWordAsync(DichVu dichVu, int id);
         public Task<byte[]> ExportWordListAsync(DichVu dichVu, List<DichVuExport> dichVuList);
         public Task<byte[]> ExportExcelAsync(DichVu loaiDichVu, List<DichVuExport> dichVuList);
+        public Task<byte[]> ExportExcelOverviewAsync();
     }
 }

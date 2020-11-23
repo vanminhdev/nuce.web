@@ -283,6 +283,12 @@
                 key: 'VE_XE_BUS',
             },
         };
+        var templateStatus = {
+            2: 'text-warning',
+            3: 'text-primary',
+            4: 'text-success',
+            5: 'text-danger',
+        };
         var getDichVuEnum = function() {
             const result = {};
             Object.keys(serviceDictionary).forEach(key => {
@@ -434,6 +440,8 @@
                 ngayHenTo = new Date(dichVu.ngayHenDenNgay);
             }
 
+            const statusTextClass = templateStatus[statusCode];
+
             let mainContentSection = ``;
             switch (Number(serviceType)) {
                 case dichVuEnum.XAC_NHAN:
@@ -508,10 +516,10 @@
                           Mã sinh viên: ${studentCode} <span class="ml-2 mr-2">|</span>
                         </div>
                         <div>
-                          Trạng thái:
-                          <span class="main-color">
-                           ${statusName}</span
-                          >
+                            Trạng thái:
+                            <span class="${statusTextClass}" style="font-weight: bold">
+                                ${statusName}
+                            </span>
                         </div>
                       </div>
                     </div>
@@ -545,9 +553,9 @@
                       <div>Mã sinh viên: ${studentCode}</div>
                       <div>
                         Trạng thái:
-                        <span class="main-color"
-                          >${statusName}</span
-                        >
+                        <span class="${statusTextClass}" style="font-weight: bold">
+                            ${statusName}
+                        </span>
                       </div>
                     </div>
                   </div>

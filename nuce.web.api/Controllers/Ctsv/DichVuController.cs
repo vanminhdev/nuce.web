@@ -151,5 +151,14 @@ namespace nuce.web.api.Controllers.Ctsv
             var result = await _dichVuService.ExportExcelAsync(model.DichVuType, model.DichVuList);
             return new FileStreamResult(new MemoryStream(result), "application/octet-stream");
         }
+
+        [Authorize(Roles = "P_CTSV")]
+        [Route("admin/export-excel-overview")]
+        [HttpPost]
+        public async Task<FileStreamResult> ExportExcel()
+        {
+            var result = await _dichVuService.ExportExcelOverviewAsync();
+            return new FileStreamResult(new MemoryStream(result), "application/octet-stream");
+        }
     }
 }

@@ -479,6 +479,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
             var SumDichVu = new AllTypeDichVuModel
             {
+                TenDichVu = "Tổng cộng",
                 DangXuLy = 0,
                 DaXuLy = 0,
                 MoiGui = 0,
@@ -754,6 +755,66 @@ namespace nuce.web.api.Services.Ctsv.Implements
         #endregion
 
         #region Export Excel
+        public async Task<byte[]> ExportExcelOverviewAsync()
+        {
+            var data = GetAllLoaiDichVuInfo();
+
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                var style = XLWorkbook.DefaultStyle;
+                var ws = wb.Worksheets.Add("Sheet1");
+                ws.Style.Font.SetFontSize(12);
+                ws.Style.Font.SetFontName("Times New Roman");
+
+                int i = 0;
+                int firstRow = 1;
+                #region title
+                setStyle(ws, firstRow, ++i, "STT");
+                setStyle(ws, firstRow, ++i, "Dịch vụ");
+                setStyle(ws, firstRow, ++i, "Tổng số");
+                setStyle(ws, firstRow, ++i, "Mới gửi");
+                setStyle(ws, firstRow, ++i, "Đang xử lý");
+                setStyle(ws, firstRow, ++i, "Đã xử lý xong");
+
+                ws.Row(firstRow).Height = 32;
+
+                int colNum = i;
+                #endregion
+                #region value
+                int recordLen = data.Count;
+                int col = 0;
+                for (int j = 0; j < recordLen; j++)
+                {
+                    var key = data.Keys.ElementAt(j);
+                    var dichVu = data[key];
+
+                    int stt = j + 1;
+                    string dichVuName = dichVu.TenDichVu;
+                    int tongSo = dichVu.TongSo;
+                    int moiGui = dichVu.MoiGui;
+                    int dangXuLy = dichVu.DangXuLy;
+                    int daXuLy = dichVu.DaXuLy;
+
+                    int row = j + 2;
+
+                    col = 0;
+                    ws.Cell(row, ++col).SetValue(stt);
+                    ws.Cell(row, ++col).SetValue(dichVuName);
+                    ws.Cell(row, ++col).SetValue(tongSo);
+                    ws.Cell(row, ++col).SetValue(moiGui);
+                    ws.Cell(row, ++col).SetValue(dangXuLy);
+                    ws.Cell(row, ++col).SetValue(daXuLy);
+                }
+                for (int j = 0; j < col; j++)
+                {
+                    ws.Column(j + 1).AdjustToContents();
+                }
+                #endregion
+                string file = _pathProvider.MapPath($"Templates/Ctsv/overview_{Guid.NewGuid().ToString()}.xlsx");
+                wb.SaveAs(file);
+                return await FileToByteAsync(file);
+            }
+        }
         public async Task<byte[]> ExportExcelAsync(DichVu loaiDichVu, List<DichVuExport> dichVuList)
         {
             switch (loaiDichVu)
@@ -1213,6 +1274,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 return await FileToByteAsync(file);
             }
         }
+
         private async Task<byte[]> ExportExcelVeXeBus(List<DichVuExport> dichVuList)
         {
             List<long> ids = new List<long>();
@@ -1425,6 +1487,15 @@ namespace nuce.web.api.Services.Ctsv.Implements
             string HeDaoTao = "Chính quy";
             string NienKhoa = studentInfo.AcademyClass.SchoolYear;
             string LyDoXacNhan = xacNhan.LyDo ?? "";
+            string specialReason = "Xin tạm hoãn nghĩa vụ quân sự (đối với SV hết hạn chính khóa)";
+            if (LyDoXacNhan == specialReason)
+            {
+                LyDoXacNhan = "Xin tạm hoãn nghĩa vụ quân sự (do SV còn nợ môn học nên chưa thể tốt nghiệp theo đúng thời hạn chính khóa, SV được gia hạn thời gian học tập tại trường theo Khoản 3 Điều 6 Quyết định số 43/2007/QĐBGDĐT ngày 15/8/2007 của Bộ trưởng Bộ Giáo dục & Đào tạo)";
+            }
+            else
+            {
+                LyDoXacNhan = LyDoXacNhan.Replace("\n", "").Replace("\r", "");
+            }
 
             //ComponentInfo.SetLicense("DTZX-HTZ5-B7Q6-2GA6");
             ComponentInfo.SetLicense("FREE-LIMITED-KEY");
@@ -3239,7 +3310,6 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 fill.Blip.Embed = mainPart.GetIdOfPart(newImg);
             }
         }
-
         #endregion
     }
 }

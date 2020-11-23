@@ -77,7 +77,8 @@ namespace nuce.web.quanly.Controllers
         {
             { "word", "api/dichVu/admin/export-word" },
             { "word-list", "api/dichVu/admin/export-word-list" },
-            { "excel", "api/dichVu/admin/export-excel" }
+            { "excel", "api/dichVu/admin/export-excel" },
+            { "excel-ov", "api/dichVu/admin/export-excel-overview" },
         };
 
         private static Dictionary<string, string> MimeTypeSet = new Dictionary<string, string>
