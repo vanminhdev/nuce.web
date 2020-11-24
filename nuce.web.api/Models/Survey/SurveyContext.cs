@@ -37,17 +37,17 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.DotKhaoSatId).HasColumnName("DotKhaoSatID");
 
-                entity.Property(e => e.GhiChu)
+                entity.Property(e => e.Note)
                     .IsRequired()
                     .HasMaxLength(2000);
 
-                entity.Property(e => e.MoTa)
+                entity.Property(e => e.Description)
                     .IsRequired()
                     .HasMaxLength(2000);
 
-                entity.Property(e => e.NgayBatDau).HasColumnType("date");
+                entity.Property(e => e.FromDate).HasColumnType("date");
 
-                entity.Property(e => e.NgayKetThuc).HasColumnType("date");
+                entity.Property(e => e.EndDate).HasColumnType("date");
             });
 
             modelBuilder.Entity<AsEduSurveyBaiKhaoSatSinhVien>(entity =>

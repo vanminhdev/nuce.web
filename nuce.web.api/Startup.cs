@@ -29,6 +29,7 @@ using nuce.web.api.Services.Survey.Implements;
 using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.Services.EduData.Implements;
 using nuce.web.api.Services.EduData.Interfaces;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace nuce.web.api
 {
@@ -176,6 +177,7 @@ namespace nuce.web.api
             );
             services.AddHttpContextAccessor();
             services.AddSingleton<IPathProvider, PathProvider>();
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
             #region config service
             services.AddScoped<IAsEduSurveyCauHoiService, AsEduSurveyCauHoiService>();

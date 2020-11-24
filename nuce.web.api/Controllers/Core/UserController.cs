@@ -22,6 +22,7 @@ using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Core;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace nuce.web.api.Controllers.Core
 {
@@ -50,10 +51,11 @@ namespace nuce.web.api.Controllers.Core
         }
 
         [HttpGet]
-        [Route("HelloWorld")]
-        public IActionResult HelloWorld()
+        [Route("TestAPI")]
+        public IActionResult TestAPI()
         {
-            return Ok(new { message = "Hello world!!" });
+            var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+            return Ok(new { message = "Hello world!!", your_ip = ip });
         }
 
         [HttpGet]

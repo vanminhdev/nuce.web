@@ -17,6 +17,9 @@ using nuce.web.api.ViewModel.Survey;
 
 namespace nuce.web.api.Controllers.Survey
 {
+    /// <summary>
+    /// Đề thi
+    /// </summary>
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize(Roles = "P_KhaoThi")]

@@ -48,35 +48,37 @@ namespace nuce.web.api.Services.Survey.Implements
             };
         }
 
-        public async Task Create(SurveyRoundCreateModel surveyRound)
+        public async Task Create(SurveyRoundCreate surveyRound)
         {
             _context.AsEduSurveyDotKhaoSat.Add(new AsEduSurveyDotKhaoSat
             {
                 Id = Guid.NewGuid(),
-                Name = surveyRound.Name,
+                Name = surveyRound.Name.Trim(),
                 FromDate = surveyRound.FromDate.Value,
                 EndDate = surveyRound.EndDate.Value,
-                Description = surveyRound.Description,
-                Note = surveyRound.Note,
+                Description = surveyRound.Description.Trim(),
+                Note = surveyRound.Note.Trim(),
                 Status = (int)SurveyRoundStatus.Active,
-                Type = surveyRound.Type
+                //Type = surveyRound.Type
+                Type = (int)SurveyRoundType.RatingTeachingQuality
             });
             await _context.SaveChangesAsync();
         }
 
-        public async Task Update(string id, SurveyRoundUpdateModel surveyRound)
+        public async Task Update(string id, SurveyRoundUpdate surveyRound)
         {
             var surveyRoundUpdate = await _context.AsEduSurveyDotKhaoSat.FirstOrDefaultAsync(o => o.Id.ToString() == id && o.Status != (int)SurveyRoundStatus.Deleted);
             if(surveyRoundUpdate == null)
             {
                 throw new RecordNotFoundException();
             }
-            surveyRoundUpdate.Name = surveyRound.Name;
+            surveyRoundUpdate.Name = surveyRound.Name.Trim();
             surveyRoundUpdate.FromDate = surveyRound.FromDate.Value;
             surveyRoundUpdate.EndDate = surveyRound.EndDate.Value;
-            surveyRoundUpdate.Description = surveyRound.Description;
-            surveyRoundUpdate.Note = surveyRound.Note;
-            surveyRoundUpdate.Type = surveyRound.Type;
+            surveyRoundUpdate.Description = surveyRound.Description.Trim();
+            surveyRoundUpdate.Note = surveyRound.Note.Trim();
+            //surveyRoundUpdate.Type = surveyRound.Type;
+            surveyRoundUpdate.Type = (int)SurveyRoundType.RatingTeachingQuality;
             await _context.SaveChangesAsync();
         }
 

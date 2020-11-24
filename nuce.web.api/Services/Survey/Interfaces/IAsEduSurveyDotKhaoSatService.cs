@@ -12,9 +12,9 @@ namespace nuce.web.api.Services.Survey.Interfaces
     {
         public Task<PaginationModel<AsEduSurveyDotKhaoSat>> GetSurveyRound(SurveyRoundFilter filter, int skip = 0, int take = 20);
 
-        public Task Create(SurveyRoundCreateModel surveyRound);
+        public Task Create(SurveyRoundCreate surveyRound);
 
-        public Task Update(string id, SurveyRoundUpdateModel surveyRound);
+        public Task Update(string id, SurveyRoundUpdate surveyRound);
 
         public Task Delete(string id);
     }

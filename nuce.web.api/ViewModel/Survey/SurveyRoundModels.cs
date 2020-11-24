@@ -13,11 +13,11 @@ namespace nuce.web.api.ViewModel.Survey
         public string Name { get; set; }
     }
 
-    public class SurveyRoundCreateModel : SurveyRoundUpdateModel
+    public class SurveyRoundCreate : SurveyRoundUpdate
     {
     }
 
-    public class SurveyRoundUpdateModel
+    public class SurveyRoundUpdate
     {
         [Required(AllowEmptyStrings = false)]
         [NotOnlyContainWhiteSpace]

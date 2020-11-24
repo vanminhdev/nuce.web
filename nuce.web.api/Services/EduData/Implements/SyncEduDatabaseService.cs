@@ -811,6 +811,7 @@ namespace nuce.web.api.Services.EduData.Implements
                                 _eduDataContext.AsAcademyStudentClassRoom.Add(new AsAcademyStudentClassRoom
                                 {
                                     ClassRoomId = classRoomId,
+                                    ClassRoomCode = strMaDK,
                                     StudentId = studentId,
                                     StudentCode = strMaSV,
                                     SemesterId = await GetCurrentSemesterId()
@@ -1111,6 +1112,7 @@ namespace nuce.web.api.Services.EduData.Implements
                                 _eduDataContext.AsAcademyCStudentClassRoom.Add(new AsAcademyCStudentClassRoom
                                 {
                                     ClassRoomId = classRoomId,
+                                    ClassRoomCode = strMaDK,
                                     StudentId = studentId,
                                     StudentCode = strMaSV,
                                     SemesterId = await GetCurrentSemesterId()
