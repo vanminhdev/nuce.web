@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using nuce.web.api.Models.Ctsv;
 using nuce.web.api.Services.Ctsv.Interfaces;
 using nuce.web.api.ViewModel;
+using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Ctsv;
 
 namespace nuce.web.api.Controllers.Ctsv
@@ -81,6 +84,24 @@ namespace nuce.web.api.Controllers.Ctsv
             catch (Exception ex)
             {
                 return BadRequest(new ResponseBody { Message = ex.Message, Data = ex });
+            }
+        }
+
+        [Route("search-students")]
+        [HttpPost]
+        public async Task<IActionResult> SearchStudents([FromBody] DataTableRequest request)
+        {
+            string searchText = request.Search.Value;
+            try
+            {
+                var rs = await _studentService.FindStudent(searchText, request.Start, request.Length);
+                rs.Draw = ++request.Draw;
+
+                return Ok(rs);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { Data = ex, Message = "Lỗi hệ thống khi tìm kiếm sinh viên" });
             }
         }
     }

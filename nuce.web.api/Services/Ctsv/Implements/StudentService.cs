@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using nuce.web.api.Models.Ctsv;
@@ -6,6 +7,7 @@ using nuce.web.api.Repositories.Ctsv.Interfaces;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.Services.Ctsv.Interfaces;
 using nuce.web.api.ViewModel;
+using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Ctsv;
 using System;
 using System.Collections.Generic;
@@ -80,6 +82,31 @@ namespace nuce.web.api.Services.Ctsv.Implements
             {
                 Student = GetStudentByCode(studentCode),
                 Enabled = _paramService.isCapNhatHoSo(),
+            };
+        }
+
+        public async Task<DataTableResponse<AsAcademyStudent>> FindStudent(string text, int seen, int size)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return new DataTableResponse<AsAcademyStudent>
+                {
+                    Data = new List<AsAcademyStudent>(),
+                    RecordsFiltered = 0,
+                    RecordsTotal = 0,
+                };
+            }
+            var students = _studentRepository.GetAll().AsNoTracking()
+                            .Where(s => s.FulName.Contains(text) || s.ClassCode.Contains(text) ||
+                                        s.Code.Contains(text) || s.Email.Contains(text) ||
+                                        s.Mobile.Contains(text))
+                            .OrderBy(s => s.FulName);
+            var takedStudents = students.Skip(seen).Take(size);
+            return new DataTableResponse<AsAcademyStudent>
+            {
+                Data = await takedStudents.ToListAsync(),
+                RecordsTotal = students.Count(),
+                RecordsFiltered = takedStudents.Count(),
             };
         }
 
