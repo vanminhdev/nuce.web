@@ -12,7 +12,7 @@
     <div class="row justify-content-center">
         <div class="col-12">
             <div class="main-name font-20-sm font-32-md font-42 text-light">
-            hệ thống quản lý thông tin sinh viên
+            hệ thống đăng ký thủ tục hành chính sinh viên online
             </div>
         </div>
         <div id="login-container" class="col-12 col-md-6">

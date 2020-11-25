@@ -2137,6 +2137,54 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     Bold = true,
                 }
             }
+            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
+            , new GemboxRun(document, "Hiện là sinh viên năm thứ: ")
+            {
+                CharacterFormat = new CharacterFormat()
+                {
+                    Size = commonFontSize
+                }
+            }
+                , new GemboxRun(document, string.Format("{0} ", getNamThu(NienKhoa)))
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Size = commonFontSize,
+                        Bold = true,
+                    }
+                }
+                , new SpecialCharacter(document, SpecialCharacterType.Tab)
+                , new GemboxRun(document, "Học kỳ: ")
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Size = commonFontSize
+                    }
+                }
+                , new GemboxRun(document, string.Format("{0} ", "1"))
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Size = commonFontSize,
+                        Bold = true,
+                    }
+                }
+                , new SpecialCharacter(document, SpecialCharacterType.Tab)
+                 , new GemboxRun(document, "Năm học: ")
+                 {
+                     CharacterFormat = new CharacterFormat()
+                     {
+                         Size = commonFontSize
+                     }
+                 }
+                , new GemboxRun(document, string.Format("{0} - {1}", DateTime.Now.Year, DateTime.Now.Year + 1))
+                {
+                    CharacterFormat = new CharacterFormat()
+                    {
+                        Size = commonFontSize,
+                        Bold = true,
+                    }
+                }
             )
             {
                 ParagraphFormat = new ParagraphFormat()
@@ -2155,28 +2203,12 @@ namespace nuce.web.api.Services.Ctsv.Implements
             tableNoiDung.TableFormat.AutomaticallyResizeToFitContents = false;
             var tableBordersNoiDung = tableNoiDung.TableFormat.Borders;
             tableBordersNoiDung.SetBorders(MultipleBorderTypes.All, BorderStyle.None, GemboxColor.Empty, 0);
-            tableNoiDung.Columns.Add(new TableColumn(40));
-            tableNoiDung.Columns.Add(new TableColumn(60));
+            tableNoiDung.Columns.Add(new TableColumn(55));
+            tableNoiDung.Columns.Add(new TableColumn(45));
             GemboxTableRow rowT1NoiDung = new GemboxTableRow(document);
             tableNoiDung.Rows.Add(rowT1NoiDung);
 
             rowT1NoiDung.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document,
-                new GemboxRun(document, "Hiện là sinh viên năm thứ: ")
-                {
-                    CharacterFormat = new CharacterFormat()
-                    {
-                        Size = commonFontSize
-                    }
-                }
-                , new GemboxRun(document, string.Format("{0} ", getNamThu(NienKhoa)))
-                {
-                    CharacterFormat = new CharacterFormat()
-                    {
-                        Size = commonFontSize,
-                        Bold = true,
-                    }
-                },
-                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new GemboxRun(document, "Mã số sinh viên: ") { CharacterFormat = new CharacterFormat { Size = commonFontSize } },
                 new GemboxRun(document, $"{MaSV}   ")
                 {
@@ -2223,38 +2255,6 @@ namespace nuce.web.api.Services.Ctsv.Implements
             }));
 
             rowT1NoiDung.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document,
-                new GemboxRun(document, "Học kỳ: ")
-                {
-                    CharacterFormat = new CharacterFormat()
-                    {
-                        Size = commonFontSize
-                    }
-                }
-                , new GemboxRun(document, string.Format("{0} ", "1"))
-                {
-                    CharacterFormat = new CharacterFormat()
-                    {
-                        Size = commonFontSize,
-                        Bold = true,
-                    }
-                }
-                , new SpecialCharacter(document, SpecialCharacterType.Tab)
-                 , new GemboxRun(document, "Năm học: ")
-                 {
-                     CharacterFormat = new CharacterFormat()
-                     {
-                         Size = commonFontSize
-                     }
-                 }
-                , new GemboxRun(document, string.Format("{0} - {1}", DateTime.Now.Year, DateTime.Now.Year + 1))
-                {
-                    CharacterFormat = new CharacterFormat()
-                    {
-                        Size = commonFontSize,
-                        Bold = true,
-                    }
-                },
-                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new GemboxRun(document, "Lớp: ") { CharacterFormat = new CharacterFormat { Size = commonFontSize } },
                 new GemboxRun(document, Class)
                 {
@@ -2957,10 +2957,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
             #endregion
             #region NoiDung
             GemboxParagraph paragraphNoiDung = new GemboxParagraph(document,
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "     "),
                 new GemboxRun(document, "Kính gửi: Ban Quản lý vận hành Khu nhà ở sinh viên Pháp Vân – Tứ Hiệp."),
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "     "),
                 new GemboxRun(document, "Tên tôi là: "),
                 new GemboxRun(document, HoVaTen) { CharacterFormat = new CharacterFormat { Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
@@ -2968,7 +2968,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 new GemboxRun(document, "(Nam/Nữ):  "),
                 new GemboxRun(document, gioiTinh) { CharacterFormat = new CharacterFormat { Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "     "),
                 new GemboxRun(document, "CMTND số: "),
                 new GemboxRun(document, cmt) { CharacterFormat = new CharacterFormat { Bold = true } },
                 new GemboxRun(document, "  cấp ngày: "),
@@ -2976,11 +2976,11 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 new GemboxRun(document, "  nơi cấp: "),
                 new GemboxRun(document, cmtNoiCap) { CharacterFormat = new CharacterFormat { Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "     "),
                 new GemboxRun(document, "Hộ khẩu thường trú: "),
                 new GemboxRun(document, $"{HKTT_Phuong}, {HKTT_Quan}, {HKTT_Tinh}") { CharacterFormat = new CharacterFormat { Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "     "),
                 new GemboxRun(document, "Sinh viên, học sinh năm thứ: "),
                 new GemboxRun(document, $"{getNamThu(NienKhoa)}") { CharacterFormat = new CharacterFormat { Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
@@ -2990,18 +2990,18 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 new GemboxRun(document, "Khoá: "),
                 new GemboxRun(document, NienKhoa) { CharacterFormat = new CharacterFormat { Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "     "),
                 new GemboxRun(document, "Ngành (khoa): "),
                 new GemboxRun(document, TenKhoa) { CharacterFormat = new CharacterFormat { Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
                 new GemboxRun(document, "Trường: "),
                 new GemboxRun(document, "Đại học Xây dựng") { CharacterFormat = new CharacterFormat { Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "     "),
                 new GemboxRun(document, "Số thẻ sinh viên, học viên (nếu có): "),
                 new GemboxRun(document, MaSV) { CharacterFormat = new CharacterFormat { Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "     "),
                 new GemboxRun(document, "Đối tượng ưu tiên (nếu có): "),
                 new GemboxRun(document, doiTuongUuTien) { CharacterFormat = new CharacterFormat { Bold = true } }
             )
@@ -3018,15 +3018,15 @@ namespace nuce.web.api.Services.Ctsv.Implements
             #region Tôi đã
 
             GemboxParagraph paragraphToiDa = new GemboxParagraph(document,
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "     "),
                 new GemboxRun(document, "Tôi làm đơn này đề nghị: "),
                 new GemboxRun(document, "BQL vận hành Khu nhà ở sinh viên Pháp Vân – Tứ Hiệp") { CharacterFormat = new CharacterFormat { Bold = true } },
                 new GemboxRun(document, " xét duyệt cho tôi được thuê nhà ở tại Khu nhà ở sinh viên Pháp Vân – Tứ Hiệp."),
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "     "),
                 new GemboxRun(document, "Tôi đã đọc Bản nội quy sử dụng nhà ở sinh viên và cam kết tuân thủ nội quy sử dụng nhà ở sinh viên; cam kết trả tiền thuê nhà đầy đủ, đúng thời hạn khi được thuê nhà ở."),
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "     "),
                 new GemboxRun(document, "Tôi cam đoan những lời kê khai trong đơn là đúng sự thật, tôi xin chịu trách nhiệm trước pháp luật về các nội dung kê khai."),
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak)
              )
@@ -3124,6 +3124,12 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 throw new Exception("Sinh viên không tồn tại");
             }
 
+            var paramSet = _thamSoDichVuService.GetParameters(DichVu.VeBus)
+                                .ToDictionary(x => x.Name, x => x.Value);
+
+            string ChucDanhNguoiKy = paramSet.ContainsKey("ChucDanhNguoiKy") ? paramSet["ChucDanhNguoiKy"] : "";
+            string TenNguoiKy = paramSet.ContainsKey("TenNguoiKy") ? paramSet["TenNguoiKy"] : "";
+
             string filePath = _pathProvider.MapPath($"Templates/Ctsv/ve_xe_bus.docx");
             string destination = _pathProvider.MapPath($"Templates/Ctsv/bus-{DateTime.Now.ToFileTime()}.docx");
             string newImgPath = _pathProvider.MapPath($"{studentInfo.Student.File1}");
@@ -3150,7 +3156,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     doc.ChangeDocumentType(WordprocessingDocumentType.Document);
                     var mainPart = doc.MainDocumentPart;
                     #region handle text
-                    var textList = mainPart.Document.Descendants<Text>();
+                    var textList = mainPart.Document.Descendants<Text>().ToList();
                     foreach (var text in textList)
                     {
                         replaceTextTemplate(text, "<ho_ten>", studentInfo.Student.FulName);
@@ -3161,6 +3167,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         replaceTextTemplate(text, "<mot_tuyen>", motTuyen);
                         replaceTextTemplate(text, "<lien_tuyen>", lienTuyen);
                         replaceTextTemplate(text, "<noi_nhan>", veXeBus.NoiNhanThe);
+                        replaceTextTemplate(text, "<chuc_danh_nguoi_ky>", ChucDanhNguoiKy);
+                        replaceTextTemplate(text, "<ten_nguoi_ky>", TenNguoiKy);
                     }
                     #endregion
                     #region handle filled image in shape
@@ -3293,9 +3301,24 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
         private void replaceTextTemplate(Text model, string oldValue, string newValue)
         {
-            if (model.Text.Contains(oldValue))
+            if (!model.Text.Contains(oldValue)) return;
+            if (!newValue.Contains('\r'))
             {
                 model.Text = model.Text.Replace(oldValue, newValue);
+            } else 
+            {
+                var arr = newValue.Split('\r');
+                for (int i = 0; i < arr.Count(); i++)
+                {
+                    string replaceText = arr[i];
+                    if (i == 0)
+                    {
+                        model.Text = model.Text.Replace(oldValue, replaceText);
+                        continue;
+                    }
+                    model.Parent.Append(new Break());
+                    model.Parent.Append(new Text(replaceText));
+                }
             }
         }
 
