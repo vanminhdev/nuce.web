@@ -30,6 +30,7 @@ using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.Services.EduData.Implements;
 using nuce.web.api.Services.EduData.Interfaces;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using nuce.web.api.Models.Status;
 
 namespace nuce.web.api
 {
@@ -58,6 +59,9 @@ namespace nuce.web.api
                 options.UseSqlServer(Configuration.GetConnectionString("NUCE_CTSV"))
             );
             services.AddDbContext<EduDataContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"))
+            );
+            services.AddDbContext<StatusContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"))
             );
             #endregion

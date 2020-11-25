@@ -1,0 +1,198 @@
+﻿@model  List<nuce.web.survey.student.Models.JsonData.QuestionJson>
+@{
+    ViewData["Title"] = "Bài khảo sát";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            @{
+                var i = 1;
+            }
+            @foreach (var question in Model)
+            {
+                <div class="">
+                    <div class="form-group col-12 mb-0 pl-0 pr-0">
+                        <label class="text-dark">Câu @i: @Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(question.Content)))</label>
+                    </div>
+                    <div class="form-row pl-2 pr-2">
+                        @foreach (var answer in question.Answers)
+                        {
+                            <div class="col">
+                                <div class="form-group">
+                                    <input questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="q-@i">
+                                    <label class="text-dark">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                i++;
+            }
+        </div>
+        <div class="col-12 d-flex justify-content-center">
+            <button id="submit-survey" class="btn btn-primary">Nộp</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-yes-no" tabindex="-1" role="dialog" aria-labelledby="modal-yes-no" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-yes-no-title">Nộp bài khảo sát</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-yes-no-content">
+                Xác nhận nộp bài khảo sát. <br />
+                Lưu ý: bài khảo sát đã nộp không thể chỉnh sửa lại
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
+                <button id="choose-yes" type="button" class="btn btn-primary">Có</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-alert" tabindex="-1" role="dialog" aria-labelledby="modal-yes-no" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thông báo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Bạn chưa hoàn thành bài khảo sát
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Tiếp tục</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @if (ViewData["SelectedAnswer"] != null)
+    {
+        <script>
+            let selectedAnswer = @Html.Raw(ViewData["SelectedAnswer"]);
+            selectedAnswer.forEach(element => {
+                if (element.AnswerCode != undefined) {
+                    $(`input[type=radio][questionCode=${element.QuestionCode}][answerCode=${element.AnswerCode}]`).attr("checked", true);
+                } else if (element.AnswerCodes != undefined) {
+                    element.AnswerCodes.forEach(function (c) {
+                        $(`input[type=checkbox][questionCode=${element.QuestionCode}][answerCode=${c}]`).attr("checked", true);
+                    });
+                } else if (element.AnswerContent != undefined) {
+                    $(`input[questionCode=${element.QuestionCode}]`).val(element.AnswerContent);
+                }
+            });
+        </script>
+    }
+
+    @if (Model.Count > 0)
+    {
+        <script>
+            $('input[type=radio]').each(function () {
+                let seft = $(this);
+                seft.click(function () {
+                    $.ajax({
+                        data: { classRoomCode:'@ViewData["classRoomCode"]', questionCode: seft.attr('questionCode'), answerCode: seft.attr('answerCode')},
+                        dataType: 'json',
+                        method: 'Post',
+                            url: '/home/AutoSave',
+                        timeout: 0,
+                        complete: () => {}
+                    }).done(function (data) {
+                        if (data.type == "error") {
+                            console.log(data.message, data.detailMessage);
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        $('#loading-screen').hide();
+                        console.log(textStatus + ': ' + errorThrown);
+                        console.log(jqXHR);
+                    });
+                });
+            });
+
+            $('input[type=checkbox]').each(function () {
+                let seft = $(this);
+                let proSeft = this;
+                seft.click(function () {
+                    let isAnswerCodesAdd = proSeft.checked;
+                    $.ajax({
+                        data: { classRoomCode: '@ViewData["classRoomCode"]', questionCode: seft.attr('questionCode'), answerCodeInMulSelect: seft.attr('answerCode'), isAnswerCodesAdd },
+                        dataType: 'json',
+                        method: 'Post',
+                        url: '/home/AutoSave',
+                        timeout: 0,
+                        complete: () => { }
+                    }).done(function (data) {
+                        if (data.type == "error") {
+                            console.log(data.message, data.detailMessage);
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        console.log(textStatus + ': ' + errorThrown);
+                        console.log(jqXHR);
+                    });
+                });
+            });
+
+            $('#choose-yes').click(() => {
+                $('#modal-yes-no').modal('hide');
+                $('#loading-screen').show();
+                $.ajax({
+                    data: { classRoomCode: '@ViewData["classRoomCode"]' },
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/home/TheSurveySubmit',
+                    timeout: 0,
+                    complete: () => {
+                        //document.getElementById(idDataTable + '-header').scrollIntoView();
+                    }
+                }).done(function (data) {
+                    $('#loading-screen').hide();
+                    if (data.type == "success") {
+                        location.href = '/home';
+                    }
+                    else if (data.type == "error") {
+                        console.log(data.message);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    $('#loading-screen').hide();
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+
+            function checkRequired() {
+                for (let i = 1; i <= @Model.Count; i++) {
+                    let hasChecked = false;
+                    $(`input[type=radio][name="q-${i}"]`).each(function () {
+                        if (this.checked) {
+                            hasChecked = true;
+                        }
+                    });
+                    if (hasChecked === false) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            $('#submit-survey').click(function () {
+                if (checkRequired()) {
+                    $('#modal-yes-no').modal('show');
+                } else {
+                    $('#modal-alert').modal('show');
+                }
+            });
+</script>
+    }
+}
+

@@ -6,7 +6,7 @@
 		- cli:
 	1.2. context core: cấu hình
 		- cli:
-		 dotnet ef dbcontext scaffold "Data Source=.\sqlexpress;Initial Catalog=NUCE_CORE;Integrated Security=True" Microsoft.EntityFrameworkCore.SqlServer -o Models/Core -c NuceCoreContext -f -t ManagerBackup
+			dotnet ef dbcontext scaffold "Data Source=.\sqlexpress;Initial Catalog=NUCE_CORE;Integrated Security=True" Microsoft.EntityFrameworkCore.SqlServer -o Models/Core -c NuceCoreContext -f -t ManagerBackup
 	1.3. context edu data: những dữ liệu lấy từ đào tạo
 		- cli: 
 			dotnet ef dbcontext scaffold "Data Source=.\sqlexpress;Initial Catalog=NUCE_SURVEY;Integrated Security=True" Microsoft.EntityFrameworkCore.SqlServer -o Models/EduData -c EduDataContext -f -t AS_Academy_Faculty -t AS_Academy_Department -t AS_Academy_Academics -t AS_Academy_Subject -t AS_Academy_Class -t AS_Academy_Lecturer -t AS_Academy_Student -t AS_Academy_ClassRoom -t AS_Academy_Lecturer_ClassRoom -t AS_Academy_Semester -t AS_Academy_Student_ClassRoom -t AS_Academy_C_ClassRoom -t AS_Academy_C_Lecturer_ClassRoom -t AS_Academy_C_Student_ClassRoom
@@ -20,6 +20,9 @@
 		- thư mục jsondata: là các model đưa dữ liệu đã query về dạng json string
 			
 	1.5. context Ctsv: công tác sinh viên
+	1.6. context status: lưu trạng thái làm việc của các bảng mất nhiều thời gian
+		-cli:
+			dotnet ef dbcontext scaffold "Data Source=.\sqlexpress;Initial Catalog=NUCE_SURVEY;Integrated Security=True" Microsoft.EntityFrameworkCore.SqlServer -o Models/Status -c StatusContext -f -t AS_Status_Table_Task
 
 2. công cụ
 	dotnet tool install --global dotnet-ef

@@ -1,0 +1,194 @@
+﻿@{
+    var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+    var accessToken = Request.Cookies[nuce.web.survey.student.Common.UserParameters.JwtAccessToken];
+    var username = "";
+    var roles = new List<string>();
+    if (accessToken != null)
+    {
+
+        var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
+
+        //username
+        var usernameClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Name);
+        if (usernameClaim != null)
+        {
+            username = usernameClaim.Value;
+        }
+
+        //role
+        roles = jwtSecurityToken.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Role).Select(r => r.Value).ToList();
+    }
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đại Học Xây Dựng | @ViewData["Title"]</title>
+    <!-- BootStrap -->
+    <link rel="stylesheet" href="~/content/css/bootstrap.min.css" />
+
+    <!-- Custom -->
+    <link rel="stylesheet" href="~/content/css/util.css" />
+    <link rel="stylesheet" href="~/content/css/style.css" />
+    <link rel="stylesheet" href="~/content/css/responsive.css" />
+    @RenderSection("Style", required: false)
+</head>
+<body>
+    <div class="full-height body-wrp">
+        <!-- header section -->
+        <section id="header">
+            <div class="container">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-12 col-md-7">
+                        <div class="row">
+                            <div class="col-2">
+                                <img class="logo"
+                                     src="~/content/images/logo.png"
+                                     alt="logo" />
+                            </div>
+                            <div class="col-10 col-md-10 mb-3">
+                                <div class="col-12 text-left main-title main-color font-18-sm font-32 font-28-md">
+                                    trường đại học xây dựng
+                                </div>
+                                <div class="col-12 main-color sub-title font-14-sm font-25 font-22-md">
+                                    National University of Civil Engeering
+                                </div>
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-2 pr-0"><hr class="line-label" /></div>
+                                        <div class="col-10 small-title font-9-sm font-15">
+                                            Cơ sở giáo dục đại học đạt chuẩn kiểm định quốc tế
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-5">
+                        <div class="row">
+                            <div class="col-5 p-1">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <img src="~/content/images/icons/hotline.png"
+                                             alt="hotline icon"
+                                             class="hotline-icon" />
+                                    </div>
+                                    <div class="col-9">
+                                        <div class="row">
+                                            <div class="col-12 main-color icon-title font-14-sm">
+                                                Hotline
+                                            </div>
+                                            <div class="col-12 icon-sub-title">02438697004</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-7 p-1">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <img src="~/content/images/icons/email.png"
+                                             alt="email icon"
+                                             class="email-icon" />
+                                    </div>
+                                    <div class="col-9">
+                                        <div class="row">
+                                            <div class="col-12 main-color icon-title font-14-sm">
+                                                Email
+                                            </div>
+                                            <div class="col-10 icon-sub-title">
+                                                ctsv@nuce.edu.vn
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- end header section -->
+        <section id="body">
+            <div class="pt-4 pb-4" id="render-body">
+                @RenderBody()
+            </div>
+        </section>
+
+        <!-- footer section -->
+        <section id="footer">
+            <div class="container full-height">
+                <div class="full-height row text-center main-color align-items-end">
+                    <div class="col-12 mb-2">
+                        Bản quyền  &copy;@(DateTime.Now.Year) thuộc Đại học Xây dựng
+                        <br />
+                        Phát triển bởi: Khoa Công Nghê Thông Tin
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- end footer section -->
+    </div>
+    <div id="loading-screen" class="popup-fullscreen">
+        <div class="d-flex justify-content-center align-items-center">
+            <div class="loading-circle"></div>
+        </div>
+    </div>
+
+    <script src="~/content/js/jquery.min.js"></script>
+    <script src="~/content/js/jquery.cookie.min.js"></script>
+    <script src="~/content/js/jquery.validate.min.js"></script>
+    <script src="~/content/js/popper.min.js"></script>
+    <script src="~/content/js/bootstrap.min.js"></script>
+    <script>
+        $.ajaxSetup({
+            xhrFields: {
+                withCredentials: true
+            },
+            complete: () => {
+                document.getElementById("render-body").scrollIntoView();
+            },
+            crossDomain: true
+        });
+        var API_URL = '';
+    </script>
+    <script>
+        let username = '@username';
+        let fullname = '@username';
+        $('#username-mobile').html(username);
+        $('#fullname-mobile').html(fullname);
+        $('#username-large-screen').html(username);
+        $('#fullname-large-screen').html(fullname);
+    </script>
+    <script>
+        $('.clear-input').each(function () {
+            let self = $(this);
+            self.click(function () {
+                //tìm 2 cấp
+                self.parent().parent().find('input').each(function () {
+                    $(this).val('');
+                });
+                self.parent().parent().find('select').each(function () {
+                    $(this).selectpicker('val', '');
+                });
+                //tìm 1 cấp
+                self.parent().find('input').each(function () {
+                    $(this).val('');
+                });
+                self.parent().find('input').each(function () {
+                    $(this).selectpicker('val', '');
+                });
+            });
+        });
+
+        function dateString(today) {
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0');
+            var yyyy = today.getFullYear();
+            return dd + '/' + mm + '/' + yyyy;
+        }
+    </script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,981 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D02A414A-16BB-40A2-BAA4-324D7A32732C}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>nuce.web.survey.student</RootNamespace>
+    <AssemblyName>nuce.web.survey.student</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <Use64BitIISExpress />
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.IdentityModel.JsonWebTokens, Version=6.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.JsonWebTokens.6.8.0\lib\net45\Microsoft.IdentityModel.JsonWebTokens.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Logging, Version=6.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Logging.6.8.0\lib\net45\Microsoft.IdentityModel.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Tokens, Version=6.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Tokens.6.8.0\lib\net45\Microsoft.IdentityModel.Tokens.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IdentityModel.Tokens.Jwt, Version=6.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.6.8.0\lib\net45\System.IdentityModel.Tokens.Jwt.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.7\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.7\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="WebGrease">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="Antlr3.Runtime">
+      <Private>True</Private>
+      <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Attributes\ActionFilter\AuthorizeActionFilter.cs" />
+    <Compile Include="Attributes\ValidationAttributes\EmailRegexAttribute.cs" />
+    <Compile Include="Attributes\ValidationAttributes\NotContainWhiteSpaceAttribute.cs" />
+    <Compile Include="Attributes\ValidationAttributes\OnlyNumberAttribute.cs" />
+    <Compile Include="Attributes\ValidationAttributes\UsernameAttribute.cs" />
+    <Compile Include="Common\Definitions.cs" />
+    <Compile Include="Common\EnumStatus.cs" />
+    <Compile Include="Common\UserParameters.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AccountModel.cs" />
+    <Compile Include="Models\Base\DataTableRequest.cs" />
+    <Compile Include="Models\Base\DataTableResponse.cs" />
+    <Compile Include="Models\JsonData\AnswerJson.cs" />
+    <Compile Include="Models\JsonData\QuestionJson.cs" />
+    <Compile Include="Models\ResponseMessage.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\css\bootstrap-datepicker3.min.css" />
+    <Content Include="Content\css\bootstrap-select.min.css" />
+    <Content Include="Content\css\bootstrap.min.css" />
+    <Content Include="Content\css\dataTables.bootstrap4.min.css" />
+    <Content Include="Content\css\responsive.css" />
+    <Content Include="Content\css\style.css" />
+    <Content Include="Content\css\util.css" />
+    <Content Include="Content\images\1x1.GIF" />
+    <Content Include="Content\images\403-3.gif" />
+    <Content Include="Content\images\about.gif" />
+    <Content Include="Content\images\action.gif" />
+    <Content Include="Content\images\action_bottom.gif" />
+    <Content Include="Content\images\action_delete.gif" />
+    <Content Include="Content\images\action_down.gif" />
+    <Content Include="Content\images\action_export.gif" />
+    <Content Include="Content\images\action_help.gif" />
+    <Content Include="Content\images\action_import.gif" />
+    <Content Include="Content\images\action_move.gif" />
+    <Content Include="Content\images\action_print.gif" />
+    <Content Include="Content\images\action_refresh.gif" />
+    <Content Include="Content\images\action_right.gif" />
+    <Content Include="Content\images\action_rss.gif" />
+    <Content Include="Content\images\action_settings.gif" />
+    <Content Include="Content\images\action_source.gif" />
+    <Content Include="Content\images\action_top.gif" />
+    <Content Include="Content\images\action_up.gif" />
+    <Content Include="Content\images\add.gif" />
+    <Content Include="Content\images\anhdaidien.png" />
+    <Content Include="Content\images\appGallery_cart.gif" />
+    <Content Include="Content\images\appGallery_deploy.gif" />
+    <Content Include="Content\images\appGallery_details.gif" />
+    <Content Include="Content\images\appGallery_License.gif" />
+    <Content Include="Content\images\appGallery_module.gif" />
+    <Content Include="Content\images\appGallery_other.gif" />
+    <Content Include="Content\images\appGallery_skin.gif" />
+    <Content Include="Content\images\arrow-left.png" />
+    <Content Include="Content\images\arrow-right-white.png" />
+    <Content Include="Content\images\arrow-right.png" />
+    <Content Include="Content\images\banner.gif" />
+    <Content Include="Content\images\banner_dhxd.png" />
+    <Content Include="Content\images\begin.gif" />
+    <Content Include="Content\images\bevel.gif" />
+    <Content Include="Content\images\bevel_blue.gif" />
+    <Content Include="Content\images\bg-body.png" />
+    <Content Include="Content\images\bg-header.png" />
+    <Content Include="Content\images\bg-header1.png" />
+    <Content Include="Content\images\bg-home.jpg" />
+    <Content Include="Content\images\Blue-Info.gif" />
+    <Content Include="Content\images\bottom-left.gif" />
+    <Content Include="Content\images\bottom-right.gif" />
+    <Content Include="Content\images\bottom-tile.gif" />
+    <Content Include="Content\images\bottom.gif" />
+    <Content Include="Content\images\Branding\DNN_logo.png" />
+    <Content Include="Content\images\Branding\iconbar_logo.png" />
+    <Content Include="Content\images\Branding\logo.gif" />
+    <Content Include="Content\images\Branding\Logo.png" />
+    <Content Include="Content\images\breadcrumb.gif" />
+    <Content Include="Content\images\btnsubmit.png" />
+    <Content Include="Content\images\calendar.png" />
+    <Content Include="Content\images\calendaricons.png" />
+    <Content Include="Content\images\cancel.gif" />
+    <Content Include="Content\images\cancel2.gif" />
+    <Content Include="Content\images\captcha.jpg" />
+    <Content Include="Content\images\cart.gif" />
+    <Content Include="Content\images\category.gif" />
+    <Content Include="Content\images\check.png" />
+    <Content Include="Content\images\checkbox.png" />
+    <Content Include="Content\images\checked-disabled.gif" />
+    <Content Include="Content\images\checked.gif" />
+    <Content Include="Content\images\close-icn.png" />
+    <Content Include="Content\images\closeBtn.png" />
+    <Content Include="Content\images\collapse.gif" />
+    <Content Include="Content\images\copy.gif" />
+    <Content Include="Content\images\darkCheckbox.png" />
+    <Content Include="Content\images\datePicker.png" />
+    <Content Include="Content\images\datePickerArrows.png" />
+    <Content Include="Content\images\dbldn.gif" />
+    <Content Include="Content\images\dblup.gif" />
+    <Content Include="Content\images\delete.gif" />
+    <Content Include="Content\images\deny.gif" />
+    <Content Include="Content\images\dn.gif" />
+    <Content Include="Content\images\dnlt.gif" />
+    <Content Include="Content\images\dnnActiveTagClose.png" />
+    <Content Include="Content\images\dnnanim.gif" />
+    <Content Include="Content\images\dnnSpinnerDownArrow.png" />
+    <Content Include="Content\images\dnnSpinnerDownArrowWhite.png" />
+    <Content Include="Content\images\dnnSpinnerUpArrow.png" />
+    <Content Include="Content\images\dnnTagClose.png" />
+    <Content Include="Content\images\dnnTertiaryButtonBG.png" />
+    <Content Include="Content\images\dnrt.gif" />
+    <Content Include="Content\images\down-icn.png" />
+    <Content Include="Content\images\edit.gif" />
+    <Content Include="Content\images\edit_pen.gif" />
+    <Content Include="Content\images\eip_edit.png" />
+    <Content Include="Content\images\eip_save.png" />
+    <Content Include="Content\images\eip_title_cancel.png" />
+    <Content Include="Content\images\eip_title_save.png" />
+    <Content Include="Content\images\eip_toolbar.png" />
+    <Content Include="Content\images\empty.png" />
+    <Content Include="Content\images\end.gif" />
+    <Content Include="Content\images\epi_save.gif" />
+    <Content Include="Content\images\error-icn.png" />
+    <Content Include="Content\images\error-pointer.png" />
+    <Content Include="Content\images\errorbg.gif" />
+    <Content Include="Content\images\error_tooltip_ie.png" />
+    <Content Include="Content\images\ex.png" />
+    <Content Include="Content\images\expand.gif" />
+    <Content Include="Content\images\False.png" />
+    <Content Include="Content\images\ffwd.gif" />
+    <Content Include="Content\images\file.gif" />
+    <Content Include="Content\images\FileManager\checked.gif" />
+    <Content Include="Content\images\FileManager\DNNExplorer_Cancel.gif" />
+    <Content Include="Content\images\FileManager\DNNExplorer_edit.gif" />
+    <Content Include="Content\images\FileManager\DNNExplorer_edit_disabled.gif" />
+    <Content Include="Content\images\FileManager\DNNExplorer_folder.small.gif" />
+    <Content Include="Content\images\FileManager\DNNExplorer_OK.gif" />
+    <Content Include="Content\images\FileManager\DNNExplorer_trash.gif" />
+    <Content Include="Content\images\FileManager\DNNExplorer_trash_disabled.gif" />
+    <Content Include="Content\images\FileManager\DNNExplorer_Unzip.gif" />
+    <Content Include="Content\images\FileManager\files\blank.gif" />
+    <Content Include="Content\images\FileManager\files\desc.gif" />
+    <Content Include="Content\images\FileManager\files\Download.gif" />
+    <Content Include="Content\images\FileManager\files\Edit.gif" />
+    <Content Include="Content\images\FileManager\files\NewFile.gif" />
+    <Content Include="Content\images\FileManager\files\NewFolder.gif" />
+    <Content Include="Content\images\FileManager\files\NewFolder_Disabled.gif" />
+    <Content Include="Content\images\FileManager\files\NewFolder_Rollover.gif" />
+    <Content Include="Content\images\FileManager\files\OK.gif" />
+    <Content Include="Content\images\FileManager\files\OK_Disabled.gif" />
+    <Content Include="Content\images\FileManager\files\OK_Rollover.gif" />
+    <Content Include="Content\images\FileManager\files\OpenFolder.gif" />
+    <Content Include="Content\images\FileManager\files\ParentFolder.gif" />
+    <Content Include="Content\images\FileManager\files\ParentFolder_Disabled.gif" />
+    <Content Include="Content\images\FileManager\files\ParentFolder_Rollover.gif" />
+    <Content Include="Content\images\FileManager\files\Properties.gif" />
+    <Content Include="Content\images\FileManager\files\Recycle.gif" />
+    <Content Include="Content\images\FileManager\files\Recycle_Rollover.gif" />
+    <Content Include="Content\images\FileManager\files\Rename.gif" />
+    <Content Include="Content\images\FileManager\files\Rename_Disabled.gif" />
+    <Content Include="Content\images\FileManager\files\Rename_Rollover.gif" />
+    <Content Include="Content\images\FileManager\files\ToolSep.gif" />
+    <Content Include="Content\images\FileManager\files\ToolThumb.gif" />
+    <Content Include="Content\images\FileManager\files\unknown.gif" />
+    <Content Include="Content\images\FileManager\files\Upload.gif" />
+    <Content Include="Content\images\FileManager\files\Upload_Disabled.gif" />
+    <Content Include="Content\images\FileManager\files\Upload_Rollover.gif" />
+    <Content Include="Content\images\FileManager\files\Write.gif" />
+    <Content Include="Content\images\FileManager\files\zip.gif" />
+    <Content Include="Content\images\FileManager\FolderPropertiesDisabled.gif" />
+    <Content Include="Content\images\FileManager\FolderPropertiesEnabled.gif" />
+    <Content Include="Content\images\FileManager\Icons\arj.gif" />
+    <Content Include="Content\images\FileManager\Icons\asa.gif" />
+    <Content Include="Content\images\FileManager\Icons\asax.gif" />
+    <Content Include="Content\images\FileManager\Icons\ascx.gif" />
+    <Content Include="Content\images\FileManager\Icons\asmx.gif" />
+    <Content Include="Content\images\FileManager\Icons\asp.gif" />
+    <Content Include="Content\images\FileManager\Icons\aspx.gif" />
+    <Content Include="Content\images\FileManager\Icons\au.gif" />
+    <Content Include="Content\images\FileManager\Icons\avi.gif" />
+    <Content Include="Content\images\FileManager\Icons\bat.gif" />
+    <Content Include="Content\images\FileManager\Icons\bmp.gif" />
+    <Content Include="Content\images\FileManager\Icons\cab.gif" />
+    <Content Include="Content\images\FileManager\Icons\chm.gif" />
+    <Content Include="Content\images\FileManager\Icons\ClosedFolder.gif" />
+    <Content Include="Content\images\FileManager\Icons\com.gif" />
+    <Content Include="Content\images\FileManager\Icons\config.gif" />
+    <Content Include="Content\images\FileManager\Icons\Copy.gif" />
+    <Content Include="Content\images\FileManager\Icons\cs.gif" />
+    <Content Include="Content\images\FileManager\Icons\css.gif" />
+    <Content Include="Content\images\FileManager\Icons\disco.gif" />
+    <Content Include="Content\images\FileManager\Icons\dll.gif" />
+    <Content Include="Content\images\FileManager\Icons\doc.gif" />
+    <Content Include="Content\images\FileManager\Icons\exe.gif" />
+    <Content Include="Content\images\FileManager\Icons\file.gif" />
+    <Content Include="Content\images\FileManager\Icons\gif.gif" />
+    <Content Include="Content\images\FileManager\Icons\hlp.gif" />
+    <Content Include="Content\images\FileManager\Icons\htm.gif" />
+    <Content Include="Content\images\FileManager\Icons\html.gif" />
+    <Content Include="Content\images\FileManager\Icons\inc.gif" />
+    <Content Include="Content\images\FileManager\Icons\ini.gif" />
+    <Content Include="Content\images\FileManager\Icons\jpg.gif" />
+    <Content Include="Content\images\FileManager\Icons\js.gif" />
+    <Content Include="Content\images\FileManager\Icons\log.gif" />
+    <Content Include="Content\images\FileManager\Icons\mdb.gif" />
+    <Content Include="Content\images\FileManager\Icons\mid.gif" />
+    <Content Include="Content\images\FileManager\Icons\midi.gif" />
+    <Content Include="Content\images\FileManager\Icons\mov.gif" />
+    <Content Include="Content\images\FileManager\Icons\Move.gif" />
+    <Content Include="Content\images\FileManager\Icons\mp3.gif" />
+    <Content Include="Content\images\FileManager\Icons\mpeg.gif" />
+    <Content Include="Content\images\FileManager\Icons\mpg.gif" />
+    <Content Include="Content\images\FileManager\Icons\pdf.gif" />
+    <Content Include="Content\images\FileManager\Icons\ppt.gif" />
+    <Content Include="Content\images\FileManager\Icons\sys.gif" />
+    <Content Include="Content\images\FileManager\Icons\tif.gif" />
+    <Content Include="Content\images\FileManager\Icons\txt.gif" />
+    <Content Include="Content\images\FileManager\Icons\vb.gif" />
+    <Content Include="Content\images\FileManager\Icons\vbs.gif" />
+    <Content Include="Content\images\FileManager\Icons\vsdisco.gif" />
+    <Content Include="Content\images\FileManager\Icons\wav.gif" />
+    <Content Include="Content\images\FileManager\Icons\wri.gif" />
+    <Content Include="Content\images\FileManager\Icons\xls.gif" />
+    <Content Include="Content\images\FileManager\Icons\xml.gif" />
+    <Content Include="Content\images\FileManager\Icons\zip.gif" />
+    <Content Include="Content\images\FileManager\MoveFirst.gif" />
+    <Content Include="Content\images\FileManager\MoveLast.gif" />
+    <Content Include="Content\images\FileManager\MoveNext.gif" />
+    <Content Include="Content\images\FileManager\MovePrevious.gif" />
+    <Content Include="Content\images\FileManager\ToolBarAddFolderDisabled.gif" />
+    <Content Include="Content\images\FileManager\ToolBarAddFolderEnabled.gif" />
+    <Content Include="Content\images\FileManager\ToolBarCopyDisabled.gif" />
+    <Content Include="Content\images\FileManager\ToolBarCopyEnabled.gif" />
+    <Content Include="Content\images\FileManager\ToolBarDeleteDisabled.gif" />
+    <Content Include="Content\images\FileManager\ToolBarDeleteEnabled.gif" />
+    <Content Include="Content\images\FileManager\ToolBarDelFolderDisabled.gif" />
+    <Content Include="Content\images\FileManager\ToolBarDelFolderEnabled.gif" />
+    <Content Include="Content\images\FileManager\ToolBarEmailDisabled.gif" />
+    <Content Include="Content\images\FileManager\ToolBarEmailEnabled.gif" />
+    <Content Include="Content\images\FileManager\ToolBarFilterDisabled.gif" />
+    <Content Include="Content\images\FileManager\ToolBarFilterEnabled.gif" />
+    <Content Include="Content\images\FileManager\ToolBarMoveDisabled.gif" />
+    <Content Include="Content\images\FileManager\ToolBarMoveEnabled.gif" />
+    <Content Include="Content\images\FileManager\ToolBarRefreshDisabled.gif" />
+    <Content Include="Content\images\FileManager\ToolBarRefreshEnabled.gif" />
+    <Content Include="Content\images\FileManager\ToolBarSynchronizeDisabled.gif" />
+    <Content Include="Content\images\FileManager\ToolBarSynchronizeEnabled.gif" />
+    <Content Include="Content\images\FileManager\ToolBarUploadDisabled.gif" />
+    <Content Include="Content\images\FileManager\ToolBarUploadEnabled.gif" />
+    <Content Include="Content\images\FileManager\unchecked.gif" />
+    <Content Include="Content\images\finishflag.png" />
+    <Content Include="Content\images\Flags\af-ZA.gif" />
+    <Content Include="Content\images\Flags\am-ET.gif" />
+    <Content Include="Content\images\Flags\ar-AE.gif" />
+    <Content Include="Content\images\Flags\ar-BH.gif" />
+    <Content Include="Content\images\Flags\ar-DZ.gif" />
+    <Content Include="Content\images\Flags\ar-EG.gif" />
+    <Content Include="Content\images\Flags\ar-IQ.gif" />
+    <Content Include="Content\images\Flags\ar-JO.gif" />
+    <Content Include="Content\images\Flags\ar-KW.gif" />
+    <Content Include="Content\images\Flags\ar-LB.gif" />
+    <Content Include="Content\images\Flags\ar-LY.gif" />
+    <Content Include="Content\images\Flags\ar-MA.gif" />
+    <Content Include="Content\images\Flags\ar-OM.gif" />
+    <Content Include="Content\images\Flags\ar-QA.gif" />
+    <Content Include="Content\images\Flags\ar-SA.gif" />
+    <Content Include="Content\images\Flags\ar-SY.gif" />
+    <Content Include="Content\images\Flags\ar-TN.gif" />
+    <Content Include="Content\images\Flags\ar-YE.gif" />
+    <Content Include="Content\images\Flags\arn-CL.gif" />
+    <Content Include="Content\images\Flags\as-IN.gif" />
+    <Content Include="Content\images\Flags\az-AZ-Cyrl.gif" />
+    <Content Include="Content\images\Flags\az-AZ-Latn.gif" />
+    <Content Include="Content\images\Flags\az-Cyrl-AZ.gif" />
+    <Content Include="Content\images\Flags\az-Latn-AZ.gif" />
+    <Content Include="Content\images\Flags\ba-RU.gif" />
+    <Content Include="Content\images\Flags\be-BY.gif" />
+    <Content Include="Content\images\Flags\bg-BG.gif" />
+    <Content Include="Content\images\Flags\bn-BD.gif" />
+    <Content Include="Content\images\Flags\bn-IN.gif" />
+    <Content Include="Content\images\Flags\bo-CN.gif" />
+    <Content Include="Content\images\Flags\br-FR.gif" />
+    <Content Include="Content\images\Flags\bs-Cyrl-BA.gif" />
+    <Content Include="Content\images\Flags\bs-Latn-BA.gif" />
+    <Content Include="Content\images\Flags\ca-ES.gif" />
+    <Content Include="Content\images\Flags\co-FR.gif" />
+    <Content Include="Content\images\Flags\cs-CZ.gif" />
+    <Content Include="Content\images\Flags\cy-GB.gif" />
+    <Content Include="Content\images\Flags\da-DK.gif" />
+    <Content Include="Content\images\Flags\de-AT.gif" />
+    <Content Include="Content\images\Flags\de-CH.gif" />
+    <Content Include="Content\images\Flags\de-DE.gif" />
+    <Content Include="Content\images\Flags\de-LI.gif" />
+    <Content Include="Content\images\Flags\de-LU.gif" />
+    <Content Include="Content\images\Flags\div-MV.gif" />
+    <Content Include="Content\images\Flags\dsb-DE.gif" />
+    <Content Include="Content\images\Flags\dv-MV.gif" />
+    <Content Include="Content\images\Flags\el-GR.gif" />
+    <Content Include="Content\images\Flags\en-029.gif" />
+    <Content Include="Content\images\Flags\en-AU.gif" />
+    <Content Include="Content\images\Flags\en-BZ.gif" />
+    <Content Include="Content\images\Flags\en-CA.gif" />
+    <Content Include="Content\images\Flags\en-CB.gif" />
+    <Content Include="Content\images\Flags\en-GB.gif" />
+    <Content Include="Content\images\Flags\en-IE.gif" />
+    <Content Include="Content\images\Flags\en-IN.gif" />
+    <Content Include="Content\images\Flags\en-JM.gif" />
+    <Content Include="Content\images\Flags\en-MY.gif" />
+    <Content Include="Content\images\Flags\en-NZ.gif" />
+    <Content Include="Content\images\Flags\en-PH.gif" />
+    <Content Include="Content\images\Flags\en-SG.gif" />
+    <Content Include="Content\images\Flags\en-TT.gif" />
+    <Content Include="Content\images\Flags\en-US.gif" />
+    <Content Include="Content\images\Flags\en-ZA.gif" />
+    <Content Include="Content\images\Flags\en-ZW.gif" />
+    <Content Include="Content\images\Flags\es-AR.gif" />
+    <Content Include="Content\images\Flags\es-BO.gif" />
+    <Content Include="Content\images\Flags\es-CL.gif" />
+    <Content Include="Content\images\Flags\es-CO.gif" />
+    <Content Include="Content\images\Flags\es-CR.gif" />
+    <Content Include="Content\images\Flags\es-DO.gif" />
+    <Content Include="Content\images\Flags\es-EC.gif" />
+    <Content Include="Content\images\Flags\es-ES.gif" />
+    <Content Include="Content\images\Flags\es-GT.gif" />
+    <Content Include="Content\images\Flags\es-HN.gif" />
+    <Content Include="Content\images\Flags\es-MX.gif" />
+    <Content Include="Content\images\Flags\es-NI.gif" />
+    <Content Include="Content\images\Flags\es-PA.gif" />
+    <Content Include="Content\images\Flags\es-PE.gif" />
+    <Content Include="Content\images\Flags\es-PR.gif" />
+    <Content Include="Content\images\Flags\es-PY.gif" />
+    <Content Include="Content\images\Flags\es-SV.gif" />
+    <Content Include="Content\images\Flags\es-US.gif" />
+    <Content Include="Content\images\Flags\es-UY.gif" />
+    <Content Include="Content\images\Flags\es-VE.gif" />
+    <Content Include="Content\images\Flags\et-EE.gif" />
+    <Content Include="Content\images\Flags\eu-ES.gif" />
+    <Content Include="Content\images\Flags\fa-IR.gif" />
+    <Content Include="Content\images\Flags\fi-FI.gif" />
+    <Content Include="Content\images\Flags\fil-PH.gif" />
+    <Content Include="Content\images\Flags\fo-FO.gif" />
+    <Content Include="Content\images\Flags\fr-BE.gif" />
+    <Content Include="Content\images\Flags\fr-CA.gif" />
+    <Content Include="Content\images\Flags\fr-CH.gif" />
+    <Content Include="Content\images\Flags\fr-FR.gif" />
+    <Content Include="Content\images\Flags\fr-LU.gif" />
+    <Content Include="Content\images\Flags\fr-MC.gif" />
+    <Content Include="Content\images\Flags\fy-NL.gif" />
+    <Content Include="Content\images\Flags\ga-IE.gif" />
+    <Content Include="Content\images\Flags\gd-GB.gif" />
+    <Content Include="Content\images\Flags\gl-ES.gif" />
+    <Content Include="Content\images\Flags\gsw-FR.gif" />
+    <Content Include="Content\images\Flags\gu-IN.gif" />
+    <Content Include="Content\images\Flags\ha-Latn-NG.gif" />
+    <Content Include="Content\images\Flags\he-IL.gif" />
+    <Content Include="Content\images\Flags\hi-IN.gif" />
+    <Content Include="Content\images\Flags\hr-BA.gif" />
+    <Content Include="Content\images\Flags\hr-HR.gif" />
+    <Content Include="Content\images\Flags\hsb-DE.gif" />
+    <Content Include="Content\images\Flags\hu-HU.gif" />
+    <Content Include="Content\images\Flags\hy-AM.gif" />
+    <Content Include="Content\images\Flags\id-ID.gif" />
+    <Content Include="Content\images\Flags\ig-NG.gif" />
+    <Content Include="Content\images\Flags\ii-CN.gif" />
+    <Content Include="Content\images\Flags\is-IS.gif" />
+    <Content Include="Content\images\Flags\it-CH.gif" />
+    <Content Include="Content\images\Flags\it-IT.gif" />
+    <Content Include="Content\images\Flags\iu-Cans-CA.gif" />
+    <Content Include="Content\images\Flags\iu-Latn-CA.gif" />
+    <Content Include="Content\images\Flags\ja-JP.gif" />
+    <Content Include="Content\images\Flags\ka-GE.gif" />
+    <Content Include="Content\images\Flags\kk-KZ.gif" />
+    <Content Include="Content\images\Flags\kl-GL.gif" />
+    <Content Include="Content\images\Flags\km-KH.gif" />
+    <Content Include="Content\images\Flags\kn-IN.gif" />
+    <Content Include="Content\images\Flags\ko-KR.gif" />
+    <Content Include="Content\images\Flags\kok-IN.gif" />
+    <Content Include="Content\images\Flags\ky-KG.gif" />
+    <Content Include="Content\images\Flags\lb-LU.gif" />
+    <Content Include="Content\images\Flags\lo-LA.gif" />
+    <Content Include="Content\images\Flags\lt-LT.gif" />
+    <Content Include="Content\images\Flags\lv-LV.gif" />
+    <Content Include="Content\images\Flags\mi-NZ.gif" />
+    <Content Include="Content\images\Flags\mk-MK.gif" />
+    <Content Include="Content\images\Flags\ml-IN.gif" />
+    <Content Include="Content\images\Flags\mn-MN.gif" />
+    <Content Include="Content\images\Flags\mn-Mong-CN.gif" />
+    <Content Include="Content\images\Flags\moh-CA.gif" />
+    <Content Include="Content\images\Flags\mr-IN.gif" />
+    <Content Include="Content\images\Flags\ms-BN.gif" />
+    <Content Include="Content\images\Flags\ms-MY.gif" />
+    <Content Include="Content\images\Flags\mt-MT.gif" />
+    <Content Include="Content\images\Flags\nb-NO.gif" />
+    <Content Include="Content\images\Flags\ne-NP.gif" />
+    <Content Include="Content\images\Flags\nl-BE.gif" />
+    <Content Include="Content\images\Flags\nl-NL.gif" />
+    <Content Include="Content\images\Flags\nn-NO.gif" />
+    <Content Include="Content\images\Flags\None.gif" />
+    <Content Include="Content\images\Flags\nso-ZA.gif" />
+    <Content Include="Content\images\Flags\oc-FR.gif" />
+    <Content Include="Content\images\Flags\or-IN.gif" />
+    <Content Include="Content\images\Flags\pa-IN.gif" />
+    <Content Include="Content\images\Flags\pl-PL.gif" />
+    <Content Include="Content\images\Flags\prs-AF.gif" />
+    <Content Include="Content\images\Flags\ps-AF.gif" />
+    <Content Include="Content\images\Flags\pt-BR.gif" />
+    <Content Include="Content\images\Flags\pt-PT.gif" />
+    <Content Include="Content\images\Flags\qut-GT.gif" />
+    <Content Include="Content\images\Flags\quz-BO.gif" />
+    <Content Include="Content\images\Flags\quz-EC.gif" />
+    <Content Include="Content\images\Flags\quz-PE.gif" />
+    <Content Include="Content\images\Flags\rm-CH.gif" />
+    <Content Include="Content\images\Flags\ro-RO.gif" />
+    <Content Include="Content\images\Flags\ru-RU.gif" />
+    <Content Include="Content\images\Flags\rw-RW.gif" />
+    <Content Include="Content\images\Flags\sa-IN.gif" />
+    <Content Include="Content\images\Flags\sah-RU.gif" />
+    <Content Include="Content\images\Flags\se-FI.gif" />
+    <Content Include="Content\images\Flags\se-NO.gif" />
+    <Content Include="Content\images\Flags\se-SE.gif" />
+    <Content Include="Content\images\Flags\si-LK.gif" />
+    <Content Include="Content\images\Flags\sk-SK.gif" />
+    <Content Include="Content\images\Flags\sl-SI.gif" />
+    <Content Include="Content\images\Flags\sma-NO.gif" />
+    <Content Include="Content\images\Flags\sma-SE.gif" />
+    <Content Include="Content\images\Flags\smj-NO.gif" />
+    <Content Include="Content\images\Flags\smj-SE.gif" />
+    <Content Include="Content\images\Flags\smn-FI.gif" />
+    <Content Include="Content\images\Flags\sms-FI.gif" />
+    <Content Include="Content\images\Flags\sq-AL.gif" />
+    <Content Include="Content\images\Flags\sr-Cyrl-BA.gif" />
+    <Content Include="Content\images\Flags\sr-Cyrl-CS.gif" />
+    <Content Include="Content\images\Flags\sr-Cyrl-ME.gif" />
+    <Content Include="Content\images\Flags\sr-Cyrl-RS.gif" />
+    <Content Include="Content\images\Flags\sr-Latn-BA.gif" />
+    <Content Include="Content\images\Flags\sr-Latn-CS.gif" />
+    <Content Include="Content\images\Flags\sr-Latn-ME.gif" />
+    <Content Include="Content\images\Flags\sr-Latn-RS.gif" />
+    <Content Include="Content\images\Flags\sv-FI.gif" />
+    <Content Include="Content\images\Flags\sv-SE.gif" />
+    <Content Include="Content\images\Flags\sw-KE.gif" />
+    <Content Include="Content\images\Flags\syr-SY.gif" />
+    <Content Include="Content\images\Flags\ta-IN.gif" />
+    <Content Include="Content\images\Flags\te-IN.gif" />
+    <Content Include="Content\images\Flags\tg-Cyrl-TJ.gif" />
+    <Content Include="Content\images\Flags\th-TH.gif" />
+    <Content Include="Content\images\Flags\tk-TM.gif" />
+    <Content Include="Content\images\Flags\tn-ZA.gif" />
+    <Content Include="Content\images\Flags\tr-TR.gif" />
+    <Content Include="Content\images\Flags\tt-RU.gif" />
+    <Content Include="Content\images\Flags\tzm-Latn-DZ.gif" />
+    <Content Include="Content\images\Flags\ug-CN.gif" />
+    <Content Include="Content\images\Flags\uk-UA.gif" />
+    <Content Include="Content\images\Flags\ur-PK.gif" />
+    <Content Include="Content\images\Flags\uz-Cyrl-UZ.gif" />
+    <Content Include="Content\images\Flags\uz-Latn-UZ.gif" />
+    <Content Include="Content\images\Flags\uz-UZ-Cyrl.gif" />
+    <Content Include="Content\images\Flags\uz-UZ-Latn.gif" />
+    <Content Include="Content\images\Flags\vi-VN.gif" />
+    <Content Include="Content\images\Flags\wo-SN.gif" />
+    <Content Include="Content\images\Flags\xh-ZA.gif" />
+    <Content Include="Content\images\Flags\yo-NG.gif" />
+    <Content Include="Content\images\Flags\zh-CHS.gif" />
+    <Content Include="Content\images\Flags\zh-CHT.gif" />
+    <Content Include="Content\images\Flags\zh-CN.gif" />
+    <Content Include="Content\images\Flags\zh-HK.gif" />
+    <Content Include="Content\images\Flags\zh-MO.gif" />
+    <Content Include="Content\images\Flags\zh-SG.gif" />
+    <Content Include="Content\images\Flags\zh-TW.gif" />
+    <Content Include="Content\images\Flags\zu-ZA.gif" />
+    <Content Include="Content\images\folder.gif" />
+    <Content Include="Content\images\folderblank.gif" />
+    <Content Include="Content\images\folderclosed.gif" />
+    <Content Include="Content\images\folderminus.gif" />
+    <Content Include="Content\images\folderopen.gif" />
+    <Content Include="Content\images\folderplus.gif" />
+    <Content Include="Content\images\folderup.gif" />
+    <Content Include="Content\images\footer-background.png" />
+    <Content Include="Content\images\Forge.png" />
+    <Content Include="Content\images\frev.gif" />
+    <Content Include="Content\images\frew.gif" />
+    <Content Include="Content\images\fwd.gif" />
+    <Content Include="Content\images\grant.gif" />
+    <Content Include="Content\images\green-ok.gif" />
+    <Content Include="Content\images\help-icn.png" />
+    <Content Include="Content\images\help.gif" />
+    <Content Include="Content\images\helpI-icn-grey.png" />
+    <Content Include="Content\images\icon-announcements-32px.png" />
+    <Content Include="Content\images\icon-events-32px.png" />
+    <Content Include="Content\images\icon-FAQ-32px.png" />
+    <Content Include="Content\images\icon-feedback-32px.png" />
+    <Content Include="Content\images\icon-fnl-32px.png" />
+    <Content Include="Content\images\icon-from-url.png" />
+    <Content Include="Content\images\icon-from-url_hover.png" />
+    <Content Include="Content\images\icon-home.png" />
+    <Content Include="Content\images\icon-iframe-32px.png" />
+    <Content Include="Content\images\icon-links-32px.png" />
+    <Content Include="Content\images\icon-media-32px.png" />
+    <Content Include="Content\images\icon-upload-file.png" />
+    <Content Include="Content\images\icon-upload-file_hover.png" />
+    <Content Include="Content\images\icon-validate-fail.png" />
+    <Content Include="Content\images\icon-validate-success.png" />
+    <Content Include="Content\images\icon-xls.gif" />
+    <Content Include="Content\images\icons\done.png" />
+    <Content Include="Content\images\icons\dropdown.png" />
+    <Content Include="Content\images\icons\email.png" />
+    <Content Include="Content\images\icons\hotline.png" />
+    <Content Include="Content\images\icons\logout.png" />
+    <Content Include="Content\images\icons\search.png" />
+    <Content Include="Content\images\icons\upload-white.png" />
+    <Content Include="Content\images\icons\upload.png" />
+    <Content Include="Content\images\icons\warning.png" />
+    <Content Include="Content\images\icon_analytics_16px.gif" />
+    <Content Include="Content\images\icon_analytics_32px.gif" />
+    <Content Include="Content\images\icon_authentication.png" />
+    <Content Include="Content\images\icon_authentication_16px.gif" />
+    <Content Include="Content\images\icon_authentication_32px.gif" />
+    <Content Include="Content\images\icon_bulkmail_16px.gif" />
+    <Content Include="Content\images\icon_bulkmail_32px.gif" />
+    <Content Include="Content\images\icon_configuration_16px.png" />
+    <Content Include="Content\images\icon_configuration_32px.png" />
+    <Content Include="Content\images\icon_container.gif" />
+    <Content Include="Content\images\icon_cursor_grab.cur" />
+    <Content Include="Content\images\icon_cursor_grabbing.cur" />
+    <Content Include="Content\images\icon_dashboard.png" />
+    <Content Include="Content\images\icon_dashboard_16px.gif" />
+    <Content Include="Content\images\icon_dashboard_32px.gif" />
+    <Content Include="Content\images\icon_exceptionviewer_16px.gif" />
+    <Content Include="Content\images\icon_extensions.gif" />
+    <Content Include="Content\images\icon_extensions_16px.png" />
+    <Content Include="Content\images\icon_extensions_32px.png" />
+    <Content Include="Content\images\icon_filemanager_16px.gif" />
+    <Content Include="Content\images\icon_filemanager_32px.gif" />
+    <Content Include="Content\images\icon_gototop.png" />
+    <Content Include="Content\images\icon_help_32px.gif" />
+    <Content Include="Content\images\icon_hostsettings_16px.gif" />
+    <Content Include="Content\images\icon_hostsettings_32px.gif" />
+    <Content Include="Content\images\icon_hostusers_16px.gif" />
+    <Content Include="Content\images\icon_hostusers_32px.gif" />
+    <Content Include="Content\images\icon_host_16px.gif" />
+    <Content Include="Content\images\icon_host_32px.gif" />
+    <Content Include="Content\images\icon_languagePack.gif" />
+    <Content Include="Content\images\icon_language_16px.gif" />
+    <Content Include="Content\images\icon_language_32px.gif" />
+    <Content Include="Content\images\icon_library.png" />
+    <Content Include="Content\images\icon_lists_16px.gif" />
+    <Content Include="Content\images\icon_lists_32px.gif" />
+    <Content Include="Content\images\icon_marketplace_16px.gif" />
+    <Content Include="Content\images\icon_marketplace_32px.gif" />
+    <Content Include="Content\images\icon_moduledefinitions_16px.gif" />
+    <Content Include="Content\images\icon_moduledefinitions_32px.gif" />
+    <Content Include="Content\images\icon_modules.png" />
+    <Content Include="Content\images\icon_profeatures_16px.gif" />
+    <Content Include="Content\images\icon_profile_16px.gif" />
+    <Content Include="Content\images\icon_profile_32px.gif" />
+    <Content Include="Content\images\icon_provider.gif" />
+    <Content Include="Content\images\icon_publishlanguage_16.gif" />
+    <Content Include="Content\images\icon_recyclebin_16px.gif" />
+    <Content Include="Content\images\icon_recyclebin_32px.gif" />
+    <Content Include="Content\images\icon_scheduler_16px.gif" />
+    <Content Include="Content\images\icon_scheduler_32px.gif" />
+    <Content Include="Content\images\icon_search_16px.gif" />
+    <Content Include="Content\images\icon_search_32px.gif" />
+    <Content Include="Content\images\icon_securityroles_16px.gif" />
+    <Content Include="Content\images\icon_securityroles_32px.gif" />
+    <Content Include="Content\images\icon_sitelog_16px.gif" />
+    <Content Include="Content\images\icon_sitelog_32px.gif" />
+    <Content Include="Content\images\icon_siteMap_16px.gif" />
+    <Content Include="Content\images\icon_siteMap_32px.gif" />
+    <Content Include="Content\images\icon_sitesettings_16px.gif" />
+    <Content Include="Content\images\icon_sitesettings_32px.gif" />
+    <Content Include="Content\images\icon_site_16px.gif" />
+    <Content Include="Content\images\icon_site_32px.gif" />
+    <Content Include="Content\images\icon_skin.gif" />
+    <Content Include="Content\images\icon_skins.png" />
+    <Content Include="Content\images\icon_skins_16px.gif" />
+    <Content Include="Content\images\icon_skins_32px.gif" />
+    <Content Include="Content\images\icon_solutions_16px.gif" />
+    <Content Include="Content\images\icon_solutions_32px.gif" />
+    <Content Include="Content\images\icon_source_32px.gif" />
+    <Content Include="Content\images\icon_specialoffers_16px.gif" />
+    <Content Include="Content\images\icon_specialoffers_32px.gif" />
+    <Content Include="Content\images\icon_sql_16px.gif" />
+    <Content Include="Content\images\icon_sql_32px.gif" />
+    <Content Include="Content\images\icon_survey_32px.gif" />
+    <Content Include="Content\images\icon_tabs_16px.gif" />
+    <Content Include="Content\images\icon_tabs_32px.gif" />
+    <Content Include="Content\images\icon_tag_16px.gif" />
+    <Content Include="Content\images\icon_tag_32px.gif" />
+    <Content Include="Content\images\icon_unknown_16px.gif" />
+    <Content Include="Content\images\icon_unknown_32px.gif" />
+    <Content Include="Content\images\icon_usersSwitcher_16px.gif" />
+    <Content Include="Content\images\icon_usersSwitcher_32px.gif" />
+    <Content Include="Content\images\icon_users_16px.gif" />
+    <Content Include="Content\images\icon_users_32px.gif" />
+    <Content Include="Content\images\icon_Vendors_16px.gif" />
+    <Content Include="Content\images\icon_Vendors_32px.gif" />
+    <Content Include="Content\images\icon_viewScheduleHistory_16px.gif" />
+    <Content Include="Content\images\icon_viewstats_16px.gif" />
+    <Content Include="Content\images\icon_viewstats_32px.gif" />
+    <Content Include="Content\images\icon_wait.gif" />
+    <Content Include="Content\images\icon_whatsnew_16px.gif" />
+    <Content Include="Content\images\icon_whatsnew_32px.gif" />
+    <Content Include="Content\images\icon_widget.png" />
+    <Content Include="Content\images\icon_wizard_16px.gif" />
+    <Content Include="Content\images\icon_wizard_32px.gif" />
+    <Content Include="Content\images\installer-feedback-states-sprite.png" />
+    <Content Include="Content\images\InstallWizardBg.png" />
+    <Content Include="Content\images\left-tile.gif" />
+    <Content Include="Content\images\loading.gif" />
+    <Content Include="Content\images\lock.gif" />
+    <Content Include="Content\images\login-form-background.png" />
+    <Content Include="Content\images\login-left.png" />
+    <Content Include="Content\images\login-right.png" />
+    <Content Include="Content\images\login.gif" />
+    <Content Include="Content\images\logo.png" />
+    <Content Include="Content\images\Logos.jpg" />
+    <Content Include="Content\images\lt.gif" />
+    <Content Include="Content\images\manage-icn.png" />
+    <Content Include="Content\images\manage-info-background.png" />
+    <Content Include="Content\images\max.gif" />
+    <Content Include="Content\images\menu-bg.png" />
+    <Content Include="Content\images\menu-icon.png" />
+    <Content Include="Content\images\menu-icon1.png" />
+    <Content Include="Content\images\menubg1.png" />
+    <Content Include="Content\images\menu_down.gif" />
+    <Content Include="Content\images\menu_right.gif" />
+    <Content Include="Content\images\min.gif" />
+    <Content Include="Content\images\minus.gif" />
+    <Content Include="Content\images\minus2.gif" />
+    <Content Include="Content\images\modal-max-min-icn.png" />
+    <Content Include="Content\images\modal-resize-icn.png" />
+    <Content Include="Content\images\modulebind.gif" />
+    <Content Include="Content\images\moduleunbind.gif" />
+    <Content Include="Content\images\move.gif" />
+    <Content Include="Content\images\news-background-mobile.png" />
+    <Content Include="Content\images\news-background.png" />
+    <Content Include="Content\images\no-content.png" />
+    <Content Include="Content\images\node.gif" />
+    <Content Include="Content\images\noimage.png" />
+    <Content Include="Content\images\no_avatar.gif" />
+    <Content Include="Content\images\no_avatar_xs.gif" />
+    <Content Include="Content\images\overlay_bg_ie.png" />
+    <Content Include="Content\images\pagination.png" />
+    <Content Include="Content\images\password.gif" />
+    <Content Include="Content\images\pause.gif" />
+    <Content Include="Content\images\person.png" />
+    <Content Include="Content\images\person1.png" />
+    <Content Include="Content\images\pin-icn-16x16.png" />
+    <Content Include="Content\images\pin-icn.png" />
+    <Content Include="Content\images\plainbutton.gif" />
+    <Content Include="Content\images\plus.gif" />
+    <Content Include="Content\images\plus2.gif" />
+    <Content Include="Content\images\populatelanguage.gif" />
+    <Content Include="Content\images\print.gif" />
+    <Content Include="Content\images\privatemodule.gif" />
+    <Content Include="Content\images\profile-background-mobile.png" />
+    <Content Include="Content\images\profile-background.png" />
+    <Content Include="Content\images\progress.gif" />
+    <Content Include="Content\images\progressbar.gif" />
+    <Content Include="Content\images\radiobutton.png" />
+    <Content Include="Content\images\ratingminus.gif" />
+    <Content Include="Content\images\ratingplus.gif" />
+    <Content Include="Content\images\ratingzero.gif" />
+    <Content Include="Content\images\rec.gif" />
+    <Content Include="Content\images\red-error.gif" />
+    <Content Include="Content\images\red-error_16px.gif" />
+    <Content Include="Content\images\red.gif" />
+    <Content Include="Content\images\refresh.gif" />
+    <Content Include="Content\images\refresh_captcha.png" />
+    <Content Include="Content\images\register.gif" />
+    <Content Include="Content\images\required.gif" />
+    <Content Include="Content\images\reset.gif" />
+    <Content Include="Content\images\resizeBtn.png" />
+    <Content Include="Content\images\restore.gif" />
+    <Content Include="Content\images\rev.gif" />
+    <Content Include="Content\images\rew.gif" />
+    <Content Include="Content\images\right-tile.gif" />
+    <Content Include="Content\images\rss.gif" />
+    <Content Include="Content\images\rt.gif" />
+    <Content Include="Content\images\sample-group-profile.jpg" />
+    <Content Include="Content\images\save.gif" />
+    <Content Include="Content\images\search.gif" />
+    <Content Include="Content\images\SearchCrawler_16px.gif" />
+    <Content Include="Content\images\SearchCrawler_32px.gif" />
+    <Content Include="Content\images\Search\clearText.png" />
+    <Content Include="Content\images\Search\dotnetnuke-icon.gif" />
+    <Content Include="Content\images\Search\google-icon.gif" />
+    <Content Include="Content\images\Search\SearchButton.png" />
+    <Content Include="Content\images\search_go.gif" />
+    <Content Include="Content\images\service-background-mobile.png" />
+    <Content Include="Content\images\service-background.png" />
+    <Content Include="Content\images\services\service1.png" />
+    <Content Include="Content\images\services\service2.png" />
+    <Content Include="Content\images\services\service3.png" />
+    <Content Include="Content\images\services\service4.png" />
+    <Content Include="Content\images\services\service5.png" />
+    <Content Include="Content\images\settings.gif" />
+    <Content Include="Content\images\shared.gif" />
+    <Content Include="Content\images\sharedmodule.gif" />
+    <Content Include="Content\images\sharepoint_48X48.png" />
+    <Content Include="Content\images\sort-dark-sprite.png" />
+    <Content Include="Content\images\sort-sprite.png" />
+    <Content Include="Content\images\sortascending.gif" />
+    <Content Include="Content\images\sortdescending.gif" />
+    <Content Include="Content\images\spacer.gif" />
+    <Content Include="Content\images\star-off-big.png" />
+    <Content Include="Content\images\star-on-big.png" />
+    <Content Include="Content\images\stop.gif" />
+    <Content Include="Content\images\Store.png" />
+    <Content Include="Content\images\success-icn.png" />
+    <Content Include="Content\images\synchronize.gif" />
+    <Content Include="Content\images\System-Box-Empty-icon.png" />
+    <Content Include="Content\images\tabimage.gif" />
+    <Content Include="Content\images\tabimage_blue.gif" />
+    <Content Include="Content\images\table-sort-sprite.png" />
+    <Content Include="Content\images\tableft.gif" />
+    <Content Include="Content\images\tablogin_blue.gif" />
+    <Content Include="Content\images\tablogin_gray.gif" />
+    <Content Include="Content\images\tabright.gif" />
+    <Content Include="Content\images\tag.gif" />
+    <Content Include="Content\images\thumbnail.jpg" />
+    <Content Include="Content\images\thumbnail_black.png" />
+    <Content Include="Content\images\TimePicker.png" />
+    <Content Include="Content\images\top-left.gif" />
+    <Content Include="Content\images\top-right.gif" />
+    <Content Include="Content\images\top-tile.gif" />
+    <Content Include="Content\images\top.gif" />
+    <Content Include="Content\images\total.gif" />
+    <Content Include="Content\images\translate.gif" />
+    <Content Include="Content\images\translated.gif" />
+    <Content Include="Content\images\True.png" />
+    <Content Include="Content\images\uncheck.png" />
+    <Content Include="Content\images\unchecked-disabled.gif" />
+    <Content Include="Content\images\unchecked.gif" />
+    <Content Include="Content\images\untranslate.gif" />
+    <Content Include="Content\images\up-icn.png" />
+    <Content Include="Content\images\up.gif" />
+    <Content Include="Content\images\update_profile-background-mobile.png" />
+    <Content Include="Content\images\update_profile-background.png" />
+    <Content Include="Content\images\uplt.gif" />
+    <Content Include="Content\images\uprt.gif" />
+    <Content Include="Content\images\userOnline.gif" />
+    <Content Include="Content\images\videoIcon.png" />
+    <Content Include="Content\images\view.gif" />
+    <Content Include="Content\images\visibility.png" />
+    <Content Include="Content\images\warning-icn.png" />
+    <Content Include="Content\images\xml.gif" />
+    <Content Include="Content\images\yellow-warning.gif" />
+    <Content Include="Content\images\yellow-warning_16px.gif" />
+    <Content Include="Content\js\bootstrap-datepicker.min.js" />
+    <Content Include="Content\js\bootstrap-datepicker.vi.min.js" />
+    <Content Include="Content\js\bootstrap-select.min.js" />
+    <Content Include="Content\js\bootstrap.min.js" />
+    <Content Include="Content\js\dataTables.bootstrap4.min.js" />
+    <Content Include="Content\js\dataTables.config.js" />
+    <Content Include="Content\js\jquery.cookie.min.js" />
+    <Content Include="Content\js\jquery.dataTables.min.js" />
+    <Content Include="Content\js\jquery.min.js" />
+    <Content Include="Content\js\jquery.validate.min.js" />
+    <Content Include="Content\js\main.js" />
+    <Content Include="Content\js\popper.min.js" />
+    <Content Include="favicon.ico" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\Site.css" />
+    <Content Include="Content\css\bootstrap-select.css.map" />
+    <Content Include="Content\js\bootstrap-select.min.js.map" />
+    <None Include="Scripts\jquery-3.4.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.4.1.js" />
+    <Content Include="Scripts\jquery-3.4.1.min.js" />
+    <Content Include="Scripts\jquery-3.4.1.slim.js" />
+    <Content Include="Scripts\jquery-3.4.1.slim.min.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Web.config" />
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Account\Index.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Shared\_LayoutEmpty.cshtml" />
+    <Content Include="Views\Home\TheSurvey.cshtml" />
+    <Content Include="Views\Error\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
+    <Content Include="Scripts\jquery-3.4.1.min.map" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>55519</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:55500/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

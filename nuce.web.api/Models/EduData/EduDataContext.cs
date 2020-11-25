@@ -30,15 +30,6 @@ namespace nuce.web.api.Models.EduData
         public virtual DbSet<AsAcademyStudentClassRoom> AsAcademyStudentClassRoom { get; set; }
         public virtual DbSet<AsAcademySubject> AsAcademySubject { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Data Source=.\\sqlexpress;Initial Catalog=NUCE_SURVEY;Integrated Security=True");
-            }
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AsAcademyAcademics>(entity =>

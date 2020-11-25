@@ -1,0 +1,47 @@
+﻿@using nuce.web.survey.student.Common;
+@{ 
+    ViewData["Title"] = "Trang chủ";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center">Môn học</th>
+                        <th class="text-center">Giảng viên</th>
+                        <th class="text-center"></th>
+                    </tr>
+                </thead>
+                <tbody id="table-content">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let content = @Html.Raw(ViewData["Content"]);
+        let tableContent = $('#table-content')
+        let htmlStr = '';
+        for (let element of content) {
+            htmlStr += `
+                <tr>
+                    <td>${element.subjectName}</td>
+                    <td>${element.lecturerName}</td>`;
+            htmlStr += `<td>`;
+            if (element.status === @((int)SurveyStudentStatus.DoNot)) {
+                htmlStr += `<a href="/home/thesurvey?theSurveyId=${element.baiKhaoSatId}&classRoomCode=${element.classRoomCode}&type=1">Thực hiện</a>`;
+            } else if (element.status === @((int)SurveyStudentStatus.Doing)) {
+                htmlStr += `<a href="/home/thesurvey?theSurveyId=${element.baiKhaoSatId}&classRoomCode=${element.classRoomCode}&type=2">Tiếp tục</a>`;
+            } else if (element.status === @((int)SurveyStudentStatus.Done)) {
+                htmlStr += `Đã hoàn thành`;
+            }
+            htmlStr += `</td>`;
+            htmlStr += `</tr>`;
+        }
+        tableContent.html(htmlStr);
+    </script>
+}

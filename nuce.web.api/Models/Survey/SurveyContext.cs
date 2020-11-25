@@ -35,24 +35,27 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.DeThiId).HasColumnName("DeThiID");
 
-                entity.Property(e => e.DotKhaoSatId).HasColumnName("DotKhaoSatID");
-
-                entity.Property(e => e.Note)
-                    .IsRequired()
-                    .HasMaxLength(2000);
-
                 entity.Property(e => e.Description)
                     .IsRequired()
                     .HasMaxLength(2000);
 
-                entity.Property(e => e.FromDate).HasColumnType("date");
+                entity.Property(e => e.DotKhaoSatId).HasColumnName("DotKhaoSatID");
 
-                entity.Property(e => e.EndDate).HasColumnType("date");
+                entity.Property(e => e.EndDate).HasColumnType("datetime");
+
+                entity.Property(e => e.FromDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Note)
+                    .IsRequired()
+                    .HasMaxLength(2000);
             });
 
             modelBuilder.Entity<AsEduSurveyBaiKhaoSatSinhVien>(entity =>
             {
                 entity.ToTable("AS_Edu_Survey_BaiKhaoSat_SinhVien");
+
+                entity.HasIndex(e => new { e.StudentCode, e.ClassRoomCode })
+                    .HasName("index_As_Edu_survey_baikhaosatsinhvien");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
@@ -66,6 +69,8 @@ namespace nuce.web.api.Models.Survey
                     .IsRequired()
                     .HasMaxLength(50)
                     .IsUnicode(false);
+
+                entity.Property(e => e.DeThi).IsRequired();
 
                 entity.Property(e => e.DepartmentCode)
                     .IsRequired()
@@ -90,7 +95,12 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.NgayGioNopBai).HasColumnType("datetime");
 
-                entity.Property(e => e.SinhVienId).HasColumnName("SinhVienID");
+                entity.Property(e => e.StudentCode)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.StudentId).HasColumnName("StudentID");
 
                 entity.Property(e => e.SubjectCode)
                     .IsRequired()
@@ -207,13 +217,13 @@ namespace nuce.web.api.Models.Survey
                     .IsRequired()
                     .HasMaxLength(2000);
 
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(100);
+                entity.Property(e => e.EndDate).HasColumnType("datetime");
 
                 entity.Property(e => e.FromDate).HasColumnType("datetime");
 
-                entity.Property(e => e.EndDate).HasColumnType("datetime");
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
 
                 entity.Property(e => e.Note)
                     .IsRequired()
