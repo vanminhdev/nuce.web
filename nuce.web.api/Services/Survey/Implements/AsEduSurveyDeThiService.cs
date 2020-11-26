@@ -59,62 +59,63 @@ namespace nuce.web.api.Services.Survey.Implements
                 (examStructure, question) => new { examStructure, question })
                 .Where(result => result.examStructure.DeThiId.ToString() == examQuestionId)
                 .OrderBy(result => result.examStructure.Order)
-                .Select(result => result.question);
+                .Select(result => new { payload = result.question, result.examStructure.Order });
 
-            var test = _surveyContext.AsEduSurveyDapAn
-                .Join(_surveyContext.AsEduSurveyCauHoi, answer => answer.CauHoiId, question => question.Id, (question, answer) => new { question, answer });
-
-            var questionAnswerJoin = await _surveyContext.AsEduSurveyDapAn
-                .Join(questions, answer => answer.CauHoiId, question => question.Id,
-                    (answer, question) => new
-                    {
-                        questionSelect = new
-                        {
-                            question.Id,
-                            question.Code,
-                            question.DoKhoId,
-                            question.Content,
-                            question.Image,
-                            question.Mark,
-                            question.Type,
-                            question.Explain
-                        },
-                        answerSelect = new
-                        {
-                            answer.Content,
-                            answer.Code,
-                            answer.Order
-                        }
-                    })
-                .OrderBy(r => r.answerSelect.Order)
+            var questionAnswerJoin = await questions
+                .GroupJoin(_surveyContext.AsEduSurveyDapAn, question => question.payload.Id, answer => answer.CauHoiId, (questionOrder, answer) => new { questionOrder, answer })
+                .SelectMany(o => o.answer.DefaultIfEmpty(), (r, answer) => new { r.questionOrder, answer })
                 .ToListAsync();
 
-            var questionAnswers = questionAnswerJoin
-                .GroupBy(result => result.questionSelect, result => result.answerSelect)
-                .ToList();
+            var questionAnswersGroup = questionAnswerJoin.GroupBy(r => r.questionOrder.payload, r => r.answer).ToList();
+
             var QuestionJsonData = new List<Models.Survey.JsonData.QuestionJson>();
-            foreach (var question in questionAnswers)
+            foreach (var itemGroup in questionAnswersGroup)
             {
-                var data = new Models.Survey.JsonData.QuestionJson
+                var questionJson = new Models.Survey.JsonData.QuestionJson
                 {
-                    Code = question.Key.Code,
-                    DifficultID = question.Key.DoKhoId,
-                    Content = question.Key.Content,
-                    Image = question.Key.Image,
-                    Mark = (float)(question.Key?.Mark ?? 0),
-                    Explain = question.Key.Explain,
-                    Type = question.Key.Type,
+                    Code = itemGroup.Key.Code,
+                    DifficultID = itemGroup.Key.DoKhoId,
+                    Content = itemGroup.Key.Content,
+                    Image = itemGroup.Key.Image,
+                    Mark = (float)(itemGroup.Key?.Mark ?? 0),
+                    Explain = itemGroup.Key.Explain,
+                    Type = itemGroup.Key.Type,
                 };
-                data.Answers = new List<Models.Survey.JsonData.AnswerJson>();
-                foreach (var answer in question)
+                questionJson.Answers = new List<Models.Survey.JsonData.AnswerJson>();
+                var answerOrder = itemGroup.OrderBy(o => o?.Order ?? 0);
+                foreach (var answer in answerOrder)
                 {
-                    data.Answers.Add(new Models.Survey.JsonData.AnswerJson
+                    if(answer == null)
+                    {
+                        break;
+                    }
+
+                    questionJson.Answers.Add(new Models.Survey.JsonData.AnswerJson
                     {
                         Code = answer.Code,
-                        Content = answer.Content,
+                        Content = answer.Content
                     });
                 }
-                QuestionJsonData.Add(data);
+
+                if(itemGroup.Key.ParentCode != null) //thêm con vào cha
+                {
+                    var parent = QuestionJsonData.FirstOrDefault(o => o.Code == itemGroup.Key.ParentCode);
+                    if(parent != null)
+                    {
+                        if(parent.ChildQuestion == null)
+                        {
+                            parent.ChildQuestion = new List<Models.Survey.JsonData.QuestionJson>() { questionJson };
+                        }
+                        else
+                        {
+                            parent.ChildQuestion.Add(questionJson);
+                        }
+                    }
+                }
+                else //thêm mới
+                {
+                    QuestionJsonData.Add(questionJson);
+                }
             }
 
             var jsonString = JsonConvert.SerializeObject(QuestionJsonData);

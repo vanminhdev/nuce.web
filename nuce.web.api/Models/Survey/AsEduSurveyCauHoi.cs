@@ -18,7 +18,6 @@ namespace nuce.web.api.Models.Survey
         public bool? IsOption { get; set; }
         public int? PartId { get; set; }
         public string Explain { get; set; }
-        public int? ParentQuestionId { get; set; }
         public int? NoAnswerOnRow { get; set; }
         public DateTime? ExpiredDate { get; set; }
         public int? TimeVisibleAnswer { get; set; }
@@ -31,5 +30,6 @@ namespace nuce.web.api.Models.Survey
         public string Type { get; set; }
         public int Status { get; set; }
         public string CheckImport { get; set; }
+        public string ParentCode { get; set; }
     }
 }

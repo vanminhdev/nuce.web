@@ -43,7 +43,7 @@ namespace nuce.web.api.Services.Survey.Implements
             return examQuestions.NoiDungDeThi;
         }
 
-        public async Task<List<TheSurveysStudent>> GetTheSurveys(string studentCode)
+        public async Task<List<TheSurveysStudent>> GetTheSurvey(string studentCode)
         {
             return await _context.AsEduSurveyBaiKhaoSatSinhVien.Where(o => o.StudentCode == studentCode)
                 .Select(o => new TheSurveysStudent
@@ -267,6 +267,7 @@ namespace nuce.web.api.Services.Survey.Implements
             {
                 return;
             }
+            surveyStudent.NgayGioNopBai = DateTime.Now;
             surveyStudent.Status = (int)SurveyStudentStatus.Done;
             surveyStudent.LogIp = ipAddress;
             await _context.SaveChangesAsync();

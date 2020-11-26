@@ -20,7 +20,7 @@ namespace nuce.web.survey.student.Controllers
         [HttpGet]
         public async Task<ActionResult> Index()
         {
-            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurveyStudent/GetTheSurveys");
+            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurveyStudent/GetTheSurvey");
             return await base.HandleResponseAsync(response,
                 action200Async: async res =>
                 {
@@ -61,7 +61,7 @@ namespace nuce.web.survey.student.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AutoSave(string classRoomCode, string questionCode, string answerCode, string answerCodeInMulSelect, bool isAnswerCodesAdd, string answerContent)
+        public async Task<ActionResult> AutoSave(string classRoomCode, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, bool isAnswerCodesAdd = true)
         {
             var jsonStr = JsonConvert.SerializeObject(new { classRoomCode, questionCode, answerCode, answerCodeInMulSelect, isAnswerCodesAdd, answerContent });
             var stringContent = new StringContent(jsonStr, Encoding.UTF8, "application/json");

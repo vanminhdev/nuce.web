@@ -36,10 +36,10 @@ namespace nuce.web.api.Controllers.Survey
 
         [HttpGet]
         [Authorize(Roles = "Student")]
-        public async Task<IActionResult> GetTheSurveys()
+        public async Task<IActionResult> GetTheSurvey()
         {
             var studentCode = _userService.GetCurrentStudentCode();
-            var result = await _asEduSurveyBaiKhaoSatSinhVienService.GetTheSurveys(studentCode);
+            var result = await _asEduSurveyBaiKhaoSatSinhVienService.GetTheSurvey(studentCode);
             return Ok(result);
         }
 

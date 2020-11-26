@@ -144,6 +144,8 @@ namespace nuce.web.api.Models.Survey
                     .HasColumnName("Media_URL")
                     .HasMaxLength(250);
 
+                entity.Property(e => e.ParentCode).HasMaxLength(50);
+
                 entity.Property(e => e.Type)
                     .HasMaxLength(15)
                     .IsUnicode(false);
