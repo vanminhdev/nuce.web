@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 
 namespace nuce.web.quanly.Models
@@ -84,12 +85,7 @@ namespace nuce.web.quanly.Models
         public string NgayHenKetThuc { get; set; }
         public bool AutoUpdateNgayHen { get; set; }
         public int Status { get; set; }
-    }
-
-    public class UpdateMultiStatusModel
-    {
-        public int LoaiDichVu { get; set; }
-        public List<DichVuExport> YeuCauList { get; set; }
+        public List<DichVuExport> DichVuList { get; set; }
     }
 
     public class ExportModel
@@ -116,4 +112,13 @@ namespace nuce.web.quanly.Models
     {
         public Dictionary<string, string> dict { get; set; }
     }
+
+    public class ResponseBody
+    {
+        public string Status { get; set; }
+        public string Message { get; set; }
+        public object Data { get; set; }
+        public HttpStatusCode StatusCode { get; set; }
+    }
+
 }

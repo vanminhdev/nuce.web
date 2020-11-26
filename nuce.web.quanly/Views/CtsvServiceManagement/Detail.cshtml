@@ -74,7 +74,7 @@
                     In
                 </button>
                 <button type="button" class="btn btn-info"
-                        onclick="showConfirm()">
+                        onclick="onClickChangeMultiStatus()">
                     Chuyển trạng thái
                 </button>
             </div>
@@ -167,6 +167,12 @@
                                             </td>
                                         </tr>
                                     </table>
+                                </div>
+                                <div id="divConfirm" class="mt-3 text-danger" style="font-weight: bold">
+
+                                </div>
+                                <div id="divWarning" class="mt-3 text-primary" style="font-weight: bold">
+
                                 </div>
                             </div>
                             <!-- PHẢN HỒI -->
@@ -275,7 +281,7 @@
                 key: 'VAY_VON',
             },
             7: {
-                name: 'thuê ktx pháp vân - tứ hiệp',
+                name: 'đăng ký nhà ở ktx pháp vân - tứ hiệp',
                 key: 'THUE_KTX',
             },
             8: {
@@ -342,41 +348,48 @@
         };
 
         var dataList = [];
+        var isUpdateStatusMulti = false;
         var selectedIndex = [];
         var fillData = function(dichVuID) {
+            isUpdateStatusMulti = false;
+            $('#divConfirm').html('');
+            showThongBaoOnStatusForm('');
             if (Array.isArray(dataList)) {
                 dataList.forEach(item => {
                     if (item.DichVu.id === `${dichVuID}`) {
                         selectedYeuCau = {...item};
 
-                        let options = `<option value="3">Đã tiếp nhận và đang xử lý</option>
-                                <option value="4">Đã xử lý và có lịch hẹn</option>
-                                <option value="5">Từ chối dịch vụ</option>`;
-                        let status = item.DichVu.status * 1;
-                        switch(status) {
-                            case 3:
-                                options = `<option value="4">Đã xử lý và có lịch hẹn</option>
-                                        <option value="5">Từ chối dịch vụ</option>`;
-                                status =4;
-                                break;
-                            case 4:
-                                options = `<option value="5">Từ chối dịch vụ</option>`;
-                                status = 5;
-                                break;
-                            case 5:
-                                options = `<option value="4">Đã xử lý và có lịch hẹn</option>`;
-                                status = 4;
-                                break;
-                            default:
-                                break;
-                        };
-                        $(`#slUpdateStatus`).html(options);
-
+                        const status = generateStatusOptions(item.DichVu.status * 1);
                         onChangeStatus({value: status});
                     }
                 });
             }
         };
+
+        var generateStatusOptions = function(status = 1) {
+            let options = `<option value="3">Đã tiếp nhận và đang xử lý</option>
+                    <option value="4">Đã xử lý và có lịch hẹn</option>
+                    <option value="5">Từ chối dịch vụ</option>`;
+            switch(status) {
+                case 3:
+                    options = `<option value="4">Đã xử lý và có lịch hẹn</option>
+                            <option value="5">Từ chối dịch vụ</option>`;
+                    status = 4;
+                    break;
+                case 4:
+                    options = `<option value="5">Từ chối dịch vụ</option>`;
+                    status = 5;
+                    break;
+                case 5:
+                    options = `<option value="4">Đã xử lý và có lịch hẹn</option>`;
+                    status = 4;
+                    break;
+                default:
+                    break;
+            };
+            $(`#slUpdateStatus`).html(options);
+            return status;
+        }
 
         var updateselectedDataIndex = function(clickIndex = 0, field = '') {
             const isChecked = $(`#${clickIndex}-${field}`).is(':checked');
@@ -446,9 +459,6 @@
             switch (Number(serviceType)) {
                 case dichVuEnum.XAC_NHAN:
                     mainContentSection = `<div class="mb-3">${dichVu.lyDo}</div>`;
-                    break;
-                case dichVuEnum.UU_DAI:
-                    mainContentSection = `<div class="mb-3"><b>Kỷ luật: </b>${dichVu.kyLuat}</div>`;
                     break;
                 case dichVuEnum.VAY_VON:
                     var ThuocDien = {
@@ -634,14 +644,18 @@
             ]
         });
 
-        var showConfirm = function() {
+        var onClickChangeMultiStatus = function() {
             if (selectedDataIsValid()) {
-                $('#h-confirm-content').html('Bạn có muốn chuyển tất cả các yêu cầu được chọn sang trạng thái ĐÃ XỬ LÝ VÀ CÓ LỊCH HẸN không?');
-                $('#myModalConfirm').modal('show');
+                isUpdateStatusMulti = true;
+                $('#divConfirm').html('Bạn có muốn chuyển tất cả các yêu cầu được chọn sang trạng thái ĐÃ XỬ LÝ VÀ CÓ LỊCH HẸN không?');
+                const status = generateStatusOptions(5);
+                onChangeStatus({ value: status });
+                $('#update-status-modal').modal();
             }
         }
 
         var onChangeStatus = function(event) {
+            showThongBaoOnStatusForm('');
             const selectedStatus = Number(event.value);
             if (!selectedStatus) return;
             switch (selectedStatus) {
@@ -656,6 +670,7 @@
                     break;
                 case 5:
                     $('#divPhanHoi').show();
+                    $('#PhanHoi').val('');
                     $('#blockNgayHen').hide();
                     break;
                 default:
@@ -749,6 +764,10 @@
             return true;
         }
 
+        var showThongBaoOnStatusForm = function(msg) {
+            $('#divWarning').html(msg || '');
+        }
+
         var getNgayHen = function(status = 0, auto = true) {
             var result = {
                 ok: true,
@@ -757,16 +776,13 @@
             }
             if (status === 4 && !auto) {
                 if (($("#txtNgayBatDau").val() == "" || $("#txtNgayKetThuc").val() == "")) {
-                    $("#edit_header_ThongBao").show();
-                    $("#edit_header_ThongBao").html("Bạn hãy chọn thời gian hẹn");
+                    showThongBaoOnStatusForm("Bạn hãy chọn thời gian hẹn");
                     result.ok = false;
                     return result;
                 }
                 else {
                     if (convertNumberFromText($("#txtNgayBatDau").val()) >= convertNumberFromText($("#txtNgayKetThuc").val())) {
-                        //$("#txtNgayKetThuc").focus();
-                        $("#edit_header_ThongBao").show();
-                        $("#edit_header_ThongBao").html("Bạn hãy chọn ngày hẹn KẾT THÚC lớn hơn ngày hẹn BẮT ĐẦU");
+                        showThongBaoOnStatusForm('Bạn hãy chọn ngày hẹn KẾT THÚC lớn hơn ngày hẹn BẮT ĐẦU');
                         result.ok = false;
                         return result;
                     }
@@ -834,6 +850,40 @@
         };
 
         var onUpdateStatus = function(event) {
+            if (isUpdateStatusMulti) {
+                onUpdateMultiStatus(event);
+                return;
+            }
+            onUpdateSingleStatus(event);
+        }
+
+        var onUpdateMultiStatus = function(event) {
+            const data = getDataToExportMultiYeuCau();
+            if (data.length < 1) {
+                return;
+            }
+
+            var body = {
+                Type: serviceType,
+                RequestId: 0,
+                PhanHoi: '',
+                NgayHenBatDau: '',
+                NgayHenKetThuc: '',
+                AutoUpdateNgayHen: true,
+                DichVuList: data,
+                Status: $('#slUpdateStatus').val(),
+            };
+
+            try {
+                handleUpdateStatusData(body);
+                callApiUpdateMultiStatus(body);
+                $('#update-status-modal').modal('hide');   
+            } catch (error) {
+                
+            }
+        };
+
+        var onUpdateSingleStatus = function(event) {
             if (!selectedYeuCau || !selectedYeuCau.DichVu.id) return;
 
             var data = {
@@ -846,12 +896,22 @@
                 Status: $('#slUpdateStatus').val(),
             };
 
+            try {
+                handleUpdateStatusData(data);
+                callApiUpdateStatus(data);
+                $('#update-status-modal').modal('hide');   
+            } catch (error) {
+                
+            }            
+        };
+
+        var handleUpdateStatusData = function(data) {
             if (data.Status * 1 === 4) {
                 var autoNgayHen = !$('#cbNgayHen').is(':checked');
                 var rsNgayHen = getNgayHen(data.Status * 1, autoNgayHen);
 
                 if (!rsNgayHen.ok) {
-                    return;
+                    throw 'ngày hẹn không hợp lệ';
                 }
                 data.AutoUpdateNgayHen = autoNgayHen;
                 data.NgayHenBatDau = rsNgayHen.strNgayBatDau;
@@ -859,23 +919,7 @@
             } else if (data.Status * 1 === 5) {
                 data.PhanHoi = $('#PhanHoi').val();
             }
-            callApiUpdateStatus(data);
-            // hide modal change status
-            $('#update-status-modal').modal('hide');
-        };
-
-        var onUpdateMultiStatus = function() {
-            const data = getDataToExportMultiYeuCau();
-            if (data.length < 1) {
-                return;
-            }
-            $('#myModalConfirm').modal('hide');
-            const body = {
-                LoaiDichVu: serviceType,
-                YeuCauList: data,
-            };
-            callApiUpdateMultiStatus(body);
-        };
+        }
 
         var callApiUpdateStatus = function(data) {
             $('#loading-screen').show();
@@ -892,7 +936,7 @@
                     $('#myModalThongBao').modal();
                     searchData();
                 } else {
-                    $("#h_noidung_thongbao").html("Lỗi hệ thống");
+                    $("#h_noidung_thongbao").html(res.Message);
                     $('#myModalThongBao').modal();
                 }
             }).fail(err => {
@@ -917,7 +961,7 @@
                     $('#myModalThongBao').modal();
                     searchData();
                 } else {
-                    $("#h_noidung_thongbao").html("Lỗi hệ thống");
+                    $("#h_noidung_thongbao").html(res.Message);
                     $('#myModalThongBao').modal();
                 }
             }).fail(err => {
@@ -943,6 +987,7 @@
         }
 
         var init = function() {
+            isUpdateStatusMulti = false;
             $('#divTitle').html(serviceDictionary[serviceType].name);
             $('#qldv-detail-datatable_filter').hide();
             $("#txt-srvc-search").keyup((event) => {

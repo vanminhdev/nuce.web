@@ -9,7 +9,7 @@
         <a href="/dichvusinhvien.aspx">dịch vụ</a>
         <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
     </div>
-    <div class="main-color text-decoration-none">thuê ktx pháp vân - tứ hiệp</div>
+    <div class="main-color text-decoration-none">đăng ký nhà ở ktx pháp vân - tứ hiệp</div>
 </asp:Content>
 
 <asp:Content ID="BreadCrumContentMobile" ContentPlaceHolderID="BreadCrumMobile" runat="server">

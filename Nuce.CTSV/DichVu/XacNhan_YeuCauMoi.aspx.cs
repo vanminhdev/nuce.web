@@ -40,11 +40,6 @@ namespace Nuce.CTSV
                         thongBao += $"{(thongBao != "" ? "," : "")} phường/xã";
                     }
 
-                    if (string.IsNullOrEmpty(student.DiaChiCuThe?.Trim()))
-                    {
-                        thongBao += $"{(thongBao != "" ? "," : "")} địa chỉ tạm trú";
-                    }
-
                     if (!string.IsNullOrEmpty(thongBao))
                     {
                         divBtnContainer.Visible = false;

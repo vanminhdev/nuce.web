@@ -528,7 +528,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
         }
         #endregion
         #region Update Status
-        public async Task<ResponseBody> UpdateRequestStatus(UpdateRequestStatusModel model)
+        public async Task UpdateRequestStatus(UpdateRequestStatusModel model)
         {
             var ngayHen = getUpdateStatusNgayHen(model);
             var fromDate = ngayHen.NgayHenBatDau;
@@ -557,20 +557,26 @@ namespace nuce.web.api.Services.Ctsv.Implements
             catch (Exception ex)
             {
                 _logger.LogError($"Cập nhật trạng thái yêu cầu dịch vụ \n {ex.Message}");
-                return new ResponseBody { Data = ex, Message = "Lỗi hệ thống" };
+                throw ex;
             }
-            return null;
         }
 
-        public async Task UpdateMultiRequestToFourStatus(DichVu loaiDichVu, List<DichVuExport> dichVuList)
+        public async Task UpdateMultiRequestToFourStatus(UpdateRequestStatusModel model)
         {
-            int status = (int)TrangThaiYeuCau.DaXuLyVaCoLichHen;
-
-            var ngayHen = getUpdateStatusNgayHen(new UpdateRequestStatusModel
+            DichVu loaiDichVu;
+            try
             {
-                AutoUpdateNgayHen = true,
-                Status = status,
-            });
+                loaiDichVu = (DichVu)model.Type;
+            }
+            catch (Exception)
+            {
+                throw new Exception("Mã loại dịch vụ không đúng");
+            }
+
+            int status = (int)TrangThaiYeuCau.DaXuLyVaCoLichHen;
+            model.Status = status;
+
+            var ngayHen = getUpdateStatusNgayHen(model);
             var fromDate = ngayHen.NgayHenBatDau;
             var toDate = ngayHen.NgayHenKetThuc;
 
@@ -579,7 +585,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             {
                 using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                 {
-                    foreach (var item in dichVuList)
+                    foreach (var item in model.DichVuList)
                     {
                         bool run = await updateStatusAsync(loaiDichVu, new UpdateRequestStatusModel
                         {
@@ -3181,7 +3187,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     var textList = mainPart.Document.Descendants<Text>().ToList();
                     foreach (var text in textList)
                     {
-                        replaceTextTemplate(text, "<ho_ten>", studentInfo.Student.FulName);
+                        replaceTextTemplate(text, "<ho_ten>", studentInfo.Student.FulName.ToUpper());
                         replaceTextTemplate(text, "<sdt>", studentInfo.Student.Mobile);
                         replaceTextTemplate(text, "<nam_sinh>", ngaySinh.ToString("dd/MM/yyyy"));
                         replaceTextTemplate(text, "<ma_lop>", studentInfo.Student.ClassCode);
@@ -3194,16 +3200,16 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     }
                     #endregion
                     #region handle filled image in shape
-                    if (!string.IsNullOrEmpty(newImgPath))
-                    {
-                        var docList = mainPart.Document.Descendants<DocumentFormat.OpenXml.Drawing.Wordprocessing.DocProperties>().ToList();
-                        var tmp = docList.Where(p => p.Name.Value.Contains("SHAPE_FILL") && p.Parent is DocumentFormat.OpenXml.Drawing.Wordprocessing.Anchor);
+                    //if (!string.IsNullOrEmpty(newImgPath))
+                    //{
+                    //    var docList = mainPart.Document.Descendants<DocumentFormat.OpenXml.Drawing.Wordprocessing.DocProperties>().ToList();
+                    //    var tmp = docList.Where(p => p.Name.Value.Contains("SHAPE_FILL") && p.Parent is DocumentFormat.OpenXml.Drawing.Wordprocessing.Anchor);
 
-                        foreach (var el in tmp)
-                        {
-                            replaceShapeFilledImageTemplate(el, mainPart, newImgPath);
-                        }
-                    }
+                    //    foreach (var el in tmp)
+                    //    {
+                    //        replaceShapeFilledImageTemplate(el, mainPart, newImgPath);
+                    //    }
+                    //}
                     #endregion
 
                     mainPart.Document.Save();

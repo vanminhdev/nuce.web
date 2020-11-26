@@ -99,32 +99,28 @@ namespace nuce.web.api.Controllers.Ctsv
         {
             try
             {
-                var rs = await _dichVuService.UpdateRequestStatus(model);
-                if (rs != null)
-                {
-                    return BadRequest(rs);
-                }
+                await _dichVuService.UpdateRequestStatus(model);
                 return Ok();
             }
             catch (Exception ex)
             {
-                return BadRequest(new ResponseBody { Message = "Lỗi hệ thống", Data = ex });
+                return BadRequest(new ResponseBody { StatusCode = HttpStatusCode.BadRequest, Message = ex.Message, Data = ex });
             }
         }
 
         [Authorize(Roles = "P_CTSV")]
         [Route("admin/update-status/multi/four")]
         [HttpPut]
-        public async Task<IActionResult> UpdateStatusMultiFour([FromBody] UpdateStatusMultiFourModel model)
+        public async Task<IActionResult> UpdateStatusMultiFour([FromBody] UpdateRequestStatusModel model)
         {
             try
             {
-                await _dichVuService.UpdateMultiRequestToFourStatus(model.LoaiDichVu, model.YeuCauList);
+                await _dichVuService.UpdateMultiRequestToFourStatus(model);
                 return Ok();
             }
             catch (Exception ex)
             {
-                return BadRequest(new ResponseBody { Message = ex.Message, Data = ex });
+                return BadRequest(new ResponseBody { StatusCode = HttpStatusCode.BadRequest, Message = ex.Message, Data = ex });
             }
         }
 

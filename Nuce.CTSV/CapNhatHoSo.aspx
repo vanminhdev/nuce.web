@@ -151,6 +151,15 @@
             <div class="col-12 col-md-12">
                 <div class="form-group">
                     <div class="fw-700 font-14-sm">
+                        <span class="sub-color">Hộ khẩu thường trú:</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12 col-md-12">
+                <div class="form-group">
+                    <div class="fw-700 font-14-sm">
                         Tỉnh/thành phố <span class="sub-color">*</span>
                     </div>
                     <select class="form-control" onchange="CapNhatHoSo.changeTinh(this)" runat="server" id="slThanhPho">

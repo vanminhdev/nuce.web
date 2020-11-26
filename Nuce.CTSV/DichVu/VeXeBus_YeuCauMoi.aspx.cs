@@ -11,26 +11,7 @@ namespace Nuce.CTSV
         {
             if (!IsPostBack)
             {
-                var studentResponse = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, $"{ApiModels.ApiEndPoint.GetStudentInfo}/{m_SinhVien.MaSV}", "");
-                if (studentResponse.IsSuccessStatusCode)
-                {
-                    var strResponse = await studentResponse.Content.ReadAsStringAsync();
-                    var student = JsonConvert.DeserializeObject<StudentModel>(strResponse);
 
-                    string thongBao = "";
-
-                    if (string.IsNullOrEmpty(student.File1?.Trim()))
-                    {
-                        thongBao += " ảnh đại diện";
-                    }
-
-                    if (!string.IsNullOrEmpty(thongBao))
-                    {
-                        divBtnContainer.Visible = false;
-                        divThongBao.InnerHtml = $"Yêu cầu cập nhật<a href=\"/capnhathoso.aspx\">{thongBao}</a>";
-                        return;
-                    }
-                }
             }
         }
         protected async void btnCapNhat_Click(object sender, EventArgs e)

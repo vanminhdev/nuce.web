@@ -66,10 +66,8 @@
         .rounded {
             border-radius: 0.35rem !important;
         }
-        @media only screen and (min-width: 1025px) {
-            .service-categories-wrp {
-                margin-top: 5px;
-            }
+        .service-categories-wrp {
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -140,12 +138,12 @@
                         class="email-icon"
                       />
                     </div>
-                    <div class="col-9">
+                    <div class="col-9 pr-0">
                       <div class="row">
                         <div class="col-12 main-color icon-title font-14-sm">
                           Email
                         </div>
-                        <div class="col-10 icon-sub-title">
+                        <div class="col-10 icon-sub-title pr-0">
                           ctsv@nuce.edu.vn
                         </div>
                       </div>

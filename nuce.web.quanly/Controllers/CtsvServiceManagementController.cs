@@ -51,32 +51,48 @@ namespace nuce.web.quanly.Controllers
             var stringContent = base.MakeContent(model);
             var response = await base.MakeRequestAuthorizedAsync("put", api, stringContent);
 
-            if (response.StatusCode == HttpStatusCode.Unauthorized || response.StatusCode == HttpStatusCode.Forbidden)
-            {
-                return Redirect($"/notfound?message={HttpUtility.UrlEncode("Không có quyền truy cập")}");
-            } else if (response.IsSuccessStatusCode)
-            {
-                return Json(response);
-            }
-            return Json(response);
+            return await HandleApiResponseUpdate(response);
         }
 
         [HttpPost]
-        public async Task<ActionResult> UpdateMultiStatus(UpdateMultiStatusModel model)
+        public async Task<ActionResult> UpdateMultiStatus(UpdateStatusModel model)
         {
             string api = "api/dichVu/admin/update-status/multi/four";
             var stringContent = base.MakeContent(model);
             var response = await base.MakeRequestAuthorizedAsync("put", api, stringContent);
 
-            if (response.StatusCode == HttpStatusCode.Unauthorized || response.StatusCode == HttpStatusCode.Forbidden)
+            return await HandleApiResponseUpdate(response);
+        }
+
+        private async Task<ActionResult> HandleApiResponseUpdate(HttpResponseMessage response)
+        {
+            if (response.IsSuccessStatusCode)
             {
-                return Redirect($"/notfound?message={HttpUtility.UrlEncode("Không có quyền truy cập")}");
+                return Json(new ResponseBody
+                {
+                    StatusCode = HttpStatusCode.OK,
+                });
             }
-            else if (response.IsSuccessStatusCode)
+            else if (response.StatusCode == HttpStatusCode.BadRequest)
             {
-                return Json(response);
+                try
+                {
+                    var apiContent = await base.DeserializeResponseAsync<ResponseBody>(response.Content);
+                    return Json(apiContent);
+                }
+                catch (Exception)
+                {
+                    return Json(new ResponseBody
+                    {
+                        StatusCode = HttpStatusCode.BadRequest,
+                        Message = "Lỗi hệ thống"
+                    });
+                }
             }
-            return Json(response);
+            else
+            {
+                return View(await base.HandleResponseAsync(response));
+            }
         }
 
         private static Dictionary<string, string> ExportApiSet = new Dictionary<string, string>

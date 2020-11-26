@@ -10,7 +10,7 @@
         <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
     </div>
     <div class="d-flex align-items-center">
-        <a href="/dichvu/thuenhasinhvien.aspx">thuê ktx pháp vân - tứ hiệp</a>
+        <a href="/dichvu/thuenhasinhvien.aspx">đăng ký nhà ở ktx pháp vân - tứ hiệp</a>
         <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
     </div>
     <div class="main-color text-decoration-none">yêu cầu mới</div>

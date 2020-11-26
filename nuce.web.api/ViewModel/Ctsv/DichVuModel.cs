@@ -61,6 +61,7 @@ namespace nuce.web.api.ViewModel.Ctsv
         public DateTime? NgayHenKetThuc { get; set; }
         public bool AutoUpdateNgayHen { get; set; }
         public int Status { get; set; }
+        public List<DichVuExport> DichVuList { get; set; }
     }
 
     public class GetAllForAdminResponseRepo<T>
