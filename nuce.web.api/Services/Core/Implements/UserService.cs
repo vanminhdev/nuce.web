@@ -108,11 +108,16 @@ namespace nuce.web.api.Services.Core.Implements
                     var isvalid = await srvc.authenAsync(model.Username, model.Password);
 
                     result = isvalid == 1;
+                    if (!result)
+                    {
+                        message = "Tài khoản hoặc mật khẩu không đúng";
+                    }
                 }
                 catch (Exception ex)
                 {
                     result = false;
-                    message = "Lỗi khi gọi service đào tạo";
+                    message = @"Chức năng đăng nhập qua mã số sinh viên tạm thời đang nâng cấp. 
+                                Vui lòng đăng nhập qua email bằng cách nhấp chuột vào nút 'Đăng nhập qua email @nuce.edu.vn'";
                 }
             }
             else

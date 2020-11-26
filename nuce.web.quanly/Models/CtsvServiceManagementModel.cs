@@ -104,4 +104,16 @@ namespace nuce.web.quanly.Models
         public int ID { get; set; }
     }
 
+    public class ThamSoModel
+    {
+        public int id { get; set; }
+        public int dichVuId { get; set; }
+        public string name { get; set; }
+        public string value { get; set; }
+    }
+
+    public class DictionaryModel
+    {
+        public Dictionary<string, string> dict { get; set; }
+    }
 }

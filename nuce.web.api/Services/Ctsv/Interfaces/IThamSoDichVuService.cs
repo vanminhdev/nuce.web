@@ -10,5 +10,7 @@ namespace nuce.web.api.Services.Ctsv.Interfaces
     public interface IThamSoDichVuService
     {
         public IQueryable<AsAcademyStudentSvThietLapThamSoDichVu> GetParameters(DichVu dichu);
+        public IQueryable<AsAcademyStudentSvThietLapThamSoDichVu> GetParameters(IEnumerable<long> idList);
+        public IQueryable<AsAcademyStudentSvLoaiDichVu> GetLoaiDichVu();
     }
 }

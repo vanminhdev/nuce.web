@@ -1,4 +1,5 @@
 ﻿using GemBox.Document;
+using nuce.web.api.Models.Ctsv;
 using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Ctsv;
@@ -23,5 +24,7 @@ namespace nuce.web.api.Services.Ctsv.Interfaces
         public Task<byte[]> ExportWordListAsync(DichVu dichVu, List<DichVuExport> dichVuList);
         public Task<byte[]> ExportExcelAsync(DichVu loaiDichVu, List<DichVuExport> dichVuList);
         public Task<byte[]> ExportExcelOverviewAsync();
+        public Task UpdateThamSoDichVu(Dictionary<long, string> thamSoDictionary);
+        public Task<DataTableResponse<AsAcademyStudentSvThietLapThamSoDichVu>> GetThamSoByDichVu(int loaiDichVu);
     }
 }

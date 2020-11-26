@@ -38,6 +38,12 @@ namespace nuce.web.quanly.Controllers
             return View("Detail");
         }
 
+        [HttpGet]
+        public ActionResult Parameters()
+        {
+            return View("Parameters");
+        }
+
         [HttpPost]
         public async Task<ActionResult> UpdateStatus(UpdateStatusModel model)
         {
@@ -138,6 +144,35 @@ namespace nuce.web.quanly.Controllers
             var stringContent = base.MakeContent(request);
             var response = await base.MakeRequestAuthorizedAsync("post", api, stringContent);
 
+            return await HandleResponseAsync(response, action200Async: async raw =>
+            {
+                var res = await base.DeserializeResponseAsync<DataTableResponse<QuanLyDichVuDetailModel>>(raw.Content);
+                return Json(new
+                {
+                    draw = res.Draw,
+                    recordsTotal = res.RecordsTotal,
+                    recordsFiltered = res.RecordsFiltered,
+                    data = res.Data
+                });
+            },
+            actionDefault: raw => {
+                return Json(new
+                {
+                    draw = ++request.Draw,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = new List<object>()
+                });
+            });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> SearchThamSoDichVu(DataTableRequest request)
+        {
+            string api = "api/dichVu/admin/search-parameters";
+            var stringContent = base.MakeContent(request);
+            var response = await base.MakeRequestAuthorizedAsync("post", api, stringContent);
+
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
                 return Redirect("");
@@ -148,14 +183,14 @@ namespace nuce.web.quanly.Controllers
             }
             else if (response.IsSuccessStatusCode)
             {
-                var res = await base.DeserializeResponseAsync<DataTableResponse<QuanLyDichVuDetailModel>>(response.Content);
+                var res = await base.DeserializeResponseAsync<DataTableResponse<ThamSoModel>>(response.Content);
                 return Json(new
                 {
                     draw = res.Draw,
                     recordsTotal = res.RecordsTotal,
                     recordsFiltered = res.RecordsFiltered,
                     data = res.Data
-                });                
+                });
             }
             return Json(new
             {
@@ -163,6 +198,34 @@ namespace nuce.web.quanly.Controllers
                 recordsTotal = 0,
                 recordsFiltered = 0,
                 data = new List<object>()
+            });
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetTypeDichVu()
+        {
+            string api = "api/dichVu/admin/get-types";
+            var response = await base.MakeRequestAuthorizedAsync("get", api);
+
+            return await base.HandleResponseAsync(response, action200Async: async raw =>
+            {
+                var res = await base.DeserializeResponseAsync<List<Dictionary<string, string>>>(raw.Content);
+                return Json(res, JsonRequestBehavior.AllowGet);
+            }, actionDefault: raw => {
+                return Json("", JsonRequestBehavior.AllowGet);
+            });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UpdateParameters(DictionaryModel data)
+        {
+            string api = "api/dichVu/admin/update-parameters";
+
+            var stringContent = base.MakeContent(data.dict);
+            var response = await base.MakeRequestAuthorizedAsync("put", api, stringContent);
+
+            return await base.HandleResponseAsync(response, actionDefault: raw => {
+                return Json(raw);
             });
         }
     }

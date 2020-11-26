@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -23,10 +24,12 @@ namespace nuce.web.api.Controllers.Ctsv
     public class DichVuController : ControllerBase
     {
         private readonly IDichVuService _dichVuService;
+        private readonly IThamSoDichVuService _thamSoDichVuService;
         
-        public DichVuController(IDichVuService _dichVuService)
+        public DichVuController(IDichVuService _dichVuService, IThamSoDichVuService _thamSoDichVuService)
         {
             this._dichVuService = _dichVuService;
+            this._thamSoDichVuService = _thamSoDichVuService;
         }
 
         [Route("type/{type}")]
@@ -123,6 +126,55 @@ namespace nuce.web.api.Controllers.Ctsv
             {
                 return BadRequest(new ResponseBody { Message = ex.Message, Data = ex });
             }
+        }
+
+        [Authorize(Roles = "P_CTSV")]
+        [HttpPost]
+        [Route("admin/search-parameters")]
+        public async Task<IActionResult> SearchParams([FromBody] DataTableRequest request)
+        {
+            string id = request.Search.Value;
+            try
+            {
+                int iId = Convert.ToInt32(id);
+
+                var rs = await _dichVuService.GetThamSoByDichVu(iId);
+                rs.Draw = ++request.Draw;
+
+                return Ok(rs);
+            }
+            catch (FormatException ex)
+            {
+                return BadRequest(new ResponseBody { Data = ex, Message = "Mã dịch vụ phải là một số" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { Data = ex, Message = "Lỗi hệ thống khi tìm kiếm" });
+            }
+        }
+
+        [Authorize(Roles = "P_CTSV")]
+        [HttpPut]
+        [Route("admin/update-parameters")]
+        public async Task<IActionResult> SearchParams(Dictionary<long, string> model)
+        {
+            try
+            {
+                await _dichVuService.UpdateThamSoDichVu(model);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { Data = ex, Message = "Lỗi hệ thống khi cập nhật tham số" });
+            }
+        }
+
+        [Authorize(Roles = "P_CTSV")]
+        [HttpGet]
+        [Route("admin/get-types")]
+        public IActionResult GetServiceTypes()
+        {
+            return Ok(_thamSoDichVuService.GetLoaiDichVu());
         }
 
         [Authorize(Roles = "P_CTSV")]

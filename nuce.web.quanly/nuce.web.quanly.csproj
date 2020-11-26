@@ -1218,6 +1218,7 @@
     <Content Include="Views\Survey\CreateExamQuestions.cshtml" />
     <Content Include="Views\SyncEduData\Index.cshtml" />
     <Content Include="Views\SyncEduData\SyncFromEduData.cshtml" />
+    <Content Include="Views\CtsvServiceManagement\Parameters.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

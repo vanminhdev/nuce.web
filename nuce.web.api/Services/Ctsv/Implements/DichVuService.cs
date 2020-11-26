@@ -505,6 +505,28 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
             return quantityDictionary;
         }
+        #region tham số dịch vụ
+        public async Task<DataTableResponse<AsAcademyStudentSvThietLapThamSoDichVu>> GetThamSoByDichVu(int loaiDichVu)
+        {
+            var result = await _thamSoDichVuService.GetParameters((DichVu)loaiDichVu).ToListAsync();
+            return new DataTableResponse<AsAcademyStudentSvThietLapThamSoDichVu>
+            {
+                Data = result,
+                RecordsTotal = result.Count,
+                RecordsFiltered = result.Count,
+            };
+        }
+        public async Task UpdateThamSoDichVu(Dictionary<long, string> thamSoDictionary)
+        {
+            var idList = thamSoDictionary.Keys.ToList();
+            var thamSos = _thamSoDichVuService.GetParameters(idList);
+            foreach (var thamSo in thamSos)
+            {
+                thamSo.Value = thamSoDictionary[thamSo.Id];
+            }
+            await _unitOfWork.SaveAsync();
+        }
+        #endregion
         #region Update Status
         public async Task<ResponseBody> UpdateRequestStatus(UpdateRequestStatusModel model)
         {
@@ -2638,11 +2660,11 @@ namespace nuce.web.api.Services.Ctsv.Implements
             #endregion
             #region NoiDung
             GemboxParagraph paragraphNoiDung = new GemboxParagraph(document,
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "    "),
                 new GemboxRun(document, "Họ và tên sinh viên: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
                 new GemboxRun(document, HoVaTen) { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "    "),
                 new GemboxRun(document, "Ngày sinh: ") { CharacterFormat = new CharacterFormat { Size = 13, } },
                 new GemboxRun(document, $"{NgaySinh.ToString("dd/MM/yyyy")}  ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new GemboxRun(document, "Giới tính:    ") { CharacterFormat = new CharacterFormat { Size = 13, } },
@@ -2654,7 +2676,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     new GemboxRun(document, GioiTinh["Nữ"]) { CharacterFormat = new CharacterFormat { Size = 13, FontName = document.DefaultCharacterFormat.FontName } }),
                 //new Field(document, FieldType.FormCheckBox) { FormData = { Name = "Nữ" } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "    "),
                 new GemboxRun(document, "CMND số: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
                 new GemboxRun(document, $"{cmt} ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new GemboxRun(document, "ngày cấp: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
@@ -2662,45 +2684,45 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 new GemboxRun(document, "Nơi cấp: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
                 new GemboxRun(document, $"{cmtNoiCap}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "    "),
                 new GemboxRun(document, "Mã trường theo học (mã quy ước trong  tuyển sinh ĐH): ") { CharacterFormat = new CharacterFormat { Size = 13 } },
                 new GemboxRun(document, matruong) { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "    "),
                 new GemboxRun(document, "Tên trường: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
                 new GemboxRun(document, tenTruong) { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "    "),
                 new GemboxRun(document, "Ngành học: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
                 new GemboxRun(document, nghanhHoc) { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "    "),
                 new GemboxRun(document, "Hệ đào tạo (Đại học, cao đẳng, dạy nghề): ") { CharacterFormat = new CharacterFormat { Size = 13 } },
                 new GemboxRun(document, heDaoTao) { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "    "),
                 new GemboxRun(document, "Khoá: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
                 new GemboxRun(document, $"{khoa}  ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new GemboxRun(document, "Loại hình đào tạo: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
                 new GemboxRun(document, $"{LoaiDaoTao}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "    "),
                 new GemboxRun(document, "Lớp: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
                 new GemboxRun(document, $"{Class}  ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new GemboxRun(document, "Mã số SV: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
                 new GemboxRun(document, $"{MaSV}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "    "),
                 new GemboxRun(document, "Khoa/Ban: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
                 new GemboxRun(document, $"{TenKhoa}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "    "),
                 new GemboxRun(document, "Ngày nhập học:...../...../") { CharacterFormat = new CharacterFormat { Size = 13 } },
                 new GemboxRun(document, $"{namNhapHoc} ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new GemboxRun(document, "Thời gian ra trường (tháng/năm):...../...../") { CharacterFormat = new CharacterFormat { Size = 13 } },
                 new GemboxRun(document, $"{namRaTruong}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "    "),
                 new GemboxRun(document, "- Số tiền học phí hàng tháng: ") { CharacterFormat = new CharacterFormat { Size = 13 } },
                 new GemboxRun(document, $"{hocPhi}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new GemboxRun(document, " đồng") { CharacterFormat = new CharacterFormat { Size = 13 } }
@@ -2724,14 +2746,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
             tableDienDoiTuong.Rows.Add(rowDoiTuong);
             rowDien.Cells.Add(
                 new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document,
-                    new SpecialCharacter(document, SpecialCharacterType.Tab),
+                    new GemboxRun(document, "    "),
                     new GemboxRun(document, "Thuộc diện:") { CharacterFormat = new CharacterFormat { Size = 13 } }
                 )
                 { ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Left, LineSpacing = 1.25 } })
             );
             rowDoiTuong.Cells.Add(
                 new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document,
-                    new SpecialCharacter(document, SpecialCharacterType.Tab),
+                    new GemboxRun(document, "    "),
                     new GemboxRun(document, "Thuộc đối tượng:") { CharacterFormat = new CharacterFormat { Size = 13 } }
                 )
                 { ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Left, LineSpacing = 1.25 } })
@@ -2791,12 +2813,12 @@ namespace nuce.web.api.Services.Ctsv.Implements
             #endregion
             #region Ket
             GemboxParagraph paragraphKet = new GemboxParagraph(document,
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "    "),
                 new GemboxRun(document, "- Trong thời gian theo học tại trường, anh (chị) ") { CharacterFormat = new CharacterFormat { Size = 13 } },
                 new GemboxRun(document, $"{HoVaTen} ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new GemboxRun(document, "không bị xử phạt hành chính trở lên về các hành vi: cờ bạc, nghiện hút, trộm cắp, buôn lậu.") { CharacterFormat = new CharacterFormat { Size = 13 } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new SpecialCharacter(document, SpecialCharacterType.Tab),
+                new GemboxRun(document, "    "),
                 new GemboxRun(document, $"- Số tài khoản của nhà trường: {stkNhaTruong}, tại ngân hàng{nganHangNhaTruong}") { CharacterFormat = new CharacterFormat { Size = 13 } }
             )
             { ParagraphFormat = new ParagraphFormat { Alignment = HorizontalAlignment.Left, LineSpacing = 1.25 } };

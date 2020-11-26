@@ -14,6 +14,7 @@ namespace Nuce.CTSV
 {
     public partial class Login : Page
     {
+        private bool IsPageRefresh = false;
         #region Google
         //your client id  
         string clientid = Utils.lwg_clientid;
@@ -210,113 +211,140 @@ namespace Nuce.CTSV
             //0TQze0o2lGXb4gUw77S2vw7l
             if (!IsPostBack)
             {
+                ViewState["postGuids"] = System.Guid.NewGuid().ToString();
+                Session["postGuid"] = ViewState["postGuids"].ToString();
                 if (Request.QueryString["code"] != null)
                 {
                     await GetToken(Request.QueryString["code"].ToString());
                 }
+            } else
+            {
+                if (ViewState["postGuids"].ToString() != Session["postGuid"].ToString())
+                {
+                    IsPageRefresh = true;
+                }
+                Session["postGuid"] = System.Guid.NewGuid().ToString();
+                ViewState["postGuids"] = Session["postGuid"].ToString();
             }
+        }
+
+        private void showThongBao(string msg)
+        {
+            divThongBaoCapNhat.InnerText = msg;
+            string script = $"<script>$('#myModalThongBao').modal()</script>";
+            spAlert.InnerHtml = script;
         }
 
         protected async void btnDangNhap_Click(object sender, EventArgs e)
         {
-            string strMaSV = txtMaDangNhap.Text.Trim();
-            string strMatKhau = txtMatKhau.Text.Trim();
-            if (strMaSV == "" || strMatKhau == "")
+            if (!IsPageRefresh)
             {
-                spAlert.InnerHtml = string.Format(@"<div class='alert alert-warning alert-dismissible' style='position: absolute; top: 0; right: 0;'>
-                                                <a href = '#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
-            {0}</div>", "Bạn không được để trắng tên đăng nhập hoặc mật khẩu");
-                return;
-            }
+                string strMaSV = txtMaDangNhap.Text.Trim();
+                string strMatKhau = txtMatKhau.Text.Trim();
 
-            //Kiểm tra đăng nhập
-
-            using (HttpClient httpClient = new HttpClient())
-            {
-                string body = JsonConvert.SerializeObject(new { username = strMaSV, password = strMatKhau, isStudent = true });
-                var content = new StringContent(body, Encoding.UTF8, "application/json");
-
-                var res = await httpClient.PostAsync($"{CustomizeHttp.API_URI}/api/User/login", content);
-                if (res.IsSuccessStatusCode)
+                bool maSvEmpty = string.IsNullOrEmpty(strMaSV);
+                bool matKhauEmpty = string.IsNullOrEmpty(strMatKhau);
+                if (maSvEmpty)
                 {
-                    var cookies = res.Headers.GetValues("Set-Cookie");
-                    foreach (var responseCookie in cookies)
-                    {
-                        var splited = responseCookie.Split(';');
-                        var value = splited[0].Split('=');
-                        var expires = splited[1].Split('=');
-                        var tmpCookie = new HttpCookie(value[0], value[1]);
-
-                        if (splited.Length > 1)
-                        {
-                            DateTime expireDate;
-                            bool parsed = DateTime.TryParse(expires[1], out expireDate);
-                            if (parsed)
-                            {
-                                tmpCookie.Expires = expireDate;
-                            }
-                        }
-
-                        Request.Cookies.Set(tmpCookie);
-                        Response.Cookies.Set(tmpCookie);
-                    }
+                    txtMaDangNhap.Focus();
                 }
-                else
+                else if (matKhauEmpty)
                 {
-                    string errorTemplate = @"<div class='alert alert-warning alert-dismissible' style='position: absolute; top: 0; right: 0;'>
-                                            <a href = '#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
-                                    {0}</div>";
-                    try
-                    {
-                        var error = await CustomizeHttp.DeserializeAsync<ResponseBody>(res.Content);
-                        spAlert.InnerHtml = errorTemplate.Replace("{0}", error.Message);
-                    }
-                    catch (Exception ex)
-                    {
-                        spAlert.InnerHtml = errorTemplate.Replace("{0}", "Thông tin đăng nhập sai");
-                    }
+                    txtMatKhau.Focus();
+                }
+                if (maSvEmpty || matKhauEmpty)
+                {
+                    showThongBao("Bạn không được để trắng tên đăng nhập hoặc mật khẩu");
                     return;
                 }
-            }
-            
-            StudentModel student = null;
 
-            var studentResponse = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, $"{ApiEndPoint.GetStudentInfo}/{strMaSV}", "");
-            if (studentResponse.IsSuccessStatusCode)
-            {
-                student = await CustomizeHttp.DeserializeAsync<StudentModel>(studentResponse.Content);
-            }
-            if (student != null)
-            {
-                nuce.web.model.SinhVien SinhVien = new nuce.web.model.SinhVien();
-                string strFullName = student.FulName;
-                string[] strFullNames = strFullName.Split(new char[] { ' ' });
+                //Kiểm tra đăng nhập
 
-                SinhVien.Ho = strFullName;
-                SinhVien.Ten = strFullNames[strFullNames.Length - 1];
-                SinhVien.MaSV = student.Code;
-                SinhVien.SinhVienID = Convert.ToInt32(student.Id);
-                SinhVien.Email = student.EmailNhaTruong ?? "";
-                SinhVien.Mobile = student.Mobile ?? "";
-                string File1 = student.File1 ?? "";
-
-                if (!File1.Trim().Equals(""))
+                using (HttpClient httpClient = new HttpClient())
                 {
-                    SinhVien.IMG = $"{CustomizeHttp.API_URI}/{File1}";
+                    string body = JsonConvert.SerializeObject(new { username = strMaSV, password = strMatKhau, isStudent = true });
+                    var content = new StringContent(body, Encoding.UTF8, "application/json");
+
+                    var res = await httpClient.PostAsync($"{CustomizeHttp.API_URI}/api/User/login", content);
+                    if (res.IsSuccessStatusCode)
+                    {
+                        var cookies = res.Headers.GetValues("Set-Cookie");
+                        foreach (var responseCookie in cookies)
+                        {
+                            var splited = responseCookie.Split(';');
+                            var value = splited[0].Split('=');
+                            var expires = splited[1].Split('=');
+                            var tmpCookie = new HttpCookie(value[0], value[1]);
+
+                            if (splited.Length > 1)
+                            {
+                                DateTime expireDate;
+                                bool parsed = DateTime.TryParse(expires[1], out expireDate);
+                                if (parsed)
+                                {
+                                    tmpCookie.Expires = expireDate;
+                                }
+                            }
+
+                            Request.Cookies.Set(tmpCookie);
+                            Response.Cookies.Set(tmpCookie);
+                        }
+                    }
+                    else
+                    {
+                        //string errorTemplate = @"<div class='alert alert-warning alert-dismissible' style='position: absolute; top: 0; right: 0;'>
+                        //                        <a href = '#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+                        //                {0}</div>";
+                        try
+                        {
+                            var error = await CustomizeHttp.DeserializeAsync<ResponseBody>(res.Content);
+                            showThongBao(error.Message);
+                        }
+                        catch (Exception ex)
+                        {
+                            showThongBao("Thông tin đăng nhập sai");
+                        }
+                        return;
+                    }
+                }
+
+                StudentModel student = null;
+
+                var studentResponse = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, $"{ApiEndPoint.GetStudentInfo}/{strMaSV}", "");
+                if (studentResponse.IsSuccessStatusCode)
+                {
+                    student = await CustomizeHttp.DeserializeAsync<StudentModel>(studentResponse.Content);
+                }
+                if (student != null)
+                {
+                    nuce.web.model.SinhVien SinhVien = new nuce.web.model.SinhVien();
+                    string strFullName = student.FulName;
+                    string[] strFullNames = strFullName.Split(new char[] { ' ' });
+
+                    SinhVien.Ho = strFullName;
+                    SinhVien.Ten = strFullNames[strFullNames.Length - 1];
+                    SinhVien.MaSV = student.Code;
+                    SinhVien.SinhVienID = Convert.ToInt32(student.Id);
+                    SinhVien.Email = student.EmailNhaTruong ?? "";
+                    SinhVien.Mobile = student.Mobile ?? "";
+                    string File1 = student.File1 ?? "";
+
+                    if (!File1.Trim().Equals(""))
+                    {
+                        SinhVien.IMG = $"{CustomizeHttp.API_URI}/{File1}";
+                    }
+                    else
+                    {
+                        SinhVien.IMG = "/Data/images/noimage_human.png";
+                    }
+
+                    Session[Utils.session_sinhvien] = SinhVien;
+                    Response.Redirect("/DichVuSinhVien.aspx", false);
                 }
                 else
                 {
-                    SinhVien.IMG = "/Data/images/noimage_human.png";
+                    showThongBao("Không tồn tại dữ liệu sinh viên");
                 }
-
-                Session[Utils.session_sinhvien] = SinhVien;
-                Response.Redirect("/DichVuSinhVien.aspx", false);
-            }
-            else
-            {
-                spAlert.InnerHtml = string.Format(@"<div class='alert alert-warning alert-dismissible' style='position: absolute; top: 0; right: 0;'>
-                                                <a href = '#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
-                {0}</div>", "Không tồn tại dữ liệu sinh viên");
             }
         }
         

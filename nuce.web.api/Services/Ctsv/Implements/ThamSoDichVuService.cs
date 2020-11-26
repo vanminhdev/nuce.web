@@ -24,5 +24,16 @@ namespace nuce.web.api.Services.Ctsv.Implements
                             .Where(p => p.DichVuId == DichVu);
             return result;
         }
+        public IQueryable<AsAcademyStudentSvThietLapThamSoDichVu> GetParameters(IEnumerable<long> idList)
+        {
+            var result = _context.AsAcademyStudentSvThietLapThamSoDichVu
+                            .Where(p => idList.Contains(p.Id));
+            return result;
+        }
+        public IQueryable<AsAcademyStudentSvLoaiDichVu> GetLoaiDichVu()
+        {
+            var result = _context.AsAcademyStudentSvLoaiDichVu.AsNoTracking();
+            return result;
+        }
     }
 }
