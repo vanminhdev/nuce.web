@@ -7,15 +7,6 @@
             font-size: 1rem;
             color: #fff;
         }
-        /*.custom-toast {
-            height: 200px; 
-            position: absolute; 
-            top: 30px; 
-            left:0; 
-            right:0; 
-            margin-left:auto; 
-            margin-right:auto;
-        }*/
     </style>
     <div class="row justify-content-center" style="position: relative">
         <div id="overlay"></div>

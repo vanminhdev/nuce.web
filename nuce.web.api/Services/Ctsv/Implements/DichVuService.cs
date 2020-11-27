@@ -3188,6 +3188,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     foreach (var text in textList)
                     {
                         replaceTextTemplate(text, "<ho_ten>", studentInfo.Student.FulName.ToUpper());
+                        replaceTextTemplate(text, "<ho_ten_ky>", studentInfo.Student.FulName);
                         replaceTextTemplate(text, "<sdt>", studentInfo.Student.Mobile);
                         replaceTextTemplate(text, "<nam_sinh>", ngaySinh.ToString("dd/MM/yyyy"));
                         replaceTextTemplate(text, "<ma_lop>", studentInfo.Student.ClassCode);
