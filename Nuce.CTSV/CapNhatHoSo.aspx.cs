@@ -98,45 +98,45 @@ namespace Nuce.CTSV
             if (response.IsSuccessStatusCode)
             {
                 string uploadAvatarApi = $"{ApiEndPoint.UploadStudentImage}/{m_SinhVien.MaSV}";
-                if (fileAvatar.HasFile)
-                {
-                    var extension = Path.GetExtension(fileAvatar.FileName).Substring(1).ToLower();
-                    var uploadImgRes = await CustomizeHttp.SendRequest(Request, Response, uploadAvatarApi, new UploadFileModel
-                    {
-                        Content = fileAvatar.FileBytes,
-                        FileName = fileAvatar.FileName,
-                        Key = "file",
-                        ContentType = $"image/{extension}",
-                    });
-                    if (uploadImgRes.IsSuccessStatusCode)
-                    {
-                        string newImgPath = await uploadImgRes.Content.ReadAsStringAsync();
-                        m_SinhVien.IMG = $"{CustomizeHttp.API_URI}/{newImgPath}";
+                //if (fileAvatar.HasFile)
+                //{
+                //    var extension = Path.GetExtension(fileAvatar.FileName).Substring(1).ToLower();
+                //    var uploadImgRes = await CustomizeHttp.SendRequest(Request, Response, uploadAvatarApi, new UploadFileModel
+                //    {
+                //        Content = fileAvatar.FileBytes,
+                //        FileName = fileAvatar.FileName,
+                //        Key = "file",
+                //        ContentType = $"image/{extension}",
+                //    });
+                //    if (uploadImgRes.IsSuccessStatusCode)
+                //    {
+                //        string newImgPath = await uploadImgRes.Content.ReadAsStringAsync();
+                //        m_SinhVien.IMG = $"{CustomizeHttp.API_URI}/{newImgPath}";
 
-                        divThongBao.InnerHtml = "Cập nhật thông tin thành công";
-                        spScript.InnerHtml = string.Format($"<script>CapNhatHoSo.initSelectForm('{model.TinhThanhPho}', '{model.QuanHuyen}', '{model.PhuongXa}');</script>");
-                        return;
-                    } 
-                    else 
-                    {
-                        try
-                        {
-                            var error = await CustomizeHttp.DeserializeAsync<ResponseBody>(uploadImgRes.Content);
-                            divThongBao.InnerText = $"{error.Message}";
-                            return;
-                        }
-                        catch (Exception)
-                        {
-                            divThongBao.InnerText = "Cập nhật ảnh thất bại - lỗi hệ thống";
-                            return;
-                        }
-                    }
-                } else
-                {
+                //        divThongBao.InnerHtml = "Cập nhật thông tin thành công";
+                //        spScript.InnerHtml = string.Format($"<script>CapNhatHoSo.initSelectForm('{model.TinhThanhPho}', '{model.QuanHuyen}', '{model.PhuongXa}');</script>");
+                //        return;
+                //    } 
+                //    else 
+                //    {
+                //        try
+                //        {
+                //            var error = await CustomizeHttp.DeserializeAsync<ResponseBody>(uploadImgRes.Content);
+                //            divThongBao.InnerText = $"{error.Message}";
+                //            return;
+                //        }
+                //        catch (Exception)
+                //        {
+                //            divThongBao.InnerText = "Cập nhật ảnh thất bại - lỗi hệ thống";
+                //            return;
+                //        }
+                //    }
+                //} else
+                //{
                     divThongBao.InnerHtml = "Cập nhật thông tin thành công";
                     spScript.InnerHtml = string.Format($"<script>CapNhatHoSo.initSelectForm('{model.TinhThanhPho}', '{model.QuanHuyen}', '{model.PhuongXa}');</script>");
                     return;
-                }
+                //}
             }
             try
             {

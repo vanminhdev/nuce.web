@@ -19,5 +19,6 @@ namespace nuce.web.api.Services.Ctsv.Interfaces
         public Task<ResponseBody> UpdateStudent(AsAcademyStudent student);
         public Task<string> UpdateStudentImage(IFormFile formFile, string studentCode);
         public Task<DataTableResponse<AsAcademyStudent>> FindStudent(string text, int seen, int size);
+        public Task<byte[]> GetStudentAvatar(string code, int? width, int? height);
     }
 }

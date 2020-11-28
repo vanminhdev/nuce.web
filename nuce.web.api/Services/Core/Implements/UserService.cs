@@ -106,7 +106,6 @@ namespace nuce.web.api.Services.Core.Implements
                 try
                 {
                     var isvalid = await srvc.authenAsync(model.Username, model.Password);
-
                     result = isvalid == 1;
                     if (!result)
                     {

@@ -18,7 +18,7 @@
                 <span class="list-inline-item mt-2 h6" style="text-align: center; font-weight: bold; color: red;" runat="server" id="divThongBao"></span>
             </div>
         </div>
-        <div class="row">
+        <div class="row" style="display: none;">
             <div class="col-12 col-md-6">
                 <div class="row">
                     <div class="col-6">

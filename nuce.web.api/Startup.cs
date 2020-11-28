@@ -133,8 +133,9 @@ namespace nuce.web.api
                                   {
                                       builder.WithOrigins(corsUrls)
                                       .AllowAnyHeader()
-                                      .AllowAnyMethod()
-                                      .AllowCredentials();
+                                        .AllowAnyMethod()
+                                        .SetIsOriginAllowed((host) => true)
+                                        .AllowCredentials();
                                   });
             });
             #endregion

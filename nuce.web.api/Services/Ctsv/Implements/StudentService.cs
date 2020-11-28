@@ -11,6 +11,9 @@ using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Ctsv;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -73,7 +76,27 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
         public AsAcademyStudent GetStudentByCode(string studentCode)
         {
-            return _studentRepository.FindByCode(studentCode);
+            var student = _studentRepository.FindByCode(studentCode);
+            return student;
+        }
+
+        public async Task<byte[]> GetStudentAvatar(string code, int? width, int? height)
+        {
+
+            string imgPath = $"ANHSV/{code}.jpg";
+            string fullImgPath = _pathProvider.MapPathStudentImage(imgPath);
+            var dataStream = await _uploadFile.DownloadFileAsync(fullImgPath);
+            if (width == null || height == null)
+            {
+                return dataStream.ToArray();
+            }
+            Image img = Image.FromStream(dataStream);
+
+            Image resizedNewImg = Resize(img, width ?? 0, 2000, false);
+            var newImg = cropImage(resizedNewImg, width ?? 0, height ?? 0);
+
+            var result = _uploadFile.ImageToByte(newImg);
+            return result;
         }
 
         public StudentAllowUpdateModel GetStudentByCodeAllowUpdate(string studentCode)
@@ -187,7 +210,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
         public async Task<string> UpdateStudentImage(IFormFile formFile, string studentCode)
         {
-            if (!_uploadFile.isValidImage(formFile))
+            if (!_uploadFile.isValidImageUpload(formFile))
             {
                 throw new Exception("Ảnh không hợp lệ");
             }
@@ -223,6 +246,46 @@ namespace nuce.web.api.Services.Ctsv.Implements
             _studentRepository.Update(student);
             await _unitOfWork.SaveAsync();
             return student.File1;
+        }
+
+        public Image Resize(Image image, int newWidth, int maxHeight, bool onlyResizeIfWider)
+        {
+            if (onlyResizeIfWider && image.Width <= newWidth) newWidth = image.Width;
+
+            var newHeight = image.Height * newWidth / image.Width;
+            if (newHeight > maxHeight)
+            {
+                // Resize with height instead  
+                newWidth = image.Width * maxHeight / image.Height;
+                newHeight = maxHeight;
+            }
+
+            var res = new Bitmap(newWidth, newHeight);
+
+            using (var graphic = Graphics.FromImage(res))
+            {
+                graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphic.SmoothingMode = SmoothingMode.HighQuality;
+                graphic.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                graphic.CompositingQuality = CompositingQuality.HighQuality;
+                graphic.DrawImage(image, 0, 0, newWidth, newHeight);
+            }
+
+            return res;
+        }
+
+        public Image cropImage(Image src, int width, int height)
+        {
+            Rectangle cropRect = new Rectangle(0, 0, width, height);
+            Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
+
+            using (Graphics g = Graphics.FromImage(target))
+            {
+                g.DrawImage((Bitmap)src, new Rectangle(0, 0, target.Width, target.Height),
+                                 cropRect,
+                                 GraphicsUnit.Pixel);
+                return target;
+            }
         }
     }
 }

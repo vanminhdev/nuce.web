@@ -430,6 +430,18 @@
             }
         };
 
+        var replaceFailedAvatar = function() {
+            $('.list-item-avatar').each(function(index, el) {
+                const id = $(el).attr('id');
+                $('<img/>')
+                    .on('error', () => { 
+                        $(`#${id}`).attr('src', `/content/images/person.png`); 
+                    })
+                    .attr("src", $(`#${id}`).attr('src'))
+                ;
+            });
+        }
+
         var template = function(data) {
             const dichVu = data.DichVu;
             const student = data.Student;
@@ -438,11 +450,13 @@
             const studentCode = dichVu.studentCode;
             const statusCode = Number(dichVu.status);
             const statusName = statusDictionary[statusCode];
-            let studentAva = '/content/images/person.png';
+            
 
-            if (student.file1) {
-                studentAva = `@ConfigurationManager.AppSettings.Get("API_URL")/${student.file1}`;
-            };
+            
+            const avaPath = `api/student/avatar/${studentCode}?width=64&height=64`;
+            const studentAva = `@ConfigurationManager.AppSettings.Get("API_URL")/${avaPath}`;
+            const avaId = `ava-${dichVu.id}`;
+            
             let ngayHenFrom = new Date();
             let ngayHenTo = new Date();
 
@@ -500,6 +514,7 @@
                 <div class="row font-13-sm align-items-center display-lg">
                     <div class="col-1 mr-3">
                       <img
+                        id="${avaId}"
                         src="${studentAva}"
                         alt=""
                         class="list-item-avatar"
@@ -541,7 +556,8 @@
                   >
                     <div class="col-2">
                       <img
-                        src="/content/images/person.png"
+                        id="${avaId}"
+                        src="${studentAva}"
                         alt=""
                         class="list-item-avatar"
                       />
@@ -617,8 +633,13 @@
                     dataList = json.data;
                     selectedIndex = [];
                     $(`#select-all`).prop({checked: false, indeterminate: false});
+                    
                     return json.data;
                 }
+            },
+            drawCallback: function() {
+                console.log('hi');
+                replaceFailedAvatar();
             },
             headerCallback: function( thead, data, start, end, display ) {
                 $(thead).find('th').eq(0).html(`<input type="checkbox" class="checkbox-select"

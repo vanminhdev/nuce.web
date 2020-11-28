@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using nuce.web.api.Models.Ctsv;
 using nuce.web.api.Services.Ctsv.Interfaces;
 using nuce.web.api.ViewModel;
@@ -46,6 +41,22 @@ namespace nuce.web.api.Controllers.Ctsv
         public IActionResult GetAllowUpdateStudent(string code)
         {
             return Ok(_studentService.GetStudentByCodeAllowUpdate(code));
+        }
+
+        [AllowAnonymous]
+        [Route("avatar/{code}")]
+        [HttpGet]
+        public async Task<IActionResult> GetImage(string code, [FromQuery] int? width, [FromQuery] int? height)
+        {
+            try
+            {
+                var result = await _studentService.GetStudentAvatar(code, width, height);
+                return File(result, "image/jpg");
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex);
+            }
         }
 
         [Route("basic-update")]

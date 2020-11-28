@@ -299,7 +299,7 @@
                         Cập nhật hồ sơ
                 </button>
             </div>
-            <div class="col-lg-4 col-xl-4 mt-3 font-14 font-14-md">
+            <div class="col-12 mt-2 font-14 font-14-md">
                 <div class="row text-uppercase justify-content-start mr-5 align-items-center">
                     <asp:ContentPlaceHolder ID="BreadCrum" runat="server"></asp:ContentPlaceHolder>
                 </div>
@@ -373,9 +373,14 @@
         </div>
     </div>
     <script>
-        var img = '<%= ((nuce.web.model.SinhVien)Session[Nuce.CTSV.Utils.session_sinhvien]).IMG %>';
+        var masv = '<%= ((nuce.web.model.SinhVien)Session[Nuce.CTSV.Utils.session_sinhvien]).MaSV %>';
         var apiURL = '<%= Nuce.CTSV.CustomizeHttp.API_URI %>';
-        $('#avatar').attr('src', `${img}?<%= DateTime.Now.ToFileTime() %>`);
+        $('#avatar').attr('src', `${apiURL}/api/student/avatar/${masv}?width=166&height=166`);
+
+        $('<img/>')
+            .on('error', function() { $('#avatar').attr('src', `/Data/images/noimage_human.png`); })
+            .attr("src", $('#avatar').attr("src"))
+        ;
 
         $('body').scroll(function () {
 	        if ($(this).scrollTop() > 100) {

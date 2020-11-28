@@ -8,5 +8,6 @@ namespace nuce.web.api.Services.Core.Interfaces
     public interface IPathProvider
     {
         public string MapPath(string path);
+        public string MapPathStudentImage(string path);
     }
 }
