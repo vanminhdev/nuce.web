@@ -31,6 +31,10 @@ using nuce.web.api.Services.EduData.Implements;
 using nuce.web.api.Services.EduData.Interfaces;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using nuce.web.api.Models.Status;
+using nuce.web.api.Services.Status.Interfaces;
+using nuce.web.api.Services.Status.Implements;
+using nuce.web.api.Services.Survey.BackgroundServices;
+using nuce.web.api.Services.Background;
 
 namespace nuce.web.api
 {
@@ -183,7 +187,13 @@ namespace nuce.web.api
             services.AddSingleton<IPathProvider, PathProvider>();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
+            #region scoped processing service
+            //services.AddHostedService<ConsumeScopedServiceHostedService>();
+            //services.AddScoped<IScopedProcessingService, ReportTotalNormalSurveyService>();
+            #endregion
+
             #region config service
+            services.AddScoped<IStatusService, StatusService>();
             services.AddScoped<IAsEduSurveyCauHoiService, AsEduSurveyCauHoiService>();
             services.AddScoped<IAsEduSurveyDapAnService, AsEduSurveyDapAnService>();
             services.AddScoped<IAsEduSurveyDeThiService, AsEduSurveyDeThiService>();
@@ -193,6 +203,7 @@ namespace nuce.web.api
             services.AddScoped<IAsEduSurveyDotKhaoSatService, AsEduSurveyDotKhaoSatService>();
             services.AddScoped<IAsEduSurveyBaiKhaoSatService, AsEduSurveyBaiKhaoSatService>();
             services.AddScoped<IAsEduSurveyBaiKhaoSatSinhVienService, AsEduSurveyBaiKhaoSatSinhVienService>();
+            services.AddScoped<IAsEduSurveyReportTotalService, AsEduSurveyReportTotalService>();
             #endregion
             #region sync edu database service
             services.AddScoped<ISyncEduDatabaseService, SyncEduDatabaseService>();

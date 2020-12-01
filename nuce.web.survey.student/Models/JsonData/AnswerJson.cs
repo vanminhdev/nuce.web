@@ -9,6 +9,7 @@ namespace nuce.web.survey.student.Models.JsonData
     {
         public string Code { get; set; }
         public string Content { get; set; }
+        public QuestionJson AnswerChildQuestion { get; set; }
     }
 
     public class SelectedAnswer
@@ -17,5 +18,6 @@ namespace nuce.web.survey.student.Models.JsonData
         public string AnswerCode { get; set; }
         public List<string> AnswerCodes { get; set; }
         public string AnswerContent { get; set; }
+        public bool? IsAnswerChildQuestion { get; set; }
     }
 }

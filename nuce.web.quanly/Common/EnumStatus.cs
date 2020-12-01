@@ -24,4 +24,22 @@ namespace nuce.web.quanly.Common
         Deactive = 4
     }
 
+    /// <summary>
+    /// Trạng thái làm việc trên các bảng mất nhiều thời gian
+    /// </summary>
+    public enum TableTaskStatus
+    {
+        /// <summary>
+        /// chưa làm
+        /// </summary>
+        DoNot = 1,
+        /// <summary>
+        /// Đang làm
+        /// </summary>
+        Doing = 2,
+        /// <summary>
+        /// Hoàn thành
+        /// </summary>
+        Done = 5
+    }
 }

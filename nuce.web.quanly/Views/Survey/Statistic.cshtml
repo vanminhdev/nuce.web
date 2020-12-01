@@ -1,0 +1,86 @@
+﻿@using nuce.web.quanly.Common
+@{
+    ViewData["Title"] = "Thống kê";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+            </div>
+            <button class="btn btn-primary" id="btn-statistic-survey" disabled>
+                Thống kê
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let btnReportTotalNormal = $('#btn-statistic-survey');
+        let message = $('#message');
+        $.ajax({
+            dataType: 'json',
+            method: 'Post',
+            url: '/Survey/GetStatusReportTotalNormalSurvey',
+            timeout: 0,
+            complete: () => { }
+        }).done(function (data) {
+            data = JSON.parse(data);
+            if (data.status === @((int)TableTaskStatus.DoNot)) {
+                btnReportTotalNormal.prop('disabled', false);
+            }
+            else if (data.status === @((int)TableTaskStatus.Doing)) {
+                btnReportTotalNormal.prop('disabled', true);
+                btnReportTotalNormal.html('<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang thống kê');
+            }
+            else if (data.status === @((int)TableTaskStatus.Done)) {
+                btnReportTotalNormal.prop('disabled', false);
+                btnReportTotalNormal.html('Thống kê');
+                if (data.isSuccess) {
+                    message.html(`
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            Thống kê thành công
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    `);
+                }
+                else {
+                    message.html(`
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            Thống kê không thành công
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    `);
+                }
+            }
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            console.log(textStatus + ': ' + errorThrown);
+            console.log(jqXHR);
+        });
+
+        btnReportTotalNormal.click(function () {
+            btnReportTotalNormal.prop('disabled', true);
+            btnReportTotalNormal.html('<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang thống kê');
+            $.ajax({
+                dataType: 'json',
+                method: 'Post',
+                url: '/Survey/ReportTotalNormalSurvey',
+                timeout: 0,
+                complete: () => { }
+            }).done(function (data) {
+
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus + ': ' + errorThrown);
+                console.log(jqXHR);
+            });
+        });
+    </script>
+}
+
+

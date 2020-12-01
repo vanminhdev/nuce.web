@@ -89,7 +89,8 @@ namespace nuce.web.api.Controllers.Survey
                 var studentCode = _userService.GetCurrentStudentCode();
                 var ip = HttpContext.Connection.RemoteIpAddress.ToString();
                 var id = await _asEduSurveyBaiKhaoSatSinhVienService.GetIdByCode(studentCode, content.ClassRoomCode);
-                await _asEduSurveyBaiKhaoSatSinhVienService.AutoSave(id.ToString(), content.QuestionCode, content.AnswerCode, content.answerCodeInMulSelect, content.isAnswerCodesAdd, content.AnswerContent);
+                await _asEduSurveyBaiKhaoSatSinhVienService.AutoSave(id.ToString(), content.QuestionCode, content.AnswerCode, content.AnswerCodeInMulSelect,
+                    content.AnswerContent, content.IsAnswerCodesAdd != null ? content.IsAnswerCodesAdd.Value : true);
             }
             catch (DbUpdateException e)
             {
@@ -111,7 +112,7 @@ namespace nuce.web.api.Controllers.Survey
 
         [HttpPut]
         [Authorize(Roles = "Student")]
-        public async Task<IActionResult> SaveTask([FromBody]
+        public async Task<IActionResult> SaveSelectedAnswer([FromBody]
             [Required(AllowEmptyStrings = false)]
             [NotContainWhiteSpace]
             string classRoomCode)
@@ -122,6 +123,11 @@ namespace nuce.web.api.Controllers.Survey
                 var ip = HttpContext.Connection.RemoteIpAddress.ToString();
                 var id = await _asEduSurveyBaiKhaoSatSinhVienService.GetIdByCode(studentCode, classRoomCode);
                 await _asEduSurveyBaiKhaoSatSinhVienService.SaveSelectedAnswer(id.ToString(), ip);
+            }
+            catch (InvalidDataException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không lưu được bài khảo sát", detailMessage = e.Message });
             }
             catch (DbUpdateException e)
             {

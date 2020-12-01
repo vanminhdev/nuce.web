@@ -91,7 +91,7 @@ namespace nuce.web.survey.student.Controllers
         public async Task<ActionResult> TheSurveySubmit(string classRoomCode)
         {
             var stringContent = new StringContent($"'{classRoomCode}'", Encoding.UTF8, "application/json");
-            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/TheSurveyStudent/SaveTask", stringContent);
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/TheSurveyStudent/SaveSelectedAnswer", stringContent);
             return await base.HandleResponseAsync(response,
                 action200Async: async res =>
                 {

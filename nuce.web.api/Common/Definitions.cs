@@ -131,5 +131,15 @@ namespace nuce.web.api.Common
         /// Hai cấp
         /// </summary>
         public static string TL = "TL";
+        /// <summary>
+        /// Tiêu đề vd: I. abc  II.def
+        /// </summary>
+        public static string T = "T";
+    }
+
+    public class TableNameTask
+    {
+        public static string AsEduSurveyBaiKhaoSatSinhVien = "AS_Edu_Survey_BaiKhaoSat_SinhVien";
+        public static string AsEduSurveyReportTotal = "AS_Edu_Survey_ReportTotal";
     }
 }

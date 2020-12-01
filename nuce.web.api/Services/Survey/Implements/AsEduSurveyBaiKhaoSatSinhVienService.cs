@@ -169,6 +169,9 @@ namespace nuce.web.api.Services.Survey.Implements
                 {
                     list.Remove(answerCodeInMulSelect.Trim());
                 }
+
+                if (list.Count == 0) //nếu k còn phần tử nào thì bỏ hẳn
+                    return null;
             }
             return list;
         }
@@ -183,7 +186,7 @@ namespace nuce.web.api.Services.Survey.Implements
         /// <param name="isAnswerCodesAdd">là thêm đáp án lựa chọn nhiều hay bỏ đi</param>
         /// <param name="answerContent"></param>
         /// <returns></returns>
-        public async Task AutoSave(string id, string questionCode, string answerCode, string answerCodeInMulSelect, bool isAnswerCodesAdd ,string answerContent)
+        public async Task AutoSave(string id, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, bool isAnswerCodesAdd = true)
         {
             var surveyStudent = await _context.AsEduSurveyBaiKhaoSatSinhVien.FirstOrDefaultAsync(o => o.Id.ToString() == id && o.Status != (int)SurveyStudentStatus.Done);
             if (surveyStudent == null)
@@ -198,7 +201,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             List<SelectedAnswer> list;
             try
-            {
+            {   
                 list = JsonSerializer.Deserialize<List<SelectedAnswer>>(surveyStudent.BaiLam);
             } 
             catch
@@ -212,7 +215,7 @@ namespace nuce.web.api.Services.Survey.Implements
             {
                 if (item.QuestionCode == questionCode)
                 {
-                    if (answerCode != null)
+                    if (answerCode != null) //lựa chọn chọn 1
                     {
                         item.AnswerCode = answerCode.Trim();
                     }
@@ -220,7 +223,7 @@ namespace nuce.web.api.Services.Survey.Implements
                     {
                         item.AnswerCodes = AddOrRemoveAnswerCodes(item.AnswerCodes, answerCodeInMulSelect, isAnswerCodesAdd);
                     }
-                    item.AnswerContent = answerContent;
+                    item.AnswerContent = answerContent; // câu trả lời text
                     exsist = true;
                     break;
                 }
@@ -234,6 +237,11 @@ namespace nuce.web.api.Services.Survey.Implements
                     AnswerCode = answerCode,
                     AnswerContent = answerContent
                 };
+
+                if(questionCode.Split('_').Length == 2) //là câu hỏi con
+                {
+                    newSelectedAnswer.IsAnswerChildQuestion = true;
+                }
 
                 if (answerCodeInMulSelect != null && isAnswerCodesAdd) // lựa chọn chọn nhiều
                 {
@@ -267,6 +275,36 @@ namespace nuce.web.api.Services.Survey.Implements
             {
                 return;
             }
+            //kiểm tra đủ số câu hỏi bắt buộc
+            var theSurvey = await _context.AsEduSurveyBaiKhaoSat.FirstOrDefaultAsync(o => o.Id == surveyStudent.BaiKhaoSatId);
+            if (theSurvey == null)
+            {
+                throw new RecordNotFoundException("Không tìm thấy bài khảo sát");
+            }
+
+            var examQuestions = await _context.AsEduSurveyDeThi.FirstOrDefaultAsync(o => o.Id == theSurvey.DeThiId);
+            if (examQuestions == null)
+            {
+                throw new RecordNotFoundException("Không tìm thấy nội dung bài khảo sát");
+            }
+
+            var questions = JsonSerializer.Deserialize<List<QuestionJson>>(examQuestions.NoiDungDeThi);
+            var answerSave = JsonSerializer.Deserialize<List<SelectedAnswer>>(surveyStudent.BaiLam);
+
+            var test = questions.Where(o => o.Type == QuestionType.SC || o.Type == QuestionType.MC).ToList();
+            foreach (var q in questions)
+            {
+                //Câu hỏi ngắn không bắt buộc
+                if(q.Type == QuestionType.SC && answerSave.FirstOrDefault(o => o.QuestionCode == q.Code && o.AnswerCode != null) == null)
+                {
+                    throw new InvalidDataException("Chưa trả lời đủ số câu hỏi");
+                }
+                else if (q.Type == QuestionType.MC && answerSave.FirstOrDefault(o => o.QuestionCode == q.Code && o.AnswerCodes != null && o.AnswerCodes.Count > 0) == null)
+                {
+                    throw new InvalidDataException("Chưa trả lời đủ số câu hỏi");
+                }
+            }
+
             surveyStudent.NgayGioNopBai = DateTime.Now;
             surveyStudent.Status = (int)SurveyStudentStatus.Done;
             surveyStudent.LogIp = ipAddress;

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using nuce.web.api.HandleException;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Repositories.Ctsv.Implements;
@@ -8,6 +7,7 @@ using nuce.web.api.ViewModel.Survey;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -54,6 +54,12 @@ namespace nuce.web.api.Services.Survey.Implements
 
         public async Task GenerateExam(string examQuestionId)
         {
+            var examQuestion = await _surveyContext.AsEduSurveyDeThi.FindAsync(Guid.Parse(examQuestionId));
+            if (examQuestion == null)
+            {
+                throw new RecordNotFoundException("Không tìm thấy đề thi");
+            }
+
             var questions = _surveyContext.AsEduSurveyCauTrucDe
                 .Join(_surveyContext.AsEduSurveyCauHoi, examStructure => examStructure.CauHoiId, question => question.Id,
                 (examStructure, question) => new { examStructure, question })
@@ -83,21 +89,47 @@ namespace nuce.web.api.Services.Survey.Implements
                 };
                 questionJson.Answers = new List<Models.Survey.JsonData.AnswerJson>();
                 var answerOrder = itemGroup.OrderBy(o => o?.Order ?? 0);
+                AsEduSurveyCauHoi answerChildQuestion = null;
+                Models.Survey.JsonData.QuestionJson answerChildQuestionJson = null;
                 foreach (var answer in answerOrder)
                 {
                     if(answer == null)
                     {
                         break;
                     }
+                    if(answer.ChildQuestionId != null)
+                    {
+                        answerChildQuestion = await _surveyContext.AsEduSurveyCauHoi.FirstOrDefaultAsync(o => o.Id == answer.ChildQuestionId);
+                        if (answerChildQuestion == null)
+                        {
+                            throw new RecordNotFoundException("Không tìm thấy câu hỏi con của đáp án có mã: " + answer.Code);
+                        }
+
+                        answerChildQuestionJson = new Models.Survey.JsonData.QuestionJson
+                        {
+                            Code =  $"{answer.Code}_{answerChildQuestion.Code}",
+                            DifficultID = answerChildQuestion.DoKhoId,
+                            Content = answerChildQuestion.Content,
+                            Image = answerChildQuestion.Image,
+                            Mark = (float)(answerChildQuestion?.Mark ?? 0),
+                            Explain = answerChildQuestion.Explain,
+                            Type = answerChildQuestion.Type,
+                        };
+                    }
+                    else
+                    {
+                        answerChildQuestionJson = null;
+                    }
 
                     questionJson.Answers.Add(new Models.Survey.JsonData.AnswerJson
                     {
                         Code = answer.Code,
-                        Content = answer.Content
+                        Content = answer.Content,
+                        AnswerChildQuestion = answerChildQuestionJson
                     });
                 }
 
-                if(itemGroup.Key.ParentCode != null) //thêm con vào cha
+                if(itemGroup.Key.ParentCode != null) //là một câu hỏi con của câu hỏi khác. thêm con vào cha
                 {
                     var parent = QuestionJsonData.FirstOrDefault(o => o.Code == itemGroup.Key.ParentCode);
                     if(parent != null)
@@ -117,14 +149,11 @@ namespace nuce.web.api.Services.Survey.Implements
                     QuestionJsonData.Add(questionJson);
                 }
             }
-
-            var jsonString = JsonConvert.SerializeObject(QuestionJsonData);
-
-            var examQuestion = await _surveyContext.AsEduSurveyDeThi.FindAsync(Guid.Parse(examQuestionId));
-            if(examQuestion == null)
+            var options = new JsonSerializerOptions
             {
-                throw new RecordNotFoundException("Không tìm thấy đề thi");
-            }
+                IgnoreNullValues = true
+            };
+            var jsonString = JsonSerializer.Serialize(QuestionJsonData, options);
             examQuestion.NoiDungDeThi = jsonString;
             await _surveyContext.SaveChangesAsync();
         }
@@ -169,7 +198,5 @@ namespace nuce.web.api.Services.Survey.Implements
                 })
                 .ToListAsync();
         }
-
-
     }
 }

@@ -63,5 +63,9 @@ namespace nuce.web.survey.student.Common
         /// Hai cấp
         /// </summary>
         public static string TL = "TL";
+        /// <summary>
+        /// Tiêu đề vd: I. abc  II.def
+        /// </summary>
+        public static string T = "T";
     }
 }

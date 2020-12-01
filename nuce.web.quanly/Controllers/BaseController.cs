@@ -130,6 +130,8 @@ namespace nuce.web.quanly.Controllers
             System.Func<HttpResponseMessage, ActionResult> action500 = null,
             System.Func<HttpResponseMessage, Task<ActionResult>> action400Async = null,
             System.Func<HttpResponseMessage, ActionResult> action400 = null,
+            System.Func<HttpResponseMessage, Task<ActionResult>> action404Async = null,
+            System.Func<HttpResponseMessage, ActionResult> action404 = null,
             System.Func<HttpResponseMessage, Task<ActionResult>> actionDefaultAsync = null,
             System.Func<HttpResponseMessage, ActionResult> actionDefault = null)
         {
@@ -150,11 +152,15 @@ namespace nuce.web.quanly.Controllers
             }
             else if (response.StatusCode == HttpStatusCode.NotFound)
             {
+                if (action404Async != null)
+                    return await action404Async(response);
+                if (action404 != null)
+                    return action404(response);
                 return Redirect($"/error?message={HttpUtility.UrlEncode("CallAPI: Không tìm thấy tài nguyên")}&code={(int)HttpStatusCode.NotFound}");
             }
             else if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
-                if(action500Async != null)
+                if (action500Async != null)
                     return await action500Async(response);
                 if (action500 != null)
                     return action500(response);

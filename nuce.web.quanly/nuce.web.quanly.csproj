@@ -1213,6 +1213,7 @@
     <Content Include="Views\Survey\CreateExamQuestions.cshtml" />
     <Content Include="Views\SyncEduData\Index.cshtml" />
     <Content Include="Views\SyncEduData\Backup.cshtml" />
+    <Content Include="Views\Survey\Statistic.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

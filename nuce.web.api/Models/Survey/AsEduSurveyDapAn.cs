@@ -9,7 +9,7 @@ namespace nuce.web.api.Models.Survey
         public string Code { get; set; }
         public Guid CauHoiId { get; set; }
         public string CauHoiCode { get; set; }
-        public Guid? SubQuestionId { get; set; }
+        public Guid? ChildQuestionId { get; set; }
         public string Content { get; set; }
         public bool? IsCheck { get; set; }
         public Guid? Matched { get; set; }

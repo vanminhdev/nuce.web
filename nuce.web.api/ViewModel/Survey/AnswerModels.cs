@@ -1,4 +1,5 @@
-﻿using System;
+﻿using nuce.web.api.Attributes.ValidationAttributes;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -24,6 +25,7 @@ namespace nuce.web.api.ViewModel.Survey
     public class AnswerCreateModel
     {
         [Required(AllowEmptyStrings = false)]
+        [NotContainWhiteSpace]
         public string Code { get; set; }
 
         [Required(AllowEmptyStrings = false)]
@@ -33,10 +35,15 @@ namespace nuce.web.api.ViewModel.Survey
         public int? Order { get; set; }
 
         [Required]
+        [NotContainWhiteSpace]
         public string CauHoiId { get; set; }
 
         [Required]
+        [NotContainWhiteSpace]
         public string CauHoiCode { get; set; }
+
+        [NotContainWhiteSpace]
+        public string ChildQuestionId { get; set; }
     }
 
     public class AnswerUpdateModel

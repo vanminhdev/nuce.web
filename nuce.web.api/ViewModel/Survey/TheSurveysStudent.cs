@@ -36,9 +36,11 @@ namespace nuce.web.api.ViewModel.Survey
         [NotContainWhiteSpace]
         public string AnswerCode { get; set; }
 
-        public string answerCodeInMulSelect { get; set; }
+        public string AnswerCodeInMulSelect { get; set; }
 
-        public bool isAnswerCodesAdd { get; set; }
+        public bool? IsAnswerCodesAdd { get; set; }
+
+        public bool? IsAnswerChildQuestion { get; set; }
 
         public string AnswerContent { get; set; }
     }

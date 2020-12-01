@@ -9,5 +9,6 @@ namespace nuce.web.quanly.Models.JsonData
     {
         public string Code { get; set; }
         public string Content { get; set; }
+        public QuestionJson ChildQuestion { get; set; }
     }
 }

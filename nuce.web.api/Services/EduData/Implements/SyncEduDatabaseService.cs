@@ -7,6 +7,8 @@ using nuce.web.api.HandleException;
 using nuce.web.api.Models.EduData;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Services.EduData.Interfaces;
+using nuce.web.api.Services.Status.Implements;
+using nuce.web.api.Services.Status.Interfaces;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.EduData;
 using System;
@@ -24,25 +26,12 @@ namespace nuce.web.api.Services.EduData.Implements
     {
         private readonly EduDataContext _eduDataContext;
         private readonly ServiceSoapClient srvc = new ServiceSoapClient(EndpointConfiguration.ServiceSoap12);
+        private readonly IStatusService _statusService;
 
-        public SyncEduDatabaseService(EduDataContext eduDataContext)
+        public SyncEduDatabaseService(EduDataContext eduDataContext, IStatusService statusService)
         {
             _eduDataContext = eduDataContext;
-        }
-
-        /// <summary>
-        /// Nếu có kì học là IsCurrent và Enabled thì trả về Id kì học đó nếu không thì trả về -1
-        /// </summary>
-        /// <returns></returns>
-        private async Task<int> GetCurrentSemesterId()
-        {
-            var semesterId = -1;
-            var semester = await _eduDataContext.AsAcademySemester.FirstOrDefaultAsync(s => s.IsCurrent == true && s.Enabled == true);
-            if (semester != null)
-            {
-                semesterId = semester.Id;
-            }
-            return semesterId;
+            _statusService = statusService;
         }
 
         #region đồng bộ cơ bản
@@ -68,14 +57,14 @@ namespace nuce.web.api.Services.EduData.Implements
                     {
                         _eduDataContext.AsAcademyAcademics.Add(new AsAcademyAcademics
                         {
-                            SemesterId = await GetCurrentSemesterId(),
+                            SemesterId = await _statusService.GetCurrentSemesterId(),
                             Code = maNganh,
                             Name = tenNg
                         });
                     }
                     else
                     {
-                        nganh.SemesterId = await GetCurrentSemesterId();
+                        nganh.SemesterId = await _statusService.GetCurrentSemesterId();
                         nganh.Code = maNganh;
                         nganh.Name = tenNg;
                     }
@@ -196,7 +185,7 @@ namespace nuce.web.api.Services.EduData.Implements
                     {
                         _eduDataContext.AsAcademyDepartment.Add(new AsAcademyDepartment
                         {
-                            SemesterId = await GetCurrentSemesterId(),
+                            SemesterId = await _statusService.GetCurrentSemesterId(),
                             Code = maBM,
                             Name = tenBM,
                             FacultyId = khoa.Id,
@@ -206,7 +195,7 @@ namespace nuce.web.api.Services.EduData.Implements
                     }
                     else
                     {
-                        boMon.SemesterId = await GetCurrentSemesterId();
+                        boMon.SemesterId = await _statusService.GetCurrentSemesterId();
                         boMon.Code = maBM;
                         boMon.Name = tenBM;
                         boMon.FacultyId = khoa.Id;
@@ -258,7 +247,7 @@ namespace nuce.web.api.Services.EduData.Implements
                         {
                             Code = maKH,
                             Name = tenKhoa,
-                            SemesterId = await GetCurrentSemesterId(),
+                            SemesterId = await _statusService.GetCurrentSemesterId(),
                             COrder = order + 1
                         });
                     }
@@ -266,7 +255,7 @@ namespace nuce.web.api.Services.EduData.Implements
                     {
                         khoa.Code = maKH;
                         khoa.Name = tenKhoa;
-                        khoa.SemesterId = await GetCurrentSemesterId();
+                        khoa.SemesterId = await _statusService.GetCurrentSemesterId();
                         khoa.COrder = order + 1;
                     }
                 }
@@ -476,7 +465,7 @@ namespace nuce.web.api.Services.EduData.Implements
                     {
                         _eduDataContext.AsAcademySubject.Add(new AsAcademySubject
                         {
-                            SemesterId = await GetCurrentSemesterId(),
+                            SemesterId = await _statusService.GetCurrentSemesterId(),
                             Code = MaMH,
                             Name = TenMH,
                             DepartmentId = boMonId,
@@ -485,7 +474,7 @@ namespace nuce.web.api.Services.EduData.Implements
                     }
                     else // nếu có rồi thì cập nhật
                     {
-                        monHoc.SemesterId = await GetCurrentSemesterId();
+                        monHoc.SemesterId = await _statusService.GetCurrentSemesterId();
                         monHoc.Code = MaMH;
                         monHoc.Name = TenMH;
                         monHoc.DepartmentId = boMonId;
@@ -574,7 +563,7 @@ namespace nuce.web.api.Services.EduData.Implements
                     {
                         _eduDataContext.AsAcademyClassRoom.Add(new AsAcademyClassRoom
                         {
-                            SemesterId = await GetCurrentSemesterId(),
+                            SemesterId = await _statusService.GetLastSemesterId(),
                             Code = MaDK,
                             GroupCode = MaNh,
                             ClassCode = Malop,
@@ -736,7 +725,7 @@ namespace nuce.web.api.Services.EduData.Implements
                             {
                                 _eduDataContext.AsAcademyLecturerClassRoom.Add(new AsAcademyLecturerClassRoom
                                 {
-                                    SemesterId = await GetCurrentSemesterId(),
+                                    SemesterId = await _statusService.GetLastSemesterId(),
                                     ClassRoomId = lopId,
                                     ClassRoomCode = strMaDK,
                                     LecturerId = canBoId,
@@ -745,7 +734,7 @@ namespace nuce.web.api.Services.EduData.Implements
                             }
                             else
                             {
-                                lecturerClassRoom.SemesterId = await GetCurrentSemesterId();
+                                lecturerClassRoom.SemesterId = await _statusService.GetLastSemesterId();
                                 lecturerClassRoom.ClassRoomId = lopId;
                                 lecturerClassRoom.ClassRoomCode = strMaDK;
                                 lecturerClassRoom.LecturerId = canBoId;
@@ -814,7 +803,7 @@ namespace nuce.web.api.Services.EduData.Implements
                                     ClassRoomCode = strMaDK,
                                     StudentId = studentId,
                                     StudentCode = strMaSV,
-                                    SemesterId = await GetCurrentSemesterId()
+                                    SemesterId = await _statusService.GetLastSemesterId()
                                 });
                             }
                         }
@@ -875,7 +864,7 @@ namespace nuce.web.api.Services.EduData.Implements
                     {
                         _eduDataContext.AsAcademyCClassRoom.Add(new AsAcademyCClassRoom
                         {
-                            SemesterId = await GetCurrentSemesterId(),
+                            SemesterId = await _statusService.GetCurrentSemesterId(),
                             Code = MaDK,
                             GroupCode = MaNh,
                             ClassCode = Malop,
@@ -1037,7 +1026,7 @@ namespace nuce.web.api.Services.EduData.Implements
                             {
                                 _eduDataContext.AsAcademyCLecturerClassRoom.Add(new AsAcademyCLecturerClassRoom
                                 {
-                                    SemesterId = await GetCurrentSemesterId(),
+                                    SemesterId = await _statusService.GetCurrentSemesterId(),
                                     ClassRoomId = lopId,
                                     ClassRoomCode = strMaDK,
                                     LecturerId = canBoId,
@@ -1046,7 +1035,7 @@ namespace nuce.web.api.Services.EduData.Implements
                             }
                             else
                             {
-                                cLecturerClassRoom.SemesterId = await GetCurrentSemesterId();
+                                cLecturerClassRoom.SemesterId = await _statusService.GetCurrentSemesterId();
                                 cLecturerClassRoom.ClassRoomId = lopId;
                                 cLecturerClassRoom.ClassRoomCode = strMaDK;
                                 cLecturerClassRoom.LecturerId = canBoId;
@@ -1115,7 +1104,7 @@ namespace nuce.web.api.Services.EduData.Implements
                                     ClassRoomCode = strMaDK,
                                     StudentId = studentId,
                                     StudentCode = strMaSV,
-                                    SemesterId = await GetCurrentSemesterId()
+                                    SemesterId = await _statusService.GetCurrentSemesterId()
                                 });
                             }
                         }

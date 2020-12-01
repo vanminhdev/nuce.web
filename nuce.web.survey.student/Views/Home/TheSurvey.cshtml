@@ -5,6 +5,70 @@
     ViewData["Title"] = "Bài khảo sát";
 }
 
+@section Style {
+    <style>
+        body {
+            counter-reset: title-question-counter;
+        }
+
+        .question-title {
+            counter-increment: title-question-counter;
+        }
+
+        .question-title:before {
+            content: counter(title-question-counter, upper-roman)". ";
+        }
+
+        .tag-child-inline > * {
+            display: inline;
+        }
+    </style>
+}
+
+@helper GenerateAnswerChildQuestion(AnswerJson answer)
+{
+    <div id="answerQuestion-@answer.AnswerChildQuestion.Code" style="display: none;">
+        <div class="form-group col-12 mb-0 pl-0 pr-0">
+            <label id="@answer.AnswerChildQuestion.Code" class="text-dark tag-child-inline mb-0">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.AnswerChildQuestion.Content)))</label>
+            @if (answer.AnswerChildQuestion.Image != null)
+            {
+                <div class="d-flex justify-content-center align-items-center">
+                    <img src="@answer.AnswerChildQuestion.Image" style="max-width: 200px; border-radius:5px;" />
+                </div>
+            }
+        </div>
+        <div class="form-row pl-2 pr-2">
+            @GenerateAnswer(answer.AnswerChildQuestion)
+            @if (answer.AnswerChildQuestion.Type == QuestionType.GQ && answer.AnswerChildQuestion.ChildQuestion != null)
+            {
+                <div class="col">
+                    <div class="form-group">
+                        @{
+                            var indexChild = 1;
+                        }
+                        @foreach (var questionChild in answer.AnswerChildQuestion.ChildQuestion)
+                        {
+                            <div class="form-group col-12 mb-0 pl-0 pr-0">
+                                <label id="@answer.AnswerChildQuestion.Code" class="text-dark">@indexChild. @Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.AnswerChildQuestion.Content)))</label>
+                                @if (answer.AnswerChildQuestion.Image != null)
+                                {
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <img src="@answer.AnswerChildQuestion.Image" style="max-width: 200px; border-radius:5px;" />
+                                    </div>
+                                }
+                            </div>
+                            <div class="form-row pl-2 pr-2">
+                                @GenerateAnswer(questionChild)
+                            </div>
+                            indexChild++;
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
 @helper GenerateAnswer(QuestionJson question)
 {
     if (question.Type == QuestionType.SC)
@@ -13,7 +77,9 @@
         {
             <div class="col">
                 <div class="form-group">
-                    <input questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code" />
+                    @* answerchildquestioncode để show hide câu hỏi con của đáp án *@
+                    <input questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
+                           @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "")/>
                     <label class="text-dark">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
                 </div>
             </div>
@@ -25,7 +91,7 @@
         {
             <div class="col">
                 <div class="form-group">
-                    <input questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code" />
+                    <input questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code" @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "") />
                     <label class="text-dark">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
                 </div>
             </div>
@@ -51,16 +117,29 @@
             {
                 <div>
                     <div class="form-group col-12 mb-0 pl-0 pr-0">
-                        <label id="@question.Code" class="text-dark">@index. @Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(question.Content)))</label>
+                        @* Câu hỏi chỉ là tiêu đề *@
+                        @if (question.Type == QuestionType.T)
+                        {
+                            index--;
+                            <label id="@question.Code" class="text-dark w-100 tag-child-inline question-title font-weight-bold text-uppercase">
+                              @Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(question.Content)))
+                            </label>
+                        }
+                        else
+                        {
+                            <label id="@question.Code" class="text-dark pl-1 w-100 tag-child-inline">
+                                @index. @Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(question.Content)))
+                            </label>
+                        }
                         @if (question.Image != null)
                         {
-                            <div class="d-flex justify-content-center align-items-center">
+                            <div class="d-flex justify-content-center w-100 tag-child-inline align-items-center">
                                 <img src="@question.Image" style="max-width: 200px; border-radius:5px;" />
                             </div>
                         }
-                        @question.Type
+                        @*@question.Type*@
                     </div>
-                    <div class="form-row pl-2 pr-2">
+                    <div class="form-row pl-2 pr-2 pl-2">
                         @GenerateAnswer(question)
                         @if (question.Type == QuestionType.GQ && question.ChildQuestion != null)
                         {
@@ -86,6 +165,15 @@
                                         indexChild++;
                                     }
                                 </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="form-row pl-3 pr-2">
+                        @* nếu tồn tại câu hỏi con của đáp án *@
+                        @foreach (var answer in question.Answers.Where(o => o.AnswerChildQuestion != null))
+                        {
+                            <div class="col">
+                                @GenerateAnswerChildQuestion(answer)
                             </div>
                         }
                     </div>
@@ -145,6 +233,9 @@
         <script>
             let selectedAnswer = @Html.Raw(ViewData["SelectedAnswer"]);
             selectedAnswer.forEach(element => {
+                if (element.IsAnswerChildQuestion === true) {
+                    $(`#answerQuestion-${element.QuestionCode}`).show();
+                }
                 if (element.AnswerCode != undefined) {
                     $(`input[type=radio][questionCode=${element.QuestionCode}][answerCode=${element.AnswerCode}]`).attr("checked", true);
                 } else if (element.AnswerCodes != undefined) {
@@ -160,11 +251,18 @@
     @if (Model.Count > 0)
     {
         <script>
-
             $('input[type=radio]').each(function () {
                 let seft = $(this);
-                seft.click(function () {
+                let proSeft = this;
+                function handle() {
                     let data = { classRoomCode: '@ViewData["classRoomCode"]', questionCode: seft.attr('questionCode'), answerCode: seft.attr('answerCode') };
+                    let isAnswerCodesAdd = proSeft.checked;
+                    if (proSeft.checked == true && seft.attr('answerchildquestioncode') != undefined) {
+                        $(`#answerQuestion-${seft.attr('answerchildquestioncode')}`).show();
+                    }
+                    else {
+                        $(`#answerQuestion-${seft.attr('answerchildquestioncode')}`).hide();
+                    }
                     $.ajax({
                         data: data,
                         dataType: 'json',
@@ -182,14 +280,21 @@
                         console.log(textStatus + ': ' + errorThrown);
                         console.log(jqXHR);
                     });
-                });
+                }
+                seft.click(handle);
             });
 
             $('input[type=checkbox]').each(function () {
                 let seft = $(this);
                 let proSeft = this;
-                seft.click(function () {
+                function handle() {
                     let isAnswerCodesAdd = proSeft.checked;
+                    if (proSeft.checked == true && seft.attr('answerchildquestioncode') != undefined) {
+                        $(`#answerQuestion-${seft.attr('answerchildquestioncode')}`).show();
+                    }
+                    else {
+                        $(`#answerQuestion-${seft.attr('answerchildquestioncode')}`).hide();
+                    }
                     $.ajax({
                         data: { classRoomCode: '@ViewData["classRoomCode"]', questionCode: seft.attr('questionCode'), answerCodeInMulSelect: seft.attr('answerCode'), isAnswerCodesAdd },
                         dataType: 'json',
@@ -206,7 +311,8 @@
                         console.log(textStatus + ': ' + errorThrown);
                         console.log(jqXHR);
                     });
-                });
+                }
+                seft.click(handle);
             });
 
             $('textarea').each(function () {
@@ -286,5 +392,6 @@
                 }
             });
         </script>
-    }}
+    }
+}
 

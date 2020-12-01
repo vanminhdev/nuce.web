@@ -16,13 +16,13 @@
 	1.4. context survey: những dữ liệu liên quan đến khảo thí như câu hỏi,...
 		- gồm các bảng:
 		- cli:
-			dotnet ef dbcontext scaffold "Data Source=.\sqlexpress;Initial Catalog=NUCE_SURVEY;Integrated Security=True" Microsoft.EntityFrameworkCore.SqlServer -o Models/Survey -c SurveyContext -f -t AS_Edu_Survey_BaiKhaoSat -t AS_Edu_Survey_BaiKhaoSat_SinhVien -t AS_Edu_Survey_CauHoi -t AS_Edu_Survey_CauTrucDe -t AS_Edu_Survey_DapAn -t AS_Edu_Survey_DeThi -t AS_Edu_Survey_DotKhaoSat
+			dotnet ef dbcontext scaffold "Data Source=.\sqlexpress;Initial Catalog=NUCE_SURVEY;Integrated Security=True" Microsoft.EntityFrameworkCore.SqlServer -o Models/Survey -c SurveyContext -f -t AS_Edu_Survey_BaiKhaoSat -t AS_Edu_Survey_BaiKhaoSat_SinhVien -t AS_Edu_Survey_CauHoi -t AS_Edu_Survey_CauTrucDe -t AS_Edu_Survey_DapAn -t AS_Edu_Survey_DeThi -t AS_Edu_Survey_DotKhaoSat -t AS_Edu_Survey_ReportTotal
 		- thư mục jsondata: là các model đưa dữ liệu đã query về dạng json string
 			
 	1.5. context Ctsv: công tác sinh viên
 	1.6. context status: lưu trạng thái làm việc của các bảng mất nhiều thời gian
 		-cli:
-			dotnet ef dbcontext scaffold "Data Source=.\sqlexpress;Initial Catalog=NUCE_SURVEY;Integrated Security=True" Microsoft.EntityFrameworkCore.SqlServer -o Models/Status -c StatusContext -f -t AS_Status_Table_Task
+			dotnet ef dbcontext scaffold "Data Source=.\sqlexpress;Initial Catalog=NUCE_SURVEY;Integrated Security=True" Microsoft.EntityFrameworkCore.SqlServer -o Models/Status -c StatusContext -f -t AS_Status_Table_Task -t AS_Academy_Semester
 
 2. công cụ
 	dotnet tool install --global dotnet-ef

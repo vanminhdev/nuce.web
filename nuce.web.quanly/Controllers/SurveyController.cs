@@ -371,5 +371,32 @@ namespace nuce.web.quanly.Controllers
 
 
         #endregion
+
+        #region thống kê
+        [HttpGet]
+        public ActionResult Statistic()
+        {
+            return View();
+        }
+
+        public async Task<ActionResult> GetStatusReportTotalNormalSurvey()
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/Statistic/GetStatusReportTotalNormalSurveyTask");
+            return await base.HandleResponseAsync(response,
+                action200Async: async res =>
+                {
+                    var jsonString = await res.Content.ReadAsStringAsync();
+                    return Json(jsonString, JsonRequestBehavior.AllowGet);
+                }
+            );
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> ReportTotalNormalSurvey()
+        {
+            await base.MakeRequestAuthorizedAsync("Post", $"/api/Statistic/ReportTotalNormalSurvey");
+            return Json(new { }, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
     }
 }

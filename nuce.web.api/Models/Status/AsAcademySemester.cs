@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace nuce.web.api.Models.EduData
+namespace nuce.web.api.Models.Status
 {
     public partial class AsAcademySemester
     {

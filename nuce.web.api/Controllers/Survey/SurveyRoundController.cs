@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -20,6 +21,7 @@ namespace nuce.web.api.Controllers.Survey
     /// </summary>
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(Roles = "P_KhaoThi")]
     public class SurveyRoundController : ControllerBase
     {
         private readonly ILogger<SurveyRoundController> _logger;

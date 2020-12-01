@@ -26,6 +26,22 @@ namespace nuce.web.api.Services.Survey.Implements
             var answerCreate = new AsEduSurveyDapAn();
             answerCreate.Id = Guid.NewGuid();
             answerCreate.Code = answer.Code;
+
+            if(await _surveyContext.AsEduSurveyCauHoi.FirstOrDefaultAsync(o => o.Id.ToString() == answer.CauHoiId) == null)
+            {
+                throw new RecordNotFoundException("Không tìm thấy câu hỏi là cha của đáp án");
+            }
+
+            if(answer.ChildQuestionId != null)
+            {
+                var answerChildQuestion = await _surveyContext.AsEduSurveyCauHoi.FirstOrDefaultAsync(o => o.Id.ToString() == answer.ChildQuestionId);
+                if (answerChildQuestion == null)
+                {
+                    throw new RecordNotFoundException("Không tìm thấy câu hỏi là câu hỏi con của đáp án");
+                }
+                answerCreate.ChildQuestionId = answerChildQuestion.Id;
+            }
+
             try
             {
                 answerCreate.CauHoiId = Guid.Parse(answer.CauHoiId);
@@ -35,7 +51,6 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new InvalidDataException("Câu hỏi Id không hợp lệ");
             }
             answerCreate.CauHoiCode = answer.CauHoiCode;
-            answerCreate.SubQuestionId = null;
             answerCreate.Content = answer.Content;
             answerCreate.IsCheck = false;
             answerCreate.Order = answer.Order;

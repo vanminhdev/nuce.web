@@ -22,6 +22,7 @@ namespace nuce.web.api.Models.Survey
         public virtual DbSet<AsEduSurveyDapAn> AsEduSurveyDapAn { get; set; }
         public virtual DbSet<AsEduSurveyDeThi> AsEduSurveyDeThi { get; set; }
         public virtual DbSet<AsEduSurveyDotKhaoSat> AsEduSurveyDotKhaoSat { get; set; }
+        public virtual DbSet<AsEduSurveyReportTotal> AsEduSurveyReportTotal { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -230,6 +231,36 @@ namespace nuce.web.api.Models.Survey
                 entity.Property(e => e.Note)
                     .IsRequired()
                     .HasMaxLength(2000);
+            });
+
+            modelBuilder.Entity<AsEduSurveyReportTotal>(entity =>
+            {
+                entity.ToTable("AS_Edu_Survey_ReportTotal");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.AnswerCode).HasMaxLength(50);
+
+                entity.Property(e => e.ClassRoomCode)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LecturerCode)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.QuestionCode)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.QuestionType)
+                    .IsRequired()
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
             });
 
             OnModelCreatingPartial(modelBuilder);

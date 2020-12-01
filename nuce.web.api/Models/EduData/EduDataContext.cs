@@ -283,13 +283,7 @@ namespace nuce.web.api.Models.EduData
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.Deleted).HasDefaultValueSql("((0))");
-
                 entity.Property(e => e.DeletedTime).HasColumnType("datetime");
-
-                entity.Property(e => e.Enabled)
-                    .IsRequired()
-                    .HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.LastModifiedTime)
                     .HasColumnType("datetime")
