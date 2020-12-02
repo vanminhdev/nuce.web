@@ -33,7 +33,6 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using nuce.web.api.Models.Status;
 using nuce.web.api.Services.Status.Interfaces;
 using nuce.web.api.Services.Status.Implements;
-using nuce.web.api.Services.Survey.BackgroundServices;
 using nuce.web.api.Services.Background;
 
 namespace nuce.web.api

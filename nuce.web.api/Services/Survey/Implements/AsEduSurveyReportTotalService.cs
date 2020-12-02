@@ -56,12 +56,11 @@ namespace nuce.web.api.Services.Survey.Implements
                 .Select(r => new { r.Key.LecturerCode, r.Key.ClassRoomCode, r.Key.BaiKhaoSatId });
 
             var timer = new Stopwatch();
-            timer.Restart();
             List<SelectedAnswer> selectedAnswers;
             while (skip <= countTheSurveyStudent)
             {
                 _logger.LogInformation($"report total normal: skip = {skip} take = {take}");
-                
+                timer.Restart();
                 var list = await lectureClassroomCode
                 .Skip(skip).Take(take)
                 .ToListAsync();
@@ -146,9 +145,9 @@ namespace nuce.web.api.Services.Survey.Implements
                 }
                 skip += take;
                 await _context.SaveChangesAsync();
+                timer.Stop();
+                _logger.LogInformation($"time report normal: {timer.Elapsed.Seconds}");
             }
-            timer.Stop();
-            _logger.LogInformation($"total time repost: {timer.Elapsed.TotalMilliseconds}");
             _logger.LogInformation($"report total normal done");
         }
     }

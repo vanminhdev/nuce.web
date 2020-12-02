@@ -8,7 +8,6 @@ using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Services.Background;
 using nuce.web.api.Services.Status.Interfaces;
-using nuce.web.api.Services.Survey.BackgroundServices;
 using nuce.web.api.Services.Survey.Interfaces;
 using System;
 using System.Collections.Generic;
