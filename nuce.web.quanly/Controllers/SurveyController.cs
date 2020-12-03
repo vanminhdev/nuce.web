@@ -398,5 +398,101 @@ namespace nuce.web.quanly.Controllers
             return Json(new { }, JsonRequestBehavior.AllowGet);
         }
         #endregion
+
+        #region đợt khảo sát
+
+        #endregion
+
+        #region bài khảo sát
+
+        #endregion
+
+        #region đợt khảo sát đã tốt nghiệp
+        [HttpGet]
+        public ActionResult GraduateSurveyRound()
+        {
+            return View("~/Views/Survey/Graduate/GraduateSurveyRound.cshtml");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetAllGraduateSurveyRound(DataTableRequest request)
+        {
+            var stringContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/GraduateSurveyRound/GetSurveyRound", stringContent);
+            return await base.HandleResponseAsync(response,
+                action200Async: async res =>
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var data = JsonConvert.DeserializeObject<DataTableResponse<GraduateSurveyRound>>(jsonString);
+                    return Json(new
+                    {
+                        draw = data.Draw,
+                        recordsTotal = data.RecordsTotal,
+                        recordsFiltered = data.RecordsFiltered,
+                        data = data.Data
+                    });
+                }
+            );
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetGraduateSurveyRoundById(string id)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/GraduateSurveyRound/GetSurveyRoundById?id={id}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateGraduateSurveyRound(GraduateSurveyRoundCreate data)
+        {
+            var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/GraduateSurveyRound/CreateSurveyRound", content);
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UpdateGraduateSurveyRound(GraduateSurveyRoundUpdate data)
+        {
+            var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/GraduateSurveyRound/UpdateSurveyRound?id={data.id}", content);
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> DeleteGraduateSurveyRound(string id)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/GraduateSurveyRound/DeleteSurveyRound?id={id}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        #region sinh viên đã tốt nghiệp
+        [HttpGet]
+        public ActionResult GraduateStudent()
+        {
+            return View("~/Views/Survey/Graduate/GraduateStudent.cshtml");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetAllGraduateStudent(DataTableRequest request)
+        {
+            var stringContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/GraduateStudent/GetGraduateStudent", stringContent);
+            return await base.HandleResponseAsync(response,
+                action200Async: async res =>
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var data = JsonConvert.DeserializeObject<DataTableResponse<GraduateStudent>>(jsonString);
+                    return Json(new
+                    {
+                        draw = data.Draw,
+                        recordsTotal = data.RecordsTotal,
+                        recordsFiltered = data.RecordsFiltered,
+                        data = data.Data
+                    });
+                }
+            );
+        }
+        #endregion
     }
 }

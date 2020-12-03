@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.Survey.Interfaces
 {
-    public interface IAsEduSurveyBaiKhaoSatSinhVienService
+    public interface IAsEduSurveyGraduateBaiKhaoSatSinhVienService
     {
         public Task SaveSelectedAnswer(string id, string ipAddress);
         public Task<Guid> GetIdByCode(string studentCode, string classroomCode);

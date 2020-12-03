@@ -22,6 +22,10 @@ namespace nuce.web.api.Models.Survey
         public virtual DbSet<AsEduSurveyDapAn> AsEduSurveyDapAn { get; set; }
         public virtual DbSet<AsEduSurveyDeThi> AsEduSurveyDeThi { get; set; }
         public virtual DbSet<AsEduSurveyDotKhaoSat> AsEduSurveyDotKhaoSat { get; set; }
+        public virtual DbSet<AsEduSurveyGraduateBaiKhaoSat> AsEduSurveyGraduateBaiKhaoSat { get; set; }
+        public virtual DbSet<AsEduSurveyGraduateBaiKhaoSatSinhVien> AsEduSurveyGraduateBaiKhaoSatSinhVien { get; set; }
+        public virtual DbSet<AsEduSurveyGraduateStudent> AsEduSurveyGraduateStudent { get; set; }
+        public virtual DbSet<AsEduSurveyGraduateSurveyRound> AsEduSurveyGraduateSurveyRound { get; set; }
         public virtual DbSet<AsEduSurveyReportTotal> AsEduSurveyReportTotal { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -211,6 +215,293 @@ namespace nuce.web.api.Models.Survey
             modelBuilder.Entity<AsEduSurveyDotKhaoSat>(entity =>
             {
                 entity.ToTable("AS_Edu_Survey_DotKhaoSat");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasMaxLength(2000);
+
+                entity.Property(e => e.EndDate).HasColumnType("datetime");
+
+                entity.Property(e => e.FromDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Note)
+                    .IsRequired()
+                    .HasMaxLength(2000);
+            });
+
+            modelBuilder.Entity<AsEduSurveyGraduateBaiKhaoSat>(entity =>
+            {
+                entity.ToTable("AS_Edu_Survey_Graduate_BaiKhaoSat");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.DeThiId).HasColumnName("DeThiID");
+
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasMaxLength(2000);
+
+                entity.Property(e => e.DotKhaoSatId).HasColumnName("DotKhaoSatID");
+
+                entity.Property(e => e.EndDate).HasColumnType("datetime");
+
+                entity.Property(e => e.FromDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Note)
+                    .IsRequired()
+                    .HasMaxLength(2000);
+            });
+
+            modelBuilder.Entity<AsEduSurveyGraduateBaiKhaoSatSinhVien>(entity =>
+            {
+                entity.ToTable("AS_Edu_Survey_Graduate_BaiKhaoSat_SinhVien");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.BaiKhaoSatId).HasColumnName("BaiKhaoSatID");
+
+                entity.Property(e => e.BaiLam).IsRequired();
+
+                entity.Property(e => e.DeThi).IsRequired();
+
+                entity.Property(e => e.DepartmentCode)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LogIp)
+                    .HasColumnName("LogIP")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.NgayGioBatDau).HasColumnType("datetime");
+
+                entity.Property(e => e.NgayGioNopBai).HasColumnType("datetime");
+
+                entity.Property(e => e.StudentCode)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<AsEduSurveyGraduateStudent>(entity =>
+            {
+                entity.ToTable("AS_Edu_Survey_Graduate_Student");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.Bangclc)
+                    .HasColumnName("bangclc")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Checksum)
+                    .HasColumnName("checksum")
+                    .HasMaxLength(200)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.DotkhaosatId).HasColumnName("dotkhaosat_id");
+
+                entity.Property(e => e.Dottotnghiep)
+                    .HasColumnName("dottotnghiep")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Dtoc)
+                    .HasColumnName("dtoc")
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.Email)
+                    .HasColumnName("email")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Email1)
+                    .HasColumnName("email1")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Email2)
+                    .HasColumnName("email2")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ExMasv)
+                    .IsRequired()
+                    .HasColumnName("ex_masv")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.GhichuThi)
+                    .HasColumnName("ghichu_thi")
+                    .HasMaxLength(200);
+
+                entity.Property(e => e.Gioitinh)
+                    .HasColumnName("gioitinh")
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Hedaotao)
+                    .HasColumnName("hedaotao")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.K)
+                    .HasColumnName("k")
+                    .HasMaxLength(5)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Khoahoc)
+                    .HasColumnName("khoahoc")
+                    .HasMaxLength(30)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Lop12)
+                    .HasColumnName("lop12")
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Lopqd)
+                    .HasColumnName("lopqd")
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Manganh)
+                    .HasColumnName("manganh")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Masv)
+                    .IsRequired()
+                    .HasColumnName("masv")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Mobile)
+                    .HasColumnName("mobile")
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Mobile1)
+                    .HasColumnName("mobile1")
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Mobile2)
+                    .HasColumnName("mobile2")
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Namtn)
+                    .HasColumnName("namtn")
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Ngaysinh)
+                    .HasColumnName("ngaysinh")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Noisiti)
+                    .HasColumnName("noisiti")
+                    .HasMaxLength(200);
+
+                entity.Property(e => e.Psw)
+                    .IsRequired()
+                    .HasColumnName("psw")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Quoctich)
+                    .HasColumnName("quoctich")
+                    .HasMaxLength(30);
+
+                entity.Property(e => e.Sobaodanh)
+                    .HasColumnName("sobaodanh")
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Sohieuba)
+                    .HasColumnName("sohieuba")
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Soqdtn)
+                    .HasColumnName("soqdtn")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Sovaoso)
+                    .HasColumnName("sovaoso")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.Property(e => e.Tbcht)
+                    .HasColumnName("tbcht")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Tcong)
+                    .HasColumnName("tcong")
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Tenchnga)
+                    .HasColumnName("tenchnga")
+                    .HasMaxLength(200);
+
+                entity.Property(e => e.Tennganh)
+                    .HasColumnName("tennganh")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Tensinhvien)
+                    .HasColumnName("tensinhvien")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Thongtinthem)
+                    .HasColumnName("thongtinthem")
+                    .HasMaxLength(1000);
+
+                entity.Property(e => e.Thongtinthem1)
+                    .HasColumnName("thongtinthem1")
+                    .HasMaxLength(1000);
+
+                entity.Property(e => e.Tinh)
+                    .HasColumnName("tinh")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Tkhau)
+                    .HasColumnName("tkhau")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Truong)
+                    .HasColumnName("truong")
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Type).HasColumnName("type");
+
+                entity.Property(e => e.Xeploai)
+                    .HasColumnName("xeploai")
+                    .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<AsEduSurveyGraduateSurveyRound>(entity =>
+            {
+                entity.ToTable("AS_Edu_Survey_Graduate_SurveyRound");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")

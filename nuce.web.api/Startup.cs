@@ -186,11 +186,6 @@ namespace nuce.web.api
             services.AddSingleton<IPathProvider, PathProvider>();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
-            #region scoped processing service
-            //services.AddHostedService<ConsumeScopedServiceHostedService>();
-            //services.AddScoped<IScopedProcessingService, ReportTotalNormalSurveyService>();
-            #endregion
-
             #region config service
             services.AddScoped<IStatusService, StatusService>();
             services.AddScoped<IAsEduSurveyCauHoiService, AsEduSurveyCauHoiService>();
@@ -203,6 +198,11 @@ namespace nuce.web.api
             services.AddScoped<IAsEduSurveyBaiKhaoSatService, AsEduSurveyBaiKhaoSatService>();
             services.AddScoped<IAsEduSurveyBaiKhaoSatSinhVienService, AsEduSurveyBaiKhaoSatSinhVienService>();
             services.AddScoped<IAsEduSurveyReportTotalService, AsEduSurveyReportTotalService>();
+
+            services.AddScoped<IAsEduSurveyGraduateStudentService, AsEduSurveyGraduateStudentService>();
+            services.AddScoped<IAsEduSurveyGraduateDotKhaoSatService, AsEduSurveyGraduateDotKhaoSatService>();
+            services.AddScoped<IAsEduSurveyGraduateBaiKhaoSatService, AsEduSurveyGraduateBaiKhaoSatService>();
+            services.AddScoped<IAsEduSurveyGraduateBaiKhaoSatSinhVienService, AsEduSurveyGraduateBaiKhaoSatSinhVienService>();
             #endregion
             #region sync edu database service
             services.AddScoped<ISyncEduDatabaseService, SyncEduDatabaseService>();

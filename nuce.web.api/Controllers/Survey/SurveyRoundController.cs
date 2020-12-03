@@ -35,6 +35,7 @@ namespace nuce.web.api.Controllers.Survey
             _asEduSurveyBaiKhaoSatService = asEduSurveyBaiKhaoSatService;
         }
 
+        #region đợt khảo sát
         [HttpPost]
         public async Task<IActionResult> GetSurveyRound([FromBody] DataTableRequest request)
         {
@@ -127,7 +128,9 @@ namespace nuce.web.api.Controllers.Survey
             }
             return Ok();
         }
+        #endregion
 
+        #region bài khảo sát
         [HttpPost]
         public async Task<IActionResult> GetTheSurvey([FromBody] DataTableRequest request)
         {
@@ -223,5 +226,6 @@ namespace nuce.web.api.Controllers.Survey
             }
             return Ok();
         }
+        #endregion
     }
 }

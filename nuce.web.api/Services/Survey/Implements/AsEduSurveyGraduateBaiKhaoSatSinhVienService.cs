@@ -15,12 +15,12 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.Survey.Implements
 {
-    public class AsEduSurveyBaiKhaoSatSinhVienService : IAsEduSurveyBaiKhaoSatSinhVienService
+    public class AsEduSurveyGraduateBaiKhaoSatSinhVienService : IAsEduSurveyGraduateBaiKhaoSatSinhVienService
     {
         private readonly SurveyContext _context;
         private readonly StatusContext _statusContext;
 
-        public AsEduSurveyBaiKhaoSatSinhVienService(SurveyContext context, StatusContext statusContext)
+        public AsEduSurveyGraduateBaiKhaoSatSinhVienService(SurveyContext context, StatusContext statusContext)
         {
             _context = context;
             _statusContext = statusContext;

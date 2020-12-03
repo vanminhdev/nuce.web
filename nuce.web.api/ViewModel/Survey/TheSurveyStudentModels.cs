@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.ViewModel.Survey
 {
-    public class TheSurveysStudent
+    public class TheSurveyStudent
     {
         public Guid Id { get; set; }
         public Guid BaiKhaoSatId { get; set; }

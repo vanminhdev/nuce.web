@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace nuce.web.api.Attributes.ValidationAttributes
+namespace nuce.web.quanly.Attributes.ValidationAttributes
 {
     /// <summary>
     /// Chuỗi không chỉ chứa toàn khoảng trắng thì thoả
@@ -17,6 +17,7 @@ namespace nuce.web.api.Attributes.ValidationAttributes
             {
                 return true;
             }
+
             var str = value as string;
             if (str.Trim().Length > 0)
                 return true;

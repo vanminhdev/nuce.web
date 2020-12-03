@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace nuce.web.api.Attributes.ValidationAttributes
+namespace nuce.web.quanly.Attributes.ValidationAttributes
 {
     public class CompareMoreThanLessThanAttribute: CompareAttribute
     {
@@ -17,11 +17,6 @@ namespace nuce.web.api.Attributes.ValidationAttributes
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            if(value == null)
-            {
-                return new ValidationResult("Property is null");
-            }
-
             ErrorMessage = ErrorMessageString;
             var currentProp = (DateTime)value;
 

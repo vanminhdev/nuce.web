@@ -32,6 +32,7 @@ namespace nuce.web.api.Controllers.Survey
             _statusService = statusService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetStatusReportTotalNormalSurveyTask()
         {
             try

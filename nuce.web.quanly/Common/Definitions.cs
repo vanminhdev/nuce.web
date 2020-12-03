@@ -104,4 +104,57 @@ namespace nuce.web.quanly.Common
         /// </summary>
         public static string T = "T";
     }
+
+    /// <summary>
+    /// Loại đợt khảo sát
+    /// </summary>
+    public enum SurveyRoundType
+    {
+        /// <summary>
+        /// Đánh giá chất lượng giảng dạy
+        /// </summary>
+        RatingTeachingQuality = 1
+    }
+
+    /// <summary>
+    /// Loại bài khảo sát
+    /// </summary>
+    public enum TheSurveyType
+    {
+        /// <summary>
+        /// Đề cho môn lý thuyết
+        /// </summary>
+        TheoreticalSubjects = 1,
+
+        /// <summary>
+        /// Đề cho môn thực hành, thí nghiệm và thực tập
+        /// </summary>
+        PracticalSubjects = 2,
+
+        /// <summary>
+        /// Đề cho môn lý thuyết + thực hành
+        /// </summary>
+        TheoreticalPracticalSubjects = 3,
+
+        /// <summary>
+        /// Đề cho môn đồ án
+        /// </summary>
+        AssignmentSubjects = 4,
+
+        /// <summary>
+        /// Đề cho môn không được phần loại
+        /// </summary>
+        DefaultSubjects = 5,
+    }
+
+    /// <summary>
+    /// Loại đợt khảo sát cựu sinh viên
+    /// </summary>
+    public enum GraduateSurveyRoundType
+    {
+        /// <summary>
+        /// Đánh giá chất lượng giảng dạy
+        /// </summary>
+        RatingTeachingQuality = 1
+    }
 }
