@@ -133,6 +133,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Attributes\ActionFilter\AuthorizeActionFilter.cs" />
+    <Compile Include="Attributes\ActionFilter\GraduateActionFilter.cs" />
     <Compile Include="Attributes\ValidationAttributes\EmailRegexAttribute.cs" />
     <Compile Include="Attributes\ValidationAttributes\NotContainWhiteSpaceAttribute.cs" />
     <Compile Include="Attributes\ValidationAttributes\OnlyNumberAttribute.cs" />
@@ -142,7 +143,9 @@
     <Compile Include="Common\UserParameters.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\GraduateStudentController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -924,11 +927,16 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Account\Index.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Shared\_LayoutEmpty.cshtml" />
     <Content Include="Views\Home\TheSurvey.cshtml" />
     <Content Include="Views\Error\Index.cshtml" />
+    <Content Include="Views\Default\Index.cshtml" />
+    <Content Include="Views\Account\LoginGraduate.cshtml" />
+    <Content Include="Views\GraduateStudent\Index.cshtml" />
+    <Content Include="Views\Shared\_LayoutDefault.cshtml" />
+    <Content Include="Views\Shared\_LayoutLogin.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

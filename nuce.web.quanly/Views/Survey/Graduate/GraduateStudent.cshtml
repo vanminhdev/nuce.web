@@ -26,6 +26,9 @@
                 <div class="col-12 col-md mb-2">
                     <button class="btn btn-primary w-100" id="upload">Tải lên danh sách</button>
                 </div>
+                <div class="col-12 col-md mb-2">
+                    <button class="btn btn-danger w-100" id="delete-all">Xoá toàn bộ</button>
+                </div>
             </div>
         </div>
     </div>
@@ -119,9 +122,8 @@
                 </button>
             </div>
             <div class="modal-body" id="modal-yes-no-content">
-                Xoá sinh viên ?
+                Xoá toàn bộ sinh viên ?
             </div>
-            <input id="delete-id" name="id" hidden />
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
                 <button id="choose-yes" type="button" class="btn btn-primary">Có</button>
@@ -130,8 +132,8 @@
     </div>
 </div>
 
-<div class="modal fade bd-example-modal-lg" id="modal-upload" tabindex="-1" role="dialog" aria-labelledby="modal-upload" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document" style="min-width:90%">
+<div class="modal fade auto-clear-form-on-open" id="modal-upload" tabindex="-1" role="dialog" aria-labelledby="modal-upload" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="min-width:800px">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Tải lên danh sách</h5>
@@ -141,18 +143,28 @@
             </div>
             <div class="modal-body" id="modal-yes-no-content">
                 <div class="container-fluid">
-                    <div>
-
+                    <div class="row">
+                        <div class="col d-flex justify-content-center">
+                            <a href="/survey/DownloadTemplateUploadFile" target="_blank" class="btn btn-success mr-1 ml-1">
+                                <i class="far fa-file-excel"></i>
+                                File mẫu
+                            </a>
+                            <input class="btn btn-outline-secondary" id="file-upload" type="file" accept=".xlsx" required/>
+                            <button id="btn-file-upload" class="btn btn-primary ml-1">
+                                <i class="far fa-file-excel"></i>
+                                Tải lên
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <table>
 
                 </table>
             </div>
-            <div class="modal-footer">
+            @*<div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
                 <button id="save-upload" type="button" class="btn btn-primary">Lưu</button>
-            </div>
+            </div>*@
         </div>
     </div>
 </div>
@@ -173,7 +185,7 @@
             language: dataTableConfig.language,
             columnDefs: [
                 {
-                    targets: [0, 1, 2],
+                    targets: [0, 1, 2, 4],
                     className: 'text-center'
                 }
             ],
@@ -215,7 +227,35 @@
         let modalUpload = $('#modal-upload');
         $('#upload').click(function () {
             modalUpload.modal('show');
-            
+        });
+
+        $('#btn-file-upload').click(() => {
+            if ($('#file-upload').prop('files').length === 0) {
+                return;
+            }
+            var formData = new FormData();
+            formData.append("fileUpload", $('#file-upload').prop('files')[0]);
+            $.ajax({
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                method: 'Post',
+                url: '/Survey/UploadFile',
+            }).done(function (res) {
+                if (res.statusCode === 200) {
+                    toastSuccess('Lưu thành công');
+                    table.ajax.reload();
+                    $('#modal-upload').modal('hide');
+                }
+                else {
+                    toastError('Có lỗi xảy ra');
+                    console.log(res);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus + ': ' + errorThrown);
+                console.log(jqXHR);
+            });
         });
 
         let saveChanges = $('#save-changes');
@@ -281,24 +321,24 @@
             });
         }
 
-        function deleteClick(id) {
+        $('#delete-all').click(() => {
             $('#modal-yes-no').modal('show');
-            $('#delete-id').val(id);
-        }
+        });
 
-        $('#choose-yes').click(function () {
+        $('#choose-yes').click(() => {
             $.ajax({
-                data: { id: $('#delete-id').val() },
                 dataType: 'json',
                 method: 'Post',
-                url: '/Survey/DeleteGraduateSurveyRound',
+                url: '/Survey/DeleteAllGraduateStudent',
                 complete: () => { }
             }).done(function (res) {
                 if (res.statusCode === 200) {
+                    toastSuccess('Xoá thành công');
                     table.ajax.reload();
                     $('#modal-yes-no').modal('hide');
                 }
                 else {
+                    toastError('Có lỗi xảy ra');
                     console.log(res);
                 }
             }).fail(function (jqXHR, textStatus, errorThrown) {

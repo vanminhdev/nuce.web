@@ -44,6 +44,8 @@ function fillFormData(id, data) {
         if (element.attr('type') === 'date') {
             let date = new Date(data[property]);
             element.val(getDateyyyyMMdd(date));
+        } else if (element.prop("tagName") === "SELECT") {
+            element.val(data[property]).trigger('change');
         } else {
             element.val(data[property]);
         }

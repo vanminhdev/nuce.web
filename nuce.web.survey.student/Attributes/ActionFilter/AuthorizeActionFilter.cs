@@ -56,7 +56,7 @@ namespace nuce.web.survey.student.Attributes.ActionFilter
             var refreshTokenCookie = filterContext.RequestContext.HttpContext.Request.Cookies[UserParameters.JwtRefreshToken];
             if(accessTokenCookie == null && refreshTokenCookie == null)
             {
-                filterContext.Result = new RedirectResult("/account");
+                filterContext.Result = new RedirectResult("/account/login");
             }
             else if(accessTokenCookie == null && refreshTokenCookie != null)
             {
@@ -89,12 +89,12 @@ namespace nuce.web.survey.student.Attributes.ActionFilter
                     }
                     else // không lấy được access token mới cho đăng nhập lại
                     {
-                        filterContext.Result = new RedirectResult("/account");
+                        filterContext.Result = new RedirectResult("/account/login");
                     }
                 }
                 else // không lấy được access token mới cho đăng nhập lại
                 {
-                    filterContext.Result = new RedirectResult("/account");
+                    filterContext.Result = new RedirectResult("/account/login");
                 }
             }
             else //kiểm tra luôn

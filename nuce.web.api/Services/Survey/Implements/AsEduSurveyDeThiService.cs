@@ -164,7 +164,7 @@ namespace nuce.web.api.Services.Survey.Implements
             return await _surveyContext.AsEduSurveyDeThi
                 .Select(eq => new ExamQuestions
                 {
-                    Id = eq.Id.ToString(),
+                    Id = eq.Id,
                     Code = eq.Code,
                     Name = eq.Name
                 }).ToListAsync();

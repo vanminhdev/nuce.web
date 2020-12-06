@@ -139,7 +139,12 @@ namespace nuce.web.api.Common
 
     public class TableNameTask
     {
-        public static string AsEduSurveyBaiKhaoSatSinhVien = "AS_Edu_Survey_BaiKhaoSat_SinhVien";
-        public static string AsEduSurveyReportTotal = "AS_Edu_Survey_ReportTotal";
+        public static readonly string AsEduSurveyBaiKhaoSatSinhVien = "AS_Edu_Survey_BaiKhaoSat_SinhVien";
+        public static readonly string AsEduSurveyReportTotal = "AS_Edu_Survey_ReportTotal";
+    }
+
+    public class ContentTypes
+    {
+        public static readonly string Xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     }
 }

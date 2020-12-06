@@ -1,6 +1,5 @@
-﻿
-@{
-    ViewData["Title"] = "Đợt khảo sát cựu sinh viên";
+﻿@{
+    ViewData["Title"] = "Bài khảo sát cựu sinh viên";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -13,19 +12,19 @@
     <div class="row mb-3">
         <div class="col-md-12">
             <div class="form-row">
-                <div class="col-12 col-md-2 mb-2">
+                @*<div class="col-12 col-md mb-2">
                     <input class="form-control form-control" id="name-search" type="text" placeholder="Tìm theo tên" />
                 </div>
-                <div class="col-12 col-md-3 mb-2 d-flex flex-row">
+                <div class="col-12 col-md mb-2 d-flex flex-row">
                     <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
                         <i class="fas fa-redo"></i>
                     </div>
                     <div class="w-75">
                         <button id="btn-search" class="btn btn-secondary w-100">Tìm kiếm</button>
                     </div>
-                </div>
+                </div>*@
                 <div class="col-12 col-md-2 mb-2">
-                    <button class="btn btn-primary w-100" onclick="createClick()">Thêm đợt khảo sát</button>
+                    <button class="btn btn-primary w-100" onclick="createClick()">Thêm bài khảo sát</button>
                 </div>
             </div>
         </div>
@@ -36,9 +35,11 @@
             <table id="id-datatable" class="table table-bordered">
                 <thead>
                     <tr>
-                        <th class="text-center" width="38%">Tên</th>
+                        <th class="text-center">Đợt khảo sát</th>
                         <th class="text-center">Từ ngày</th>
                         <th class="text-center">Đến ngày</th>
+                        <th class="text-center">Mô tả</th>
+                        <th class="text-center">Ghi chú</th>
                         <th class="text-center">Loại</th>
                         <th class="text-center">Trạng thái</th>
                         <th class="text-center"></th>
@@ -53,7 +54,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modal-title">Thêm đợt khảo sát</h5>
+                <h5 class="modal-title" id="modal-title">Thêm</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -63,9 +64,17 @@
                     <form id="form-data" class="auto-validate">
                         <input name="id" hidden />
                         <div class="form-group row">
-                            <label class="col-3 col-form-label">Tên đợt khảo sát <span class="text-danger">*</span></label>
+                            <label class="col-3 col-form-label">Đợt khảo sát <span class="text-danger">*</span></label>
                             <div class="col-9">
-                                <input type="text" class="form-control" name="name" id="name" required>
+                                <select class="form-control selectpicker custom-boostrap-select" name="dotKhaoSatId" id="dotKhaoSatId" required title="Chọn đợt khảo sát">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3 col-form-label">Bài khảo sát <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <select class="form-control selectpicker custom-boostrap-select" name="deThiId" id="deThiId" required title="Chọn bài khảo sát">
+                                </select>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -95,8 +104,8 @@
                         <div class="form-group row">
                             <label class="col-3 col-form-label">Loại <span class="text-danger">*</span></label>
                             <div class="col-9">
-                                <select class="form-control selectpicker custom-boostrap-select" name="type" id="type" data-rule-onlyAcceptListValue="1" >
-                                    <option value="1">Đánh giá chất lượng giảng dạy</option>
+                                <select class="form-control selectpicker custom-boostrap-select" name="type" id="type" data-rule-onlyAcceptListValue="1">
+                                    <option value="1">Loại 1</option>
                                 </select>
                             </div>
                         </div>
@@ -106,27 +115,6 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
                 <button type="button" class="btn btn-primary" id="save-changes" type-handle="create">Lưu</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modal-yes-no-close" tabindex="-1" role="dialog" aria-labelledby="modal-yes-no-close" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modal-yes-no-title">Xác nhận kết thúc</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                Kết thúc đợt khảo sát ?
-            </div>
-            <input id="close-id" name="id" hidden />
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
-                <button id="choose-yes-close" type="button" class="btn btn-primary">Có</button>
             </div>
         </div>
     </div>
@@ -142,7 +130,7 @@
                 </button>
             </div>
             <div class="modal-body" id="modal-yes-no-content">
-                Xoá đợt khảo sát ?
+                Xoá bài khảo sát ?
             </div>
             <input id="delete-id" name="id" hidden />
             <div class="modal-footer">
@@ -159,6 +147,20 @@
     <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/content/js/dataTables.config.js"></script>
     <script>
+        let surveyRounds = JSON.parse('@Html.Raw(ViewData["SurveyRoundActive"])');
+        let dotKhaoSats = $('#dotKhaoSatId');
+        surveyRounds.forEach(e => {
+            dotKhaoSats.append(`<option value="${e.id}">${e.name} (từ ${getDateString(e.fromDate)} đến ${getDateString(e.endDate)})</option>`);
+        });
+        dotKhaoSats.selectpicker('refresh');
+
+        let examQuestions = JSON.parse('@Html.Raw(ViewData["ExamQuestions"])');
+        let deThis = $('#deThiId');
+        examQuestions.forEach(e => {
+            deThis.append(`<option value="${e.id}">${e.name}</option >`);
+        });
+        deThis.selectpicker('refresh');
+
         var table = $('#id-datatable').DataTable({
             processing: true,
             serverSide: true,
@@ -169,12 +171,12 @@
             language: dataTableConfig.language,
             columnDefs: [
                 {
-                    targets: [ 1, 2, 3, 4, 5],
+                    targets: [1, 2, 5, 6, 7],
                     className: 'text-center'
                 }
             ],
             ajax: {
-                url: '/Survey/GetAllGraduateSurveyRound',
+                url: '/Survey/GetAllGraduateTheSurvey',
                 dataType: 'json',
                 contentType: 'application/json',
                 type: "POST",
@@ -184,7 +186,7 @@
             },
             columns: [
                 {
-                    data: "name"
+                    data: "surveyRoundName"
                 },
                 {
                     data: null,
@@ -199,6 +201,12 @@
                     mRender: function (data, type, row) {
                         return getDateStringFromServerType(data.endDate);
                     }
+                },
+                {
+                    data: "description"
+                },
+                {
+                    data: "note"
                 },
                 {
                     data: "type"
@@ -222,7 +230,6 @@
                         let html = '';
                         if (data.status === 1) {
                             html += `<button class="btn btn btn-outline-success ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
-                            html += `<button class="btn btn btn-outline-warning ml-1 mr-1" onclick="closeClick('${data.id}')">Kết thúc</button>`;
                         }
                         if (data.status === 2) {
                             html += `<button class="btn btn btn-outline-danger ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
@@ -234,9 +241,9 @@
         });
         $('#id-datatable_filter').hide();
         $("#btn-search").click(() => {
-            table
-                .column(0).search($("#name-search").val())
-                .draw();
+            //table
+            //    .column(0).search($("#name-search").val())
+            //    .draw();
         });
         document.getElementById("footer").scrollIntoView();
 
@@ -246,9 +253,9 @@
             if (form.valid()) {
                 let url;
                 if (saveChanges.attr('type-handle') === 'create') {
-                    url = '/Survey/CreateGraduateSurveyRound';
+                    url = '/Survey/CreateGraduateTheSurvey';
                 } else if (saveChanges.attr('type-handle') === 'update') {
-                    url = '/Survey/UpdateGraduateSurveyRound';
+                    url = '/Survey/UpdateGraduateTheSurvey';
                 }
                 $.ajax({
                     data: getFormData('#form-data'),
@@ -261,6 +268,10 @@
                         toastSuccess('Lưu thành công');
                         table.ajax.reload();
                         $('#modal-input').modal('hide');
+                    }
+                    else if (res.statusCode === 409) {
+                        let content = JSON.parse(res.content);
+                        toastWarning(content.detailMessage);
                     }
                     else {
                         toastError('Có lỗi xảy ra');
@@ -275,18 +286,18 @@
 
         function createClick() {
             $('#modal-input').modal('show');
-            $('#modal-title').html('Thêm đợt khảo sát');
+            $('#modal-title').html('Thêm bài khảo sát');
             saveChanges.attr('type-handle', 'create');
         }
 
-        function updateClick(id) { 
+        function updateClick(id) {
             $('#modal-input').modal('show');
-            $('#modal-title').html('Cập nhật đợt khảo sát');
+            $('#modal-title').html('Cập nhật bài khảo sát');
             saveChanges.attr('type-handle', 'update');
             $.ajax({
                 dataType: 'json',
                 method: 'Get',
-                url: `/Survey/GetGraduateSurveyRoundById?id=${id}`,
+                url: `/Survey/GetGraduateTheSurveyById?id=${id}`,
                 timeout: 0,
                 complete: () => { }
             }).done(function (res) {
@@ -305,32 +316,6 @@
             });
         }
 
-        function closeClick(id) {
-            $('#modal-yes-no-close').modal('show');
-            $('#close-id').val(id);
-        }
-
-        $('#choose-yes-close').click(function () {
-            $.ajax({
-                data: { id: $('#close-id').val() },
-                dataType: 'json',
-                method: 'Post',
-                url: '/Survey/CloseGraduateSurveyRound',
-                complete: () => { }
-            }).done(function (res) {
-                if (res.statusCode === 200) {
-                    table.ajax.reload();
-                    $('#modal-yes-no-close').modal('hide');
-                }
-                else {
-                    console.log(res);
-                }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.log(textStatus + ': ' + errorThrown);
-                console.log(jqXHR);
-            });
-        });
-
         function deleteClick(id) {
             $('#modal-yes-no').modal('show');
             $('#delete-id').val(id);
@@ -341,7 +326,7 @@
                 data: { id: $('#delete-id').val() },
                 dataType: 'json',
                 method: 'Post',
-                url: '/Survey/DeleteGraduateSurveyRound',
+                url: '/Survey/DeleteGraduateTheSurvey',
                 complete: () => { }
             }).done(function (res) {
                 if (res.statusCode === 200) {

@@ -23,6 +23,7 @@ using nuce.web.api.ViewModel.Core;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using nuce.web.api.Services.Survey.Interfaces;
 
 namespace nuce.web.api.Controllers.Core
 {
@@ -37,9 +38,10 @@ namespace nuce.web.api.Controllers.Core
         private readonly IUserService _userService;
         private readonly IConfiguration _configuration;
         private readonly ILogService _logService;
+        private readonly IAsEduSurveyGraduateStudentService _asEduSurveyGraduateStudentService;
 
         public UserController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, NuceCoreIdentityContext identityContext,
-            ILogger<UserController> logger, IUserService userService, IConfiguration configuration, ILogService logService)
+            ILogger<UserController> logger, IUserService userService, IConfiguration configuration, ILogService logService, IAsEduSurveyGraduateStudentService asEduSurveyGraduateStudentService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -48,6 +50,7 @@ namespace nuce.web.api.Controllers.Core
             _userService = userService;
             _configuration = configuration;
             _logService = logService;
+            _asEduSurveyGraduateStudentService = asEduSurveyGraduateStudentService;
         }
 
         [HttpGet]
@@ -96,6 +99,24 @@ namespace nuce.web.api.Controllers.Core
                 return Ok();
             }
             return Unauthorized(userIsValidResult);
+        }
+
+        [HttpPost]
+        [Route("Logingraduate")]
+        public async Task<IActionResult> LoginGraduate([FromBody] LoginModel model)
+        {
+            bool isSuccess = await _asEduSurveyGraduateStudentService.Login(model.Username, model.Password);
+            if (isSuccess)
+            {
+                await _logService.WriteLog(new ActivityLogModel
+                {
+                    Username = model.Username,
+                    LogCode = ActivityLogParameters.CODE_LOGIN,
+                    LogMessage = "Cựu sinh viên đăng nhập"
+                });
+                return Ok();
+            }
+            return Unauthorized();
         }
 
         [HttpPost]

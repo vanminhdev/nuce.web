@@ -116,12 +116,12 @@ namespace nuce.web.api.Services.Survey.Implements
 
         public async Task Delete(string id)
         {
-            var theSurvey = await _context.AsEduSurveyBaiKhaoSat.FirstOrDefaultAsync(o => o.Id.ToString() == id && o.Status != (int)SurveyRoundStatus.Deleted);
+            var theSurvey = await _context.AsEduSurveyBaiKhaoSat.FirstOrDefaultAsync(o => o.Id.ToString() == id && o.Status != (int)TheSurveyStatus.Deleted);
             if (theSurvey == null)
             {
                 throw new RecordNotFoundException();
             }
-            theSurvey.Status = (int)SurveyRoundStatus.Deleted;
+            theSurvey.Status = (int)TheSurveyStatus.Deleted;
             await _context.SaveChangesAsync();
         }
     }

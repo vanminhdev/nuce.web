@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="GemBox.Spreadsheet" Version="47.0.1044" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.9" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
@@ -39,6 +40,7 @@
     <Folder Include="Resources\Core\" />
     <Folder Include="Resources\Ctsv\" />
     <Folder Include="Resources\Survey\" />
+    <Folder Include="Templates\Survey\" />
   </ItemGroup>
 
   <ItemGroup>

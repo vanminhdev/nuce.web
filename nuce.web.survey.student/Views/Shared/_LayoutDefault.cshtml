@@ -1,26 +1,4 @@
-﻿@{
-    var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
-    var accessToken = Request.Cookies[nuce.web.survey.student.Common.UserParameters.JwtAccessToken];
-    var username = "";
-    var roles = new List<string>();
-    if (accessToken != null)
-    {
-
-        var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
-
-        //username
-        var usernameClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Name);
-        if (usernameClaim != null)
-        {
-            username = usernameClaim.Value;
-        }
-
-        //role
-        roles = jwtSecurityToken.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Role).Select(r => r.Value).ToList();
-    }
-}
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8" />
@@ -36,9 +14,6 @@
     @RenderSection("Style", required: false)
 </head>
 <body>
-    <form action="/account/logout" method="post" style="position: absolute; top: 20px; right: 40px;">
-        <button type="submit" class="btn btn-outline-secondary">Đăng xuất</button>
-    </form>
     <div class="full-height body-wrp">
         <!-- header section -->
         <section id="header">
@@ -133,73 +108,9 @@
         </section>
         <!-- end footer section -->
     </div>
-    <div id="loading-screen" class="popup-fullscreen">
-        <div class="d-flex justify-content-center align-items-center">
-            <div class="loading-circle"></div>
-        </div>
-    </div>
-
     <script src="~/content/js/jquery.min.js"></script>
-    <script src="~/content/js/jquery.cookie.min.js"></script>
-    <script src="~/content/js/jquery.validate.min.js"></script>
     <script src="~/content/js/popper.min.js"></script>
     <script src="~/content/js/bootstrap.min.js"></script>
-    <script>
-        $.ajaxSetup({
-            xhrFields: {
-                withCredentials: true
-            },
-            complete: () => {
-                document.getElementById("render-body").scrollIntoView();
-            },
-            crossDomain: true
-        });
-        const debounce = (func, delay) => {
-            let debounceTimer;
-            return function () {
-                const context = this;
-                const args = arguments;
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(() => func.apply(context, args), delay);
-            }
-        }
-    </script>
-    <script>
-        let username = '@username';
-        let fullname = '@username';
-        $('#username-mobile').html(username);
-        $('#fullname-mobile').html(fullname);
-        $('#username-large-screen').html(username);
-        $('#fullname-large-screen').html(fullname);
-    </script>
-    <script>
-        $('.clear-input').each(function () {
-            let self = $(this);
-            self.click(function () {
-                //tìm 2 cấp
-                self.parent().parent().find('input').each(function () {
-                    $(this).val('');
-                });
-                self.parent().parent().find('select').each(function () {
-                    $(this).selectpicker('val', '');
-                });
-                //tìm 1 cấp
-                self.parent().find('input').each(function () {
-                    $(this).val('');
-                });
-                self.parent().find('input').each(function () {
-                    $(this).selectpicker('val', '');
-                });
-            });
-        });
-
-        function dateString(today) {
-            var dd = String(today.getDate()).padStart(2, '0');
-            var mm = String(today.getMonth() + 1).padStart(2, '0');
-            var yyyy = today.getFullYear();
-            return dd + '/' + mm + '/' + yyyy;
-        }
-    </script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

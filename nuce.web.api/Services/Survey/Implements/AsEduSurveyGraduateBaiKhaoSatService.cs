@@ -5,6 +5,7 @@ using nuce.web.api.Models.Survey;
 using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey;
+using nuce.web.api.ViewModel.Survey.Graduate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,21 +22,36 @@ namespace nuce.web.api.Services.Survey.Implements
             _context = context;
         }
 
-        public async Task<PaginationModel<AsEduSurveyBaiKhaoSat>> GetTheSurvey(TheSurveyFilter filter, int skip = 0, int take = 20)
+        public async Task<PaginationModel<GraduateTheSurvey>> GetTheSurvey(GraduateTheSurveyFilter filter, int skip = 0, int take = 20)
         {
             _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            IQueryable<AsEduSurveyBaiKhaoSat> query = _context.AsEduSurveyBaiKhaoSat.Where(o => o.Status != (int)SurveyRoundStatus.Deleted);
-            var recordsTotal = query.Count();
+            IQueryable<AsEduSurveyGraduateBaiKhaoSat> query = _context.AsEduSurveyGraduateBaiKhaoSat.Where(o => o.Status != (int)SurveyRoundStatus.Deleted);
+            var join = query.Join(_context.AsEduSurveyGraduateSurveyRound, o => o.DotKhaoSatId, o => o.Id, (baikhaosat, dotkhaosat) => new { baikhaosat, dotkhaosat });
 
-            var recordsFiltered = query.Count();
+            var recordsTotal = join.Count();
 
-            var querySkip = query
-                .OrderBy(u => u.Id)
-                .Skip(skip).Take(take);
+            var recordsFiltered = join.Count();
+
+            var querySkip = join
+                .OrderBy(u => u.baikhaosat.Id)
+                .Skip(skip).Take(take)
+                .Select(o => new GraduateTheSurvey
+                {
+                    Id = o.baikhaosat.Id,
+                    DotKhaoSatId = o.baikhaosat.DotKhaoSatId,
+                    DeThiId = o.baikhaosat.DeThiId,
+                    FromDate = o.baikhaosat.FromDate,
+                    EndDate = o.baikhaosat.EndDate,
+                    Description = o.baikhaosat.Description,
+                    Note = o.baikhaosat.Note,
+                    Status = o.baikhaosat.Status,
+                    Type = o.baikhaosat.Type,
+                    SurveyRoundName = o.dotkhaosat.Name
+                });
 
             var data = await querySkip.ToListAsync();
 
-            return new PaginationModel<AsEduSurveyBaiKhaoSat>
+            return new PaginationModel<GraduateTheSurvey>
             {
                 RecordsTotal = recordsTotal,
                 RecordsFiltered = recordsFiltered,
@@ -43,9 +59,9 @@ namespace nuce.web.api.Services.Survey.Implements
             };
         }
 
-        public async Task Create(TheSurveyCreate theSurvey)
+        public async Task Create(GraduateTheSurveyCreate theSurvey)
         {
-            var surveyRound = await _context.AsEduSurveyDotKhaoSat.FirstOrDefaultAsync(o => o.Id == theSurvey.DotKhaoSatId && o.Status == (int)TheSurveyStatus.Active);
+            var surveyRound = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == theSurvey.DotKhaoSatId && o.Status == (int)TheSurveyStatus.Active);
             if(surveyRound == null)
             {
                 throw new RecordNotFoundException("Id đợt khảo sát không tồn tại");
@@ -57,7 +73,13 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException("Id đề thi không tồn tại");
             }
 
-            _context.AsEduSurveyBaiKhaoSat.Add(new AsEduSurveyBaiKhaoSat
+            var theActivedSurvey = await _context.AsEduSurveyGraduateBaiKhaoSat.FirstOrDefaultAsync(o => o.DotKhaoSatId == theSurvey.DotKhaoSatId && o.Status == (int)TheSurveyStatus.Active);
+            if (theActivedSurvey != null)
+            {
+                throw new InvalidDataException($"Đợt khảo sát \"{surveyRound.Name}\" đang có bài khảo sát còn hoạt động");
+            }
+
+            _context.AsEduSurveyGraduateBaiKhaoSat.Add(new AsEduSurveyGraduateBaiKhaoSat
             {
                 Id = Guid.NewGuid(),
                 DotKhaoSatId = theSurvey.DotKhaoSatId.Value,
@@ -66,30 +88,43 @@ namespace nuce.web.api.Services.Survey.Implements
                 DapAn = examQuestion.DapAn,
                 FromDate = theSurvey.FromDate.Value,
                 EndDate = theSurvey.EndDate.Value,
-                Description = theSurvey.Description.Trim(),
-                Note = theSurvey.Note.Trim(),
+                Description = theSurvey?.Description.Trim() ?? "",
+                Note = theSurvey?.Note.Trim() ?? "",
                 Status = (int)TheSurveyStatus.Active,
-                //Type = theSurvey.Type.Value
-                Type = (int)TheSurveyType.TheoreticalSubjects
+                Type = theSurvey.Type.Value,
             });
             await _context.SaveChangesAsync();
         }
 
-        public async Task Update(string id, TheSurveyUpdate theSurvey)
+        public async Task Update(string id, GraduateTheSurveyUpdate theSurvey)
         {
-            var theSurveyUpdate = await _context.AsEduSurveyBaiKhaoSat.FirstOrDefaultAsync(o => o.Id.ToString() == id && o.Status != (int)TheSurveyStatus.Deleted);
+            var theSurveyUpdate = await _context.AsEduSurveyGraduateBaiKhaoSat.FirstOrDefaultAsync(o => o.Id.ToString() == id && o.Status != (int)TheSurveyStatus.Deleted);
             if (theSurveyUpdate == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy bài khảo sát cần cập nhật");
             }
 
-            if(theSurvey.DotKhaoSatId != theSurveyUpdate.DotKhaoSatId)
+            if(theSurveyUpdate.Status != (int)TheSurveyStatus.Active)
             {
-                var surveyRound = await _context.AsEduSurveyDotKhaoSat.FirstOrDefaultAsync(o => o.Id == theSurvey.DotKhaoSatId && o.Status == (int)TheSurveyStatus.Active);
+                throw new InvalidDataException("Bài khảo sát không còn hoạt động, không thể sửa");
+            }
+
+            //đổi đợt khảo sát
+            if (theSurvey.DotKhaoSatId != theSurveyUpdate.DotKhaoSatId)
+            {
+                var surveyRound = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == theSurvey.DotKhaoSatId && o.Status == (int)TheSurveyStatus.Active);
                 if (surveyRound == null)
                 {
                     throw new RecordNotFoundException("Id đợt khảo sát không tồn tại");
                 }
+
+                //có bài đang active rồi
+                var theActivedSurvey = await _context.AsEduSurveyGraduateBaiKhaoSat.FirstOrDefaultAsync(o => o.DotKhaoSatId == theSurvey.DotKhaoSatId && o.Status == (int)TheSurveyStatus.Active);
+                if (theActivedSurvey != null)
+                {
+                    throw new InvalidDataException($"Đợt khảo sát \"{surveyRound.Name}\" đang có bài khảo sát còn hoạt động");
+                }
+
                 theSurveyUpdate.DotKhaoSatId = theSurvey.DotKhaoSatId.Value;
             }
 
@@ -107,22 +142,38 @@ namespace nuce.web.api.Services.Survey.Implements
 
             theSurveyUpdate.FromDate = theSurvey.FromDate.Value;
             theSurveyUpdate.EndDate = theSurvey.EndDate.Value;
-            theSurveyUpdate.Description = theSurvey.Description.Trim();
-            theSurveyUpdate.Note = theSurvey.Note.Trim();
-            //theSurveyUpdate.Type = theSurvey.Type.Value;
-            theSurveyUpdate.Type = (int)TheSurveyType.TheoreticalSubjects;
+            theSurveyUpdate.Description = theSurvey?.Description.Trim() ?? "";
+            theSurveyUpdate.Note = theSurvey?.Note.Trim() ?? "";
+            theSurveyUpdate.Type = theSurvey.Type.Value;
             await _context.SaveChangesAsync();
         }
 
         public async Task Delete(string id)
         {
-            var theSurvey = await _context.AsEduSurveyBaiKhaoSat.FirstOrDefaultAsync(o => o.Id.ToString() == id && o.Status != (int)SurveyRoundStatus.Deleted);
+            var theSurvey = await _context.AsEduSurveyGraduateBaiKhaoSat.FirstOrDefaultAsync(o => o.Id.ToString() == id && o.Status != (int)TheSurveyStatus.Deleted);
             if (theSurvey == null)
             {
                 throw new RecordNotFoundException();
             }
-            theSurvey.Status = (int)SurveyRoundStatus.Deleted;
+
+            if (theSurvey.Status == (int)TheSurveyStatus.Active)
+            {
+                throw new InvalidDataException("Bài khảo sát còn hoạt động không thể xoá");
+            }
+
+            theSurvey.Status = (int)TheSurveyStatus.Deleted;
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<AsEduSurveyGraduateBaiKhaoSat> GetTheSurveyById(string id)
+        {
+            _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            var theSurvey = await _context.AsEduSurveyGraduateBaiKhaoSat.FirstOrDefaultAsync(o => o.Id.ToString() == id && o.Status != (int)TheSurveyStatus.Deleted);
+            if (theSurvey == null)
+            {
+                throw new RecordNotFoundException("Không tìm thấy bài khảo sát");
+            }
+            return theSurvey;
         }
     }
 }

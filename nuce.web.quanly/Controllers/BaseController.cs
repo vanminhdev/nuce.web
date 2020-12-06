@@ -84,7 +84,8 @@ namespace nuce.web.quanly.Controllers
             var refreshTokenInCookie = Request.Cookies[UserParameters.JwtRefreshToken];
             var response = new HttpResponseMessage()
             {
-                StatusCode = HttpStatusCode.Unauthorized
+                StatusCode = HttpStatusCode.Unauthorized,
+                Content = new StringContent("", Encoding.UTF8, "application/json")
             };
             //mất cả 2 token thì không xác thực
             if (accessTokenInCookie == null && refreshTokenInCookie == null)
@@ -112,13 +113,17 @@ namespace nuce.web.quanly.Controllers
                         Response.Cookies[UserParameters.JwtAccessToken].Value = accessToken.Value;
                         Response.Cookies[UserParameters.JwtAccessToken].HttpOnly = true;
                         Response.Cookies[UserParameters.JwtAccessToken].Expires = accessToken.Expires;
+
+                        //send lại request với token mới
+                        _cookieContainer.Add(_apiUri, new Cookie(UserParameters.JwtAccessToken, accessToken.Value));
+                        response = await SendRequestAsync(method, requestUri, content);
                     }
-                    //send lại request với token mới
-                    _cookieContainer.Add(_apiUri, new Cookie(UserParameters.JwtAccessToken, accessToken.Value));
-                    response = await SendRequestAsync(method, requestUri, content);
+                    else //trường hợp vẫn null do khả năng tài khoản đã bị khoá hoặc xoá
+                    {
+                        return response;
+                    }
                 }
             }
-
             return response;
         }
 

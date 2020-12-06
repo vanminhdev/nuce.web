@@ -1227,6 +1227,7 @@
     <Content Include="Views\Survey\Statistic.cshtml" />
     <Content Include="Views\Survey\Graduate\GraduateSurveyRound.cshtml" />
     <Content Include="Views\Survey\Graduate\GraduateStudent.cshtml" />
+    <Content Include="Views\Survey\Graduate\GraduateTheSurvey.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

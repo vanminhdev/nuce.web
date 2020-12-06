@@ -34,6 +34,8 @@ using nuce.web.api.Models.Status;
 using nuce.web.api.Services.Status.Interfaces;
 using nuce.web.api.Services.Status.Implements;
 using nuce.web.api.Services.Background;
+using System.Net;
+using nuce.web.api.Middlewares;
 
 namespace nuce.web.api
 {
@@ -73,7 +75,9 @@ namespace nuce.web.api
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<NuceCoreIdentityContext>()
                 .AddDefaultTokenProviders();
+            #endregion
 
+            #region config authentication
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -245,6 +249,18 @@ namespace nuce.web.api
             }
             var loggingOptions = this.Configuration.GetSection("Log4NetCore").Get<Log4NetProviderOptions>();
             loggerFactory.AddLog4Net(loggingOptions);
+
+            //app.Run(async context =>
+            //{
+            //    var userStatus = context.Items["UserStatus"];
+            //    if (userStatus != null && ((int)userStatus == (int)UserStatus.Deactive || (int)userStatus == (int)UserStatus.Deleted))
+            //    {
+            //        context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            //        context.Response.Cookies.Delete(UserParameters.JwtAccessToken);
+            //        context.Response.Cookies.Delete(UserParameters.JwtRefreshToken);
+            //    }
+            //});
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -252,6 +268,8 @@ namespace nuce.web.api
             
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseUserStatusMiddleware();
 
             app.UseEndpoints(endpoints =>
             {

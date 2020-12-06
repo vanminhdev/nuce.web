@@ -8,67 +8,42 @@ using System.Threading.Tasks;
 
 namespace nuce.web.quanly.Models
 {
-
-    public class GraduateTheSurveyCreate : GraduateTheSurveyUpdate
+    public class GraduateTheSurvey
     {
+        public Guid id { get; set; }
+        public Guid dotKhaoSatId { get; set; }
+        public Guid deThiId { get; set; }
+        public string noiDungDeThi { get; set; }
+        public string dapAn { get; set; }
+        public DateTime fromDate { get; set; }
+        public DateTime endDate { get; set; }
+        public string description { get; set; }
+        public string note { get; set; }
+        public int type { get; set; }
+        public int status { get; set; }
 
+        public string surveyRoundName { get; set; }
     }
 
-    public class GraduateTheSurveyUpdate
+    public class GraduateTheSurveyUpdate : GraduateTheSurveyCreate
     {
-        [Required(AllowEmptyStrings = false)]
-        public Guid? DotKhaoSatId { get; set; }
+        public string id { get; set; }
+    }
 
-        [Required(AllowEmptyStrings = false)]
-        public Guid? DeThiId { get; set; }
+    public class GraduateTheSurveyCreate
+    {
+        public Guid? dotKhaoSatId { get; set; }
 
-        [Required]
-        [CompareMoreThanLessThan(false, "EndDate", ErrorMessage = "Từ ngày phải nhỏ hơn đến ngày")]
-        public DateTime? FromDate { get; private set; }
-        public string FromDateString
-        {
-            set
-            {
-                try
-                {
-                    FromDate = DateTime.Parse(value);
-                }
-                catch
-                {
-                    FromDate = null;
-                }
-            }
-        }
+        public Guid? deThiId { get; set; }
 
-        [Required]
-        [CompareMoreThanLessThan(true, "FromDate", ErrorMessage = "Đến ngày phải lớn hơn từ ngày")]
-        public DateTime? EndDate { get; private set; }
+        public DateTime? fromDate { get; set; }
 
-        public string EndDateString
-        {
-            set
-            {
-                try
-                {
-                    EndDate = DateTime.Parse(value);
-                }
-                catch
-                {
-                    EndDate = null;
-                }
-            }
-        }
+        public DateTime? endDate { get; set; }
 
-        [Required(AllowEmptyStrings = false)]
-        [NotOnlyContainWhiteSpace]
-        public string Description { get; set; }
+        public string description { get; set; }
 
-        [Required(AllowEmptyStrings = false)]
-        [NotOnlyContainWhiteSpace]
-        public string Note { get; set; }
+        public string note { get; set; }
 
-        [Required]
-        [EnumDataType(typeof(GraduateSurveyRoundType))]
-        public int? Type { get; set; }
+        public int? type { get; set; }
     }
 }

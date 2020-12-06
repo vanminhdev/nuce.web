@@ -7,12 +7,16 @@ using nuce.web.quanly.ViewModel.Base;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.Mvc;
 
 namespace nuce.web.quanly.Controllers
@@ -459,6 +463,13 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        public async Task<ActionResult> CloseGraduateSurveyRound(string id)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/GraduateSurveyRound/CloseGraduateSurveyRound?id={id}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
         public async Task<ActionResult> DeleteGraduateSurveyRound(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/GraduateSurveyRound/DeleteSurveyRound?id={id}");
@@ -492,6 +503,123 @@ namespace nuce.web.quanly.Controllers
                     });
                 }
             );
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> DownloadTemplateUploadFile()
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/GraduateStudent/DownloadTemplateUploadFile");
+            if(response.StatusCode == HttpStatusCode.OK)
+            {
+                using (Stream streamToReadFrom = await response.Content.ReadAsStreamAsync())
+                {
+                    using (MemoryStream memoryStream = new MemoryStream())
+                    {
+                        await streamToReadFrom.CopyToAsync(memoryStream);
+                        return File(memoryStream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.Content.Headers.ContentDisposition.FileName);
+                    }
+                }
+            }
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UploadFile(HttpPostedFileBase fileUpload)
+        {
+            var contentLength = fileUpload.ContentLength;
+            int maxSize = int.Parse(ConfigurationManager.AppSettings["MaxSizeFileUpload"]);
+            if (contentLength > maxSize)
+            {
+                return Json(new { statusCode = HttpStatusCode.BadRequest, message = $"file lớn hơn {(int)(maxSize/1024)} KB" }, JsonRequestBehavior.AllowGet);
+            }
+
+            using (var memoryStream = new MemoryStream())
+            {
+                await fileUpload.InputStream.CopyToAsync(memoryStream);
+
+                var byteArrayContent = new ByteArrayContent(memoryStream.ToArray());
+                byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse(fileUpload.ContentType);
+
+                var multipartFormData = new MultipartFormDataContent();
+                multipartFormData.Add(byteArrayContent, "fileUpload", fileUpload.FileName);
+
+                var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/GraduateStudent/UploadFile", multipartFormData);
+                return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> DeleteAllGraduateStudent()
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/GraduateStudent/DeleteAll");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+
+        #endregion
+
+        #region bài khảo sát đã tốt nghiệp
+        [HttpGet]
+        public async Task<ActionResult> GraduateTheSurvey()
+        {
+            var resSurveyRound = await base.MakeRequestAuthorizedAsync("Get", $"/api/GraduateSurveyRound/GetSurveyRoundActive");
+            ViewData["SurveyRoundActive"] = await resSurveyRound.Content.ReadAsStringAsync();
+
+            var resExam = await base.MakeRequestAuthorizedAsync("Get", $"/api/ExamQuestions/GetAll");
+            ViewData["ExamQuestions"] = await resExam.Content.ReadAsStringAsync();
+
+            return View("~/Views/Survey/Graduate/GraduateTheSurvey.cshtml");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetAllGraduateTheSurvey(DataTableRequest request)
+        {
+            var stringContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/GraduateSurveyRound/GetTheSurvey", stringContent);
+            return await base.HandleResponseAsync(response,
+                action200Async: async res =>
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var data = JsonConvert.DeserializeObject<DataTableResponse<GraduateTheSurvey>>(jsonString);
+                    return Json(new
+                    {
+                        draw = data.Draw,
+                        recordsTotal = data.RecordsTotal,
+                        recordsFiltered = data.RecordsFiltered,
+                        data = data.Data
+                    });
+                }
+            );
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetGraduateTheSurveyById(string id)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/GraduateSurveyRound/GetTheSurveyById?id={id}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateGraduateTheSurvey(GraduateTheSurveyCreate data)
+        {
+            var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/GraduateSurveyRound/CreateTheSurvey", content);
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UpdateGraduateTheSurvey(GraduateTheSurveyUpdate data)
+        {
+            var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/GraduateSurveyRound/UpdateTheSurvey?id={data.id}", content);
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> DeleteGraduateTheSurvey(string id)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/GraduateSurveyRound/DeleteTheSurvey?id={id}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
         #endregion
     }

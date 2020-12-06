@@ -10,8 +10,15 @@ namespace nuce.web.api.Services.Survey.Interfaces
 {
     public interface IAsEduSurveyGraduateStudentService
     {
+        public Task<bool> Login(string masv, string pwd);
+
         public Task<PaginationModel<AsEduSurveyGraduateStudent>> GetAll(GraduateStudentFilter filter, int skip = 0, int take = 20);
 
         public Task<AsEduSurveyGraduateStudent> GetById(string id);
+
+        public Task Create(AsEduSurveyGraduateStudent student);
+
+        public Task CreateAll(List<AsEduSurveyGraduateStudent> students);
+        public Task TruncateTable();
     }
 }

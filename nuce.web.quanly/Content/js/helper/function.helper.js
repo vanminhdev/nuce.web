@@ -5,6 +5,11 @@
     return dd + '/' + mm + '/' + yyyy;
 }
 
+//2020-01-01T00:00:00 -> dd/MM/yyyy
+function getDateString(date) {
+    return dateString(new Date(date));
+}
+
 function getDateStringFromServerType(date) {
     if (date == null || date === "") {
         return '';
@@ -31,4 +36,24 @@ const debounce = (func, delay) => {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => func.apply(context, args), delay);
     }
+}
+
+
+$('.toast').toast({
+    delay: 4000
+});
+
+function toastSuccess(message) {
+    $('#toast-success-message').html(message);
+    $('#toast-success').toast('show');
+}
+
+function toastWarning(message) {
+    $('#toast-warning-message').html(message);
+    $('#toast-warning').toast('show');
+}
+
+function toastError(message) {
+    $('#toast-error-message').html(message);
+    $('#toast-error').toast('show');
 }

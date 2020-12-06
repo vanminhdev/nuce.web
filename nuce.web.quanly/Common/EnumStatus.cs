@@ -9,7 +9,7 @@ namespace nuce.web.quanly.Common
     {
         Active = 1,
         Deactive = 2,
-        Deleted = 3
+        Deleted = 4
     }
 
     public enum QuestionStatus

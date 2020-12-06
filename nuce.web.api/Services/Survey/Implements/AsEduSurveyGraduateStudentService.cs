@@ -64,5 +64,48 @@ namespace nuce.web.api.Services.Survey.Implements
             }
             return record;
         }
+
+        public async Task Create(AsEduSurveyGraduateStudent student)
+        {
+            if(await _context.AsEduSurveyGraduateStudent.FirstOrDefaultAsync(o => o.Masv == student.Masv) != null)
+            {
+                return;
+            }
+            _context.AsEduSurveyGraduateStudent.Add(student);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task CreateAll(List<AsEduSurveyGraduateStudent> students)
+        {
+            foreach(var s in students)
+            {
+                if (await _context.AsEduSurveyGraduateStudent.FirstOrDefaultAsync(o => o.Masv == s.Masv) != null)
+                {
+                    continue;
+                }
+                _context.AsEduSurveyGraduateStudent.Add(s);
+            }
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task TruncateTable()
+        {
+            await _context.Database.ExecuteSqlRawAsync("TRUNCATE TABLE AS_Edu_Survey_Graduate_Student");
+        }
+
+        public async Task<bool> Login(string masv, string pwd)
+        {
+            var sinhvien = await _context.AsEduSurveyGraduateStudent.FirstOrDefaultAsync(o => o.ExMasv == masv);
+            if (sinhvien == null)
+            {
+                return false;
+            }
+
+            if (sinhvien.Psw == pwd)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

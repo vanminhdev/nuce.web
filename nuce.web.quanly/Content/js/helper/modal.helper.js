@@ -27,6 +27,10 @@ $(document).ready(function () {
                     element.removeClass('is-invalid');
                     element.tooltip('dispose');
                 }
+
+                if (element.attr('title') != undefined) { //cho những select mặc định là không chọn gì
+                    element.val(null).trigger('change');
+                }
             }
         });
     });

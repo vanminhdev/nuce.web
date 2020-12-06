@@ -15,7 +15,8 @@ namespace nuce.web.survey.student.Controllers
 {
     public class AccountController : BaseController
     {
-        public ActionResult Index()
+        [HttpGet]
+        public ActionResult Login()
         {
             //Khi access token hết hạn thì vào trang home sẽ được cấp mới
             if (Request.Cookies[UserParameters.JwtRefreshToken] != null)
@@ -73,21 +74,62 @@ namespace nuce.web.survey.student.Controllers
                 default:
                     break;
             }
-            return View("Index", new LoginModel());
+            return View("login", new LoginModel());
         }
 
+
+        [HttpGet]
+        public ActionResult LoginGraduate()
+        {
+            return View(new LoginModel());
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> LoginGraduate(LoginModel login)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("logingraduate", new LoginModel());
+            }
+
+            var userNamePasswordJsonString = JsonConvert.SerializeObject(new
+            {
+                username = login.Username,
+                password = login.Password
+            });
+
+            var content = new StringContent(userNamePasswordJsonString, Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync("/api/user/logingraduate", content);
+
+            switch (response.StatusCode)
+            {
+                case HttpStatusCode.OK:
+                    Session["masv"] = login.Username;
+                    return Redirect("/graduatestudent/index");
+                case HttpStatusCode.Unauthorized:
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    ViewData["LoginMessage"] = "Đăng nhập không thành công";
+                    break;
+                default:
+                    break;
+            }
+            return View("logingraduate", new LoginModel());
+        }
+
+        [HttpPost]
         public async Task<ActionResult> Logout(string returnUrl = null)
         {
             await _client.PostAsync($"{API_URL}/api/user/logout", new StringContent(""));
             Response.Cookies[UserParameters.JwtAccessToken].Expires = DateTime.Now.AddDays(-100);
             Response.Cookies[UserParameters.JwtRefreshToken].Expires = DateTime.Now.AddDays(-100);
+            Session.Abandon();
             if (returnUrl != null)
             {
                 return Redirect(returnUrl);
             }
             else
             {
-                return Redirect("/account");
+                return Redirect("/default");
             }
         }
     }
