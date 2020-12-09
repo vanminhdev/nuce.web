@@ -43,7 +43,7 @@ namespace nuce.web.api.Models.Survey
         public string Mobile2 { get; set; }
         public string Thongtinthem { get; set; }
         public string Thongtinthem1 { get; set; }
-        public int DotkhaosatId { get; set; }
+        public Guid DotKhaoSatId { get; set; }
         public string Psw { get; set; }
         public string Checksum { get; set; }
         public string ExMasv { get; set; }

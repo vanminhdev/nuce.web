@@ -54,7 +54,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             var take = request.Length;
             var result = await _asEduSurveyGraduateStudentService.GetAll(filter, skip, take);
             return Ok(
-                new DataTableResponse<AsEduSurveyGraduateStudent>
+                new DataTableResponse<GraduateStudent>
                 {
                     Draw = ++request.Draw,
                     RecordsTotal = result.RecordsTotal,
@@ -99,7 +99,11 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadFile(IFormFile fileUpload)
+        public async Task<IActionResult> UploadFile(
+            [Required]
+            IFormFile fileUpload, 
+            [Required]
+            Guid? surveyRoundId)
         {
             if(fileUpload.ContentType != ContentTypes.Xlsx)
             {
@@ -115,7 +119,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
                     {
                         await fileUpload.CopyToAsync(stream);
                     }
-                    await ReadFileUpload(filePath);
+                    await ReadFileUpload(filePath, surveyRoundId.Value);
                 }
                 catch (Exception e)
                 {
@@ -148,7 +152,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             return (sb.ToString().Normalize(NormalizationForm.FormD));
         }
 
-        private async Task ReadFileUpload(string filepath)
+        private async Task ReadFileUpload(string filepath, Guid surveyRoundId)
         {
             SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
             var workbook = ExcelFile.Load(filepath);
@@ -196,6 +200,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
                     Ngaysinh = ngaysinh,
                     ExMasv = masv,
                     Psw = ConvertToLatin(hovaten).Replace(" ", "").ToLower(),
+                    DotKhaoSatId = surveyRoundId,
                     Type = 1,
                     Status = 1
                 };

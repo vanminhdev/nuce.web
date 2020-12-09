@@ -145,7 +145,7 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
-    <Compile Include="Controllers\GraduateStudentController.cs" />
+    <Compile Include="Controllers\GraduateHomeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -164,6 +164,7 @@
     <Content Include="Content\css\bootstrap.min.css" />
     <Content Include="Content\css\dataTables.bootstrap4.min.css" />
     <Content Include="Content\css\responsive.css" />
+    <Content Include="Content\css\star-rating.css" />
     <Content Include="Content\css\style.css" />
     <Content Include="Content\css\util.css" />
     <Content Include="Content\images\1x1.GIF" />
@@ -934,9 +935,10 @@
     <Content Include="Views\Error\Index.cshtml" />
     <Content Include="Views\Default\Index.cshtml" />
     <Content Include="Views\Account\LoginGraduate.cshtml" />
-    <Content Include="Views\GraduateStudent\Index.cshtml" />
+    <Content Include="Views\GraduateHome\Index.cshtml" />
     <Content Include="Views\Shared\_LayoutDefault.cshtml" />
     <Content Include="Views\Shared\_LayoutLogin.cshtml" />
+    <Content Include="Views\GraduateHome\TheSurvey.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -13,6 +13,7 @@ namespace nuce.web.quanly.Models
         public Guid id { get; set; }
         public Guid dotKhaoSatId { get; set; }
         public Guid deThiId { get; set; }
+        public string name { get; set; }
         public string noiDungDeThi { get; set; }
         public string dapAn { get; set; }
         public DateTime fromDate { get; set; }
@@ -35,6 +36,8 @@ namespace nuce.web.quanly.Models
         public Guid? dotKhaoSatId { get; set; }
 
         public Guid? deThiId { get; set; }
+
+        public string name { get; set; }
 
         public DateTime? fromDate { get; set; }
 

@@ -45,7 +45,8 @@ namespace nuce.web.quanly.Models
         public string mobile2 { get; set; }
         public string thongtinthem { get; set; }
         public string thongtinthem1 { get; set; }
-        public int dotkhaosatId { get; set; }
+        public Guid dotKhaoSatId { get; set; }
+        public string tenDotKhaoSat { get; set; }
         public string psw { get; set; }
         public string checksum { get; set; }
         public string exMasv { get; set; }

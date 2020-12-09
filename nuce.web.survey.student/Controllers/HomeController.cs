@@ -39,7 +39,6 @@ namespace nuce.web.survey.student.Controllers
                 action200Async: async res =>
                 {
                     var jsonString = await res.Content.ReadAsStringAsync();
-                    //var selectedAnswer = JsonConvert.DeserializeObject<List<SelectedAnswer>>(jsonString);
                     if(jsonString != "")
                     {
                         ViewData["SelectedAnswer"] = jsonString;

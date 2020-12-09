@@ -10,6 +10,8 @@ namespace nuce.web.api.Models.Survey.JsonData
         public string Code { get; set; }
         public string Content { get; set; }
         public QuestionJson AnswerChildQuestion { get; set; }
+        public List<string> ShowQuestion { get; set; }
+        public List<string> HideQuestion { get; set; }
     }
 
     /// <summary>

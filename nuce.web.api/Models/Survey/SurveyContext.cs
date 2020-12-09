@@ -40,9 +40,7 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.DeThiId).HasColumnName("DeThiID");
 
-                entity.Property(e => e.Description)
-                    .IsRequired()
-                    .HasMaxLength(2000);
+                entity.Property(e => e.Description).HasMaxLength(100);
 
                 entity.Property(e => e.DotKhaoSatId).HasColumnName("DotKhaoSatID");
 
@@ -50,9 +48,11 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.FromDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Note)
+                entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(2000);
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Note).HasMaxLength(100);
             });
 
             modelBuilder.Entity<AsEduSurveyBaiKhaoSatSinhVien>(entity =>
@@ -188,6 +188,10 @@ namespace nuce.web.api.Models.Survey
                 entity.Property(e => e.Code)
                     .IsRequired()
                     .HasMaxLength(10);
+
+                entity.Property(e => e.HideQuestion).HasMaxLength(2000);
+
+                entity.Property(e => e.ShowQuestion).HasMaxLength(2000);
             });
 
             modelBuilder.Entity<AsEduSurveyDeThi>(entity =>
@@ -220,9 +224,7 @@ namespace nuce.web.api.Models.Survey
                     .HasColumnName("ID")
                     .ValueGeneratedNever();
 
-                entity.Property(e => e.Description)
-                    .IsRequired()
-                    .HasMaxLength(2000);
+                entity.Property(e => e.Description).HasMaxLength(100);
 
                 entity.Property(e => e.EndDate).HasColumnType("datetime");
 
@@ -232,9 +234,7 @@ namespace nuce.web.api.Models.Survey
                     .IsRequired()
                     .HasMaxLength(100);
 
-                entity.Property(e => e.Note)
-                    .IsRequired()
-                    .HasMaxLength(2000);
+                entity.Property(e => e.Note).HasMaxLength(100);
             });
 
             modelBuilder.Entity<AsEduSurveyGraduateBaiKhaoSat>(entity =>
@@ -247,9 +247,7 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.DeThiId).HasColumnName("DeThiID");
 
-                entity.Property(e => e.Description)
-                    .IsRequired()
-                    .HasMaxLength(2000);
+                entity.Property(e => e.Description).HasMaxLength(2000);
 
                 entity.Property(e => e.DotKhaoSatId).HasColumnName("DotKhaoSatID");
 
@@ -257,9 +255,11 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.FromDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Note)
+                entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(2000);
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Note).HasMaxLength(2000);
             });
 
             modelBuilder.Entity<AsEduSurveyGraduateBaiKhaoSatSinhVien>(entity =>
@@ -312,8 +312,6 @@ namespace nuce.web.api.Models.Survey
                     .HasColumnName("checksum")
                     .HasMaxLength(200)
                     .IsUnicode(false);
-
-                entity.Property(e => e.DotkhaosatId).HasColumnName("dotkhaosat_id");
 
                 entity.Property(e => e.Dottotnghiep)
                     .HasColumnName("dottotnghiep")
@@ -507,9 +505,7 @@ namespace nuce.web.api.Models.Survey
                     .HasColumnName("ID")
                     .ValueGeneratedNever();
 
-                entity.Property(e => e.Description)
-                    .IsRequired()
-                    .HasMaxLength(2000);
+                entity.Property(e => e.Description).HasMaxLength(100);
 
                 entity.Property(e => e.EndDate).HasColumnType("datetime");
 
@@ -519,9 +515,7 @@ namespace nuce.web.api.Models.Survey
                     .IsRequired()
                     .HasMaxLength(100);
 
-                entity.Property(e => e.Note)
-                    .IsRequired()
-                    .HasMaxLength(2000);
+                entity.Property(e => e.Note).HasMaxLength(100);
             });
 
             modelBuilder.Entity<AsEduSurveyReportTotal>(entity =>

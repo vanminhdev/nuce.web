@@ -73,6 +73,9 @@ namespace nuce.web.api.Common
         DefaultSubjects = 5,
     }
 
+    /// <summary>
+    /// Loại câu hỏi
+    /// </summary>
     public class QuestionType
     {
         /// <summary>
@@ -135,14 +138,28 @@ namespace nuce.web.api.Common
         /// Tiêu đề vd: I. abc  II.def
         /// </summary>
         public static string T = "T";
+        /// <summary>
+        /// Lựa chọn tỉnh thành
+        /// </summary>
+        public static string CityC = "CityC";
+        /// <summary>
+        /// Rate Start
+        /// </summary>
+        public static string StarRating = "StarRating";
     }
 
+    /// <summary>
+    /// Tên bảng làm việc mất nhiều thời gian
+    /// </summary>
     public class TableNameTask
     {
         public static readonly string AsEduSurveyBaiKhaoSatSinhVien = "AS_Edu_Survey_BaiKhaoSat_SinhVien";
         public static readonly string AsEduSurveyReportTotal = "AS_Edu_Survey_ReportTotal";
     }
 
+    /// <summary>
+    /// Loại file upload
+    /// </summary>
     public class ContentTypes
     {
         public static readonly string Xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";

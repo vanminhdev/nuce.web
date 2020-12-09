@@ -39,8 +39,9 @@ namespace nuce.web.api.Common
     /// </summary>
     public enum TheSurveyStatus
     {
-        Active = 1,
+        New = 1,
         Deactive = 2,
+        Published = 3,
         Deleted = 4,
     }
 
@@ -49,8 +50,21 @@ namespace nuce.web.api.Common
     /// </summary>
     public enum SurveyStudentStatus
     {
+        /// <summary>
+        /// Chưa thực hiện
+        /// </summary>
         DoNot = 1,
+        /// <summary>
+        /// Đang thực hiện
+        /// </summary>
         Doing = 2,
+        /// <summary>
+        /// Bị kết thúc khi đợt khảo sát kết thúc
+        /// </summary>
+        Close = 3,
+        /// <summary>
+        /// Hoàn thành
+        /// </summary>
         Done = 5
     }
 

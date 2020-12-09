@@ -24,6 +24,7 @@ using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using nuce.web.api.Services.Survey.Interfaces;
+using System.Collections.Generic;
 
 namespace nuce.web.api.Controllers.Core
 {
@@ -108,6 +109,23 @@ namespace nuce.web.api.Controllers.Core
             bool isSuccess = await _asEduSurveyGraduateStudentService.Login(model.Username, model.Password);
             if (isSuccess)
             {
+                var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, model.Username),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(ClaimTypes.Role, "GraduateStudent"),
+                    new Claim(UserParameters.MSSV, model.Username),
+                };
+
+                var accessToken = _userService.CreateJWTAccessToken(authClaims);
+                var refreshToken = _userService.CreateJWTRefreshToken(authClaims);
+
+                //send token to http only cookies
+                Response.Cookies.Append(UserParameters.JwtAccessToken, new JwtSecurityTokenHandler().WriteToken(accessToken),
+                    new CookieOptions() { HttpOnly = true, Expires = accessToken.ValidTo });
+                Response.Cookies.Append(UserParameters.JwtRefreshToken, new JwtSecurityTokenHandler().WriteToken(refreshToken),
+                    new CookieOptions() { HttpOnly = true, Expires = refreshToken.ValidTo });
+
                 await _logService.WriteLog(new ActivityLogModel
                 {
                     Username = model.Username,

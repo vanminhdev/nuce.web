@@ -101,43 +101,54 @@ namespace nuce.web.api.Services.Survey.Implements
             status.Status = (int)TableTaskStatus.Doing;
             await _statusContext.SaveChangesAsync();
 
-            var queryTheSurvey =  _context.AsEduSurveyBaiKhaoSat.Where(o => o.Status == (int)TheSurveyStatus.Active);
-            AsEduSurveyBaiKhaoSat temp = null;
-            temp = queryTheSurvey.FirstOrDefault(o => o.Type == (int)TheSurveyType.TheoreticalSubjects);
-            if(temp == null)
+            try
             {
-                throw new RecordNotFoundException("Không có bài khảo sát chuẩn bị cho môn lý thuyết");
-            }
-            var idLyThuyet = new SqlParameter("@BaiKSLoai1", temp.Id);
+                var queryTheSurvey = _context.AsEduSurveyBaiKhaoSat.Where(o => o.Status == (int)TheSurveyStatus.New);
+                AsEduSurveyBaiKhaoSat temp = null;
+                temp = queryTheSurvey.FirstOrDefault(o => o.Type == (int)TheSurveyType.TheoreticalSubjects);
+                if (temp == null)
+                {
+                    throw new RecordNotFoundException("Không có bài khảo sát chuẩn bị cho môn lý thuyết");
+                }
+                var idLyThuyet = new SqlParameter("@BaiKSLoai1", temp.Id);
 
-            temp = queryTheSurvey.FirstOrDefault(o => o.Type == (int)TheSurveyType.PracticalSubjects);
-            if (temp == null)
-            {
-                throw new RecordNotFoundException("Không có bài khảo sát chuẩn bị cho môn thực hành, thực tập, thí nghiệm");
-            }
-            var idThucHanhThucTap = new SqlParameter("@BaiKSLoai2", temp.Id);
+                temp = queryTheSurvey.FirstOrDefault(o => o.Type == (int)TheSurveyType.PracticalSubjects);
+                if (temp == null)
+                {
+                    throw new RecordNotFoundException("Không có bài khảo sát chuẩn bị cho môn thực hành, thực tập, thí nghiệm");
+                }
+                var idThucHanhThucTap = new SqlParameter("@BaiKSLoai2", temp.Id);
 
-            temp = queryTheSurvey.FirstOrDefault(o => o.Type == (int)TheSurveyType.TheoreticalPracticalSubjects);
-            if (temp == null)
-            {
-                throw new RecordNotFoundException("Không có bài khảo sát chuẩn bị cho môn lý thuyết + thực hành");
-            }
-            var idLyThuyetThucHanh = new SqlParameter("@BaiKSLoai3", temp.Id);
+                temp = queryTheSurvey.FirstOrDefault(o => o.Type == (int)TheSurveyType.TheoreticalPracticalSubjects);
+                if (temp == null)
+                {
+                    throw new RecordNotFoundException("Không có bài khảo sát chuẩn bị cho môn lý thuyết + thực hành");
+                }
+                var idLyThuyetThucHanh = new SqlParameter("@BaiKSLoai3", temp.Id);
 
-            temp = queryTheSurvey.FirstOrDefault(o => o.Type == (int)TheSurveyType.AssignmentSubjects);
-            if (temp == null)
-            {
-                throw new RecordNotFoundException("Không có bài khảo sát chuẩn bị cho môn đồ án");
-            }
-            var idDoAn = new SqlParameter("@BaiKSLoai4", temp.Id);
+                temp = queryTheSurvey.FirstOrDefault(o => o.Type == (int)TheSurveyType.AssignmentSubjects);
+                if (temp == null)
+                {
+                    throw new RecordNotFoundException("Không có bài khảo sát chuẩn bị cho môn đồ án");
+                }
+                var idDoAn = new SqlParameter("@BaiKSLoai4", temp.Id);
 
-            temp = queryTheSurvey.FirstOrDefault(o => o.Type == (int)TheSurveyType.DefaultSubjects);
-            if (temp == null)
-            {
-                throw new RecordNotFoundException("Không có bài khảo sát chuẩn bị cho môn không được phân loại");
+                temp = queryTheSurvey.FirstOrDefault(o => o.Type == (int)TheSurveyType.DefaultSubjects);
+                if (temp == null)
+                {
+                    throw new RecordNotFoundException("Không có bài khảo sát chuẩn bị cho môn không được phân loại");
+                }
+                var idMacDinh = new SqlParameter("@BaiKSLoaiMacDinh", temp.Id);
+                await _context.Database.ExecuteSqlRawAsync("exec generate_the_survey_student @BaiKSLoai1, @BaiKSLoai2, @BaiKSLoai3, @BaiKSLoai4, @BaiKSLoaiMacDinh", idLyThuyet, idThucHanhThucTap, idLyThuyetThucHanh, idDoAn, idMacDinh);
             }
-            var idMacDinh = new SqlParameter("@BaiKSLoaiMacDinh", temp.Id);
-            await _context.Database.ExecuteSqlRawAsync("exec generate_the_survey_student @BaiKSLoai1, @BaiKSLoai2, @BaiKSLoai3, @BaiKSLoai4, @BaiKSLoaiMacDinh", idLyThuyet, idThucHanhThucTap, idLyThuyetThucHanh, idDoAn, idMacDinh);
+            catch (Exception e)
+            {
+                status.Status = (int)TableTaskStatus.Done;
+                status.IsSuccess = false;
+                status.Message = e.Message;
+                await _statusContext.SaveChangesAsync();
+                throw e;
+            }
         }
 
         public async Task<string> GetSelectedAnswerAutoSave(string studentCode, string classroomCode)

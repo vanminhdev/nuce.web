@@ -55,7 +55,7 @@
                     Nội dung
                 </div>
                 <div class="col-12 col-md-10">
-                    @Html.TextAreaFor(m => m.content, new { @id = "content" })
+                    @Html.TextAreaFor(m => m.content, new { @id = "content", @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.content, "", new { @class = "form-text text-danger" })
                 </div>
             </div>
@@ -95,18 +95,11 @@
 
 @section Scripts {
     <script src="~/content/js/bootstrap-select.min.js"></script>
-    @*<script type="text/javascript" src="~/content/js/tiny_mce/tiny_mce.js"></script>
-        <script type="text/javascript" language="javascript">
-            tinyMCE.init({
-                mode: "textareas",
-                encoding: 'xml'
-            });
-        </script>*@
-    <script src="https://cdn.tiny.cloud/1/7kx0ud503sqh7se57iao9whndipt7k0wu0j9y2381lnywnis/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    @*<script src="https://cdn.tiny.cloud/1/7kx0ud503sqh7se57iao9whndipt7k0wu0j9y2381lnywnis/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
     <script>
         tinymce.init({
             selector: '#content',
             encoding: 'xml'
         });
-    </script>
+    </script>*@
 }

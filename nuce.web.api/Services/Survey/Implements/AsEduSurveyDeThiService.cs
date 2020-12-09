@@ -52,6 +52,17 @@ namespace nuce.web.api.Services.Survey.Implements
             await _surveyContext.SaveChangesAsync();
         }
 
+        public async Task DeleteQuestionFromStructure(string id)
+        {
+            var question = await _surveyContext.AsEduSurveyCauTrucDe.FirstOrDefaultAsync(o => o.Id.ToString() == id);
+            if (question == null)
+            {
+                throw new RecordNotFoundException("Không tìm thấy câu hỏi");
+            }
+            _surveyContext.AsEduSurveyCauTrucDe.Remove(question);
+            await _surveyContext.SaveChangesAsync();
+        }
+
         public async Task GenerateExam(string examQuestionId)
         {
             var examQuestion = await _surveyContext.AsEduSurveyDeThi.FindAsync(Guid.Parse(examQuestionId));
@@ -121,12 +132,24 @@ namespace nuce.web.api.Services.Survey.Implements
                         answerChildQuestionJson = null;
                     }
 
-                    questionJson.Answers.Add(new Models.Survey.JsonData.AnswerJson
+                    var answerJson = new Models.Survey.JsonData.AnswerJson
                     {
                         Code = answer.Code,
                         Content = answer.Content,
                         AnswerChildQuestion = answerChildQuestionJson
-                    });
+                    };
+
+                    if(answer.ShowQuestion != null)
+                    {
+                        answerJson.ShowQuestion = JsonSerializer.Deserialize<List<string>>(answer.ShowQuestion);
+                    }
+
+                    if (answer.HideQuestion != null)
+                    {
+                        answerJson.HideQuestion = JsonSerializer.Deserialize<List<string>>(answer.HideQuestion);
+                    }
+
+                    questionJson.Answers.Add(answerJson);
                 }
 
                 if(itemGroup.Key.ParentCode != null) //là một câu hỏi con của câu hỏi khác. thêm con vào cha
@@ -185,16 +208,17 @@ namespace nuce.web.api.Services.Survey.Implements
         {
             _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             return await _surveyContext.AsEduSurveyCauTrucDe
-                .Join(_surveyContext.AsEduSurveyCauHoi, eq => eq.CauHoiId, q => q.Id, (eq, q) => new { examQuestionId = eq.DeThiId, order = eq.Order, question = q })
-                .Where(r => r.examQuestionId.ToString() == id)
-                .OrderBy(r => r.order)
+                .Join(_surveyContext.AsEduSurveyCauHoi, eq => eq.CauHoiId, q => q.Id, (examquestion, question) => new { examquestion, question })
+                .Where(r => r.examquestion.DeThiId.ToString() == id)
+                .OrderBy(r => r.examquestion.Order)
                 .Select(r => new ExamStructure
                 {
+                    Id = r.examquestion.Id,
                     Code = r.question.Code,
                     Content = HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(r.question.Content)),
                     Type = r.question.Type,
-                    Order = r.order, //thứ tự được lưu lại là bao nhiêu trong đề
-                    QuestionId = r.question.Id.ToString()
+                    Order = r.examquestion.Order, //thứ tự được lưu lại là bao nhiêu trong đề
+                    QuestionId = r.question.Id
                 })
                 .ToListAsync();
         }

@@ -13,6 +13,7 @@ namespace nuce.web.api.ViewModel.Survey.Graduate
         public Guid Id { get; set; }
         public Guid DotKhaoSatId { get; set; }
         public Guid DeThiId { get; set; }
+        public string Name { get; set; }
         public DateTime FromDate { get; set; }
         public DateTime EndDate { get; set; }
         public string Description { get; set; }
@@ -40,6 +41,9 @@ namespace nuce.web.api.ViewModel.Survey.Graduate
         [Required(AllowEmptyStrings = false)]
         public Guid? DeThiId { get; set; }
 
+        [Required(AllowEmptyStrings = false)]
+        public string Name { get; set; }
+
         [Required]
         [CompareMoreThanLessThan(false, "EndDate", ErrorMessage = "Từ ngày phải nhỏ hơn đến ngày")]
         public DateTime? FromDate { get; set; }
@@ -48,12 +52,8 @@ namespace nuce.web.api.ViewModel.Survey.Graduate
         [CompareMoreThanLessThan(true, "FromDate", ErrorMessage = "Đến ngày phải lớn hơn từ ngày")]
         public DateTime? EndDate { get; set; }
 
-        [Required(AllowEmptyStrings = false)]
-        [NotOnlyContainWhiteSpace]
         public string Description { get; set; }
 
-        [Required(AllowEmptyStrings = false)]
-        [NotOnlyContainWhiteSpace]
         public string Note { get; set; }
 
         [Required]

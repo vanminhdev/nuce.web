@@ -127,6 +127,8 @@ namespace nuce.web.api.Services.Survey.Implements
             foreach(var item in baiKhaoSats)
             {
                 item.Status = (int)TheSurveyStatus.Deactive;
+                //kết thúc tất cả bài khảo sát sinh viên là con của đợt khảo sát này
+                _context.Database.ExecuteSqlRaw($"update AS_Edu_Survey_Graduate_BaiKhaoSat_SinhVien set Status = {SurveyStudentStatus.Close} where BaiKhaoSatID = '{item.Id}'");
             }
             await _context.SaveChangesAsync();
         }

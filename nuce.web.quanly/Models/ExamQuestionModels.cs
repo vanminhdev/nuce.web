@@ -28,11 +28,12 @@ namespace nuce.web.quanly.Models
 
     public class ExamStructure
     {
+        public Guid id { get; set; }
         public string code { get; set; }
         public string content { get; set; }
         public string type { get; set; }
         public int order { get; set; }
-        public string questionId { get; set; }
+        public Guid questionId { get; set; }
     }
 
     public class AddQuestionExam

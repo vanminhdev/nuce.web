@@ -27,26 +27,73 @@ namespace nuce.web.api.Services.Survey.Implements
             _context = context;
         }
 
-        public async Task<PaginationModel<AsEduSurveyGraduateStudent>> GetAll(GraduateStudentFilter filter, int skip = 0, int take = 20)
+        public async Task<PaginationModel<GraduateStudent>> GetAll(GraduateStudentFilter filter, int skip = 0, int take = 20)
         {
             _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            IQueryable<AsEduSurveyGraduateStudent> query = _context.AsEduSurveyGraduateStudent;
+            var query = _context.AsEduSurveyGraduateStudent
+                .Join(_context.AsEduSurveyGraduateSurveyRound, o => o.DotKhaoSatId, o => o.Id, (sv, dotks) => new { sv, dotks });
             var recordsTotal = query.Count();
 
             if (!string.IsNullOrWhiteSpace(filter.Masv))
             {
-                query = query.Where(o => o.Masv.Contains(filter.Masv));
+                query = query.Where(o => o.sv.Masv.Contains(filter.Masv));
             }
 
             var recordsFiltered = query.Count();
 
             var querySkip = query
-                .OrderBy(u => u.Id)
+                .OrderBy(u => u.sv.Id)
                 .Skip(skip).Take(take);
 
-            var data = await querySkip.ToListAsync();
+            var data = await querySkip
+                .Select(o => new GraduateStudent {
+                    id = o.sv.Id,
+                    dottotnghiep = o.sv.Dottotnghiep,
+                    sovaoso = o.sv.Sovaoso,
+                    masv = o.sv.Masv,
+                    noisiti = o.sv.Noisiti,
+                    tbcht = o.sv.Tbcht,
+                    xeploai = o.sv.Xeploai,
+                    soqdtn = o.sv.Soqdtn,
+                    sohieuba = o.sv.Sohieuba,
+                    tinh = o.sv.Tinh,
+                    truong = o.sv.Truong,
+                    gioitinh = o.sv.Gioitinh,
+                    ngaysinh = o.sv.Ngaysinh,
+                    tkhau = o.sv.Tkhau,
+                    lop12 = o.sv.Lop12,
+                    namtn = o.sv.Namtn,
+                    sobaodanh = o.sv.Sobaodanh,
+                    tcong = o.sv.Tcong,
+                    ghichuThi = o.sv.GhichuThi,
+                    lopqd = o.sv.Lopqd,
+                    k = o.sv.K,
+                    dtoc = o.sv.Dtoc,
+                    quoctich = o.sv.Quoctich,
+                    bangclc = o.sv.Bangclc,
+                    manganh = o.sv.Manganh,
+                    tenchnga = o.sv.Tenchnga,
+                    tennganh = o.sv.Tennganh,
+                    hedaotao = o.sv.Hedaotao,
+                    khoahoc = o.sv.Khoahoc,
+                    tensinhvien = o.sv.Tensinhvien,
+                    email = o.sv.Email,
+                    email1 = o.sv.Email1,
+                    email2 = o.sv.Email2,
+                    mobile = o.sv.Mobile,
+                    mobile1 = o.sv.Mobile1,
+                    mobile2 = o.sv.Mobile2,
+                    thongtinthem = o.sv.Thongtinthem,
+                    thongtinthem1 = o.sv.Thongtinthem1,
+                    dotKhaoSatId = o.sv.DotKhaoSatId,
+                    tenDotKhaoSat = o.dotks.Name,
+                    checksum = o.sv.Checksum,
+                    exMasv = o.sv.ExMasv,
+                    type = o.sv.Type,
+                    status = o.sv.Status
+                }).ToListAsync();
 
-            return new PaginationModel<AsEduSurveyGraduateStudent>
+            return new PaginationModel<GraduateStudent>
             {
                 RecordsTotal = recordsTotal,
                 RecordsFiltered = recordsFiltered,

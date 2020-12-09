@@ -101,11 +101,29 @@ namespace nuce.web.survey.student.Controllers
             var content = new StringContent(userNamePasswordJsonString, Encoding.UTF8, "application/json");
             var response = await _client.PostAsync("/api/user/logingraduate", content);
 
+            IEnumerable<Cookie> responseCookies = base.GetAllCookies();
+
+            var accessToken = responseCookies.FirstOrDefault(c => c.Name == UserParameters.JwtAccessToken);
+            var refreshToken = responseCookies.FirstOrDefault(c => c.Name == UserParameters.JwtRefreshToken);
+
+            if (accessToken != null)
+            {
+                Response.Cookies[UserParameters.JwtAccessToken].Value = accessToken.Value;
+                Response.Cookies[UserParameters.JwtAccessToken].HttpOnly = true;
+                Response.Cookies[UserParameters.JwtAccessToken].Expires = accessToken.Expires;
+            }
+
+            if (refreshToken != null)
+            {
+                Response.Cookies[UserParameters.JwtRefreshToken].Value = refreshToken.Value;
+                Response.Cookies[UserParameters.JwtRefreshToken].HttpOnly = true;
+                Response.Cookies[UserParameters.JwtRefreshToken].Expires = refreshToken.Expires;
+            }
+
             switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:
-                    Session["masv"] = login.Username;
-                    return Redirect("/graduatestudent/index");
+                    return Redirect("/graduatehome/index");
                 case HttpStatusCode.Unauthorized:
                     var jsonString = await response.Content.ReadAsStringAsync();
                     ViewData["LoginMessage"] = "Đăng nhập không thành công";

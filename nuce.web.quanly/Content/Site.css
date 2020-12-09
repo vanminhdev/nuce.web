@@ -1,4 +1,9 @@
-﻿.custom-boostrap-select button {
+﻿/*Các class để bắt auto*/
+.auto-clear-form-on-open {}
+.auto-validate {}
+.clear-input {}
+
+.custom-boostrap-select button {
     background: none;
     border-color: #ced4da;
 }

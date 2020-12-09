@@ -57,6 +57,23 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpGet]
+        public async Task<IActionResult> GetSurveyRoundActive()
+        {
+            try
+            {
+                var result = await _asEduSurveyGraduateDotKhaoSatService.GetSurveyRoundActive();
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không lấy được đợt khảo sát", detailMessage = mainMessage });
+            }
+        }
+
+
+        [HttpGet]
         public async Task<IActionResult> GetSurveyRoundById(
             [Required(AllowEmptyStrings = false)]
             string id)
@@ -176,26 +193,6 @@ namespace nuce.web.api.Controllers.Survey.Graduate
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không kết thúc được đợt khảo sát", detailMessage = mainMessage });
             }
             return Ok();
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetSurveyRoundActive()
-        {
-            try
-            {
-                var surveyRounds = await _asEduSurveyGraduateDotKhaoSatService.GetSurveyRoundActive();
-                return Ok(surveyRounds);
-            }
-            catch (RecordNotFoundException e)
-            {
-                return NotFound(new { message = e.Message });
-            }
-            catch (Exception e)
-            {
-                var mainMessage = UtilsException.GetMainMessage(e);
-                _logger.LogError(e, mainMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không lấy được đợt khảo sát", detailMessage = mainMessage });
-            }
         }
         #endregion
 

@@ -19,5 +19,7 @@ namespace nuce.web.api.Models.Survey
         public int? Order { get; set; }
         public int Status { get; set; }
         public string Explain { get; set; }
+        public string ShowQuestion { get; set; }
+        public string HideQuestion { get; set; }
     }
 }

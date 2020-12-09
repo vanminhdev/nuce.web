@@ -124,12 +124,12 @@ namespace nuce.web.api.Controllers.Survey
             }
             catch (RecordNotFoundException)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không tìm thấy đề khảo sát" });
+                return NotFound(new { message = "Không lấy được đề khảo sát", detailMessage = "Không tìm thấy đề khảo sát" });
             }
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Có lỗi xảy ra", detailMessage = e.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không lấy được đề khảo sát", detailMessage = e.Message });
             }
         }
 
@@ -148,7 +148,33 @@ namespace nuce.web.api.Controllers.Survey
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Có lỗi xảy ra", detailMessage = e.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Tạo không thành công", detailMessage = e.Message });
+            }
+            return Ok();
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteQuestionFromStructure(
+            [Required(AllowEmptyStrings = false)]
+            string id)
+        {
+            try
+            {
+                await _asEduSurveyDeThiService.DeleteQuestionFromStructure(id);
+            }
+            catch (RecordNotFoundException e)
+            {
+                return NotFound(new { message = "Xoá không thành công", detailMessage = e.Message });
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Xoá không thành công", detailMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Xoá không thành công", detailMessage = e.Message });
             }
             return Ok();
         }

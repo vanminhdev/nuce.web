@@ -1,4 +1,4 @@
-﻿$(document).ready(function () {
+﻿function autoValidate() {
     $('.auto-validate').each(function () {
         let form = $(this);
         let validator = form.validate({
@@ -24,6 +24,9 @@
             }
         });
     });
+}
+$(document).ready(function () {
+    autoValidate();
 });
 
 function getFormData(id) {

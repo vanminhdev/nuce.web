@@ -23,12 +23,8 @@ namespace nuce.web.api.ViewModel.Survey
         public int Status { get; set; }
     }
 
-    public class SelectedAnswerAutoSave
+    public class SelectedAnswerAutoSaveBase
     {
-        [Required(AllowEmptyStrings = false)]
-        [NotContainWhiteSpace]
-        public string ClassRoomCode { get; set; }
-
         [Required(AllowEmptyStrings = false)]
         [NotContainWhiteSpace]
         public string QuestionCode { get; set; }
@@ -43,5 +39,18 @@ namespace nuce.web.api.ViewModel.Survey
         public bool? IsAnswerChildQuestion { get; set; }
 
         public string AnswerContent { get; set; }
+    }
+
+    public class GraduateSelectedAnswerAutoSave : SelectedAnswerAutoSaveBase
+    {
+        [Required]
+        public Guid? TheSurveyId { get; set; }
+    }
+
+    public class SelectedAnswerAutoSave : SelectedAnswerAutoSaveBase
+    {
+        [Required(AllowEmptyStrings = false)]
+        [NotContainWhiteSpace]
+        public string ClassRoomCode { get; set; }
     }
 }

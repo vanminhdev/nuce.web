@@ -320,22 +320,11 @@ namespace nuce.web.quanly.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return Json(new { type = "fail", message = "Thêm không thành công", detailMessage = "Dữ liệu đã nhập không hợp lệ" });
+                return Json(new { statusCode = HttpStatusCode.BadRequest }, JsonRequestBehavior.AllowGet);
             }
             var content = new StringContent(JsonConvert.SerializeObject(question), Encoding.UTF8, "application/json");
             var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/ExamQuestions/AddQuestion", content);
-            return await base.HandleResponseAsync(response,
-                action200: res =>
-                {
-                    return Json(new { type = "success", message = "Thêm thành công" });
-                },
-                action500Async: async res =>
-                {
-                    var jsonString = await response.Content.ReadAsStringAsync();
-                    var resMess = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
-                    return Json(new { type = "fail", message = "Thêm không thành công", detailMessage = resMess.message });
-                }
-            );
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -343,18 +332,7 @@ namespace nuce.web.quanly.Controllers
         {
             var content = new StringContent($@"'{examQuestionId}'", Encoding.UTF8, "application/json");
             var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/ExamQuestions/GenerateExam", content);
-            return await base.HandleResponseAsync(response,
-                action200: res =>
-                {
-                    return Json(new { type = "success", message = "Tạo thành công" });
-                },
-                action500Async: async res =>
-                {
-                    var jsonString = await response.Content.ReadAsStringAsync();
-                    var resMess = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
-                    return Json(new { type = "fail", message = "Tạo không thành công", detailMessage = resMess.message });
-                }
-            );
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
@@ -373,7 +351,12 @@ namespace nuce.web.quanly.Controllers
             );
         }
 
-
+        [HttpPost]
+        public async Task<ActionResult> DeleteQuestionFromStructure(string id)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/ExamQuestions/DeleteQuestionFromStructure?id={id}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
         #endregion
 
         #region thống kê
@@ -479,8 +462,11 @@ namespace nuce.web.quanly.Controllers
 
         #region sinh viên đã tốt nghiệp
         [HttpGet]
-        public ActionResult GraduateStudent()
+        public async Task<ActionResult> GraduateStudent()
         {
+            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/GraduateSurveyRound/GetSurveyRoundActive");
+            ViewData["SurveyRoundActive"] =  await response.Content.ReadAsStringAsync();
+
             return View("~/Views/Survey/Graduate/GraduateStudent.cshtml");
         }
 
@@ -524,7 +510,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> UploadFile(HttpPostedFileBase fileUpload)
+        public async Task<ActionResult> UploadFile(HttpPostedFileBase fileUpload, string surveyRoundId)
         {
             var contentLength = fileUpload.ContentLength;
             int maxSize = int.Parse(ConfigurationManager.AppSettings["MaxSizeFileUpload"]);
@@ -540,10 +526,12 @@ namespace nuce.web.quanly.Controllers
                 var byteArrayContent = new ByteArrayContent(memoryStream.ToArray());
                 byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse(fileUpload.ContentType);
 
+                var stringContent = new StringContent($"{surveyRoundId}", Encoding.UTF8, "application/json");
+
                 var multipartFormData = new MultipartFormDataContent();
                 multipartFormData.Add(byteArrayContent, "fileUpload", fileUpload.FileName);
 
-                var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/GraduateStudent/UploadFile", multipartFormData);
+                var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/GraduateStudent/UploadFile?surveyRoundId={surveyRoundId}", multipartFormData);
                 return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
             }
         }
@@ -554,14 +542,15 @@ namespace nuce.web.quanly.Controllers
             var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/GraduateStudent/DeleteAll");
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
-
-
         #endregion
 
         #region bài khảo sát đã tốt nghiệp
         [HttpGet]
         public async Task<ActionResult> GraduateTheSurvey()
         {
+            var resTableStatus = await base.MakeRequestAuthorizedAsync("Get", $"/api/GraduateTheSurveyStudent/GetGenerateTheSurveyStudentStatus");
+            ViewData["TableTheSurveyStudentStatus"] = await resTableStatus.Content.ReadAsStringAsync();
+
             var resSurveyRound = await base.MakeRequestAuthorizedAsync("Get", $"/api/GraduateSurveyRound/GetSurveyRoundActive");
             ViewData["SurveyRoundActive"] = await resSurveyRound.Content.ReadAsStringAsync();
 
@@ -619,6 +608,13 @@ namespace nuce.web.quanly.Controllers
         public async Task<ActionResult> DeleteGraduateTheSurvey(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/GraduateSurveyRound/DeleteTheSurvey?id={id}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GenerateTheSurveyStudent(string id)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/GraduateTheSurveyStudent/GenerateTheSurveyStudent?theSurveyId={id}");
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
         #endregion

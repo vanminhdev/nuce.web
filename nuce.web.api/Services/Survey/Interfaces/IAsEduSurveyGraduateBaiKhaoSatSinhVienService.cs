@@ -1,4 +1,5 @@
 ﻿using nuce.web.api.ViewModel.Survey;
+using nuce.web.api.ViewModel.Survey.Graduate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +9,12 @@ namespace nuce.web.api.Services.Survey.Interfaces
 {
     public interface IAsEduSurveyGraduateBaiKhaoSatSinhVienService
     {
-        public Task SaveSelectedAnswer(string id, string ipAddress);
-        public Task<Guid> GetIdByCode(string studentCode, string classroomCode);
-        public Task GenerateTheSurveyStudent();
+        public Task SaveSelectedAnswer(Guid theSurveyId, string studentCode, string ipAddress);
+        public Task GenerateTheSurveyStudent(Guid theSurveyId);
         public Task<int> GetGenerateTheSurveyStudentStatus();
-        public Task<List<TheSurveyStudent>> GetTheSurvey(string studentCode);
-        public Task<string> GetTheSurveyJsonStringByBaiKhaoSatId(string id);
-        public Task<string> GetSelectedAnswerAutoSave(string studentCode, string classroomCode);
-        public Task AutoSave(string id, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, bool isAnswerCodesAdd = true);
+        public Task<List<GraduateTheSurveyStudent>> GetTheSurvey(string studentCode);
+        public Task<string> GetTheSurveyContent(string studentCode, string id);
+        public Task<string> GetSelectedAnswerAutoSave(Guid theSurveyId, string studentCode);
+        public Task AutoSave(Guid theSurveyId, string studentCode, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, bool isAnswerCodesAdd = true);
     }
 }

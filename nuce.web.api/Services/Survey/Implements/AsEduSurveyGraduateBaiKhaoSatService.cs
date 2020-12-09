@@ -40,6 +40,7 @@ namespace nuce.web.api.Services.Survey.Implements
                     Id = o.baikhaosat.Id,
                     DotKhaoSatId = o.baikhaosat.DotKhaoSatId,
                     DeThiId = o.baikhaosat.DeThiId,
+                    Name = o.baikhaosat.Name,
                     FromDate = o.baikhaosat.FromDate,
                     EndDate = o.baikhaosat.EndDate,
                     Description = o.baikhaosat.Description,
@@ -61,7 +62,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
         public async Task Create(GraduateTheSurveyCreate theSurvey)
         {
-            var surveyRound = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == theSurvey.DotKhaoSatId && o.Status == (int)TheSurveyStatus.Active);
+            var surveyRound = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == theSurvey.DotKhaoSatId && o.Status == (int)TheSurveyStatus.New);
             if(surveyRound == null)
             {
                 throw new RecordNotFoundException("Id đợt khảo sát không tồn tại");
@@ -73,7 +74,8 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException("Id đề thi không tồn tại");
             }
 
-            var theActivedSurvey = await _context.AsEduSurveyGraduateBaiKhaoSat.FirstOrDefaultAsync(o => o.DotKhaoSatId == theSurvey.DotKhaoSatId && o.Status == (int)TheSurveyStatus.Active);
+            var theActivedSurvey = await _context.AsEduSurveyGraduateBaiKhaoSat
+                .FirstOrDefaultAsync(o => o.DotKhaoSatId == theSurvey.DotKhaoSatId && (o.Status == (int)TheSurveyStatus.New || o.Status == (int)TheSurveyStatus.Published));
             if (theActivedSurvey != null)
             {
                 throw new InvalidDataException($"Đợt khảo sát \"{surveyRound.Name}\" đang có bài khảo sát còn hoạt động");
@@ -84,13 +86,14 @@ namespace nuce.web.api.Services.Survey.Implements
                 Id = Guid.NewGuid(),
                 DotKhaoSatId = theSurvey.DotKhaoSatId.Value,
                 DeThiId = theSurvey.DeThiId.Value,
+                Name = theSurvey.Name,
                 NoiDungDeThi = examQuestion.NoiDungDeThi,
                 DapAn = examQuestion.DapAn,
                 FromDate = theSurvey.FromDate.Value,
                 EndDate = theSurvey.EndDate.Value,
-                Description = theSurvey?.Description.Trim() ?? "",
-                Note = theSurvey?.Note.Trim() ?? "",
-                Status = (int)TheSurveyStatus.Active,
+                Description = theSurvey.Description != null ? theSurvey.Description.Trim() : null,
+                Note = theSurvey.Note != null ? theSurvey.Note.Trim() : null,
+                Status = (int)TheSurveyStatus.New,
                 Type = theSurvey.Type.Value,
             });
             await _context.SaveChangesAsync();
@@ -104,22 +107,22 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException("Không tìm thấy bài khảo sát cần cập nhật");
             }
 
-            if(theSurveyUpdate.Status != (int)TheSurveyStatus.Active)
+            if (theSurveyUpdate.Status != (int)TheSurveyStatus.New)
             {
-                throw new InvalidDataException("Bài khảo sát không còn hoạt động, không thể sửa");
+                throw new InvalidDataException("Bài khảo sát không phải mới tạo, không thể sửa");
             }
 
             //đổi đợt khảo sát
             if (theSurvey.DotKhaoSatId != theSurveyUpdate.DotKhaoSatId)
             {
-                var surveyRound = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == theSurvey.DotKhaoSatId && o.Status == (int)TheSurveyStatus.Active);
+                var surveyRound = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == theSurvey.DotKhaoSatId && o.Status == (int)TheSurveyStatus.New);
                 if (surveyRound == null)
                 {
                     throw new RecordNotFoundException("Id đợt khảo sát không tồn tại");
                 }
 
                 //có bài đang active rồi
-                var theActivedSurvey = await _context.AsEduSurveyGraduateBaiKhaoSat.FirstOrDefaultAsync(o => o.DotKhaoSatId == theSurvey.DotKhaoSatId && o.Status == (int)TheSurveyStatus.Active);
+                var theActivedSurvey = await _context.AsEduSurveyGraduateBaiKhaoSat.FirstOrDefaultAsync(o => o.DotKhaoSatId == theSurvey.DotKhaoSatId && o.Status == (int)TheSurveyStatus.New);
                 if (theActivedSurvey != null)
                 {
                     throw new InvalidDataException($"Đợt khảo sát \"{surveyRound.Name}\" đang có bài khảo sát còn hoạt động");
@@ -128,7 +131,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 theSurveyUpdate.DotKhaoSatId = theSurvey.DotKhaoSatId.Value;
             }
 
-            if(theSurvey.DeThiId != theSurvey.DeThiId)
+            if(theSurveyUpdate.DeThiId != theSurvey.DeThiId)
             {
                 var examQuestion = await _context.AsEduSurveyDeThi.FirstOrDefaultAsync(o => o.Id == theSurvey.DeThiId);
                 if (examQuestion == null)
@@ -140,10 +143,11 @@ namespace nuce.web.api.Services.Survey.Implements
                 theSurveyUpdate.DapAn = examQuestion.DapAn;
             }
 
+            theSurveyUpdate.Name = theSurvey.Name.Trim();
             theSurveyUpdate.FromDate = theSurvey.FromDate.Value;
             theSurveyUpdate.EndDate = theSurvey.EndDate.Value;
-            theSurveyUpdate.Description = theSurvey?.Description.Trim() ?? "";
-            theSurveyUpdate.Note = theSurvey?.Note.Trim() ?? "";
+            theSurveyUpdate.Description = theSurvey.Description != null ? theSurvey.Description.Trim() : null;
+            theSurveyUpdate.Note = theSurvey.Note != null ? theSurvey.Note.Trim() : null;
             theSurveyUpdate.Type = theSurvey.Type.Value;
             await _context.SaveChangesAsync();
         }
@@ -156,7 +160,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException();
             }
 
-            if (theSurvey.Status == (int)TheSurveyStatus.Active)
+            if (theSurvey.Status == (int)TheSurveyStatus.New)
             {
                 throw new InvalidDataException("Bài khảo sát còn hoạt động không thể xoá");
             }

@@ -67,5 +67,13 @@ namespace nuce.web.survey.student.Common
         /// Tiêu đề vd: I. abc  II.def
         /// </summary>
         public static string T = "T";
+        /// <summary>
+        /// Lựa chọn tỉnh thành
+        /// </summary>
+        public static string CityC = "CityC";
+        /// <summary>
+        /// Rate Start
+        /// </summary>
+        public static string StarRating = "StarRating";
     }
 }
