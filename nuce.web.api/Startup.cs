@@ -210,6 +210,11 @@ namespace nuce.web.api
             services.AddScoped<IAsEduSurveyGraduateDotKhaoSatService, AsEduSurveyGraduateDotKhaoSatService>();
             services.AddScoped<IAsEduSurveyGraduateBaiKhaoSatService, AsEduSurveyGraduateBaiKhaoSatService>();
             services.AddScoped<IAsEduSurveyGraduateBaiKhaoSatSinhVienService, AsEduSurveyGraduateBaiKhaoSatSinhVienService>();
+
+            services.AddScoped<IAsEduSurveyUndergraduateStudentService, AsEduSurveyUndergraduateStudentService>();
+            services.AddScoped<IAsEduSurveyUndergraduateDotKhaoSatService, AsEduSurveyUndergraduateDotKhaoSatService>();
+            services.AddScoped<IAsEduSurveyUndergraduateBaiKhaoSatService, AsEduSurveyUndergraduateBaiKhaoSatService>();
+            services.AddScoped<IAsEduSurveyUndergraduateBaiKhaoSatSinhVienService, AsEduSurveyUndergraduateBaiKhaoSatSinhVienService>();
             #endregion
             #region sync edu database service
             services.AddScoped<ISyncEduDatabaseService, SyncEduDatabaseService>();

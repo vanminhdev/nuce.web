@@ -4,7 +4,7 @@ using nuce.web.api.HandleException;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Base;
-using nuce.web.api.ViewModel.Survey.Graduate;
+using nuce.web.api.ViewModel.Survey.Undergraduate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,19 +12,19 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.Survey.Implements
 {
-    class AsEduSurveyGraduateDotKhaoSatService : IAsEduSurveyGraduateDotKhaoSatService
+    class AsEduSurveyUndergraduateDotKhaoSatService : IAsEduSurveyUndergraduateDotKhaoSatService
     {
         private readonly SurveyContext _context;
 
-        public AsEduSurveyGraduateDotKhaoSatService(SurveyContext context)
+        public AsEduSurveyUndergraduateDotKhaoSatService(SurveyContext context)
         {
             _context = context;
         }
 
-        public async Task<PaginationModel<AsEduSurveyGraduateSurveyRound>> GetSurveyRound(GraduateSurveyRoundFilter filter, int skip = 0, int take = 20)
+        public async Task<PaginationModel<AsEduSurveyUndergraduateSurveyRound>> GetSurveyRound(UndergraduateSurveyRoundFilter filter, int skip = 0, int take = 20)
         {
             _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            IQueryable<AsEduSurveyGraduateSurveyRound> query = _context.AsEduSurveyGraduateSurveyRound.Where(o => o.Status != (int)SurveyRoundStatus.Deleted);
+            IQueryable<AsEduSurveyUndergraduateSurveyRound> query = _context.AsEduSurveyUndergraduateSurveyRound.Where(o => o.Status != (int)SurveyRoundStatus.Deleted);
             var recordsTotal = query.Count();
 
             if (!string.IsNullOrWhiteSpace(filter.Name))
@@ -40,7 +40,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             var data = await querySkip.ToListAsync();
 
-            return new PaginationModel<AsEduSurveyGraduateSurveyRound>
+            return new PaginationModel<AsEduSurveyUndergraduateSurveyRound>
             {
                 RecordsTotal = recordsTotal,
                 RecordsFiltered = recordsFiltered,
@@ -48,10 +48,10 @@ namespace nuce.web.api.Services.Survey.Implements
             };
         }
 
-        public async Task<AsEduSurveyGraduateSurveyRound> GetSurveyRoundById(string id)
+        public async Task<AsEduSurveyUndergraduateSurveyRound> GetSurveyRoundById(string id)
         {
             _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            var surveyRound = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id.ToString() == id && o.Status != (int)SurveyRoundStatus.Deleted);
+            var surveyRound = await _context.AsEduSurveyUndergraduateSurveyRound.FirstOrDefaultAsync(o => o.Id.ToString() == id && o.Status != (int)SurveyRoundStatus.Deleted);
             if(surveyRound == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
@@ -59,9 +59,9 @@ namespace nuce.web.api.Services.Survey.Implements
             return surveyRound;
         }
 
-        public async Task Create(GraduateSurveyRoundCreate surveyRound)
+        public async Task Create(UndergraduateSurveyRoundCreate surveyRound)
         {
-            _context.AsEduSurveyGraduateSurveyRound.Add(new AsEduSurveyGraduateSurveyRound
+            _context.AsEduSurveyUndergraduateSurveyRound.Add(new AsEduSurveyUndergraduateSurveyRound
             {
                 Id = Guid.NewGuid(),
                 Name = surveyRound.Name.Trim(),
@@ -75,9 +75,9 @@ namespace nuce.web.api.Services.Survey.Implements
             await _context.SaveChangesAsync();
         }
 
-        public async Task Update(Guid id, GraduateSurveyRoundUpdate surveyRound)
+        public async Task Update(Guid id, UndergraduateSurveyRoundUpdate surveyRound)
         {
-            var surveyRoundUpdate = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == id && o.Status != (int)SurveyRoundStatus.Deleted);
+            var surveyRoundUpdate = await _context.AsEduSurveyUndergraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == id && o.Status != (int)SurveyRoundStatus.Deleted);
             if(surveyRoundUpdate == null)
             {
                 throw new RecordNotFoundException();
@@ -99,7 +99,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
         public async Task Delete(Guid id)
         {
-            var surveyRoundUpdate = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == id && o.Status != (int)SurveyRoundStatus.Deleted);
+            var surveyRoundUpdate = await _context.AsEduSurveyUndergraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == id && o.Status != (int)SurveyRoundStatus.Deleted);
             if (surveyRoundUpdate == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
@@ -116,14 +116,14 @@ namespace nuce.web.api.Services.Survey.Implements
 
         public async Task Close(Guid id)
         {
-            var surveyRound = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == id && o.Status != (int)SurveyRoundStatus.Deleted);
+            var surveyRound = await _context.AsEduSurveyUndergraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == id && o.Status != (int)SurveyRoundStatus.Deleted);
             if (surveyRound == null)
             {
                 throw new RecordNotFoundException();
             }
             surveyRound.Status = (int)SurveyRoundStatus.Deactive;
             //kết thúc tất cả bài khảo sát là con của đợt này
-            var baiKhaoSats = await _context.AsEduSurveyGraduateBaiKhaoSat.Where(o => o.DotKhaoSatId == surveyRound.Id).ToListAsync();
+            var baiKhaoSats = await _context.AsEduSurveyUndergraduateBaiKhaoSat.Where(o => o.DotKhaoSatId == surveyRound.Id).ToListAsync();
             foreach(var item in baiKhaoSats)
             {
                 item.Status = (int)TheSurveyStatus.Deactive;
@@ -133,9 +133,9 @@ namespace nuce.web.api.Services.Survey.Implements
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<AsEduSurveyGraduateSurveyRound>> GetSurveyRoundActive()
+        public async Task<List<AsEduSurveyUndergraduateSurveyRound>> GetSurveyRoundActive()
         {
-            var surveyRounds = await _context.AsEduSurveyGraduateSurveyRound.Where(o => o.Status == (int)SurveyRoundStatus.Active).ToListAsync();
+            var surveyRounds = await _context.AsEduSurveyUndergraduateSurveyRound.Where(o => o.Status == (int)SurveyRoundStatus.Active).ToListAsync();
             return surveyRounds;
         }
     }

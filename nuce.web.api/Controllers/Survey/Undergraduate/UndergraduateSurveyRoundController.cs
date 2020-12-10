@@ -7,7 +7,7 @@ using nuce.web.api.HandleException;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Base;
-using nuce.web.api.ViewModel.Survey.Graduate;
+using nuce.web.api.ViewModel.Survey.Undergraduate;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -19,31 +19,31 @@ namespace nuce.web.api.Controllers.Survey.Graduate
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize(Roles = "P_KhaoThi")]
-    public class GraduateSurveyRoundController : ControllerBase
+    public class UndergraduateSurveyRoundController : ControllerBase
     {
         private readonly ILogger<GraduateSurveyRoundController> _logger;
-        private readonly IAsEduSurveyGraduateDotKhaoSatService _asEduSurveyGraduateDotKhaoSatService;
+        private readonly IAsEduSurveyUndergraduateDotKhaoSatService _asEduSurveyUndergraduateDotKhaoSatService;
 
-        public GraduateSurveyRoundController(ILogger<GraduateSurveyRoundController> logger, IAsEduSurveyGraduateDotKhaoSatService asEduSurveyGraduateDotKhaoSatService)
+        public UndergraduateSurveyRoundController(ILogger<GraduateSurveyRoundController> logger, IAsEduSurveyUndergraduateDotKhaoSatService asEduSurveyUndergraduateDotKhaoSatService)
         {
             _logger = logger;
-            _asEduSurveyGraduateDotKhaoSatService = asEduSurveyGraduateDotKhaoSatService;
+            _asEduSurveyUndergraduateDotKhaoSatService = asEduSurveyUndergraduateDotKhaoSatService;
         }
 
         #region đợt khảo sát
         [HttpPost]
         public async Task<IActionResult> GetSurveyRound([FromBody] DataTableRequest request)
         {
-            var filter = new GraduateSurveyRoundFilter();
+            var filter = new UndergraduateSurveyRoundFilter();
             if (request.Columns != null)
             {
                 filter.Name = request.Columns.FirstOrDefault(c => c.Data == "name" || c.Name == "name")?.Search.Value ?? null;
             }
             var skip = request.Start;
             var take = request.Length;
-            var result = await _asEduSurveyGraduateDotKhaoSatService.GetSurveyRound(filter, skip, take);
+            var result = await _asEduSurveyUndergraduateDotKhaoSatService.GetSurveyRound(filter, skip, take);
             return Ok(
-                new DataTableResponse<AsEduSurveyGraduateSurveyRound>
+                new DataTableResponse<AsEduSurveyUndergraduateSurveyRound>
                 {
                     Draw = ++request.Draw,
                     RecordsTotal = result.RecordsTotal,
@@ -58,7 +58,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         {
             try
             {
-                var result = await _asEduSurveyGraduateDotKhaoSatService.GetSurveyRoundActive();
+                var result = await _asEduSurveyUndergraduateDotKhaoSatService.GetSurveyRoundActive();
                 return Ok(result);
             }
             catch (Exception e)
@@ -77,7 +77,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         {
             try
             {
-                var surveyRound = await _asEduSurveyGraduateDotKhaoSatService.GetSurveyRoundById(id);
+                var surveyRound = await _asEduSurveyUndergraduateDotKhaoSatService.GetSurveyRoundById(id);
                 return Ok(surveyRound);
             }
             catch(RecordNotFoundException e)
@@ -93,11 +93,11 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateSurveyRound([FromBody] GraduateSurveyRoundCreate surveyRound)
+        public async Task<IActionResult> CreateSurveyRound([FromBody] UndergraduateSurveyRoundCreate surveyRound)
         {
             try
             {
-                await _asEduSurveyGraduateDotKhaoSatService.Create(surveyRound);
+                await _asEduSurveyUndergraduateDotKhaoSatService.Create(surveyRound);
             }
             catch (DbUpdateException e)
             {
@@ -114,11 +114,11 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateSurveyRound([Required(AllowEmptyStrings = false)] Guid? id, [FromBody] GraduateSurveyRoundUpdate surveyRound)
+        public async Task<IActionResult> UpdateSurveyRound([Required(AllowEmptyStrings = false)] Guid? id, [FromBody] UndergraduateSurveyRoundUpdate surveyRound)
         {
             try
             {
-                await _asEduSurveyGraduateDotKhaoSatService.Update(id.Value, surveyRound);
+                await _asEduSurveyUndergraduateDotKhaoSatService.Update(id.Value, surveyRound);
             }
             catch (InvalidDataException e)
             {
@@ -147,7 +147,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         {
             try
             {
-                await _asEduSurveyGraduateDotKhaoSatService.Delete(id.Value);
+                await _asEduSurveyUndergraduateDotKhaoSatService.Delete(id.Value);
             }
             catch (RecordNotFoundException)
             {
@@ -172,7 +172,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         {
             try
             {
-                await _asEduSurveyGraduateDotKhaoSatService.Close(id.Value);
+                await _asEduSurveyUndergraduateDotKhaoSatService.Close(id.Value);
             }
             catch (RecordNotFoundException)
             {

@@ -186,7 +186,7 @@
                 }
             ],
             ajax: {
-                url: '/Survey/GetAllGraduateTheSurvey',
+                url: '/Survey/GetAllUndergraduateTheSurvey',
                 dataType: 'json',
                 contentType: 'application/json',
                 type: "POST",
@@ -276,9 +276,9 @@
             if (form.valid()) {
                 let url;
                 if (saveChanges.attr('type-handle') === 'create') {
-                    url = '/Survey/CreateGraduateTheSurvey';
+                    url = '/Survey/CreateUndergraduateTheSurvey';
                 } else if (saveChanges.attr('type-handle') === 'update') {
-                    url = '/Survey/UpdateGraduateTheSurvey';
+                    url = '/Survey/UpdateUndergraduateTheSurvey';
                 }
                 $.ajax({
                     data: getFormData('#form-data'),
@@ -320,7 +320,7 @@
             $.ajax({
                 dataType: 'json',
                 method: 'Get',
-                url: `/Survey/GetGraduateTheSurveyById?id=${id}`,
+                url: `/Survey/GetUndergraduateTheSurveyById?id=${id}`,
                 timeout: 0,
                 complete: () => { }
             }).done(function (res) {
@@ -348,7 +348,7 @@
                     data: { id },
                     dataType: 'json',
                     method: 'Post',
-                    url: '/Survey/GenerateGraduateTheSurveyStudent',
+                    url: '/Survey/GenerateUndergraduateTheSurveyStudent',
                     complete: () => { }
                 }).done(function (res) {
                     if (res.statusCode === 200) {
@@ -376,7 +376,7 @@
                     data: { id },
                     dataType: 'json',
                     method: 'Post',
-                    url: '/Survey/CloseGraduateTheSurvey',
+                    url: '/Survey/CloseUndergraduateTheSurvey',
                     complete: () => { }
                 }).done(function (res) {
                     if (res.statusCode === 200) {
@@ -404,7 +404,7 @@
                     data: { id },
                     dataType: 'json',
                     method: 'Post',
-                    url: '/Survey/DeleteGraduateTheSurvey',
+                    url: '/Survey/DeleteUndergraduateTheSurvey',
                     complete: () => { }
                 }).done(function (res) {
                     if (res.statusCode === 200) {

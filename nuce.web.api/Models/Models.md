@@ -16,7 +16,7 @@
 	1.4. context SURVEY: những dữ liệu liên quan đến khảo thí như câu hỏi,...
 		- gồm các bảng:
 		- cli:
-			dotnet ef dbcontext scaffold "Data Source=.\sqlexpress;Initial Catalog=NUCE_SURVEY;Integrated Security=True" Microsoft.EntityFrameworkCore.SqlServer -o Models/Survey -c SurveyContext -f -t AS_Edu_Survey_BaiKhaoSat -t AS_Edu_Survey_BaiKhaoSat_SinhVien -t AS_Edu_Survey_CauHoi -t AS_Edu_Survey_CauTrucDe -t AS_Edu_Survey_DapAn -t AS_Edu_Survey_DeThi -t AS_Edu_Survey_DotKhaoSat -t AS_Edu_Survey_ReportTotal -t AS_Edu_Survey_Graduate_SurveyRound -t AS_Edu_Survey_Graduate_Student -t AS_Edu_Survey_Graduate_BaiKhaoSat -t AS_Edu_Survey_Graduate_BaiKhaoSat_SinhVien
+			dotnet ef dbcontext scaffold "Data Source=.\sqlexpress;Initial Catalog=NUCE_SURVEY;Integrated Security=True" Microsoft.EntityFrameworkCore.SqlServer -o Models/Survey -c SurveyContext -f -t AS_Edu_Survey_BaiKhaoSat -t AS_Edu_Survey_BaiKhaoSat_SinhVien -t AS_Edu_Survey_CauHoi -t AS_Edu_Survey_CauTrucDe -t AS_Edu_Survey_DapAn -t AS_Edu_Survey_DeThi -t AS_Edu_Survey_DotKhaoSat -t AS_Edu_Survey_ReportTotal -t AS_Edu_Survey_Graduate_SurveyRound -t AS_Edu_Survey_Graduate_Student -t AS_Edu_Survey_Graduate_BaiKhaoSat -t AS_Edu_Survey_Graduate_BaiKhaoSat_SinhVien -t AS_Edu_Survey_Undergraduate_SurveyRound -t AS_Edu_Survey_Undergraduate_Student -t AS_Edu_Survey_Undergraduate_BaiKhaoSat -t AS_Edu_Survey_Undergraduate_BaiKhaoSat_SinhVien
 		- thư mục jsondata: là các model đưa dữ liệu đã query về dạng json string
 			
 	1.5. context Ctsv: công tác sinh viên

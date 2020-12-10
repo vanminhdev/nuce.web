@@ -7,13 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="NewFolder\**" />
-    <Content Remove="NewFolder\**" />
-    <EmbeddedResource Remove="NewFolder\**" />
-    <None Remove="NewFolder\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.95.3" />
     <PackageReference Include="GemBox.Document" Version="33.0.1031" />
     <PackageReference Include="GemBox.Spreadsheet" Version="47.0.1044" />
@@ -49,7 +42,6 @@
     <Folder Include="Resources\Core\" />
     <Folder Include="Resources\Ctsv\" />
     <Folder Include="Resources\Survey\" />
-    <Folder Include="Templates\Survey\" />
   </ItemGroup>
 
   <ItemGroup>

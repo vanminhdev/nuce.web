@@ -11,7 +11,7 @@ using nuce.web.api.Models.Survey;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Base;
-using nuce.web.api.ViewModel.Survey.Graduate;
+using nuce.web.api.ViewModel.Survey.Undergraduate;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -26,36 +26,36 @@ namespace nuce.web.api.Controllers.Survey.Graduate
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize(Roles = "P_KhaoThi")]
-    public class GraduateStudentController : ControllerBase
+    public class UndergraduateStudentController : ControllerBase
     {
-        private readonly ILogger<GraduateStudentController> _logger;
+        private readonly ILogger<UndergraduateStudentController> _logger;
         private readonly IConfiguration _configuration;
         private readonly IPathProvider _pathProvider;
-        private readonly IAsEduSurveyGraduateStudentService _asEduSurveyGraduateStudentService;
+        private readonly IAsEduSurveyUndergraduateStudentService _asEduSurveyUndergraduateStudentService;
 
-        public GraduateStudentController(ILogger<GraduateStudentController> logger, IPathProvider pathProvider, 
+        public UndergraduateStudentController(ILogger<UndergraduateStudentController> logger, IPathProvider pathProvider, 
             IConfiguration configuration,
-            IAsEduSurveyGraduateStudentService asEduSurveyGraduateStudentService)
+            IAsEduSurveyUndergraduateStudentService asEduSurveyUndergraduateStudentService)
         {
             _logger = logger;
             _pathProvider = pathProvider;
             _configuration = configuration;
-            _asEduSurveyGraduateStudentService = asEduSurveyGraduateStudentService;
+            _asEduSurveyUndergraduateStudentService = asEduSurveyUndergraduateStudentService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetGraduateStudent([FromBody] DataTableRequest request)
+        public async Task<IActionResult> GetUndergraduateStudent([FromBody] DataTableRequest request)
         {
-            var filter = new GraduateStudentFilter();
+            var filter = new UndergraduateStudentFilter();
             if (request.Columns != null)
             {
                 filter.Masv = request.Columns.FirstOrDefault(c => c.Data == "masv" || c.Name == "masv")?.Search.Value ?? null;
             }
             var skip = request.Start;
             var take = request.Length;
-            var result = await _asEduSurveyGraduateStudentService.GetAll(filter, skip, take);
+            var result = await _asEduSurveyUndergraduateStudentService.GetAll(filter, skip, take);
             return Ok(
-                new DataTableResponse<GraduateStudent>
+                new DataTableResponse<UndergraduateStudent>
                 {
                     Draw = ++request.Draw,
                     RecordsTotal = result.RecordsTotal,
@@ -66,13 +66,13 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetGraduateStudentById(
+        public async Task<IActionResult> GetUndergraduateStudentById(
             [Required(AllowEmptyStrings = false)]
             string id)
         {
             try
             {
-                var surveyRound = await _asEduSurveyGraduateStudentService.GetById(id);
+                var surveyRound = await _asEduSurveyUndergraduateStudentService.GetById(id);
                 return Ok(surveyRound);
             }
             catch (RecordNotFoundException e)
@@ -90,7 +90,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         [HttpGet]
         public async Task<IActionResult> DownloadTemplateUploadFile()
         {
-            var path = _pathProvider.MapPath("Templates/Survey/Template_Graduate_Student.xlsx");
+            var path = _pathProvider.MapPath("Templates/Survey/Template_Undergraduate_Student.xlsx");
             if (!System.IO.File.Exists(path))
             {
                 return NotFound(new { message = "Không tìm thấy file" });
@@ -152,8 +152,8 @@ namespace nuce.web.api.Controllers.Survey.Graduate
                 Resolution = ColumnTypeResolution.AutoPreferStringCurrentCulture
             });
 
-            List<AsEduSurveyGraduateStudent> students = new List<AsEduSurveyGraduateStudent>();
-            AsEduSurveyGraduateStudent student;
+            List<AsEduSurveyUndergraduateStudent> students = new List<AsEduSurveyUndergraduateStudent>();
+            AsEduSurveyUndergraduateStudent student;
             int maxSize = 100;
             int numRowCount = 0;
             foreach (DataRow row in dataTable.Rows)
@@ -173,7 +173,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
                 var xeploai = row[4].ToString();
                 var ngaysinh = row[5].ToString();
 
-                student = new AsEduSurveyGraduateStudent
+                student = new AsEduSurveyUndergraduateStudent
                 {
                     Id = Guid.NewGuid(),
                     Dottotnghiep = dottonghiep,
@@ -183,7 +183,6 @@ namespace nuce.web.api.Controllers.Survey.Graduate
                     Xeploai = xeploai,
                     Ngaysinh = ngaysinh,
                     ExMasv = masv,
-                    Psw = StringHelper.ConvertToLatin(hovaten).Replace(" ", "").ToLower(),
                     DotKhaoSatId = surveyRoundId,
                     Type = 1,
                     Status = 1
@@ -192,7 +191,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
                 numRowCount++;
                 if (students.Count == maxSize || numRowCount == dataTable.Rows.Count) // đủ 100 hoặc là phần tử cuối cùng
                 {
-                    await _asEduSurveyGraduateStudentService.CreateAll(students);
+                    await _asEduSurveyUndergraduateStudentService.CreateAll(students);
                     students.Clear();
                 }
             }
@@ -203,7 +202,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         {
             try
             {
-                await _asEduSurveyGraduateStudentService.TruncateTable();
+                await _asEduSurveyUndergraduateStudentService.TruncateTable();
                 return Ok();
             }
             catch (Exception e)

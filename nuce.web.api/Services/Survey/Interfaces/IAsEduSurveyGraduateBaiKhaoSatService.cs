@@ -13,8 +13,9 @@ namespace nuce.web.api.Services.Survey.Interfaces
     {
         public Task<PaginationModel<GraduateTheSurvey>> GetTheSurvey(GraduateTheSurveyFilter filter, int skip = 0, int take = 20);
         public Task Create(GraduateTheSurveyCreate theSurvey);
-        public Task Update(string id, GraduateTheSurveyUpdate theSurvey);
-        public Task Delete(string id);
-        public Task<AsEduSurveyGraduateBaiKhaoSat> GetTheSurveyById(string id);
+        public Task Update(Guid id, GraduateTheSurveyUpdate theSurvey);
+        public Task Delete(Guid id);
+        public Task<AsEduSurveyGraduateBaiKhaoSat> GetTheSurveyById(Guid id);
+        public Task Deactive(Guid value);
     }
 }

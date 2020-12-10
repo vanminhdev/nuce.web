@@ -8,7 +8,7 @@ using nuce.web.api.Models.Survey.JsonData;
 using nuce.web.api.Services.Status.Interfaces;
 using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Base;
-using nuce.web.api.ViewModel.Survey.Graduate;
+using nuce.web.api.ViewModel.Survey.Undergraduate;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,20 +18,20 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.Survey.Implements
 {
-    class AsEduSurveyGraduateStudentService : IAsEduSurveyGraduateStudentService
+    class AsEduSurveyUndergraduateStudentService : IAsEduSurveyUndergraduateStudentService
     {
         private readonly SurveyContext _context;
 
-        public AsEduSurveyGraduateStudentService(SurveyContext context)
+        public AsEduSurveyUndergraduateStudentService(SurveyContext context)
         {
             _context = context;
         }
 
-        public async Task<PaginationModel<GraduateStudent>> GetAll(GraduateStudentFilter filter, int skip = 0, int take = 20)
+        public async Task<PaginationModel<UndergraduateStudent>> GetAll(UndergraduateStudentFilter filter, int skip = 0, int take = 20)
         {
             _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            var query = _context.AsEduSurveyGraduateStudent
-                .Join(_context.AsEduSurveyGraduateSurveyRound, o => o.DotKhaoSatId, o => o.Id, (sv, dotks) => new { sv, dotks });
+            var query = _context.AsEduSurveyUndergraduateStudent
+                .Join(_context.AsEduSurveyUndergraduateSurveyRound, o => o.DotKhaoSatId, o => o.Id, (sv, dotks) => new { sv, dotks });
             var recordsTotal = query.Count();
 
             if (!string.IsNullOrWhiteSpace(filter.Masv))
@@ -46,7 +46,8 @@ namespace nuce.web.api.Services.Survey.Implements
                 .Skip(skip).Take(take);
 
             var data = await querySkip
-                .Select(o => new GraduateStudent {
+                .Select(o => new UndergraduateStudent
+                {
                     id = o.sv.Id,
                     dottotnghiep = o.sv.Dottotnghiep,
                     sovaoso = o.sv.Sovaoso,
@@ -90,10 +91,15 @@ namespace nuce.web.api.Services.Survey.Implements
                     checksum = o.sv.Checksum,
                     exMasv = o.sv.ExMasv,
                     type = o.sv.Type,
-                    status = o.sv.Status
+                    status = o.sv.Status,
+                    ghichuphatbang = o.sv.Ghichuphatbang,
+                    makhoa = o.sv.Makhoa,
+                    malop = o.sv.Malop,
+                    nguoiphatbang = o.sv.Nguoiphatbang,
+                    cnOrder = o.sv.CnOrder
                 }).ToListAsync();
 
-            return new PaginationModel<GraduateStudent>
+            return new PaginationModel<UndergraduateStudent>
             {
                 RecordsTotal = recordsTotal,
                 RecordsFiltered = recordsFiltered,
@@ -101,10 +107,10 @@ namespace nuce.web.api.Services.Survey.Implements
             };
         }
 
-        public async Task<AsEduSurveyGraduateStudent> GetById(string id)
+        public async Task<AsEduSurveyUndergraduateStudent> GetById(string id)
         {
             _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            var record = await _context.AsEduSurveyGraduateStudent.FirstOrDefaultAsync(o => o.Id.ToString() == id);
+            var record = await _context.AsEduSurveyUndergraduateStudent.FirstOrDefaultAsync(o => o.Id.ToString() == id);
             if (record == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy sinh viên");
@@ -112,47 +118,39 @@ namespace nuce.web.api.Services.Survey.Implements
             return record;
         }
 
-        public async Task Create(AsEduSurveyGraduateStudent student)
+        public async Task<AsEduSurveyUndergraduateStudent> GetByStudentCode(string studentCode)
         {
-            if(await _context.AsEduSurveyGraduateStudent.FirstOrDefaultAsync(o => o.Masv == student.Masv) != null)
+            _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            var record = await _context.AsEduSurveyUndergraduateStudent.FirstOrDefaultAsync(o => o.ExMasv == studentCode);
+            return record;
+        }
+
+        public async Task Create(AsEduSurveyUndergraduateStudent student)
+        {
+            if(await _context.AsEduSurveyUndergraduateStudent.FirstOrDefaultAsync(o => o.Masv == student.Masv) != null)
             {
                 return;
             }
-            _context.AsEduSurveyGraduateStudent.Add(student);
+            _context.AsEduSurveyUndergraduateStudent.Add(student);
             await _context.SaveChangesAsync();
         }
 
-        public async Task CreateAll(List<AsEduSurveyGraduateStudent> students)
+        public async Task CreateAll(List<AsEduSurveyUndergraduateStudent> students)
         {
             foreach(var s in students)
             {
-                if (await _context.AsEduSurveyGraduateStudent.FirstOrDefaultAsync(o => o.Masv == s.Masv) != null)
+                if (await _context.AsEduSurveyUndergraduateStudent.FirstOrDefaultAsync(o => o.Masv == s.Masv) != null)
                 {
                     continue;
                 }
-                _context.AsEduSurveyGraduateStudent.Add(s);
+                _context.AsEduSurveyUndergraduateStudent.Add(s);
             }
             await _context.SaveChangesAsync();
         }
 
         public async Task TruncateTable()
         {
-            await _context.Database.ExecuteSqlRawAsync("TRUNCATE TABLE AS_Edu_Survey_Graduate_Student");
-        }
-
-        public async Task<bool> Login(string masv, string pwd)
-        {
-            var sinhvien = await _context.AsEduSurveyGraduateStudent.FirstOrDefaultAsync(o => o.ExMasv == masv);
-            if (sinhvien == null)
-            {
-                return false;
-            }
-
-            if (sinhvien.Psw == pwd)
-            {
-                return true;
-            }
-            return false;
+            await _context.Database.ExecuteSqlRawAsync("TRUNCATE TABLE AS_Edu_Survey_Undergraduate_Student");
         }
     }
 }

@@ -40,9 +40,11 @@ namespace nuce.web.api.Controllers.Core
         private readonly IConfiguration _configuration;
         private readonly ILogService _logService;
         private readonly IAsEduSurveyGraduateStudentService _asEduSurveyGraduateStudentService;
+        private readonly IAsEduSurveyUndergraduateStudentService _asEduSurveyUndergraduateStudentService;
 
         public UserController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, NuceCoreIdentityContext identityContext,
-            ILogger<UserController> logger, IUserService userService, IConfiguration configuration, ILogService logService, IAsEduSurveyGraduateStudentService asEduSurveyGraduateStudentService)
+            ILogger<UserController> logger, IUserService userService, IConfiguration configuration, ILogService logService, 
+            IAsEduSurveyGraduateStudentService asEduSurveyGraduateStudentService, IAsEduSurveyUndergraduateStudentService asEduSurveyUndergraduateStudentService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -52,6 +54,7 @@ namespace nuce.web.api.Controllers.Core
             _configuration = configuration;
             _logService = logService;
             _asEduSurveyGraduateStudentService = asEduSurveyGraduateStudentService;
+            _asEduSurveyUndergraduateStudentService = asEduSurveyUndergraduateStudentService;
         }
 
         [HttpGet]
@@ -82,6 +85,17 @@ namespace nuce.web.api.Controllers.Core
             if (userIsValid)
             {
                 var authClaims = await _userService.AddClaimsAsync(model, user);
+
+                if(model.IsStudent == true)
+                {
+                    //nếu là sinh viên sắp tôt nghiệp thêm role là sắp tốt nghiệp
+                    var undergraduateStudent = await _asEduSurveyUndergraduateStudentService.GetByStudentCode(model.Username);
+                    if(undergraduateStudent != null)
+                    {
+                        authClaims.Add(new Claim(ClaimTypes.Role, "UndergraduateStudent"));
+                    }
+                }
+
                 var accessToken = _userService.CreateJWTAccessToken(authClaims);
                 var refreshToken = _userService.CreateJWTRefreshToken(authClaims);
 
@@ -95,7 +109,7 @@ namespace nuce.web.api.Controllers.Core
                 {
                     Username = model.Username,
                     LogCode = ActivityLogParameters.CODE_LOGIN,
-                    LogMessage = "1"
+                    LogMessage = "Sinh viên đăng nhập"
                 });
                 return Ok();
             }

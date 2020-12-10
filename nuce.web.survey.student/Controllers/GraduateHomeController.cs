@@ -70,8 +70,7 @@ namespace nuce.web.survey.student.Controllers
         [HttpPost]
         public async Task<ActionResult> TheSurveySubmit(string theSurveyId)
         {
-            var stringContent = new StringContent($"'{theSurveyId}'", Encoding.UTF8, "application/json");
-            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/GraduateTheSurveyStudent/SaveSelectedAnswer", stringContent);
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/GraduateTheSurveyStudent/SaveSelectedAnswer?theSurveyId={theSurveyId}");
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
     }

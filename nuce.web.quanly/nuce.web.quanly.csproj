@@ -162,8 +162,11 @@
     <Compile Include="Models\CtsvServiceManagementModel.cs" />
     <Compile Include="Models\EduDataModels.cs" />
     <Compile Include="Models\ExamQuestionModels.cs" />
+    <Compile Include="Models\UndergraduateStudentModels.cs" />
     <Compile Include="Models\GraduateStudentModels.cs" />
+    <Compile Include="Models\UndergraduateSurveyRoundModels.cs" />
     <Compile Include="Models\GraduateSurveyRoundModels.cs" />
+    <Compile Include="Models\UndergraduateTheSurveyModels.cs" />
     <Compile Include="Models\GraduateTheSurveyModels.cs" />
     <Compile Include="Models\JsonData\AnswerJson.cs" />
     <Compile Include="Models\JsonData\QuestionJson.cs" />
@@ -1238,6 +1241,9 @@
     <Content Include="Views\Survey\Graduate\GraduateSurveyRound.cshtml" />
     <Content Include="Views\Survey\Graduate\GraduateStudent.cshtml" />
     <Content Include="Views\Survey\Graduate\GraduateTheSurvey.cshtml" />
+    <Content Include="Views\Survey\Undergraduate\UndergraduateStudent.cshtml" />
+    <Content Include="Views\Survey\Undergraduate\UndergraduateSurveyRound.cshtml" />
+    <Content Include="Views\Survey\Undergraduate\UndergraduateTheSurvey.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

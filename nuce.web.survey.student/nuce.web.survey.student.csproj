@@ -895,6 +895,7 @@
     <Content Include="Content\js\bootstrap.min.js" />
     <Content Include="Content\js\dataTables.bootstrap4.min.js" />
     <Content Include="Content\js\dataTables.config.js" />
+    <Content Include="Content\js\helper\prevent.debugger.helper.js" />
     <Content Include="Content\js\jquery.cookie.min.js" />
     <Content Include="Content\js\jquery.dataTables.min.js" />
     <Content Include="Content\js\jquery.min.js" />

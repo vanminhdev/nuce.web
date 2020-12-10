@@ -14,37 +14,35 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace nuce.web.api.Controllers.Survey
+namespace nuce.web.api.Controllers.Survey.Graduate
 {
-    /// <summary>
-    /// Bài khảo sát sinh viên
-    /// </summary>
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class TheSurveyStudentController : ControllerBase
+    public class UndergraduateTheSurveyStudentController : ControllerBase
     {
-        private readonly ILogger<TheSurveyStudentController> _logger;
-        private readonly IAsEduSurveyBaiKhaoSatSinhVienService _asEduSurveyBaiKhaoSatSinhVienService;
+        private readonly ILogger<UndergraduateTheSurveyStudentController> _logger;
+        private readonly IAsEduSurveyUndergraduateBaiKhaoSatSinhVienService _asEduSurveyUndergraduateBaiKhaoSatSinhVienService;
         private readonly IUserService _userService;
 
-        public TheSurveyStudentController(ILogger<TheSurveyStudentController> logger, IAsEduSurveyBaiKhaoSatSinhVienService asEduSurveyBaiKhaoSatSinhVienService, IUserService userService)
+        public UndergraduateTheSurveyStudentController(ILogger<UndergraduateTheSurveyStudentController> logger, IUserService userService,
+            IAsEduSurveyUndergraduateBaiKhaoSatSinhVienService asEduSurveyUndergraduateBaiKhaoSatSinhVienService)
         {
             _logger = logger;
-            _asEduSurveyBaiKhaoSatSinhVienService = asEduSurveyBaiKhaoSatSinhVienService;
             _userService = userService;
+            _asEduSurveyUndergraduateBaiKhaoSatSinhVienService = asEduSurveyUndergraduateBaiKhaoSatSinhVienService;
         }
 
         [HttpGet]
-        [Authorize(Roles = "Student")]
+        [Authorize(Roles = "UndergraduateStudent")]
         public async Task<IActionResult> GetTheSurvey()
         {
             var studentCode = _userService.GetCurrentStudentCode();
-            var result = await _asEduSurveyBaiKhaoSatSinhVienService.GetTheSurvey(studentCode);
+            var result = await _asEduSurveyUndergraduateBaiKhaoSatSinhVienService.GetTheSurvey(studentCode);
             return Ok(result);
         }
 
         [HttpGet]
-        [Authorize(Roles = "Student")]
+        [Authorize(Roles = "UndergraduateStudent")]
         public async Task<IActionResult> GetTheSurveyContent(
             [Required(AllowEmptyStrings = false)]
             [NotContainWhiteSpace]
@@ -52,7 +50,9 @@ namespace nuce.web.api.Controllers.Survey
         {
             try
             {
-                var result = await _asEduSurveyBaiKhaoSatSinhVienService.GetTheSurveyContent(id);
+                //mã sinh viên kiểm tra sinh viên có bài khảo sát đó thật không
+                var studentCode = _userService.GetCurrentStudentCode();
+                var result = await _asEduSurveyUndergraduateBaiKhaoSatSinhVienService.GetTheSurveyContent(studentCode, id);
                 return Ok(result);
             }
             catch (RecordNotFoundException e)
@@ -62,16 +62,13 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpGet]
-        [Authorize(Roles = "Student")]
-        public async Task<IActionResult> GetSelectedAnswerAutoSave(
-            [Required(AllowEmptyStrings = false)]
-            [NotContainWhiteSpace]
-            string classRoomCode)
+        [Authorize(Roles = "UndergraduateStudent")]
+        public async Task<IActionResult> GetSelectedAnswerAutoSave([Required] Guid? theSurveyId)
         {
             try
             {
                 var studentCode = _userService.GetCurrentStudentCode();
-                var result = await _asEduSurveyBaiKhaoSatSinhVienService.GetSelectedAnswerAutoSave(studentCode, classRoomCode);
+                var result = await _asEduSurveyUndergraduateBaiKhaoSatSinhVienService.GetSelectedAnswerAutoSave(theSurveyId.Value, studentCode);
                 return Ok(result);
             }
             catch (RecordNotFoundException e)
@@ -81,15 +78,15 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpPut]
-        [Authorize(Roles = "Student")]
-        public async Task<IActionResult> AutoSave([FromBody] SelectedAnswerAutoSave content)
+        [Authorize(Roles = "UndergraduateStudent")]
+        public async Task<IActionResult> AutoSave([FromBody] GraduateSelectedAnswerAutoSave content)
         {
             try
             {
                 var studentCode = _userService.GetCurrentStudentCode();
                 var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-                await _asEduSurveyBaiKhaoSatSinhVienService.AutoSave(studentCode, content.ClassRoomCode, content.QuestionCode, content.AnswerCode, content.AnswerCodeInMulSelect,
-                    content.AnswerContent, content.IsAnswerCodesAdd != null ? content.IsAnswerCodesAdd.Value : true);
+                await _asEduSurveyUndergraduateBaiKhaoSatSinhVienService.AutoSave(content.TheSurveyId.Value, studentCode, content.QuestionCode, content.AnswerCode,
+                    content.AnswerCodeInMulSelect, content.AnswerContent, content.IsAnswerCodesAdd != null ? content.IsAnswerCodesAdd.Value : true);
             }
             catch (DbUpdateException e)
             {
@@ -110,18 +107,14 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpPut]
-        [Authorize(Roles = "Student")]
-        public async Task<IActionResult> SaveSelectedAnswer([FromBody]
-            [Required(AllowEmptyStrings = false)]
-            [NotContainWhiteSpace]
-            string classRoomCode)
+        [Authorize(Roles = "UndergraduateStudent")]
+        public async Task<IActionResult> SaveSelectedAnswer([Required] Guid? theSurveyId)
         {
             try
             {
                 var studentCode = _userService.GetCurrentStudentCode();
                 var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-                var id = await _asEduSurveyBaiKhaoSatSinhVienService.GetIdByCode(studentCode, classRoomCode);
-                await _asEduSurveyBaiKhaoSatSinhVienService.SaveSelectedAnswer(id.ToString(), ip);
+                await _asEduSurveyUndergraduateBaiKhaoSatSinhVienService.SaveSelectedAnswer(theSurveyId.Value, studentCode, ip);
             }
             catch (InvalidDataException e)
             {
@@ -152,7 +145,7 @@ namespace nuce.web.api.Controllers.Survey
         {
             try
             {
-                var status = await _asEduSurveyBaiKhaoSatSinhVienService.GetGenerateTheSurveyStudentStatus();
+                var status = await _asEduSurveyUndergraduateBaiKhaoSatSinhVienService.GetGenerateTheSurveyStudentStatus();
                 return Ok(status);
             }
             catch (RecordNotFoundException e)
@@ -169,11 +162,13 @@ namespace nuce.web.api.Controllers.Survey
 
         [HttpPost]
         [Authorize(Roles = "P_KhaoThi")]
-        public async Task<IActionResult> GenerateTheSurveyStudent()
+        public async Task<IActionResult> GenerateTheSurveyStudent(
+            [Required]
+            Guid? theSurveyId)
         {
             try
             {
-                await _asEduSurveyBaiKhaoSatSinhVienService.GenerateTheSurveyStudent();
+                await _asEduSurveyUndergraduateBaiKhaoSatSinhVienService.GenerateTheSurveyStudent(theSurveyId.Value);
             }
             catch (TableBusyException e)
             {

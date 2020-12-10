@@ -24,3 +24,10 @@
         }
     }
 }
+
+if ($(window).width() < 720) {
+    $.extend(true, $.fn.dataTable.defaults, {
+        scrollX: true
+    });
+}
+

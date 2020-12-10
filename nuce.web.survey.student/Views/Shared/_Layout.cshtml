@@ -37,10 +37,10 @@
     @RenderSection("Style", required: false)
 </head>
 <body>
-    <form action="/account/logout" method="post" style="position: absolute; top: 20px; right: 40px;">
-        <button type="submit" class="btn btn-outline-secondary">Đăng xuất</button>
-    </form>
-    <div class="full-height body-wrp">
+    <div class="full-height body-wrp" style="position: relative;">
+        <form action="/account/logout" method="post" style="position: absolute; top: 20px; right: 40px;">
+            <button type="submit" class="btn btn-outline-secondary">Đăng xuất</button>
+        </form>
         <!-- header section -->
         <section id="header">
             <div class="container">
@@ -139,7 +139,7 @@
             <div class="loading-circle"></div>
         </div>
     </div>
-
+    <script src="~/Content/js/helper/prevent.debugger.helper.js"></script>
     <script src="~/content/js/jquery.min.js"></script>
     <script src="~/content/js/jquery.cookie.min.js"></script>
     <script src="~/content/js/jquery.validate.min.js"></script>
