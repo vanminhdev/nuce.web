@@ -49,7 +49,7 @@ namespace nuce.web.api.Services.Core.Implements
         
         public async Task<MemoryStream> DownloadFileAsync(string path)
         {
-            var uri = new Uri(path);
+            var uri = new Uri(path, UriKind.Absolute);
             using (var webClient = new WebClient())
             {
                 byte[] byteImg = await webClient.DownloadDataTaskAsync(uri);
