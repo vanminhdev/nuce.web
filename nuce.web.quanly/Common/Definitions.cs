@@ -10,11 +10,9 @@ namespace nuce.web.quanly.Common
         public static Dictionary<string, string> Roles = new Dictionary<string, string>()
         {
             { "Admin", "Quản trị" },
-            //{ "PhongBan", "Phòng ban" },
             { "P_KhaoThi", "Phòng khảo thí" },
             { "P_CTSV", "Phòng công tác sinh viên" },
-            //{ "Khoa", "Khoa" },
-            //{ "K_CNTT", "Khoa CNTT" }
+            { "K_CNTT", "Khoa CNTT" }
         };
 
 
@@ -27,37 +25,154 @@ namespace nuce.web.quanly.Common
             { 6, "Hoàn thành" },
         };
 
-        public class Function
+        public static Dictionary<string, string> QuestionType = new Dictionary<string, string>()
         {
-            public string Link { get; set; }
-            public string Title { get; set; }
-        }
-
-        public class RoleFunc
-        {
-            public string FuncType { get; set; }
-            public string FuncName { get; set; }
-        }
-
-        public static Dictionary<string, List<RoleFunc>> RoleFunction = new Dictionary<string, List<RoleFunc>>()
-        {
-            {
-                "Admin", new List<RoleFunc>() {
-                    new RoleFunc { FuncType = "QuanTri", FuncName = "QuanLyTaiKhoan" },
-                    new RoleFunc { FuncType = "QuanTri", FuncName = "CauHinhTrangWeb" }
-                }
-            },
-            {
-                "P_KhaoThi", new List<RoleFunc>() {
-                    new RoleFunc { FuncType = "KhaoThi", FuncName = "QuanLyDotKhaoThi" },
-                    new RoleFunc { FuncType = "KhaoThi", FuncName = "QuanLyCauHoi" }
-                }
-            },
-            {
-                "P_CTSV", new List<RoleFunc>() {
-                    
-                }
-            },
+            {"SC", "Một lựa chọn" },
+            {"MC", "Nhiều lựa chọn" },
+            //{"TQ", "Câu hỏi đúng" },
+            //{"FQ", "Câu hỏi sai" },
+            //{"SQ", "Câu hỏi kéo thả" },
+            //{"MA", "Ghép đôi phù hợp" },
+            //{"MW", "Điền từ vào chỗ trống" },
+            {"SA", "Trả lời ngắn" },
+            {"NR", "Câu hỏi số" },
+            //{"HS", "Khoanh vùng điểm ảnh" },
+            //{"GQ", "Câu hỏi nhiều câu hỏi phụ" },
+            //{"SP", "Nghe nói" },
+            //{"EQ", "Câu hỏi cảm xúc" },
+            //{"TL", "Hai cấp" },
+            {"T",  "Tiêu đề"}
         };
+    }
+
+    public enum BackupTypeDefination
+    {
+        BACKUP = 1,
+        RESTORE = 2
+    }
+
+    public class QuestionType
+    {
+        /// <summary>
+        /// Một lựa chọn
+        /// </summary>
+        public static string SC = "SC";
+        /// <summary>
+        /// Nhiều lựa chọn
+        /// </summary>
+        public static string MC = "MC";
+        /// <summary>
+        /// Câu hỏi đúng
+        /// </summary>
+        public static string TQ = "TQ";
+        /// <summary>
+        /// Câu hỏi sai
+        /// </summary>
+        public static string FQ = "FQ";
+        /// <summary>
+        /// Câu hỏi kéo thả
+        /// </summary>
+        public static string SQ = "SQ";
+        /// <summary>
+        /// Ghép đôi phù hợp
+        /// </summary>
+        public static string MA = "MA";
+        /// <summary>
+        /// Điền từ vào chỗ trống
+        /// </summary>
+        public static string MW = "MW";
+        /// <summary>
+        /// Trả lời ngắn
+        /// </summary>
+        public static string SA = "SA";
+        /// <summary>
+        /// Câu hỏi số
+        /// </summary>
+        public static string NR = "NR";
+        /// <summary>
+        /// Khoanh vùng điểm ảnh
+        /// </summary>
+        public static string HS = "HS";
+        /// <summary>
+        /// Câu hỏi nhiều câu hỏi phụ
+        /// </summary>
+        public static string GQ = "GQ";
+        /// <summary>
+        /// Nghe nói
+        /// </summary>
+        public static string SP = "SP";
+        /// <summary>
+        /// Câu hỏi cảm xúc 
+        /// </summary>
+        public static string EQ = "EQ";
+        /// <summary>
+        /// Hai cấp
+        /// </summary>
+        public static string TL = "TL";
+        /// <summary>
+        /// Tiêu đề vd: I. abc  II.def
+        /// </summary>
+        public static string T = "T";
+        /// <summary>
+        /// Lựa chọn tỉnh thành
+        /// </summary>
+        public static string CityC = "CityC";
+        /// <summary>
+        /// Rate Start
+        /// </summary>
+        public static string StarRating = "StarRating";
+    }
+
+    /// <summary>
+    /// Loại đợt khảo sát
+    /// </summary>
+    public enum SurveyRoundType
+    {
+        /// <summary>
+        /// Đánh giá chất lượng giảng dạy
+        /// </summary>
+        RatingTeachingQuality = 1
+    }
+
+    /// <summary>
+    /// Loại bài khảo sát
+    /// </summary>
+    public enum TheSurveyType
+    {
+        /// <summary>
+        /// Đề cho môn lý thuyết
+        /// </summary>
+        TheoreticalSubjects = 1,
+
+        /// <summary>
+        /// Đề cho môn thực hành, thí nghiệm và thực tập
+        /// </summary>
+        PracticalSubjects = 2,
+
+        /// <summary>
+        /// Đề cho môn lý thuyết + thực hành
+        /// </summary>
+        TheoreticalPracticalSubjects = 3,
+
+        /// <summary>
+        /// Đề cho môn đồ án
+        /// </summary>
+        AssignmentSubjects = 4,
+
+        /// <summary>
+        /// Đề cho môn không được phần loại
+        /// </summary>
+        DefaultSubjects = 5,
+    }
+
+    /// <summary>
+    /// Loại đợt khảo sát cựu sinh viên
+    /// </summary>
+    public enum GraduateSurveyRoundType
+    {
+        /// <summary>
+        /// Đánh giá chất lượng giảng dạy
+        /// </summary>
+        RatingTeachingQuality = 1
     }
 }

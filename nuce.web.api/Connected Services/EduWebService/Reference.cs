@@ -20,6 +20,14 @@ namespace EduWebService
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         System.Threading.Tasks.Task<string> TestAsync();
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/getAllTTSV1", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        System.Threading.Tasks.Task<EduWebService.getAllTTSV1ResponseGetAllTTSV1Result> getAllTTSV1Async();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/getAllTTSV2_HoKhauTamTru", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        System.Threading.Tasks.Task<EduWebService.getAllTTSV2_HoKhauTamTruResponseGetAllTTSV2_HoKhauTamTruResult> getAllTTSV2_HoKhauTamTruAsync();
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/getAllTKB1JoinToDk1", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         System.Threading.Tasks.Task<EduWebService.getAllTKB1JoinToDk1ResponseGetAllTKB1JoinToDk1Result> getAllTKB1JoinToDk1Async();
@@ -52,9 +60,13 @@ namespace EduWebService
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         System.Threading.Tasks.Task<EduWebService.getToDK_bangkytruocResponseGetToDK_bangkytruocResult> getToDK_bangkytruocAsync(string Prefix);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/getAllToDK1", ReplyAction="*")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/getAllToDKKyHienTai", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
-        System.Threading.Tasks.Task<EduWebService.getAllToDK1ResponseGetAllToDK1Result> getAllToDK1Async();
+        System.Threading.Tasks.Task<EduWebService.getAllToDKKyHienTaiResponseGetAllToDKKyHienTaiResult> getAllToDKKyHienTaiAsync();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/getAllToDKKyTruoc", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        System.Threading.Tasks.Task<EduWebService.getAllToDKKyTruocResponseGetAllToDKKyTruocResult> getAllToDKKyTruocAsync();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/countToDK1", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
@@ -64,9 +76,9 @@ namespace EduWebService
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         System.Threading.Tasks.Task<EduWebService.getAllToDKResponseGetAllToDKResult> getAllToDKAsync();
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/getKQDK", ReplyAction="*")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/getKQDKKyHienTai", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
-        System.Threading.Tasks.Task<EduWebService.getKQDKResponseGetKQDKResult> getKQDKAsync(int from, int to);
+        System.Threading.Tasks.Task<EduWebService.getKQDKKyHienTaiResponseGetKQDKKyHienTaiResult> getKQDKKyHienTaiAsync(int skip, int take);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/getTongSoSVDK", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
@@ -140,9 +152,9 @@ namespace EduWebService
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         System.Threading.Tasks.Task<int> countSinhVienAsync();
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/getKqdk1", ReplyAction="*")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/getKQDKKyTruoc", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
-        System.Threading.Tasks.Task<EduWebService.getKqdk1ResponseGetKqdk1Result> getKqdk1Async();
+        System.Threading.Tasks.Task<EduWebService.getKQDKKyTruocResponseGetKQDKKyTruocResult> getKQDKKyTruocAsync(int skip, int take);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/countKqdk1", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
@@ -167,6 +179,86 @@ namespace EduWebService
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/getMatKhauNguoiDung", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         System.Threading.Tasks.Task<EduWebService.getMatKhauNguoiDungResponseGetMatKhauNguoiDungResult> getMatKhauNguoiDungAsync(string danhsachma);
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/")]
+    public partial class getAllTTSV1ResponseGetAllTTSV1Result
+    {
+        
+        private System.Xml.XmlElement[] anyField;
+        
+        private System.Xml.XmlElement any1Field;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAnyElementAttribute(Namespace="http://www.w3.org/2001/XMLSchema", Order=0)]
+        public System.Xml.XmlElement[] Any
+        {
+            get
+            {
+                return this.anyField;
+            }
+            set
+            {
+                this.anyField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAnyElementAttribute(Namespace="urn:schemas-microsoft-com:xml-diffgram-v1", Order=1)]
+        public System.Xml.XmlElement Any1
+        {
+            get
+            {
+                return this.any1Field;
+            }
+            set
+            {
+                this.any1Field = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/")]
+    public partial class getAllTTSV2_HoKhauTamTruResponseGetAllTTSV2_HoKhauTamTruResult
+    {
+        
+        private System.Xml.XmlElement[] anyField;
+        
+        private System.Xml.XmlElement any1Field;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAnyElementAttribute(Namespace="http://www.w3.org/2001/XMLSchema", Order=0)]
+        public System.Xml.XmlElement[] Any
+        {
+            get
+            {
+                return this.anyField;
+            }
+            set
+            {
+                this.anyField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAnyElementAttribute(Namespace="urn:schemas-microsoft-com:xml-diffgram-v1", Order=1)]
+        public System.Xml.XmlElement Any1
+        {
+            get
+            {
+                return this.any1Field;
+            }
+            set
+            {
+                this.any1Field = value;
+            }
+        }
     }
     
     /// <remarks/>
@@ -493,7 +585,47 @@ namespace EduWebService
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/")]
-    public partial class getAllToDK1ResponseGetAllToDK1Result
+    public partial class getAllToDKKyHienTaiResponseGetAllToDKKyHienTaiResult
+    {
+        
+        private System.Xml.XmlElement[] anyField;
+        
+        private System.Xml.XmlElement any1Field;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAnyElementAttribute(Namespace="http://www.w3.org/2001/XMLSchema", Order=0)]
+        public System.Xml.XmlElement[] Any
+        {
+            get
+            {
+                return this.anyField;
+            }
+            set
+            {
+                this.anyField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAnyElementAttribute(Namespace="urn:schemas-microsoft-com:xml-diffgram-v1", Order=1)]
+        public System.Xml.XmlElement Any1
+        {
+            get
+            {
+                return this.any1Field;
+            }
+            set
+            {
+                this.any1Field = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/")]
+    public partial class getAllToDKKyTruocResponseGetAllToDKKyTruocResult
     {
         
         private System.Xml.XmlElement[] anyField;
@@ -573,7 +705,7 @@ namespace EduWebService
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/")]
-    public partial class getKQDKResponseGetKQDKResult
+    public partial class getKQDKKyHienTaiResponseGetKQDKKyHienTaiResult
     {
         
         private System.Xml.XmlElement[] anyField;
@@ -1053,7 +1185,7 @@ namespace EduWebService
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/")]
-    public partial class getKqdk1ResponseGetKqdk1Result
+    public partial class getKQDKKyTruocResponseGetKQDKKyTruocResult
     {
         
         private System.Xml.XmlElement[] anyField;
@@ -1217,6 +1349,16 @@ namespace EduWebService
             return base.Channel.TestAsync();
         }
         
+        public System.Threading.Tasks.Task<EduWebService.getAllTTSV1ResponseGetAllTTSV1Result> getAllTTSV1Async()
+        {
+            return base.Channel.getAllTTSV1Async();
+        }
+        
+        public System.Threading.Tasks.Task<EduWebService.getAllTTSV2_HoKhauTamTruResponseGetAllTTSV2_HoKhauTamTruResult> getAllTTSV2_HoKhauTamTruAsync()
+        {
+            return base.Channel.getAllTTSV2_HoKhauTamTruAsync();
+        }
+        
         public System.Threading.Tasks.Task<EduWebService.getAllTKB1JoinToDk1ResponseGetAllTKB1JoinToDk1Result> getAllTKB1JoinToDk1Async()
         {
             return base.Channel.getAllTKB1JoinToDk1Async();
@@ -1257,9 +1399,14 @@ namespace EduWebService
             return base.Channel.getToDK_bangkytruocAsync(Prefix);
         }
         
-        public System.Threading.Tasks.Task<EduWebService.getAllToDK1ResponseGetAllToDK1Result> getAllToDK1Async()
+        public System.Threading.Tasks.Task<EduWebService.getAllToDKKyHienTaiResponseGetAllToDKKyHienTaiResult> getAllToDKKyHienTaiAsync()
         {
-            return base.Channel.getAllToDK1Async();
+            return base.Channel.getAllToDKKyHienTaiAsync();
+        }
+        
+        public System.Threading.Tasks.Task<EduWebService.getAllToDKKyTruocResponseGetAllToDKKyTruocResult> getAllToDKKyTruocAsync()
+        {
+            return base.Channel.getAllToDKKyTruocAsync();
         }
         
         public System.Threading.Tasks.Task<int> countToDK1Async()
@@ -1272,9 +1419,9 @@ namespace EduWebService
             return base.Channel.getAllToDKAsync();
         }
         
-        public System.Threading.Tasks.Task<EduWebService.getKQDKResponseGetKQDKResult> getKQDKAsync(int from, int to)
+        public System.Threading.Tasks.Task<EduWebService.getKQDKKyHienTaiResponseGetKQDKKyHienTaiResult> getKQDKKyHienTaiAsync(int skip, int take)
         {
-            return base.Channel.getKQDKAsync(from, to);
+            return base.Channel.getKQDKKyHienTaiAsync(skip, take);
         }
         
         public System.Threading.Tasks.Task<EduWebService.getTongSoSVDKResponseGetTongSoSVDKResult> getTongSoSVDKAsync(string Prefix)
@@ -1367,9 +1514,9 @@ namespace EduWebService
             return base.Channel.countSinhVienAsync();
         }
         
-        public System.Threading.Tasks.Task<EduWebService.getKqdk1ResponseGetKqdk1Result> getKqdk1Async()
+        public System.Threading.Tasks.Task<EduWebService.getKQDKKyTruocResponseGetKQDKKyTruocResult> getKQDKKyTruocAsync(int skip, int take)
         {
-            return base.Channel.getKqdk1Async();
+            return base.Channel.getKQDKKyTruocAsync(skip, take);
         }
         
         public System.Threading.Tasks.Task<int> countKqdk1Async()

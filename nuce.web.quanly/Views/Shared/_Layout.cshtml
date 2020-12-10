@@ -174,7 +174,7 @@
                             {
                                 if (roles.FirstOrDefault(r => r == "Admin") != null)
                                 {
-                                    <li class="nav-item dropdown">
+                                    <li class="nav-item dropdown dropdown-hover-show">
                                         <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action block-center" 
                                            href="#" id="navbarDropdown-admin" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             Quản trị
@@ -184,18 +184,18 @@
                                             @*<a class="dropdown-item font-18 font-10-xsm" href="/config/index">Cấu hình trang web</a>*@
                                         </div>
                                     </li>
-                                    @*<li class="nav-item dropdown dropdown-hover-show">
-                            <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action" href="#" id="navbarDropdown-sync" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Đồng bộ dữ liệu
-                            </a>
-                            <div class="dropdown-menu width-100ps" aria-labelledby="navbarDropdown-sync">
-                                <a class="dropdown-item font-18 font-10-xsm" href="/syncedudata/syncfromedudata">Đồng bộ dữ liệu từ đào tạo</a>
-                            </div>
-                        </li>*@
+                                    <li class="nav-item dropdown dropdown-hover-show">
+                                        <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action" href="#" id="navbarDropdown-sync" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Đồng bộ dữ liệu
+                                        </a>
+                                        <div class="dropdown-menu width-100ps" aria-labelledby="navbarDropdown-sync">
+                                            <a class="dropdown-item font-18 font-10-xsm" href="/syncedudata/index">Đồng bộ dữ liệu từ đào tạo</a>
+                                        </div>
+                                    </li>
                                 }
                                 if (roles.FirstOrDefault(r => r == "P_KhaoThi") != null)
                                 {
-                                    <li class="nav-item dropdown">
+                                    <li class="nav-item dropdown dropdown-hover-show">
                                         <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action block-center" 
                                            href="#" id="navbarDropdown-survey" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             Khảo thí
@@ -204,12 +204,18 @@
                                             @*<a class="dropdown-item font-18 font-10-xsm" href="/survey/surveyround">Đợt khảo sát</a>*@
                                             <a class="dropdown-item font-18 font-10-xsm" href="/survey/examquestions">Quản lý đề khảo sát</a>
                                             <a class="dropdown-item font-18 font-10-xsm" href="/survey/question">Quản lý câu hỏi</a>
+                                            <a class="dropdown-item font-18 font-10-xsm" href="/survey/statistic">Thống kê</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item font-18 font-10-xsm" href="/survey/graduatesurveyround">Đợt khảo sát cựu sinh viên</a>
+                                            <a class="dropdown-item font-18 font-10-xsm" href="/survey/graduatethesurvey">Bài khảo sát cựu sinh viên</a>
+                                            <a class="dropdown-item font-18 font-10-xsm" href="/survey/graduatestudent">Danh sách cựu sinh viên</a>
+                                            <div class="dropdown-divider"></div>
                                         </div>
                                     </li>
                                 }
                                 if (roles.FirstOrDefault(r => r == "P_CTSV") != null)
                                 {
-                                    <li class="nav-item dropdown">
+                                    <li class="nav-item dropdown dropdown-hover-show">
                                         <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action block-center" 
                                            href="#" id="navbarDropdown-ctsv" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             Công tác sinh viên
@@ -308,7 +314,7 @@
                     </div>
                 </div>
             </div>
-            <div class="pt-4 pb-4" id="render-body">
+            <div class="pt-4 pb-4" id="render-body" style="min-height:480px;">
                 @RenderBody()
             </div>
         </section>
@@ -332,6 +338,45 @@
             <div class="loading-circle"></div>
         </div>
     </div>
+
+    <div>
+        <div id="toast-success" class="toast" style="position: absolute; top: 20px; right: 30px; width: 400px; z-index:99999999999;">
+            <div class="toast-header bg-success">
+                <strong class="mr-auto text-white">Thành công</strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true" class="text-white">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body" id="toast-success-message">
+                Nội dung
+            </div>
+        </div>
+
+        <div id="toast-warning" class="toast" style="position: absolute; top: 20px; right: 30px; width: 400px; z-index:99999999999;">
+            <div class="toast-header bg-warning">
+                <strong class="mr-auto text-white">Cảnh báo</strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true" class="text-white">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body" id="toast-warning-message">
+                Nội dung
+            </div>
+        </div>
+
+        <div id="toast-error" class="toast" style="position: absolute; top: 20px; right: 30px; width: 400px; z-index:99999999999;">
+            <div class="toast-header bg-danger">
+                <strong class="mr-auto text-white">Thất bại</strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true" class="text-white">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body" id="toast-error-message">
+                Nội dung
+            </div>
+        </div>
+    </div>
+
     <script src="~/content/js/jquery.min.js"></script>
     <script src="~/content/js/jquery.cookie.min.js"></script>
     <script src="~/content/js/jquery.validate.min.js"></script>
@@ -347,7 +392,6 @@
             },
             crossDomain: true
         });
-        var API_URL = '';
     </script>
     <script>
         //(function (i, s, o, g, r, a, m) {
@@ -369,6 +413,12 @@
         $('#fullname-large-screen').html(fullname);
         document.getElementById("render-body").scrollIntoView();
     </script>
+    <script src="~/Content/js/helper/jquery.validate.custom.rule.js"></script>
+    <script src="~/Content/js/helper/jquery.validate.default.message.js"></script>
+    <script src="~/Content/js/helper/form.helper.js"></script>
+    <script src="~/Content/js/helper/input-search.helper.js"></script>
+    <script src="~/Content/js/helper/function.helper.js"></script>
+    <script src="~/Content/js/helper/modal.helper.js"></script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

@@ -1,0 +1,59 @@
+﻿function dateString(today) {
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var yyyy = today.getFullYear();
+    return dd + '/' + mm + '/' + yyyy;
+}
+
+//2020-01-01T00:00:00 -> dd/MM/yyyy
+function getDateString(date) {
+    return dateString(new Date(date));
+}
+
+function getDateStringFromServerType(date) {
+    if (date == null || date === "") {
+        return '';
+    }
+    let regex = /(\d+)/g;
+    return dateString(new Date(+date.match(regex)[0]));
+}
+
+function getDateyyyyMMdd(date) {
+    var mm = date.getMonth() + 1;
+    var dd = date.getDate();
+
+    return [date.getFullYear(),
+    (mm > 9 ? '' : '0') + mm,
+    (dd > 9 ? '' : '0') + dd
+    ].join('-');
+};
+
+const debounce = (func, delay) => {
+    let debounceTimer;
+    return function () {
+        const context = this;
+        const args = arguments;
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => func.apply(context, args), delay);
+    }
+}
+
+
+$('.toast').toast({
+    delay: 4000
+});
+
+function toastSuccess(message) {
+    $('#toast-success-message').html(message);
+    $('#toast-success').toast('show');
+}
+
+function toastWarning(message) {
+    $('#toast-warning-message').html(message);
+    $('#toast-warning').toast('show');
+}
+
+function toastError(message) {
+    $('#toast-error-message').html(message);
+    $('#toast-error').toast('show');
+}

@@ -12,6 +12,7 @@ using nuce.web.api.Models.Ctsv;
 using nuce.web.api.Repositories.Ctsv.Interfaces;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.ViewModel;
+using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
 using System;
 using System.Collections.Generic;
@@ -176,7 +177,7 @@ namespace nuce.web.api.Services.Core.Implements
             return _studentRepository.FindByEmailNhaTruong(email);
         }
 
-        public async Task<UserPaginationModel> GetAllAsync(UserFilter filter, int skip = 0, int pageSize = 20)
+        public async Task<PaginationModel<UserModel>> GetAllAsync(UserFilter filter, int skip = 0, int pageSize = 20)
         {
             _identityContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             var currentUsernameWorking = GetUserName();
@@ -203,7 +204,8 @@ namespace nuce.web.api.Services.Core.Implements
                 })
                 .ToListAsync();
 
-            return new UserPaginationModel {
+            return new PaginationModel<UserModel>
+            {
                 RecordsTotal = recordsTotal,
                 RecordsFiltered = recordsFiltered,
                 Data = data

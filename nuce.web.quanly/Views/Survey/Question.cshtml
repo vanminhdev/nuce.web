@@ -10,22 +10,29 @@
 
 <div class="container">
     <div class="row mb-3">
-        <div class="col-md-10">
-            <div class="form-inline m-2">
-                <div class="form-group">
+        <div class="col-md-12">
+            <div class="form-row">
+                <div class="col-12 col-md mb-2">
                     <input class="form-control form-control" id="ma-cauhoi" type="text" placeholder="Tìm theo mã" />
                 </div>
-                <div class="form-group m-2">
+                <div class="col-6 col-md mb-2">
                     <input class="form-control form-control" id="noidung" type="text" placeholder="Tìm theo nội dung" />
                 </div>
-                <div class="form-group m-2">
+                <div class="col-6 col-md mb-2">
                     <input class="form-control form-control" id="loai" type="text" placeholder="Tìm theo loại câu hỏi" />
                 </div>
-                <button id="btn-search" class="btn btn-secondary btn m-2">Tìm kiếm</button>
+                <div class="col-12 col-md mb-2 d-flex flex-row">
+                    <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
+                        <i class="fas fa-redo"></i>
+                    </div>
+                    <div class="w-75">
+                        <button id="btn-search" class="btn btn-secondary w-100">Tìm kiếm</button>
+                    </div>
+                </div>
+                <div class="col-12 col-md mb-2">
+                    <a href="/survey/createquestion" class="btn btn-primary w-100">Thêm câu hỏi</a>
+                </div>
             </div>
-        </div>
-        <div class="col-md-2">
-            <a href="/survey/createquestion" class="btn update-btn text-light w-100 m-2">Thêm câu hỏi</a>
         </div>
     </div>
 
@@ -57,7 +64,7 @@
             serverSide: true,
             ordering: false,
             lengthChange: false,
-            stateSave: true,
+            stateSave: false,
             pageLength: 20,
             language: dataTableConfig.language,
             ajax: {
@@ -71,11 +78,10 @@
             },
             columns: [
                 {
-                    data: null,
-                    
+                    data: null
                 },
                 {
-                    data: "ma"
+                    data: "code"
                 },
                 {
                     data: "content"

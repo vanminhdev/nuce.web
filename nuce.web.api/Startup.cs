@@ -29,8 +29,15 @@ using nuce.web.api.Services.Ctsv.Implements;
 using nuce.web.api.Services.Ctsv.Interfaces;
 using nuce.web.api.Services.Survey.Implements;
 using nuce.web.api.Services.Survey.Interfaces;
-using nuce.web.api.Services.Synchronization.Implements;
-using nuce.web.api.Services.Synchronization.Interfaces;
+using nuce.web.api.Services.EduData.Implements;
+using nuce.web.api.Services.EduData.Interfaces;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using nuce.web.api.Models.Status;
+using nuce.web.api.Services.Status.Interfaces;
+using nuce.web.api.Services.Status.Implements;
+using nuce.web.api.Services.Background;
+using System.Net;
+using nuce.web.api.Middlewares;
 
 namespace nuce.web.api
 {
@@ -61,13 +68,18 @@ namespace nuce.web.api
             services.AddDbContext<EduDataContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"))
             );
+            services.AddDbContext<StatusContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"))
+            );
             #endregion
 
             #region config usermanager
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<NuceCoreIdentityContext>()
                 .AddDefaultTokenProviders();
+            #endregion
 
+            #region config authentication
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -146,7 +158,7 @@ namespace nuce.web.api
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "API V1"
+                    Title = "NUCE API"
                 });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -179,13 +191,25 @@ namespace nuce.web.api
             );
             services.AddHttpContextAccessor();
             services.AddSingleton<IPathProvider, PathProvider>();
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
             #region config service
+            services.AddScoped<IStatusService, StatusService>();
             services.AddScoped<IAsEduSurveyCauHoiService, AsEduSurveyCauHoiService>();
             services.AddScoped<IAsEduSurveyDapAnService, AsEduSurveyDapAnService>();
             services.AddScoped<IAsEduSurveyDeThiService, AsEduSurveyDeThiService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ILogService, LogService>();
+            services.AddScoped<IManagerBackupService, ManagerBackUpService>();
+            services.AddScoped<IAsEduSurveyDotKhaoSatService, AsEduSurveyDotKhaoSatService>();
+            services.AddScoped<IAsEduSurveyBaiKhaoSatService, AsEduSurveyBaiKhaoSatService>();
+            services.AddScoped<IAsEduSurveyBaiKhaoSatSinhVienService, AsEduSurveyBaiKhaoSatSinhVienService>();
+            services.AddScoped<IAsEduSurveyReportTotalService, AsEduSurveyReportTotalService>();
+
+            services.AddScoped<IAsEduSurveyGraduateStudentService, AsEduSurveyGraduateStudentService>();
+            services.AddScoped<IAsEduSurveyGraduateDotKhaoSatService, AsEduSurveyGraduateDotKhaoSatService>();
+            services.AddScoped<IAsEduSurveyGraduateBaiKhaoSatService, AsEduSurveyGraduateBaiKhaoSatService>();
+            services.AddScoped<IAsEduSurveyGraduateBaiKhaoSatSinhVienService, AsEduSurveyGraduateBaiKhaoSatSinhVienService>();
             #endregion
             #region sync edu database service
             services.AddScoped<ISyncEduDatabaseService, SyncEduDatabaseService>();
@@ -231,6 +255,18 @@ namespace nuce.web.api
             }
             var loggingOptions = this.Configuration.GetSection("Log4NetCore").Get<Log4NetProviderOptions>();
             loggerFactory.AddLog4Net(loggingOptions);
+
+            //app.Run(async context =>
+            //{
+            //    var userStatus = context.Items["UserStatus"];
+            //    if (userStatus != null && ((int)userStatus == (int)UserStatus.Deactive || (int)userStatus == (int)UserStatus.Deleted))
+            //    {
+            //        context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            //        context.Response.Cookies.Delete(UserParameters.JwtAccessToken);
+            //        context.Response.Cookies.Delete(UserParameters.JwtRefreshToken);
+            //    }
+            //});
+
             app.UseHttpsRedirection();
 
             // using Microsoft.Extensions.FileProviders;
@@ -247,6 +283,8 @@ namespace nuce.web.api
             
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseUserStatusMiddleware();
 
             app.UseEndpoints(endpoints =>
             {

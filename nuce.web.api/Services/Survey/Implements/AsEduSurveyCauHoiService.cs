@@ -4,6 +4,7 @@ using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Services.Survey.Interfaces;
+using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey;
 using System;
 using System.Collections.Generic;
@@ -22,15 +23,15 @@ namespace nuce.web.api.Services.Survey.Implements
             _surveyContext = surveyContext;
         }
 
-        public async Task<QuestionPaginationModel> GetAllActiveStatus(QuestionFilter filter, int skip = 0, int pageSize = 20)
+        public async Task<PaginationModel<QuestionModel>> GetAllActiveStatus(QuestionFilter filter, int skip = 0, int take = 20)
         {
             _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            var query = _surveyContext.AsEduSurveyCauHoi.Where(q => q.Status != (int)QuestionStatus.Deactive);
+            var query = _surveyContext.AsEduSurveyCauHoi.Where(q => q.Status != (int)QuestionStatus.Deleted);
             var recordsTotal = query.Count();
 
-            if (!string.IsNullOrWhiteSpace(filter.Ma))
+            if (!string.IsNullOrWhiteSpace(filter.Code))
             {
-                query = query.Where(u => u.Ma.Contains(filter.Ma));
+                query = query.Where(u => u.Code.Contains(filter.Code));
             }
             if (!string.IsNullOrWhiteSpace(filter.Content))
             {
@@ -46,20 +47,20 @@ namespace nuce.web.api.Services.Survey.Implements
 
             var querySkip = query
                 .OrderBy(u => u.Order)
-                .Skip(skip).Take(pageSize);
+                .Skip(skip).Take(take);
 
             var data = await querySkip
                 .Select(q => new QuestionModel
                 {
                     Id = q.Id.ToString(),
-                    Ma = q.Ma,
+                    Code = q.Code,
                     Content = HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(q.Content)),
                     Type = q.Type,
                     Order = q.Order
                 })
                 .ToListAsync();
 
-            return new QuestionPaginationModel
+            return new PaginationModel<QuestionModel>
             {
                 RecordsTotal = recordsTotal,
                 RecordsFiltered = recordsFiltered,
@@ -75,7 +76,7 @@ namespace nuce.web.api.Services.Survey.Implements
             return
                 list.Select(q => new QuestionModel
                 {
-                    Ma = q.Ma,
+                    Code = q.Code,
                     Content = HttpUtility.HtmlDecode(q.Content),
                     Type = q.Type,
                     Order = q.Order
@@ -86,13 +87,13 @@ namespace nuce.web.api.Services.Survey.Implements
         {
             var question = await _surveyContext.AsEduSurveyCauHoi
                 .AsNoTracking()
-                .Where(q => q.Status != (int)QuestionStatus.Deactive && q.Id.ToString() == Id)
+                .Where(q => q.Status != (int)QuestionStatus.Deleted && q.Id.ToString() == Id)
                 .FirstOrDefaultAsync();
             if (question == null)
                 return null;
             return new QuestionModel {
                 Id = Id,
-                Ma = question.Ma,
+                Code = question.Code,
                 Content = HttpUtility.HtmlDecode(question.Content),
                 Type = question.Type,
                 Order = question.Order
@@ -102,18 +103,10 @@ namespace nuce.web.api.Services.Survey.Implements
         public async Task Create(QuestionCreateModel question)
         {
             var questionCreate = new AsEduSurveyCauHoi();
-            try
-            {
-                questionCreate.CauHoiId = int.Parse(question.Ma);
-            }
-            catch
-            {
-                throw new InvalidDataException("'Ma' must be a number");
-            }
             questionCreate.Id = Guid.NewGuid();
             questionCreate.BoCauHoiId = -1;
             questionCreate.DoKhoId = 1;
-            questionCreate.Ma = question.Ma;
+            questionCreate.Code = question.Code;
             questionCreate.Content = question.Content;
             questionCreate.InsertedDate = DateTime.Now;
             questionCreate.UpdatedDate = DateTime.Now;
@@ -121,7 +114,6 @@ namespace nuce.web.api.Services.Survey.Implements
             questionCreate.Level = 1;
             questionCreate.Type = question.Type;
             questionCreate.Status = (int)QuestionStatus.Active;
-
             _surveyContext.AsEduSurveyCauHoi.Add(questionCreate);
             await _surveyContext.SaveChangesAsync();
         }
@@ -134,16 +126,7 @@ namespace nuce.web.api.Services.Survey.Implements
             {
                 throw new RecordNotFoundException();
             }
-
-            try
-            {
-                questionUpdate.CauHoiId = int.Parse(question.Ma);
-            }
-            catch
-            {
-                throw new InvalidDataException("'Ma' must be a number");
-            }
-            questionUpdate.Ma = question.Ma;
+            questionUpdate.Code = question.Code;
             questionUpdate.Content = question.Content;
             questionUpdate.UpdatedDate = DateTime.Now;
             questionUpdate.Order = question.Order.Value;
@@ -158,7 +141,7 @@ namespace nuce.web.api.Services.Survey.Implements
             {
                 throw new RecordNotFoundException();
             }
-            question.Status = (int)QuestionStatus.Deactive;
+            question.Status = (int)QuestionStatus.Deleted;
             await _surveyContext.SaveChangesAsync();
         }
     }

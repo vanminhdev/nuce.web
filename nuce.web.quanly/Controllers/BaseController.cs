@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using nuce.web.quanly.Common;
 using nuce.web.quanly.Models;
+using nuce.web.quanly.ViewModel.Base;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -83,7 +84,8 @@ namespace nuce.web.quanly.Controllers
             var refreshTokenInCookie = Request.Cookies[UserParameters.JwtRefreshToken];
             var response = new HttpResponseMessage()
             {
-                StatusCode = HttpStatusCode.Unauthorized
+                StatusCode = HttpStatusCode.Unauthorized,
+                Content = new StringContent("", Encoding.UTF8, "application/json")
             };
             //mất cả 2 token thì không xác thực
             if (accessTokenInCookie == null && refreshTokenInCookie == null)
@@ -111,13 +113,17 @@ namespace nuce.web.quanly.Controllers
                         Response.Cookies[UserParameters.JwtAccessToken].Value = accessToken.Value;
                         Response.Cookies[UserParameters.JwtAccessToken].HttpOnly = true;
                         Response.Cookies[UserParameters.JwtAccessToken].Expires = accessToken.Expires;
+
+                        //send lại request với token mới
+                        _cookieContainer.Add(_apiUri, new Cookie(UserParameters.JwtAccessToken, accessToken.Value));
+                        response = await SendRequestAsync(method, requestUri, content);
                     }
-                    //send lại request với token mới
-                    _cookieContainer.Add(_apiUri, new Cookie(UserParameters.JwtAccessToken, accessToken.Value));
-                    response = await SendRequestAsync(method, requestUri, content);
+                    else //trường hợp vẫn null do khả năng tài khoản đã bị khoá hoặc xoá
+                    {
+                        return response;
+                    }
                 }
             }
-
             return response;
         }
 
@@ -129,6 +135,8 @@ namespace nuce.web.quanly.Controllers
             System.Func<HttpResponseMessage, ActionResult> action500 = null,
             System.Func<HttpResponseMessage, Task<ActionResult>> action400Async = null,
             System.Func<HttpResponseMessage, ActionResult> action400 = null,
+            System.Func<HttpResponseMessage, Task<ActionResult>> action404Async = null,
+            System.Func<HttpResponseMessage, ActionResult> action404 = null,
             System.Func<HttpResponseMessage, Task<ActionResult>> actionDefaultAsync = null,
             System.Func<HttpResponseMessage, ActionResult> actionDefault = null)
         {
@@ -149,11 +157,15 @@ namespace nuce.web.quanly.Controllers
             }
             else if (response.StatusCode == HttpStatusCode.NotFound)
             {
+                if (action404Async != null)
+                    return await action404Async(response);
+                if (action404 != null)
+                    return action404(response);
                 return Redirect($"/error?message={HttpUtility.UrlEncode("CallAPI: Không tìm thấy tài nguyên")}&code={(int)HttpStatusCode.NotFound}");
             }
             else if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
-                if(action500Async != null)
+                if (action500Async != null)
                     return await action500Async(response);
                 if (action500 != null)
                     return action500(response);
@@ -205,6 +217,26 @@ namespace nuce.web.quanly.Controllers
         protected HttpContent MakeContent(object data)
         {
             return new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+        }
+        
+        protected async Task<ActionResult> GetDataTabeFromApi<T>(DataTableRequest request, string apiUri)
+        {
+            var stringContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+            var response = await MakeRequestAuthorizedAsync("Post", apiUri, stringContent);
+            return await HandleResponseAsync(response,
+                action200Async: async res =>
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var data = JsonConvert.DeserializeObject<DataTableResponse<T>>(jsonString);
+                    return Json(new
+                    {
+                        draw = data.Draw,
+                        recordsTotal = data.RecordsTotal,
+                        recordsFiltered = data.RecordsFiltered,
+                        data = data.Data
+                    });
+                }
+            );
         }
     }
 }

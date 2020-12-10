@@ -36,12 +36,15 @@ namespace nuce.web.api.Controllers.Survey
         public async Task<IActionResult> GetAll([FromBody] DataTableRequest request)
         {
             var filter = new QuestionFilter();
-            filter.Ma = request.Columns.FirstOrDefault(c => c.Data == "ma")?.Search.Value ?? null;
-            filter.Content = request.Columns.FirstOrDefault(c => c.Data == "content")?.Search.Value ?? null;
-            filter.Type = request.Columns.FirstOrDefault(c => c.Data == "type")?.Search.Value ?? null;
+            if(request.Columns != null)
+            {
+                filter.Code = request.Columns.FirstOrDefault(c => c.Data == "code")?.Search.Value ?? null;
+                filter.Content = request.Columns.FirstOrDefault(c => c.Data == "content")?.Search.Value ?? null;
+                filter.Type = request.Columns.FirstOrDefault(c => c.Data == "type")?.Search.Value ?? null;
+            }
             var skip = request.Start;
-            var pageSize = request.Length;
-            var result = await _asEduSurveyCauHoiService.GetAllActiveStatus(filter, skip, pageSize);
+            var take = request.Length;
+            var result = await _asEduSurveyCauHoiService.GetAllActiveStatus(filter, skip, take);
             return Ok(
                 new DataTableResponse<QuestionModel>
                 {
@@ -58,7 +61,7 @@ namespace nuce.web.api.Controllers.Survey
         {
             var question = await _asEduSurveyCauHoiService.GetById(id);
             if (question == null)
-                return NotFound(new { message = "Không tìm thấy bản ghi" });
+                return NotFound(new { message = "Không tìm thấy câu hỏi" });
             return Ok(question);
         }
 
@@ -72,16 +75,13 @@ namespace nuce.web.api.Controllers.Survey
             catch (DbUpdateException e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
-            }
-            catch (InvalidDataException e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không tạo được câu hỏi", detailMessage = e.Message });
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message, detailMessage = mainMessage });
             }
             return Ok();
         }
@@ -93,23 +93,20 @@ namespace nuce.web.api.Controllers.Survey
             {
                 await _asEduSurveyCauHoiService.Update(id, question);
             }
-            catch(DbUpdateException e)
+            catch (DbUpdateException e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
-            }
-            catch (InvalidDataException e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message});
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không sửa được câu hỏi", detailMessage = e.Message });
             }
             catch (RecordNotFoundException)
             {
-                return NotFound(new {message = "Không tìm thấy bản ghi"});
+                return NotFound(new {message = "Không tìm thấy câu hỏi cần sửa"});
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message, detailMessage = mainMessage });
             }
             return Ok();
         }
@@ -123,17 +120,18 @@ namespace nuce.web.api.Controllers.Survey
             }
             catch (RecordNotFoundException)
             {
-                return NotFound(new { message = "Không tìm thấy bản ghi" });
+                return NotFound(new { message = "Không tìm thấy câu hỏi" });
             }
             catch (DbUpdateException e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không xoá được câu hỏi", detailMessage = e.Message });
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message, detailMessage = mainMessage });
             }
             return Ok();
         }

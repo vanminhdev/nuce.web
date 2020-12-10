@@ -22,6 +22,9 @@ using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Core;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using nuce.web.api.Services.Survey.Interfaces;
+using System.Collections.Generic;
 
 namespace nuce.web.api.Controllers.Core
 {
@@ -36,9 +39,10 @@ namespace nuce.web.api.Controllers.Core
         private readonly IUserService _userService;
         private readonly IConfiguration _configuration;
         private readonly ILogService _logService;
+        private readonly IAsEduSurveyGraduateStudentService _asEduSurveyGraduateStudentService;
 
         public UserController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, NuceCoreIdentityContext identityContext,
-            ILogger<UserController> logger, IUserService userService, IConfiguration configuration, ILogService logService)
+            ILogger<UserController> logger, IUserService userService, IConfiguration configuration, ILogService logService, IAsEduSurveyGraduateStudentService asEduSurveyGraduateStudentService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -47,6 +51,15 @@ namespace nuce.web.api.Controllers.Core
             _userService = userService;
             _configuration = configuration;
             _logService = logService;
+            _asEduSurveyGraduateStudentService = asEduSurveyGraduateStudentService;
+        }
+
+        [HttpGet]
+        [Route("TestAPI")]
+        public IActionResult TestAPI()
+        {
+            var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+            return Ok(new { message = "Hello world!!", your_ip = ip });
         }
 
         [HttpGet]
@@ -87,6 +100,41 @@ namespace nuce.web.api.Controllers.Core
                 return Ok();
             }
             return Unauthorized(userIsValidResult);
+        }
+
+        [HttpPost]
+        [Route("Logingraduate")]
+        public async Task<IActionResult> LoginGraduate([FromBody] LoginModel model)
+        {
+            bool isSuccess = await _asEduSurveyGraduateStudentService.Login(model.Username, model.Password);
+            if (isSuccess)
+            {
+                var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, model.Username),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(ClaimTypes.Role, "GraduateStudent"),
+                    new Claim(UserParameters.MSSV, model.Username),
+                };
+
+                var accessToken = _userService.CreateJWTAccessToken(authClaims);
+                var refreshToken = _userService.CreateJWTRefreshToken(authClaims);
+
+                //send token to http only cookies
+                Response.Cookies.Append(UserParameters.JwtAccessToken, new JwtSecurityTokenHandler().WriteToken(accessToken),
+                    new CookieOptions() { HttpOnly = true, Expires = accessToken.ValidTo });
+                Response.Cookies.Append(UserParameters.JwtRefreshToken, new JwtSecurityTokenHandler().WriteToken(refreshToken),
+                    new CookieOptions() { HttpOnly = true, Expires = refreshToken.ValidTo });
+
+                await _logService.WriteLog(new ActivityLogModel
+                {
+                    Username = model.Username,
+                    LogCode = ActivityLogParameters.CODE_LOGIN,
+                    LogMessage = "Cựu sinh viên đăng nhập"
+                });
+                return Ok();
+            }
+            return Unauthorized();
         }
 
         [HttpPost]

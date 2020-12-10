@@ -49,7 +49,7 @@ namespace nuce.web.quanly.Controllers
             var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/User/GetAllUser", stringContent);
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                return Redirect("");
+                return Redirect("/account");
             }
             else if (response.StatusCode == HttpStatusCode.Forbidden)
             {
@@ -139,20 +139,24 @@ namespace nuce.web.quanly.Controllers
         public async Task<ActionResult> ChangeStatus(UserDetail userDetail)
         {
             var action = "ActiveUser";
+            var method = "Put";
             if (userDetail.ChangeStatus == "unlock-user")
             {
                 action = "ActiveUser";
+                method = "Put";
             }
             else if (userDetail.ChangeStatus == "lock-user")
             {
                 action = "DeactiveUser";
+                method = "Put";
             }
             else if (userDetail.ChangeStatus == "delete-user")
             {
                 action = "DeleteUser";
+                method = "Delete";
             }
 
-            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/User/{action}?id={userDetail.UserUpdateBind.id}");
+            var response = await base.MakeRequestAuthorizedAsync(method, $"/api/User/{action}?id={userDetail.UserUpdateBind.id}");
             return await base.HandleResponseAsync(response,
                 action200: res =>
                 {

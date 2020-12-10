@@ -4,6 +4,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@section Style {
+    <link rel="stylesheet" href="~/content/css/bootstrap-select.min.css" />
+}
+
 <form method="post" class="container-fluid service-categories-wrp mt-2">
     <a class="update-btn text-light p-2" style="text-decoration: none;" href="/survey/question">← Quay lại danh sách</a>
 
@@ -42,8 +46,8 @@
                     Mã
                 </div>
                 <div class="col-12 col-md-10">
-                    @Html.TextBoxFor(m => m.ma, new { @class = "form-control" })
-                    @Html.ValidationMessageFor(m => m.ma, "", new { @class = "form-text text-danger" })
+                    @Html.TextBoxFor(m => m.code, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.code, "", new { @class = "form-text text-danger" })
                 </div>
             </div>
         </div>
@@ -53,7 +57,7 @@
                     Nội dung
                 </div>
                 <div class="col-12 col-md-10">
-                    @Html.TextAreaFor(m => m.content, new { @id = "content" })
+                    @Html.TextAreaFor(m => m.content, new { @id = "content", @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.content, "", new { @class = "form-text text-danger" })
                 </div>
             </div>
@@ -64,7 +68,8 @@
                     Loại câu hỏi
                 </div>
                 <div class=" col-12 col-md-10">
-                    @Html.TextBoxFor(m => m.type, new { @class = "form-control" })
+                    @Html.DropDownListFor(m => m.type, new SelectList(nuce.web.quanly.Common.Definitions.QuestionType, "Key", "Value", "type"),
+                        new { @class = "selectpicker form-control custom-boostrap-select", title = "Chọn loại câu hỏi" })
                     @Html.ValidationMessageFor(m => m.type, "", new { @class = "form-text text-danger" })
                 </div>
             </div>
@@ -92,18 +97,19 @@
 </form>
 
 @section Scripts {
+    <script src="~/content/js/bootstrap-select.min.js"></script>
     @*<script type="text/javascript" src="~/content/js/tiny_mce/tiny_mce.js"></script>
-    <script type="text/javascript" language="javascript">
-        tinyMCE.init({
-            mode: "textareas",
-            encoding: 'xml'
-        });
-    </script>*@
-    <script src="https://cdn.tiny.cloud/1/7kx0ud503sqh7se57iao9whndipt7k0wu0j9y2381lnywnis/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+        <script type="text/javascript" language="javascript">
+            tinyMCE.init({
+                mode: "textareas",
+                encoding: 'xml'
+            });
+        </script>*@
+    @*<script src="https://cdn.tiny.cloud/1/7kx0ud503sqh7se57iao9whndipt7k0wu0j9y2381lnywnis/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
     <script>
         tinymce.init({
             selector: '#content',
             encoding: 'xml'
         });
-    </script>
+    </script>*@
 }

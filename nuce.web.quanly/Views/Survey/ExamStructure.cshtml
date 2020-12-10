@@ -4,39 +4,23 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container-fluid service-categories-wrp mt-2">
+@section Style {
+    <link rel="stylesheet" href="~/content/css/dataTables.bootstrap4.min.css" />
+}
+
+<div class="container mt-2" style="font-size: 13px">
     <div class="row mb-4">
         <div class="col-12">
             <a class="update-btn text-light p-2" style="text-decoration: none;" href="/survey/examquestions">← Quay lại danh sách đề khảo sát</a>
         </div>
     </div>
     <div class="row">
-        <div id="message" class="col-12">
-        </div>
-    </div>
-    <div class="row">
         <div class="col-12">
-            <form id="form-add-question" class="row">
-                <div class="col-3 d-flex align-items-center">
-                    <div class="form-group width-100ps">
-                        <input id="ma-cau-hoi" class="form-control form-control width-100ps" type="number" placeholder="Mã câu hỏi cần thêm"
-                               required data-msg="Mã không được bỏ trống" />
-                    </div>
-                </div>
-                <div class="col-3 d-flex align-items-center">
-                    <div class="form-group width-100ps">
-                        <input id="thu-tu-them" class="form-control form-control" type="number" placeholder="Thứ tự thêm"
-                               required data-msg="Thứ tự không được bỏ trống" />
-                    </div>
-                </div>
-                <div class="col-3">
+            <form id="form-add-question auto-validate" class="row">
+                <div class="col d-flex justify-content-end">
                     <div class="form-group">
-                        <button type="button" id="btn-add-question" class="btn update-btn text-light w-100 m-2">Thêm câu hỏi</button>
-                    </div>
-                </div>
-                <div class="col-3">
-                    <div class="form-group">
-                        <button type="button" id="btn-generate-exam" class="btn update-btn text-light w-100 m-2">Tạo đề</button>
+                        <button type="button" id="btn-add-question" class="btn btn-primary">Thêm câu hỏi</button>
+                        <button type="button" id="btn-generate-exam" class="btn btn-success">Sinh đề</button>
                     </div>
                 </div>
             </form>
@@ -45,15 +29,15 @@
 
     <div class="row">
         <div class="col-md-12">
-            <table id="id-datatable" class="table table-bordered">
+            <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th class="text-center">STT</th>
-                        <th class="text-center">Mã</th>
-                        <th class="text-center" width="60%">Nội dung</th>
-                        <th class="text-center">Loại</th>
-                        <th class="text-center">Thứ tự</th>
-                        @*<th></th>*@
+                        <th class="text-center" width="10%">STT</th>
+                        <th class="text-center" width="10%">Mã</th>
+                        <th class="text-center">Nội dung</th>
+                        <th class="text-center" width="10%">Loại</th>
+                        <th class="text-center" width="10%">Thứ tự</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody id="tbody-data">
@@ -62,99 +46,293 @@
         </div>
     </div>
 </div>
-@section Scripts {
-    @*<td class="text-center">
-            <a href="/survey/DeleteQuestionInExam?questionId=@Model[i].questionId">Xoá</a>
-        </td>*@
-<script>
-    function loadDataTable() {
-        $.ajax({
-            dataType: 'json',
-            method: 'Get',
-            url: '/Survey/GetStructure?examQuestionId=' + '@ViewData["ExamQuestionId"]'
-        }).done(function (data) {
-            let htmlstr = "";
-            if (data.length === 0) {
-                htmlstr = "<tr><td class='text-center' colspan='100%'>Danh sách trống</td></tr>";
-            }
-            for (let i = 0; i < data.length; i++) {
-                htmlstr += `\
-            <tr>\
-                <td class="text-center">${i + 1}</td>\
-                <td class="text-center">${data[i].ma}</td>\
-                <td>${data[i].content}</td>\
-                <td class="text-center">${data[i].type}</td>\
-                <td class="text-center">${data[i].order}</td>\
-            </tr>`;
-            }
-            $('#tbody-data').html(htmlstr);
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            console.log(textStatus + ': ' + errorThrown);
-        });
-    }
-    loadDataTable();
-    let form = $('#form-add-question');
-    form.validate({
-        errorElement: 'span',
-        errorClass: 'text-danger pt-1'
-    });
 
-    let message = $('#message');
-    function showMessage(data) {
-        if (data.type == "success") {
-            loadDataTable();
-            message.html(`\
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">\
-                                ${data.message}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">\
-                                <span aria-hidden="true">&times;</span>\
-                            </button>\
-                        </div>\
-                    `);
-        }
-        else if (data.type == "fail") {
-            message.html(`\
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            ${data.message}
-                            <hr>
-                            <p class="mb-0">${data.detailMessage}</p>
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+<div class="modal fade bd-example-modal-lg" id="modal-input" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document" style="min-width:1000px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-title">Thêm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="form-row">
+                                <div class="col-12 col-md mb-2">
+                                    <input class="form-control form-control" id="ma-cauhoi" type="text" placeholder="Tìm theo mã" />
+                                </div>
+                                <div class="col-6 col-md mb-2">
+                                    <input class="form-control form-control" id="noidung" type="text" placeholder="Tìm theo nội dung" />
+                                </div>
+                                <div class="col-6 col-md mb-2">
+                                    <input class="form-control form-control" id="loai" type="text" placeholder="Tìm theo loại câu hỏi" />
+                                </div>
+                                <div class="col-12 col-md mb-2 d-flex flex-row">
+                                    <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
+                                        <i class="fas fa-redo"></i>
+                                    </div>
+                                    <div class="w-75">
+                                        <button id="btn-search" class="btn btn-secondary w-100">Tìm kiếm</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    `);
-        }
-    }
+                    </div>
 
-    $('#btn-add-question').click(() => {
-        if (form.valid()) {
-            let objData = { examQuestionId: '@ViewData["ExamQuestionId"]', maCauHoi: $('#ma-cau-hoi').val(), order: $('#thu-tu-them').val() };
-            $.ajax({
-                data: objData,
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table id="id-datatable" class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">STT</th>
+                                        <th class="text-center">Mã</th>
+                                        <th class="text-center" width="50%">Nội dung</th>
+                                        <th class="text-center">Loại</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-yes-no" tabindex="-1" role="dialog" aria-labelledby="modal-yes-no" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-yes-no-title">Xác nhận xoá</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-yes-no-content">
+                Xoá câu hỏi khỏi bài khảo sát ?
+            </div>
+            <input id="delete-id" name="id" hidden />
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
+                <button id="choose-yes" type="button" class="btn btn-primary">Có</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/content/js/jquery.dataTables.min.js"></script>
+    <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/content/js/dataTables.config.js"></script>
+    <script>
+        var table = $('#id-datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ordering: false,
+            lengthChange: false,
+            stateSave: false,
+            pageLength: 10,
+            language: dataTableConfig.language,
+            columnDefs: [
+                {
+                    targets: [4],
+                    className: 'position-relative'
+                }
+            ],
+            ajax: {
+                url: '/Survey/GetAllQuestion',
                 dataType: 'json',
-                method: 'Post',
-                url: '/Survey/AddQuestionExam'
+                contentType: 'application/json',
+                type: "POST",
+                data: function (d) {
+                    return JSON.stringify(d);
+                },
+                complete: () => {
+                    autoValidate();
+                }
+            },
+            columns: [
+                {
+                    data: null
+                },
+                {
+                    data: "code"
+                },
+                {
+                    data: "content"
+                },
+                {
+                    data: "type"
+                },
+                {
+                    data: null,
+                    mRender: function (data, type, row) {
+                        //console.log(data);
+                        return `<div id="${data.id}" class="add-box position-absolute bg-light p-2 border rounded" style="top: 2px;right:-190px; display:none">
+                                    <form id="add-box-${data.id}" class="d-flex auto-validate">
+                                        <input name="examQuestionId" value="@ViewData["ExamQuestionId"]" hidden />
+                                        <input name="questionCode" value="${data.code}" hidden />
+                                        <input class="form-control mr-1" style="width:110px;" value="${data.order}" name="order" placeholder="Thứ tự" required/>
+                                        <button type="button" class="btn btn-primary" onclick="addItem('${data.id}')" >Lưu</button>
+                                    </form>
+                                </div>
+                                <button class="btn btn-outline-primary" onclick="showAddBox('${data.id}')">Thêm</button>`;
+                    }
+                }
+            ]
+        });
+        table.on('draw.dt', function () {
+            var PageInfo = $('#id-datatable').DataTable().page.info();
+            table.column(0, { page: 'current' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1 + PageInfo.start;
+            });
+        });
+        $('#id-datatable_filter').hide();
+        $("#btn-search").click(() => {
+            table
+                .column(1).search($("#ma-cauhoi").val())
+                .column(2).search($("#noidung").val())
+                .column(3).search($("#loai").val())
+                .draw();
+        });
+
+        function showAddBox(id) {
+            let addBox = $('#' + id);
+            if (!addBox.is(':visible')) {
+                addBox.show();
+            } else {
+                addBox.hide();
+            }
+        }
+
+        function addItem(addBoxId) {
+            let addBoxForm = $('#add-box-' + addBoxId);
+            if (addBoxForm.valid()) {
+                $.ajax({
+                    data: getFormData('#add-box-' + addBoxId),
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/AddQuestionExam',
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        toastSuccess('Lưu thành công');
+                        $('#' + addBoxId).hide();
+                        loadDataTable();
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch (error) {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            }
+        }
+    </script>
+
+    <script>
+        function loadDataTable() {
+            $.ajax({
+                dataType: 'json',
+                method: 'Get',
+                url: '/Survey/GetStructure?examQuestionId=' + '@ViewData["ExamQuestionId"]'
             }).done(function (data) {
-                showMessage(data);
+                let htmlstr = "";
+                if (data.length === 0) {
+                    htmlstr = "<tr><td class='text-center' colspan='100%'>Danh sách trống</td></tr>";
+                }
+                for (let i = 0; i < data.length; i++) {
+                    htmlstr += `
+                    <tr>
+                        <td class="text-center">${i + 1}</td>
+                        <td class="text-center">${data[i].code}</td>
+                        <td>${data[i].content}</td>
+                        <td class="text-center">${data[i].type}</td>
+                        <td class="text-center">${data[i].order}</td>
+                        <td class="text-center"> <button class="btn btn-outline-danger" onclick="deleteClick('${data[i].id}')">Xoá</button> </td>
+                    </tr>`;
+                }
+                $('#tbody-data').html(htmlstr);
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 console.log(textStatus + ': ' + errorThrown);
             });
         }
-    });
-    $('#btn-generate-exam').click(() => {
-        $('#loading-screen').show();
-        $.ajax({
-            data: { examQuestionId: '@ViewData["ExamQuestionId"]'},
-            dataType: 'json',
-            method: 'Post',
-            url: '/Survey/GenerateExam'
-        }).done(function (data) {
-            $('#loading-screen').hide();
-            showMessage(data);
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            $('#loading-screen').hide();
-            console.log(textStatus + ': ' + errorThrown);
+        loadDataTable();
+
+        $('#btn-add-question').click(() => {
+            $('#modal-input').modal('show');
+            $('#modal-title').html('Thêm câu hỏi');
         });
-    });
-</script>
+
+        $('#modal-input').on('shown.bs.modal', function () {
+            $('.add-box').hide();
+        });
+
+        $('#btn-generate-exam').click(() => {
+            $('#loading-screen').show();
+            $.ajax({
+                data: { examQuestionId: '@ViewData["ExamQuestionId"]'},
+                dataType: 'json',
+                method: 'Post',
+                url: '/Survey/GenerateExam',
+                complete: () => {}
+            }).done(function (res) {
+                $('#loading-screen').hide();
+                if (res.statusCode === 200) {
+                    toastSuccess('Sinh đề thành công');
+                }
+                else {
+                    try {
+                        let content = JSON.parse(res.content);
+                        toastError(content.message);
+                    } catch (error) {
+                        toastError('Có lỗi xảy ra');
+                    }
+                    console.log(res);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                $('#loading-screen').hide();
+                console.log(textStatus + ': ' + errorThrown);
+            });
+        });
+
+        function deleteClick(id) {
+            $('#modal-yes-no').modal('show');
+            $('#delete-id').val(id);
+        }
+
+        $('#choose-yes').click(function () {
+            $.ajax({
+                data: { id: $('#delete-id').val() },
+                dataType: 'json',
+                method: 'Post',
+                url: `/Survey/DeleteQuestionFromStructure`,
+                complete: () => { }
+            }).done(function (res) {
+                if (res.statusCode === 200) {
+                    toastSuccess('Xoá thành công');
+                    $('#modal-yes-no').modal('hide');
+                    location.reload();
+                }
+                else {
+                    toastError('Có lỗi xảy ra');
+                    console.log(res);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus + ': ' + errorThrown);
+                console.log(jqXHR);
+            });
+        });
+    </script>
 }

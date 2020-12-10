@@ -134,6 +134,8 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Attributes\ActionFilter\AuthorizeActionFilter.cs" />
+    <Compile Include="Attributes\ValidationAttributes\CompareMoreThanLessThanAttribute.cs" />
+    <Compile Include="Attributes\ValidationAttributes\NotOnlyContainWhiteSpaceAttribute.cs" />
     <Compile Include="Attributes\ValidationAttributes\OnlyNumberAttribute.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CtsvServiceManagementController.cs" />
@@ -153,16 +155,21 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\AccountModel.cs" />
-    <Compile Include="Models\AnswerModel.cs" />
+    <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\AnswerModels.cs" />
     <Compile Include="Models\Base\DataTableRequest.cs" />
     <Compile Include="Models\Base\DataTableResponse.cs" />
     <Compile Include="Models\CtsvServiceManagementModel.cs" />
-    <Compile Include="Models\CauHoi.cs" />
-    <Compile Include="Models\ExamQuestionModel.cs" />
-    <Compile Include="Models\QuestionModel.cs" />
+    <Compile Include="Models\EduDataModels.cs" />
+    <Compile Include="Models\ExamQuestionModels.cs" />
+    <Compile Include="Models\GraduateStudentModels.cs" />
+    <Compile Include="Models\GraduateSurveyRoundModels.cs" />
+    <Compile Include="Models\GraduateTheSurveyModels.cs" />
+    <Compile Include="Models\JsonData\AnswerJson.cs" />
+    <Compile Include="Models\JsonData\QuestionJson.cs" />
+    <Compile Include="Models\QuestionModels.cs" />
     <Compile Include="Models\ResponseMessage.cs" />
-    <Compile Include="Models\UserModel.cs" />
+    <Compile Include="Models\UserModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -171,6 +178,7 @@
     <Content Include="Content\css\bootstrap.min.css" />
     <Content Include="Content\css\dataTables.bootstrap4.min.css" />
     <Content Include="Content\css\responsive.css" />
+    <Content Include="Content\css\star-rating.css" />
     <Content Include="Content\css\style.css" />
     <Content Include="Content\css\util.css" />
     <Content Include="Content\images\1x1.GIF" />
@@ -902,6 +910,12 @@
     <Content Include="Content\js\common\request.js" />
     <Content Include="Content\js\dataTables.bootstrap4.min.js" />
     <Content Include="Content\js\dataTables.config.js" />
+    <Content Include="Content\js\helper\function.helper.js" />
+    <Content Include="Content\js\helper\input-search.helper.js" />
+    <Content Include="Content\js\helper\jquery.validate.custom.rule.js" />
+    <Content Include="Content\js\helper\jquery.validate.default.message.js" />
+    <Content Include="Content\js\helper\modal.helper.js" />
+    <Content Include="Content\js\helper\form.helper.js" />
     <Content Include="Content\js\jquery.cookie.min.js" />
     <Content Include="Content\js\jquery.dataTables.min.js" />
     <Content Include="Content\js\jquery.min.js" />
@@ -1219,6 +1233,11 @@
     <Content Include="Views\SyncEduData\Index.cshtml" />
     <Content Include="Views\SyncEduData\SyncFromEduData.cshtml" />
     <Content Include="Views\CtsvServiceManagement\Parameters.cshtml" />
+    <Content Include="Views\SyncEduData\Backup.cshtml" />
+    <Content Include="Views\Survey\Statistic.cshtml" />
+    <Content Include="Views\Survey\Graduate\GraduateSurveyRound.cshtml" />
+    <Content Include="Views\Survey\Graduate\GraduateStudent.cshtml" />
+    <Content Include="Views\Survey\Graduate\GraduateTheSurvey.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

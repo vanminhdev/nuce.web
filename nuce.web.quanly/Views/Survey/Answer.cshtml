@@ -3,7 +3,7 @@
     ViewData["Title"] = "Đáp án";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div class="container">
+<div class="container-fluid service-categories-wrp mt-2">
     <a class="update-btn text-light p-2" style="text-decoration: none;" href="/survey/question">← Quay lại danh sách</a>
 
     <div class="fw-700 text-uppercase font-15-sm font-25 mb-2 mt-3">
@@ -39,7 +39,7 @@
                                 @(i + 1)
                             </td>
                             <td>
-                                @Model.Answers[i].dapAnId
+                                @Model.Answers[i].code
                             </td>
                             <td>
                                 @Html.Raw(Model.Answers[i].content)
@@ -48,7 +48,7 @@
                                 @Model.Answers[i].order
                             </td>
                             <td>
-                                <a href='/survey/detailanswer?id=@Model.Answers[i].id&questionId=@Model.Answers[i].cauHoiGId'>Sửa</a>
+                                <a href='/survey/detailanswer?id=@Model.Answers[i].id&questionId=@Model.Answers[i].cauHoiId'>Sửa</a>
                             </td>
                         </tr>
                     }
