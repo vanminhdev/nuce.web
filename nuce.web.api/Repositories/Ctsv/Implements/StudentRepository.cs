@@ -40,25 +40,35 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
         }
         public async Task<StudentDichVuModel> GetStudentDichVuInfoAsync(string studentCode)
         {
-            var result = await _context.AsAcademyStudent.AsNoTracking()
-                        .Join(_context.AsAcademyClass.AsNoTracking(),
+            var result = await _context.AsAcademyStudent
+                        .Join(_context.AsAcademyClass,
                                 student => student.ClassId,
                                 aClass => aClass.Id,
                                 (student, aClass) => new { student, aClass })
-                        .Join(_context.AsAcademyFaculty.AsNoTracking(),
-                               tmp => tmp.aClass.FacultyId,
-                               faculty => faculty.Id,
-                               (tmp, faculty) => new { tmp.student, tmp.aClass, faculty })
-                        .Join(_context.AsAcademyAcademics.AsNoTracking(),
+                        .GroupJoin(_context.AsAcademyFaculty.AsNoTracking(),
+                           tmp => tmp.aClass.FacultyId,
+                           faculty => faculty.Id,
+                           (tmp, faculty) => new { tmp, faculty }
+                         )
+                        .SelectMany(left => left.faculty.DefaultIfEmpty(), (left, f) => new { left.tmp.student, left.tmp.aClass, f })
+                        .GroupJoin(_context.AsAcademyAcademics.AsNoTracking(),
                                 tmp => tmp.aClass.AcademicsId,
                                 academic => academic.Id,
-                                (tmp, academic) => new StudentDichVuModel
+                                (tmp, academic) => new
                                 {
                                     Student = tmp.student,
                                     AcademyClass = tmp.aClass,
-                                    Faculty = tmp.faculty,
+                                    Faculty = tmp.f,
                                     Academics = academic
                                 })
+                        .SelectMany(left => left.Academics.DefaultIfEmpty(),
+                                    (left, academic) => new StudentDichVuModel
+                                    {
+                                        Student = left.Student,
+                                        AcademyClass = left.AcademyClass,
+                                        Faculty = left.Faculty,
+                                        Academics = academic
+                                    })
                         .FirstOrDefaultAsync(s => s.Student.Code == studentCode);
             return result;
         }

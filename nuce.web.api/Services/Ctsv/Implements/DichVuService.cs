@@ -920,7 +920,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string tinh = yeuCau.Student.HkttTinh ?? "";
                     string classCode = yeuCau.Student.ClassCode ?? "";
                     string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
-                    string tenKhoa = yeuCau.Faculty.Name ?? "";
+                    string tenKhoa = yeuCau.Faculty?.Name ?? "";
                     string mobile = yeuCau.Student.Mobile ?? "";
 
                     string lyDo = yeuCau.YeuCauDichVu.LyDo ?? "";
@@ -1030,7 +1030,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string tinh = yeuCau.Student.HkttTinh ?? "";
                     string classCode = yeuCau.Student.ClassCode ?? "";
                     string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
-                    string tenKhoa = yeuCau.Faculty.Name ?? "";
+                    string tenKhoa = yeuCau.Faculty?.Name ?? "";
                     string mobile = yeuCau.Student.Mobile ?? "";
 
                     string kyLuat = yeuCau.YeuCauDichVu.KyLuat ?? "Không";
@@ -1146,14 +1146,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string tinh = yeuCau.Student.HkttTinh ?? "";
                     string classCode = yeuCau.Student.ClassCode ?? "";
                     string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
-                    string tenKhoa = yeuCau.Faculty.Name ?? "";
+                    string tenKhoa = yeuCau.Faculty?.Name ?? "";
                     string mobile = yeuCau.Student.Mobile ?? "";
                     string gioiTinh = yeuCau.Student.GioiTinh ?? "";
                     gioiTinh = getGender(gioiTinh);
                     string cmtNoiCap = yeuCau.Student.CmtNoiCap ?? "";
                     string cmt = yeuCau.Student.Cmt ?? "";
                     string soDienThoai = mobile;
-                    string nganhHoc = yeuCau.Academics.Name ?? "";
+                    string nganhHoc = yeuCau.Academics?.Name ?? "";
                     DateTime now = DateTime.Now;
                     int row = j + 2;
 
@@ -1257,14 +1257,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string tinh = yeuCau.Student.HkttTinh ?? "";
                     string classCode = yeuCau.Student.ClassCode ?? "";
                     string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
-                    string tenKhoa = yeuCau.Faculty.Name ?? "";
+                    string tenKhoa = yeuCau.Faculty?.Name ?? "";
                     string mobile = yeuCau.Student.Mobile ?? "";
                     string gioiTinh = yeuCau.Student.GioiTinh ?? "";
                     gioiTinh = getGender(gioiTinh);
                     string cmtNoiCap = yeuCau.Student.CmtNoiCap ?? "";
                     string cmt = yeuCau.Student.Cmt ?? "";
                     string soDienThoai = mobile;
-                    string nganhHoc = yeuCau.Academics.Name ?? "";
+                    string nganhHoc = yeuCau.Academics?.Name ?? "";
                     string doiTuongUuTien = yeuCau.Student.DoiTuongUuTien ?? "";
                     DateTime now = DateTime.Now;
                     int row = j + 2;
@@ -1362,7 +1362,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string tinh = yeuCau.Student.HkttTinh ?? "";
                     string classCode = yeuCau.Student.ClassCode ?? "";
                     string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
-                    string tenKhoa = yeuCau.Faculty.Name ?? "";
+                    string tenKhoa = yeuCau.Faculty?.Name ?? "";
                     string mobile = yeuCau.Student.Mobile ?? "";
                     string lienTuyen = (DichVuXeBusLoaiTuyen)yeuCau.YeuCauDichVu.TuyenType == DichVuXeBusLoaiTuyen.LienTuyen ? "x" : "";
                     string soTuyen = yeuCau.YeuCauDichVu.TuyenCode;
@@ -1449,7 +1449,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             }
             catch (Exception ex)
             {
-                _logger.LogError("hihi: ", ex.Message, " |||| \n", ex.ToString());
+                _logger.LogError("Có lỗi: ", ex.Message, " |||| \n", ex.ToString());
                 throw ex;
             }
         }
@@ -1511,7 +1511,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             string MaSV = studentInfo.Student.Code.ToString();
             string HoVaTen = studentInfo.Student.FulName;
             string Class = studentInfo.Student.ClassCode ?? "";
-            string TenKhoa = studentInfo.Faculty.Name ?? "";
+            string TenKhoa = studentInfo.Faculty?.Name ?? "";
             string HeDaoTao = "Chính quy";
             string NienKhoa = studentInfo.AcademyClass.SchoolYear;
             string LyDoXacNhan = xacNhan.LyDo ?? "";
@@ -2016,7 +2016,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             string MaSV = studentInfo.Student.Code.ToString();
             string HoVaTen = studentInfo.Student.FulName;
             string Class = studentInfo.Student.ClassCode ?? "";
-            string TenKhoa = studentInfo.Faculty.Name ?? "";
+            string TenKhoa = studentInfo.Faculty?.Name ?? "";
             string NienKhoa = studentInfo.AcademyClass.SchoolYear;
             string DiaChiCuThe = studentInfo.Student.DiaChiCuThe ?? "";
 
@@ -2470,13 +2470,13 @@ namespace nuce.web.api.Services.Ctsv.Implements
             string MaSV = studentInfo.Student.Code.ToString();
             string HoVaTen = studentInfo.Student.FulName;
             string Class = studentInfo.Student.ClassCode ?? "";
-            string TenKhoa = studentInfo.Faculty.Name ?? "";
+            string TenKhoa = studentInfo.Faculty?.Name ?? "";
             string NienKhoa = studentInfo.AcademyClass.SchoolYear;
             string LoaiDaoTao = "Chính quy";
             string cmt = studentInfo.Student.Cmt ?? "";
             string cmtNoiCap = studentInfo.Student.CmtNoiCap ?? "";
             string cmtNgayCap = CmtNgayCap == null ? "" : CmtNgayCap?.ToString("dd/MM/yyyy");
-            string nghanhHoc = studentInfo.Academics.Name ?? "";
+            string nghanhHoc = studentInfo.Academics?.Name ?? "";
             string thuocDien = vayVon.ThuocDien ?? "";
             string thuocDoiTuong = vayVon.ThuocDoiTuong ?? "";
             string gioiTinh = studentInfo.Student.GioiTinh;
@@ -2920,7 +2920,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             string MaSV = studentInfo.Student.Code.ToString();
             string HoVaTen = studentInfo.Student.FulName;
             string Class = studentInfo.Student.ClassCode ?? "";
-            string TenKhoa = studentInfo.Faculty.Name ?? "";
+            string TenKhoa = studentInfo.Faculty?.Name ?? "";
             string NienKhoa = studentInfo.AcademyClass.SchoolYear;
             string doiTuongUuTien = studentInfo.Student.DoiTuongUuTien ?? "";
             string cmt = studentInfo.Student.Cmt ?? "";
@@ -3192,7 +3192,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         replaceTextTemplate(text, "<sdt>", studentInfo.Student.Mobile);
                         replaceTextTemplate(text, "<nam_sinh>", ngaySinh.ToString("dd/MM/yyyy"));
                         replaceTextTemplate(text, "<ma_lop>", studentInfo.Student.ClassCode);
-                        replaceTextTemplate(text, "<ten_khoa>", studentInfo.Faculty.Name);
+                        replaceTextTemplate(text, "<ten_khoa>", studentInfo.Faculty?.Name);
                         replaceTextTemplate(text, "<mot_tuyen>", motTuyen);
                         replaceTextTemplate(text, "<lien_tuyen>", lienTuyen);
                         replaceTextTemplate(text, "<noi_nhan>", veXeBus.NoiNhanThe);
