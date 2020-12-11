@@ -1,0 +1,96 @@
+﻿
+@{
+    ViewBag.Title = "Danh sách bài tin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .th-border-none th {
+        border: none
+    }
+</style>
+
+<div class="main-content-wrp mt-0">
+    <div class="row">
+        <div class="col-12 text-right">
+            <a id="create-news-item" href="" class="btn btn-primary" role="button">
+                Đăng bài
+            </a>
+        </div>
+        <div class="col-12">
+            <table id="news-items-list-datatable" 
+                    data-page-length='25' class="table th-border-none">
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link href="~/content/css/bootstrap-datepicker3.min.css" rel="stylesheet" />
+
+    <script src="~/content/js/jquery.dataTables.min.js"></script>
+    <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/content/js/dataTables.config.js"></script>
+    <script src="~/content/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/content/js/bootstrap-datepicker.vi.min.js"></script>
+    <script>
+        var state = {
+            catId: null,
+        };
+
+        var userTable = $('#news-items-list-datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ordering: false,
+            lengthChange: false,
+            stateSave: true,
+            deferLoading: 0,
+            language: dataTableConfig.language,
+            ajax: {
+                url: 'GetItemsListByCatId',
+                dataType: 'json',
+                contentType: 'application/json',
+                type: 'POST',
+                data: function (d) {
+                    const data = {
+                        body: d,
+                        catId: state.catId
+                    };
+                    return JSON.stringify(data);
+                },
+                dataSrc: function(json) {
+                    state.dataList = json.data;
+                    return json.data;
+                }
+            },
+            columns: [
+                {
+                    data: null,
+                    mRender: function(data, type, row, meta) {
+                        return `<div>
+                                    <h4>${data.title || ''}</h4>
+                                    <p>${data.description || ''}</p>
+                                    <a href="/newsmanagement/itemsdetail?id=${data.id}">Đọc tiếp</a>
+                                    <a href="/newsmanagement/itemsupdate?id=${data.id}" role="button" class="btn btn-outline-success">Cập nhật</a>
+                                </div>`;
+                    }
+                },
+            ]
+        });
+
+        var searchData = function() {
+            userTable.page.len(50).search("").draw();
+        };
+
+        var init = function() {
+            $('#news-items-list-datatable_filter').hide();
+            state.catId = @ViewData["catId"];
+            $('#create-news-item').prop({href: `/newsmanagement/create?catId=${state.catId}`});
+            searchData();
+        }
+
+        init();
+
+    </script>
+}
+

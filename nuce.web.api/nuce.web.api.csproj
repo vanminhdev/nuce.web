@@ -14,6 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\Core\NuceCoreContext.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.95.3" />
     <PackageReference Include="GemBox.Document" Version="33.0.1031" />
     <PackageReference Include="GemBox.Spreadsheet" Version="47.0.1044" />

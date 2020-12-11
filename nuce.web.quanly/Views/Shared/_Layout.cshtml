@@ -124,9 +124,9 @@
                 <hr />
                 <nav class="navbar navbar-expand-lg navbar-light pl-0 pr-0">
                     @*<a class="navbar-brand" href="/home"></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>*@
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>*@
                     @*<div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">*@
                     <div class="navbar-collapse justify-content-center">
                         <ul class="navbar-nav row">
@@ -135,7 +135,7 @@
                                 if (roles.FirstOrDefault(r => r == "Admin") != null)
                                 {
                                     <li class="nav-item">
-                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action block-center" 
+                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action block-center"
                                            href="/usermanager/index">
                                             Quản lý tài khoản
                                         </a>
@@ -144,28 +144,38 @@
                                 if (roles.FirstOrDefault(r => r == "P_KhaoThi") != null)
                                 {
                                     <li class="nav-item">
-                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action block-center" 
+                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action block-center"
                                            href="/survey/examquestions">
                                             Quản lý đề khảo sát
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action block-center" 
+                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action block-center"
                                            href="/survey/question">
                                             Quản lý câu hỏi
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action block-center"
+                                           href="/newsmanagement/index?role=1">
+                                            Tin tức
                                         </a>
                                     </li>
                                 }
                                 if (roles.FirstOrDefault(r => r == "P_CTSV") != null)
                                 {
                                     <li class="nav-item">
-                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action block-center" 
+                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action block-center"
                                            href="/ctsvservicemanagement">
                                             Quản lý dịch vụ
                                         </a>
-                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action block-center" 
+                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action block-center"
                                            href="/ctsvservicemanagement/parameters">
                                             Tham số dịch vụ
+                                        </a>
+                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action block-center"
+                                           href="/newsmanagement/index?role=2">
+                                            Tin tức
                                         </a>
                                     </li>
                                 }
@@ -175,11 +185,11 @@
                                 if (roles.FirstOrDefault(r => r == "Admin") != null)
                                 {
                                     <li class="nav-item dropdown dropdown-hover-show">
-                                        <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action block-center" 
+                                        <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action block-center"
                                            href="#" id="navbarDropdown-admin" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             Quản trị
                                         </a>
-                                        <div class="dropdown-menu width-action block-center"  aria-labelledby="navbarDropdown-admin">
+                                        <div class="dropdown-menu width-action block-center" aria-labelledby="navbarDropdown-admin">
                                             <a class="dropdown-item font-18 font-10-xsm" href="/usermanager/index">Quản lý tài khoản</a>
                                             @*<a class="dropdown-item font-18 font-10-xsm" href="/config/index">Cấu hình trang web</a>*@
                                         </div>
@@ -196,7 +206,7 @@
                                 if (roles.FirstOrDefault(r => r == "P_KhaoThi") != null)
                                 {
                                     <li class="nav-item dropdown dropdown-hover-show">
-                                        <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action block-center" 
+                                        <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action block-center"
                                            href="#" id="navbarDropdown-survey" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             Khảo thí
                                         </a>
@@ -210,19 +220,22 @@
                                             <a class="dropdown-item font-18 font-10-xsm" href="/survey/graduatethesurvey">Bài khảo sát cựu sinh viên</a>
                                             <a class="dropdown-item font-18 font-10-xsm" href="/survey/graduatestudent">Danh sách cựu sinh viên</a>
                                             <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item font-18 font-10-xsm" href="/newsmanagement/index?role=1">Tin tức</a>
                                         </div>
                                     </li>
                                 }
                                 if (roles.FirstOrDefault(r => r == "P_CTSV") != null)
                                 {
                                     <li class="nav-item dropdown dropdown-hover-show">
-                                        <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action block-center" 
+                                        <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action block-center"
                                            href="#" id="navbarDropdown-ctsv" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             Công tác sinh viên
                                         </a>
                                         <div class="dropdown-menu width-action block-center" aria-labelledby="navbarDropdown-ctsv">
                                             <a class="dropdown-item font-18 font-10-xsm" href="/ctsvservicemanagement">Quản lý dịch vụ</a>
                                             <a class="dropdown-item font-18 font-10-xsm" href="/ctsvservicemanagement/parameters">Tham số dịch vụ</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item font-18 font-10-xsm" href="/newsmanagement/index?role=2">Tin tức</a>
                                         </div>
                                     </li>
                                 }
@@ -419,6 +432,12 @@
     <script src="~/Content/js/helper/input-search.helper.js"></script>
     <script src="~/Content/js/helper/function.helper.js"></script>
     <script src="~/Content/js/helper/modal.helper.js"></script>
+    <script src="~/Content/js/ckeditor/ckeditor.js"></script>
+    <script>
+        CKEDITOR.editorConfig = function( config ) {
+            config.extraPlugins = 'embed';
+        };
+    </script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

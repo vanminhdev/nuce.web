@@ -193,14 +193,17 @@ namespace nuce.web.api
             services.AddSingleton<IPathProvider, PathProvider>();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
+            #region core service
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ILogService, LogService>();
+            services.AddScoped<IManagerBackupService, ManagerBackUpService>();
+            services.AddScoped<INewsManagerService, NewsManagerService>();
+            #endregion
             #region config service
             services.AddScoped<IStatusService, StatusService>();
             services.AddScoped<IAsEduSurveyCauHoiService, AsEduSurveyCauHoiService>();
             services.AddScoped<IAsEduSurveyDapAnService, AsEduSurveyDapAnService>();
             services.AddScoped<IAsEduSurveyDeThiService, AsEduSurveyDeThiService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<ILogService, LogService>();
-            services.AddScoped<IManagerBackupService, ManagerBackUpService>();
             services.AddScoped<IAsEduSurveyDotKhaoSatService, AsEduSurveyDotKhaoSatService>();
             services.AddScoped<IAsEduSurveyBaiKhaoSatService, AsEduSurveyBaiKhaoSatService>();
             services.AddScoped<IAsEduSurveyBaiKhaoSatSinhVienService, AsEduSurveyBaiKhaoSatSinhVienService>();

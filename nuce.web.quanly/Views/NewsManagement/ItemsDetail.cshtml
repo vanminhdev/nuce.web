@@ -1,0 +1,21 @@
+﻿@using nuce.web.quanly.Models;
+
+@{
+    ViewBag.Title = "Chi tiết bản tin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .child-fill-parent>div {
+        width: 100%;
+        height: 100%;
+    }
+</style>
+<div class="row main-content-wrp child-fill-parent mt-0">
+    @{ NewsItemModel model = (NewsItemModel)Model; }
+    <h3 class="main-color text-uppercase font-15-sm fw-600 font-25 text-center font-weight-bold">
+        @(model.title)
+    </h3>
+    <div class="mt-2">
+        @Html.Raw(model.newContent)
+    </div>
+</div>
