@@ -73,11 +73,11 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         [HttpGet]
         public async Task<IActionResult> GetSurveyRoundById(
             [Required(AllowEmptyStrings = false)]
-            string id)
+            Guid? id)
         {
             try
             {
-                var surveyRound = await _asEduSurveyGraduateDotKhaoSatService.GetSurveyRoundById(id);
+                var surveyRound = await _asEduSurveyGraduateDotKhaoSatService.GetSurveyRoundById(id.Value);
                 return Ok(surveyRound);
             }
             catch(RecordNotFoundException e)
@@ -168,7 +168,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpPut]
-        public async Task<IActionResult> CloseGraduateSurveyRound([Required(AllowEmptyStrings = false)] Guid? id)
+        public async Task<IActionResult> CloseSurveyRound([Required(AllowEmptyStrings = false)] Guid? id)
         {
             try
             {

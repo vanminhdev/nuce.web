@@ -121,6 +121,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
                         await fileUpload.CopyToAsync(stream);
                     }
                     await ReadFileUpload(filePath, surveyRoundId.Value);
+                    System.IO.File.Delete(filePath);
                 }
                 catch (Exception e)
                 {

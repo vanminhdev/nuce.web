@@ -74,6 +74,14 @@ namespace nuce.web.api.Common
     }
 
     /// <summary>
+    /// Loại bài khảo sát cho cựu sinh viên và sinh viên sắp tốt nghiệp
+    /// </summary>
+    public enum GraduateTheSurveyType
+    {
+        Type1 = 1,
+    }
+
+    /// <summary>
     /// Loại câu hỏi
     /// </summary>
     public class QuestionType

@@ -93,6 +93,22 @@ namespace nuce.web.api.Controllers.Core
                     if(undergraduateStudent != null)
                     {
                         authClaims.Add(new Claim(ClaimTypes.Role, "UndergraduateStudent"));
+
+                        await _logService.WriteLog(new ActivityLogModel
+                        {
+                            Username = model.Username,
+                            LogCode = ActivityLogParameters.CODE_LOGIN,
+                            LogMessage = "Sinh viên sắp tốt nghiệp đăng nhập"
+                        });
+                    }
+                    else
+                    {
+                        await _logService.WriteLog(new ActivityLogModel
+                        {
+                            Username = model.Username,
+                            LogCode = ActivityLogParameters.CODE_LOGIN,
+                            LogMessage = "Sinh viên đăng nhập"
+                        });
                     }
                 }
 
@@ -105,12 +121,7 @@ namespace nuce.web.api.Controllers.Core
                 Response.Cookies.Append(UserParameters.JwtRefreshToken, new JwtSecurityTokenHandler().WriteToken(refreshToken),
                     new CookieOptions() { HttpOnly = true, Expires = refreshToken.ValidTo });
 
-                await _logService.WriteLog(new ActivityLogModel
-                {
-                    Username = model.Username,
-                    LogCode = ActivityLogParameters.CODE_LOGIN,
-                    LogMessage = "Sinh viên đăng nhập"
-                });
+                
                 return Ok();
             }
             return Unauthorized(userIsValidResult);

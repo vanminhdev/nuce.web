@@ -3,6 +3,9 @@ using nuce.web.quanly.Attributes.ActionFilter;
 using nuce.web.quanly.Attributes.ValidationAttributes;
 using nuce.web.quanly.Models;
 using nuce.web.quanly.Models.JsonData;
+using nuce.web.quanly.Models.Survey.Graduate;
+using nuce.web.quanly.Models.Survey.Normal;
+using nuce.web.quanly.Models.Survey.Undergraduate;
 using nuce.web.quanly.ViewModel.Base;
 using System;
 using System.Collections.Generic;
@@ -76,18 +79,17 @@ namespace nuce.web.quanly.Controllers
             return await base.HandleResponseAsync(response,
                 action200: res =>
                 {
-                    ViewData["UpdateSuccessMessage"] = "Cập nhật thành công";
-                    //return View("DetailQuestion", detail);
-                    return Redirect("/survey/question");
+                    ViewData["UpdateSuccessMessage"] = "Thêm thành công";
+                    return View("CreateQuestion", question);
+                },
+                action500Async: async res =>
+                {
+                    ViewData["UpdateErrorMessage"] = "Thêm không thành công";
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var resMess = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
+                    ViewData["UpdateErrorMessageDetail"] = resMess.message;
+                    return View("CreateQuestion", question);
                 }
-                //action500Async: async res =>
-                //{
-                //    ViewData["UpdateErrorMessage"] = "Cập nhật không thành công";
-                //    var jsonString = await response.Content.ReadAsStringAsync();
-                //    var resMess = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
-                //    ViewData["UpdateErrorMessageDetail"] = resMess.message;
-                //    return View("DetailQuestion", detail);
-                //}
             );
         }
 
@@ -118,17 +120,16 @@ namespace nuce.web.quanly.Controllers
                 action200: res =>
                 {
                     ViewData["UpdateSuccessMessage"] = "Cập nhật thành công";
-                    //return View("DetailQuestion", detail);
-                    return Redirect("/survey/question");
+                    return View("DetailQuestion", detail);
+                },
+                action500Async: async res =>
+                {
+                    ViewData["UpdateErrorMessage"] = "Cập nhật không thành công";
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var resMess = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
+                    ViewData["UpdateErrorMessageDetail"] = resMess.message;
+                    return View("DetailQuestion", detail);
                 }
-                //action500Async: async res =>
-                //{
-                //    ViewData["UpdateErrorMessage"] = "Cập nhật không thành công";
-                //    var jsonString = await response.Content.ReadAsStringAsync();
-                //    var resMess = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
-                //    ViewData["UpdateErrorMessageDetail"] = resMess.message;
-                //    return View("DetailQuestion", detail);
-                //}
             );
         }
         #endregion
@@ -387,11 +388,151 @@ namespace nuce.web.quanly.Controllers
         #endregion
 
         #region đợt khảo sát
+        [HttpGet]
+        public ActionResult SurveyRound()
+        {
+            return View("~/Views/Survey/Normal/SurveyRound.cshtml");
+        }
 
+        [HttpPost]
+        public async Task<ActionResult> GetAllSurveyRound(DataTableRequest request)
+        {
+            var stringContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/SurveyRound/GetSurveyRound", stringContent);
+            return await base.HandleResponseAsync(response,
+                action200Async: async res =>
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var data = JsonConvert.DeserializeObject<DataTableResponse<SurveyRound>>(jsonString);
+                    return Json(new
+                    {
+                        draw = data.Draw,
+                        recordsTotal = data.RecordsTotal,
+                        recordsFiltered = data.RecordsFiltered,
+                        data = data.Data
+                    });
+                }
+            );
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetSurveyRoundById(string id)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/SurveyRound/GetSurveyRoundById?id={id}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateSurveyRound(SurveyRoundCreate data)
+        {
+            var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/SurveyRound/CreateSurveyRound", content);
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UpdateSurveyRound(SurveyRoundUpdate data)
+        {
+            var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/SurveyRound/UpdateSurveyRound?id={data.id}", content);
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CloseSurveyRound(string id)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/SurveyRound/CloseSurveyRound?id={id}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> DeleteSurveyRound(string id)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/SurveyRound/DeleteSurveyRound?id={id}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
         #endregion
 
         #region bài khảo sát
+        [HttpGet]
+        public async Task<ActionResult> TheSurvey()
+        {
+            var resTableStatus = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurveyStudent/GetGenerateTheSurveyStudentStatus");
+            ViewData["TableTheSurveyStudentStatus"] = await resTableStatus.Content.ReadAsStringAsync();
 
+            var resSurveyRound = await base.MakeRequestAuthorizedAsync("Get", $"/api/SurveyRound/GetSurveyRoundActive");
+            ViewData["SurveyRoundActive"] = await resSurveyRound.Content.ReadAsStringAsync();
+
+            var resExam = await base.MakeRequestAuthorizedAsync("Get", $"/api/ExamQuestions/GetAll");
+            ViewData["ExamQuestions"] = await resExam.Content.ReadAsStringAsync();
+
+            return View("~/Views/Survey/Normal/TheSurvey.cshtml");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetAllTheSurvey(DataTableRequest request)
+        {
+            var stringContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/TheSurvey/GetTheSurvey", stringContent);
+            return await base.HandleResponseAsync(response,
+                action200Async: async res =>
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var data = JsonConvert.DeserializeObject<DataTableResponse<TheSurvey>>(jsonString);
+                    return Json(new
+                    {
+                        draw = data.Draw,
+                        recordsTotal = data.RecordsTotal,
+                        recordsFiltered = data.RecordsFiltered,
+                        data = data.Data
+                    });
+                }
+            );
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetTheSurveyById(string id)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurvey/GetTheSurveyById?id={id}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateTheSurvey(TheSurveyCreate data)
+        {
+            var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/TheSurvey/CreateTheSurvey", content);
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UpdateTheSurvey(GraduateTheSurveyUpdate data)
+        {
+            var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/TheSurvey/UpdateTheSurvey?id={data.id}", content);
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> DeleteTheSurvey(string id)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/TheSurvey/DeleteTheSurvey?id={id}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CloseTheSurvey(string id)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/TheSurvey/CloseTheSurvey?id={id}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GenerateTheSurveyStudent(string surveyRoundId)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/TheSurveyStudent/GenerateTheSurveyStudent?surveyRoundId={surveyRoundId}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
         #endregion
 
         #region đợt khảo sát đã tốt nghiệp
@@ -448,7 +589,7 @@ namespace nuce.web.quanly.Controllers
         [HttpPost]
         public async Task<ActionResult> CloseGraduateSurveyRound(string id)
         {
-            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/GraduateSurveyRound/CloseGraduateSurveyRound?id={id}");
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/GraduateSurveyRound/CloseSurveyRound?id={id}");
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
 
@@ -510,7 +651,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> UploadFile(HttpPostedFileBase fileUpload, string surveyRoundId)
+        public async Task<ActionResult> UploadFileGraudate(HttpPostedFileBase fileUpload, string surveyRoundId)
         {
             var contentLength = fileUpload.ContentLength;
             int maxSize = int.Parse(ConfigurationManager.AppSettings["MaxSizeFileUpload"]);
@@ -626,7 +767,7 @@ namespace nuce.web.quanly.Controllers
         }
         #endregion
 
-        #region đợt khảo sát đã tốt nghiệp
+        #region đợt khảo sát sắp tốt nghiệp
         [HttpGet]
         public ActionResult UndergraduateSurveyRound()
         {
@@ -680,7 +821,7 @@ namespace nuce.web.quanly.Controllers
         [HttpPost]
         public async Task<ActionResult> CloseUndergraduateSurveyRound(string id)
         {
-            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/UndergraduateSurveyRound/CloseUndergraduateSurveyRound?id={id}");
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/UndergraduateSurveyRound/CloseSurveyRound?id={id}");
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
 
@@ -853,7 +994,7 @@ namespace nuce.web.quanly.Controllers
         [HttpPost]
         public async Task<ActionResult> GenerateUndergraduateTheSurveyStudent(string id)
         {
-            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/GraduateTheSurveyStudent/GenerateTheSurveyStudent?theSurveyId={id}");
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/UndergraduateTheSurveyStudent/GenerateTheSurveyStudent?theSurveyId={id}");
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
         #endregion

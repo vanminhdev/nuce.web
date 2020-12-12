@@ -1,4 +1,5 @@
-﻿@*@model List<nuce.web.quanly.Models.ExamStructure>*@
+﻿@using nuce.web.quanly.Common
+@using Newtonsoft.Json
 @{
     ViewData["Title"] = "Cấu trúc đề thi";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -6,6 +7,7 @@
 
 @section Style {
     <link rel="stylesheet" href="~/content/css/dataTables.bootstrap4.min.css" />
+    <link rel="stylesheet" href="~/content/css/bootstrap-select.min.css" />
 }
 
 <div class="container mt-2" style="font-size: 13px">
@@ -68,7 +70,8 @@
                                     <input class="form-control form-control" id="noidung" type="text" placeholder="Tìm theo nội dung" />
                                 </div>
                                 <div class="col-6 col-md mb-2">
-                                    <input class="form-control form-control" id="loai" type="text" placeholder="Tìm theo loại câu hỏi" />
+                                    @Html.DropDownList("type", new SelectList(Definitions.QuestionType, "Key", "Value"),
+                                        new { @id = "loai", @class = "selectpicker form-control custom-boostrap-select", title = "Tìm theo loại câu hỏi" })
                                 </div>
                                 <div class="col-12 col-md mb-2 d-flex flex-row">
                                     <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
@@ -84,13 +87,14 @@
 
                     <div class="row">
                         <div class="col-md-12">
-                            <table id="id-datatable" class="table table-bordered">
+                            <table id="id-datatable" class="table table-bordered w-100">
                                 <thead>
                                     <tr>
-                                        <th class="text-center">STT</th>
-                                        <th class="text-center">Mã</th>
-                                        <th class="text-center" width="50%">Nội dung</th>
-                                        <th class="text-center">Loại</th>
+                                        <th class="text-center" width="1px">STT</th>
+                                        <th class="text-center" width="1px">Mã</th>
+                                        <th class="text-center" width="1px">Mã Cha</th>
+                                        <th class="text-center">Nội dung</th>
+                                        <th class="text-center" style="min-width:120px">Loại</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -125,6 +129,7 @@
 </div>
 
 @section Scripts {
+    <script src="~/content/js/bootstrap-select.min.js"></script>
     <script src="~/content/js/jquery.dataTables.min.js"></script>
     <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/content/js/dataTables.config.js"></script>
@@ -141,6 +146,10 @@
                 {
                     targets: [4],
                     className: 'position-relative'
+                },
+                {
+                    targets: [0,1,2,4],
+                    className: 'text-center'
                 }
             ],
             ajax: {
@@ -163,10 +172,27 @@
                     data: "code"
                 },
                 {
+                    data: null,
+                    name: "parentCode",
+                    mRender: function (data, type, row) {
+                        if (data.parentCode != null) {
+                            return data.parentCode;
+                        } else {
+                            return '-'
+                        }
+                    }
+                },
+                {
                     data: "content"
                 },
                 {
-                    data: "type"
+                    data: null,
+                    name: "type",
+                    mRender: function (data, type, row) {
+                        let questionType = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(Definitions.QuestionType.ToList()))');
+                        let result = questionType.find(element => element.Key == data.type);
+                        return result.Value;
+                    }
                 },
                 {
                     data: null,
@@ -195,8 +221,8 @@
         $("#btn-search").click(() => {
             table
                 .column(1).search($("#ma-cauhoi").val())
-                .column(2).search($("#noidung").val())
-                .column(3).search($("#loai").val())
+                .column(3).search($("#noidung").val())
+                .column(4).search($("#loai").val())
                 .draw();
         });
 

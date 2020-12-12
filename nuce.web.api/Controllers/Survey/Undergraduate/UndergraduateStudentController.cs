@@ -121,6 +121,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
                         await fileUpload.CopyToAsync(stream);
                     }
                     await ReadFileUpload(filePath, surveyRoundId.Value);
+                    System.IO.File.Delete(filePath);
                 }
                 catch (Exception e)
                 {
@@ -141,7 +142,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
             var workbook = ExcelFile.Load(filepath);
             var worksheet = workbook.Worksheets[0];
-
+            
             /// Create DataTable from an Excel worksheet.
             var dataTable = worksheet.CreateDataTable(new CreateDataTableOptions()
             {

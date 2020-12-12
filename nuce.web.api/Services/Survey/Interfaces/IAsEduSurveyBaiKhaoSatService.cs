@@ -10,9 +10,11 @@ namespace nuce.web.api.Services.Survey.Interfaces
 {
     public interface IAsEduSurveyBaiKhaoSatService
     {
-        public Task<PaginationModel<AsEduSurveyBaiKhaoSat>> GetTheSurvey(TheSurveyFilter filter, int skip = 0, int take = 20);
+        public Task<PaginationModel<TheSurvey>> GetTheSurvey(TheSurveyFilter filter, int skip = 0, int take = 20);
         public Task Create(TheSurveyCreate theSurvey);
-        public Task Update(string id, TheSurveyUpdate theSurvey);
-        public Task Delete(string id);
+        public Task Update(Guid id, TheSurveyUpdate theSurvey);
+        public Task Delete(Guid id);
+        public Task<AsEduSurveyBaiKhaoSat> GetTheSurveyById(Guid id);
+        public Task Deactive(Guid value);
     }
 }

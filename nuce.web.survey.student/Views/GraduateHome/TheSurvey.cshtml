@@ -3,7 +3,7 @@
 @using Newtonsoft.Json;
 @model  List<QuestionJson>
 @{
-    ViewData["Title"] = "Bài khảo sát";
+    ViewData["Title"] = "Bài khảo sát cựu sinh viên";
 }
 
 @section Style {
@@ -17,9 +17,9 @@
             counter-increment: title-question-counter;
         }
 
-            .question-title:before {
-                content: counter(title-question-counter, upper-roman)". ";
-            }
+        .question-title:before {
+            content: counter(title-question-counter, upper-roman)". ";
+        }
 
         .tag-child-inline > * {
             display: inline;
@@ -74,7 +74,7 @@
 @helper GenerateAnswer(QuestionJson question)
 {
     bool displayLong = false;
-    if (question.Answers != null && (question.Answers.Count > 5 || question.Answers.Where(o => o.Content.Length > 20).Count() > 0))
+    if (question.Answers != null && (question.Answers.Count > 5 || question.Answers.Where(o => o.Content.Length > 30).Count() > 0))
     {
         displayLong = true;
     }
@@ -400,7 +400,7 @@
                             console.log(textStatus + ': ' + errorThrown);
                             console.log(jqXHR);
                         });
-                    }, 3000)
+                    }, 1500)
                 );
             });
             $('#choose-yes').click(() => {
@@ -419,12 +419,8 @@
                     if (res.statusCode === 200) {
                         location.href = '/graduatehome';
                     }
-                    else if (res.statusCode === 404) {
-                        try {
-                            let content = JSON.parse(res.content);
-                        } catch {
-
-                        }
+                    else {
+                        console.log(res);
                     }
                     console.log(res);
                 }).fail(function (jqXHR, textStatus, errorThrown) {

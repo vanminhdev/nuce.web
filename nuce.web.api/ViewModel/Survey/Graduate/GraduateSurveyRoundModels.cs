@@ -31,12 +31,8 @@ namespace nuce.web.api.ViewModel.Survey.Graduate
         [CompareMoreThanLessThan(true, "FromDate", ErrorMessage = "Đến ngày phải lớn hơn từ ngày")]
         public DateTime? EndDate { get; set; }
         
-        [Required(AllowEmptyStrings = false)]
-        [NotOnlyContainWhiteSpace]
         public string Description { get; set; }
 
-        [Required(AllowEmptyStrings = false)]
-        [NotOnlyContainWhiteSpace]
         public string Note { get; set; }
 
         [Required]

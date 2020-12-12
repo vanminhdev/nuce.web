@@ -26,6 +26,8 @@ namespace nuce.web.api.ViewModel.Survey
         public string Type { get; set; }
 
         public int? Order { get; set; }
+
+        public string ParentCode { get; set; }
     }
 
     public class QuestionCreateModel

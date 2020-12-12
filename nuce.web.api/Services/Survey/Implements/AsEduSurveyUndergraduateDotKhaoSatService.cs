@@ -35,7 +35,7 @@ namespace nuce.web.api.Services.Survey.Implements
             var recordsFiltered = query.Count();
 
             var querySkip = query
-                .OrderBy(u => u.Id)
+                .OrderByDescending(u => u.FromDate)
                 .Skip(skip).Take(take);
 
             var data = await querySkip.ToListAsync();
@@ -67,8 +67,8 @@ namespace nuce.web.api.Services.Survey.Implements
                 Name = surveyRound.Name.Trim(),
                 FromDate = surveyRound.FromDate.Value,
                 EndDate = surveyRound.EndDate.Value,
-                Description = surveyRound?.Description.Trim() ?? "",
-                Note = surveyRound?.Note.Trim() ?? "",
+                Description = surveyRound.Description?.Trim(),
+                Note = surveyRound.Note?.Trim(),
                 Status = (int)SurveyRoundStatus.Active,
                 Type = surveyRound.Type.Value
             });
@@ -91,8 +91,8 @@ namespace nuce.web.api.Services.Survey.Implements
             surveyRoundUpdate.Name = surveyRound.Name.Trim();
             surveyRoundUpdate.FromDate = surveyRound.FromDate.Value;
             surveyRoundUpdate.EndDate = surveyRound.EndDate.Value;
-            surveyRoundUpdate.Description = surveyRound?.Description.Trim() ?? "";
-            surveyRoundUpdate.Note = surveyRound?.Note.Trim() ?? "";
+            surveyRoundUpdate.Description = surveyRound.Description?.Trim();
+            surveyRoundUpdate.Note = surveyRound.Note?.Trim();
             surveyRoundUpdate.Type = surveyRound.Type.Value;
             await _context.SaveChangesAsync();
         }

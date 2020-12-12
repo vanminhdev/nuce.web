@@ -57,7 +57,7 @@ namespace nuce.web.api.ViewModel.Survey.Undergraduate
         public string Note { get; set; }
 
         [Required]
-        [EnumDataType(typeof(TheSurveyType))]
+        [EnumDataType(typeof(GraduateTheSurveyType))]
         public int? Type { get; set; }
     }
 }

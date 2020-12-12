@@ -35,9 +35,9 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using nuce.web.api.Models.Status;
 using nuce.web.api.Services.Status.Interfaces;
 using nuce.web.api.Services.Status.Implements;
-using nuce.web.api.Services.Background;
 using System.Net;
 using nuce.web.api.Middlewares;
+using nuce.web.api.Services.Background;
 
 namespace nuce.web.api
 {
@@ -242,6 +242,12 @@ namespace nuce.web.api
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IParameterService, ParameterService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            #endregion
+
+            #region background
+            services.AddSingleton<MonitorLoop>();
+            services.AddHostedService<QueuedHostedService>();
+            services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
             #endregion
         }
 

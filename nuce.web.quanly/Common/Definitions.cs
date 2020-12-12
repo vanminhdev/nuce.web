@@ -35,13 +35,15 @@ namespace nuce.web.quanly.Common
             //{"MA", "Ghép đôi phù hợp" },
             //{"MW", "Điền từ vào chỗ trống" },
             {"SA", "Trả lời ngắn" },
-            {"NR", "Câu hỏi số" },
+            //{"NR", "Câu hỏi số" },
             //{"HS", "Khoanh vùng điểm ảnh" },
-            //{"GQ", "Câu hỏi nhiều câu hỏi phụ" },
+            {"GQ", "Có nhiều câu hỏi phụ" },
             //{"SP", "Nghe nói" },
             //{"EQ", "Câu hỏi cảm xúc" },
             //{"TL", "Hai cấp" },
-            {"T",  "Tiêu đề"}
+            {"T",  "Chỉ là tiêu đề"},
+            {"CityC", "Lựa chọn tỉnh thành" },
+            {"StarRating", "Vote Sao" },
         };
     }
 

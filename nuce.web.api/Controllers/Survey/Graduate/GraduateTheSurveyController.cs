@@ -181,8 +181,6 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             }
             return Ok();
         }
-
-
         #endregion
     }
 }

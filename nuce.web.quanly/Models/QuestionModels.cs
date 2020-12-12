@@ -14,6 +14,7 @@ namespace nuce.web.quanly.Models
         public string content { get; set; }
         public string type { get; set; }
         public int? order { get; set; }
+        public string parentCode { get; set; }
     }
 
     public class QuestionCreate

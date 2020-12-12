@@ -357,7 +357,12 @@
                         table.ajax.reload();
                     }
                     else {
-                        toastError('Có lỗi xảy ra');
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
                         console.log(res);
                     }
                 }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -385,7 +390,12 @@
                         table.ajax.reload();
                     }
                     else {
-                        toastError('Có lỗi xảy ra');
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
                         console.log(res);
                     }
                 }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -414,7 +424,12 @@
                         $('#modal-yes-no').modal('hide');
                     }
                     else {
-                        toastError('Có lỗi xảy ra');
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
                         console.log(res);
                     }
                 }).fail(function (jqXHR, textStatus, errorThrown) {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.Survey.Base
 {
-    class BaiKhaoSatSinhVienServiceBase
+    public class BaiKhaoSatSinhVienServiceBase
     {
         private List<string> AddOrRemoveAnswerCodes(List<string> list, string answerCodeInMulSelect, bool isAnswerCodesAdd)
         {

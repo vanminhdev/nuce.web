@@ -201,6 +201,18 @@
             return dd + '/' + mm + '/' + yyyy;
         }
     </script>
+    @*<script>
+        let div = document.createElement('div');
+        let loop = setInterval(() => {
+            console.log(div);
+        });
+        Object.defineProperty(div, "id", {
+            get: () => {
+                //clearInterval(loop);
+                alert("Yêu cầu khảo sát nghiêm túc!. Mở một tab mới để thực hiện lại.");
+            }
+        });
+    </script>*@
     @RenderSection("Scripts", required: false)
 </body>
 </html>

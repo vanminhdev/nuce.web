@@ -44,16 +44,28 @@ $('.toast').toast({
 });
 
 function toastSuccess(message) {
+    if (message == undefined || message == "") {
+        message = "Thành công";
+        console.log("default toast message");
+    }
     $('#toast-success-message').html(message);
     $('#toast-success').toast('show');
 }
 
 function toastWarning(message) {
+    if (message == undefined || message == "") {
+        message = "Cảnh báo";
+        console.log("default toast message");
+    }
     $('#toast-warning-message').html(message);
     $('#toast-warning').toast('show');
 }
 
 function toastError(message) {
+    if (message == undefined || message == "") {
+        message = "Lỗi";
+        console.log("default toast message");
+    }
     $('#toast-error-message').html(message);
     $('#toast-error').toast('show');
 }

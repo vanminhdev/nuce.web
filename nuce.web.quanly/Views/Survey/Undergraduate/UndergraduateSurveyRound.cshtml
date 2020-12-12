@@ -12,7 +12,7 @@
 <div class="container">
     <div class="row mb-3">
         <div class="col-md-12">
-            <div class="form-row">
+            <div class="form-row d-flex justify-content-end">
                 <div class="col-12 col-md-2 mb-2">
                     <input class="form-control form-control" id="name-search" type="text" placeholder="Tìm theo tên" />
                 </div>
@@ -41,7 +41,7 @@
                         <th class="text-center">Đến ngày</th>
                         <th class="text-center">Loại</th>
                         <th class="text-center">Trạng thái</th>
-                        <th class="text-center"></th>
+                        <th class="text-center" style="min-width:190px"></th>
                     </tr>
                 </thead>
             </table>
@@ -81,15 +81,15 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-3 col-form-label">Mô tả <span class="text-danger">*</span></label>
+                            <label class="col-3 col-form-label">Mô tả</label>
                             <div class="col-9">
-                                <textarea type="text" class="form-control" name="description" id="description" required></textarea>
+                                <textarea type="text" class="form-control" name="description" id="description"></textarea>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-3 col-form-label">Ghi chú <span class="text-danger">*</span></label>
+                            <label class="col-3 col-form-label">Ghi chú</label>
                             <div class="col-9">
-                                <textarea type="text" class="form-control" name="note" id="note" required></textarea>
+                                <textarea type="text" class="form-control" name="note" id="note"></textarea>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -263,7 +263,12 @@
                         $('#modal-input').modal('hide');
                     }
                     else {
-                        toastError('Có lỗi xảy ra');
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
                         console.log(res);
                     }
                 }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -323,6 +328,12 @@
                     $('#modal-yes-no-close').modal('hide');
                 }
                 else {
+                    try {
+                        let content = JSON.parse(res.content);
+                        toastError(content.message);
+                    } catch {
+                        toastError('Có lỗi xảy ra');
+                    }
                     console.log(res);
                 }
             }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -350,7 +361,12 @@
                     $('#modal-yes-no').modal('hide');
                 }
                 else {
-                    toastError('Có lỗi xảy ra');
+                    try {
+                        let content = JSON.parse(res.content);
+                        toastError(content.message);
+                    } catch {
+                        toastError('Có lỗi xảy ra');
+                    }
                     console.log(res);
                 }
             }).fail(function (jqXHR, textStatus, errorThrown) {

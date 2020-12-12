@@ -28,19 +28,23 @@ namespace nuce.web.api.Services.Survey.Implements
             _statusContext = statusContext;
         }
 
-        public async Task<string> GetTheSurveyContent(string studentCode, string id)
+        public async Task<string> GetTheSurveyContent(string studentCode, Guid theSurveyId)
         {
-            var baiKSSinhViens = await _context.AsEduSurveyGraduateBaiKhaoSatSinhVien.Where(o => o.StudentCode == studentCode).ToListAsync();
-            var baiKS = baiKSSinhViens.FirstOrDefault(o => o.BaiKhaoSatId.ToString() == id);
-            if (baiKS == null)
+            var baiKSSinhViens = await _context.AsEduSurveyGraduateBaiKhaoSatSinhVien.Where(o => o.StudentCode == studentCode && (o.Status != (int)SurveyStudentStatus.Close || o.Status != (int)SurveyStudentStatus.Done)).ToListAsync();
+            var baiKSsv = baiKSSinhViens.FirstOrDefault(o => o.BaiKhaoSatId == theSurveyId);
+            if (baiKSsv == null)
             {
-                throw new RecordNotFoundException("Sinh viên không có bài khảo sát này");
+                throw new RecordNotFoundException("Sinh viên không có bài khảo sát này hoặc bài khảo sát đã kết thúc");
             }
-            baiKS.Status = (int)SurveyStudentStatus.Doing;
-            baiKS.NgayGioBatDau = DateTime.Now;
-            await _context.SaveChangesAsync();
 
-            var theSurvey = await _context.AsEduSurveyGraduateBaiKhaoSat.FirstOrDefaultAsync(o => o.Id.ToString() == id);
+            if (baiKSsv.Status != (int)SurveyStudentStatus.Doing)
+            {
+                baiKSsv.Status = (int)SurveyStudentStatus.Doing;
+                baiKSsv.NgayGioBatDau = DateTime.Now;
+                await _context.SaveChangesAsync();
+            }
+
+            var theSurvey = await _context.AsEduSurveyGraduateBaiKhaoSat.FirstOrDefaultAsync(o => o.Id == theSurveyId);
             if (theSurvey == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy bài khảo sát");
@@ -124,8 +128,8 @@ namespace nuce.web.api.Services.Survey.Implements
                             {
                                 Id = Guid.NewGuid(),
                                 BaiKhaoSatId = theSurvey.Id,
-                                DepartmentCode = student?.Manganh ?? "",
-                                StudentCode = student?.ExMasv ?? "",
+                                DepartmentCode = student.Manganh ?? "",
+                                StudentCode = student.ExMasv ?? "",
                                 DeThi = "",
                                 BaiLam = "",
                                 NgayGioBatDau = DateTime.Now,
@@ -229,8 +233,8 @@ namespace nuce.web.api.Services.Survey.Implements
             //kiểm tra đủ số câu hỏi bắt buộc
             var theSurvey = await _context.AsEduSurveyGraduateBaiKhaoSat.FirstOrDefaultAsync(o => o.Id == surveyStudent.BaiKhaoSatId);
             if (theSurvey == null)
-            {                throw new RecordNotFoundException("Không tìm thấy bài khảo sát");
-
+            {                
+                throw new RecordNotFoundException("Không tìm thấy bài khảo sát");
             }
 
             var examQuestions = await _context.AsEduSurveyDeThi.FirstOrDefaultAsync(o => o.Id == theSurvey.DeThiId);

@@ -33,7 +33,7 @@ namespace nuce.web.api.Services.Survey.Implements
             var recordsFiltered = join.Count();
 
             var querySkip = join
-                .OrderBy(u => u.baikhaosat.Id)
+                .OrderByDescending(u => u.baikhaosat.FromDate)
                 .Skip(skip).Take(take)
                 .Select(o => new GraduateTheSurvey
                 {
@@ -62,7 +62,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
         public async Task Create(GraduateTheSurveyCreate theSurvey)
         {
-            var surveyRound = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == theSurvey.DotKhaoSatId && o.Status == (int)TheSurveyStatus.New);
+            var surveyRound = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == theSurvey.DotKhaoSatId && o.Status == (int)SurveyRoundStatus.Active);
             if(surveyRound == null)
             {
                 throw new RecordNotFoundException("Id đợt khảo sát không tồn tại");
@@ -91,8 +91,8 @@ namespace nuce.web.api.Services.Survey.Implements
                 DapAn = examQuestion.DapAn,
                 FromDate = theSurvey.FromDate.Value,
                 EndDate = theSurvey.EndDate.Value,
-                Description = theSurvey.Description != null ? theSurvey.Description.Trim() : null,
-                Note = theSurvey.Note != null ? theSurvey.Note.Trim() : null,
+                Description = theSurvey.Description?.Trim(),
+                Note = theSurvey.Note?.Trim(),
                 Status = (int)TheSurveyStatus.New,
                 Type = theSurvey.Type.Value,
             });
@@ -115,7 +115,7 @@ namespace nuce.web.api.Services.Survey.Implements
             //đổi đợt khảo sát
             if (theSurvey.DotKhaoSatId != theSurveyUpdate.DotKhaoSatId)
             {
-                var surveyRound = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == theSurvey.DotKhaoSatId && o.Status == (int)TheSurveyStatus.New);
+                var surveyRound = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == theSurvey.DotKhaoSatId && o.Status == (int)SurveyRoundStatus.Active);
                 if (surveyRound == null)
                 {
                     throw new RecordNotFoundException("Id đợt khảo sát không tồn tại");
@@ -146,8 +146,8 @@ namespace nuce.web.api.Services.Survey.Implements
             theSurveyUpdate.Name = theSurvey.Name.Trim();
             theSurveyUpdate.FromDate = theSurvey.FromDate.Value;
             theSurveyUpdate.EndDate = theSurvey.EndDate.Value;
-            theSurveyUpdate.Description = theSurvey.Description != null ? theSurvey.Description.Trim() : null;
-            theSurveyUpdate.Note = theSurvey.Note != null ? theSurvey.Note.Trim() : null;
+            theSurveyUpdate.Description = theSurvey.Description?.Trim();
+            theSurveyUpdate.Note = theSurvey.Note?.Trim();
             theSurveyUpdate.Type = theSurvey.Type.Value;
             await _context.SaveChangesAsync();
         }

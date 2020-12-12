@@ -168,7 +168,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpPut]
-        public async Task<IActionResult> CloseGraduateSurveyRound([Required(AllowEmptyStrings = false)] Guid? id)
+        public async Task<IActionResult> CloseSurveyRound([Required(AllowEmptyStrings = false)] Guid? id)
         {
             try
             {

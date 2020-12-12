@@ -1,11 +1,13 @@
 ﻿@using nuce.web.survey.student.Common
 @using nuce.web.survey.student.Models.JsonData
+@using Newtonsoft.Json;
 @model  List<QuestionJson>
 @{
     ViewData["Title"] = "Bài khảo sát";
 }
 
 @section Style {
+    <link rel="stylesheet" href="~/Content/css/star-rating.css" />
     <style>
         body {
             counter-reset: title-question-counter;
@@ -71,30 +73,68 @@
 
 @helper GenerateAnswer(QuestionJson question)
 {
+    bool displayLong = false;
+    if (question.Answers != null && (question.Answers.Count > 5 || question.Answers.Where(o => o.Content.Length > 30).Count() > 0))
+    {
+        displayLong = true;
+    }
+
     if (question.Type == QuestionType.SC)
     {
         foreach (var answer in question.Answers)
         {
-            <div class="col">
-                <div class="form-group">
-                    @* answerchildquestioncode để show hide câu hỏi con của đáp án *@
-                    <input questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
-                           @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "")/>
-                    <label class="text-dark">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+            if (displayLong)
+            {
+                <div class="col-12">
+                    <div class="d-flex">
+                        @* answerchildquestioncode để show hide câu hỏi con của đáp án *@
+                        <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
+                               @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "")
+                               @(answer.ShowQuestion != null ? $"showquestion={JsonConvert.SerializeObject(answer.ShowQuestion)}" : "")
+                               @(answer.HideQuestion != null ? $"hidequestion={JsonConvert.SerializeObject(answer.HideQuestion)}" : "") />
+                        <label class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+                    </div>
                 </div>
-            </div>
+            }
+            else
+            {
+                <div class="col">
+                    <div class="form-group mb-0">
+                        @* answerchildquestioncode để show hide câu hỏi con của đáp án *@
+                        <input questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
+                               @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "")
+                               @(answer.ShowQuestion != null ? $"showquestion={JsonConvert.SerializeObject(answer.ShowQuestion)}" : "")
+                               @(answer.HideQuestion != null ? $"hidequestion={JsonConvert.SerializeObject(answer.HideQuestion)}" : "") />
+                        <label class="text-dark">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+                    </div>
+                </div>
+            }
         }
     }
     else if (question.Type == QuestionType.MC)
     {
         foreach (var answer in question.Answers)
         {
-            <div class="col">
-                <div class="form-group">
-                    <input questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code" @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "") />
-                    <label class="text-dark">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+            if (displayLong)
+            {
+                <div class="col-12">
+                    <div class="d-flex">
+                        <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
+                               @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "") />
+                        <label class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+                    </div>
                 </div>
-            </div>
+            }
+            else
+            {
+                <div class="col">
+                    <div class="form-group mb-0">
+                        <input questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
+                               @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "") />
+                        <label class="text-dark">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+                    </div>
+                </div>
+            }
         }
     }
     else if (question.Type == QuestionType.SA)
@@ -102,6 +142,29 @@
         <div class="col">
             <div class="form-group">
                 <textarea class="form-control" style="min-height:100px;" questionCode="@question.Code" name="@question.Code"></textarea>
+            </div>
+        </div>
+    }
+    else if (question.Type == QuestionType.StarRating)
+    {
+        <div class="col">
+            <div class="d-flex justify-content-center">
+                <div class="rating">
+                    <input questionCode="@question.Code" id="rating5" type="radio" name="rating" value="5" hidden>
+                    <label class="fas fa-star" for="rating5"></label>
+
+                    <input questionCode="@question.Code" id="rating4" type="radio" name="rating" value="4" hidden>
+                    <label class="fas fa-star" for="rating4"></label>
+
+                    <input questionCode="@question.Code" id="rating3" type="radio" name="rating" value="3" hidden>
+                    <label class="fas fa-star" for="rating3"></label>
+
+                    <input questionCode="@question.Code" id="rating2" type="radio" name="rating" value="2" hidden>
+                    <label class="fas fa-star" for="rating2"></label>
+
+                    <input questionCode="@question.Code" id="rating1" type="radio" name="rating" value="1" hidden>
+                    <label class="fas fa-star" for="rating1"></label>
+                </div>
             </div>
         </div>
     }
@@ -115,14 +178,14 @@
             }
             @foreach (var question in Model)
             {
-                <div>
+                <div id="div-q-@question.Code">
                     <div class="form-group col-12 mb-0 pl-0 pr-0">
                         @* Câu hỏi chỉ là tiêu đề *@
                         @if (question.Type == QuestionType.T)
                         {
                             index--;
                             <label id="@question.Code" class="text-dark w-100 tag-child-inline question-title font-weight-bold text-uppercase">
-                              @Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(question.Content)))
+                                @Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(question.Content)))
                             </label>
                         }
                         else
@@ -242,7 +305,10 @@
                     element.AnswerCodes.forEach(function (c) {
                         $(`input[type=checkbox][questionCode=${element.QuestionCode}][answerCode=${c}]`).attr("checked", true);
                     });
-                } else if (element.AnswerContent != undefined) {
+                } else if (element.AnswerContent != undefined && (element.AnswerContent == "1" || element.AnswerContent == "2" || element.AnswerContent == "3" || element.AnswerContent == "4" || element.AnswerContent == "5")) {
+                    @* là câu hỏi star *@
+                    $(`input[type=radio][questionCode=${element.QuestionCode}][value=${element.AnswerContent}]`).attr('checked', true);
+                } else if (element.AnswerContent !== undefined && element.AnswerContent !== "") {
                     $(`textarea[questionCode=${element.QuestionCode}]`).val(element.AnswerContent);
                 }
             });
@@ -270,18 +336,16 @@
                         url: '/home/AutoSave',
                         timeout: 0,
                         complete: () => {}
-                    }).done(function (data) {
+                    }).done(function (res) {
                         console.log('radio');
-                        if (data.type == "error") {
-                            console.log(data.message, data.detailMessage);
-                        }
+                        console.log(res);
                     }).fail(function (jqXHR, textStatus, errorThrown) {
                         $('#loading-screen').hide();
                         console.log(textStatus + ': ' + errorThrown);
                         console.log(jqXHR);
                     });
                 }
-                seft.click(handle);
+                seft.change(handle);
             });
 
             $('input[type=checkbox]').each(function () {
@@ -302,17 +366,15 @@
                         url: '/home/AutoSave',
                         timeout: 0,
                         complete: () => { }
-                    }).done(function (data) {
+                    }).done(function (res) {
                         console.log('checkbox');
-                        if (data.type == "error") {
-                            console.log(data.message, data.detailMessage);
-                        }
+                        console.log(res);
                     }).fail(function (jqXHR, textStatus, errorThrown) {
                         console.log(textStatus + ': ' + errorThrown);
                         console.log(jqXHR);
                     });
                 }
-                seft.click(handle);
+                seft.change(handle);
             });
 
             $('textarea').each(function () {
@@ -326,11 +388,9 @@
                             url: '/home/AutoSave',
                             timeout: 0,
                             complete: () => { }
-                        }).done(function (data) {
+                        }).done(function (res) {
                             console.log('textarea');
-                            if (data.type == "error") {
-                                console.log(data.message, data.detailMessage);
-                            }
+                            console.log(res);
                         }).fail(function (jqXHR, textStatus, errorThrown) {
                             console.log(textStatus + ': ' + errorThrown);
                             console.log(jqXHR);
@@ -347,15 +407,14 @@
                     method: 'Post',
                     url: '/home/TheSurveySubmit',
                     timeout: 0,
-                    complete: () => {
-                    }
-                }).done(function (data) {
+                    complete: () => {}
+                }).done(function (res) {
                     $('#loading-screen').hide();
-                    if (data.type == "success") {
+                    if (res.statusCode === 200) {
                         location.href = '/home';
                     }
-                    else if (data.type == "error") {
-                        console.log(data.message);
+                    else {
+                        console.log(res);
                     }
                 }).fail(function (jqXHR, textStatus, errorThrown) {
                     $('#loading-screen').hide();
@@ -368,6 +427,11 @@
                 let questions = JSON.parse(str);
                 let hasChecked = false;
                 for (let i = 0; i < questions.length; i++) {
+                    @* Nếu không visible thì bỏ qua *@
+                    if (!$(`#div-q-${questions[i].Code}`).is(":visible")) {
+                        continue;
+                    }
+
                     if (questions[i].Type === "@QuestionType.SC" || questions[i].Type === "@QuestionType.MC") {
                         hasChecked = false;
                         $(`input[questionCode="${questions[i].Code}"]`).each(function () {
@@ -390,6 +454,39 @@
                 } else {
                     $('#modal-alert').modal('show');
                 }
+            });
+
+            $('input[showquestion]').each(function () {
+                let seft = $(this);
+                let proSeft = this;
+                let showQuestions = JSON.parse(seft.attr('showquestion'));
+
+                if (proSeft.checked == false) {
+                    showQuestions.forEach(item => {
+                        $('#' + 'div-q-' + item).hide();
+                    });
+                }
+                seft.change(() => {
+                    showQuestions.forEach(item => {
+                        $('#' + 'div-q-' + item).show();
+                    });
+                });
+            });
+
+            $('input[hidequestion]').each(function () {
+                let seft = $(this);
+                let proSeft = this;
+                let hideQuestions = JSON.parse(seft.attr('hidequestion'));
+                if (proSeft.checked == false) {
+                    hideQuestions.forEach(item => {
+                        $('#' + 'div-q-' + item).show();
+                    });
+                }
+                seft.change(() => {
+                    hideQuestions.forEach(item => {
+                        $('#' + 'div-q-' + item).hide();
+                    });
+                });
             });
         </script>
     }

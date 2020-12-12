@@ -29,6 +29,7 @@ namespace nuce.web.api.Models.EduData
         public virtual DbSet<AsAcademyStudent> AsAcademyStudent { get; set; }
         public virtual DbSet<AsAcademyStudentClassRoom> AsAcademyStudentClassRoom { get; set; }
         public virtual DbSet<AsAcademySubject> AsAcademySubject { get; set; }
+        public virtual DbSet<AsAcademySubjectExtend> AsAcademySubjectExtend { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -370,6 +371,19 @@ namespace nuce.web.api.Models.EduData
                 entity.Property(e => e.Name).HasMaxLength(100);
 
                 entity.Property(e => e.SemesterId).HasColumnName("SemesterID");
+            });
+
+            modelBuilder.Entity<AsAcademySubjectExtend>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("AS_Academy_Subject_Extend");
+
+                entity.Property(e => e.Code)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Name).HasMaxLength(300);
             });
 
             OnModelCreatingPartial(modelBuilder);
