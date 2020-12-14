@@ -107,7 +107,7 @@ namespace nuce.web.api.Services.Survey.Implements
             var record = await _context.AsEduSurveyGraduateStudent.FirstOrDefaultAsync(o => o.Id.ToString() == id);
             if (record == null)
             {
-                throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
+                throw new RecordNotFoundException("Không tìm thấy sinh viên");
             }
             return record;
         }

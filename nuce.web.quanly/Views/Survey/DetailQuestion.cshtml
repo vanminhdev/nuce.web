@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="~/content/css/bootstrap-select.min.css" />
 }
 
-<form method="post" class="container-fluid service-categories-wrp mt-2">
+<form method="post" class="container mt-2">
     <a class="update-btn text-light p-2" style="text-decoration: none;" href="/survey/question">← Quay lại danh sách</a>
 
     <div class="fw-700 text-uppercase font-15-sm font-25 mb-2 mt-3">
@@ -87,11 +87,9 @@
         </div>
 
         <div class="col-12 form-group d-flex justify-content-center">
-            <div class="col-12 col-md-3">
-                <button type="submit" formaction="/Survey/UpdateQuestion" class="update-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2 mt-2">
-                    cập nhật
-                </button>
-            </div>
+            <button type="submit" formaction="/Survey/UpdateQuestion" class="btn btn-primary">
+                cập nhật
+            </button>
         </div>
     </div>
 </form>

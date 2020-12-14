@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
+using nuce.web.api.Helper;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.Services.Survey.Interfaces;
@@ -120,6 +121,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
                         await fileUpload.CopyToAsync(stream);
                     }
                     await ReadFileUpload(filePath, surveyRoundId.Value);
+                    System.IO.File.Delete(filePath);
                 }
                 catch (Exception e)
                 {
@@ -133,23 +135,6 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             {
                 return BadRequest(new { message = $"file lớn hơn {(long)(maxSize/1024)} KB" });
             }
-        }
-
-        private string ConvertToLatin(string s)
-        {
-            string stFormD = s.Normalize(NormalizationForm.FormD);
-            StringBuilder sb = new StringBuilder();
-            for (int ich = 0; ich < stFormD.Length; ich++)
-            {
-                System.Globalization.UnicodeCategory uc = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(stFormD[ich]);
-                if (uc != System.Globalization.UnicodeCategory.NonSpacingMark)
-                {
-                    sb.Append(stFormD[ich]);
-                }
-            }
-            sb = sb.Replace('Đ', 'D');
-            sb = sb.Replace('đ', 'd');
-            return (sb.ToString().Normalize(NormalizationForm.FormD));
         }
 
         private async Task ReadFileUpload(string filepath, Guid surveyRoundId)
@@ -199,7 +184,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
                     Xeploai = xeploai,
                     Ngaysinh = ngaysinh,
                     ExMasv = masv,
-                    Psw = ConvertToLatin(hovaten).Replace(" ", "").ToLower(),
+                    Psw = StringHelper.ConvertToLatin(hovaten).Replace(" ", "").ToLower(),
                     DotKhaoSatId = surveyRoundId,
                     Type = 1,
                     Status = 1

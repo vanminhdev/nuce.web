@@ -52,68 +52,6 @@
     </div>
 </div>
 
-<div class="modal fade bd-example-modal-lg auto-clear-form-on-open" id="modal-input" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modal-title">Thêm đợt khảo sát</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="container-fluid">
-                    <form id="form-data" class="auto-validate">
-                        <input name="id" hidden />
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Tên đợt khảo sát</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" name="name" id="name" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Từ ngày</label>
-                            <div class="col-sm-10">
-                                <input type="date" class="form-control" name="fromDate" id="fromDate" required data-rule-dateLessThanOrEqual="#endDate">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Đến ngày</label>
-                            <div class="col-sm-10">
-                                <input type="date" class="form-control" name="endDate" id="endDate" required data-rule-dateGreaterThanOrEqual="#fromDate">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Mô tả</label>
-                            <div class="col-sm-10">
-                                <textarea type="text" class="form-control" name="description" id="description" required></textarea>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Ghi chú</label>
-                            <div class="col-sm-10">
-                                <textarea type="text" class="form-control" name="note" id="note" required></textarea>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Loại</label>
-                            <div class="col-sm-10">
-                                <select class="form-control selectpicker custom-boostrap-select" name="type" id="type" data-rule-onlyAcceptListValue="1" >
-                                    <option value="1">Đánh giá chất lượng giảng dạy</option>
-                                </select>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
-                <button type="button" class="btn btn-primary" id="save-changes" type-handle="create">Lưu</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="modal fade" id="modal-yes-no" tabindex="-1" role="dialog" aria-labelledby="modal-yes-no" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -259,7 +197,7 @@
                 contentType: false,
                 processData: false,
                 method: 'Post',
-                url: '/Survey/UploadFile',
+                url: '/Survey/UploadFileGraudate',
             }).done(function (res) {
                 if (res.statusCode === 200) {
                     toastSuccess('Lưu thành công');
@@ -275,69 +213,6 @@
                 console.log(jqXHR);
             });
         });
-
-        let saveChanges = $('#save-changes');
-        saveChanges.click(function () {
-            let form = $('#form-data');
-            if (form.valid()) {
-                let url;
-                if (saveChanges.attr('type-handle') === 'create') {
-                    url = '/Survey/CreateGraduateSurveyRound';
-                } else if (saveChanges.attr('type-handle') === 'update') {
-                    url = '/Survey/UpdateGraduateSurveyRound';
-                }
-                $.ajax({
-                    data: getFormData('#form-data'),
-                    dataType: 'json',
-                    method: 'Post',
-                    url: url,
-                    complete: () => { }
-                }).done(function (res) {
-                    if (res.statusCode === 200) {
-                        table.ajax.reload();
-                        $('#modal-input').modal('hide');
-                    }
-                    else {
-                        console.log(res);
-                    }
-                }).fail(function (jqXHR, textStatus, errorThrown) {
-                    console.log(textStatus + ': ' + errorThrown);
-                    console.log(jqXHR);
-                });
-            }
-        });
-
-        function createClick() {
-            $('#modal-input').modal('show');
-            $('#modal-title').html('Thêm đợt khảo sát');
-            saveChanges.attr('type-handle', 'create');
-        }
-
-        function updateClick(id) {
-            $('#modal-input').modal('show');
-            $('#modal-title').html('Cập nhật đợt khảo sát');
-            saveChanges.attr('type-handle', 'update');
-            $.ajax({
-                dataType: 'json',
-                method: 'Get',
-                url: `/Survey/GetGraduateSurveyRoundById?id=${id}`,
-                timeout: 0,
-                complete: () => { }
-            }).done(function (res) {
-                if (res.statusCode === 200) {
-                    if (res.content != "") {
-                        let content = JSON.parse(res.content);
-                        fillFormData('#form-data', content);
-                    }
-                }
-                else {
-                    console.log(res);
-                }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.log(textStatus + ': ' + errorThrown);
-                console.log(jqXHR);
-            });
-        }
 
         $('#delete-all').click(() => {
             $('#modal-yes-no').modal('show');

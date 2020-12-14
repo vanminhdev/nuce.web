@@ -8,13 +8,11 @@ namespace nuce.web.api.Services.Survey.Interfaces
 {
     public interface IAsEduSurveyBaiKhaoSatSinhVienService
     {
-        public Task SaveSelectedAnswer(string id, string ipAddress);
-        public Task<Guid> GetIdByCode(string studentCode, string classroomCode);
-        public Task GenerateTheSurveyStudent();
+        public Task SaveSelectedAnswer(string studentCode, string classroomCode, string ipAddress);
         public Task<int> GetGenerateTheSurveyStudentStatus();
         public Task<List<TheSurveyStudent>> GetTheSurvey(string studentCode);
-        public Task<string> GetTheSurveyJsonStringByBaiKhaoSatId(string id);
+        public Task<string> GetTheSurveyContent(string studentCode, string classroomCode, Guid theSurveyId);
         public Task<string> GetSelectedAnswerAutoSave(string studentCode, string classroomCode);
-        public Task AutoSave(string id, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, bool isAnswerCodesAdd = true);
+        public Task AutoSave(string studentCode, string classroomCode, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, bool isAnswerCodesAdd = true);
     }
 }

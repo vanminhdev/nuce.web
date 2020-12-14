@@ -35,9 +35,10 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using nuce.web.api.Models.Status;
 using nuce.web.api.Services.Status.Interfaces;
 using nuce.web.api.Services.Status.Implements;
-using nuce.web.api.Services.Background;
 using System.Net;
 using nuce.web.api.Middlewares;
+using nuce.web.api.Services.Background;
+using nuce.web.api.Services.Survey.BackgroundTasks;
 
 namespace nuce.web.api
 {
@@ -207,12 +208,20 @@ namespace nuce.web.api
             services.AddScoped<IAsEduSurveyDotKhaoSatService, AsEduSurveyDotKhaoSatService>();
             services.AddScoped<IAsEduSurveyBaiKhaoSatService, AsEduSurveyBaiKhaoSatService>();
             services.AddScoped<IAsEduSurveyBaiKhaoSatSinhVienService, AsEduSurveyBaiKhaoSatSinhVienService>();
+            services.AddScoped<BaiKhaoSatSinhVienBackgroundTask>();
             services.AddScoped<IAsEduSurveyReportTotalService, AsEduSurveyReportTotalService>();
 
             services.AddScoped<IAsEduSurveyGraduateStudentService, AsEduSurveyGraduateStudentService>();
             services.AddScoped<IAsEduSurveyGraduateDotKhaoSatService, AsEduSurveyGraduateDotKhaoSatService>();
             services.AddScoped<IAsEduSurveyGraduateBaiKhaoSatService, AsEduSurveyGraduateBaiKhaoSatService>();
             services.AddScoped<IAsEduSurveyGraduateBaiKhaoSatSinhVienService, AsEduSurveyGraduateBaiKhaoSatSinhVienService>();
+
+            services.AddScoped<IAsEduSurveyUndergraduateStudentService, AsEduSurveyUndergraduateStudentService>();
+            services.AddScoped<IAsEduSurveyUndergraduateDotKhaoSatService, AsEduSurveyUndergraduateDotKhaoSatService>();
+            services.AddScoped<IAsEduSurveyUndergraduateBaiKhaoSatService, AsEduSurveyUndergraduateBaiKhaoSatService>();
+            services.AddScoped<IAsEduSurveyUndergraduateBaiKhaoSatSinhVienService, AsEduSurveyUndergraduateBaiKhaoSatSinhVienService>();
+
+            services.AddScoped<SurveyStatisticBackgroundTask>();
             #endregion
             #region sync edu database service
             services.AddScoped<ISyncEduDatabaseService, SyncEduDatabaseService>();
@@ -240,6 +249,12 @@ namespace nuce.web.api
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IParameterService, ParameterService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            #endregion
+
+            #region background
+            services.AddSingleton<BackgroundTaskWorkder>();
+            services.AddHostedService<QueuedHostedService>();
+            services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
             #endregion
         }
 

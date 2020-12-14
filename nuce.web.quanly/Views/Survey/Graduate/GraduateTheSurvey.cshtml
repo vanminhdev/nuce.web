@@ -44,7 +44,7 @@
                         <th class="text-center">Ghi chú</th>
                         <th class="text-center">Loại</th>
                         <th class="text-center">Trạng thái</th>
-                        <th class="text-center"></th>
+                        <th class="text-center" style="min-width:190px"></th>
                     </tr>
                 </thead>
             </table>
@@ -132,15 +132,14 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modal-yes-no-title">Xác nhận xoá</h5>
+                <h5 class="modal-title" id="modal-yes-no-title">Xác nhận</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body" id="modal-yes-no-content">
-                Xoá bài khảo sát ?
+                
             </div>
-            <input id="delete-id" name="id" hidden />
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
                 <button id="choose-yes" type="button" class="btn btn-primary">Có</button>
@@ -248,9 +247,12 @@
                             html += `<button class="btn btn btn-outline-success ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
                             if (tableTheSurveyStudentStatus !== @((int)TableTaskStatus.Doing)) {
                                 html += `<button class="btn btn btn-outline-primary ml-1 mr-1" onclick="publishClick('${data.id}')">Xuất bản</button>`;
+                            } else {
+                                html += `<button class="btn btn btn-outline-secondary ml-1 mr-1" disabled title="Bảng đang làm việc thử lại sau">Xuất bản</button>`;
                             }
                         } else if (data.status === @((int)TheSurveyStatus.Published)) {
                             //đã xuất bản
+                            html += `<button class="btn btn btn-outline-warning ml-1 mr-1" onclick="closeClick('${data.id}')">Kết thúc</button>`;
                         }
                         if (data.status === @((int)TheSurveyStatus.Deactive)) {
                             html += `<button class="btn btn btn-outline-danger ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
@@ -295,7 +297,12 @@
                         toastWarning(content.detailMessage);
                     }
                     else {
-                        toastError('Có lỗi xảy ra');
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
                         console.log(res);
                     }
                 }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -338,54 +345,98 @@
         }
 
         function publishClick(id) {
-            $.ajax({
-                data: { id },
-                dataType: 'json',
-                method: 'Post',
-                url: '/Survey/GenerateTheSurveyStudent',
-                complete: () => { }
-            }).done(function (res) {
-                if (res.statusCode === 200) {
-                    toastSuccess('Xuất bản thành công');
-                    table.ajax.reload();
-                }
-                else {
-                    toastError('Có lỗi xảy ra');
-                    console.log(res);
-                }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.log(textStatus + ': ' + errorThrown);
-                console.log(jqXHR);
+            $('#modal-yes-no-content').html('Xuất bản bài khảo sát ?');
+            $('#modal-yes-no').modal('show');
+            $('#choose-yes').off("click");
+            $('#choose-yes').click(() => {
+                $.ajax({
+                    data: { id },
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/GenerateGraduateTheSurveyStudent',
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        $('#modal-yes-no').modal('hide');
+                        toastSuccess('Xuất bản thành công');
+                        table.ajax.reload();
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+        }
+
+        function closeClick(id) {
+            $('#modal-yes-no-content').html('Kết thúc bài khảo sát ?');
+            $('#modal-yes-no').modal('show');
+            $('#choose-yes').off("click");
+            $('#choose-yes').click(() => {
+                $.ajax({
+                    data: { id },
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/CloseGraduateTheSurvey',
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        $('#modal-yes-no').modal('hide');
+                        toastSuccess('Kết thúc thành công');
+                        table.ajax.reload();
+                    }
+                    else {
+                        toastError('Có lỗi xảy ra');
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
             });
         }
 
         function deleteClick(id) {
+            $('#modal-yes-no-content').html('Xoá bài khảo sát ?');
             $('#modal-yes-no').modal('show');
-            $('#delete-id').val(id);
-        }
-
-        $('#choose-yes').click(function () {
-            $.ajax({
-                data: { id: $('#delete-id').val() },
-                dataType: 'json',
-                method: 'Post',
-                url: '/Survey/DeleteGraduateTheSurvey',
-                complete: () => { }
-            }).done(function (res) {
-                if (res.statusCode === 200) {
-                    toastSuccess('Xoá thành công');
-                    table.ajax.reload();
-                    $('#modal-yes-no').modal('hide');
-                }
-                else {
-                    toastError('Có lỗi xảy ra');
-                    console.log(res);
-                }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.log(textStatus + ': ' + errorThrown);
-                console.log(jqXHR);
+            $('#choose-yes').off("click");
+            $('#choose-yes').click(() => {
+                $.ajax({
+                    data: { id },
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/DeleteGraduateTheSurvey',
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        $('#modal-yes-no').modal('hide');
+                        toastSuccess('Xoá thành công');
+                        table.ajax.reload();
+                        $('#modal-yes-no').modal('hide');
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
             });
-        });
-
+        }
     </script>
 }

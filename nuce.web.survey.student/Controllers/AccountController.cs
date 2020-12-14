@@ -19,10 +19,10 @@ namespace nuce.web.survey.student.Controllers
         public ActionResult Login()
         {
             //Khi access token hết hạn thì vào trang home sẽ được cấp mới
-            if (Request.Cookies[UserParameters.JwtRefreshToken] != null)
-            {
-                return Redirect("/home");
-            }
+            //if (Request.Cookies[UserParameters.JwtRefreshToken] != null)
+            //{
+            //    return Redirect("/home");
+            //}
             return View(new LoginModel());
         }
 

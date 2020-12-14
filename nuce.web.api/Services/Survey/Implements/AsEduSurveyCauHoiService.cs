@@ -56,7 +56,8 @@ namespace nuce.web.api.Services.Survey.Implements
                     Code = q.Code,
                     Content = HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(q.Content)),
                     Type = q.Type,
-                    Order = q.Order
+                    Order = q.Order,
+                    ParentCode = q.ParentCode
                 })
                 .ToListAsync();
 

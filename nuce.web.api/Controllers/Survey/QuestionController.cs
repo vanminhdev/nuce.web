@@ -40,7 +40,7 @@ namespace nuce.web.api.Controllers.Survey
             {
                 filter.Code = request.Columns.FirstOrDefault(c => c.Data == "code")?.Search.Value ?? null;
                 filter.Content = request.Columns.FirstOrDefault(c => c.Data == "content")?.Search.Value ?? null;
-                filter.Type = request.Columns.FirstOrDefault(c => c.Data == "type")?.Search.Value ?? null;
+                filter.Type = request.Columns.FirstOrDefault(c => c.Data == "type" || c.Name == "type")?.Search.Value ?? null;
             }
             var skip = request.Start;
             var take = request.Length;

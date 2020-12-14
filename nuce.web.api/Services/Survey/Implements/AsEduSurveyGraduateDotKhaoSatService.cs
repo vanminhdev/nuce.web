@@ -35,7 +35,7 @@ namespace nuce.web.api.Services.Survey.Implements
             var recordsFiltered = query.Count();
 
             var querySkip = query
-                .OrderBy(u => u.Id)
+                .OrderByDescending(u => u.FromDate)
                 .Skip(skip).Take(take);
 
             var data = await querySkip.ToListAsync();
@@ -48,10 +48,10 @@ namespace nuce.web.api.Services.Survey.Implements
             };
         }
 
-        public async Task<AsEduSurveyGraduateSurveyRound> GetSurveyRoundById(string id)
+        public async Task<AsEduSurveyGraduateSurveyRound> GetSurveyRoundById(Guid id)
         {
             _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            var surveyRound = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id.ToString() == id && o.Status != (int)SurveyRoundStatus.Deleted);
+            var surveyRound = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == id && o.Status != (int)SurveyRoundStatus.Deleted);
             if(surveyRound == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
@@ -67,17 +67,17 @@ namespace nuce.web.api.Services.Survey.Implements
                 Name = surveyRound.Name.Trim(),
                 FromDate = surveyRound.FromDate.Value,
                 EndDate = surveyRound.EndDate.Value,
-                Description = surveyRound?.Description.Trim() ?? "",
-                Note = surveyRound?.Note.Trim() ?? "",
+                Description = surveyRound.Description?.Trim(),
+                Note = surveyRound.Note?.Trim(),
                 Status = (int)SurveyRoundStatus.Active,
                 Type = surveyRound.Type.Value
             });
             await _context.SaveChangesAsync();
         }
 
-        public async Task Update(string id, GraduateSurveyRoundUpdate surveyRound)
+        public async Task Update(Guid id, GraduateSurveyRoundUpdate surveyRound)
         {
-            var surveyRoundUpdate = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id.ToString() == id && o.Status != (int)SurveyRoundStatus.Deleted);
+            var surveyRoundUpdate = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == id && o.Status != (int)SurveyRoundStatus.Deleted);
             if(surveyRoundUpdate == null)
             {
                 throw new RecordNotFoundException();
@@ -91,15 +91,15 @@ namespace nuce.web.api.Services.Survey.Implements
             surveyRoundUpdate.Name = surveyRound.Name.Trim();
             surveyRoundUpdate.FromDate = surveyRound.FromDate.Value;
             surveyRoundUpdate.EndDate = surveyRound.EndDate.Value;
-            surveyRoundUpdate.Description = surveyRound?.Description.Trim() ?? "";
-            surveyRoundUpdate.Note = surveyRound?.Note.Trim() ?? "";
+            surveyRoundUpdate.Description = surveyRound.Description?.Trim();
+            surveyRoundUpdate.Note = surveyRound.Note?.Trim();
             surveyRoundUpdate.Type = surveyRound.Type.Value;
             await _context.SaveChangesAsync();
         }
 
-        public async Task Delete(string id)
+        public async Task Delete(Guid id)
         {
-            var surveyRoundUpdate = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id.ToString() == id && o.Status != (int)SurveyRoundStatus.Deleted);
+            var surveyRoundUpdate = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == id && o.Status != (int)SurveyRoundStatus.Deleted);
             if (surveyRoundUpdate == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
@@ -114,9 +114,9 @@ namespace nuce.web.api.Services.Survey.Implements
             await _context.SaveChangesAsync();
         }
 
-        public async Task Close(string id)
+        public async Task Close(Guid id)
         {
-            var surveyRound = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id.ToString() == id && o.Status != (int)SurveyRoundStatus.Deleted);
+            var surveyRound = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == id && o.Status != (int)SurveyRoundStatus.Deleted);
             if (surveyRound == null)
             {
                 throw new RecordNotFoundException();
@@ -128,7 +128,7 @@ namespace nuce.web.api.Services.Survey.Implements
             {
                 item.Status = (int)TheSurveyStatus.Deactive;
                 //kết thúc tất cả bài khảo sát sinh viên là con của đợt khảo sát này
-                _context.Database.ExecuteSqlRaw($"update AS_Edu_Survey_Graduate_BaiKhaoSat_SinhVien set Status = {SurveyStudentStatus.Close} where BaiKhaoSatID = '{item.Id}'");
+                await _context.Database.ExecuteSqlRawAsync($"update AS_Edu_Survey_Graduate_BaiKhaoSat_SinhVien set Status = {(int)SurveyStudentStatus.Close} where BaiKhaoSatID = '{item.Id}'");
             }
             await _context.SaveChangesAsync();
         }

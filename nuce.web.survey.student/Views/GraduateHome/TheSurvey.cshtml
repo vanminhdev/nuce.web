@@ -3,7 +3,7 @@
 @using Newtonsoft.Json;
 @model  List<QuestionJson>
 @{
-    ViewData["Title"] = "Bài khảo sát";
+    ViewData["Title"] = "Bài khảo sát cựu sinh viên";
 }
 
 @section Style {
@@ -17,9 +17,9 @@
             counter-increment: title-question-counter;
         }
 
-            .question-title:before {
-                content: counter(title-question-counter, upper-roman)". ";
-            }
+        .question-title:before {
+            content: counter(title-question-counter, upper-roman)". ";
+        }
 
         .tag-child-inline > * {
             display: inline;
@@ -74,7 +74,7 @@
 @helper GenerateAnswer(QuestionJson question)
 {
     bool displayLong = false;
-    if (question.Answers != null && (question.Answers.Count > 5 || question.Answers.Where(o => o.Content.Length > 20).Count() > 0))
+    if (question.Answers != null && (question.Answers.Count > 5 || question.Answers.Where(o => o.Content.Length > 30).Count() > 0))
     {
         displayLong = true;
     }
@@ -249,7 +249,7 @@
                 index++;
             }
         </div>
-        <div class="col-12 d-flex justify-content-center">
+        <div class="col-12 d-flex justify-content-center mt-4">
             <button id="submit-survey" class="btn btn-primary">Nộp</button>
         </div>
     </div>
@@ -313,7 +313,7 @@
                 } else if (element.AnswerContent != undefined && (element.AnswerContent == "1" || element.AnswerContent == "2" || element.AnswerContent == "3" || element.AnswerContent == "4" || element.AnswerContent == "5" )) {
                     @* là câu hỏi star *@
                     $(`input[type=radio][questionCode=${element.QuestionCode}][value=${element.AnswerContent}]`).attr('checked', true);
-                } else if (element.AnswerContent != undefined) {
+                } else if (element.AnswerContent !== undefined && element.AnswerContent !== "") {
                     $(`textarea[questionCode=${element.QuestionCode}]`).val(element.AnswerContent);
                 }
             });
@@ -400,7 +400,7 @@
                             console.log(textStatus + ': ' + errorThrown);
                             console.log(jqXHR);
                         });
-                    }, 3000)
+                    }, 1500)
                 );
             });
             $('#choose-yes').click(() => {
@@ -410,18 +410,19 @@
                     data: { theSurveyId: '@ViewData["TheSurveyId"]' },
                     dataType: 'json',
                     method: 'Post',
-                    url: '/home/TheSurveySubmit',
+                    url: '/GraduateHome/TheSurveySubmit',
                     timeout: 0,
                     complete: () => {
                     }
-                }).done(function (data) {
+                }).done(function (res) {
                     $('#loading-screen').hide();
-                    if (data.type == "success") {
-                        location.href = '/home';
+                    if (res.statusCode === 200) {
+                        location.href = '/graduatehome';
                     }
-                    else if (data.type == "error") {
-                        console.log(data.message);
+                    else {
+                        console.log(res);
                     }
+                    console.log(res);
                 }).fail(function (jqXHR, textStatus, errorThrown) {
                     $('#loading-screen').hide();
                     console.log(textStatus + ': ' + errorThrown);
@@ -434,6 +435,11 @@
                 let questions = JSON.parse(str);
                 let hasChecked = false;
                 for (let i = 0; i < questions.length; i++) {
+                    @* Nếu không visible thì bỏ qua *@
+                    if (!$(`#div-q-${questions[i].Code}`).is(":visible")) {
+                        continue;
+                    }
+
                     if (questions[i].Type === "@QuestionType.SC" || questions[i].Type === "@QuestionType.MC") {
                         hasChecked = false;
                         $(`input[questionCode="${questions[i].Code}"]`).each(function () {

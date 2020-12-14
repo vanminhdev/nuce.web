@@ -1,17 +1,28 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using nuce.web.api.Attributes.ValidationAttributes;
+using nuce.web.api.Common;
 using nuce.web.api.HandleException;
+using nuce.web.api.Models.EduData;
+using nuce.web.api.Models.Status;
+using nuce.web.api.Models.Survey;
+using nuce.web.api.Services.Background;
 using nuce.web.api.Services.Core.Interfaces;
+using nuce.web.api.Services.Status.Interfaces;
+using nuce.web.api.Services.Survey.BackgroundTasks;
 using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Survey;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace nuce.web.api.Controllers.Survey
@@ -25,13 +36,19 @@ namespace nuce.web.api.Controllers.Survey
     {
         private readonly ILogger<TheSurveyStudentController> _logger;
         private readonly IAsEduSurveyBaiKhaoSatSinhVienService _asEduSurveyBaiKhaoSatSinhVienService;
+        private readonly IStatusService _statusService;
         private readonly IUserService _userService;
+        private readonly BaiKhaoSatSinhVienBackgroundTask _baiKhaoSatSinhVienBackgroundTask;
 
-        public TheSurveyStudentController(ILogger<TheSurveyStudentController> logger, IAsEduSurveyBaiKhaoSatSinhVienService asEduSurveyBaiKhaoSatSinhVienService, IUserService userService)
+        public TheSurveyStudentController(ILogger<TheSurveyStudentController> logger, IAsEduSurveyBaiKhaoSatSinhVienService asEduSurveyBaiKhaoSatSinhVienService, 
+            IUserService userService, IStatusService statusService,
+             BaiKhaoSatSinhVienBackgroundTask baiKhaoSatSinhVienBackgroundTask)
         {
             _logger = logger;
             _asEduSurveyBaiKhaoSatSinhVienService = asEduSurveyBaiKhaoSatSinhVienService;
             _userService = userService;
+            _baiKhaoSatSinhVienBackgroundTask = baiKhaoSatSinhVienBackgroundTask;
+            _statusService = statusService;
         }
 
         [HttpGet]
@@ -45,14 +62,13 @@ namespace nuce.web.api.Controllers.Survey
 
         [HttpGet]
         [Authorize(Roles = "Student")]
-        public async Task<IActionResult> GetTheSurveyContent(
-            [Required(AllowEmptyStrings = false)]
-            [NotContainWhiteSpace]
-            string id)
+        public async Task<IActionResult> GetTheSurveyContent([Required(AllowEmptyStrings = false)] Guid? id, [Required(AllowEmptyStrings = false)] string classroomCode)
         {
             try
             {
-                var result = await _asEduSurveyBaiKhaoSatSinhVienService.GetTheSurveyJsonStringByBaiKhaoSatId(id);
+                //mã sinh viên kiểm tra sinh viên có bài khảo sát đó thật không
+                var studentCode = _userService.GetCurrentStudentCode();
+                var result = await _asEduSurveyBaiKhaoSatSinhVienService.GetTheSurveyContent(studentCode, classroomCode, id.Value);
                 return Ok(result);
             }
             catch (RecordNotFoundException e)
@@ -88,8 +104,7 @@ namespace nuce.web.api.Controllers.Survey
             {
                 var studentCode = _userService.GetCurrentStudentCode();
                 var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-                var id = await _asEduSurveyBaiKhaoSatSinhVienService.GetIdByCode(studentCode, content.ClassRoomCode);
-                await _asEduSurveyBaiKhaoSatSinhVienService.AutoSave(id.ToString(), content.QuestionCode, content.AnswerCode, content.AnswerCodeInMulSelect,
+                await _asEduSurveyBaiKhaoSatSinhVienService.AutoSave(studentCode, content.ClassRoomCode, content.QuestionCode, content.AnswerCode, content.AnswerCodeInMulSelect,
                     content.AnswerContent, content.IsAnswerCodesAdd != null ? content.IsAnswerCodesAdd.Value : true);
             }
             catch (DbUpdateException e)
@@ -121,8 +136,7 @@ namespace nuce.web.api.Controllers.Survey
             {
                 var studentCode = _userService.GetCurrentStudentCode();
                 var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-                var id = await _asEduSurveyBaiKhaoSatSinhVienService.GetIdByCode(studentCode, classRoomCode);
-                await _asEduSurveyBaiKhaoSatSinhVienService.SaveSelectedAnswer(id.ToString(), ip);
+                await _asEduSurveyBaiKhaoSatSinhVienService.SaveSelectedAnswer(studentCode, classRoomCode, ip);
             }
             catch (InvalidDataException e)
             {
@@ -153,8 +167,8 @@ namespace nuce.web.api.Controllers.Survey
         {
             try
             {
-                var status = await _asEduSurveyBaiKhaoSatSinhVienService.GetGenerateTheSurveyStudentStatus();
-                return Ok(status);
+                var status = await _statusService.GetStatusTableTask(TableNameTask.AsEduSurveyReportTotal);
+                return Ok(new { status.Status, status.IsSuccess, status.Message });
             }
             catch (RecordNotFoundException e)
             {
@@ -170,19 +184,20 @@ namespace nuce.web.api.Controllers.Survey
 
         [HttpPost]
         [Authorize(Roles = "P_KhaoThi")]
-        public async Task<IActionResult> GenerateTheSurveyStudent()
+        public async Task<IActionResult> GenerateTheSurveyStudent([Required(AllowEmptyStrings = false)] Guid? surveyRoundId)
         {
             try
             {
-                await _asEduSurveyBaiKhaoSatSinhVienService.GenerateTheSurveyStudent();
+                await _baiKhaoSatSinhVienBackgroundTask.GenerateTheSurveyStudent(surveyRoundId.Value);
+                return Ok();
             }
             catch (TableBusyException e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không tạo được bài khảo sát cho từng sinh viên", detailMessage = e.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
             catch (RecordNotFoundException e)
             {
-                return NotFound(new { message = "Không tạo được bài khảo sát cho từng sinh viên", detailMessage = e.Message });
+                return NotFound(new { message = e.Message });
             }
             catch (Exception e)
             {
@@ -190,7 +205,6 @@ namespace nuce.web.api.Controllers.Survey
                 _logger.LogError(e, mainMessage);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không tạo được bài khảo sát cho từng sinh viên", detailMessage = mainMessage });
             }
-            return Ok();
         }
     }
 }

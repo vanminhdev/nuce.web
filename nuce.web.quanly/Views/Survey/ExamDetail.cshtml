@@ -76,7 +76,7 @@
 @helper GenerateAnswer(QuestionJson question)
 {
     bool displayLong = false;
-    if (question.Answers != null && (question.Answers.Count > 5 || question.Answers.Where(o => o.Content.Length > 20).Count() > 0))
+    if (question.Answers != null && (question.Answers.Count > 5 || question.Answers.Where(o => o.Content.Length > 30).Count() > 0))
     {
         displayLong = true;
     }

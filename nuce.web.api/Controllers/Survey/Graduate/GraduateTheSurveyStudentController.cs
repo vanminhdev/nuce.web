@@ -45,14 +45,13 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         [Authorize(Roles = "GraduateStudent")]
         public async Task<IActionResult> GetTheSurveyContent(
             [Required(AllowEmptyStrings = false)]
-            [NotContainWhiteSpace]
-            string id)
+            Guid? id)
         {
             try
             {
                 //mã sinh viên kiểm tra sinh viên có bài khảo sát đó thật không
                 var studentCode = _userService.GetCurrentStudentCode();
-                var result = await _asEduSurveyGraduateBaiKhaoSatSinhVienService.GetTheSurveyContent(studentCode, id);
+                var result = await _asEduSurveyGraduateBaiKhaoSatSinhVienService.GetTheSurveyContent(studentCode, id.Value);
                 return Ok(result);
             }
             catch (RecordNotFoundException e)

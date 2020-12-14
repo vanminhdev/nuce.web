@@ -26,13 +26,11 @@ namespace nuce.web.api.Controllers.Survey
     {
         private readonly ILogger<SurveyRoundController> _logger;
         private readonly IAsEduSurveyDotKhaoSatService _asEduSurveyDotKhaoSatService;
-        private readonly IAsEduSurveyBaiKhaoSatService _asEduSurveyBaiKhaoSatService;
 
-        public SurveyRoundController(ILogger<SurveyRoundController> logger, IAsEduSurveyDotKhaoSatService asEduSurveyDotKhaoSatService, IAsEduSurveyBaiKhaoSatService asEduSurveyBaiKhaoSatService)
+        public SurveyRoundController(ILogger<SurveyRoundController> logger, IAsEduSurveyDotKhaoSatService asEduSurveyDotKhaoSatService)
         {
             _logger = logger;
             _asEduSurveyDotKhaoSatService = asEduSurveyDotKhaoSatService;
-            _asEduSurveyBaiKhaoSatService = asEduSurveyBaiKhaoSatService;
         }
 
         #region đợt khảo sát
@@ -58,12 +56,54 @@ namespace nuce.web.api.Controllers.Survey
             );
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetSurveyRoundActive()
+        {
+            try
+            {
+                var result = await _asEduSurveyDotKhaoSatService.GetSurveyRoundActive();
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không lấy được đợt khảo sát", detailMessage = mainMessage });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetSurveyRoundById(
+            [Required(AllowEmptyStrings = false)]
+            Guid? id)
+        {
+            try
+            {
+                var surveyRound = await _asEduSurveyDotKhaoSatService.GetSurveyRoundById(id.Value);
+                return Ok(surveyRound);
+            }
+            catch (RecordNotFoundException e)
+            {
+                return NotFound(new { message = e.Message });
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không lấy được đợt khảo sát", detailMessage = mainMessage });
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateSurveyRound([FromBody] SurveyRoundCreate surveyRound)
         {
             try
             {
                 await _asEduSurveyDotKhaoSatService.Create(surveyRound);
+            }
+            catch (InvalidDataException e)
+            {
+                return StatusCode(StatusCodes.Status409Conflict, new { message = e.Message });
             }
             catch (DbUpdateException e)
             {
@@ -80,11 +120,15 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateSurveyRound([Required(AllowEmptyStrings = false)] string id, [FromBody] SurveyRoundUpdate surveyRound)
+        public async Task<IActionResult> UpdateSurveyRound([Required(AllowEmptyStrings = false)] Guid? id, [FromBody] SurveyRoundUpdate surveyRound)
         {
             try
             {
-                await _asEduSurveyDotKhaoSatService.Update(id, surveyRound);
+                await _asEduSurveyDotKhaoSatService.Update(id.Value, surveyRound);
+            }
+            catch (InvalidDataException e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
             catch (DbUpdateException e)
             {
@@ -105,11 +149,11 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteSurveyRound([Required(AllowEmptyStrings = false)] string id)
+        public async Task<IActionResult> DeleteSurveyRound([Required(AllowEmptyStrings = false)] Guid? id)
         {
             try
             {
-                await _asEduSurveyDotKhaoSatService.Delete(id);
+                await _asEduSurveyDotKhaoSatService.Delete(id.Value);
             }
             catch (RecordNotFoundException)
             {
@@ -128,101 +172,28 @@ namespace nuce.web.api.Controllers.Survey
             }
             return Ok();
         }
-        #endregion
-
-        #region bài khảo sát
-        [HttpPost]
-        public async Task<IActionResult> GetTheSurvey([FromBody] DataTableRequest request)
-        {
-            var filter = new TheSurveyFilter();
-            if (request.Columns != null)
-            {
-            }
-            var skip = request.Start;
-            var take = request.Length;
-            var result = await _asEduSurveyBaiKhaoSatService.GetTheSurvey(filter, skip, take);
-            return Ok(
-                new DataTableResponse<AsEduSurveyBaiKhaoSat>
-                {
-                    Draw = ++request.Draw,
-                    RecordsTotal = result.RecordsTotal,
-                    RecordsFiltered = result.RecordsFiltered,
-                    Data = result.Data
-                }
-            );
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateTheSurvey([FromBody] TheSurveyCreate theSurvey)
-        {
-            try
-            {
-                await _asEduSurveyBaiKhaoSatService.Create(theSurvey);
-            }
-            catch (RecordNotFoundException e)
-            {
-                return NotFound(new { message = "Không tạo được bài khảo sát", detailMessage = e.Message });
-            }
-            catch (DbUpdateException e)
-            {
-                _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không tạo được bài khảo sát", detailMessage = e.Message });
-            }
-            catch (Exception e)
-            {
-                var mainMessage = UtilsException.GetMainMessage(e);
-                _logger.LogError(e, mainMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không tạo được bài khảo sát", detailMessage = mainMessage });
-            }
-            return Ok();
-        }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateTheSurvey([Required(AllowEmptyStrings = false)] string id, [FromBody] TheSurveyUpdate theSurvey)
+        public async Task<IActionResult> CloseSurveyRound([Required(AllowEmptyStrings = false)] Guid? id)
         {
             try
             {
-                await _asEduSurveyBaiKhaoSatService.Update(id, theSurvey);
-            }
-            catch (DbUpdateException e)
-            {
-                _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không cập nhật được bài khảo sát", detailMessage = e.Message });
-            }
-            catch (RecordNotFoundException e)
-            {
-                return NotFound(new { message = "Không cập nhật được bài khảo sát", detailMessage = e.Message });
-            }
-            catch (Exception e)
-            {
-                var mainMessage = UtilsException.GetMainMessage(e);
-                _logger.LogError(e, mainMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không cập nhật được bài khảo sát", detailMessage = mainMessage });
-            }
-            return Ok();
-        }
-
-        [HttpDelete]
-        public async Task<IActionResult> DeleteTheSurvey([Required(AllowEmptyStrings = false)] string id)
-        {
-            try
-            {
-                await _asEduSurveyBaiKhaoSatService.Delete(id);
+                await _asEduSurveyDotKhaoSatService.Close(id.Value);
             }
             catch (RecordNotFoundException)
             {
-                return NotFound(new { message = "Không tìm thấy bài khảo sát" });
+                return NotFound(new { message = "Không tìm thấy đợt khảo sát" });
             }
             catch (DbUpdateException e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không xoá được đợt bài khảo sát", detailMessage = e.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không kết thúc được đợt khảo sát", detailMessage = e.Message });
             }
             catch (Exception e)
             {
                 var mainMessage = UtilsException.GetMainMessage(e);
                 _logger.LogError(e, mainMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không xoá được bài khảo sát", detailMessage = mainMessage });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không kết thúc được đợt khảo sát", detailMessage = mainMessage });
             }
             return Ok();
         }

@@ -8,6 +8,22 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.ViewModel.Survey
 {
+
+    public class TheSurvey
+    {
+        public Guid Id { get; set; }
+        public Guid DotKhaoSatId { get; set; }
+        public Guid DeThiId { get; set; }
+        public string Name { get; set; }
+        public DateTime FromDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public string Description { get; set; }
+        public string Note { get; set; }
+        public int Type { get; set; }
+        public int Status { get; set; }
+
+        public string SurveyRoundName { get; set; }
+    }
     public class TheSurveyFilter
     {
     }

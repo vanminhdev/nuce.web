@@ -5,6 +5,7 @@ using nuce.web.api.HandleException;
 using nuce.web.api.Models.Status;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Models.Survey.JsonData;
+using nuce.web.api.Services.Survey.Base;
 using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Survey;
 using nuce.web.api.ViewModel.Survey.Graduate;
@@ -16,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.Survey.Implements
 {
-    public class AsEduSurveyGraduateBaiKhaoSatSinhVienService : IAsEduSurveyGraduateBaiKhaoSatSinhVienService
+    class AsEduSurveyGraduateBaiKhaoSatSinhVienService : BaiKhaoSatSinhVienServiceBase, IAsEduSurveyGraduateBaiKhaoSatSinhVienService
     {
         private readonly SurveyContext _context;
         private readonly StatusContext _statusContext;
@@ -27,32 +28,40 @@ namespace nuce.web.api.Services.Survey.Implements
             _statusContext = statusContext;
         }
 
-        public async Task<string> GetTheSurveyContent(string studentCode, string id)
+        public async Task<string> GetTheSurveyContent(string studentCode, Guid theSurveyId)
         {
-            var baiKSSinhVien = await _context.AsEduSurveyGraduateBaiKhaoSatSinhVien.Where(o => o.StudentCode == studentCode).ToListAsync();
-            if(baiKSSinhVien.FirstOrDefault(o => o.BaiKhaoSatId.ToString() == id) == null)
+            var baiKSSinhViens = await _context.AsEduSurveyGraduateBaiKhaoSatSinhVien.Where(o => o.StudentCode == studentCode && (o.Status != (int)SurveyStudentStatus.Close || o.Status != (int)SurveyStudentStatus.Done)).ToListAsync();
+            var baiKSsv = baiKSSinhViens.FirstOrDefault(o => o.BaiKhaoSatId == theSurveyId);
+            if (baiKSsv == null)
             {
-                throw new RecordNotFoundException("Sinh viên không có bài khảo sát này");
+                throw new RecordNotFoundException("Sinh viên không có bài khảo sát này hoặc bài khảo sát đã kết thúc");
             }
 
-            var theSurvey = await _context.AsEduSurveyGraduateBaiKhaoSat.FirstOrDefaultAsync(o => o.Id.ToString() == id);
+            if (baiKSsv.Status != (int)SurveyStudentStatus.Doing)
+            {
+                baiKSsv.Status = (int)SurveyStudentStatus.Doing;
+                baiKSsv.NgayGioBatDau = DateTime.Now;
+                await _context.SaveChangesAsync();
+            }
+
+            var theSurvey = await _context.AsEduSurveyGraduateBaiKhaoSat.FirstOrDefaultAsync(o => o.Id == theSurveyId);
             if (theSurvey == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy bài khảo sát");
             }
 
-            var examQuestions = await _context.AsEduSurveyDeThi.FirstOrDefaultAsync(o => o.Id == theSurvey.DeThiId);
-            if (examQuestions == null)
+            var examQuestion = await _context.AsEduSurveyDeThi.FirstOrDefaultAsync(o => o.Id == theSurvey.DeThiId);
+            if (examQuestion == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy nội dung bài khảo sát");
             }
 
-            return examQuestions.NoiDungDeThi;
+            return examQuestion.NoiDungDeThi;
         }
 
         public async Task<List<GraduateTheSurveyStudent>> GetTheSurvey(string studentCode)
         {
-            return await _context.AsEduSurveyGraduateBaiKhaoSatSinhVien.Where(o => o.StudentCode == studentCode)
+            return await _context.AsEduSurveyGraduateBaiKhaoSatSinhVien.Where(o => o.StudentCode == studentCode && o.Status != (int)SurveyStudentStatus.Close)
                 .Join(_context.AsEduSurveyGraduateBaiKhaoSat, o => o.BaiKhaoSatId, o => o.Id, (baikssv, baiks) => new { baikssv, baiks })
                 .Select(o => new GraduateTheSurveyStudent
                 {
@@ -113,14 +122,14 @@ namespace nuce.web.api.Services.Survey.Implements
                     foreach (var student in students)
                     {
                         //nếu chưa có thì thêm
-                        if( await _context.AsEduSurveyBaiKhaoSatSinhVien.FirstOrDefaultAsync(o => o.BaiKhaoSatId == theSurvey.Id && o.StudentCode == student.ExMasv) == null )
+                        if( await _context.AsEduSurveyGraduateBaiKhaoSatSinhVien.FirstOrDefaultAsync(o => o.BaiKhaoSatId == theSurvey.Id && o.StudentCode == student.ExMasv) == null )
                         {
                             _context.AsEduSurveyGraduateBaiKhaoSatSinhVien.Add(new AsEduSurveyGraduateBaiKhaoSatSinhVien
                             {
                                 Id = Guid.NewGuid(),
                                 BaiKhaoSatId = theSurvey.Id,
-                                DepartmentCode = student?.Manganh ?? "",
-                                StudentCode = student?.ExMasv ?? "",
+                                DepartmentCode = student.Manganh ?? "",
+                                StudentCode = student.ExMasv ?? "",
                                 DeThi = "",
                                 BaiLam = "",
                                 NgayGioBatDau = DateTime.Now,
@@ -162,31 +171,6 @@ namespace nuce.web.api.Services.Survey.Implements
             return surveyStudent.BaiLam;
         }
 
-        private List<string> AddOrRemoveAnswerCodes (List<string> list,  string answerCodeInMulSelect, bool isAnswerCodesAdd)
-        {
-            if (isAnswerCodesAdd) //thêm
-            {
-                if (list != null && !list.Contains(answerCodeInMulSelect)) //chưa có đáp án chọn nhiều này
-                {
-                    list.Add(answerCodeInMulSelect.Trim());
-                }
-                else if (list == null) //chưa có bất kì đáp án chọn nhiều nào
-                {
-                    list = new List<string>() { answerCodeInMulSelect };
-                }
-            }
-            else //bỏ
-            {
-                if (list != null && list.Contains(answerCodeInMulSelect)) //có đáp án chọn nhiều này
-                {
-                    list.Remove(answerCodeInMulSelect.Trim());
-                }
-
-                if (list.Count == 0) //nếu k còn phần tử nào thì bỏ hẳn
-                    return null;
-            }
-            return list;
-        }
 
         /// <summary>
         /// Tự động lưu khi click
@@ -208,63 +192,17 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException("Không tìm thấy bài làm");
             }
 
-            List<SelectedAnswer> list;
+            List<SelectedAnswer> selectedAnswer;
             try
             {   
-                list = JsonSerializer.Deserialize<List<SelectedAnswer>>(surveyStudent.BaiLam);
+                selectedAnswer = JsonSerializer.Deserialize<List<SelectedAnswer>>(surveyStudent.BaiLam);
             } 
             catch
             {
-                list = new List<SelectedAnswer>();
+                selectedAnswer = new List<SelectedAnswer>();
             }
+            surveyStudent.BaiLam = base.AutoSaveBaiLam(selectedAnswer, questionCode, answerCode, answerCodeInMulSelect, answerContent, isAnswerCodesAdd);
 
-            var exsist = false; //đã tồn tại câu hỏi chưa
-            //cập nhật cho câu hỏi tương ứng
-            foreach (var item in list)
-            {
-                if (item.QuestionCode == questionCode)
-                {
-                    if (answerCode != null) //lựa chọn chọn 1
-                    {
-                        item.AnswerCode = answerCode.Trim();
-                    }
-                    else if (answerCodeInMulSelect != null) // lựa chọn chọn nhiều
-                    {
-                        item.AnswerCodes = AddOrRemoveAnswerCodes(item.AnswerCodes, answerCodeInMulSelect, isAnswerCodesAdd);
-                    }
-                    item.AnswerContent = answerContent; // câu trả lời text
-                    exsist = true;
-                    break;
-                }
-            }
-            //thêm mới cho câu hỏi tương ứng
-            if (!exsist)
-            {
-                var newSelectedAnswer = new SelectedAnswer
-                {
-                    QuestionCode = questionCode,
-                    AnswerCode = answerCode,
-                    AnswerContent = answerContent
-                };
-
-                if(questionCode.Split('_').Length == 2) //là câu hỏi con
-                {
-                    newSelectedAnswer.IsAnswerChildQuestion = true;
-                }
-
-                if (answerCodeInMulSelect != null && isAnswerCodesAdd) // lựa chọn chọn nhiều
-                {
-                    newSelectedAnswer.AnswerCodes = new List<string>() { answerCodeInMulSelect };
-                }
-
-                list.Add(newSelectedAnswer);
-            }
-
-            var options = new JsonSerializerOptions
-            {
-                IgnoreNullValues = true
-            };
-            surveyStudent.BaiLam = JsonSerializer.Serialize(list, options);
             await _context.SaveChangesAsync();
         }
 
@@ -276,19 +214,26 @@ namespace nuce.web.api.Services.Survey.Implements
         public async Task SaveSelectedAnswer(Guid theSurveyId, string studentCode, string ipAddress)
         {
             var surveyStudent = await _context.AsEduSurveyGraduateBaiKhaoSatSinhVien
-                .FirstOrDefaultAsync(o => o.BaiKhaoSatId == theSurveyId && o.StudentCode == studentCode && o.Status != (int)SurveyStudentStatus.Done && o.Status != (int)SurveyStudentStatus.Close);
+                .FirstOrDefaultAsync(o => o.BaiKhaoSatId == theSurveyId && o.StudentCode == studentCode);
+            
             if (surveyStudent == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy bài làm");
             }
-            if(surveyStudent.Status == (int)SurveyStudentStatus.Done)
+
+            if (surveyStudent.Status == (int)SurveyStudentStatus.Done)
             {
-                return;
+                throw new RecordNotFoundException("Bài khảo sát đã hoàn thành");
             }
-            //kiểm tra đủ số câu hỏi bắt buộc
-            var theSurvey = await _context.AsEduSurveyBaiKhaoSat.FirstOrDefaultAsync(o => o.Id == surveyStudent.BaiKhaoSatId);
-            if (theSurvey == null)
+            else if (surveyStudent.Status == (int)SurveyStudentStatus.Close)
             {
+                throw new RecordNotFoundException("Đợt khảo sát đã kết thúc");
+            }
+
+            //kiểm tra đủ số câu hỏi bắt buộc
+            var theSurvey = await _context.AsEduSurveyGraduateBaiKhaoSat.FirstOrDefaultAsync(o => o.Id == surveyStudent.BaiKhaoSatId);
+            if (theSurvey == null)
+            {                
                 throw new RecordNotFoundException("Không tìm thấy bài khảo sát");
             }
 
@@ -302,18 +247,30 @@ namespace nuce.web.api.Services.Survey.Implements
             var answerSave = JsonSerializer.Deserialize<List<SelectedAnswer>>(surveyStudent.BaiLam);
 
             var test = questions.Where(o => o.Type == QuestionType.SC || o.Type == QuestionType.MC).ToList();
-            foreach (var q in questions)
-            {
-                //Câu hỏi ngắn không bắt buộc
-                if(q.Type == QuestionType.SC && answerSave.FirstOrDefault(o => o.QuestionCode == q.Code && o.AnswerCode != null) == null)
-                {
-                    throw new InvalidDataException("Chưa trả lời đủ số câu hỏi");
-                }
-                else if (q.Type == QuestionType.MC && answerSave.FirstOrDefault(o => o.QuestionCode == q.Code && o.AnswerCodes != null && o.AnswerCodes.Count > 0) == null)
-                {
-                    throw new InvalidDataException("Chưa trả lời đủ số câu hỏi");
-                }
-            }
+            string[] star = new string[]{ "1", "2", "3", "4", "5" };
+
+            //bỏ qua một số câu hỏi không visible
+
+            //những câu hỏi có đáp án làm show hide câu hỏi khác
+            //var questionShowHide = questions.Where(o => (o.Type == QuestionType.SC || o.Type == QuestionType.MC) && o.Answers != null && o.Answers.FirstOrDefault(a => a.HideQuestion != null || a.ShowQuestion != null) != null).ToList();
+
+
+            //foreach (var q in questions)
+            //{
+            //    //Câu hỏi ngắn không bắt buộc
+            //    if(q.Type == QuestionType.SC && answerSave.FirstOrDefault(o => o.QuestionCode == q.Code && o.AnswerCode != null) == null)
+            //    {
+            //        throw new InvalidDataException("Chưa trả lời đủ số câu hỏi");
+            //    }
+            //    else if (q.Type == QuestionType.MC && answerSave.FirstOrDefault(o => o.QuestionCode == q.Code && o.AnswerCodes != null && o.AnswerCodes.Count > 0) == null)
+            //    {
+            //        throw new InvalidDataException("Chưa trả lời đủ số câu hỏi");
+            //    }
+            //    else if (q.Type == QuestionType.StarRating && answerSave.FirstOrDefault(o => o.QuestionCode == q.Code && star.Contains(o.AnswerContent)) == null)
+            //    {
+            //        throw new InvalidDataException("Chưa trả lời đủ số câu hỏi");
+            //    }
+            //}
 
             surveyStudent.NgayGioNopBai = DateTime.Now;
             surveyStudent.Status = (int)SurveyStudentStatus.Done;

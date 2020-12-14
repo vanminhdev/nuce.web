@@ -12,15 +12,15 @@ namespace nuce.web.api.Services.Survey.Interfaces
     {
         public Task<PaginationModel<AsEduSurveyGraduateSurveyRound>> GetSurveyRound(GraduateSurveyRoundFilter filter, int skip = 0, int take = 20);
 
-        public Task<AsEduSurveyGraduateSurveyRound> GetSurveyRoundById(string id);
+        public Task<AsEduSurveyGraduateSurveyRound> GetSurveyRoundById(Guid id);
 
         public Task Create(GraduateSurveyRoundCreate surveyRound);
 
-        public Task Update(string id, GraduateSurveyRoundUpdate surveyRound);
+        public Task Update(Guid id, GraduateSurveyRoundUpdate surveyRound);
 
-        public Task Delete(string id);
+        public Task Delete(Guid id);
 
-        public Task Close(string id);
+        public Task Close(Guid id);
 
         public Task<List<AsEduSurveyGraduateSurveyRound>> GetSurveyRoundActive();
     }

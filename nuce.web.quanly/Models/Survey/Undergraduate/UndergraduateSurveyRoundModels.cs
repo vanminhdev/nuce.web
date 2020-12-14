@@ -6,9 +6,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace nuce.web.quanly.Models
+namespace nuce.web.quanly.Models.Survey.Undergraduate
 {
-    public class GraduateSurveyRound
+    public class UndergraduateSurveyRound
     {
         public Guid id { get; set; }
         public string name { get; set; }
@@ -20,12 +20,12 @@ namespace nuce.web.quanly.Models
         public int status { get; set; }
     }
 
-    public class GraduateSurveyRoundUpdate : GraduateSurveyRoundCreate
+    public class UndergraduateSurveyRoundUpdate : UndergraduateSurveyRoundCreate
     {
         public string id { get; set; }
     }
 
-    public class GraduateSurveyRoundCreate
+    public class UndergraduateSurveyRoundCreate
     {
         public string name { get; set; }
 
