@@ -11,6 +11,10 @@ body {
   overflow-x: hidden;
 }
 
+html {
+  overflow-x: unset;
+}
+
 #footer {
   bottom: 0;
   background-image: url("../images/footer-background.png");

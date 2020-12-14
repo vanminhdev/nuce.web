@@ -1,0 +1,97 @@
+﻿
+@{
+    ViewBag.Title = "Cập nhật bản tin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row main-content-wrp mt-0">
+    <div class="col-12">
+        <a class="update-btn text-light p-2 mb-3"
+           style="text-decoration: none; display: inline-block"
+           href="/newsmanagement/itemslist?catId=@TempData.Peek("catId")">
+            ← Quay lại danh sách bài tin
+        </a>
+    </div>
+    <div class="col-12 text-right">
+        <button class="btn btn-outline-success"
+                onclick="onUpdate()">
+            Cập nhật
+        </button>
+    </div>
+    <div class="col-lg-12">
+        <form id="form-data" class="auto-validate">
+            <div class="form-group">
+                <div class="font-14-sm fw-600 font-18">Tiêu đề</div>
+                <input id="txtTitle" name="title" type="text" class="form-control" required/>
+            </div>
+            <div class="form-group">
+                <div class="font-14-sm fw-600 font-18">Mô tả</div>
+                <input id="txtDescription" name="description" type="text" class="form-control" />
+            </div>
+            <div class="form-group">
+                <div class="font-14-sm fw-600 font-18">Nội dung</div>
+                <textarea id="news-content"></textarea>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+
+        var state = {
+            newsItem: {},
+        };
+
+        var onUpdate = function() {
+            let form = $('#form-data');
+            if (!form.valid()) return;
+
+            const body = state.newsItem;
+            body.title = $('#txtTitle').val();
+            body.description = $('#txtDescription').val();
+            body.newContent = CKEDITOR.instances["news-content"].getData();
+
+            callApiUpdate(body);
+        };
+
+        var callApiUpdate = function(body) {
+            $('#loading-screen').show();
+            const data = JSON.stringify(body);
+            
+            $.ajax({
+                type: 'POST',
+                url: `@Url.Action("UpdateNewsItem", "NewsManagement")`,
+                data,
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function(res) {
+                    $('#loading-screen').hide();
+                },
+            }).done(res => {
+                if (res.StatusCode == 200) {
+                    toastSuccess('Lưu thành công');
+                } else {
+                    toastError(res.Message || 'Lỗi hệ thống');
+                }
+            }).fail(err => {
+                toastError('Lỗi hệ thống');
+                $('#loading-screen').hide();
+            });
+        };
+
+        var init = function() {
+            CKEDITOR.replace('news-content', {
+                embed_provider: '//ckeditor.iframe.ly/api/oembed?url={url}&callback={callback}',
+            });
+            state.newsItem = @Html.Raw(Json.Encode(Model));
+            $('#txtTitle').val(state.newsItem.title);
+            $('#txtDescription').val(state.newsItem.description);
+            $('#news-content').val(state.newsItem.newContent);
+        };
+
+        init();
+
+    </script>
+}
+

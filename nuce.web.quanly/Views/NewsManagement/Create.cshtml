@@ -1,0 +1,94 @@
+﻿
+@{
+    ViewBag.Title = "Đăng bài";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row main-content-wrp mt-0">
+    <div class="col-12">
+        <a class="update-btn text-light p-2 mb-3"
+            style="text-decoration: none; display: inline-block"
+            href="/newsmanagement/itemslist?catId=@TempData.Peek("catId")">← Quay lại danh sách bài tin</a>
+    </div>
+    <div class="col-12 text-right">
+        <button class="btn btn-outline-success"
+                onclick="onPostNewsItem()">
+            Đăng bài
+        </button>
+    </div>
+    <div class="col-lg-12">
+        <form id="form-data" class="auto-validate">
+            <div class="form-group">
+                <div class="font-14-sm fw-600 font-18">Tiêu đề</div>
+                <input id="txtTitle" name="title" type="text" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <div class="font-14-sm fw-600 font-18">Mô tả</div>
+                <input id="txtDescription" name="description" type="text" class="form-control" />
+            </div>
+            <div class="form-group">
+                <div class="font-14-sm fw-600 font-18">Nội dung</div>
+                <textarea id="news-content"></textarea>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+
+        var state = {
+            catId: null,  
+        };
+
+        var onPostNewsItem = function() {
+            let form = $('#form-data');
+            if (!form.valid()) return;
+            const content = CKEDITOR.instances["news-content"].getData();
+            const title = $('#txtTitle').val();
+            const description = $('#txtDescription').val();
+            const body = {
+                catId: state.catId,
+                title,
+                description,
+                content,
+                avatar: '',
+                file: '',
+            };
+            callApiSaveNewsItem(body);
+        };
+
+        var callApiSaveNewsItem = function(body) {
+            $('#loading-screen').show();
+            const data = JSON.stringify(body);
+            
+            $.ajax({
+                type: 'POST',
+                url: `@Url.Action("CreateNewsItem", "NewsManagement")`,
+                data,
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function(res) {
+                    $('#loading-screen').hide();
+                },
+            }).done(res => {
+                if (res.StatusCode == 200) {
+                    toastSuccess('Lưu thành công');
+                } else {
+                    toastError(res.Message || 'Lỗi hệ thống');
+                }
+            }).fail(err => {
+                toastError('Lỗi hệ thống');
+                $('#loading-screen').hide();
+            });
+        };
+
+        var init = function() {
+            CKEDITOR.replace('news-content');
+            state.catId = @TempData.Peek("catId");
+            autoValidate();
+        };
+
+        init();
+    </script>
+}

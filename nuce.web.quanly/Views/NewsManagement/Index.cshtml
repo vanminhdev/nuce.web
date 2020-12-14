@@ -1,0 +1,49 @@
+﻿@using nuce.web.quanly.Models;
+
+@{
+    ViewBag.Title = "Danh mục tin tức";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    @@media (prefers-reduced-motion: reduce) {
+        .collapse-custom>.collapsing {
+            -webkit-transition: none;
+            transition: ease;
+            transition-duration: 0.5s;
+        }
+    }
+</style>
+    <div class="container-fluid service-categories-wrp collapse-custom" style="margin-top: 0">
+        @{
+            List<NewsCatsModel> model = (List<NewsCatsModel>)Model;    
+        }
+        @foreach (var item in model)
+        {
+            if (item.parent == -1 && model.Any(cat => cat.parent == item.id))
+            {
+                <div class="font-weight-bold cursor-pointer" 
+                     data-toggle="collapse" data-target="#children-@item.id">
+                    @item.description
+                </div>
+                <div id="children-@item.id" class="collapse p-0">
+                    @foreach (var child in model.Where(cat => cat.parent == item.id))
+                    {
+                    <div>
+                        &nbsp;&nbsp;&nbsp;
+                        <a href="/newsmanagement/itemslist?catId=@child.id">
+                            @child.description
+                        </a>
+                    </div>
+                    }
+                </div>
+            }
+            else if (item.parent == -1)
+            {
+                <div class="font-weight-bold cursor-pointer">
+                    <a href="/newsmanagement/itemslist?catId=@item.id">
+                        @item.description
+                    </a>
+                </div>
+            }
+        }
+    </div>
