@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.Background
 {
-    public class MonitorLoop
+    public class BackgroundTaskWorkder
     {
         private readonly IBackgroundTaskQueue _taskQueue;
-        private readonly ILogger<MonitorLoop> _logger;
+        private readonly ILogger<BackgroundTaskWorkder> _logger;
         private readonly CancellationToken _cancellationToken;
 
-        public MonitorLoop(IBackgroundTaskQueue taskQueue,
-            ILogger<MonitorLoop> logger,
+        public BackgroundTaskWorkder(IBackgroundTaskQueue taskQueue,
+            ILogger<BackgroundTaskWorkder> logger,
             IHostApplicationLifetime applicationLifetime)
         {
             _taskQueue = taskQueue;

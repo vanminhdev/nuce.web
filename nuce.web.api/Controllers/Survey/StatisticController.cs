@@ -2,15 +2,14 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Services.Status.Interfaces;
+using nuce.web.api.Services.Survey.BackgroundTasks;
 using nuce.web.api.Services.Survey.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace nuce.web.api.Controllers.Survey
@@ -22,13 +21,16 @@ namespace nuce.web.api.Controllers.Survey
     {
         private readonly ILogger<StatisticController> _logger;
         private readonly IAsEduSurveyReportTotalService _asEduSurveyReportTotalService;
+        private readonly SurveyStatisticBackgroundTask _surveyStatisticBackgroundTask;
         private readonly IStatusService _statusService;
 
-        public StatisticController(ILogger<StatisticController> logger, IAsEduSurveyReportTotalService asEduSurveyReportTotalService, IStatusService statusService)
+        public StatisticController(ILogger<StatisticController> logger, IAsEduSurveyReportTotalService asEduSurveyReportTotalService, 
+            IStatusService statusService, SurveyStatisticBackgroundTask surveyStatisticBackgroundTask)
         {
             _logger = logger;
             _asEduSurveyReportTotalService = asEduSurveyReportTotalService;
             _statusService = statusService;
+            _surveyStatisticBackgroundTask = surveyStatisticBackgroundTask;
         }
 
         [HttpGet]
@@ -37,11 +39,6 @@ namespace nuce.web.api.Controllers.Survey
             try
             {
                 var status = await _statusService.GetStatusTableTask(TableNameTask.AsEduSurveyReportTotal);
-                //nếu đã xong k cần biết đúng sai chỉ hiển message 1 lần rồi chuyển về trạng thái chưa làm gì
-                if(status.Status == (int)TableTaskStatus.Done)
-                {
-                    await _statusService.DoNotStatusTableTask(TableNameTask.AsEduSurveyReportTotal, "Không tìm thấy bản ghi trạng thái của bảng thống kê khảo sát");
-                }
                 return Ok(new { status.Status, status.IsSuccess, status.Message });
             }
             catch (RecordNotFoundException e)
@@ -52,13 +49,11 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpPost]
-        public async Task<IActionResult> ReportTotalNormalSurvey()
+        public async Task<IActionResult> ReportTotalNormalSurvey([Required] Guid? surveyRoundId)
         {
             try
             {
-                await _statusService.DoingStatusTableTask(TableNameTask.AsEduSurveyReportTotal, "Không tìm thấy bản ghi trạng thái của bảng thống kê khảo sát", "Đang thống kê khảo sát");
-                await _asEduSurveyReportTotalService.ReportTotalNormalSurvey();
-                await _statusService.DoneStatusTableTask(TableNameTask.AsEduSurveyReportTotal, "Không tìm thấy bản ghi trạng thái của bảng thống kê khảo sát");
+                await _surveyStatisticBackgroundTask.ReportTotalNormalSurvey(surveyRoundId.Value);
             }
             catch (RecordNotFoundException e)
             {
@@ -71,14 +66,12 @@ namespace nuce.web.api.Controllers.Survey
             }
             catch (DbUpdateException e)
             {
-                await _statusService.DoneStatusTableTask(TableNameTask.AsEduSurveyReportTotal, "Không tìm thấy bản ghi trạng thái của bảng thống kê khảo sát", e.Message);
                 _logger.LogError(e, e.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thống kê được đợt khảo sát", detailMessage = e.Message });
             }
             catch (Exception e)
             {
                 var mainMessage = UtilsException.GetMainMessage(e);
-                await _statusService.DoneStatusTableTask(TableNameTask.AsEduSurveyReportTotal, "Không tìm thấy bản ghi trạng thái của bảng thống kê khảo sát", mainMessage);
                 _logger.LogError(e, mainMessage);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thống kê được đợt khảo sát", detailMessage = mainMessage });
             }

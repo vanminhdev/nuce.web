@@ -370,20 +370,14 @@ namespace nuce.web.quanly.Controllers
         public async Task<ActionResult> GetStatusReportTotalNormalSurvey()
         {
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/Statistic/GetStatusReportTotalNormalSurveyTask");
-            return await base.HandleResponseAsync(response,
-                action200Async: async res =>
-                {
-                    var jsonString = await res.Content.ReadAsStringAsync();
-                    return Json(jsonString, JsonRequestBehavior.AllowGet);
-                }
-            );
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
         public async Task<ActionResult> ReportTotalNormalSurvey()
         {
-            await base.MakeRequestAuthorizedAsync("Post", $"/api/Statistic/ReportTotalNormalSurvey");
-            return Json(new { }, JsonRequestBehavior.AllowGet);
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/Statistic/ReportTotalNormalSurvey");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
         #endregion
 

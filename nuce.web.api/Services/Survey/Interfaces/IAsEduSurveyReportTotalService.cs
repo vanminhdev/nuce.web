@@ -7,8 +7,5 @@ namespace nuce.web.api.Services.Survey.Interfaces
 {
     public interface IAsEduSurveyReportTotalService
     {
-        public Task ReportTotalNormalSurvey();
-        public Task ReportTotalGoingToGraduateSurvey();
-        public Task ReportTotalGraduateSurvey();
     }
 }

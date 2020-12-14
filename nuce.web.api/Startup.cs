@@ -38,6 +38,7 @@ using nuce.web.api.Services.Status.Implements;
 using System.Net;
 using nuce.web.api.Middlewares;
 using nuce.web.api.Services.Background;
+using nuce.web.api.Services.Survey.BackgroundTasks;
 
 namespace nuce.web.api
 {
@@ -204,6 +205,7 @@ namespace nuce.web.api
             services.AddScoped<IAsEduSurveyDotKhaoSatService, AsEduSurveyDotKhaoSatService>();
             services.AddScoped<IAsEduSurveyBaiKhaoSatService, AsEduSurveyBaiKhaoSatService>();
             services.AddScoped<IAsEduSurveyBaiKhaoSatSinhVienService, AsEduSurveyBaiKhaoSatSinhVienService>();
+            services.AddScoped<BaiKhaoSatSinhVienBackgroundTask>();
             services.AddScoped<IAsEduSurveyReportTotalService, AsEduSurveyReportTotalService>();
 
             services.AddScoped<IAsEduSurveyGraduateStudentService, AsEduSurveyGraduateStudentService>();
@@ -215,6 +217,8 @@ namespace nuce.web.api
             services.AddScoped<IAsEduSurveyUndergraduateDotKhaoSatService, AsEduSurveyUndergraduateDotKhaoSatService>();
             services.AddScoped<IAsEduSurveyUndergraduateBaiKhaoSatService, AsEduSurveyUndergraduateBaiKhaoSatService>();
             services.AddScoped<IAsEduSurveyUndergraduateBaiKhaoSatSinhVienService, AsEduSurveyUndergraduateBaiKhaoSatSinhVienService>();
+
+            services.AddScoped<SurveyStatisticBackgroundTask>();
             #endregion
             #region sync edu database service
             services.AddScoped<ISyncEduDatabaseService, SyncEduDatabaseService>();
@@ -245,7 +249,7 @@ namespace nuce.web.api
             #endregion
 
             #region background
-            services.AddSingleton<MonitorLoop>();
+            services.AddSingleton<BackgroundTaskWorkder>();
             services.AddHostedService<QueuedHostedService>();
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
             #endregion

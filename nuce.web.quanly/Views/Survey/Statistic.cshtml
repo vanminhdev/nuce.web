@@ -16,6 +16,36 @@
     </div>
 </div>
 
+<div class="modal fade bd-example-modal-lg auto-clear-form-on-open" id="modal-start-report" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thống kê khảo sát</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form id="form-data-start-report" class="auto-validate">
+                        <div class="form-group row">
+                            <label class="col-3 col-form-label">Đợt khảo sát <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <select class="form-control selectpicker custom-boostrap-select" name="surveyRoundId" id="dotKhaoSat" required title="Chọn đợt khảo sát">
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
+                <button type="button" class="btn btn-primary" id="save-changes-start-report" type-handle="">Bắt đầu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         let btnReportTotalNormal = $('#btn-statistic-survey');

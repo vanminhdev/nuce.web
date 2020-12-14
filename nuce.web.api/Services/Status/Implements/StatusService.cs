@@ -26,7 +26,23 @@ namespace nuce.web.api.Services.Status.Implements
             {
                 throw new RecordNotFoundException("Không tìm thấy bản ghi trạng thái");
             }
-            return task;
+
+            var result = new AsStatusTableTask
+            {
+                Id = task.Id,
+                Status = task.Status,
+                IsSuccess = task.IsSuccess,
+                TableName = task.TableName,
+                Message = task.Message
+            };
+
+            //nếu là hoàn thành thì chuyển về chưa làm, chỉ hiển thị 1 lần message hoàn thành
+            if (task.Status == (int)TableTaskStatus.Done)
+            {
+                task.Status = (int)TableTaskStatus.DoNot;
+                await _context.SaveChangesAsync();
+            }
+            return result;
         }
 
         public async Task<int> GetCurrentSemesterId()
@@ -49,53 +65,6 @@ namespace nuce.web.api.Services.Status.Implements
                 semesterId = semester.Id;
             }
             return semesterId;
-        }
-
-        public async Task DoNotStatusTableTask(string tableName, string messageNotFound)
-        {
-            var status = await _context.AsStatusTableTask.FirstOrDefaultAsync(o => o.TableName == tableName);
-            if (status == null)
-            {
-                throw new RecordNotFoundException(messageNotFound);
-            }
-            status.Status = (int)TableTaskStatus.DoNot;
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DoingStatusTableTask(string tableName, string messageNotFound, string messageBusy) 
-        {
-            var status = await _context.AsStatusTableTask.FirstOrDefaultAsync(o => o.TableName == tableName);
-            if (status == null)
-            {
-                throw new RecordNotFoundException(messageNotFound);
-            }
-            //bảng đang làm việc
-            if (status.Status == (int)TableTaskStatus.Doing)
-            {
-                throw new TableBusyException(messageBusy);
-            }
-            status.Status = (int)TableTaskStatus.Doing;
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DoneStatusTableTask(string tableName, string messageNotFound, string messageIfError = null)
-        {
-            var status = await _context.AsStatusTableTask.FirstOrDefaultAsync(o => o.TableName == tableName);
-            if (status == null)
-            {
-                throw new RecordNotFoundException("Không tìm thấy bản ghi cập nhật trạng thái cho bảng thống kê bài khảo sát");
-            }
-            status.Status = (int)TableTaskStatus.Done;
-            if(messageIfError != null)
-            {
-                status.IsSuccess = false;
-                status.Message = messageIfError;
-            } 
-            else
-            {
-                status.IsSuccess = true;
-            }
-            await _context.SaveChangesAsync();
         }
     }
 }

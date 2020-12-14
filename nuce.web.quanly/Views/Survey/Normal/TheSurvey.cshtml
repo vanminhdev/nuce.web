@@ -28,7 +28,7 @@
                     <button class="btn btn-primary w-100" onclick="createClick()">Thêm bài khảo sát</button>
                 </div>
                 <div class="col-12 col-md-2 mb-2">
-                    <button class="btn btn-success w-100" onclick="choosePublish()">Xuất bản</button>
+                    <button class="btn btn-success w-100" id="btn-publish">Phát bài</button>
                 </div>
             </div>
         </div>
@@ -157,7 +157,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Xuất bản bài khảo sát</h5>
+                <h5 class="modal-title">Phát bài khảo sát</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -177,7 +177,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
-                <button type="button" class="btn btn-primary" id="save-changes-publish" type-handle="">Lưu</button>
+                <button type="button" class="btn btn-primary" id="save-changes-publish" type-handle="">Bắt đầu</button>
             </div>
         </div>
     </div>
@@ -209,7 +209,19 @@
         });
         deThis.selectpicker('refresh');
 
-        let tableTheSurveyStudentStatus = @ViewData["TableTheSurveyStudentStatus"];
+        let btnPublish = $('#btn-publish');
+        let tableTheSurveyStudentStatus = @Html.Raw(ViewData["TableTheSurveyStudentStatus"]);
+        if (tableTheSurveyStudentStatus.status === @((int)TableTaskStatus.Done)) {
+            if (tableTheSurveyStudentStatus.isSuccess) {
+                toastWarning('Có lỗi xảy ra khi phát bài');
+            } else {
+                toastSuccess('Phát thành công');
+            }
+        }
+        else if (tableTheSurveyStudentStatus.status === @((int)TableTaskStatus.Doing)) {
+            btnPublish.prop('disabled', true);
+            btnPublish.html('<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang phát bài');
+        }
         console.log('table the survey student status', tableTheSurveyStudentStatus);
 
         var table = $('#id-datatable').DataTable({
@@ -228,7 +240,7 @@
             ],
             ajax: {
                 url: '/Survey/GetAllTheSurvey',
-                dataType: 'json',
+              HtmlHtmldataType: 'json',
                 contentType: 'application/json',
                 type: "POST",
                 data: function (d) {
@@ -284,7 +296,7 @@
                         } else if (data.status === @((int)TheSurveyStatus.Deactive)) {
                             return '<span class="badge badge-pill badge-secondary">Kết thúc</span>';
                         } else if (data.status === @((int)TheSurveyStatus.Published)) {
-                            return '<span class="badge badge-pill badge-primary">Đã xuất bản</span>';
+                            return '<span class="badge badge-pill badge-primary">Đã Phát</span>';
                         } else {
                             return data.status;
                         }
@@ -423,9 +435,9 @@
             });
         }
 
-        function choosePublish() {
+        btnPublish.click(() => {
             $('#modal-publish').modal('show');
-        }
+        })
 
         $('#save-changes-publish').click(function () {
             let form = $('#form-data-publish');
@@ -438,7 +450,9 @@
                     complete: () => { }
                 }).done(function (res) {
                     if (res.statusCode === 200) {
-                        toastSuccess('Bắt đầu xuất bản');
+                        btnPublish.prop('disabled', true);
+                        btnPublish.html('<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang phát bài');
+                        toastSuccess('Bắt đầu Phát');
                         //table.ajax.reload();
                         $('#modal-publish').modal('hide');
                     }
