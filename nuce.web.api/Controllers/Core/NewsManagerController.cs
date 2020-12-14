@@ -25,7 +25,7 @@ namespace nuce.web.api.Controllers.Core
         [Route("news-category/{role}")]
         public IActionResult GetNewsCategory(string role)
         {
-            return Ok(_newsManagerService.GetAllCategory(role));
+            return Ok(_newsManagerService.GetAllActiveCategoryByRole(role));
         }
 
         [HttpPost]

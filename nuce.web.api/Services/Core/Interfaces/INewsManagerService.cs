@@ -10,7 +10,7 @@ namespace nuce.web.api.Services.Core.Interfaces
 {
     public interface INewsManagerService
     {
-        public IQueryable GetAllCategory(string role);
+        public IQueryable GetAllActiveCategoryByRole(string role);
         public Task<DataTableResponse<NewsItems>> FindItemsByCatId(int catId, int seen, int size);
         public Task<NewsItems> FindNewsItemById(int id);
         public Task CreateNewsItems(CreateNewsItemModel model);

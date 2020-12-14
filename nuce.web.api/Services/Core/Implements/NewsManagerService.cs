@@ -6,6 +6,7 @@ using nuce.web.api.ViewModel.Core;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace nuce.web.api.Services.Core.Implements
 {
@@ -19,7 +20,7 @@ namespace nuce.web.api.Services.Core.Implements
             this._userService = _userService;
         }
         
-        public IQueryable GetAllCategory(string role)
+        public IQueryable GetAllActiveCategoryByRole(string role)
         {
             return _nuceCoreContext.NewsCats.AsNoTracking()
                                 .Where(c => c.Role == role && c.Status == 1)
@@ -28,9 +29,29 @@ namespace nuce.web.api.Services.Core.Implements
 
         public async Task<DataTableResponse<NewsItems>> FindItemsByCatId(int catId, int seen, int size)
         {
-            var data = _nuceCoreContext.NewsItems.AsNoTracking()
+            var catChildren = _nuceCoreContext.NewsCats.Where(cat => cat.Parent == catId && cat.Parent != -1 && cat.Status == 1);
+            bool isParent = catChildren != null && catChildren.Any();
+            IQueryable<NewsItems> data = null;
+
+            if (isParent)
+            {
+                data = catChildren.AsNoTracking().GroupJoin(
+                            _nuceCoreContext.NewsItems.AsNoTracking(),
+                            cat => cat.Id,
+                            newsItem => newsItem.CatId,
+                            (cat, newsItem) => new { cat, newsItem }
+                        ).SelectMany(
+                            left => left.newsItem.DefaultIfEmpty(),
+                            (left, newsitem) => newsitem
+                        ).Where(ni => ni != null)
+                        .OrderByDescending(ni => ni.EntryDatetime);
+            }
+            else
+            {
+                data = _nuceCoreContext.NewsItems.AsNoTracking()
                             .Where(ni => ni.CatId == catId)
-                            .OrderByDescending(ni => ni.UpdateDatetime);
+                            .OrderByDescending(ni => ni.EntryDatetime);
+            }
 
             var takedData = await data.Skip(seen).Take(size).ToListAsync();
             return new DataTableResponse<NewsItems>
@@ -61,21 +82,32 @@ namespace nuce.web.api.Services.Core.Implements
                 throw new Exception("Tiêu đề không được để trống");
             }
 
-            var newsItems = new NewsItems
+            try
             {
-                CatId = model.CatId,
-                NewContent = model.Content,
-                Title = model.Title,
-                Description = model.Description,
-                EntryUsername = username,
-                UpdateUsername = username,
-                EntryDatetime = now,
-                UpdateDatetime = now,
-                TotalView = 1,
-                Status = 1
-            };
-            await _nuceCoreContext.NewsItems.AddAsync(newsItems);
-            await _nuceCoreContext.SaveChangesAsync();
+                using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                {
+                    var newsItems = new NewsItems
+                    {
+                        CatId = model.CatId,
+                        NewContent = model.Content,
+                        Title = model.Title,
+                        Description = model.Description,
+                        EntryUsername = username,
+                        UpdateUsername = username,
+                        EntryDatetime = now,
+                        UpdateDatetime = now,
+                        TotalView = 1,
+                        Status = 1
+                    };
+                    await _nuceCoreContext.NewsItems.AddAsync(newsItems);
+
+                    await _nuceCoreContext.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public async Task UpdateNewsItems(NewsItems model)
@@ -95,6 +127,12 @@ namespace nuce.web.api.Services.Core.Implements
             newsItems.UpdateUsername = _userService.GetUserName();
 
             await _nuceCoreContext.SaveChangesAsync();
+        }
+
+        private IQueryable GetAllActiveCategory()
+        {
+            return _nuceCoreContext.NewsCats.AsNoTracking()
+                                .Where(c => c.Status == 1);
         }
 
     }

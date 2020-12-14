@@ -37,6 +37,6 @@ CKEDITOR.editorConfig = function( config ) {
 	config.removeDialogTabs = 'image:advanced;link:advanced';
 	
 	//customize
-	config.extraPlugins = 'embed';
+	config.extraPlugins = 'embed,justify';
 	config.embed_provider = '//ckeditor.iframe.ly/api/oembed?url={url}&callback={callback}';
 };

@@ -1,7 +1,5 @@
-﻿using System;
+﻿using nuce.web.api.Models.Core;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace nuce.web.api.ViewModel.Core
 {
@@ -13,5 +11,18 @@ namespace nuce.web.api.ViewModel.Core
         public string Content { get; set; }
         public string Avatar { get; set; }
         public string File { get; set; }
+        //public List<NewsCatItem> OtherCategory { get; set; }
     }
+
+    public class CreateNewsCategoryModel
+    {
+        public string Role { get; set; }
+        public List<NewsCategoryParent> CategoryList { get; set; }
+    }
+
+    public class NewsCategoryParent : NewsCats
+    {
+        public List<NewsCats> Children { get; set; }
+    }
+
 }
