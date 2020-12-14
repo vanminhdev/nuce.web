@@ -1,32 +1,161 @@
-﻿
-@{
-    ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_LayoutDefault.cshtml";
+﻿@{
+    ViewData["Title"] = "Trang chủ";
 }
 
-<div class="container">
-    <div class="row d-flex justify-content-center">
-        <div class="col-12 col-md-6 mt-2 mb-2">
-            <a href="/account/login" class="p-4 d-flex align-items-center" style="background-color: #0F297E; border-radius: 5px; height: 200px; text-decoration:none;">
-                <h2 class="text-center text-white">
-                    Khảo sát phản hồi của sinh viên về hoạt động giảng dạy của giảng viên
-                </h2>
-            </a>
+@section Breadcrumb {
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Index</li>
+}
+
+<div class="row">
+    <div class="col-md-8 col-12">
+        <div class="row mb-3">
+            <div class="col-12 col-md-6">
+                <div>
+                    <div>
+                        <img src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg" class="img-fluid" alt="Responsive image" />
+                    </div>
+                    <div class="mt-2">
+                        <a class="m-text-black m-text-decoration-none" href="#">
+                            <span class="m-fs-18 font-weight-bold m-text-hover-blue mb-1">
+                                Thứ trưởng Bộ Mỏ và Năng lượng Campuchia đến thăm và làm việc với Viện Năng lượng nguyên tử Việt Nam
+                            </span>
+                        </a>
+                        <br />
+                        <span class="text-muted m-fs-13">20/12/2020</span>
+                        <p class="text-secondary mt-1 mb-0">
+                            Ngày 7/8/2018, Đoàn công tác của Bộ Mỏ và Năng lượng Campuchia gồm có ông Tun Lean - Thứ...
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 mt-2 mt-md-0">
+                <div>
+                    <div class="d-flex align-items-center m-height-70">
+                        <div class="ml-0 ml-md-2 mr-3 h-100">
+                            <img src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg" class="h-100" />
+                        </div>
+                        <div class="pt-1 pb-1">
+                            <a class="m-text-black m-text-decoration-none font-weight-bold m-text-hover-blue m-fs-13" href="#">
+                                Thứ trưởng Bộ Mỏ và Năng lượng Campuchia đến thăm và làm việc với...
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center m-height-70 mt-3">
+                        <div class="ml-0 ml-md-2 mr-3 h-100">
+                            <img src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg" class="h-100" />
+                        </div>
+                        <div class="pt-1 pb-1">
+                            <a class="m-text-black m-text-decoration-none font-weight-bold m-text-hover-blue m-fs-13" href="#">
+                                Thứ trưởng Bộ Mỏ và Năng lượng Campuchia đến thăm và làm việc với...
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center m-height-70 mt-3">
+                        <div class="ml-0 ml-md-2 mr-3 h-100">
+                            <img src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg" class="h-100" />
+                        </div>
+                        <div class="pt-1 pb-1">
+                            <a class="m-text-black m-text-decoration-none font-weight-bold m-text-hover-blue  m-fs-13" href="#">
+                                Thứ trưởng Bộ Mỏ và Năng lượng Campuchia đến thăm và làm việc với...
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        @*<div class="col-12 col-md-6 mt-2 mb-2">
-            <a href="" class="p-4 d-flex align-items-center" style="background-color: #0F297E; border-radius: 5px; height: 200px; text-decoration:none;">
-                <h2 class="text-center text-white">
-                    Khảo sát phản hồi của sinh viên về chất lượng đào tạo trước tốt nghiệp
-                </h2>
-            </a>
-        </div>*@
-        <div class="col-12 col-md-6 mt-2 mb-2">
-            <a href="/account/logingraduate" class="p-4 d-flex align-items-center" style="background-color: #0F297E; border-radius: 5px; height: 200px; text-decoration:none;">
-                <h2 class="text-center text-white">
-                    Khảo sát phản hồi của cựu sinh viên
-                </h2>
-            </a>
+
+        <div class="row">
+            <div class="col">
+                <div class="mb-2">
+                    <div class="m-border-b-blue d-flex">
+                        <span class="m-bg-blue text-white p-1 pl-2 pr-2 text-uppercase"><i class="fas fa-poll-h mr-2"></i>Khảo sát đánh giá giảng viên</span>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12 col-md-4">
+                        <a class="m-text-black m-text-decoration-none m-text-hover-blue" href="/account/login">
+                            <div>
+                                <img src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg" class="w-100" />
+                            </div>
+                            <div class="mt-2">
+                                <p class="">Khảo sát phản hồi của sv về hoạt động giảng dạy của gv</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <a class="m-text-black m-text-decoration-none m-text-hover-blue" href="/account/login">
+                            <div>
+                                <img src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg" class="w-100" />
+                            </div>
+                            <div class="mt-2">
+                                <p class="">Khảo sát phản hồi của sv về chất lượng đào tạo trước tốt nghiệp</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <a class="m-text-black m-text-decoration-none m-text-hover-blue" href="/account/logingraduate">
+                            <div>
+                                <img src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg" class="w-100" />
+                            </div>
+                            <div class="mt-2">
+                                <p class="">Khảo sát tình hình việc làm sv sau tốt nghiệp</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 col-12">
+        <div class="mb-3">
+            <div class="mb-2">
+                <div class="m-border-b-blue d-flex">
+                    <span class="m-bg-blue text-white p-1 pl-2 pr-2 text-uppercase"><i class="fas fa-bell mr-2"></i>Thông báo</span>
+                </div>
+            </div>
+
+            <div class="pt-2 pb-2 m-border-b-gray">
+                <a class="m-text-black m-text-decoration-none m-text-hover-blue" href="#">
+                    Thông báo tuyển chọn tổ chức, cá nhân chủ trì thực hiện nhiệm vụ KH&CN cấp Bộ
+                    do Viện Năng...
+                </a>
+                <br />
+                <span class="text-muted m-fs-13">20/12/2020</span>
+            </div>
+
+            <div class="pt-2 pb-2 m-border-b-gray">
+                <a class="m-text-black m-text-decoration-none m-text-hover-blue" href="#">
+                    Thông báo tuyển chọn tổ chức, cá nhân chủ trì thực hiện nhiệm vụ KH&CN cấp Bộ
+                    do Viện Năng...
+                </a>
+                <br />
+                <span class="text-muted m-fs-13">20/12/2020</span>
+            </div>
+        </div>
+
+
+        <div class="mb-3">
+            <div class="mb-2">
+                <div class="m-border-b-blue d-flex">
+                    <span class="m-bg-blue text-white p-1 pl-2 pr-2 text-uppercase"><i class="fas fa-link mr-2"></i>Liên kết nhanh</span>
+                </div>
+            </div>
+
+            <div class="pt-2 pb-2">
+                <a class="m-text-black m-text-decoration-none m-text-hover-blue" href="#">
+                    <img src="http://dut.udn.vn/Images/UserfulLinks/home_HTTTSV.jpg" class="w-100" />
+                </a>
+            </div>
+
+            <div class="pt-2 pb-2">
+                <a class="m-text-black m-text-decoration-none m-text-hover-blue" href="#">
+                    <img src="http://dut.udn.vn/Images/UserfulLinks/home_HTTTSV.jpg" class="w-100" />
+                </a>
+            </div>
         </div>
     </div>
 </div>
-

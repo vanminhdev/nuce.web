@@ -26,120 +26,148 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Đại Học Xây Dựng | @ViewData["Title"]</title>
-    <!-- BootStrap -->
     <link rel="stylesheet" href="~/content/css/bootstrap.min.css" />
 
     <!-- Custom -->
-    <link rel="stylesheet" href="~/content/css/util.css" />
-    <link rel="stylesheet" href="~/content/css/style.css" />
-    <link rel="stylesheet" href="~/content/css/responsive.css" />
+    <link rel="stylesheet" href="~/content/css/m-util.css" />
+    <link rel="stylesheet" href="~/content/css/m-style.css" />
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
     @RenderSection("Style", required: false)
 </head>
 <body>
-    <div class="full-height body-wrp" style="position: relative;">
-        <form action="/account/logout" method="post" style="position: absolute; top: 20px; right: 40px;">
-            <button type="submit" class="btn btn-outline-secondary">Đăng xuất</button>
-        </form>
-        <!-- header section -->
-        <section id="header">
+    <header>
+        <div class="m-bg-gray">
             <div class="container">
-                <div class="row justify-content-between align-items-center">
-                    <div class="col-12 col-md-7">
-                        <div class="row">
-                            <div class="col-2">
-                                <img class="logo"
-                                     src="~/content/images/logo.png"
-                                     alt="logo" />
-                            </div>
-                            <div class="col-10 col-md-10 mb-3">
-                                <div class="col-12 text-left main-title main-color font-18-sm font-32 font-28-md">
-                                    trường đại học xây dựng
-                                </div>
-                                <div class="col-12 main-color sub-title font-14-sm font-25 font-22-md">
-                                    National University of Civil Engeering
-                                </div>
-                                <div class="col-12">
-                                    <div class="row">
-                                        <div class="col-2 pr-0"><hr class="line-label" /></div>
-                                        <div class="col-10 small-title font-9-sm font-15">
-                                            Cơ sở giáo dục đại học đạt chuẩn kiểm định quốc tế
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-5">
-                        <div class="row">
-                            <div class="col-5 p-1">
-                                <div class="row">
-                                    <div class="col-3">
-                                        <img src="~/content/images/icons/hotline.png"
-                                             alt="hotline icon"
-                                             class="hotline-icon" />
-                                    </div>
-                                    <div class="col-9">
-                                        <div class="row">
-                                            <div class="col-12 main-color icon-title font-14-sm">
-                                                Hotline
-                                            </div>
-                                            <div class="col-12 icon-sub-title">02438697004</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-7 p-1">
-                                <div class="row">
-                                    <div class="col-3">
-                                        <img src="~/content/images/icons/email.png"
-                                             alt="email icon"
-                                             class="email-icon" />
-                                    </div>
-                                    <div class="col-9">
-                                        <div class="row">
-                                            <div class="col-12 main-color icon-title font-14-sm">
-                                                Email
-                                            </div>
-                                            <div class="col-10 icon-sub-title">
-                                                ctsv@nuce.edu.vn
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- end header section -->
-        <section id="body">
-            <div class="pt-4 pb-4" id="render-body">
-                @RenderBody()
-            </div>
-        </section>
+                <div class="row">
+                    <div class="col">
+                        <div class="d-md-flex justify-content-end pt-1 pb-1 pt-md-3 pb-md-3 m-fs-sm-12">
+                            <div class="ml-2 mr-2 font-weight-bold">
+                                @{ 
+                                    string strDayOfWeek = "";
+                                    var dayOfWeek = DateTime.Now.DayOfWeek;
+                                    if(dayOfWeek == DayOfWeek.Monday)
+                                    {
+                                        strDayOfWeek = "Thứ 2";
+                                    }
+                                    else if (dayOfWeek == DayOfWeek.Tuesday)
+                                    {
+                                        strDayOfWeek = "Thứ 3";
+                                    }
+                                    else if (dayOfWeek == DayOfWeek.Wednesday)
+                                    {
+                                        strDayOfWeek = "Thứ 4";
+                                    }
+                                    else if (dayOfWeek == DayOfWeek.Thursday)
+                                    {
+                                        strDayOfWeek = "Thứ 5";
+                                    }
+                                    else if (dayOfWeek == DayOfWeek.Friday)
+                                    {
+                                        strDayOfWeek = "Thứ 6";
+                                    }
+                                    else if (dayOfWeek == DayOfWeek.Saturday)
+                                    {
+                                        strDayOfWeek = "Thứ 7";
+                                    }
+                                    else if (dayOfWeek == DayOfWeek.Sunday)
+                                    {
+                                        strDayOfWeek = "Chủ nhật";
+                                    }
+                                }
 
-        <!-- footer section -->
-        <section id="footer">
-            <div class="container full-height">
-                <div class="full-height row text-center main-color align-items-end">
-                    <div class="col-12 mb-2">
-                        Bản quyền  &copy;@(DateTime.Now.Year) thuộc Đại học Xây dựng
-                        <br />
-                        Phát triển bởi: Khoa Công Nghê Thông Tin
+                                @(strDayOfWeek), ngày @(DateTime.Now.ToString("dd/MM/yyyy"))
+                            </div>
+                            <div class="ml-2 mr-2 font-weight-bold d-inline">
+                                <a class="m-text-black m-text-decoration-none m-text-hover-blue" href="#"><i class="fas fa-laptop p-1"></i> Văn phòng điện tử</a>
+                            </div>
+                            <div class="ml-2 mr-2 font-weight-bold d-inline">
+                                <a class="m-text-black m-text-decoration-none m-text-hover-blue" href="#"><i class="fas fa-envelope p-1"></i> Email</a>
+                            </div>
+                            <div class="ml-2 mr-2 font-weight-bold d-inline">
+                                <a class="m-text-black m-text-decoration-none m-text-hover-blue" href="#"><i class="fas fa-phone p-1"></i> Liên hệ</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </section>
-        <!-- end footer section -->
-    </div>
+        </div>
+        <div class="container">
+            <div class="hd-banner">
+                <img src="~/content/img/HEADDER-CHIEUXA.png" class="img-fluid" alt="Khảo thí đại học xây dựng" />
+            </div>
+        </div>
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-dark m-bg-blue pt-0 pb-0 pr-0">
+                <a class="navbar-brand" href="/default">
+                    <i class="fas fa-home text-white"></i>
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse w-100" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item dropdown m-nav-item-hover">
+                            <a class="nav-link text-white mt-1 mb-1" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Giới thiệu
+                            </a>
+                            <div class="dropdown-menu m-max-width-md-90per" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="#">Sứ mệnh tầm nhìn của Đại học Xây Dựng</a>
+                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="#">Chứng nhận kiểm định CLGD Đại học Xây Dựng</a>
+                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="#">Giới thiệu chung</a>
+                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="#">Chức năng nhiệm vụ</a>
+                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="#">Cơ cấu tổ chức</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown m-nav-item-hover">
+                            <a class="nav-link text-white mt-1 mb-1" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Khảo thí
+                            </a>
+                            <div class="dropdown-menu m-max-width-md-90per" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="#">Văn bản của Nhà nước & Bộ</a>
+                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="#">Văn bản của Trường</a>
+                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="#">Hướng dẫn quy trình và biểu mẫu</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb m-bg-none pl-0 mb-0">
+                @RenderSection("Breadcrumb", required: false)
+                @*<li class="breadcrumb-item "><a class="m-text-blue" href="#">Home</a></li>
+                <li class="breadcrumb-item "><a class="m-text-blue" href="#">Library</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Data</li>*@
+            </ol>
+        </nav>
+    </section>
+
+    <section class="container">
+        @RenderBody()
+    </section>
+
+
+    <footer class="mt-3" id="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col pt-5 pb-5 d-flex justify-content-center">
+                    Bản quyền  &copy;@(DateTime.Now.Year) thuộc Đại học Xây dựng
+                    <br />
+                    Phát triển bởi: Khoa Công Nghê Thông Tin
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <div id="loading-screen" class="popup-fullscreen">
         <div class="d-flex justify-content-center align-items-center">
             <div class="loading-circle"></div>
         </div>
     </div>
-    <script src="~/Content/js/helper/prevent.debugger.helper.js"></script>
     <script src="~/content/js/jquery.min.js"></script>
     <script src="~/content/js/jquery.cookie.min.js"></script>
     <script src="~/content/js/jquery.validate.min.js"></script>
@@ -202,17 +230,17 @@
         }
     </script>
     @*<script>
-        let div = document.createElement('div');
-        let loop = setInterval(() => {
-            console.log(div);
-        });
-        Object.defineProperty(div, "id", {
-            get: () => {
-                //clearInterval(loop);
-                alert("Yêu cầu khảo sát nghiêm túc!. Mở một tab mới để thực hiện lại.");
-            }
-        });
-    </script>*@
+            let div = document.createElement('div');
+            let loop = setInterval(() => {
+                console.log(div);
+            });
+            Object.defineProperty(div, "id", {
+                get: () => {
+                    //clearInterval(loop);
+                    alert("Yêu cầu khảo sát nghiêm túc!. Mở một tab mới để thực hiện lại.");
+                }
+            });
+        </script>*@
     @RenderSection("Scripts", required: false)
 </body>
 </html>
