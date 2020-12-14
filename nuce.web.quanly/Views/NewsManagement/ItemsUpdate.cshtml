@@ -5,6 +5,13 @@
 }
 
 <div class="row main-content-wrp mt-0">
+    <div class="col-12">
+        <a class="update-btn text-light p-2 mb-3"
+           style="text-decoration: none; display: inline-block"
+           href="/newsmanagement/itemslist?catId=@TempData.Peek("catId")">
+            ← Quay lại danh sách bài tin
+        </a>
+    </div>
     <div class="col-12 text-right">
         <button class="btn btn-outline-success"
                 onclick="onUpdate()">

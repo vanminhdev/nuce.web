@@ -353,7 +353,7 @@
     </div>
 
     <div>
-        <div id="toast-success" class="toast" style="position: absolute; top: 20px; right: 30px; width: 400px; z-index:99999999999;">
+        <div id="toast-success" class="toast" style="position: fixed; top: 20px; right: 30px; width: 400px; z-index:99999999999;">
             <div class="toast-header bg-success">
                 <strong class="mr-auto text-white">Thành công</strong>
                 <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
@@ -365,7 +365,7 @@
             </div>
         </div>
 
-        <div id="toast-warning" class="toast" style="position: absolute; top: 20px; right: 30px; width: 400px; z-index:99999999999;">
+        <div id="toast-warning" class="toast" style="position: fixed; top: 20px; right: 30px; width: 400px; z-index:99999999999;">
             <div class="toast-header bg-warning">
                 <strong class="mr-auto text-white">Cảnh báo</strong>
                 <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
@@ -377,7 +377,7 @@
             </div>
         </div>
 
-        <div id="toast-error" class="toast" style="position: absolute; top: 20px; right: 30px; width: 400px; z-index:99999999999;">
+        <div id="toast-error" class="toast" style="position: fixed; top: 20px; right: 30px; width: 400px; z-index:99999999999;">
             <div class="toast-header bg-danger">
                 <strong class="mr-auto text-white">Thất bại</strong>
                 <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
@@ -433,11 +433,6 @@
     <script src="~/Content/js/helper/function.helper.js"></script>
     <script src="~/Content/js/helper/modal.helper.js"></script>
     <script src="~/Content/js/ckeditor/ckeditor.js"></script>
-    <script>
-        CKEDITOR.editorConfig = function( config ) {
-            config.extraPlugins = 'embed';
-        };
-    </script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

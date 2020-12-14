@@ -12,6 +12,11 @@
 
 <div class="main-content-wrp mt-0">
     <div class="row">
+        <div class="col-12">
+            <a class="update-btn text-light p-2 mb-3"
+               style="text-decoration: none; display: inline-block"
+               href="/newsmanagement/index?role=@TempData.Peek("role")">← Quay lại danh mục</a>
+        </div>
         <div class="col-12 text-right">
             <a id="create-news-item" href="" class="btn btn-primary" role="button">
                 Đăng bài
@@ -84,7 +89,7 @@
 
         var init = function() {
             $('#news-items-list-datatable_filter').hide();
-            state.catId = @ViewData["catId"];
+            state.catId = @TempData.Peek("catId");
             $('#create-news-item').prop({href: `/newsmanagement/create?catId=${state.catId}`});
             searchData();
         }

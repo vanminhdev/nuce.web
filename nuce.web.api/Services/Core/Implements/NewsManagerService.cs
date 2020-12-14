@@ -4,7 +4,6 @@ using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Core;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -82,6 +81,11 @@ namespace nuce.web.api.Services.Core.Implements
         public async Task UpdateNewsItems(NewsItems model)
         {
             var newsItems = await FindNewsItemById(model.Id);
+
+            if (string.IsNullOrEmpty(model.Title?.Trim()))
+            {
+                throw new Exception("Tiêu đề không được để trống");
+            }
 
             newsItems.NewContent = model.NewContent;
             newsItems.CatId = model.CatId;

@@ -5,6 +5,11 @@
 }
 
 <div class="row main-content-wrp mt-0">
+    <div class="col-12">
+        <a class="update-btn text-light p-2 mb-3"
+            style="text-decoration: none; display: inline-block"
+            href="/newsmanagement/itemslist?catId=@TempData.Peek("catId")">← Quay lại danh sách bài tin</a>
+    </div>
     <div class="col-12 text-right">
         <button class="btn btn-outline-success"
                 onclick="onPostNewsItem()">
@@ -23,7 +28,7 @@
             </div>
             <div class="form-group">
                 <div class="font-14-sm fw-600 font-18">Nội dung</div>
-                <textarea id="news-content" required></textarea>
+                <textarea id="news-content"></textarea>
             </div>
         </form>
     </div>
@@ -79,10 +84,8 @@
         };
 
         var init = function() {
-            CKEDITOR.replace('news-content', {
-                embed_provider: '//ckeditor.iframe.ly/api/oembed?url={url}&callback={callback}',
-            });
-            state.catId = @ViewData["catId"];
+            CKEDITOR.replace('news-content');
+            state.catId = @TempData.Peek("catId");
             autoValidate();
         };
 

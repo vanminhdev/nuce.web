@@ -4,9 +4,19 @@
     ViewBag.Title = "Danh mục tin tức";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-    <div class="container-fluid service-categories-wrp" style="margin-top: 0">
-        @{List<NewsCatsModel> model = (List<NewsCatsModel>)Model; }
+<style>
+    @@media (prefers-reduced-motion: reduce) {
+        .collapse-custom>.collapsing {
+            -webkit-transition: none;
+            transition: ease;
+            transition-duration: 0.5s;
+        }
+    }
+</style>
+    <div class="container-fluid service-categories-wrp collapse-custom" style="margin-top: 0">
+        @{
+            List<NewsCatsModel> model = (List<NewsCatsModel>)Model;    
+        }
         @foreach (var item in model)
         {
             if (item.parent == -1 && model.Any(cat => cat.parent == item.id))
@@ -15,7 +25,7 @@
                      data-toggle="collapse" data-target="#children-@item.id">
                     @item.description
                 </div>
-                <div id="children-@item.id" class="collapse">
+                <div id="children-@item.id" class="collapse p-0">
                     @foreach (var child in model.Where(cat => cat.parent == item.id))
                     {
                     <div>

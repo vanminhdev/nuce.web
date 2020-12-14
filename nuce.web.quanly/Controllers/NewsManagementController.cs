@@ -27,6 +27,7 @@ namespace nuce.web.quanly.Controllers
             {
                 roleName = roleDict[role];
             }
+            TempData["role"] = role;
             string api = $"api/NewsManager/news-category/{roleName}";
             var response = await base.MakeRequestAuthorizedAsync("get", api);
 
@@ -40,7 +41,7 @@ namespace nuce.web.quanly.Controllers
         [HttpGet]
         public ActionResult ItemsList(int catId)
         {
-            ViewData["catId"] = catId;
+            TempData["catId"] = catId;
             return View("ItemsList");
         }
 
