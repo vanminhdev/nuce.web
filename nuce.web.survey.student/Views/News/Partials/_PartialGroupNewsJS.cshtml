@@ -18,7 +18,7 @@
     var getNewsItemDetail = function() {
         $.ajax({
             type: 'post',
-            url: `NewsManager/news-items/category/${THONGBAO_ID}`,
+            url: `${API_URL}/api/NewsManager/news-items/category/${THONGBAO_ID}`,
             data: JSON.stringify(partialGroupNews.body),
             dataType: 'json',
             contentType: 'application/json',

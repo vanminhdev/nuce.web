@@ -88,7 +88,7 @@
             getNewsItemDetail: function() {
                 $.ajax({
                     type: 'post',
-                    url: `NewsManager/news-items/category/${TINTUC_ID}`,
+                    url: `${API_URL}/api/NewsManager/news-items/category/${TINTUC_ID}`,
                     data: JSON.stringify(defaultState.body),
                     dataType: 'json',
                     contentType: 'application/json',

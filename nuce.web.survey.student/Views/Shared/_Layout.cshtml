@@ -185,9 +185,6 @@
                 withCredentials: true
             },
             crossDomain: true,
-            beforeSend: function(xhr, settings) { 
-                settings.url = `${API_URL}/api/${settings.url}`; 
-            } 
         });
         const debounce = (func, delay) => {
             let debounceTimer;
@@ -256,7 +253,7 @@
         var apiGenerateMenu = function() {
             $.ajax({
                 type: 'get',
-                url: `NewsManager/news-category/P_KhaoThi`,
+                url: `${API_URL}/api/NewsManager/news-category/P_KhaoThi`,
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function(res) {

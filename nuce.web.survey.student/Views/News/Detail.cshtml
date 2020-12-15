@@ -4,6 +4,11 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@section Breadcrumb {
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+    <li class="breadcrumb-item"><a id="breadcrum-category" class="m-text-blue" href="/news?catId=@TempData.Peek("catId")"></a></li>
+}
+
 <div class="row">
     <div class="col-md-8 col-12">
         <p id="news-item-title" class="font-weight-bold text-justify m-fs-16"></p>
@@ -22,20 +27,35 @@
     <script>
         var state = {
             id: @TempData.Peek("itemId") || '',
+            data: {},
+        };
+
+        var generateCategoryNameBreadcrumb = function() {
+            const localCategoryData = localStorage.getItem(STORAGE_KEY_CATEGORY_LIST);
+            if (localCategoryData != null) {
+                var data = JSON.parse(localCategoryData);
+                const thisCat = data.find(c => c.id === state.data.catId);
+                if (typeof thisCat !== 'undefined') {
+                    $('#breadcrum-category').html(thisCat.description || '');
+                    $('#breadcrum-category').prop({href: `/news?catId=${state.data.catId}` });
+                }
+            }
         };
 
         var getNewsItemDetail = function() {
             $.ajax({
                 type: 'get',
-                url: `NewsManager/news-items/${state.id}`,
+                url: `${API_URL}/api/NewsManager/news-items/${state.id}`,
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function(res) {
                     if (res != null && typeof res !== 'undefined') {
+                        state.data = res;
                         $('#news-item-title').html(res.title);
                         $('#news-item-content').html(res.newContent);
                         $('#news-item-date').html(datetimeHelper.convertDateTime(new Date(res.entryDatetime)));
                         handleContentImage();
+                        generateCategoryNameBreadcrumb();
                     }
                 },
             });
