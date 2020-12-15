@@ -162,6 +162,7 @@ namespace nuce.web.quanly.Controllers
                 return Json(new ResponseBody
                 {
                     StatusCode = HttpStatusCode.OK,
+                    Data = response
                 });
             }
             else if (response.StatusCode == HttpStatusCode.BadRequest)
