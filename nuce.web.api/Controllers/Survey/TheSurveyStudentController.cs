@@ -167,7 +167,7 @@ namespace nuce.web.api.Controllers.Survey
         {
             try
             {
-                var status = await _statusService.GetStatusTableTask(TableNameTask.AsEduSurveyReportTotal);
+                var status = await _statusService.GetStatusTableTask(TableNameTask.AsEduSurveyBaiKhaoSatSinhVien);
                 return Ok(new { status.Status, status.IsSuccess, status.Message });
             }
             catch (RecordNotFoundException e)

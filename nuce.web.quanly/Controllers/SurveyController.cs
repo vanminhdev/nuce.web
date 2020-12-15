@@ -108,29 +108,11 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> UpdateQuestion(QuestionDetail detail)
+        public async Task<ActionResult> UpdateQuestion(QuestionDetail question)
         {
-            if (!ModelState.IsValid)
-            {
-                return View("DetailQuestion", detail);
-            }
-            var content = new StringContent(JsonConvert.SerializeObject(detail), Encoding.UTF8, "application/json");
-            var response = await base.MakeRequestAuthorizedAsync("PUT", $"/api/question/update?id={detail.id}", content);
-            return await base.HandleResponseAsync(response,
-                action200: res =>
-                {
-                    ViewData["UpdateSuccessMessage"] = "Cập nhật thành công";
-                    return View("DetailQuestion", detail);
-                },
-                action500Async: async res =>
-                {
-                    ViewData["UpdateErrorMessage"] = "Cập nhật không thành công";
-                    var jsonString = await response.Content.ReadAsStringAsync();
-                    var resMess = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
-                    ViewData["UpdateErrorMessageDetail"] = resMess.message;
-                    return View("DetailQuestion", detail);
-                }
-            );
+            var content = new StringContent(JsonConvert.SerializeObject(question), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("PUT", $"/api/question/update?id={question.id}", content);
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() });
         }
         #endregion
 
@@ -241,7 +223,6 @@ namespace nuce.web.quanly.Controllers
                 action200: res =>
                 {
                     ViewData["UpdateSuccessMessage"] = "Cập nhật thành công";
-                    //return View("DetailQuestion", detail);
                     return Redirect($"/survey/answer?questionId={detail.QuestionId}");
                 }
             );
@@ -362,21 +343,21 @@ namespace nuce.web.quanly.Controllers
 
         #region thống kê
         [HttpGet]
-        public ActionResult Statistic()
+        public async Task<ActionResult> Statistic()
         {
+            var resTableStatus = await base.MakeRequestAuthorizedAsync("Get", $"/api/Statistic/GetStatusReportTotalNormalSurveyTask");
+            ViewData["TableReportNormalStatus"] = await resTableStatus.Content.ReadAsStringAsync();
+
+            var resSurveyRound = await base.MakeRequestAuthorizedAsync("Get", $"/api/SurveyRound/GetSurveyRoundEnd");
+            ViewData["SurveyRoundEnd"] = await resSurveyRound.Content.ReadAsStringAsync();
+
             return View();
         }
 
-        public async Task<ActionResult> GetStatusReportTotalNormalSurvey()
-        {
-            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/Statistic/GetStatusReportTotalNormalSurveyTask");
-            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
-        }
-
         [HttpPost]
-        public async Task<ActionResult> ReportTotalNormalSurvey()
+        public async Task<ActionResult> ReportTotalNormalSurvey(string surveyRoundId)
         {
-            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/Statistic/ReportTotalNormalSurvey");
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/Statistic/ReportTotalNormalSurvey?surveyRoundId={surveyRoundId}");
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
         #endregion

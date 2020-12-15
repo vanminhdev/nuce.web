@@ -13,9 +13,9 @@ namespace nuce.web.api.Services.Survey.Interfaces
     {
         public Task<PaginationModel<QuestionModel>> GetAllActiveStatus(QuestionFilter filter, int skip = 0, int pageSize = 20);
         public Task<List<QuestionModel>> GetAllByStatus(QuestionStatus status);
-        public Task<QuestionModel> GetById(string id);
+        public Task<QuestionModel> GetById(Guid id);
         public Task Create(QuestionCreateModel question);
-        public Task Update(string id, QuestionUpdateModel question);
-        public Task Delete(string id);
+        public Task Update(Guid id, QuestionUpdateModel question);
+        public Task Delete(Guid id);
     }
 }

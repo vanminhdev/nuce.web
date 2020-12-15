@@ -40,7 +40,7 @@ namespace nuce.web.api.Services.Survey.Implements
             }
             if (!string.IsNullOrWhiteSpace(filter.Type))
             {
-                query = query.Where(u => u.Type.Contains(filter.Type));
+                query = query.Where(u => u.Type == filter.Type);
             }
 
             var recordsFiltered = query.Count();
@@ -52,7 +52,7 @@ namespace nuce.web.api.Services.Survey.Implements
             var data = await querySkip
                 .Select(q => new QuestionModel
                 {
-                    Id = q.Id.ToString(),
+                    Id = q.Id,
                     Code = q.Code,
                     Content = HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(q.Content)),
                     Type = q.Type,
@@ -84,60 +84,97 @@ namespace nuce.web.api.Services.Survey.Implements
                 }).ToList();
         }
 
-        public async Task<QuestionModel> GetById(string Id)
+        public async Task<QuestionModel> GetById(Guid Id)
         {
+            _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             var question = await _surveyContext.AsEduSurveyCauHoi
-                .AsNoTracking()
-                .Where(q => q.Status != (int)QuestionStatus.Deleted && q.Id.ToString() == Id)
+                .Where(q => q.Status != (int)QuestionStatus.Deleted && q.Id == Id)
                 .FirstOrDefaultAsync();
+
+            var childs = await _surveyContext.AsEduSurveyCauHoi.Where(o => o.ParentCode == question.Code && o.Status != (int)QuestionStatus.Deleted).ToListAsync();
+
             if (question == null)
-                return null;
+            {
+                throw new RecordNotFoundException();
+            }
             return new QuestionModel {
                 Id = Id,
                 Code = question.Code,
                 Content = HttpUtility.HtmlDecode(question.Content),
                 Type = question.Type,
-                Order = question.Order
+                Order = question.Order,
+                ParentCode = question.ParentCode,
+                QuestionChilds = childs.Select(o => new QuestionModel
+                {
+                    Id = o.Id,
+                    Code = o.Code,
+                    Content = HttpUtility.HtmlDecode(o.Content),
+                    Type = o.Type,
+                    Order = o.Order,
+                    ParentCode = o.ParentCode
+                }).ToList()
             };
         }
 
         public async Task Create(QuestionCreateModel question)
         {
-            var questionCreate = new AsEduSurveyCauHoi();
-            questionCreate.Id = Guid.NewGuid();
-            questionCreate.BoCauHoiId = -1;
-            questionCreate.DoKhoId = 1;
-            questionCreate.Code = question.Code;
-            questionCreate.Content = question.Content;
-            questionCreate.InsertedDate = DateTime.Now;
-            questionCreate.UpdatedDate = DateTime.Now;
-            questionCreate.Order = question.Order.Value;
-            questionCreate.Level = 1;
-            questionCreate.Type = question.Type;
-            questionCreate.Status = (int)QuestionStatus.Active;
+            var questionCreate = new AsEduSurveyCauHoi
+            {
+                Id = Guid.NewGuid(),
+                BoCauHoiId = -1,
+                DoKhoId = 1,
+                Code = question.Code,
+                Content = question.Content,
+                InsertedDate = DateTime.Now,
+                UpdatedDate = DateTime.Now,
+                Order = question.Order.Value,
+                Level = 1,
+                Type = question.Type,
+                Status = (int)QuestionStatus.Active
+            };
             _surveyContext.AsEduSurveyCauHoi.Add(questionCreate);
             await _surveyContext.SaveChangesAsync();
         }
 
-        public async Task Update(string id, QuestionUpdateModel question)
+        public async Task Update(Guid id, QuestionUpdateModel question)
         {
             var questionUpdate = _surveyContext.AsEduSurveyCauHoi
-                .FirstOrDefault(q => q.Id.ToString() == id);
+                .FirstOrDefault(q => q.Id == id);
             if(questionUpdate == null)
             {
                 throw new RecordNotFoundException();
             }
-            questionUpdate.Code = question.Code;
+            //questionUpdate.Code = question.Code; //không cập nhật mã
             questionUpdate.Content = question.Content;
             questionUpdate.UpdatedDate = DateTime.Now;
             questionUpdate.Order = question.Order.Value;
             questionUpdate.Type = question.Type;
-             await _surveyContext.SaveChangesAsync();
+
+            if(question.QuestionChildCodes != null)
+            {
+                //xoá cái cũ
+                var oldChilds = await _surveyContext.AsEduSurveyCauHoi.Where(o => o.ParentCode == question.Code && o.Status != (int)QuestionStatus.Deleted).ToListAsync();
+                foreach (var item in oldChilds)
+                {
+                    item.ParentCode = null;
+                }
+
+                //thêm lại
+                foreach (var code in question.QuestionChildCodes)
+                {
+                    var questionChild = await _surveyContext.AsEduSurveyCauHoi.FirstOrDefaultAsync(o => o.Code == code && o.Status != (int)QuestionStatus.Deleted);
+                    if(questionChild != null)
+                    {
+                        questionChild.ParentCode = question.Code;
+                    }
+                }
+            }
+            await _surveyContext.SaveChangesAsync();
         }
 
-        public async Task Delete(string id)
+        public async Task Delete(Guid id)
         {
-            var question = await _surveyContext.AsEduSurveyCauHoi.FirstOrDefaultAsync(q => q.Id.ToString() == id);
+            var question = await _surveyContext.AsEduSurveyCauHoi.FirstOrDefaultAsync(q => q.Id == id);
             if(question == null)
             {
                 throw new RecordNotFoundException();

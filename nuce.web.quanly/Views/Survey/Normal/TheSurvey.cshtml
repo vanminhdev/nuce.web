@@ -212,7 +212,7 @@
         let btnPublish = $('#btn-publish');
         let tableTheSurveyStudentStatus = @Html.Raw(ViewData["TableTheSurveyStudentStatus"]);
         if (tableTheSurveyStudentStatus.status === @((int)TableTaskStatus.Done)) {
-            if (tableTheSurveyStudentStatus.isSuccess) {
+            if (!tableTheSurveyStudentStatus.isSuccess) {
                 toastWarning('Có lỗi xảy ra khi phát bài');
             } else {
                 toastSuccess('Phát thành công');
