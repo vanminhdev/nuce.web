@@ -144,5 +144,11 @@ namespace nuce.web.api.Services.Survey.Implements
             var surveyRounds = await _context.AsEduSurveyDotKhaoSat.Where(o => o.Status == (int)SurveyRoundStatus.Active).ToListAsync();
             return surveyRounds;
         }
+
+        public async Task<List<AsEduSurveyDotKhaoSat>> GetSurveyRoundEnd()
+        {
+            var surveyRounds = await _context.AsEduSurveyDotKhaoSat.Where(o => o.Status == (int)SurveyRoundStatus.Deactive).ToListAsync();
+            return surveyRounds;
+        }
     }
 }

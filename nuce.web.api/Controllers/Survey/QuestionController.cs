@@ -57,12 +57,23 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetById([Required(AllowEmptyStrings = false)] string id)
+        public async Task<IActionResult> GetById([Required(AllowEmptyStrings = false)] Guid? id)
         {
-            var question = await _asEduSurveyCauHoiService.GetById(id);
-            if (question == null)
+            try
+            {
+                var question = await _asEduSurveyCauHoiService.GetById(id.Value);                    
+                return Ok(question);
+            }
+            catch (RecordNotFoundException)
+            {
                 return NotFound(new { message = "Không tìm thấy câu hỏi" });
-            return Ok(question);
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không lấy được câu hỏi", detailMessage = mainMessage });
+            }
         }
 
         [HttpPost]
@@ -87,11 +98,11 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([Required(AllowEmptyStrings = false)] string id, [FromBody] QuestionUpdateModel question)
+        public async Task<IActionResult> Update([Required(AllowEmptyStrings = false)] Guid? id, [FromBody] QuestionUpdateModel question)
         {
             try
             {
-                await _asEduSurveyCauHoiService.Update(id, question);
+                await _asEduSurveyCauHoiService.Update(id.Value, question);
             }
             catch (DbUpdateException e)
             {
@@ -112,11 +123,11 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete([Required(AllowEmptyStrings = false)] string id)
+        public async Task<IActionResult> Delete([Required(AllowEmptyStrings = false)] Guid? id)
         {
             try
             {
-                await _asEduSurveyCauHoiService.Delete(id);
+                await _asEduSurveyCauHoiService.Delete(id.Value);
             }
             catch (RecordNotFoundException)
             {

@@ -144,7 +144,7 @@
             language: dataTableConfig.language,
             columnDefs: [
                 {
-                    targets: [4],
+                    targets: [5],
                     className: 'position-relative'
                 },
                 {
@@ -227,6 +227,7 @@
         });
 
         function showAddBox(id) {
+            console.log(id);
             let addBox = $('#' + id);
             if (!addBox.is(':visible')) {
                 addBox.show();
@@ -279,13 +280,17 @@
                     htmlstr = "<tr><td class='text-center' colspan='100%'>Danh sách trống</td></tr>";
                 }
                 for (let i = 0; i < data.length; i++) {
-                    htmlstr += `
-                    <tr>
+                    htmlstr += `<tr>
                         <td class="text-center">${i + 1}</td>
                         <td class="text-center">${data[i].code}</td>
-                        <td>${data[i].content}</td>
-                        <td class="text-center">${data[i].type}</td>
-                        <td class="text-center">${data[i].order}</td>
+                        <td>${data[i].content}</td> `;
+
+                    let questionType = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(Definitions.QuestionType.ToList()))');
+                    let result = questionType.find(element => element.Key == data[i].type);
+                    htmlstr += `<td class="text-center">${result.Value}</td>`;
+
+
+                    htmlstr += `<td class="text-center">${data[i].order}</td>
                         <td class="text-center"> <button class="btn btn-outline-danger" onclick="deleteClick('${data[i].id}')">Xoá</button> </td>
                     </tr>`;
                 }

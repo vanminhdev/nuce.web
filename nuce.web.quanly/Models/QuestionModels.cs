@@ -51,5 +51,11 @@ namespace nuce.web.quanly.Models
 
         [Required(ErrorMessage = "Số thứ tự không được để trống")]
         public int? order { get; set; }
+
+        public string parentCode { get; set; }
+
+        public List<QuestionDetail> questionChilds { get; set; }
+
+        public List<string> questionChildCodes { get; set; }
     }
 }

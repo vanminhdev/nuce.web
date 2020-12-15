@@ -912,6 +912,7 @@
     <Content Include="Content\img\3470-200.png" />
     <Content Include="Content\img\36871.png" />
     <Content Include="Content\img\6a99ebb8d0b585a00b407123ff76964cb3e18780_1_500x500.png" />
+    <Content Include="Content\img\banner.jpg" />
     <Content Include="Content\img\BNVinatom1.png" />
     <Content Include="Content\img\congkhains.png" />
     <Content Include="Content\img\dauthau-muasam.jpg" />
@@ -978,7 +979,6 @@
     <Content Include="Views\Default\Index.cshtml" />
     <Content Include="Views\Account\LoginGraduate.cshtml" />
     <Content Include="Views\GraduateHome\Index.cshtml" />
-    <Content Include="Views\Shared\_LayoutDefault.cshtml" />
     <Content Include="Views\Shared\_LayoutLogin.cshtml" />
     <Content Include="Views\GraduateHome\TheSurvey.cshtml" />
     <Content Include="Views\Home\UndergraduateTheSurvey.cshtml" />

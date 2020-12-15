@@ -3,7 +3,7 @@
     ViewData["Title"] = "Chi tiết đáp án";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<form method="post" class="container mt-2">
+<form method="post" class="container mt-2 auto-validate">
     <a class="update-btn text-light p-2" style="text-decoration: none;" href="/survey/Answer?questionId=@Model.QuestionId">← Quay lại danh sách đáp án</a>
 
     <div class="fw-700 text-uppercase font-15-sm font-25 mb-2 mt-3 text-dark">
@@ -46,7 +46,7 @@
                     Mã
                 </div>
                 <div class="col-12 col-md-10">
-                    @Html.TextBoxFor(m => m.AnswerBind.code, new { @class = "form-control" })
+                    @Html.TextBoxFor(m => m.AnswerBind.code, new { @class = "form-control", @required = true })
                     @Html.ValidationMessageFor(m => m.AnswerBind.code, "", new { @class = "form-text text-danger" })
                 </div>
             </div>
@@ -57,7 +57,7 @@
                     Nội dung
                 </div>
                 <div class="col-12 col-md-10">
-                    @Html.TextAreaFor(m => m.AnswerBind.content, new { @id = "content", @class = "form-control" })
+                    @Html.TextAreaFor(m => m.AnswerBind.content, new { @id = "content", @class = "form-control", @required = true })
                     @Html.ValidationMessageFor(m => m.AnswerBind.content, "", new { @class = "form-text text-danger" })
                 </div>
             </div>
@@ -68,7 +68,7 @@
                     Thứ tự
                 </div>
                 <div class=" col-12 col-md-10">
-                    @Html.TextBoxFor(m => m.AnswerBind.order, new { @class = "form-control", @type = "number" })
+                    @Html.TextBoxFor(m => m.AnswerBind.order, new { @class = "form-control", @type = "number", @required = true })
                     @Html.ValidationMessageFor(m => m.AnswerBind.order, "", new { @class = "form-text text-danger" })
                 </div>
             </div>

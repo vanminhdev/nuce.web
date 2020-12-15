@@ -73,6 +73,22 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpGet]
+        public async Task<IActionResult> GetSurveyRoundEnd()
+        {
+            try
+            {
+                var result = await _asEduSurveyDotKhaoSatService.GetSurveyRoundEnd();
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không lấy được đợt khảo sát", detailMessage = mainMessage });
+            }
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetSurveyRoundById(
             [Required(AllowEmptyStrings = false)]
             Guid? id)

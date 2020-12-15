@@ -6,6 +6,12 @@
     ViewData["Title"] = "Bài khảo sát";
 }
 
+@section Breadcrumb {
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/home/index">Khảo sát</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Làm bài khảo sát</li>
+}
+
 @section Style {
     <link rel="stylesheet" href="~/Content/css/star-rating.css" />
     <style>
@@ -17,9 +23,9 @@
             counter-increment: title-question-counter;
         }
 
-        .question-title:before {
-            content: counter(title-question-counter, upper-roman)". ";
-        }
+            .question-title:before {
+                content: counter(title-question-counter, upper-roman)". ";
+            }
 
         .tag-child-inline > * {
             display: inline;
@@ -171,6 +177,11 @@
 }
 
 <div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center text-dark">NỘI DUNG KHẢO SÁT</h1>
+        </div>
+    </div>
     <div class="row">
         <div class="col-12">
             @{

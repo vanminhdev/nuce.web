@@ -17,7 +17,7 @@ namespace nuce.web.api.ViewModel.Survey
 
     public class QuestionModel
     {
-        public string Id { get; set; }
+        public Guid Id { get; set; }
 
         public string Code { get; set; }
 
@@ -28,6 +28,8 @@ namespace nuce.web.api.ViewModel.Survey
         public int? Order { get; set; }
 
         public string ParentCode { get; set; }
+
+        public List<QuestionModel> QuestionChilds { get; set; }
     }
 
     public class QuestionCreateModel
@@ -62,5 +64,7 @@ namespace nuce.web.api.ViewModel.Survey
 
         [Required]
         public int? Order { get; set; }
+
+        public List<string> QuestionChildCodes { get; set; }
     }
 }

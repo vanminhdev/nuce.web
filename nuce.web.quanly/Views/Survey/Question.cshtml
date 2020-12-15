@@ -70,10 +70,10 @@
             ordering: false,
             lengthChange: false,
             stateSave: false,
-            pageLength: 20,
+            pageLength: 15,
             columnDefs: [
                 {
-                    targets: [0,1,2,4,5,6],
+                    targets: [0,1,2,4,5],
                     className: 'text-center'
                 }
             ],
@@ -123,8 +123,13 @@
                 {
                     data: null,
                     mRender: function (data, type, row) {
-                        return `<a class="btn btn-outline-success" href="/survey/detailquestion?questionId=${data.id}">Sửa</a>
-                                <a class="btn btn-outline-info" href="/survey/answer?questionId=${data.id}">Đáp án</a>`;
+                        let str = ``;
+                        str += `<a class="btn btn-outline-success" href="/survey/detailquestion?questionId=${data.id}">Sửa</a> `;
+
+                        if (data.type != '@QuestionType.SA' && data.type != '@QuestionType.StarRating' && data.type != '@QuestionType.CityC' && data.type != '@QuestionType.T') {
+                            str += `<a class="btn btn-outline-info" href="/survey/answer?questionId=${data.id}">Đáp án</a>`;
+                        }
+                        return str;
                     }
                 }
             ]

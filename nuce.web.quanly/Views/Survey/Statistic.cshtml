@@ -4,12 +4,14 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@section Style {
+    <link rel="stylesheet" href="~/content/css/bootstrap-select.min.css" />
+}
+
 <div class="container">
     <div class="row">
-        <div class="col-12">
-            <div id="message">
-            </div>
-            <button class="btn btn-primary" id="btn-statistic-survey" disabled>
+        <div class="col-12 d-flex justify-content-end">
+            <button class="btn btn-primary" id="btn-statistic-survey">
                 Thống kê
             </button>
         </div>
@@ -40,76 +42,74 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
-                <button type="button" class="btn btn-primary" id="save-changes-start-report" type-handle="">Bắt đầu</button>
+                <button type="button" class="btn btn-primary" id="start-report">Bắt đầu</button>
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
+    <script src="~/Content/js/bootstrap-select.min.js"></script>
     <script>
-        let btnReportTotalNormal = $('#btn-statistic-survey');
-        let message = $('#message');
-        $.ajax({
-            dataType: 'json',
-            method: 'Post',
-            url: '/Survey/GetStatusReportTotalNormalSurvey',
-            timeout: 0,
-            complete: () => { }
-        }).done(function (data) {
-            data = JSON.parse(data);
-            if (data.status === @((int)TableTaskStatus.DoNot)) {
-                btnReportTotalNormal.prop('disabled', false);
-            }
-            else if (data.status === @((int)TableTaskStatus.Doing)) {
-                btnReportTotalNormal.prop('disabled', true);
-                btnReportTotalNormal.html('<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang thống kê');
-            }
-            else if (data.status === @((int)TableTaskStatus.Done)) {
-                btnReportTotalNormal.prop('disabled', false);
-                btnReportTotalNormal.html('Thống kê');
-                if (data.isSuccess) {
-                    message.html(`
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            Thống kê thành công
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    `);
-                }
-                else {
-                    message.html(`
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            Thống kê không thành công
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    `);
-                }
-            }
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            console.log(textStatus + ': ' + errorThrown);
-            console.log(jqXHR);
+        let surveyRounds = JSON.parse('@Html.Raw(ViewData["SurveyRoundEnd"])');
+        let dotKhaoSats = $('#dotKhaoSat');
+        surveyRounds.forEach(e => {
+            dotKhaoSats.append(`<option value="${e.id}">${e.name} (từ ${getDateString(e.fromDate)} đến ${getDateString(e.endDate)})</option>`);
         });
+        dotKhaoSats.selectpicker('refresh');
 
-        btnReportTotalNormal.click(function () {
+        let btnReportTotalNormal = $('#btn-statistic-survey');
+        let tableReportNomalStatus = @Html.Raw(ViewData["TableReportNormalStatus"]);
+        if (tableReportNomalStatus.status === @((int)TableTaskStatus.Done)) {
+            if (!tableReportNomalStatus.isSuccess) {
+                toastWarning('Có lỗi xảy ra khi thống kê');
+            } else {
+                toastSuccess('Thống kê thành công');
+            }
+        }
+        else if (tableReportNomalStatus.status === @((int)TableTaskStatus.Doing)) {
             btnReportTotalNormal.prop('disabled', true);
             btnReportTotalNormal.html('<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang thống kê');
-            $.ajax({
-                dataType: 'json',
-                method: 'Post',
-                url: '/Survey/ReportTotalNormalSurvey',
-                timeout: 0,
-                complete: () => { }
-            }).done(function (data) {
+        }
+        console.log('statistic', tableReportNomalStatus);
 
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.log(textStatus + ': ' + errorThrown);
-                console.log(jqXHR);
-            });
+        btnReportTotalNormal.click(() => {
+            $('#modal-start-report').modal('show');
         });
+
+        $('#start-report').click(function () {
+            if ($('#form-data-start-report').valid()) {
+                $.ajax({
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/ReportTotalNormalSurvey',
+                    data: { surveyRoundId: $('#dotKhaoSat').val() },
+                    timeout: 0,
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        btnReportTotalNormal.prop('disabled', true);
+                        btnReportTotalNormal.html('<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang thống kê');
+                        toastSuccess('Bắt đầu thống kê');
+                        $('#modal-start-report').modal('hide');
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            }
+        });
+
+
     </script>
 }
 
