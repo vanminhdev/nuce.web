@@ -2488,6 +2488,13 @@ namespace nuce.web.api.Services.Ctsv.Implements
             string namNhapHoc = getNamNhapHoc(NienKhoa);
             string namRaTruong = getNamRaTruong(NienKhoa);
 
+            int soThangHoc = 60;
+            string lopLienThong = "LT";
+            if (Class.Trim().StartsWith(lopLienThong))
+            {
+                soThangHoc = 36;
+            }
+
             var Dien = new Dictionary<string, string>
                 {
                     {"1", "☐" },
@@ -2727,6 +2734,9 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 new GemboxRun(document, $"{namNhapHoc} ") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
                 new GemboxRun(document, "Thời gian ra trường (tháng/năm):...../...../") { CharacterFormat = new CharacterFormat { Size = 13 } },
                 new GemboxRun(document, $"{namRaTruong}") { CharacterFormat = new CharacterFormat { Size = 13, Bold = true } },
+                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
+                new GemboxRun(document, "    "),
+                new GemboxRun(document, $"(Thời gian học tại trường: {soThangHoc} tháng)") { CharacterFormat = new CharacterFormat { Size = 13 } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new GemboxRun(document, "    "),
                 new GemboxRun(document, "- Số tiền học phí hàng tháng: ") { CharacterFormat = new CharacterFormat { Size = 13 } },

@@ -12,7 +12,7 @@ using nuce.web.api.ViewModel.Core;
 
 namespace nuce.web.api.Controllers.Core
 {
-    [Authorize(Roles = "P_CTSV,P_KhaoThi")]
+    //[Authorize(Roles = "P_CTSV,P_KhaoThi")]
     [Route("api/[controller]")]
     public class NewsManagerController : Controller
     {

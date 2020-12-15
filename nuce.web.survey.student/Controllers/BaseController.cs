@@ -225,5 +225,12 @@ namespace nuce.web.survey.student.Controllers
                 }
             );
         }
+
+        protected async Task<T> DeserializeResponseAsync<T>(HttpContent responseContent)
+        {
+            string content = await responseContent.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<T>(content);
+        }
+
     }
 }

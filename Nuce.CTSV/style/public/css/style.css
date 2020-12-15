@@ -134,8 +134,10 @@ body {
 }
 
 .login-wrp {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
+    max-width: 1500px;
+    margin: 0 auto;
 }
 
 .login-wrp #header {
@@ -153,6 +155,8 @@ body {
 .body-wrp {
   display: flex;
   flex-direction: column;
+  max-width: 1500px;
+  margin: 0 auto;
 }
 
 .body-wrp #header {
