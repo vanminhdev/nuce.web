@@ -25,4 +25,10 @@ namespace nuce.web.api.ViewModel.Core
         public List<NewsCats> Children { get; set; }
     }
 
+    public class ItemAvatarModel
+    {
+        public byte[] Data { get; set; }
+        public string Extension { get; set; }
+    }
+
 }

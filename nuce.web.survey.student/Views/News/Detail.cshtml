@@ -1,0 +1,61 @@
+﻿
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-8 col-12">
+        <h4 id="news-item-title" class="font-weight-bold text-justify"></h4>
+        <div>
+            <p id="news-item-date" class="m-date-article m-fs-13 text-right"></p>
+        </div>
+        <div id="news-item-content" class="mt-4"></div>
+    </div>
+    <div class="col-md-4 col-12">
+        @Html.Partial("~/Views/News/Partials/_PartialGroupNews.cshtml")
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/Content/js/helper/datetime.js"></script>
+    <script>
+        var state = {
+            id: @TempData.Peek("itemId") || '',
+        };
+
+        var getNewsItemDetail = function() {
+            $.ajax({
+                type: 'get',
+                url: `NewsManager/news-items/${state.id}`,
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function(res) {
+                    if (res != null && typeof res !== 'undefined') {
+                        $('#news-item-title').html(res.title);
+                        $('#news-item-content').html(res.newContent);
+                        $('#news-item-date').html(datetimeHelper.convertDateTime(new Date(res.entryDatetime)));
+                        handleContentImage();
+                    }
+                },
+            });
+        };
+
+        var handleContentImage = function() {
+            $('#news-item-content img').each((idx, el) => {
+                el.style.width = '100%';
+            });
+        };
+
+        var init = function() {
+            getNewsItemDetail();
+        }
+
+        init();
+
+    </script>
+
+    @Html.Partial("~/Views/News/Partials/_PartialGroupNewsJS.cshtml")
+}
+
+

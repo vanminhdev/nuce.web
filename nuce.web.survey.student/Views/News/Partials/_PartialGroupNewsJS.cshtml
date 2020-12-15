@@ -1,0 +1,60 @@
+﻿<script src="~/Content/js/helper/datetime.js"></script>
+<script>
+    var partialGroupNews = {
+        limitNumber: 2,
+        body: {
+                draw: 1,
+                columns: [],
+                order: [],
+                start: 0,
+                length: 2,
+                search: {
+                    value: '',
+                    regex: false
+                }
+        },
+    };
+
+    var getNewsItemDetail = function() {
+        $.ajax({
+            type: 'post',
+            url: `NewsManager/news-items/category/${THONGBAO_ID}`,
+            data: JSON.stringify(partialGroupNews.body),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function(res) {
+                if (res.data != null && Array.isArray(res.data)) {
+                    handleContent(res.data);
+                }
+            },
+        });
+    };
+
+    var handleContent = function(data) {
+        let resultHtml = '';
+        const template = `<div class="pt-2 pb-2 m-border-b-gray">
+                            <a class="m-text-black m-text-decoration-none m-text-hover-blue" href="[link]">
+                                [title]
+                            </a>
+                            <br />
+                            <span class="text-muted m-fs-13">[entry-date]</span>
+                        </div>`;
+        for(let i = 0; i < partialGroupNews.limitNumber; i++) {
+            const newsItem = data[i];
+            if (typeof newsItem === 'undefined') {
+                break;
+            }
+            var entryDate = datetimeHelper.convertDateTime(new Date(newsItem.entryDatetime));
+            resultHtml += template.replace('[title]', `${newsItem.title || ''}`)
+                                    .replace('[link]', `/news/detail?itemId=${newsItem.id}`)
+                                    .replace('[entry-date]', `${entryDate}`);
+        }; 
+        $('#side-announcement').html(resultHtml);
+    };
+
+    var init = function() {
+        getNewsItemDetail();
+    };
+
+    init();
+</script>

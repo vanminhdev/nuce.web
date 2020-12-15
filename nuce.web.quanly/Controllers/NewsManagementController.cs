@@ -2,6 +2,7 @@
 using nuce.web.quanly.ViewModel.Base;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -100,6 +101,33 @@ namespace nuce.web.quanly.Controllers
 
             var stringContent = base.MakeContent(request);
             var response = await base.MakeRequestAuthorizedAsync("post", api, stringContent);
+
+            return await HandleApiResponseUpdate(response);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UploadAvatar(int id)
+        {
+            if (Request.Files.Count == 0)
+            {
+                return null;
+            }
+            HttpPostedFileBase imgAvatar = Request.Files[0];
+            byte[] content = new byte[imgAvatar.ContentLength];
+            await imgAvatar.InputStream.ReadAsync(content, 0, content.Length);
+            var extension = Path.GetExtension(imgAvatar.FileName).Substring(1).ToLower();
+            UploadFileModel model = new UploadFileModel
+            {
+                Content = content,
+                FileName = imgAvatar.FileName,
+                Key = "file",
+                ContentType = $"image/{extension}",
+            };
+
+            string api = $"api/NewsManager/news-items/avatar/{id}";
+
+            var stringContent = base.MakeContent(model);
+            var response = await base.MakeRequestAuthorizedAsync("put", api, stringContent);
 
             return await HandleApiResponseUpdate(response);
         }

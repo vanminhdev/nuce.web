@@ -147,6 +147,7 @@
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\GraduateHomeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\NewsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -934,6 +935,7 @@
     <Content Include="Content\js\bootstrap.min.js" />
     <Content Include="Content\js\dataTables.bootstrap4.min.js" />
     <Content Include="Content\js\dataTables.config.js" />
+    <Content Include="Content\js\helper\datetime.js" />
     <Content Include="Content\js\helper\prevent.debugger.helper.js" />
     <Content Include="Content\js\jquery.cookie.min.js" />
     <Content Include="Content\js\jquery.dataTables.min.js" />
@@ -982,6 +984,10 @@
     <Content Include="Views\Shared\_LayoutLogin.cshtml" />
     <Content Include="Views\GraduateHome\TheSurvey.cshtml" />
     <Content Include="Views\Home\UndergraduateTheSurvey.cshtml" />
+    <Content Include="Views\News\Index.cshtml" />
+    <Content Include="Views\News\Detail.cshtml" />
+    <Content Include="Views\News\Partials\_PartialGroupNews.cshtml" />
+    <Content Include="Views\News\Partials\_PartialGroupNewsJS.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

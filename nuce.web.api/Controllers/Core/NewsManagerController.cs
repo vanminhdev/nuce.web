@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using nuce.web.api.Models.Core;
 using nuce.web.api.Services.Core.Interfaces;
@@ -57,8 +58,42 @@ namespace nuce.web.api.Controllers.Core
         {
             try
             {
-                await _newsManagerService.CreateNewsItems(model);
-                return Ok();
+                var id = await _newsManagerService.CreateNewsItems(model);
+                return Ok(id);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [Route("news-items/avatar/{id}")]
+        public async Task<IActionResult> UploadAvatar(IFormFile file, int id)
+        {
+            try
+            {
+                var result = await _newsManagerService.UploadNewsItemAvatar(file, id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("news-items/avatar/{id}")]
+        public async Task<IActionResult> GetAvatar(int id, [FromQuery] int? width, [FromQuery] int? height)
+        {
+            try
+            {
+                var result = await _newsManagerService.GetNewsItemAvatar(id, width, height);
+                if (result != null)
+                {
+                    return File(result.Data, $"image/{result.Extension}");
+                }
+                return null;
             }
             catch (Exception ex)
             {

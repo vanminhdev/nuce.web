@@ -22,6 +22,29 @@
                 <div class="font-14-sm fw-600 font-18">Tiêu đề</div>
                 <input id="txtTitle" name="title" type="text" class="form-control" required />
             </div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="font-14-sm font-weight-bold mb-2">
+                                Ảnh đại diện
+                            </div>
+                            <div class="custom-file">
+                                <input id="file" type="file" onchange="onChangeFileUpload(this)" />
+                            </div>
+                            <div class="font-10-sm mt-2 sub-upload-file">
+                                Dung lượng < 1MB. Định dạng hỗ trợ: jpg, jpeg, png, gift
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            @*<img id="imgAvaPreview"
+                                 src="/style/public/images/person1.png"
+                                 alt=""
+                                 class="upload-user-avatar" />*@
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="form-group">
                 <div class="font-14-sm fw-600 font-18">Mô tả</div>
                 <input id="txtDescription" name="description" type="text" class="form-control" />
@@ -38,7 +61,11 @@
     <script>
 
         var state = {
-            catId: null,  
+            catId: @TempData.Peek("catId"),  
+        };
+
+        var onChangeFileUpload = function(e) {
+            console.log(e.files[0]);
         };
 
         var onPostNewsItem = function() {
@@ -69,6 +96,10 @@
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function(res) {
+                    var file = document.getElementById('file').files[0];
+                    if (file) {
+                        callApiSaveAvatar(file);
+                    }
                     $('#loading-screen').hide();
                 },
             }).done(res => {
@@ -83,9 +114,23 @@
             });
         };
 
+        var callApiSaveAvatar = function(file) {
+            var formData = new FormData();
+            // Attach file
+            formData.append(file.type, file); 
+
+            $.ajax({
+                url: `/newsmanagement/uploadavatar?id=${state.cat}`,
+                data: formData,
+                type: 'POST',
+                contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+                processData: false, // NEEDED, DON'T OMIT THIS
+                // ... Other options like success and etc
+            });
+        };
+
         var init = function() {
             CKEDITOR.replace('news-content');
-            state.catId = @TempData.Peek("catId");
             autoValidate();
         };
 

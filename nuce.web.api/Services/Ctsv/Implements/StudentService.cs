@@ -82,7 +82,6 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
         public async Task<byte[]> GetStudentAvatar(string code, int? width, int? height)
         {
-
             string imgPath = $"ANHSV/{code}.jpg";
             string fullImgPath = _pathProvider.MapPathStudentImage(imgPath);
             var dataStream = await _uploadFile.DownloadFileAsync(fullImgPath);

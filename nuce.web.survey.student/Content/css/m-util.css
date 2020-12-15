@@ -75,3 +75,10 @@
 .m-height-100per {
     height: 100%;
 }
+
+.m-date-article {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 22px;
+    color: #777;
+}

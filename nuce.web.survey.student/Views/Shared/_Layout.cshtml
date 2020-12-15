@@ -178,6 +178,8 @@
     <script src="~/content/js/bootstrap.min.js"></script>
     <script>
         var API_URL = `@ConfigurationManager.AppSettings.Get("API_URL")`;
+        var THONGBAO_ID = 5;
+        var TINTUC_ID = 6;
         $.ajaxSetup({
             xhrFields: {
                 withCredentials: true
@@ -277,7 +279,7 @@
             const dropdownTemplate = `<div class="dropdown-menu m-max-width-md-90per" aria-labelledby="navbarDropdown">
                                         [dropdown-detail-template]
                                     </div>`;
-            const dropdownDetailTemplate = `<a class="dropdown-item m-bg-hover-blue text-truncate" href="#">[name]</a>`;
+            const dropdownDetailTemplate = `<a class="dropdown-item m-bg-hover-blue text-truncate" href="[link]">[name]</a>`;
 
             data.forEach(cat => {
                 if (cat.parent == -1) {
@@ -286,11 +288,13 @@
                     if (children.length > 0) {
                         let dropdownDetailHtml = '';
                         children.forEach(child => {
-                           dropdownDetailHtml += dropdownDetailTemplate.replace('[name]', child.description);
+                           dropdownDetailHtml += dropdownDetailTemplate.replace('[name]', child.description)
+                                                                    .replace('[link]', `/news?catId=${child.id}`);
                         });
                         dropdownHtml += dropdownTemplate.replace('[dropdown-detail-template]', dropdownDetailHtml);  
                     }
-                    const tempHtml = menuItemTemplate.replace('[name]', cat.description).replace('[dropdown-template]', dropdownHtml);
+                    const tempHtml = menuItemTemplate.replace('[name]', cat.description)
+                                                    .replace('[dropdown-template]', dropdownHtml);
                     stringHtml += tempHtml;
                 }
             });
