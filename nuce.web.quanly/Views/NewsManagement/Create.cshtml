@@ -22,29 +22,29 @@
                 <div class="font-14-sm fw-600 font-18">Tiêu đề</div>
                 <input id="txtTitle" name="title" type="text" class="form-control" required />
             </div>
+            <!--<div class="row">
+        <div class="col-12 col-md-6">
             <div class="row">
-                <div class="col-12 col-md-6">
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="font-14-sm font-weight-bold mb-2">
-                                Ảnh đại diện
-                            </div>
-                            <div class="custom-file">
-                                <input id="file" type="file" onchange="onChangeFileUpload(this)" />
-                            </div>
-                            <div class="font-10-sm mt-2 sub-upload-file">
-                                Dung lượng < 1MB. Định dạng hỗ trợ: jpg, jpeg, png, gift
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            @*<img id="imgAvaPreview"
-                                 src="/style/public/images/person1.png"
-                                 alt=""
-                                 class="upload-user-avatar" />*@
-                        </div>
+                <div class="col-6">
+                    <div class="font-14-sm font-weight-bold mb-2">
+                        Ảnh đại diện
+                    </div>
+                    <div class="custom-file">
+                        <input id="file" type="file" onchange="onChangeFileUpload(this)" />
+                    </div>
+                    <div class="font-10-sm mt-2 sub-upload-file">
+                        Dung lượng < 1MB. Định dạng hỗ trợ: jpg, jpeg, png, gift
                     </div>
                 </div>
+                <div class="col-6">
+                    @*<img id="imgAvaPreview"
+                         src="/style/public/images/person1.png"
+                         alt=""
+                         class="upload-user-avatar" />*@
+                </div>
             </div>
+        </div>
+    </div>-->
             <div class="form-group">
                 <div class="font-14-sm fw-600 font-18">Mô tả</div>
                 <input id="txtDescription" name="description" type="text" class="form-control" />
@@ -96,10 +96,10 @@
                 dataType: 'json',
                 contentType: 'application/json',
                 success: function(res) {
-                    var file = document.getElementById('file').files[0];
+                    /*var file = document.getElementById('file').files[0];
                     if (file) {
                         callApiSaveAvatar(file);
-                    }
+                    }*/
                     $('#loading-screen').hide();
                 },
             }).done(res => {

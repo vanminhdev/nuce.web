@@ -113,13 +113,13 @@ namespace nuce.web.api.Services.Core.Implements
 
                     await _nuceCoreContext.NewsItems.AddAsync(newsItems);
                     await _nuceCoreContext.SaveChangesAsync();
+                    scope.Complete();
                     return newsItems.Id;
                 }
             }
             catch (Exception ex)
             {
                 throw ex;
-                return -1;
             }
         }
 

@@ -75,7 +75,7 @@
                     </div>
                     <div class="col-12 col-md-5 p-0">
                         <div class="row">
-                            <div class="col-5 p-1">
+                            <div class="col-5 px-1">
                                 <div class="row">
                                     <div class="col-3">
                                         <img src="~/content/images/icons/hotline.png"
@@ -87,7 +87,9 @@
                                             <div class="col-12 main-color icon-title font-14-sm">
                                                 Hotline
                                             </div>
-                                            <div class="col-12 icon-sub-title">02438697004</div>
+                                            <div id="web-mobile" class="col-12 icon-sub-title">
+                                                
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -104,8 +106,8 @@
                                             <div class="col-12 main-color icon-title font-14-sm">
                                                 Email
                                             </div>
-                                            <div class="col-10 icon-sub-title">
-                                                ctsv@nuce.edu.vn
+                                            <div id="web-email" class="col-10 icon-sub-title">
+                                                
                                             </div>
                                         </div>
                                     </div>
@@ -169,10 +171,14 @@
                                            href="/ctsvservicemanagement">
                                             Quản lý dịch vụ
                                         </a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a class="nav-link menu-item text-center font-18 font-10-xsm width-action block-center"
                                            href="/ctsvservicemanagement/parameters">
                                             Tham số dịch vụ
                                         </a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a class="nav-link menu-item text-center font-18 font-10-xsm width-action block-center"
                                            href="/newsmanagement/index?role=2">
                                             Tin tức
@@ -401,6 +407,11 @@
     <script src="~/content/js/jquery.validate.min.js"></script>
     <script src="~/content/js/popper.min.js"></script>
     <script src="~/content/js/bootstrap.min.js"></script>
+    <script src="~/Content/js/common/config.js"></script>
+    <script>
+        $('#web-mobile').html(COMMON_CONFIG.getDomainConfig().mobile);
+        $('#web-email').html(COMMON_CONFIG.getDomainConfig().email);
+    </script>
     <script>
         $.ajaxSetup({
             xhrFields: {

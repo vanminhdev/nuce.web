@@ -17,5 +17,6 @@ namespace nuce.web.survey.student.Models
         [Required(AllowEmptyStrings = false, ErrorMessage = "Mật khẩu không được bỏ trống")]
         [NotContainWhiteSpace]
         public string Password { get; set; }
+        public string Type { get; set; }
     }
 }

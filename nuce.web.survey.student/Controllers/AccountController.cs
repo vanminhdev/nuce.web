@@ -70,13 +70,22 @@ namespace nuce.web.survey.student.Controllers
                 case HttpStatusCode.Unauthorized:
                     var jsonString = await response.Content.ReadAsStringAsync();
                     ViewData["LoginMessage"] = "Đăng nhập không thành công";
+                    ViewData["LoginFailed"] = jsonString;
                     break;
                 default:
+                    jsonString = await response.Content.ReadAsStringAsync();
+                    ViewData["LoginMessage"] = "Đăng nhập không thành công";
+                    ViewData["LoginFailed"] = jsonString;
                     break;
             }
             return View("login", new LoginModel());
         }
 
+        [HttpGet]
+        public ActionResult LoginUndergraduate()
+        {
+            return View(new LoginModel());
+        }
 
         [HttpGet]
         public ActionResult LoginGraduate()
@@ -126,15 +135,19 @@ namespace nuce.web.survey.student.Controllers
                     return Redirect("/graduatehome/index");
                 case HttpStatusCode.Unauthorized:
                     var jsonString = await response.Content.ReadAsStringAsync();
+                    ViewData["LoginFailed"] = jsonString;
                     ViewData["LoginMessage"] = "Đăng nhập không thành công";
                     break;
                 default:
+                    jsonString = await response.Content.ReadAsStringAsync();
+                    ViewData["LoginMessage"] = "Đăng nhập không thành công";
+                    ViewData["LoginFailed"] = jsonString;
                     break;
             }
             return View("logingraduate", new LoginModel());
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<ActionResult> Logout(string returnUrl = null)
         {
             await _client.PostAsync($"{API_URL}/api/user/logout", new StringContent(""));

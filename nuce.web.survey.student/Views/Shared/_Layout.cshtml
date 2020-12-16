@@ -19,7 +19,6 @@
 
         //role
         roles = jwtSecurityToken.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Role).Select(r => r.Value).ToList();
-
     }
 }
 
@@ -35,6 +34,17 @@
     <link rel="stylesheet" href="~/content/css/m-util.css" />
     <link rel="stylesheet" href="~/content/css/m-style.css" />
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+    <script type="text/javascript">
+        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+        (function(){
+        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+        s1.async=true;
+        s1.src='https://embed.tawk.to/5fd973c8df060f156a8d7a7d/1epkmoi47';
+        s1.charset='UTF-8';
+        s1.setAttribute('crossorigin','*');
+        s0.parentNode.insertBefore(s1,s0);
+        })();
+    </script>
     @RenderSection("Style", required: false)
 </head>
 <body>
@@ -139,14 +149,24 @@
     </header>
 
     <section class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb m-bg-none pl-0 mb-0">
-                @RenderSection("Breadcrumb", required: false)
-                @*<li class="breadcrumb-item "><a class="m-text-blue" href="#">Home</a></li>
+        <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb m-bg-none pl-0 mb-0">
+                        @RenderSection("Breadcrumb", required: false)
+                        @*<li class="breadcrumb-item "><a class="m-text-blue" href="#">Home</a></li>
                     <li class="breadcrumb-item "><a class="m-text-blue" href="#">Library</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Data</li>*@
-            </ol>
-        </nav>
+                    </ol>
+                </nav>
+            </div>
+            @if (accessToken != null)
+            {
+                <div class="col-3 d-flex justify-content-end align-items-center">
+                    @username | <a href="/Account/Logout">Đăng xuất</a>
+                </div>
+            }
+        </div>
     </section>
 
     <section class="container" style="min-height: 600px;">
