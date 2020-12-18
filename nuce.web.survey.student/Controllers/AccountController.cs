@@ -31,7 +31,7 @@ namespace nuce.web.survey.student.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("Index", new LoginModel());
+                return View("login", new LoginModel());
             }
 
             var userNamePasswordJsonString = JsonConvert.SerializeObject(new
@@ -69,7 +69,7 @@ namespace nuce.web.survey.student.Controllers
                     return Redirect("/home");
                 case HttpStatusCode.Unauthorized:
                     var jsonString = await response.Content.ReadAsStringAsync();
-                    ViewData["LoginMessage"] = "Đăng nhập không thành công";
+                    ViewData["LoginMessage"] = "Tài khoản hoặc mật khẩu không chính xác";
                     ViewData["LoginFailed"] = jsonString;
                     break;
                 default:
@@ -136,7 +136,7 @@ namespace nuce.web.survey.student.Controllers
                 case HttpStatusCode.Unauthorized:
                     var jsonString = await response.Content.ReadAsStringAsync();
                     ViewData["LoginFailed"] = jsonString;
-                    ViewData["LoginMessage"] = "Đăng nhập không thành công";
+                    ViewData["LoginMessage"] = "Tài khoản hoặc mật khẩu không chính xác";
                     break;
                 default:
                     jsonString = await response.Content.ReadAsStringAsync();

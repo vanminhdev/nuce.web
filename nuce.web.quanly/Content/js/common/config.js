@@ -1,9 +1,9 @@
 ﻿var COMMON_CONFIG = {
-    getCurrentDomain: window.location.hostname,
+    currentDomain: window.location.hostname,
     domain: {
         "api3.khmt.nuce.edu.vn": {
-            mobile: "",
-            email: "",
+            mobile: "0912987567",
+            email: "ks.ktdb@nuce.edu.vn",
         },
         "ad.sv.nuce.edu.vn": {
             mobile: "02438697004",
@@ -15,7 +15,7 @@
         },
     },
     getDomainConfig: function() {
-        var host = COMMON_CONFIG.getCurrentDomain;
+        var host = COMMON_CONFIG.currentDomain;
         if (host in COMMON_CONFIG.domain) {
             return COMMON_CONFIG.domain[host];
         }
