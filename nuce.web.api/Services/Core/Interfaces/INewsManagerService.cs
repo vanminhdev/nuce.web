@@ -1,4 +1,5 @@
-﻿using nuce.web.api.Models.Core;
+﻿using Microsoft.AspNetCore.Http;
+using nuce.web.api.Models.Core;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Core;
 using System;
@@ -13,7 +14,9 @@ namespace nuce.web.api.Services.Core.Interfaces
         public IQueryable GetAllActiveCategoryByRole(string role);
         public Task<DataTableResponse<NewsItems>> FindItemsByCatId(int catId, int seen, int size);
         public Task<NewsItems> FindNewsItemById(int id);
-        public Task CreateNewsItems(CreateNewsItemModel model);
+        public Task<int> CreateNewsItems(CreateNewsItemModel model);
         public Task UpdateNewsItems(NewsItems model);
+        public Task<string> UploadNewsItemAvatar(IFormFile formFile, int id);
+        public Task<ItemAvatarModel> GetNewsItemAvatar(int id, int? width, int? height);
     }
 }

@@ -35,7 +35,7 @@ namespace nuce.web.survey.student.Controllers
                     {
                         var jsonString = await res.Content.ReadAsStringAsync();
                         ViewData["UndergraduateTheSurvey"] = jsonString;
-                        return View();
+                        return null;
                     }
                 );
             }
@@ -47,6 +47,37 @@ namespace nuce.web.survey.student.Controllers
                     var jsonString = await res.Content.ReadAsStringAsync();
                     ViewData["TheSurvey"] = jsonString;
                     return View();
+                }
+            );
+        }
+
+        [HttpGet]
+        [AuthorizeActionFilter("UndergraduateStudent")]
+        public async Task<ActionResult> IndexUndergraduate()
+        {
+            var accessToken = Request.Cookies[UserParameters.JwtAccessToken].Value;
+            var handler = new JwtSecurityTokenHandler();
+            var jwtSecurityToken = handler.ReadJwtToken(accessToken);
+            if (jwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(r => r.Value).FirstOrDefault(o => o == "UndergraduateStudent") != null)
+            {
+                var resUndergraduate = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateTheSurveyStudent/GetTheSurvey");
+                await base.HandleResponseAsync(resUndergraduate,
+                    action200Async: async res =>
+                    {
+                        var jsonString = await res.Content.ReadAsStringAsync();
+                        ViewData["UndergraduateTheSurvey"] = jsonString;
+                        return null;
+                    }
+                );
+            }
+
+            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurveyStudent/GetTheSurvey");
+            return await base.HandleResponseAsync(response,
+                action200Async: async res =>
+                {
+                    var jsonString = await res.Content.ReadAsStringAsync();
+                    ViewData["TheSurvey"] = jsonString;
+                    return View("Index");
                 }
             );
         }

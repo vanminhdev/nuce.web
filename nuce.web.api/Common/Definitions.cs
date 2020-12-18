@@ -12,7 +12,6 @@ namespace nuce.web.api.Common
             { "Admin", "Quản trị" },
             { "P_KhaoThi", "Phòng khảo thí" },
             { "P_CTSV", "Phòng công tác sinh viên" },
-            { "K_CNTT", "Khoa CNTT" }
         };
     }
 

@@ -52,11 +52,18 @@ namespace nuce.web.survey.student.Attributes.ActionFilter
 
         void IActionFilter.OnActionExecuting(ActionExecutingContext filterContext)
         {
+            var roleCheckSplited = _rolesCheck.Split(',');
+            var roleCheckFirst = roleCheckSplited.FirstOrDefault();
+            if (roleCheckSplited.FirstOrDefault(s => s == "UndergraduateStudent") != null)
+            {
+                roleCheckFirst = "UndergraduateStudent";
+            }
+
             var accessTokenCookie = filterContext.RequestContext.HttpContext.Request.Cookies[UserParameters.JwtAccessToken];
             var refreshTokenCookie = filterContext.RequestContext.HttpContext.Request.Cookies[UserParameters.JwtRefreshToken];
             if(accessTokenCookie == null && refreshTokenCookie == null)
             {
-                filterContext.Result = new RedirectResult("/account/login");
+                RedirecLoginPage(roleCheckFirst, filterContext);
             }
             else if(accessTokenCookie == null && refreshTokenCookie != null)
             {
@@ -89,12 +96,12 @@ namespace nuce.web.survey.student.Attributes.ActionFilter
                     }
                     else // không lấy được access token mới cho đăng nhập lại
                     {
-                        filterContext.Result = new RedirectResult("/account/login");
+                        RedirecLoginPage(roleCheckFirst, filterContext);
                     }
                 }
                 else // không lấy được access token mới cho đăng nhập lại
                 {
-                    filterContext.Result = new RedirectResult("/account/login");
+                    RedirecLoginPage(roleCheckFirst, filterContext);
                 }
             }
             else //kiểm tra luôn
@@ -102,5 +109,24 @@ namespace nuce.web.survey.student.Attributes.ActionFilter
                 CheckRole(filterContext, accessTokenCookie.Value);
             }
         }
+
+        private void RedirecLoginPage(string role, ActionExecutingContext filterContext)
+        {
+            if (role == "Student")
+            {
+                filterContext.Result = new RedirectResult("/account/login");
+            } else if (role == "UndergraduateStudent")
+            {
+                filterContext.Result = new RedirectResult("/account/loginundergraduate");
+            }
+            else if (role == "GraduateStudent")
+            {
+                filterContext.Result = new RedirectResult("/account/logingraduate");
+            } else
+            {
+                filterContext.Result = new RedirectResult("/account/login");
+            }
+        }
+
     }
 }

@@ -1,0 +1,122 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .th-border-none th {
+        border: none
+    }
+
+    .th-border-none td {
+        padding: 0;
+    }
+
+    .news-item-container a:link {
+        text-decoration: none;
+    }
+
+    .news-item-container:hover {
+        background: #eee;
+    }
+
+        .news-item-container:hover #title {
+            color: #112B7F;
+        }
+</style>
+
+@section Breadcrumb {
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+    <li class="breadcrumb-item active" aria-current="page" id="breadcrum-category"></li>
+}
+
+<div class="row">
+    <div class="col-md-8 col-12">
+        <table id="news-items-list-datatable"
+               data-page-length='25'
+               class="table th-border-none">
+        </table>
+    </div>
+    <div class="col-md-4 col-12">
+        @Html.Partial("~/Views/News/Partials/_PartialGroupNews.cshtml")
+    </div>
+</div>
+
+@section Scripts{
+    <link href="~/content/css/bootstrap-datepicker3.min.css" rel="stylesheet" />
+
+    <script src="~/content/js/jquery.dataTables.min.js"></script>
+    <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/content/js/dataTables.config.js"></script>
+    <script src="~/content/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/content/js/bootstrap-datepicker.vi.min.js"></script>
+    <script src="~/Content/js/helper/datetime.js"></script>
+    <script>
+        var state = {
+            catId: @TempData.Peek("catId") || '',
+        };
+
+        var generateCategoryNameBreadcrumb = function() {
+            const localCategoryData = localStorage.getItem(STORAGE_KEY_CATEGORY_LIST);
+            if (localCategoryData != null) {
+                var data = JSON.parse(localCategoryData);
+                const thisCat = data.find(c => c.id === state.catId);
+                console.log(thisCat);
+                if (typeof thisCat !== 'undefined') {
+                    $('#breadcrum-category').html(thisCat.description || '');
+                }
+            }
+        };
+
+        var userTable = $('#news-items-list-datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ordering: false,
+            lengthChange: false,
+            stateSave: true,
+            deferLoading: 0,
+            language: dataTableConfig.language,
+            ajax: {
+                url: `${API_URL}/api/NewsManager/news-items/category/${state.catId}`,
+                dataType: 'json',
+                contentType: 'application/json',
+                type: 'post',
+                data: function (d) {
+                    return JSON.stringify(d);
+                },
+            },
+            columns: [
+                {
+                    data: null,
+                    mRender: function(data, type, row, meta) {
+                        var entryDate = datetimeHelper.convertDateTime(new Date(data.entryDatetime));
+                        return `<div class="news-item-container p-2">
+                                    <a href="/news/detail?itemId=${data.id}"
+                                        style="display: block;"
+                                        class="text-dark">
+                                        <h5 id="title">${data.title || ''}</h5>
+                                        <p class="m-date-article m-fs-13 mb-1">${entryDate || ''}</p>
+                                    </a>
+                                </div>`;
+                    }
+                },
+            ]
+        });
+
+        var searchData = function() {
+            userTable.page.len(50).search("").draw();
+        };
+
+        var init = function() {
+            $('#news-items-list-datatable_filter').hide();
+            generateCategoryNameBreadcrumb();
+            searchData();
+        }
+
+        init();
+
+    </script>
+
+    @Html.Partial("~/Views/News/Partials/_PartialGroupNewsJS.cshtml")
+}
+

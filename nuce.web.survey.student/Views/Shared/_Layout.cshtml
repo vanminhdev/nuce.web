@@ -1,4 +1,6 @@
-﻿@{
+﻿@using System.Configuration;
+
+@{
     var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
     var accessToken = Request.Cookies[nuce.web.survey.student.Common.UserParameters.JwtAccessToken];
     var username = "";
@@ -32,6 +34,17 @@
     <link rel="stylesheet" href="~/content/css/m-util.css" />
     <link rel="stylesheet" href="~/content/css/m-style.css" />
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+    <script type="text/javascript">
+        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+        (function(){
+        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+        s1.async=true;
+        s1.src='https://embed.tawk.to/5fd973c8df060f156a8d7a7d/1epkmoi47';
+        s1.charset='UTF-8';
+        s1.setAttribute('crossorigin','*');
+        s0.parentNode.insertBefore(s1,s0);
+        })();
+    </script>
     @RenderSection("Style", required: false)
 </head>
 <body>
@@ -42,10 +55,10 @@
                     <div class="col">
                         <div class="d-md-flex justify-content-end pt-1 pb-1 pt-md-3 pb-md-3 m-fs-sm-12">
                             <div class="ml-2 mr-2 font-weight-bold">
-                                @{ 
+                                @{
                                     string strDayOfWeek = "";
                                     var dayOfWeek = DateTime.Now.DayOfWeek;
-                                    if(dayOfWeek == DayOfWeek.Monday)
+                                    if (dayOfWeek == DayOfWeek.Monday)
                                     {
                                         strDayOfWeek = "Thứ 2";
                                     }
@@ -106,7 +119,7 @@
                 </button>
 
                 <div class="collapse navbar-collapse w-100" id="navbarSupportedContent">
-                    <ul class="navbar-nav mr-auto">
+                    <ul class="navbar-nav mr-auto" id="nav-item-container">
                         <li class="nav-item dropdown m-nav-item-hover">
                             <a class="nav-link text-white mt-1 mb-1" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Giới thiệu
@@ -136,14 +149,24 @@
     </header>
 
     <section class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb m-bg-none pl-0 mb-0">
-                @RenderSection("Breadcrumb", required: false)
-                @*<li class="breadcrumb-item "><a class="m-text-blue" href="#">Home</a></li>
-                <li class="breadcrumb-item "><a class="m-text-blue" href="#">Library</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Data</li>*@
-            </ol>
-        </nav>
+        <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb m-bg-none pl-0 mb-0">
+                        @RenderSection("Breadcrumb", required: false)
+                        @*<li class="breadcrumb-item "><a class="m-text-blue" href="#">Home</a></li>
+                    <li class="breadcrumb-item "><a class="m-text-blue" href="#">Library</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Data</li>*@
+                    </ol>
+                </nav>
+            </div>
+            @if (accessToken != null)
+            {
+                <div class="col-3 d-flex justify-content-end align-items-center">
+                    @username | <a href="/Account/Logout">Đăng xuất</a>
+                </div>
+            }
+        </div>
     </section>
 
     <section class="container" style="min-height: 600px;">
@@ -174,14 +197,14 @@
     <script src="~/content/js/popper.min.js"></script>
     <script src="~/content/js/bootstrap.min.js"></script>
     <script>
+        var API_URL = `@ConfigurationManager.AppSettings.Get("API_URL")`;
+        var THONGBAO_ID = 5;
+        var TINTUC_ID = 6;
         $.ajaxSetup({
             xhrFields: {
                 withCredentials: true
             },
-            complete: () => {
-                document.getElementById("render-body").scrollIntoView();
-            },
-            crossDomain: true
+            crossDomain: true,
         });
         const debounce = (func, delay) => {
             let debounceTimer;
@@ -228,6 +251,75 @@
             var yyyy = today.getFullYear();
             return dd + '/' + mm + '/' + yyyy;
         }
+    </script>
+    <script>
+
+        var STORAGE_KEY_CATEGORY_LIST = 'category-list';
+
+        var initMenu = function() {
+            const localCategoryData = localStorage.getItem(STORAGE_KEY_CATEGORY_LIST);
+            if (localCategoryData == null) {
+                apiGenerateMenu();
+                return;
+            }
+            try {
+                handleCategoryList(JSON.parse(localCategoryData));
+            } catch (err) {
+                console.log(err);
+                apiGenerateMenu();
+            }
+        };
+
+        var apiGenerateMenu = function() {
+            $.ajax({
+                type: 'get',
+                url: `${API_URL}/api/NewsManager/news-category/P_KhaoThi`,
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function(res) {
+                    if (res != null && Array.isArray(res)) {
+                        handleCategoryList(res);
+                        localStorage.setItem(STORAGE_KEY_CATEGORY_LIST, JSON.stringify(res));
+                    }
+                },
+            });
+        };
+
+        var handleCategoryList = function(data = []) {
+            let stringHtml = '';
+            const menuItemTemplate = `<li class="nav-item dropdown m-nav-item-hover">
+                                        <a class="nav-link text-white mt-1 mb-1" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            [name]
+                                        </a>
+                                        [dropdown-template]
+                                    </li>`;
+            const dropdownTemplate = `<div class="dropdown-menu m-max-width-md-90per" aria-labelledby="navbarDropdown">
+                                        [dropdown-detail-template]
+                                    </div>`;
+            const dropdownDetailTemplate = `<a class="dropdown-item m-bg-hover-blue text-truncate" href="[link]">[name]</a>`;
+
+            data.forEach(cat => {
+                if (cat.parent == -1) {
+                    const children = data.filter(c => c.parent == cat.id);
+                    let dropdownHtml = '';
+                    if (children.length > 0) {
+                        let dropdownDetailHtml = '';
+                        children.forEach(child => {
+                           dropdownDetailHtml += dropdownDetailTemplate.replace('[name]', child.description)
+                                                                    .replace('[link]', `/news?catId=${child.id}`);
+                        });
+                        dropdownHtml += dropdownTemplate.replace('[dropdown-detail-template]', dropdownDetailHtml);  
+                    }
+                    const tempHtml = menuItemTemplate.replace('[name]', cat.description)
+                                                    .replace('[dropdown-template]', dropdownHtml);
+                    stringHtml += tempHtml;
+                }
+            });
+            $('#nav-item-container').html(stringHtml);
+        };
+
+        initMenu();
+
     </script>
     @*<script>
             let div = document.createElement('div');

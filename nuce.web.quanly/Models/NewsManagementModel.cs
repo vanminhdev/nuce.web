@@ -60,5 +60,13 @@ namespace nuce.web.quanly.Models
         public object file { get; set; }
     }
 
+    public class UploadFileModel
+    {
+        public string FileName { get; set; }
+        public string Key { get; set; }
+        public byte[] Content { get; set; }
+        public string ContentType { get; set; }
+    }
+
 
 }
