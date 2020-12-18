@@ -90,4 +90,12 @@
     background-image: url("../img/footer-background.png");
     background-size: contain;
 }
+
+.m-nav-item li {
+    border-left: 1px solid #ffffff;
+}
+
+.m-navbar {
+    box-shadow: 4px 5px 5px rgba(0, 0, 0, 0.4);
+}
     

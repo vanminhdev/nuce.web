@@ -1,4 +1,6 @@
-﻿@{
+﻿@using nuce.web.survey.student.Models;
+
+@{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -116,7 +118,20 @@
         init();
 
     </script>
-
-    @Html.Partial("~/Views/News/Partials/_PartialGroupNewsJS.cshtml")
+    <script>
+        @{ 
+            var partialGroupNewsModel = new PartialGroupNewsModel()
+            {
+                showAnnoucement = true,
+                showNewsEvent = false
+            };
+            if (((int)TempData.Peek("catId")).Equals(5))
+            {
+                partialGroupNewsModel.showNewsEvent = true;
+                partialGroupNewsModel.showAnnoucement = false;
+            }
+        }
+    </script>
+    @Html.Partial("~/Views/News/Partials/_PartialGroupNewsJS.cshtml", partialGroupNewsModel)
 }
 

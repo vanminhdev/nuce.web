@@ -11,9 +11,9 @@ namespace nuce.web.api.Services.Core.Interfaces
 {
     public interface INewsManagerService
     {
-        public IQueryable GetAllActiveCategoryByRole(string role);
-        public Task<DataTableResponse<NewsItems>> FindItemsByCatId(int catId, int seen, int size);
-        public Task<NewsItems> FindNewsItemById(int id);
+        public IQueryable GetAllCategoryByRole(string role, int? status);
+        public Task<DataTableResponse<NewsItems>> FindItemsByCatId(int catId, int seen, int size, int? status);
+        public Task<NewsItems> FindNewsItemById(int id, int? status);
         public Task<int> CreateNewsItems(CreateNewsItemModel model);
         public Task UpdateNewsItems(NewsItems model);
         public Task<string> UploadNewsItemAvatar(IFormFile formFile, int id);

@@ -53,8 +53,8 @@
             <div class="container">
                 <div class="row">
                     <div class="col">
-                        <div class="d-md-flex justify-content-end pt-1 pb-1 pt-md-3 pb-md-3 m-fs-sm-12">
-                            <div class="ml-2 mr-2 font-weight-bold">
+                        <div class="d-md-flex justify-content-end pt-1 pb-1 m-fs-sm-12">
+                            <div class="ml-2 mr-2 m-fs-14 font-weight-bold">
                                 @{
                                     string strDayOfWeek = "";
                                     var dayOfWeek = DateTime.Now.DayOfWeek;
@@ -90,15 +90,6 @@
 
                                 @(strDayOfWeek), ngày @(DateTime.Now.ToString("dd/MM/yyyy"))
                             </div>
-                            <div class="ml-2 mr-2 font-weight-bold d-inline">
-                                <a class="m-text-black m-text-decoration-none m-text-hover-blue" href="#"><i class="fas fa-laptop p-1"></i> Văn phòng điện tử</a>
-                            </div>
-                            <div class="ml-2 mr-2 font-weight-bold d-inline">
-                                <a class="m-text-black m-text-decoration-none m-text-hover-blue" href="#"><i class="fas fa-envelope p-1"></i> Email</a>
-                            </div>
-                            <div class="ml-2 mr-2 font-weight-bold d-inline">
-                                <a class="m-text-black m-text-decoration-none m-text-hover-blue" href="#"><i class="fas fa-phone p-1"></i> Liên hệ</a>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -110,7 +101,7 @@
             </div>
         </div>
         <div class="container">
-            <nav class="navbar navbar-expand-lg navbar-dark m-bg-blue pt-0 pb-0 pr-0">
+            <nav class="navbar m-navbar navbar-expand-lg navbar-dark m-bg-blue pt-0 pb-0 pr-0">
                 <a class="navbar-brand" href="/default">
                     <i class="fas fa-home text-white"></i>
                 </a>
@@ -119,7 +110,7 @@
                 </button>
 
                 <div class="collapse navbar-collapse w-100" id="navbarSupportedContent">
-                    <ul class="navbar-nav mr-auto" id="nav-item-container">
+                    <ul class="navbar-nav m-nav-item mr-auto" id="nav-item-container">
                         <li class="nav-item dropdown m-nav-item-hover">
                             <a class="nav-link text-white mt-1 mb-1" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Giới thiệu
@@ -150,7 +141,7 @@
 
     <section class="container">
         <div class="row">
-            <div class="col">
+            <div class="col-lg-9 col-12 order-lg-1 order-12 mb-md-0 mb-2">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb m-bg-none pl-0 mb-0">
                         @RenderSection("Breadcrumb", required: false)
@@ -162,8 +153,11 @@
             </div>
             @if (accessToken != null)
             {
-                <div class="col-3 d-flex justify-content-end align-items-center">
-                    @username | <a href="/Account/Logout">Đăng xuất</a>
+                <div class="col-lg-3 col-12 order-lg-10 order-1 mb-md-0 mb-2 d-flex justify-content-end align-items-center">
+                    @username |&nbsp;
+                    <a href="/Account/Logout">Đăng xuất
+                        <i class="fas fa-sign-out-alt"></i>
+                    </a>
                 </div>
             }
         </div>

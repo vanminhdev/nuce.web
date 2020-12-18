@@ -156,6 +156,7 @@
     <Compile Include="Models\Base\DataTableResponse.cs" />
     <Compile Include="Models\JsonData\AnswerJson.cs" />
     <Compile Include="Models\JsonData\QuestionJson.cs" />
+    <Compile Include="Models\NewsModel.cs" />
     <Compile Include="Models\ResponseMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

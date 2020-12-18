@@ -3,21 +3,31 @@
 }
 
 @section Breadcrumb {
-    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Index</li>
+    @*<li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Index</li>*@
 }
 
 <div class="row">
     <div class="col-md-8 col-12">
+        <a class="mb-2"
+           style="display: block; text-decoration: none"
+           href="/news?catId=6">
+            <div class="m-border-b-blue d-flex">
+                <span class="m-bg-blue text-white p-1 pl-2 pr-2 text-uppercase">
+                    <i class="fas fa-newspaper mr-2"></i>
+                    Tin tức - Sự kiện
+                </span>
+            </div>
+        </a>
         <div class="row mb-3">
             <div class="col-12 col-md-6">
                 <div id="main-event">
-                    
+
                 </div>
             </div>
             <div class="col-12 col-md-6 mt-2 mt-md-0">
                 <div id="side-event">
-                    
+
                 </div>
             </div>
         </div>
