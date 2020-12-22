@@ -56,5 +56,7 @@ namespace nuce.web.quanly.Models.Survey.Undergraduate
         public int? nguoiphatbang { get; set; }
         public string ghichuphatbang { get; set; }
         public int? cnOrder { get; set; }
+
+        public bool hasTheSurvey { get; set; }
     }
 }

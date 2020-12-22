@@ -77,7 +77,7 @@
 
     @if (ViewData["UndergraduateTheSurvey"] != null)
     {
-        <script>
+<script>
             $('#undergraduate-thesurvey').show();
             let undergraduateTheSurvey = @Html.Raw(ViewData["UndergraduateTheSurvey"]);
             let tableUndergraduate = $('#table-undergraduate-thesurvey');
@@ -93,11 +93,13 @@
                     htmlUndergraduate += `<a href="/home/undergraduatethesurvey?theSurveyId=${element.baiKhaoSatId}">Tiếp tục</a>`;
                 } else if (element.status === @((int)SurveyStudentStatus.Done)) {
                     htmlUndergraduate += `Đã hoàn thành`;
+                } else if (element.status === @((int)SurveyStudentStatus.RequestAuthorize)) {
+                    htmlUndergraduate += `<a href="/home/requestauthorize">Xác thực hoàn thành</a>`;
                 }
                 htmlUndergraduate += `</td>`;
                 htmlUndergraduate += `</tr>`;
             }
             tableUndergraduate.html(htmlUndergraduate);
-        </script>
+</script>
     }
 }

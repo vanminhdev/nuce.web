@@ -3,7 +3,7 @@
     ViewData["Title"] = "Thêm câu trả lời";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<form method="post" class="container-fluid service-categories-wrp mt-2">
+<form method="post" class="container">
     <a class="update-btn text-light p-2" style="text-decoration: none;" href="/survey/Answer?questionId=@Model.QuestionId">← Quay lại danh sách đáp án</a>
 
     <div class="fw-700 text-uppercase font-15-sm font-25 mb-2 mt-3">
@@ -41,7 +41,7 @@
         @Html.TextBoxFor(m => m.QuestionContent, new { @type = "hidden" })
         @Html.TextBoxFor(m => m.AnswerBind.cauHoiId, new { @type = "hidden" })
         @Html.TextBoxFor(m => m.AnswerBind.cauHoiId, new { @type = "hidden" })
-        <div class="col-12 form-group">
+        @*<div class="col-12 form-group">
             <div class="row mr-0 ml-0 align-items-center">
                 <div class="font-14-sm fw-600 col-12 col-md-2 pr-0 pl-0">
                     Mã
@@ -51,7 +51,7 @@
                     @Html.ValidationMessageFor(m => m.AnswerBind.code, "", new { @class = "form-text text-danger" })
                 </div>
             </div>
-        </div>
+        </div>*@
         <div class="col-12 form-group">
             <div class="row mr-0 ml-0">
                 <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
@@ -76,11 +76,9 @@
         </div>
 
         <div class="col-12 form-group d-flex justify-content-center">
-            <div class="col-12 col-md-3">
-                <button type="submit" formaction="/Survey/CreateAnswerSubmit" class="update-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2 mt-2">
-                    Thêm
-                </button>
-            </div>
+            <button type="submit" formaction="/Survey/CreateAnswerSubmit" class="btn btn-primary mt-2">
+                Thêm
+            </button>
         </div>
     </div>
 </form>

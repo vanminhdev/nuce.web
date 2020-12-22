@@ -62,7 +62,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
         public async Task Create(GraduateTheSurveyCreate theSurvey)
         {
-            var surveyRound = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == theSurvey.DotKhaoSatId && o.Status == (int)SurveyRoundStatus.Active);
+            var surveyRound = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == theSurvey.DotKhaoSatId && o.Status == (int)SurveyRoundStatus.New);
             if(surveyRound == null)
             {
                 throw new RecordNotFoundException("Id đợt khảo sát không tồn tại");
@@ -115,7 +115,7 @@ namespace nuce.web.api.Services.Survey.Implements
             //đổi đợt khảo sát
             if (theSurvey.DotKhaoSatId != theSurveyUpdate.DotKhaoSatId)
             {
-                var surveyRound = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == theSurvey.DotKhaoSatId && o.Status == (int)SurveyRoundStatus.Active);
+                var surveyRound = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == theSurvey.DotKhaoSatId && o.Status == (int)SurveyRoundStatus.New);
                 if (surveyRound == null)
                 {
                     throw new RecordNotFoundException("Id đợt khảo sát không tồn tại");

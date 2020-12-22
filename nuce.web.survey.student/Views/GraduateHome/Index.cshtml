@@ -35,7 +35,7 @@
                 htmlStr += `<a href="/graduatehome/thesurvey?theSurveyId=${element.baiKhaoSatId}">Thực hiện</a>`;
             } else if (element.status === @((int)SurveyStudentStatus.Doing)) {
                 htmlStr += `<a href="/graduatehome/thesurvey?theSurveyId=${element.baiKhaoSatId}">Tiếp tục</a>`;
-            } else if (element.status === @((int)SurveyStudentStatus.Done)) {
+            } else if (element.status === @((int)SurveyStudentStatus)) {
                 htmlStr += `Đã hoàn thành`;
             }
             htmlStr += `</td>`;

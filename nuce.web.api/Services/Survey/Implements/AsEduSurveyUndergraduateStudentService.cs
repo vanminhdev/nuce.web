@@ -39,13 +39,21 @@ namespace nuce.web.api.Services.Survey.Implements
                 query = query.Where(o => o.sv.Masv.Contains(filter.Masv));
             }
 
+            if (filter.DotKhaoSatId != null)
+            {
+                query = query.Where(o => o.sv.DotKhaoSatId == filter.DotKhaoSatId);
+            }
+
             var recordsFiltered = query.Count();
 
             var querySkip = query
                 .OrderBy(u => u.sv.Id)
                 .Skip(skip).Take(take);
 
-            var data = await querySkip
+            var leftJoin = querySkip.GroupJoin(_context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien, o => o.sv.ExMasv, o => o.StudentCode, (svdotks, baikssv) => new { svdotks, baikssv })
+                .SelectMany(o => o.baikssv.DefaultIfEmpty(), (r, baikssv) => new { r.svdotks.sv, r.svdotks.dotks, baikssv });
+
+            var data = await leftJoin
                 .Select(o => new UndergraduateStudent
                 {
                     id = o.sv.Id,
@@ -96,8 +104,13 @@ namespace nuce.web.api.Services.Survey.Implements
                     makhoa = o.sv.Makhoa,
                     malop = o.sv.Malop,
                     nguoiphatbang = o.sv.Nguoiphatbang,
-                    cnOrder = o.sv.CnOrder
-                }).ToListAsync();
+                    cnOrder = o.sv.CnOrder,
+
+                    hasTheSurvey = o.baikssv != null
+                })
+                .OrderBy(o => o.dotKhaoSatId)
+                .ThenBy(o => o.exMasv)
+                .ToListAsync();
 
             return new PaginationModel<UndergraduateStudent>
             {

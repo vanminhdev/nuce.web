@@ -15,5 +15,14 @@
         self.parent().find('input').each(function () {
             $(this).selectpicker('val', '');
         });
+
+        let element = $(self.attr('clear-input')); //thẻ div chứa các input cần clear
+        element.find('input').each(function () {
+            $(this).val('');
+        });
+
+        element.find('select').each(function () {
+            $(this).selectpicker('val', '');
+        });
     });
 });

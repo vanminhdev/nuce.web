@@ -25,9 +25,9 @@ namespace nuce.web.api.Services.Survey.Implements
         {
             var answerCreate = new AsEduSurveyDapAn();
             answerCreate.Id = Guid.NewGuid();
-            answerCreate.Code = answer.Code;
+            answerCreate.Code = $"{_surveyContext.AsEduSurveyDapAn.Count() + 1:00000}";
 
-            if(await _surveyContext.AsEduSurveyCauHoi.FirstOrDefaultAsync(o => o.Id.ToString() == answer.CauHoiId) == null)
+            if (await _surveyContext.AsEduSurveyCauHoi.FirstOrDefaultAsync(o => o.Id.ToString() == answer.CauHoiId) == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy câu hỏi là cha của đáp án");
             }
@@ -116,7 +116,6 @@ namespace nuce.web.api.Services.Survey.Implements
             {
                 throw new RecordNotFoundException();
             }
-            answerUpdate.Code = answer.Code;
             answerUpdate.Content = answer.Content;
             answerUpdate.Order = answer.Order;
             await _surveyContext.SaveChangesAsync();

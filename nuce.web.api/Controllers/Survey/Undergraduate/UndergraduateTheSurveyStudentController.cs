@@ -56,7 +56,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             }
             catch (RecordNotFoundException e)
             {
-                return NotFound(new { message = "Không lấy được nội dung bài khảo sát", detailMessage = e.Message });
+                return NotFound(new { message = e.Message });
             }
         }
 
@@ -72,7 +72,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             }
             catch (RecordNotFoundException e)
             {
-                return NotFound(new { message = "Không lấy được câu trả lời đã chọn", detailMessage = e.Message });
+                return NotFound(new { message = e.Message });
             }
         }
 
@@ -94,7 +94,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             }
             catch (RecordNotFoundException e)
             {
-                return NotFound(new { message = "Không tự lưu được bài làm", detailMessage = e.Message });
+                return NotFound(new { message = e.Message });
             }
             catch (Exception e)
             {
@@ -118,7 +118,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             catch (InvalidDataException e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không lưu được bài khảo sát", detailMessage = e.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
             catch (DbUpdateException e)
             {
@@ -127,7 +127,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             }
             catch (RecordNotFoundException e)
             {
-                return NotFound(new { message = "Không lưu được bài làm", detailMessage = e.Message });
+                return NotFound(new { message = e.Message });
             }
             catch (Exception e)
             {
@@ -149,7 +149,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             }
             catch (RecordNotFoundException e)
             {
-                return NotFound(new { message = "Không lấy được trạng thái", detailMessage = e.Message });
+                return NotFound(new { message = e.Message });
             }
             catch (Exception e)
             {
@@ -171,11 +171,11 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             }
             catch (TableBusyException e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không tạo được bài khảo sát cho từng sinh viên", detailMessage = e.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
             catch (RecordNotFoundException e)
             {
-                return NotFound(new { message = "Không tạo được bài khảo sát cho từng sinh viên", detailMessage = e.Message });
+                return NotFound(new { message = e.Message });
             }
             catch (Exception e)
             {

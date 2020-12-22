@@ -162,6 +162,7 @@ namespace nuce.web.survey.student.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter("UndergraduateStudent")]
         public async Task<ActionResult> UndergraduateAutoSave(string theSurveyId, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, bool isAnswerCodesAdd = true)
         {
             var jsonStr = JsonConvert.SerializeObject(new { theSurveyId, questionCode, answerCode, answerCodeInMulSelect, isAnswerCodesAdd, answerContent });
@@ -171,10 +172,18 @@ namespace nuce.web.survey.student.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter("UndergraduateStudent")]
         public async Task<ActionResult> UndergraduateTheSurveySubmit(string theSurveyId)
         {
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/UndergraduateTheSurveyStudent/SaveSelectedAnswer?theSurveyId={theSurveyId}");
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        [AuthorizeActionFilter("UndergraduateStudent")]
+        public ActionResult RequestAuthorize()
+        {
+            return View();
         }
         #endregion
     }

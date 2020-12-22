@@ -56,10 +56,12 @@ namespace nuce.web.api.ViewModel.Survey.Undergraduate
         public int? nguoiphatbang { get; set; }
         public string ghichuphatbang { get; set; }
         public int? cnOrder { get; set; }
+        public bool hasTheSurvey { get; set; }
     }
 
     public class UndergraduateStudentFilter
     {
         public string Masv { get; set; }
+        public Guid? DotKhaoSatId { get; set; }
     }
 }

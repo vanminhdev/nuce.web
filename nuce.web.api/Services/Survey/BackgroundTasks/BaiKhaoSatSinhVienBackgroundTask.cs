@@ -38,7 +38,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             var surveyContext = scope.ServiceProvider.GetRequiredService<SurveyContext>();
             var statusContext = scope.ServiceProvider.GetRequiredService<StatusContext>();
 
-            var surveyRound = surveyContext.AsEduSurveyDotKhaoSat.FirstOrDefault(o => o.Id == surveyRoundId && o.Status == (int)SurveyRoundStatus.Active);
+            var surveyRound = surveyContext.AsEduSurveyDotKhaoSat.FirstOrDefault(o => o.Id == surveyRoundId && o.Status == (int)SurveyRoundStatus.New);
             if (surveyRound == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");

@@ -13,22 +13,30 @@
     <div class="row mb-3">
         <div class="col-md-12">
             <div class="form-row">
-                <div class="col-12 col-md mb-2">
-                    <input class="form-control form-control" id="masv-search" type="text" placeholder="Tìm theo mã sinh viên" />
-                </div>
-                <div class="col-12 col-md mb-2 d-flex flex-row">
-                    <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
-                        <i class="fas fa-redo"></i>
+                <div id="input-search" class="col-8 col-md mb-2">
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <input class="form-control form-control" id="masv-search" type="text" placeholder="Tìm theo mã sinh viên" />
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <select class="form-control selectpicker custom-boostrap-select" name="allDotKhaoSat" id="allDotKhaoSatId" required title="Chọn đợt khảo sát">
+                            </select>
+                        </div>
                     </div>
-                    <div class="w-75">
-                        <button id="btn-search" class="btn btn-secondary w-100">Tìm kiếm</button>
+                </div>
+                <div class="col-4 col-md-2 mb-2 d-flex align-items-start justify-content-center">
+                    <div class="d-flex">
+                        <div class="clear-input d-flex align-items-center mx-2" clear-input="#input-search" title="Nhập lại">
+                            <i class="fas fa-redo"></i>
+                        </div>
+                        <button id="btn-search" class="btn btn-secondary">Tìm kiếm</button>
                     </div>
                 </div>
-                <div class="col-12 col-md mb-2">
-                    <button class="btn btn-primary w-100" id="upload">Tải lên danh sách</button>
-                </div>
-                <div class="col-12 col-md mb-2">
-                    <button class="btn btn-danger w-100" id="delete-all">Xoá toàn bộ</button>
+                <div class="col-12 col-md mb-2 d-flex align-items-start justify-content-md-end justify-content-center">
+                    <div class="d-flex">
+                        <button class="btn btn-primary mx-2" id="upload">Tải lên danh sách</button>
+                        <button class="btn btn-danger" id="delete-all">Xoá toàn bộ</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -40,11 +48,12 @@
                 <thead>
                     <tr>
                         <th class="text-center">Đợt khảo sát</th>
-                        <th class="text-center">Đợt tốt nghiệp</th>
-                        <th class="text-center">Số vào sổ</th>
                         <th class="text-center">Mã sinh viên</th>
                         <th class="text-center">Tên sinh viên</th>
+                        <th class="text-center">Lớp</th>
+                        <th class="text-center">TBCHT</th>
                         <th class="text-center">Xếp loại</th>
+                        <th class="text-center">Được phát bài ks</th>
                     </tr>
                 </thead>
             </table>
@@ -86,7 +95,7 @@
                     <div class="form-group row">
                         <label class="col-3 col-form-label">File <span class="text-danger">*</span></label>
                         <div class="col-9">
-                            <a href="/survey/DownloadTemplateUploadFile" target="_blank" class="btn btn-success mr-1">
+                            <a href="/survey/DownloadTemplateUploadFileUndergraudate" target="_blank" class="btn btn-success mr-1">
                                 <i class="far fa-file-excel"></i>
                                 File mẫu
                             </a>
@@ -119,14 +128,31 @@
     <script src="~/content/js/jquery.dataTables.min.js"></script>
     <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/content/js/dataTables.config.js"></script>
-    <script>
-        let surveyRounds = JSON.parse('@Html.Raw(ViewData["SurveyRoundActive"])');
-        let dotKhaoSats = $('#surveyRoundId');
-        surveyRounds.forEach(e => {
-            dotKhaoSats.append(`<option value="${e.id}">${e.name} (từ ${getDateString(e.fromDate)} đến ${getDateString(e.endDate)})</option>`);
-        });
-        dotKhaoSats.selectpicker('refresh');
+    @if (!string.IsNullOrEmpty((string)ViewData["SurveyRoundActive"]))
+    {
+        <script>
+            let surveyRounds = JSON.parse('@Html.Raw(ViewData["SurveyRoundActive"])');
+            let dotKhaoSats = $('#surveyRoundId');
+            surveyRounds.forEach(e => {
+                dotKhaoSats.append(`<option value="${e.id}">${e.name} (từ ${e.fromDate != null ? getDateString(e.fromDate) : "-"} đến ${e.endDate != null ? getDateString(e.endDate) : ""})</option>`);
+            });
+            dotKhaoSats.selectpicker('refresh');
+        </script>
+    }
 
+    @if (!string.IsNullOrEmpty((string)ViewData["AllSurveyRound"]))
+    {
+        <script>
+            let allSurveyRound = JSON.parse('@Html.Raw(ViewData["AllSurveyRound"])');
+            let allDotKhaoSat = $('#allDotKhaoSatId');
+            allSurveyRound.forEach(e => {
+                allDotKhaoSat.append(`<option value="${e.id}">${e.name} (từ ${e.fromDate != null ? getDateString(e.fromDate) : "-"} đến ${e.endDate != null ? getDateString(e.endDate) : ""})</option>`);
+            });
+            allDotKhaoSat.selectpicker('refresh');
+        </script>
+    }
+
+    <script>
         var table = $('#id-datatable').DataTable({
             processing: true,
             serverSide: true,
@@ -137,7 +163,7 @@
             language: dataTableConfig.language,
             columnDefs: [
                 {
-                    targets: [0, 1, 2, 3, 5],
+                    targets: [0, 1, 2, 3, 4, 5, 6],
                     className: 'text-center'
                 }
             ],
@@ -152,13 +178,8 @@
             },
             columns: [
                 {
-                    data: "tenDotKhaoSat"
-                },
-                {
-                    data: "dottotnghiep"
-                },
-                {
-                    data: "sovaoso"
+                    data: "tenDotKhaoSat",
+                    name: "dotKhaoSatId"
                 },
                 {
                     data: "masv"
@@ -167,14 +188,28 @@
                     data: "tensinhvien"
                 },
                 {
+                    data: "lopqd",
+                },
+                {
+                    data: "tbcht",
+                },
+                {
                     data: "xeploai"
+                },
+                {
+                    data: null,
+                    name: "hasTheSurvey",
+                    mRender: function (data, type, row) {
+                        return data.hasTheSurvey ? 'Đã phát' : 'Chưa phát';
+                    }
                 }
             ]
         });
         $('#id-datatable_filter').hide();
         $("#btn-search").click(() => {
             table
-                .column(2).search($("#masv-search").val())
+                .column(0).search($("#allDotKhaoSatId").val())
+                .column(1).search($("#masv-search").val())
                 .draw();
         });
         document.getElementById("footer").scrollIntoView();

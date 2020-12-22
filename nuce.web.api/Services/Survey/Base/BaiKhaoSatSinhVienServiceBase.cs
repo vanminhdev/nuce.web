@@ -66,7 +66,7 @@ namespace nuce.web.api.Services.Survey.Base
                     AnswerContent = answerContent
                 };
 
-                if (questionCode.Split('_').Length == 2) //là câu hỏi con
+                if (questionCode.Split('_').Length == 2) //là câu hỏi con của đáp án
                 {
                     newSelectedAnswer.IsAnswerChildQuestion = true;
                 }

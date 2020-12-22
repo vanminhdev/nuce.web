@@ -48,7 +48,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             }
 
             //đợt khảo sát chưa kết thúc
-            if(surveyRound.Status != (int)SurveyRoundStatus.Deactive)
+            if(surveyRound.Status != (int)SurveyRoundStatus.Closed)
             {
                 throw new InvalidDataException("Đợt khảo sát chưa kết thúc chưa thể thống kê");
             }

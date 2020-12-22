@@ -972,6 +972,7 @@
     <Content Include="Views\News\Partials\_PartialGroupNewsJS.cshtml" />
     <Content Include="Views\Account\Partials\_PartialLogin.cshtml" />
     <Content Include="Views\Account\LoginUndergraduate.cshtml" />
+    <Content Include="Views\Home\RequestAuthorize.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

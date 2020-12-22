@@ -11,9 +11,9 @@ namespace nuce.web.quanly.Models
     {
         public string id { get; set; }
 
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Mã không được để trống")]
-        [OnlyNumber(ErrorMessage = "Mã phải ở dạng số")]
-        public int? code { get; set; }
+        //[Required(AllowEmptyStrings = false, ErrorMessage = "Mã không được để trống")]
+        //[OnlyNumber(ErrorMessage = "Mã phải ở dạng số")]
+        public string code { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Nội dung không được để trống")]
         public string content { get; set; }
@@ -42,8 +42,8 @@ namespace nuce.web.quanly.Models
 
     public class AnswerCreate
     {
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Mã không được để trống")]
-        public string code { get; set; }
+        //[Required(AllowEmptyStrings = false, ErrorMessage = "Mã không được để trống")]
+        //public string code { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Nội dung không được để trống")]
         public string content { get; set; }

@@ -23,9 +23,9 @@
             counter-increment: title-question-counter;
         }
 
-            .question-title:before {
-                content: counter(title-question-counter, upper-roman)". ";
-            }
+        .question-title:before {
+            content: counter(title-question-counter, upper-roman)". ";
+        }
 
         .tag-child-inline > * {
             display: inline;
@@ -57,11 +57,11 @@
                         @foreach (var questionChild in answer.AnswerChildQuestion.ChildQuestion)
                         {
                             <div class="form-group col-12 mb-0 pl-0 pr-0">
-                                <label id="@answer.AnswerChildQuestion.Code" class="text-dark">@indexChild. @Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.AnswerChildQuestion.Content)))</label>
-                                @if (answer.AnswerChildQuestion.Image != null)
+                                <label id="@questionChild.Code" class="text-dark">@indexChild. @Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(questionChild.Content)))</label>
+                                @if (questionChild.Image != null)
                                 {
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <img src="@answer.AnswerChildQuestion.Image" style="max-width: 200px; border-radius:5px;" />
+                                        <img src="@questionChild.Image" style="max-width: 200px; border-radius:5px;" />
                                     </div>
                                 }
                             </div>
@@ -225,11 +225,11 @@
                                     @foreach (var questionChild in question.ChildQuestion)
                                     {
                                         <div class="form-group col-12 mb-0 pl-0 pr-0">
-                                            <label id="@question.Code" class="text-dark">@index.@indexChild. @Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(question.Content)))</label>
-                                            @if (question.Image != null)
+                                            <label id="@questionChild.Code" class="text-dark">@index.@indexChild. @Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(questionChild.Content)))</label>
+                                            @if (questionChild.Image != null)
                                             {
                                                 <div class="d-flex justify-content-center align-items-center">
-                                                    <img src="@question.Image" style="max-width: 200px; border-radius:5px;" />
+                                                    <img src="@questionChild.Image" style="max-width: 200px; border-radius:5px;" />
                                                 </div>
                                             }
                                         </div>

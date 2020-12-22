@@ -69,7 +69,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 EndDate = surveyRound.EndDate.Value,
                 Description = surveyRound.Description?.Trim(),
                 Note = surveyRound.Note?.Trim(),
-                Status = (int)SurveyRoundStatus.Active,
+                Status = (int)SurveyRoundStatus.New,
                 Type = surveyRound.Type.Value
             });
             await _context.SaveChangesAsync();
@@ -83,7 +83,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException();
             }
 
-            if (surveyRoundUpdate.Status != (int)SurveyRoundStatus.Active)
+            if (surveyRoundUpdate.Status != (int)SurveyRoundStatus.New)
             {
                 throw new InvalidDataException("Đợt khảo sát không còn hoạt động, không thể sửa");
             }
@@ -105,7 +105,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
             }
 
-            if(surveyRoundUpdate.Status == (int)SurveyRoundStatus.Active)
+            if(surveyRoundUpdate.Status == (int)SurveyRoundStatus.New)
             {
                 throw new InvalidDataException("Đợt khảo sát còn hoạt động không thể xoá");
             }
@@ -121,7 +121,7 @@ namespace nuce.web.api.Services.Survey.Implements
             {
                 throw new RecordNotFoundException();
             }
-            surveyRound.Status = (int)SurveyRoundStatus.Deactive;
+            surveyRound.Status = (int)SurveyRoundStatus.Closed;
             //kết thúc tất cả bài khảo sát là con của đợt này
             var baiKhaoSats = await _context.AsEduSurveyGraduateBaiKhaoSat.Where(o => o.DotKhaoSatId == surveyRound.Id).ToListAsync();
             foreach(var item in baiKhaoSats)
@@ -135,7 +135,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
         public async Task<List<AsEduSurveyGraduateSurveyRound>> GetSurveyRoundActive()
         {
-            var surveyRounds = await _context.AsEduSurveyGraduateSurveyRound.Where(o => o.Status == (int)SurveyRoundStatus.Active).ToListAsync();
+            var surveyRounds = await _context.AsEduSurveyGraduateSurveyRound.Where(o => o.Status == (int)SurveyRoundStatus.New).ToListAsync();
             return surveyRounds;
         }
     }

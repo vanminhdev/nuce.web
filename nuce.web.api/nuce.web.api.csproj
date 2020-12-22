@@ -12,8 +12,8 @@
 
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.95.3" />
+    <PackageReference Include="EPPlus" Version="5.5.0" />
     <PackageReference Include="GemBox.Document" Version="33.0.1031" />
-    <PackageReference Include="GemBox.Spreadsheet" Version="47.0.1044" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.9" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
