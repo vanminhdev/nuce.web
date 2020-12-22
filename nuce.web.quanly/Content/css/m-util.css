@@ -1,0 +1,99 @@
+.m-container-fluid {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.m-rotate-90 {
+  transform: rotate(90deg);
+}
+
+.m-fs-8 {
+    font-size: 8px;
+}
+.m-fs-9 {
+    font-size: 9px;
+}
+.m-fs-10 {
+    font-size: 10px;
+}
+.m-fs-11 {
+    font-size: 11px;
+}
+.m-fs-12 {
+    font-size: 12px;
+}
+.m-fs-13 {
+    font-size: 13px;
+}
+.m-fs-14 {
+    font-size: 14px;
+}
+.m-fs-15 {
+    font-size: 15px;
+}
+.m-fs-16 {
+    font-size: 16px;
+}
+.m-fs-17 {
+    font-size: 17px;
+}
+.m-fs-18 {
+    font-size: 18px;
+}
+.m-fs-19 {
+    font-size: 19px;
+}
+.m-fs-20 {
+    font-size: 20px;
+}
+.m-fs-21 {
+    font-size: 21px;
+}
+.m-fs-22 {
+    font-size: 22px;
+}
+.m-fs-23 {
+    font-size: 23px;
+}
+.m-fs-24 {
+    font-size: 24px;
+}
+.m-fs-25 {
+    font-size: 25px;
+}
+
+.m-height-70 {
+    height: 70px;
+}
+
+.m-height-100per {
+    height: 100%;
+}
+
+.m-date-article {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 22px;
+    color: #777;
+}
+
+.m-btn-width-80 {
+    width: 80px;
+}
+
+.scroll-top {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    width: 60px;
+    height: 60px;
+    display: none;
+    border-radius: 50%;
+}
+
+@media (max-width: 767.98px) {
+    .m-fs-sm-12 {
+        font-size: 12px;
+    }
+}
