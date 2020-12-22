@@ -167,38 +167,35 @@ namespace nuce.web.api.Services.Core.Implements
         #endregion
 
         #region common
-        public IQueryable GetAllCategoryByRole(string role, int? status)
+        public IQueryable<NewsCats> GetAllCategoryByRole(string role, int? status)
         {
             return _nuceCoreContext.NewsCats.AsNoTracking()
                                 .Where(c => c.Role == role && (status == null || c.Status == status))
                                 .OrderBy(c => c.Count);
         }
 
+        public IQueryable<NewsCats> GetAllCategoryByRole(string role, int? status, bool onMenu)
+        {
+            return _nuceCoreContext.NewsCats
+                                .Where(c => c.Role == role && (status == null || c.Status == status) && (c.OnMenu ?? false) == onMenu)
+                                .OrderBy(c => c.Count);
+        }
+
         public async Task<DataTableResponse<NewsItems>> FindItemsByCatId(int catId, int seen, int size, int? status)
         {
-            var catChildren = _nuceCoreContext.NewsCats.Where(cat => cat.Parent == catId && cat.Parent != -1 && (status == null || cat.Status == status));
-            bool isParent = catChildren != null && catChildren.Any();
+            var catChildren = _nuceCoreContext.NewsCats.Where(cat => (cat.Parent == catId || cat.Id == catId) && (status == null || cat.Status == status));
             IQueryable<NewsItems> data = null;
 
-            if (isParent)
-            {
-                data = catChildren.AsNoTracking().GroupJoin(
-                            _nuceCoreContext.NewsItems.AsNoTracking(),
-                            cat => cat.Id,
-                            newsItem => newsItem.CatId,
-                            (cat, newsItem) => new { cat, newsItem }
-                        ).SelectMany(
-                            left => left.newsItem.DefaultIfEmpty(),
-                            (left, newsitem) => newsitem
-                        ).Where(ni => ni != null)
-                        .OrderByDescending(ni => ni.EntryDatetime);
-            }
-            else
-            {
-                data = _nuceCoreContext.NewsItems.AsNoTracking()
-                            .Where(ni => ni.CatId == catId)
-                            .OrderByDescending(ni => ni.EntryDatetime);
-            }
+            data = catChildren.AsNoTracking().GroupJoin(
+                        _nuceCoreContext.NewsItems.AsNoTracking(),
+                        cat => cat.Id,
+                        newsItem => newsItem.CatId,
+                        (cat, newsItem) => new { cat, newsItem }
+                    ).SelectMany(
+                        left => left.newsItem.DefaultIfEmpty(),
+                        (left, newsitem) => newsitem
+                    ).Where(ni => ni != null)
+                    .OrderByDescending(ni => ni.EntryDatetime);
 
             var takedData = await data.Skip(seen).Take(size).ToListAsync();
             return new DataTableResponse<NewsItems>

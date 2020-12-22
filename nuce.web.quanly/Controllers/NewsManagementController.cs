@@ -115,19 +115,13 @@ namespace nuce.web.quanly.Controllers
             HttpPostedFileBase imgAvatar = Request.Files[0];
             byte[] content = new byte[imgAvatar.ContentLength];
             await imgAvatar.InputStream.ReadAsync(content, 0, content.Length);
-            var extension = Path.GetExtension(imgAvatar.FileName).Substring(1).ToLower();
-            UploadFileModel model = new UploadFileModel
-            {
-                Content = content,
-                FileName = imgAvatar.FileName,
-                Key = "file",
-                ContentType = $"image/{extension}",
-            };
+
+            var multipartFormData = new MultipartFormDataContent();
+            multipartFormData.Add(new ByteArrayContent(content), "file", imgAvatar.FileName);
 
             string api = $"api/NewsManager/admin/news-items/avatar/{id}";
 
-            var stringContent = base.MakeContent(model);
-            var response = await base.MakeRequestAuthorizedAsync("put", api, stringContent);
+            var response = await base.MakeRequestAuthorizedAsync("put", api, multipartFormData);
 
             return await HandleApiResponseUpdate(response);
         }

@@ -139,6 +139,7 @@
     <Compile Include="Attributes\ValidationAttributes\OnlyNumberAttribute.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CtsvServiceManagementController.cs" />
+    <Compile Include="Controllers\FrontendManagerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\NewsManagementController.cs" />
     <Compile Include="Controllers\SurveyController.cs" />
@@ -1535,6 +1536,7 @@
     <Content Include="Views\NewsManagement\Create.cshtml" />
     <Content Include="Views\NewsManagement\ItemsDetail.cshtml" />
     <Content Include="Views\NewsManagement\ItemsUpdate.cshtml" />
+    <Content Include="Views\FrontendManager\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

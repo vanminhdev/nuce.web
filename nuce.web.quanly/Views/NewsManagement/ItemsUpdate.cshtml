@@ -22,7 +22,30 @@
         <form id="form-data" class="auto-validate">
             <div class="form-group">
                 <div class="font-14-sm fw-600 font-18">Tiêu đề</div>
-                <input id="txtTitle" name="title" type="text" class="form-control" required/>
+                <input id="txtTitle" name="title" type="text" class="form-control" required />
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="font-14-sm font-weight-bold mb-2">
+                                Ảnh đại diện
+                            </div>
+                            <div class="custom-file">
+                                <input id="file" type="file" onchange="onChangeFileUpload(this)" />
+                            </div>
+                            <div class="font-10-sm mt-2 sub-upload-file">
+                                Dung lượng < 1MB. Định dạng hỗ trợ: jpg, jpeg, png, gift
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <img id="imgAvaPreview"
+                                 src="/style/public/images/person1.png"
+                                 alt=""
+                                 class="upload-user-avatar" />
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="form-group">
                 <div class="font-14-sm fw-600 font-18">Mô tả</div>
@@ -41,6 +64,10 @@
 
         var state = {
             newsItem: {},
+        };
+
+        var onChangeFileUpload = function(e) {
+            console.log(e.files[0]);
         };
 
         var onUpdate = function() {
@@ -65,15 +92,17 @@
                 data,
                 dataType: 'json',
                 contentType: 'application/json',
-                success: function(res) {
-                    $('#loading-screen').hide();
-                },
             }).done(res => {
                 if (res.StatusCode == 200) {
+                    var file = document.getElementById('file').files[0];
+                    if (file) {
+                        callApiSaveAvatar(file);
+                    }
                     toastSuccess('Lưu thành công');
                 } else {
                     toastError(res.Message || 'Lỗi hệ thống');
                 }
+                $('#loading-screen').hide();
             }).fail(err => {
                 toastError('Lỗi hệ thống');
                 $('#loading-screen').hide();
@@ -88,6 +117,21 @@
             $('#txtTitle').val(state.newsItem.title);
             $('#txtDescription').val(state.newsItem.description);
             $('#news-content').val(state.newsItem.newContent);
+        };
+
+        var callApiSaveAvatar = function(file) {
+            var formData = new FormData();
+            // Attach file
+            formData.append(file.type, file); 
+
+            $.ajax({
+                url: `/newsmanagement/uploadavatar?id=${state.newsItem.id}`,
+                data: formData,
+                type: 'POST',
+                contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+                processData: false, // NEEDED, DON'T OMIT THIS
+                // ... Other options like success and etc
+            });
         };
 
         init();

@@ -143,6 +143,7 @@
     <Compile Include="Common\UserParameters.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ContactController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\GraduateHomeController.cs" />
@@ -919,7 +920,9 @@
     <Content Include="Content\js\bootstrap.min.js" />
     <Content Include="Content\js\dataTables.bootstrap4.min.js" />
     <Content Include="Content\js\dataTables.config.js" />
+    <Content Include="Content\js\helper\common.js" />
     <Content Include="Content\js\helper\datetime.js" />
+    <Content Include="Content\js\helper\enum.js" />
     <Content Include="Content\js\helper\prevent.debugger.helper.js" />
     <Content Include="Content\js\jquery.cookie.min.js" />
     <Content Include="Content\js\jquery.dataTables.min.js" />
@@ -973,6 +976,7 @@
     <Content Include="Views\News\Partials\_PartialGroupNewsJS.cshtml" />
     <Content Include="Views\Account\Partials\_PartialLogin.cshtml" />
     <Content Include="Views\Account\LoginUndergraduate.cshtml" />
+    <Content Include="Views\Contact\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

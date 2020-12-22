@@ -1,4 +1,5 @@
 ﻿@using nuce.web.survey.student.Models;
+@using System.Configuration;
 
 @{
     ViewBag.Title = "Detail";
@@ -25,6 +26,7 @@
 
 @section Scripts{
     <script src="~/Content/js/helper/datetime.js"></script>
+    <script src="~/Content/js/helper/enum.js"></script>
     <script>
         var state = {
             id: @TempData.Peek("itemId") || '',
@@ -33,7 +35,7 @@
         };
 
         var generateCategoryNameBreadcrumb = function() {
-            const localCategoryData = localStorage.getItem(STORAGE_KEY_CATEGORY_LIST);
+            const localCategoryData = localStorage.getItem(STORAGE_KEY.CATEGORY_LIST);
             if (localCategoryData != null) {
                 var data = JSON.parse(localCategoryData);
                 const thisCat = data.find(c => c.id === state.data.catId);
@@ -58,6 +60,12 @@
                         $('#news-item-date').html(datetimeHelper.convertDateTime(new Date(res.entryDatetime)));
                         handleContentImage();
                         generateCategoryNameBreadcrumb();
+                        $.ajax({
+                            type: 'get',
+                            url: `/news/UpdateCatId?catId=${res.catId}`,
+                            dataType: 'json',
+                            contentType: 'application/json',
+                        });
                     }
                 },
             });
@@ -76,8 +84,26 @@
         init();
 
     </script>
-
-    @Html.Partial("~/Views/News/Partials/_PartialGroupNewsJS.cshtml")
+    <script>
+        @{
+            var partialGroupNewsModel = new PartialGroupNewsModel()
+            {
+                showAnnoucement = true,
+                showNewsEvent = true
+            };
+            if (((int)TempData.Peek("catId")).Equals(Convert.ToInt32(@ConfigurationManager.AppSettings.Get("THONGBAO_ID"))))
+            {
+                partialGroupNewsModel.showNewsEvent = true;
+                partialGroupNewsModel.showAnnoucement = false;
+            }
+            if (((int)TempData.Peek("catId")).Equals(Convert.ToInt32(@ConfigurationManager.AppSettings.Get("TINTUC_ID"))))
+            {
+                partialGroupNewsModel.showNewsEvent = false;
+                partialGroupNewsModel.showAnnoucement = true;
+            }
+        }
+    </script>
+    @Html.Partial("~/Views/News/Partials/_PartialGroupNewsJS.cshtml", partialGroupNewsModel)
 }
 
 

@@ -61,7 +61,7 @@
                 }
                 var entryDate = datetimeHelper.convertDateTime(new Date(newsItem.entryDatetime));
                 resultHtml += template.replace('[title]', `${newsItem.title || ''}`)
-                                        .replace('[link]', `/news/detail?itemId=${newsItem.id}`)
+                                        .replace('[link]', `/news/detail?catId=${newsItem.catId}&itemId=${newsItem.id}`)
                                         .replace('[entry-date]', `${entryDate}`);
             };
             $(`#${elementId}`).html(resultHtml);

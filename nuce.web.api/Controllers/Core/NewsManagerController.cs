@@ -24,7 +24,7 @@ namespace nuce.web.api.Controllers.Core
         }
         #region client
         /// <summary>
-        /// List danh mục theo quyền
+        /// List danh mục theo site
         /// </summary>
         /// <param name="role"></param>
         /// <returns></returns>
@@ -34,6 +34,14 @@ namespace nuce.web.api.Controllers.Core
         public IActionResult GetNewsCategory(string role)
         {
             return Ok(_newsManagerService.GetAllCategoryByRole(role, 1));
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("news-category/menu/{role}")]
+        public IActionResult GetNewsCategoryOnMenu(string role)
+        {
+            return Ok(_newsManagerService.GetAllCategoryByRole(role, 1, true));
         }
 
         /// <summary>

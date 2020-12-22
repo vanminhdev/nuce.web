@@ -60,6 +60,7 @@ namespace nuce.web.api.Services.Core.Implements
             {
                 authClaims.Add(new Claim(ClaimTypes.Role, "Student"));
                 authClaims.Add(new Claim(UserParameters.MSSV, username));
+                authClaims.Add(new Claim(ClaimTypes.GivenName,  _studentRepository.FindByCode(username)?.FulName));
             }
             else
             {
