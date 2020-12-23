@@ -3,21 +3,37 @@
 }
 
 @section Breadcrumb {
-    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Index</li>
+    @*<li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Index</li>*@
 }
 
 <div class="row">
+    <div class="col-12">
+        <img src="http://nuce.edu.vn/sites/default/files/banner/banner_web-01.jpg" 
+            class="w-100 border" style="display: inline-block" />
+    </div>
+</div>
+<div class="row mt-3">
     <div class="col-md-8 col-12">
+        <a class="mb-2"
+           style="display: block; text-decoration: none"
+           href="/news?catId=6">
+            <div class="m-border-b-blue d-flex ">
+                <span class="m-bg-blue m-section-title m-text-white p-1 pl-2 pr-2 text-uppercase">
+                    <i class="fas fa-newspaper mr-2"></i>
+                    Tin tức - Sự kiện
+                </span>
+            </div>
+        </a>
         <div class="row mb-3">
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-lg-6">
                 <div id="main-event">
-                    
+
                 </div>
             </div>
-            <div class="col-12 col-md-6 mt-2 mt-md-0">
+            <div class="col-12 col-lg-6 mt-2 mt-md-0">
                 <div id="side-event">
-                    
+
                 </div>
             </div>
         </div>
@@ -36,7 +52,7 @@
                                 <img src="~/Content/img/survey-student.jpg" class="w-100" />
                             </div>
                             <div class="mt-2">
-                                <p class="">Khảo sát phản hồi của sv về hoạt động giảng dạy của gv</p>
+                                <p class="">Khảo sát phản hồi của sinh viên về hoạt động giảng dạy của giáo viên</p>
                             </div>
                         </a>
                     </div>
@@ -46,7 +62,7 @@
                                 <img src="~/Content/img/survey-student.jpg" class="w-100" />
                             </div>
                             <div class="mt-2">
-                                <p class="">Khảo sát phản hồi của sv về chất lượng đào tạo trước tốt nghiệp</p>
+                                <p class="">Khảo sát phản hồi của sinh viên về chất lượng đào tạo trước tốt nghiệp</p>
                             </div>
                         </a>
                     </div>
@@ -56,7 +72,7 @@
                                 <img src="~/Content/img/survey-student.jpg" class="w-100" />
                             </div>
                             <div class="mt-2">
-                                <p class="">Khảo sát tình hình việc làm sv sau tốt nghiệp</p>
+                                <p class="">Khảo sát tình hình việc làm sinh viên sau tốt nghiệp</p>
                             </div>
                         </a>
                     </div>
@@ -121,7 +137,7 @@
                 const resultHtml = template.replace('[image]', `${API_URL}/api/NewsManager/news-items/avatar/${data.id}`)
                                             .replace('[title]', data.title || '')
                                             .replace('[description]', data.description || '')
-                                            .replace('[link]', `/news/detail?itemId=${data.id}`)
+                                            .replace('[link]', `/news/detail?catId=${data.catId}&itemId=${data.id}`)
                                             .replace('[entry-date]', entryDate || '' );
                 $('#main-event').html(resultHtml);
             },
@@ -152,7 +168,7 @@
                     }
                     resultHtml += template.replace('[title]', `${title || ''}`)
                                             .replace('[image]', `${API_URL}/api/NewsManager/news-items/avatar/${newsItem.id}`)
-                                            .replace('[link]', `/news/detail?itemId=${newsItem.id}`);
+                                            .replace('[link]', `/news/detail?catId=${newsItem.catId}&itemId=${newsItem.id}`);
                 };
                 $('#side-event').html(resultHtml);
             },

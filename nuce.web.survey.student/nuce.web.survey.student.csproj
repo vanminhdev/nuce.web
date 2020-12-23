@@ -143,6 +143,7 @@
     <Compile Include="Common\UserParameters.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ContactController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\GraduateHomeController.cs" />
@@ -156,6 +157,7 @@
     <Compile Include="Models\Base\DataTableResponse.cs" />
     <Compile Include="Models\JsonData\AnswerJson.cs" />
     <Compile Include="Models\JsonData\QuestionJson.cs" />
+    <Compile Include="Models\NewsModel.cs" />
     <Compile Include="Models\ResponseMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -918,6 +920,7 @@
     <Content Include="Content\js\bootstrap.min.js" />
     <Content Include="Content\js\dataTables.bootstrap4.min.js" />
     <Content Include="Content\js\dataTables.config.js" />
+    <Content Include="Content\js\helper\common.js" />
     <Content Include="Content\js\helper\datetime.js" />
     <Content Include="Content\js\helper\form.helper.js" />
     <Content Include="Content\js\helper\function.helper.js" />
@@ -925,6 +928,7 @@
     <Content Include="Content\js\helper\jquery.validate.custom.rule.js" />
     <Content Include="Content\js\helper\jquery.validate.default.message.js" />
     <Content Include="Content\js\helper\modal.helper.js" />
+    <Content Include="Content\js\helper\enum.js" />
     <Content Include="Content\js\helper\prevent.debugger.helper.js" />
     <Content Include="Content\js\jquery.cookie.min.js" />
     <Content Include="Content\js\jquery.dataTables.min.js" />
@@ -979,6 +983,7 @@
     <Content Include="Views\Account\LoginUndergraduate.cshtml" />
     <Content Include="Views\Home\Verification.cshtml" />
     <Content Include="Views\Home\VerifyByToken.cshtml" />
+    <Content Include="Views\Contact\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

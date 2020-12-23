@@ -1,12 +1,13 @@
 ﻿@using nuce.web.quanly.Models;
 
 @{
-    ViewBag.Title = "Danh mục tin tức";
+    ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <style>
     @@media (prefers-reduced-motion: reduce) {
-        .collapse-custom>.collapsing {
+        .collapse-custom > .collapsing {
             -webkit-transition: none;
             transition: ease;
             transition-duration: 0.5s;
@@ -28,26 +29,25 @@
     }
 
     .caret::before {
-      content: "\25B6";
-      color: black;
-      display: inline-block;
-      margin-right: 6px;
+        content: "\25B6";
+        color: black;
+        display: inline-block;
+        margin-right: 6px;
     }
 
     .caret-down::before {
-      -ms-transform: rotate(90deg); /* IE 9 */
-      -webkit-transform: rotate(90deg); /* Safari */'
-      transform: rotate(90deg);  
+        -ms-transform: rotate(90deg); /* IE 9 */
+        -webkit-transform: rotate(90deg); /* Safari */
+        transform: rotate(90deg);
     }
 
     .nested {
-      display: none;
+        display: none;
     }
 
     .active {
-      display: block;
+        display: block;
     }
-
 </style>
 <div class="container-fluid service-categories-wrp collapse-custom" style="margin-top: 0">
     <ul class="font-weight-bold cursor-pointer">

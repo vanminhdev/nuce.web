@@ -13,7 +13,7 @@ using nuce.web.api.ViewModel.Core;
 
 namespace nuce.web.api.Controllers.Core
 {
-    //[Authorize(Roles = "P_CTSV,P_KhaoThi")]
+    [Authorize(Roles = "P_KhaoThi")]
     [Route("api/[controller]")]
     public class NewsManagerController : Controller
     {
@@ -22,66 +22,36 @@ namespace nuce.web.api.Controllers.Core
         {
             this._newsManagerService = _newsManagerService;
         }
+        #region client
+        /// <summary>
+        /// List danh mục theo site
+        /// </summary>
+        /// <param name="role"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet]
         [Route("news-category/{role}")]
         public IActionResult GetNewsCategory(string role)
         {
-            return Ok(_newsManagerService.GetAllActiveCategoryByRole(role));
+            return Ok(_newsManagerService.GetAllCategoryByRole(role, 1));
         }
 
-        [HttpPost]
-        [Route("news-items/category/{catId}")]
-        public async Task<IActionResult> GetNewsItemByCategory(int catId, [FromBody] DataTableRequest request)
-        {
-            try
-            {
-                var data = await _newsManagerService.FindItemsByCatId(catId, request.Start, request.Length);
-                data.Draw = request.Draw++;
-                return Ok(data);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
-            }
-        }
-
+        [AllowAnonymous]
         [HttpGet]
-        [Route("news-items/{id}")]
-        public async Task<IActionResult> GetNewsItemById(int id)
+        [Route("news-category/menu/{role}")]
+        public IActionResult GetNewsCategoryOnMenu(string role)
         {
-            return Ok(await _newsManagerService.FindNewsItemById(id));
+            return Ok(_newsManagerService.GetAllCategoryByRole(role, 1, true));
         }
 
-        [HttpPost]
-        [Route("news-items/create")]
-        public async Task<IActionResult> CreateNewsItem([FromBody]CreateNewsItemModel model)
-        {
-            try
-            {
-                var id = await _newsManagerService.CreateNewsItems(model);
-                return Ok(id);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
-            }
-        }
-
-        [HttpPut]
-        [Route("news-items/avatar/{id}")]
-        public async Task<IActionResult> UploadAvatar(IFormFile file, int id)
-        {
-            try
-            {
-                var result = await _newsManagerService.UploadNewsItemAvatar(file, id);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
-            }
-        }
-
+        /// <summary>
+        /// Avatar bài tin
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet]
         [Route("news-items/avatar/{id}")]
         public async Task<IActionResult> GetAvatar(int id, [FromQuery] int? width, [FromQuery] int? height)
@@ -101,8 +71,124 @@ namespace nuce.web.api.Controllers.Core
             }
         }
 
+        /// <summary>
+        /// Chi tiết bài tin
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("news-items/{id}")]
+        public async Task<IActionResult> GetNewsItemById(int id)
+        {
+            return Ok(await _newsManagerService.FindNewsItemById(id, 1));
+        }
+
+        /// <summary>
+        /// List bài tin theo danh mục
+        /// </summary>
+        /// <param name="catId"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("news-items/category/{catId}")]
+        public async Task<IActionResult> GetNewsItemByCategory(int catId, [FromBody] DataTableRequest request)
+        {
+            try
+            {
+                var data = await _newsManagerService.FindItemsByCatId(catId, request.Start, request.Length, 1);
+                data.Draw = request.Draw++;
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
+            }
+        }
+        #endregion
+
+        #region admin
+        /// <summary>
+        /// List danh mục theo quyền
+        /// </summary>
+        /// <param name="role"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("admin/news-category/{role}")]
+        public IActionResult GetNewsCategoryAdmin(string role)
+        {
+            return Ok(_newsManagerService.GetAllCategoryByRole(role, 1));
+        }
+
+        /// <summary>
+        /// Chi tiết bài tin
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("admin/news-items/{id}")]
+        public async Task<IActionResult> GetNewsItemByIdAdmin(int id)
+        {
+            return Ok(await _newsManagerService.FindNewsItemById(id, 1));
+        }
+
+        /// <summary>
+        /// List bài tin theo danh mục
+        /// </summary>
+        /// <param name="catId"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("admin/news-items/category/{catId}")]
+        public async Task<IActionResult> GetNewsItemByCategoryAdmin(int catId, [FromBody] DataTableRequest request)
+        {
+            try
+            {
+                var data = await _newsManagerService.FindItemsByCatId(catId, request.Start, request.Length, 1);
+                data.Draw = request.Draw++;
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("admin/news-items/create")]
+        public async Task<IActionResult> CreateNewsItem([FromBody]CreateNewsItemModel model)
+        {
+            try
+            {
+                var id = await _newsManagerService.CreateNewsItems(model);
+                return Ok(id);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
+            }
+        }
+
         [HttpPut]
-        [Route("news-items/update")]
+        [Route("admin/news-items/avatar/{id}")]
+        public async Task<IActionResult> UploadAvatar(IFormFile file, int id)
+        {
+            try
+            {
+                var result = await _newsManagerService.UploadNewsItemAvatar(file, id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [Route("admin/news-items/update")]
         public async Task<IActionResult> UpdateNewsItem([FromBody]NewsItems newsItem)
         {
             try
@@ -117,10 +203,11 @@ namespace nuce.web.api.Controllers.Core
         }
 
         [HttpPut]
-        [Route("news-items/lock")]
+        [Route("admin/news-items/lock")]
         public IActionResult LockNewsItem()
         {
             return Ok();
         }
+        #endregion
     }
 }

@@ -19,65 +19,18 @@ namespace nuce.web.api.Services.Core.Implements
         private readonly NuceCoreIdentityContext _nuceCoreContext;
         private readonly IUserService _userService;
         private readonly IUploadFile _uploadFile;
-        private readonly IPathProvider _pathProvider;
         private readonly IConfiguration _configuration;
         public NewsManagerService(NuceCoreIdentityContext _nuceCoreContext, IUserService _userService,
-                                IUploadFile _uploadFile, IPathProvider _pathProvider, IConfiguration _configuration)
+                                IUploadFile _uploadFile, IConfiguration _configuration)
         {
             this._nuceCoreContext = _nuceCoreContext;
             this._userService = _userService;
             this._uploadFile = _uploadFile;
-            this._pathProvider = _pathProvider;
             this._configuration = _configuration;
         }
         
-        public IQueryable GetAllActiveCategoryByRole(string role)
-        {
-            return _nuceCoreContext.NewsCats.AsNoTracking()
-                                .Where(c => c.Role == role && c.Status == 1)
-                                .OrderBy(c => c.Count);
-        }
 
-        public async Task<DataTableResponse<NewsItems>> FindItemsByCatId(int catId, int seen, int size)
-        {
-            var catChildren = _nuceCoreContext.NewsCats.Where(cat => cat.Parent == catId && cat.Parent != -1 && cat.Status == 1);
-            bool isParent = catChildren != null && catChildren.Any();
-            IQueryable<NewsItems> data = null;
-
-            if (isParent)
-            {
-                data = catChildren.AsNoTracking().GroupJoin(
-                            _nuceCoreContext.NewsItems.AsNoTracking(),
-                            cat => cat.Id,
-                            newsItem => newsItem.CatId,
-                            (cat, newsItem) => new { cat, newsItem }
-                        ).SelectMany(
-                            left => left.newsItem.DefaultIfEmpty(),
-                            (left, newsitem) => newsitem
-                        ).Where(ni => ni != null)
-                        .OrderByDescending(ni => ni.EntryDatetime);
-            }
-            else
-            {
-                data = _nuceCoreContext.NewsItems.AsNoTracking()
-                            .Where(ni => ni.CatId == catId)
-                            .OrderByDescending(ni => ni.EntryDatetime);
-            }
-
-            var takedData = await data.Skip(seen).Take(size).ToListAsync();
-            return new DataTableResponse<NewsItems>
-            {
-                Data = takedData,
-                RecordsFiltered = takedData.Count(),
-                RecordsTotal = data.Count()
-            };
-        }
-
-        public async Task<NewsItems> FindNewsItemById(int id)
-        {
-            return await _nuceCoreContext.NewsItems.FindAsync(id);
-        }
-
+        #region admin
         public async Task<int> CreateNewsItems(CreateNewsItemModel model)
         {
             var username = _userService.GetUserName();
@@ -149,7 +102,7 @@ namespace nuce.web.api.Services.Core.Implements
             }
             string newFileName = $"news_item_ava_{id}{Path.GetExtension(formFile.FileName).ToLower()}";
             string filePath = $"{dir}/{newFileName}";
-            
+
             try
             {
                 await _uploadFile.SaveFileAsync(formFile, filePath);
@@ -164,36 +117,9 @@ namespace nuce.web.api.Services.Core.Implements
             return newsItem.Avatar;
         }
 
-        public async Task<ItemAvatarModel> GetNewsItemAvatar(int id, int? width, int? height)
-        {
-            var newsItemData = await FindNewsItemById(id);
-
-            if (newsItemData == null)
-            {
-                return null;
-            }
-
-            var imgPath = newsItemData.Avatar;
-            string extension = Path.GetExtension(imgPath);
-            extension = extension.Substring(1, extension.Length -1);
-
-            if (width == null || height == null)
-            {
-                var data = await File.ReadAllBytesAsync(imgPath);
-                return new ItemAvatarModel { Data = data, Extension = extension };
-            }
-            Image img = Image.FromFile(imgPath);
-
-            Image resizedNewImg = _uploadFile.ResizeImage(img, width ?? 0, 2000, false);
-            var newImg = _uploadFile.CropImage(resizedNewImg, width ?? 0, height ?? 0);
-
-            var result = _uploadFile.ImageToByte(newImg);
-            return new ItemAvatarModel { Data = result, Extension = extension };
-        }
-
         public async Task UpdateNewsItems(NewsItems model)
         {
-            var newsItems = await FindNewsItemById(model.Id);
+            var newsItems = await FindNewsItemById(model.Id, null);
 
             if (string.IsNullOrEmpty(model.Title?.Trim()))
             {
@@ -209,12 +135,82 @@ namespace nuce.web.api.Services.Core.Implements
 
             await _nuceCoreContext.SaveChangesAsync();
         }
+        #endregion
 
-        private IQueryable GetAllActiveCategory()
+        #region client
+        public async Task<ItemAvatarModel> GetNewsItemAvatar(int id, int? width, int? height)
+        {
+            var newsItemData = await FindNewsItemById(id, null);
+
+            if (newsItemData == null)
+            {
+                return null;
+            }
+
+            var imgPath = newsItemData.Avatar;
+            string extension = Path.GetExtension(imgPath);
+            extension = extension.Substring(1, extension.Length - 1);
+
+            if (width == null || height == null)
+            {
+                var data = await File.ReadAllBytesAsync(imgPath);
+                return new ItemAvatarModel { Data = data, Extension = extension };
+            }
+            Image img = Image.FromFile(imgPath);
+
+            Image resizedNewImg = _uploadFile.ResizeImage(img, width ?? 0, 2000, false);
+            var newImg = _uploadFile.CropImage(resizedNewImg, width ?? 0, height ?? 0);
+
+            var result = _uploadFile.ImageToByte(newImg);
+            return new ItemAvatarModel { Data = result, Extension = extension };
+        }
+        #endregion
+
+        #region common
+        public IQueryable<NewsCats> GetAllCategoryByRole(string role, int? status)
         {
             return _nuceCoreContext.NewsCats.AsNoTracking()
-                                .Where(c => c.Status == 1);
+                                .Where(c => c.Role == role && (status == null || c.Status == status))
+                                .OrderBy(c => c.Count);
         }
 
+        public IQueryable<NewsCats> GetAllCategoryByRole(string role, int? status, bool onMenu)
+        {
+            return _nuceCoreContext.NewsCats
+                                .Where(c => c.Role == role && (status == null || c.Status == status) && (c.OnMenu ?? false) == onMenu)
+                                .OrderBy(c => c.Count);
+        }
+
+        public async Task<DataTableResponse<NewsItems>> FindItemsByCatId(int catId, int seen, int size, int? status)
+        {
+            var catChildren = _nuceCoreContext.NewsCats.Where(cat => (cat.Parent == catId || cat.Id == catId) && (status == null || cat.Status == status));
+            IQueryable<NewsItems> data = null;
+
+            data = catChildren.AsNoTracking().GroupJoin(
+                        _nuceCoreContext.NewsItems.AsNoTracking(),
+                        cat => cat.Id,
+                        newsItem => newsItem.CatId,
+                        (cat, newsItem) => new { cat, newsItem }
+                    ).SelectMany(
+                        left => left.newsItem.DefaultIfEmpty(),
+                        (left, newsitem) => newsitem
+                    ).Where(ni => ni != null)
+                    .OrderByDescending(ni => ni.EntryDatetime);
+
+            var takedData = await data.Skip(seen).Take(size).ToListAsync();
+            return new DataTableResponse<NewsItems>
+            {
+                Data = takedData,
+                RecordsFiltered = takedData.Count(),
+                RecordsTotal = data.Count()
+            };
+        }
+
+        public async Task<NewsItems> FindNewsItemById(int id, int? status)
+        {
+            return await _nuceCoreContext.NewsItems
+                            .FirstOrDefaultAsync(ni => ni.Id == id && (status == null || ni.Status == status));
+        }
+        #endregion
     }
 }

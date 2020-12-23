@@ -76,7 +76,9 @@ namespace nuce.web.api.Models.Core
             {
                 entity.ToTable("News_Cats");
 
-                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedNever();
 
                 entity.Property(e => e.Description).IsRequired();
 
@@ -84,7 +86,7 @@ namespace nuce.web.api.Models.Core
                     .IsRequired()
                     .HasMaxLength(200);
 
-                entity.Property(e => e.Role).HasMaxLength(1);
+                entity.Property(e => e.Role).HasMaxLength(200);
             });
 
             modelBuilder.Entity<NewsItems>(entity =>

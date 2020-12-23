@@ -173,9 +173,8 @@ html {
 }
 
 .menu-item {
-  border: 1px solid #2d3e99;
-  padding: 16px 0px;
-
+  /*padding: 16px 0px;*/
+  /*border: 1px solid #2d3e99;*/
   text-transform: uppercase;
   font-weight: 600;
 }

@@ -1,24 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 
 namespace nuce.web.survey.student.Controllers
 {
     public class NewsController : BaseController
     {
         // GET: News
+        [HttpGet]
         public ActionResult Index(int catId)
         {
             TempData["catId"] = catId;
             return View("Index");
         }
 
-        public ActionResult Detail(int itemId)
+        [HttpGet]
+        public ActionResult Detail(int catId, int itemId)
         {
+            TempData["catId"] = catId;
             TempData["itemId"] = itemId;
             return View("Detail");
         }
+
     }
 }

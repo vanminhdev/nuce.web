@@ -37,10 +37,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
     <link rel="stylesheet" href="~/content/Site.css" />
+    <link rel="stylesheet" href="~/Content/css/m-style.css" />
+    <link rel="stylesheet" href="~/Content/css/m-util.css" />
     @RenderSection("Style", required: false)
     <style>
-        .block-center {
-            margin: 0 auto;
+        /*button:focus {
+            outline: none;
+        }
+
+        button:active {
+            outline: none;
+        }*/
+
+        .m-navbar-nav-border li:not(:last-child) {
+            border-right: 1px solid #2d3e99;
+        }
+
+        .m-navbar-collapse-border {
+            border: 1px solid #2d3e99;
         }
         body {
             font-family: 'Open Sans', sans-serif;
@@ -129,20 +143,19 @@
         <section id="menu">
             <div class="container-fluid menu-wrp mt-2">
                 <hr />
-                <nav class="navbar navbar-expand-lg navbar-light pl-0 pr-0">
-                    @*<a class="navbar-brand" href="/home"></a>
-                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>*@
+                <nav class="navbar m-navbar navbar-expand-lg navbar-dark m-bg-blue p-0">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
                     @*<div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">*@
-                    <div class="navbar-collapse justify-content-center">
-                        <ul class="navbar-nav row">
+                    <div class="collapse navbar-collapse w-100" id="navbarSupportedContent">
+                        <ul class="navbar-nav m-nav-item mr-auto">
                             @if (roles.Count == 1)
                             {
                                 if (roles.FirstOrDefault(r => r == "Admin") != null)
                                 {
                                     <li class="nav-item">
-                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action block-center"
+                                        <a class="nav-link mt-1 mb-1 m-text-white-ace"
                                            href="/usermanager/index">
                                             Quản lý tài khoản
                                         </a>
@@ -151,42 +164,30 @@
                                 if (roles.FirstOrDefault(r => r == "P_KhaoThi") != null)
                                 {
                                     <li class="nav-item">
-                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action block-center"
+                                        <a class="nav-link mt-1 mb-1 m-text-white-ace"
                                            href="/survey/examquestions">
                                             Quản lý đề khảo sát
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action block-center"
+                                        <a class="nav-link mt-1 mb-1 m-text-white-ace"
                                            href="/survey/question">
                                             Quản lý câu hỏi
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action block-center"
-                                           href="/newsmanagement/index?role=1">
-                                            Tin tức
                                         </a>
                                     </li>
                                 }
                                 if (roles.FirstOrDefault(r => r == "P_CTSV") != null)
                                 {
                                     <li class="nav-item">
-                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action block-center"
+                                        <a class="nav-link mt-1 mb-1 m-text-white-ace"
                                            href="/ctsvservicemanagement">
                                             Quản lý dịch vụ
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action block-center"
+                                        <a class="nav-link mt-1 mb-1 m-text-white-ace"
                                            href="/ctsvservicemanagement/parameters">
                                             Tham số dịch vụ
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link menu-item text-center font-18 font-10-xsm width-action block-center"
-                                           href="/newsmanagement/index?role=2">
-                                            Tin tức
                                         </a>
                                     </li>
                                 }
@@ -195,64 +196,65 @@
                             {
                                 if (roles.FirstOrDefault(r => r == "Admin") != null)
                                 {
-                                    <li class="nav-item dropdown dropdown-hover-show">
-                                        <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action block-center"
-                                           href="#" id="navbarDropdown-admin" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            Quản trị
-                                        </a>
-                                        <div class="dropdown-menu width-action block-center" aria-labelledby="navbarDropdown-admin">
-                                            <a class="dropdown-item font-18 font-10-xsm" href="/usermanager/index">Quản lý tài khoản</a>
-                                            @*<a class="dropdown-item font-18 font-10-xsm" href="/config/index">Cấu hình trang web</a>*@
-                                        </div>
-                                    </li>
-                                    <li class="nav-item dropdown dropdown-hover-show">
-                                        <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action" href="#" id="navbarDropdown-sync" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            Đồng bộ dữ liệu
-                                        </a>
-                                        <div class="dropdown-menu width-100ps" aria-labelledby="navbarDropdown-sync">
-                                            <a class="dropdown-item font-18 font-10-xsm" href="/syncedudata/index">Đồng bộ dữ liệu từ đào tạo</a>
-                                        </div>
-                                    </li>
+                                <li class="nav-item dropdown m-nav-item-hover">
+                                    <a class="nav-link mt-1 mb-1 m-text-white-ace" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Quản trị
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown-admin">
+                                        <a class="dropdown-item m-bg-hover-blue text-truncate" href="/usermanager/index">Quản lý tài khoản</a>
+                                        <a class="dropdown-item m-bg-hover-blue text-truncate" href="/frontendmanager/index?role=1">Quản trị giao diện</a>
+                                    </div>
+                                </li>
+                                    if (roles.FirstOrDefault(r => r == "P_KhaoThi") != null)
+                                    {
+                                        <li class="nav-item dropdown m-nav-item-hover">
+                                            <a class="nav-link mt-1 mb-1 m-text-white-ace"
+                                               href="#" id="navbarDropdown-survey" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Dữ liệu đối tượng khảo sát
+                                            </a>
+                                            <div class="dropdown-menu" aria-labelledby="navbarDropdown-sync">
+                                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="/syncedudata/index">Dữ liệu khảo sát hoạt động giáo dục</a>
+                                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/undergraduatestudent">Dữ liệu khảo sát trước tốt nghiệp</a>
+                                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/graduatestudent">Dữ liệu khảo sát việc làm</a>
+                                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="/syncedudata/backup">Sao lưu dữ liệu</a>
+                                            </div>
+                                        </li>
+                                    }
                                 }
                                 if (roles.FirstOrDefault(r => r == "P_KhaoThi") != null)
                                 {
-                                    <li class="nav-item dropdown dropdown-hover-show">
-                                        <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action block-center"
+                                    <li class="nav-item dropdown m-nav-item-hover">
+                                        <a class="nav-link mt-1 mb-1 m-text-white-ace"
                                            href="#" id="navbarDropdown-survey" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             Khảo thí
                                         </a>
-                                        <div class="dropdown-menu width-action block-center" aria-labelledby="navbarDropdown-survey" style="min-width: 320px;">
-                                            <a class="dropdown-item font-18 font-10-xsm" href="/survey/question">Quản lý câu hỏi</a>
-                                            <a class="dropdown-item font-18 font-10-xsm" href="/survey/examquestions">Quản lý đề khảo sát</a>
+                                        <div class="dropdown-menu" aria-labelledby="navbarDropdown-survey" style="min-width: 320px;">
+                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/question">Quản lý câu hỏi</a>
+                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/examquestions">Quản lý đề khảo sát</a>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item font-18 font-10-xsm" href="/survey/surveyround">Đợt khảo sát sinh viên</a>
-                                            <a class="dropdown-item font-18 font-10-xsm" href="/survey/thesurvey">Bài khảo sát sinh viên</a>
-                                            <a class="dropdown-item font-18 font-10-xsm" href="/survey/statistic">Thống kê</a>
+                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/surveyround">Đợt khảo sát sinh viên</a>
+                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/thesurvey">Bài khảo sát sinh viên</a>
+                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/statistic">Thống kê</a>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item font-18 font-10-xsm" href="/survey/graduatesurveyround">Đợt khảo sát cựu sinh viên</a>
-                                            <a class="dropdown-item font-18 font-10-xsm" href="/survey/graduatestudent">Danh sách cựu sinh viên</a>
-                                            <a class="dropdown-item font-18 font-10-xsm" href="/survey/graduatethesurvey">Bài khảo sát cựu sinh viên</a>
+                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/graduatesurveyround">Đợt khảo sát cựu sinh viên</a>
+                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/graduatethesurvey">Bài khảo sát cựu sinh viên</a>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item font-18 font-10-xsm" href="/survey/undergraduatesurveyround">Đợt khảo sát sv sắp tốt nghiệp</a>
-                                            <a class="dropdown-item font-18 font-10-xsm" href="/survey/undergraduatestudent">Danh sách sv sắp tốt nghiệp</a>
-                                            <a class="dropdown-item font-18 font-10-xsm" href="/survey/undergraduatethesurvey">Bài khảo sát sv sắp tốt nghiệp</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item font-18 font-10-xsm" href="/newsmanagement/index?role=1">Tin tức</a>
+                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/undergraduatesurveyround">Đợt khảo sát sv sắp tốt nghiệp</a>
+                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/undergraduatethesurvey">Bài khảo sát sv sắp tốt nghiệp</a>
                                         </div>
                                     </li>
                                 }
                                 if (roles.FirstOrDefault(r => r == "P_CTSV") != null)
                                 {
-                                    <li class="nav-item dropdown dropdown-hover-show">
-                                        <a class="nav-link dropdown-toggle menu-item text-center font-18 font-10-xsm width-action block-center"
+                                    <li class="nav-item dropdown m-nav-item-hover">
+                                        <a class="nav-link mt-1 mb-1 m-text-white-ace"
                                            href="#" id="navbarDropdown-ctsv" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             Công tác sinh viên
                                         </a>
-                                        <div class="dropdown-menu width-action block-center" aria-labelledby="navbarDropdown-ctsv">
-                                            <a class="dropdown-item font-18 font-10-xsm" href="/ctsvservicemanagement">Quản lý dịch vụ</a>
-                                            <a class="dropdown-item font-18 font-10-xsm" href="/ctsvservicemanagement/parameters">Tham số dịch vụ</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item font-18 font-10-xsm" href="/newsmanagement/index?role=2">Tin tức</a>
+                                        <div class="dropdown-menu" aria-labelledby="navbarDropdown-ctsv">
+                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/ctsvservicemanagement">Quản lý dịch vụ</a>
+                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/ctsvservicemanagement/parameters">Tham số dịch vụ</a>
+                                            @*<a class="dropdown-item m-bg-hover-blue text-truncate" href="/newsmanagement/index?role=2">Tin tức</a>*@
                                         </div>
                                     </li>
                                 }

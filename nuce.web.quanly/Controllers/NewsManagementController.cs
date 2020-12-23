@@ -29,7 +29,7 @@ namespace nuce.web.quanly.Controllers
                 roleName = roleDict[role];
             }
             TempData["role"] = role;
-            string api = $"api/NewsManager/news-category/{roleName}";
+            string api = $"api/NewsManager/admin/news-category/{roleName}";
             var response = await base.MakeRequestAuthorizedAsync("get", api);
 
             return await base.HandleResponseAsync(response, action200Async: async res =>
@@ -68,7 +68,7 @@ namespace nuce.web.quanly.Controllers
         [HttpPost]
         public async Task<ActionResult> GetItemsListByCatId(GetNewsItemByCatIdModel request)
         {
-            string api = $"api/NewsManager/news-items/category/{request.catId}";
+            string api = $"api/NewsManager/admin/news-items/category/{request.catId}";
             var stringContent = base.MakeContent(request.body);
             var response = await base.MakeRequestAuthorizedAsync("post", api, stringContent);
 
@@ -97,7 +97,7 @@ namespace nuce.web.quanly.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateNewsItem(CreateNewsItemModel request)
         {
-            string api = "api/NewsManager/news-items/create";
+            string api = "api/NewsManager/admin/news-items/create";
 
             var stringContent = base.MakeContent(request);
             var response = await base.MakeRequestAuthorizedAsync("post", api, stringContent);
@@ -115,19 +115,13 @@ namespace nuce.web.quanly.Controllers
             HttpPostedFileBase imgAvatar = Request.Files[0];
             byte[] content = new byte[imgAvatar.ContentLength];
             await imgAvatar.InputStream.ReadAsync(content, 0, content.Length);
-            var extension = Path.GetExtension(imgAvatar.FileName).Substring(1).ToLower();
-            UploadFileModel model = new UploadFileModel
-            {
-                Content = content,
-                FileName = imgAvatar.FileName,
-                Key = "file",
-                ContentType = $"image/{extension}",
-            };
 
-            string api = $"api/NewsManager/news-items/avatar/{id}";
+            var multipartFormData = new MultipartFormDataContent();
+            multipartFormData.Add(new ByteArrayContent(content), "file", imgAvatar.FileName);
 
-            var stringContent = base.MakeContent(model);
-            var response = await base.MakeRequestAuthorizedAsync("put", api, stringContent);
+            string api = $"api/NewsManager/admin/news-items/avatar/{id}";
+
+            var response = await base.MakeRequestAuthorizedAsync("put", api, multipartFormData);
 
             return await HandleApiResponseUpdate(response);
         }
@@ -135,7 +129,7 @@ namespace nuce.web.quanly.Controllers
         [HttpPost]
         public async Task<ActionResult> UpdateNewsItem(NewsItemModel request)
         {
-            string api = "api/NewsManager/news-items/update";
+            string api = "api/NewsManager/admin/news-items/update";
 
             var stringContent = base.MakeContent(request);
             var response = await base.MakeRequestAuthorizedAsync("put", api, stringContent);
@@ -145,7 +139,7 @@ namespace nuce.web.quanly.Controllers
 
         private async Task<ActionResult> GetNewsItem(int id, string viewName)
         {
-            string api = $"api/NewsManager/news-items/{id}";
+            string api = $"api/NewsManager/admin/news-items/{id}";
             var response = await base.MakeRequestAuthorizedAsync("get", api);
 
             return await base.HandleResponseAsync(response, action200Async: async res =>
