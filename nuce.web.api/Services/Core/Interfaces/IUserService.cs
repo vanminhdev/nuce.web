@@ -23,6 +23,7 @@ namespace nuce.web.api.Services.Core.Interfaces
         public Task<ResponseBody> UserIsvalidAsync(LoginModel model, ApplicationUser user);
         public string GetCurrentStudentCode();
         public string GetClaimByKey(string key);
+        public List<string> GetClaimListByKey(string key);
         public long? GetCurrentStudentID();
         public AsAcademyStudent GetCurrentStudent();
         public string GetUserName();

@@ -199,6 +199,7 @@ namespace nuce.web.api
             services.AddScoped<ILogService, LogService>();
             services.AddScoped<IManagerBackupService, ManagerBackUpService>();
             services.AddScoped<INewsManagerService, NewsManagerService>();
+            services.AddScoped<IClientParameterService, ClientParameterService>();
             #endregion
             #region config service
             services.AddScoped<IStatusService, StatusService>();

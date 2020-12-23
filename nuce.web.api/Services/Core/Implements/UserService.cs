@@ -160,6 +160,20 @@ namespace nuce.web.api.Services.Core.Implements
             }
             return null;
         }
+        public List<string> GetClaimListByKey(string key)
+        {
+            var identity = _httpContext.User.Identity as ClaimsIdentity;
+            List<string> result = new List<string>();
+            if (identity != null)
+            {
+                var claimList = identity.FindAll(key);
+                foreach (var claim in claimList)
+                {
+                    result.Add(claim.Value);
+                }
+            }
+            return result;
+        }
         public long? GetCurrentStudentID()
         {
             string studentCode = GetCurrentStudentCode();

@@ -164,6 +164,7 @@
     <Compile Include="Models\CtsvServiceManagementModel.cs" />
     <Compile Include="Models\EduDataModels.cs" />
     <Compile Include="Models\ExamQuestionModels.cs" />
+    <Compile Include="Models\FrontendManagerModel.cs" />
     <Compile Include="Models\Survey\Normal\SurveyRoundModels.cs" />
     <Compile Include="Models\Survey\Normal\TheSurveyModels.cs" />
     <Compile Include="Models\Survey\Undergraduate\UndergraduateStudentModels.cs" />
@@ -185,6 +186,8 @@
     <Content Include="Content\css\bootstrap-select.min.css" />
     <Content Include="Content\css\bootstrap.min.css" />
     <Content Include="Content\css\dataTables.bootstrap4.min.css" />
+    <Content Include="Content\css\m-style.css" />
+    <Content Include="Content\css\m-util.css" />
     <Content Include="Content\css\responsive.css" />
     <Content Include="Content\css\star-rating.css" />
     <Content Include="Content\css\style.css" />
@@ -1537,6 +1540,7 @@
     <Content Include="Views\NewsManagement\ItemsDetail.cshtml" />
     <Content Include="Views\NewsManagement\ItemsUpdate.cshtml" />
     <Content Include="Views\FrontendManager\Index.cshtml" />
+    <Content Include="Views\FrontendManager\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -111,6 +111,10 @@
     border-bottom: none !important;
 }
 
+.m-table-vertical-middle {
+    vertical-align: middle !important;
+}
+
 /* MEDIA QUERY */
 @media screen and (max-width: 768px) {
     .m-nav-item li {

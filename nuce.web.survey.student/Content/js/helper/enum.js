@@ -2,3 +2,17 @@
     CATEGORY_LIST: 'category-list',
     MENU_LOAD_DAY: 'menu-load-day',
 };
+
+var CLIENT_PARAMETERS_TYPE = {
+    CONTACT: 'CONTACT',
+    KHAO_SAT_SV: 'KSSV',
+};
+
+var CLIENT_PARAMETERS_CODE = {
+    ADDRESS: 'KTDB_ADDRESS',
+    MOBILE: 'KTDB_MOBILE',
+    EMAIL: 'KTDB_EMAIL',
+    NOTICE_1: 'KTDB_NOTICE_1',
+    NOTICE_2: 'KTDB_NOTICE_2',
+    NOTICE_3: 'KTDB_NOTICE_3',
+};
