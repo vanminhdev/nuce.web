@@ -106,7 +106,7 @@ namespace nuce.web.api.Services.Survey.Implements
                     nguoiphatbang = o.sv.Nguoiphatbang,
                     cnOrder = o.sv.CnOrder,
 
-                    hasTheSurvey = o.baikssv != null
+                    surveyStudentStatus = o.baikssv != null ? o.baikssv.Status : (int)SurveyStudentStatus.HaveNot
                 })
                 .OrderBy(o => o.dotKhaoSatId)
                 .ThenBy(o => o.exMasv)

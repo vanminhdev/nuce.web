@@ -1,0 +1,105 @@
+﻿@{
+    var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+    var accessToken = Request.Cookies[nuce.web.survey.student.Common.UserParameters.JwtAccessToken];
+    var masv = "";
+    var hoten = "";
+    var roles = new List<string>();
+    if (accessToken != null)
+    {
+
+        var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
+
+        var masvClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == "Masv");
+        if (masvClaim != null)
+        {
+            masv = masvClaim.Value;
+        }
+
+        var hotenClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.GivenName);
+        if (hotenClaim != null)
+        {
+            hoten = hotenClaim.Value;
+        }
+    }
+}
+
+@{
+    ViewData["Title"] = "Xác thực hoàn thành bài khảo sát";
+}
+
+@section Breadcrumb {
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Xác thực hoàn thành bài khảo sát</li>
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-12">
+            <form id="form-data" class="auto-validate">
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">Mã sinh viên</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control-plaintext" value="@masv" readonly disabled>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">Tên sinh viên</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control-plaintext" value="@hoten" readonly disabled>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">Email</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="email" class="form-control" required data-rule-email="true" data-rule-emailNotEdu="true">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">Số điện thoại</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="phone" class="form-control" required data-rule-phoneNumberMobile="true">
+                    </div>
+                </div>
+                <div class="form-group row d-flex justify-content-center">
+                    <button type="button" id="btn-xac-thuc" class="btn btn-primary">Xác thực</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let formData = $('#form-data');
+        $('#btn-xac-thuc').click(() => {
+            if (formData.valid()) {
+                $('#loading-screen').show();
+                $.ajax({
+                    data: formData.serializeArray(),
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Home/Verification',
+                    timeout: 0,
+                    complete: () => { }
+                }).done(function (res) {
+                    $('#loading-screen').hide();
+                    if (res.statusCode === 200) {
+                        toastSuccess("Một email xác thực đã được gửi đến địa chỉ email của bạn");
+                    } else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch (error) {
+                            toastError('Có lỗi xảy ra');
+                        }
+                    }
+                    console.log(res);
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    $('#loading-screen').hide();
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            }
+        });
+    </script>
+}

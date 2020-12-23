@@ -67,6 +67,12 @@ namespace nuce.web.survey.student.Controllers
                         var jsonString = await res.Content.ReadAsStringAsync();
                         ViewData["UndergraduateTheSurvey"] = jsonString;
                         return null;
+                    },
+                    action404Async: async res =>
+                    {
+                        var jsonString = await res.Content.ReadAsStringAsync();
+                        ViewData["message"] = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
+                        return null;
                     }
                 );
             }
@@ -78,6 +84,12 @@ namespace nuce.web.survey.student.Controllers
                     var jsonString = await res.Content.ReadAsStringAsync();
                     ViewData["TheSurvey"] = jsonString;
                     return View("Index");
+                },
+                action404Async: async res =>
+                {
+                    var jsonString = await res.Content.ReadAsStringAsync();
+                    ViewData["message"] = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
+                    return null;
                 }
             );
         }
@@ -181,8 +193,26 @@ namespace nuce.web.survey.student.Controllers
 
         [HttpGet]
         [AuthorizeActionFilter("UndergraduateStudent")]
-        public ActionResult RequestAuthorize()
+        public ActionResult Verification()
         {
+            return View();
+        }
+
+        [HttpPost]
+        [AuthorizeActionFilter("UndergraduateStudent")]
+        public async Task<ActionResult> Verification(string email, string phone)
+        {
+            var content = new StringContent(JsonConvert.SerializeObject(new { email, phone }), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/UndergraduateTheSurveyStudent/Verification", content);
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() });
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> VerifyByToken(string studentCode, string token)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/UndergraduateTheSurveyStudent/VerifyByToken?studentCode={studentCode}&token={token}");
+            ViewData["statusCode"] = response.StatusCode;
+            ViewData["content"] = JsonConvert.DeserializeObject<ResponseMessage>(await response.Content.ReadAsStringAsync());
             return View();
         }
         #endregion

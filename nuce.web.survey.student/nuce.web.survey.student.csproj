@@ -919,6 +919,12 @@
     <Content Include="Content\js\dataTables.bootstrap4.min.js" />
     <Content Include="Content\js\dataTables.config.js" />
     <Content Include="Content\js\helper\datetime.js" />
+    <Content Include="Content\js\helper\form.helper.js" />
+    <Content Include="Content\js\helper\function.helper.js" />
+    <Content Include="Content\js\helper\input-search.helper.js" />
+    <Content Include="Content\js\helper\jquery.validate.custom.rule.js" />
+    <Content Include="Content\js\helper\jquery.validate.default.message.js" />
+    <Content Include="Content\js\helper\modal.helper.js" />
     <Content Include="Content\js\helper\prevent.debugger.helper.js" />
     <Content Include="Content\js\jquery.cookie.min.js" />
     <Content Include="Content\js\jquery.dataTables.min.js" />
@@ -928,7 +934,6 @@
     <Content Include="Content\js\popper.min.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
-    <Content Include="Content\Site.css" />
     <Content Include="Content\css\bootstrap-select.css.map" />
     <Content Include="Content\js\bootstrap-select.min.js.map" />
     <Content Include="Content\js\bootstrap.min.js.map" />
@@ -972,7 +977,8 @@
     <Content Include="Views\News\Partials\_PartialGroupNewsJS.cshtml" />
     <Content Include="Views\Account\Partials\_PartialLogin.cshtml" />
     <Content Include="Views\Account\LoginUndergraduate.cshtml" />
-    <Content Include="Views\Home\RequestAuthorize.cshtml" />
+    <Content Include="Views\Home\Verification.cshtml" />
+    <Content Include="Views\Home\VerifyByToken.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

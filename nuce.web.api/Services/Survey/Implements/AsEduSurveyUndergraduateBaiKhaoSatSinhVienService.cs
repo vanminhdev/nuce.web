@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Models.Status;
@@ -12,6 +13,9 @@ using nuce.web.api.ViewModel.Survey.Undergraduate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Mime;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -21,11 +25,13 @@ namespace nuce.web.api.Services.Survey.Implements
     {
         private readonly SurveyContext _context;
         private readonly StatusContext _statusContext;
+        private readonly IConfiguration _configuration;
 
-        public AsEduSurveyUndergraduateBaiKhaoSatSinhVienService(SurveyContext context, StatusContext statusContext)
+        public AsEduSurveyUndergraduateBaiKhaoSatSinhVienService(SurveyContext context, StatusContext statusContext, IConfiguration configuration)
         {
             _context = context;
             _statusContext = statusContext;
+            _configuration = configuration;
         }
 
         private async Task<bool> IsOpenSurveyRound(string studentCode)
@@ -326,6 +332,76 @@ namespace nuce.web.api.Services.Survey.Implements
             surveyStudent.Status = (int)SurveyStudentStatus.RequestAuthorize;
             surveyStudent.LogIp = ipAddress;
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<string> Verification(string studentCode, VerificationStudent verification)
+        {
+            var student = await _context.AsEduSurveyUndergraduateStudent.FirstOrDefaultAsync(o => o.ExMasv == studentCode);
+            if (student == null)
+            {
+                throw new RecordNotFoundException("Không tìm thấy sinh viên");
+            }
+
+            student.Email = verification.Email;
+            student.Mobile = verification.Phone;
+
+            student.KeyAuthorize = Guid.NewGuid().ToString();
+            await _context.SaveChangesAsync();
+
+            return student.KeyAuthorize;
+        }
+
+        public async Task<bool> VerifyByToken(string studentCode, string token)
+        {
+            var student = await _context.AsEduSurveyUndergraduateStudent.FirstOrDefaultAsync(o => o.ExMasv == studentCode);
+            if (student == null)
+            {
+                throw new RecordNotFoundException("Không tìm thấy sinh viên");
+            }
+
+            if (student.KeyAuthorize == token)
+            {
+                var baikssv = await _context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien.Where(o => o.StudentCode == studentCode && o.Status == (int)SurveyStudentStatus.RequestAuthorize).ToListAsync();
+                if(baikssv.Count == 0)
+                {
+                    throw new RecordNotFoundException("Không tìm thấy bài khảo sát của sinh viên đang chờ xác thực hoặc bài khảo sát đã được xác thực");
+                }
+
+                foreach(var bai in baikssv)
+                {
+                    bai.Status = (int)SurveyStudentStatus.Done;
+                }
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
+        public async Task SendEmailVerify(string email, string url)
+        {
+            HttpClient client = new HttpClient();
+            var strContent = JsonSerializer.Serialize(new { 
+                emails = new[] { 
+                    new { 
+                        email,
+                        data = new {
+                            url
+                        }
+                    }   
+                },
+                template = 25,
+                subject = "Xác thực hoàn thành bài khảo sát",
+                email_identifier = "emails",
+                datetime = DateTime.Now.ToString("dd-MM-yyyy h:mm tt"),
+                send_later_email = 0,
+                timezone = 7
+            });
+            var content = new StringContent(strContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var response = await client.PostAsync(_configuration.GetValue<string>("ApiSendEmail"), content);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new SendEmailException(await response.Content.ReadAsStringAsync());
+            }
         }
     }
 }

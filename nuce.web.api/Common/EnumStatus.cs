@@ -53,6 +53,10 @@ namespace nuce.web.api.Common
     public enum SurveyStudentStatus
     {
         /// <summary>
+        /// Chưa được phát bài ks
+        /// </summary>
+        HaveNot = -1,
+        /// <summary>
         /// Chưa thực hiện
         /// </summary>
         DoNot = 1,

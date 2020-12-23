@@ -1,4 +1,5 @@
 ﻿@using nuce.web.survey.student.Common;
+@using nuce.web.survey.student.Models;
 @{
     ViewData["Title"] = "Trang khảo sát";
 }
@@ -27,6 +28,18 @@
             </table>
         </div>
     </div>
+
+    @if (ViewData["message"] != null)
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <h2 class="text-center text-dark mb-3">Danh sách bài khảo sát trước tốt nghiệp</h2>
+            </div>
+            <div class="col-12">
+                <p class="text-center text-dark mb-3 m-fs-20">@(((ResponseMessage)ViewData["message"]).message)</p>
+            </div>
+        </div>
+    }
 
     <div id="undergraduate-thesurvey" class="row mt-4" style="display: none;">
         <div class="col-12">
@@ -77,7 +90,7 @@
 
     @if (ViewData["UndergraduateTheSurvey"] != null)
     {
-<script>
+        <script>
             $('#undergraduate-thesurvey').show();
             let undergraduateTheSurvey = @Html.Raw(ViewData["UndergraduateTheSurvey"]);
             let tableUndergraduate = $('#table-undergraduate-thesurvey');
@@ -94,12 +107,12 @@
                 } else if (element.status === @((int)SurveyStudentStatus.Done)) {
                     htmlUndergraduate += `Đã hoàn thành`;
                 } else if (element.status === @((int)SurveyStudentStatus.RequestAuthorize)) {
-                    htmlUndergraduate += `<a href="/home/requestauthorize">Xác thực hoàn thành</a>`;
+                    htmlUndergraduate += `<a href="/home/verification">Xác thực hoàn thành</a>`;
                 }
                 htmlUndergraduate += `</td>`;
                 htmlUndergraduate += `</tr>`;
             }
             tableUndergraduate.html(htmlUndergraduate);
-</script>
+        </script>
     }
 }

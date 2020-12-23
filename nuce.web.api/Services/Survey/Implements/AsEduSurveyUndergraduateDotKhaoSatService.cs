@@ -119,6 +119,11 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new InvalidDataException("Đợt khảo sát đang mở cửa");
             }
 
+            if (surveyRoundUpdate.Status == (int)SurveyRoundStatus.Closed)
+            {
+                throw new InvalidDataException("Đợt khảo sát chưa kết thúc không thể xoá");
+            }
+
             surveyRoundUpdate.Status = (int)SurveyRoundStatus.Deleted;
             await _context.SaveChangesAsync();
         }

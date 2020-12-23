@@ -162,7 +162,7 @@ namespace nuce.web.survey.student.Controllers
                     return action404(response);
                 
                 var message = JsonConvert.DeserializeObject<ResponseMessage>(await response.Content.ReadAsStringAsync());
-                return Redirect($"/error?message={HttpUtility.UrlEncode("CallAPI: " + (message.message ?? "Không tìm thấy tài nguyên"))}&code={(int)HttpStatusCode.NotFound}");
+                return Redirect($"/error?message={HttpUtility.UrlEncode("CallAPI: " + (message?.message ?? "Không tìm thấy tài nguyên"))}&code={(int)HttpStatusCode.NotFound}");
             }
             else if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
@@ -170,8 +170,15 @@ namespace nuce.web.survey.student.Controllers
                     return await action500Async(response);
                 if (action500 != null)
                     return action500(response);
-                var message = JsonConvert.DeserializeObject<ResponseMessage>(await response.Content.ReadAsStringAsync());
-                return Redirect($"/error?message={HttpUtility.UrlEncode("CallAPI: " + (message.message ?? "Có lỗi xảy ra"))}&code={(int)HttpStatusCode.InternalServerError}");
+                try
+                {
+                    var message = JsonConvert.DeserializeObject<ResponseMessage>(await response.Content.ReadAsStringAsync());
+                    return Redirect($"/error?message={HttpUtility.UrlEncode("CallAPI: " + (message?.message ?? "Có lỗi xảy ra"))}&code={(int)HttpStatusCode.InternalServerError}");
+                }
+                catch
+                {
+                    return Redirect($"/error?message={HttpUtility.UrlEncode("CallAPI: Có lỗi xảy ra")}&code={(int)HttpStatusCode.InternalServerError}");
+                }
             }
             else if (response.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -180,7 +187,7 @@ namespace nuce.web.survey.student.Controllers
                 if (action400 != null)
                     return action400(response);
                 var message = JsonConvert.DeserializeObject<ResponseMessage>(await response.Content.ReadAsStringAsync());
-                return Redirect($"/error?message={HttpUtility.UrlEncode("CallAPI: " + (message.message ?? "Dữ liệu truyền vào không hợp lệ"))}&code={(int)HttpStatusCode.BadRequest}");
+                return Redirect($"/error?message={HttpUtility.UrlEncode("CallAPI: " + (message?.message ?? "Dữ liệu truyền vào không hợp lệ"))}&code={(int)HttpStatusCode.BadRequest}");
             }
             if (actionDefaultAsync != null)
                 return await actionDefaultAsync(response);

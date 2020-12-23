@@ -106,7 +106,7 @@
         </div>
         <div class="container">
             <div class="hd-banner">
-                <img src="~/content/img/banner.jpg" class="img-fluid"  />
+                <img src="~/content/img/banner.jpg" class="img-fluid" />
             </div>
         </div>
         <div class="container">
@@ -155,8 +155,8 @@
                     <ol class="breadcrumb m-bg-none pl-0 mb-0">
                         @RenderSection("Breadcrumb", required: false)
                         @*<li class="breadcrumb-item "><a class="m-text-blue" href="#">Home</a></li>
-                    <li class="breadcrumb-item "><a class="m-text-blue" href="#">Library</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Data</li>*@
+                            <li class="breadcrumb-item "><a class="m-text-blue" href="#">Library</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Data</li>*@
                     </ol>
                 </nav>
             </div>
@@ -186,11 +186,50 @@
         </div>
     </footer>
 
+    <div>
+        <div id="toast-success" class="toast" style="position: fixed; top: 20px; right: 30px; width: 400px; z-index:99999999999;">
+            <div class="toast-header bg-success">
+                <strong class="mr-auto text-white">Thành công</strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true" class="text-white">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body" id="toast-success-message">
+                Nội dung
+            </div>
+        </div>
+
+        <div id="toast-warning" class="toast" style="position: fixed; top: 20px; right: 30px; width: 400px; z-index:99999999999;">
+            <div class="toast-header bg-warning">
+                <strong class="mr-auto text-white">Cảnh báo</strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true" class="text-white">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body" id="toast-warning-message">
+                Nội dung
+            </div>
+        </div>
+
+        <div id="toast-error" class="toast" style="position: fixed; top: 20px; right: 30px; width: 400px; z-index:99999999999;">
+            <div class="toast-header bg-danger">
+                <strong class="mr-auto text-white">Thất bại</strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true" class="text-white">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body" id="toast-error-message">
+                Nội dung
+            </div>
+        </div>
+    </div>
+
     <div id="loading-screen" class="popup-fullscreen">
         <div class="d-flex justify-content-center align-items-center">
             <div class="loading-circle"></div>
         </div>
     </div>
+
     <script src="~/content/js/jquery.min.js"></script>
     <script src="~/content/js/jquery.cookie.min.js"></script>
     <script src="~/content/js/jquery.validate.min.js"></script>
@@ -206,57 +245,12 @@
             },
             crossDomain: true,
         });
-        const debounce = (func, delay) => {
-            let debounceTimer;
-            return function () {
-                const context = this;
-                const args = arguments;
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(() => func.apply(context, args), delay);
-            }
-        }
-    </script>
-    <script>
-        let username = '@username';
-        let fullname = '@username';
-        $('#username-mobile').html(username);
-        $('#fullname-mobile').html(fullname);
-        $('#username-large-screen').html(username);
-        $('#fullname-large-screen').html(fullname);
-    </script>
-    <script>
-        $('.clear-input').each(function () {
-            let self = $(this);
-            self.click(function () {
-                //tìm 2 cấp
-                self.parent().parent().find('input').each(function () {
-                    $(this).val('');
-                });
-                self.parent().parent().find('select').each(function () {
-                    $(this).selectpicker('val', '');
-                });
-                //tìm 1 cấp
-                self.parent().find('input').each(function () {
-                    $(this).val('');
-                });
-                self.parent().find('input').each(function () {
-                    $(this).selectpicker('val', '');
-                });
-            });
-        });
-
-        function dateString(today) {
-            var dd = String(today.getDate()).padStart(2, '0');
-            var mm = String(today.getMonth() + 1).padStart(2, '0');
-            var yyyy = today.getFullYear();
-            return dd + '/' + mm + '/' + yyyy;
-        }
     </script>
     <script>
 
         var STORAGE_KEY_CATEGORY_LIST = 'category-list';
 
-        var initMenu = function() {
+        var initMenu = function () {
             const localCategoryData = localStorage.getItem(STORAGE_KEY_CATEGORY_LIST);
             if (localCategoryData == null) {
                 apiGenerateMenu();
@@ -270,13 +264,13 @@
             }
         };
 
-        var apiGenerateMenu = function() {
+        var apiGenerateMenu = function () {
             $.ajax({
                 type: 'get',
                 url: `${API_URL}/api/NewsManager/news-category/P_KhaoThi`,
                 dataType: 'json',
                 contentType: 'application/json',
-                success: function(res) {
+                success: function (res) {
                     if (res != null && Array.isArray(res)) {
                         handleCategoryList(res);
                         localStorage.setItem(STORAGE_KEY_CATEGORY_LIST, JSON.stringify(res));
@@ -285,17 +279,17 @@
             });
         };
 
-        var handleCategoryList = function(data = []) {
+        var handleCategoryList = function (data = []) {
             let stringHtml = '';
             const menuItemTemplate = `<li class="nav-item dropdown m-nav-item-hover">
-                                        <a class="nav-link text-white mt-1 mb-1" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            [name]
-                                        </a>
-                                        [dropdown-template]
-                                    </li>`;
+                                                        <a class="nav-link text-white mt-1 mb-1" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            [name]
+                                                        </a>
+                                                        [dropdown-template]
+                                                    </li>`;
             const dropdownTemplate = `<div class="dropdown-menu m-max-width-md-90per" aria-labelledby="navbarDropdown">
-                                        [dropdown-detail-template]
-                                    </div>`;
+                                                        [dropdown-detail-template]
+                                                    </div>`;
             const dropdownDetailTemplate = `<a class="dropdown-item m-bg-hover-blue text-truncate" href="[link]">[name]</a>`;
 
             data.forEach(cat => {
@@ -305,13 +299,13 @@
                     if (children.length > 0) {
                         let dropdownDetailHtml = '';
                         children.forEach(child => {
-                           dropdownDetailHtml += dropdownDetailTemplate.replace('[name]', child.description)
-                                                                    .replace('[link]', `/news?catId=${child.id}`);
+                            dropdownDetailHtml += dropdownDetailTemplate.replace('[name]', child.description)
+                                .replace('[link]', `/news?catId=${child.id}`);
                         });
-                        dropdownHtml += dropdownTemplate.replace('[dropdown-detail-template]', dropdownDetailHtml);  
+                        dropdownHtml += dropdownTemplate.replace('[dropdown-detail-template]', dropdownDetailHtml);
                     }
                     const tempHtml = menuItemTemplate.replace('[name]', cat.description)
-                                                    .replace('[dropdown-template]', dropdownHtml);
+                        .replace('[dropdown-template]', dropdownHtml);
                     stringHtml += tempHtml;
                 }
             });
@@ -321,6 +315,12 @@
         initMenu();
 
     </script>
+    <script src="~/Content/js/helper/jquery.validate.custom.rule.js"></script>
+    <script src="~/Content/js/helper/jquery.validate.default.message.js"></script>
+    <script src="~/Content/js/helper/form.helper.js"></script>
+    <script src="~/Content/js/helper/input-search.helper.js"></script>
+    <script src="~/Content/js/helper/function.helper.js"></script>
+    <script src="~/Content/js/helper/modal.helper.js"></script>
     @*<script>
             let div = document.createElement('div');
             let loop = setInterval(() => {

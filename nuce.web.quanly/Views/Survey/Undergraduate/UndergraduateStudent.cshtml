@@ -1,4 +1,4 @@
-﻿
+﻿@using nuce.web.quanly.Common
 @{
     ViewData["Title"] = "Danh sách sinh viên sắp tốt nghiệp";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -53,7 +53,7 @@
                         <th class="text-center">Lớp</th>
                         <th class="text-center">TBCHT</th>
                         <th class="text-center">Xếp loại</th>
-                        <th class="text-center">Được phát bài ks</th>
+                        <th class="text-center">Trạng thái bài ks</th>
                     </tr>
                 </thead>
             </table>
@@ -152,7 +152,7 @@
         </script>
     }
 
-    <script>
+<script>
         var table = $('#id-datatable').DataTable({
             processing: true,
             serverSide: true,
@@ -198,9 +198,20 @@
                 },
                 {
                     data: null,
-                    name: "hasTheSurvey",
+                    name: "surveyStudentStatus",
                     mRender: function (data, type, row) {
-                        return data.hasTheSurvey ? 'Đã phát' : 'Chưa phát';
+                        if (data.surveyStudentStatus === @((int)SurveyStudentStatus.DoNot)) {
+                            return 'Chưa thực hiện';
+                        } else if (data.surveyStudentStatus === @((int)SurveyStudentStatus.Doing)) {
+                            return 'Đang thực hiện';
+                        } else if (data.surveyStudentStatus === @((int)SurveyStudentStatus.Done)) {
+                            return 'Hoàn thành';
+                        } else if (data.surveyStudentStatus === @((int)SurveyStudentStatus.RequestAuthorize)) {
+                            return 'Đang xác thực';
+                        } else if (data.surveyStudentStatus === @((int)SurveyStudentStatus.HaveNot)) {
+                            return 'Không có';
+                        }
+                        return data.surveyStudentStatus;
                     }
                 }
             ]
@@ -285,5 +296,5 @@
             });
         });
 
-    </script>
+</script>
 }
