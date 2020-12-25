@@ -13,6 +13,6 @@ namespace nuce.web.api.Services.Survey.Interfaces
         public Task<List<TheSurveyStudent>> GetTheSurvey(string studentCode);
         public Task<string> GetTheSurveyContent(string studentCode, string classroomCode, Guid theSurveyId);
         public Task<string> GetSelectedAnswerAutoSave(string studentCode, string classroomCode);
-        public Task AutoSave(string studentCode, string classroomCode, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, bool isAnswerCodesAdd = true);
+        public Task AutoSave(string studentCode, string classroomCode, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, int? numStar, string city, bool isAnswerCodesAdd = true);
     }
 }

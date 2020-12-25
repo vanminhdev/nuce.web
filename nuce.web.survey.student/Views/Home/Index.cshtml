@@ -1,6 +1,7 @@
 ﻿@using nuce.web.survey.student.Common;
+@using nuce.web.survey.student.Models;
 @{
-    ViewData["Title"] = "Trang khảo sát";
+    ViewData["Title"] = "Khảo sát đánh giá chất lượng giảng dạy";
 }
 
 @section Breadcrumb {
@@ -24,25 +25,6 @@
                     </tr>
                 </thead>
                 <tbody id="table-thesurvey">
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div id="undergraduate-thesurvey" class="row mt-4" style="display: none;">
-        <div class="col-12">
-            <h2 class="text-center text-dark mb-3">Danh sách bài khảo sát trước tốt nghiệp</h2>
-        </div>
-        <div class="col-12">
-            <table class="table m-table-bordered">
-                <thead>
-                    <tr>
-                        <th class="text-center">STT</th>
-                        <th class="text-center" width="75%">Bài khảo sát</th>
-                        <th class="text-center"></th>
-                    </tr>
-                </thead>
-                <tbody id="table-undergraduate-thesurvey">
                 </tbody>
             </table>
         </div>
@@ -78,32 +60,4 @@
         }
         tableContent.html(htmlStr);
     </script>
-
-    @if (ViewData["UndergraduateTheSurvey"] != null)
-    {
-        <script>
-            $('#undergraduate-thesurvey').show();
-            let undergraduateTheSurvey = @Html.Raw(ViewData["UndergraduateTheSurvey"]);
-            let tableUndergraduate = $('#table-undergraduate-thesurvey');
-            let htmlUndergraduate = '';
-            let stt = 0;
-            for (let element of undergraduateTheSurvey) {
-                htmlUndergraduate += `
-                    <tr>
-                        <td class="text-center">${stt+=1}</td>
-                        <td>${element.name}</td>`;
-                htmlUndergraduate += `<td class="text-center">`;
-                if (element.status === @((int)SurveyStudentStatus.DoNot)) {
-                    htmlUndergraduate += `<a href="/home/undergraduatethesurvey?theSurveyId=${element.baiKhaoSatId}">Thực hiện</a>`;
-                } else if (element.status === @((int)SurveyStudentStatus.Doing)) {
-                    htmlUndergraduate += `<a href="/home/undergraduatethesurvey?theSurveyId=${element.baiKhaoSatId}">Tiếp tục</a>`;
-                } else if (element.status === @((int)SurveyStudentStatus.Done)) {
-                    htmlUndergraduate += `Đã hoàn thành`;
-                }
-                htmlUndergraduate += `</td>`;
-                htmlUndergraduate += `</tr>`;
-            }
-            tableUndergraduate.html(htmlUndergraduate);
-        </script>
-    }
 }

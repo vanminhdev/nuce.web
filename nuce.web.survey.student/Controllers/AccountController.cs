@@ -3,9 +3,11 @@ using nuce.web.survey.student.Common;
 using nuce.web.survey.student.Models;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -66,11 +68,25 @@ namespace nuce.web.survey.student.Controllers
             switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:
-                    return Redirect("/home");
-                case HttpStatusCode.Unauthorized:
+                    var handler = new JwtSecurityTokenHandler();
+                    var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
+                    var roles = jwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(r => r.Value).ToList();
+                    if (roles.Contains("UndergraduateStudent"))
+                    {
+                        return Redirect("/home/indexundergraduate");
+                    }
+                    return Redirect("/home/index");
+                case HttpStatusCode.NotFound:
+                    ViewData["LoginMessage"] = "Tài khoản không tồn tại";
+                    break;
+                case HttpStatusCode.InternalServerError:
                     var jsonString = await response.Content.ReadAsStringAsync();
-                    ViewData["LoginMessage"] = "Tài khoản hoặc mật khẩu không chính xác";
+                    var message = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
+                    ViewData["LoginMessage"] = message.message;
                     ViewData["LoginFailed"] = jsonString;
+                    break;
+                case HttpStatusCode.Unauthorized:
+                    ViewData["LoginMessage"] = "Tài khoản hoặc mật khẩu không chính xác";
                     break;
                 default:
                     jsonString = await response.Content.ReadAsStringAsync();
@@ -133,9 +149,16 @@ namespace nuce.web.survey.student.Controllers
             {
                 case HttpStatusCode.OK:
                     return Redirect("/graduatehome/index");
-                case HttpStatusCode.Unauthorized:
+                case HttpStatusCode.NotFound:
+                    ViewData["LoginMessage"] = "Tài khoản không tồn tại";
+                    break;
+                case HttpStatusCode.InternalServerError:
                     var jsonString = await response.Content.ReadAsStringAsync();
+                    var message = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
+                    ViewData["LoginMessage"] = message.message;
                     ViewData["LoginFailed"] = jsonString;
+                    break;
+                case HttpStatusCode.Unauthorized:
                     ViewData["LoginMessage"] = "Tài khoản hoặc mật khẩu không chính xác";
                     break;
                 default:

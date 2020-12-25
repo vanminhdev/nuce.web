@@ -132,31 +132,6 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             return Ok();
         }
 
-        [HttpPut]
-        public async Task<IActionResult> CloseTheSurvey([Required(AllowEmptyStrings = false)] Guid? id)
-        {
-            try
-            {
-                await _asEduSurveyUndergraduateBaiKhaoSatService.Deactive(id.Value);
-            }
-            catch (DbUpdateException e)
-            {
-                _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không cập nhật được bài khảo sát", detailMessage = e.Message });
-            }
-            catch (RecordNotFoundException e)
-            {
-                return NotFound(new { message = "Không cập nhật được bài khảo sát", detailMessage = e.Message });
-            }
-            catch (Exception e)
-            {
-                var mainMessage = UtilsException.GetMainMessage(e);
-                _logger.LogError(e, mainMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không cập nhật được bài khảo sát", detailMessage = mainMessage });
-            }
-            return Ok();
-        }
-
         [HttpDelete]
         public async Task<IActionResult> DeleteTheSurvey([Required(AllowEmptyStrings = false)] Guid? id)
         {

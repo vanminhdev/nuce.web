@@ -12,11 +12,10 @@ namespace nuce.web.quanly.Models.Survey.Undergraduate
     {
         public Guid id { get; set; }
         public string name { get; set; }
-        public DateTime fromDate { get; set; }
-        public DateTime endDate { get; set; }
+        public DateTime? fromDate { get; set; }
+        public DateTime? endDate { get; set; }
         public string description { get; set; }
         public string note { get; set; }
-        public int type { get; set; }
         public int status { get; set; }
     }
 
@@ -36,7 +35,5 @@ namespace nuce.web.quanly.Models.Survey.Undergraduate
         public string description { get; set; }
 
         public string note { get; set; }
-
-        public int? type { get; set; }
     }
 }

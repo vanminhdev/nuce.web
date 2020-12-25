@@ -1,5 +1,4 @@
-﻿using GemBox.Spreadsheet;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -139,64 +138,64 @@ namespace nuce.web.api.Controllers.Survey.Graduate
 
         private async Task ReadFileUpload(string filepath, Guid surveyRoundId)
         {
-            SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
-            var workbook = ExcelFile.Load(filepath);
-            var worksheet = workbook.Worksheets[0];
+            //SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
+            //var workbook = ExcelFile.Load(filepath);
+            //var worksheet = workbook.Worksheets[0];
 
-            /// Create DataTable from an Excel worksheet.
-            var dataTable = worksheet.CreateDataTable(new CreateDataTableOptions()
-            {
-                ColumnHeaders = true,
-                StartRow = 0,
-                NumberOfColumns = worksheet.Columns.Count,
-                NumberOfRows = worksheet.Rows.Count,
-                Resolution = ColumnTypeResolution.AutoPreferStringCurrentCulture
-            });
+            ///// Create DataTable from an Excel worksheet.
+            //var dataTable = worksheet.CreateDataTable(new CreateDataTableOptions()
+            //{
+            //    ColumnHeaders = true,
+            //    StartRow = 0,
+            //    NumberOfColumns = worksheet.Columns.Count,
+            //    NumberOfRows = worksheet.Rows.Count,
+            //    Resolution = ColumnTypeResolution.AutoPreferStringCurrentCulture
+            //});
 
-            List<AsEduSurveyGraduateStudent> students = new List<AsEduSurveyGraduateStudent>();
-            AsEduSurveyGraduateStudent student;
-            int maxSize = 100;
-            int numRowCount = 0;
-            foreach (DataRow row in dataTable.Rows)
-            {
-                var dottonghiep = row[0].ToString();
-                var sovaoso = row[1].ToString();
-                var masv = row[2].ToString();
+            //List<AsEduSurveyGraduateStudent> students = new List<AsEduSurveyGraduateStudent>();
+            //AsEduSurveyGraduateStudent student;
+            //int maxSize = 100;
+            //int numRowCount = 0;
+            //foreach (DataRow row in dataTable.Rows)
+            //{
+            //    var dottonghiep = row[0].ToString();
+            //    var sovaoso = row[1].ToString();
+            //    var masv = row[2].ToString();
 
-                string addStr = "";
-                for(int i = 0; i < 7 - masv.Length; i++)
-                {
-                    addStr += "0";
-                }
-                string masvFormated = addStr + masv;
+            //    string addStr = "";
+            //    for(int i = 0; i < 7 - masv.Length; i++)
+            //    {
+            //        addStr += "0";
+            //    }
+            //    string masvFormated = addStr + masv;
 
-                var hovaten = row[3].ToString();
-                var xeploai = row[4].ToString();
-                var ngaysinh = row[5].ToString();
+            //    var hovaten = row[3].ToString();
+            //    var xeploai = row[4].ToString();
+            //    var ngaysinh = row[5].ToString();
 
-                student = new AsEduSurveyGraduateStudent
-                {
-                    Id = Guid.NewGuid(),
-                    Dottotnghiep = dottonghiep,
-                    Sovaoso = sovaoso,
-                    Masv = masvFormated,
-                    Tensinhvien = hovaten,
-                    Xeploai = xeploai,
-                    Ngaysinh = ngaysinh,
-                    ExMasv = masv,
-                    Psw = StringHelper.ConvertToLatin(hovaten).Replace(" ", "").ToLower(),
-                    DotKhaoSatId = surveyRoundId,
-                    Type = 1,
-                    Status = 1
-                };
-                students.Add(student);
-                numRowCount++;
-                if (students.Count == maxSize || numRowCount == dataTable.Rows.Count) // đủ 100 hoặc là phần tử cuối cùng
-                {
-                    await _asEduSurveyGraduateStudentService.CreateAll(students);
-                    students.Clear();
-                }
-            }
+            //    student = new AsEduSurveyGraduateStudent
+            //    {
+            //        Id = Guid.NewGuid(),
+            //        Dottotnghiep = dottonghiep,
+            //        Sovaoso = sovaoso,
+            //        Masv = masvFormated,
+            //        Tensinhvien = hovaten,
+            //        Xeploai = xeploai,
+            //        Ngaysinh = ngaysinh,
+            //        ExMasv = masv,
+            //        Psw = StringHelper.ConvertToLatin(hovaten).Replace(" ", "").ToLower(),
+            //        DotKhaoSatId = surveyRoundId,
+            //        Type = 1,
+            //        Status = 1
+            //    };
+            //    students.Add(student);
+            //    numRowCount++;
+            //    if (students.Count == maxSize || numRowCount == dataTable.Rows.Count) // đủ 100 hoặc là phần tử cuối cùng
+            //    {
+            //        await _asEduSurveyGraduateStudentService.CreateAll(students);
+            //        students.Clear();
+            //    }
+            //}
         }
 
         [HttpDelete]

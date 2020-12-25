@@ -20,8 +20,11 @@ namespace nuce.web.api.Services.Survey.Interfaces
 
         public Task Delete(Guid id);
 
+        public Task Open(Guid id);
+
         public Task Close(Guid id);
 
         public Task<List<AsEduSurveyUndergraduateSurveyRound>> GetSurveyRoundActive();
+        public Task<List<AsEduSurveyUndergraduateSurveyRound>> GetAllSurveyRound();
     }
 }

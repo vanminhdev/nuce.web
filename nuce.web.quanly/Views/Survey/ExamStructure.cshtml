@@ -13,7 +13,7 @@
 <div class="container mt-2" style="font-size: 13px">
     <div class="row mb-4">
         <div class="col-12">
-            <a class="update-btn text-light p-2" style="text-decoration: none;" href="/survey/examquestions">← Quay lại danh sách đề khảo sát</a>
+            <a class="update-btn text-light p-2" style="text-decoration: none;" href="/survey/examquestions">← Quay lại danh sách phiếu khảo sát</a>
         </div>
     </div>
     <div class="row">
@@ -22,7 +22,7 @@
                 <div class="col d-flex justify-content-end">
                     <div class="form-group">
                         <button type="button" id="btn-add-question" class="btn btn-primary">Thêm câu hỏi</button>
-                        <button type="button" id="btn-generate-exam" class="btn btn-success">Sinh đề</button>
+                        <button type="button" id="btn-generate-exam" class="btn btn-success">Lưu cấu trúc</button>
                     </div>
                 </div>
             </form>
@@ -197,7 +197,9 @@
                 {
                     data: null,
                     mRender: function (data, type, row) {
-                        //console.log(data);
+                        if (data.parentCode != null) {
+                            return '';
+                        }
                         return `<div id="${data.id}" class="add-box position-absolute bg-light p-2 border rounded" style="top: 2px;right:-190px; display:none">
                                     <form id="add-box-${data.id}" class="d-flex auto-validate">
                                         <input name="examQuestionId" value="@ViewData["ExamQuestionId"]" hidden />
@@ -321,7 +323,7 @@
             }).done(function (res) {
                 $('#loading-screen').hide();
                 if (res.statusCode === 200) {
-                    toastSuccess('Sinh đề thành công');
+                    toastSuccess('Lưu thành công');
                 }
                 else {
                     try {

@@ -62,7 +62,41 @@ namespace nuce.web.api.Controllers.Survey
             }
             catch (TableBusyException e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thống kê được đợt khảo sát", detailMessage = e.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thống kê được đợt khảo sát", detailMessage = mainMessage });
+            }
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ReportTotalUndergraduateSurvey([Required] Guid? surveyRoundId)
+        {
+            try
+            {
+                await _surveyStatisticBackgroundTask.ReportTotalUndergraduateSurvey(surveyRoundId.Value);
+            }
+            catch (RecordNotFoundException e)
+            {
+                _logger.LogError(e, e.Message);
+                return NotFound(new { message = e.Message });
+            }
+            catch (InvalidDataException e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (TableBusyException e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
             catch (DbUpdateException e)
             {

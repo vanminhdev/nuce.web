@@ -150,6 +150,9 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb m-bg-none pl-0 mb-0">
                         @RenderSection("Breadcrumb", required: false)
+                        @*<li class="breadcrumb-item "><a class="m-text-blue" href="#">Home</a></li>
+                            <li class="breadcrumb-item "><a class="m-text-blue" href="#">Library</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Data</li>*@
                     </ol>
                 </nav>
             </div>
@@ -194,11 +197,50 @@
         </div>
     </footer>
 
+    <div>
+        <div id="toast-success" class="toast" style="position: fixed; top: 20px; right: 30px; width: 400px; z-index:99999999999;">
+            <div class="toast-header bg-success">
+                <strong class="mr-auto text-white">Thành công</strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true" class="text-white">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body" id="toast-success-message">
+                Nội dung
+            </div>
+        </div>
+
+        <div id="toast-warning" class="toast" style="position: fixed; top: 20px; right: 30px; width: 400px; z-index:99999999999;">
+            <div class="toast-header bg-warning">
+                <strong class="mr-auto text-white">Cảnh báo</strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true" class="text-white">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body" id="toast-warning-message">
+                Nội dung
+            </div>
+        </div>
+
+        <div id="toast-error" class="toast" style="position: fixed; top: 20px; right: 30px; width: 400px; z-index:99999999999;">
+            <div class="toast-header bg-danger">
+                <strong class="mr-auto text-white">Thất bại</strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true" class="text-white">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body" id="toast-error-message">
+                Nội dung
+            </div>
+        </div>
+    </div>
+
     <div id="loading-screen" class="popup-fullscreen">
         <div class="d-flex justify-content-center align-items-center">
             <div class="loading-circle"></div>
         </div>
     </div>
+
     <script src="~/content/js/jquery.min.js"></script>
     <script src="~/content/js/jquery.cookie.min.js"></script>
     <script src="~/content/js/jquery.validate.min.js"></script>
@@ -216,51 +258,6 @@
             },
             crossDomain: true,
         });
-        const debounce = (func, delay) => {
-            let debounceTimer;
-            return function () {
-                const context = this;
-                const args = arguments;
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(() => func.apply(context, args), delay);
-            }
-        }
-    </script>
-    <script>
-        let username = '@username';
-        let fullname = '@username';
-        $('#username-mobile').html(username);
-        $('#fullname-mobile').html(fullname);
-        $('#username-large-screen').html(username);
-        $('#fullname-large-screen').html(fullname);
-    </script>
-    <script>
-        $('.clear-input').each(function () {
-            let self = $(this);
-            self.click(function () {
-                //tìm 2 cấp
-                self.parent().parent().find('input').each(function () {
-                    $(this).val('');
-                });
-                self.parent().parent().find('select').each(function () {
-                    $(this).selectpicker('val', '');
-                });
-                //tìm 1 cấp
-                self.parent().find('input').each(function () {
-                    $(this).val('');
-                });
-                self.parent().find('input').each(function () {
-                    $(this).selectpicker('val', '');
-                });
-            });
-        });
-
-        function dateString(today) {
-            var dd = String(today.getDate()).padStart(2, '0');
-            var mm = String(today.getMonth() + 1).padStart(2, '0');
-            var yyyy = today.getFullYear();
-            return dd + '/' + mm + '/' + yyyy;
-        }
     </script>
     <script>
         var initMenu = function() {
@@ -322,7 +319,7 @@
                 url: `${API_URL}/api/NewsManager/news-category/P_KhaoThi`,
                 dataType: 'json',
                 contentType: 'application/json',
-                success: function(res) {
+                success: function (res) {
                     if (res != null && Array.isArray(res)) {
                         handleCategoryList(filterMenu(res));
                         localStorage.setItem(STORAGE_KEY.CATEGORY_LIST, JSON.stringify(res));
@@ -365,7 +362,7 @@
                         dropdownHtml += dropdownTemplate.replace('[dropdown-detail-template]', dropdownDetailHtml);
                     }
                     const tempHtml = menuItemTemplate.replace('[name]', cat.description)
-                                                    .replace('[dropdown-template]', dropdownHtml);
+                        .replace('[dropdown-template]', dropdownHtml);
                     stringHtml += tempHtml;
                 }
             });
@@ -385,6 +382,12 @@
             commonHelper.smoothScrollByAnchor('scroll-top');
         });
     </script>
+    <script src="~/Content/js/helper/jquery.validate.custom.rule.js"></script>
+    <script src="~/Content/js/helper/jquery.validate.default.message.js"></script>
+    <script src="~/Content/js/helper/form.helper.js"></script>
+    <script src="~/Content/js/helper/input-search.helper.js"></script>
+    <script src="~/Content/js/helper/function.helper.js"></script>
+    <script src="~/Content/js/helper/modal.helper.js"></script>
     @*<script>
             let div = document.createElement('div');
             let loop = setInterval(() => {

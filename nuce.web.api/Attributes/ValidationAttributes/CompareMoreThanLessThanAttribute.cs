@@ -19,7 +19,7 @@ namespace nuce.web.api.Attributes.ValidationAttributes
         {
             if(value == null)
             {
-                return new ValidationResult("Property is null");
+                return ValidationResult.Success;
             }
 
             ErrorMessage = ErrorMessageString;

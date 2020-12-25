@@ -24,7 +24,7 @@ namespace nuce.web.api.Services.Status.Implements
             var task = await _context.AsStatusTableTask.FirstOrDefaultAsync(o => o.TableName == tableName);
             if(task == null)
             {
-                throw new RecordNotFoundException("Không tìm thấy bản ghi trạng thái");
+                throw new RecordNotFoundException("Không tìm thấy bản ghi trạng thái của bảng");
             }
 
             var result = new AsStatusTableTask

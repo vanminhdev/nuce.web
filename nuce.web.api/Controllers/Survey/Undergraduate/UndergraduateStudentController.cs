@@ -1,5 +1,4 @@
-﻿using GemBox.Spreadsheet;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -12,6 +11,7 @@ using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey.Undergraduate;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -50,6 +50,12 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             if (request.Columns != null)
             {
                 filter.Masv = request.Columns.FirstOrDefault(c => c.Data == "masv" || c.Name == "masv")?.Search.Value ?? null;
+
+                var dotKhaoSatId = request.Columns.FirstOrDefault(c => c.Data == "dotKhaoSatId" || c.Name == "dotKhaoSatId")?.Search.Value;
+                if(dotKhaoSatId != null)
+                {
+                    filter.DotKhaoSatId = Guid.Parse(dotKhaoSatId);
+                }
             }
             var skip = request.Start;
             var take = request.Length;
@@ -90,10 +96,10 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         [HttpGet]
         public async Task<IActionResult> DownloadTemplateUploadFile()
         {
-            var path = _pathProvider.MapPath("Templates/Survey/Template_Undergraduate_Student.xlsx");
+            var path = _pathProvider.MapPath("Templates/Survey/MauUploadTruocTotNghiep.xlsx");
             if (!System.IO.File.Exists(path))
             {
-                return NotFound(new { message = "Không tìm thấy file" });
+                return NotFound(new { message = "Không tìm thấy file mẫu" });
             }
             var templateContent = await System.IO.File.ReadAllBytesAsync(path);
             return File(templateContent, ContentTypes.Xlsx, Path.GetFileName(path));
@@ -108,7 +114,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         {
             if(fileUpload.ContentType != ContentTypes.Xlsx)
             {
-                return BadRequest(new { message = "phải tải lên file có phần mở rộng .xlsx" });
+                return BadRequest(new { message = "Phải tải lên file có phần mở rộng .xlsx" });
             }
             long maxSize = _configuration.GetValue<long>("MaxSizeFileUpload");
             if (fileUpload.Length <= maxSize)
@@ -133,64 +139,77 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             }
             else
             {
-                return BadRequest(new { message = $"file lớn hơn {(long)(maxSize/1024)} KB" });
+                return BadRequest(new { message = $"File lớn hơn {(long)(maxSize/1024)} KB" });
             }
         }
 
         private async Task ReadFileUpload(string filepath, Guid surveyRoundId)
         {
-            SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
-            var workbook = ExcelFile.Load(filepath);
-            var worksheet = workbook.Worksheets[0];
-            
-            /// Create DataTable from an Excel worksheet.
-            var dataTable = worksheet.CreateDataTable(new CreateDataTableOptions()
+            FileInfo fileInfo = new FileInfo(filepath);
+
+            ExcelPackage package = new ExcelPackage(fileInfo);
+            ExcelWorksheet worksheet = package.Workbook.Worksheets.FirstOrDefault();
+
+            // get number of rows and columns in the sheet
+            int rows = worksheet.Dimension.Rows;
+
+            for(int i = 2; i <= rows; i++)
             {
-                ColumnHeaders = true,
-                StartRow = 0,
-                NumberOfColumns = worksheet.Columns.Count,
-                NumberOfRows = worksheet.Rows.Count,
-                Resolution = ColumnTypeResolution.AutoPreferStringCurrentCulture
-            });
+                if(worksheet.Cells[i,2].Value == null)
+                {
+                    rows = i - 1; // dòng cuối cùng
+                    break;
+                }
+            }
 
             List<AsEduSurveyUndergraduateStudent> students = new List<AsEduSurveyUndergraduateStudent>();
-            AsEduSurveyUndergraduateStudent student;
             int maxSize = 100;
-            int numRowCount = 0;
-            foreach (DataRow row in dataTable.Rows)
+
+            for (int i = 2; i <= rows; i++)
             {
-                var dottonghiep = row[0].ToString();
-                var sovaoso = row[1].ToString();
-                var masv = row[2].ToString();
+                var masv = worksheet.Cells[i, 2].Value?.ToString();
+                var hoten = worksheet.Cells[i, 3].Value?.ToString();
+                var lop = worksheet.Cells[i, 4].Value?.ToString();
+                var ngaySinh = worksheet.Cells[i, 5].Value?.ToString();
+                var gioi = worksheet.Cells[i, 6].Value?.ToString();
+                var tichluy = worksheet.Cells[i, 7].Value?.ToString();
+                var xepLoai = worksheet.Cells[i, 8].Value?.ToString();
+                var tenNganh = worksheet.Cells[i, 9].Value?.ToString();
+                var tenChuyenNganh = worksheet.Cells[i, 10].Value?.ToString();
 
-                string addStr = "";
-                for(int i = 0; i < 7 - masv.Length; i++)
+                var heTotNghiep = worksheet.Cells[i, 11].Value?.ToString();
+                var maKhoa = worksheet.Cells[i, 12].Value?.ToString();
+                var soQuyetDinhVaNgayRaQuyetDinh = worksheet.Cells[i, 13].Value?.ToString();
+
+                string masvFormated = null;
+                if (masv != null)
                 {
-                    addStr += "0";
+                    masvFormated = $"{masv:0000000}";
+
+                    var student = new AsEduSurveyUndergraduateStudent
+                    {
+                        Id = Guid.NewGuid(),
+                        Masv = masvFormated,
+                        Tensinhvien = hoten,
+                        Lopqd = lop,
+                        Ngaysinh = ngaySinh,
+                        Gioitinh = gioi,
+                        Tbcht = tichluy,
+                        Xeploai = xepLoai,
+                        Tennganh = tenNganh,
+                        Tenchnga = tenChuyenNganh,
+                        Makhoa = maKhoa,
+                        Hedaotao = heTotNghiep,
+                        ExMasv = masv,
+                        DotKhaoSatId = surveyRoundId,
+                        Soqdtn = soQuyetDinhVaNgayRaQuyetDinh,
+                        Type = 1,
+                        Status = 1
+                    };
+                    students.Add(student);
                 }
-                string masvFormated = addStr + masv;
 
-                var hovaten = row[3].ToString();
-                var xeploai = row[4].ToString();
-                var ngaysinh = row[5].ToString();
-
-                student = new AsEduSurveyUndergraduateStudent
-                {
-                    Id = Guid.NewGuid(),
-                    Dottotnghiep = dottonghiep,
-                    Sovaoso = sovaoso,
-                    Masv = masvFormated,
-                    Tensinhvien = hovaten,
-                    Xeploai = xeploai,
-                    Ngaysinh = ngaysinh,
-                    ExMasv = masv,
-                    DotKhaoSatId = surveyRoundId,
-                    Type = 1,
-                    Status = 1
-                };
-                students.Add(student);
-                numRowCount++;
-                if (students.Count == maxSize || numRowCount == dataTable.Rows.Count) // đủ 100 hoặc là phần tử cuối cùng
+                if (students.Count == maxSize || i == rows) // đủ 100 hoặc là phần tử cuối cùng
                 {
                     await _asEduSurveyUndergraduateStudentService.CreateAll(students);
                     students.Clear();

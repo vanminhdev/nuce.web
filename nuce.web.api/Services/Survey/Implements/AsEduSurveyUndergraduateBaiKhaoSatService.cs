@@ -25,29 +25,23 @@ namespace nuce.web.api.Services.Survey.Implements
         public async Task<PaginationModel<UndergraduateTheSurvey>> GetTheSurvey(UndergraduateTheSurveyFilter filter, int skip = 0, int take = 20)
         {
             _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            IQueryable<AsEduSurveyUndergraduateBaiKhaoSat> query = _context.AsEduSurveyUndergraduateBaiKhaoSat.Where(o => o.Status != (int)SurveyRoundStatus.Deleted);
-            var join = query.Join(_context.AsEduSurveyUndergraduateSurveyRound, o => o.DotKhaoSatId, o => o.Id, (baikhaosat, dotkhaosat) => new { baikhaosat, dotkhaosat });
+            IQueryable<AsEduSurveyUndergraduateBaiKhaoSat> query = _context.AsEduSurveyUndergraduateBaiKhaoSat.Where(o => o.Status != (int)TheSurveyStatus.Deleted);
 
-            var recordsTotal = join.Count();
+            var recordsTotal = query.Count();
 
-            var recordsFiltered = join.Count();
+            var recordsFiltered = query.Count();
 
-            var querySkip = join
-                .OrderByDescending(u => u.baikhaosat.FromDate)
+            var querySkip = query
+                .OrderByDescending(u => u.Id)
                 .Skip(skip).Take(take)
                 .Select(o => new UndergraduateTheSurvey
                 {
-                    Id = o.baikhaosat.Id,
-                    DotKhaoSatId = o.baikhaosat.DotKhaoSatId,
-                    DeThiId = o.baikhaosat.DeThiId,
-                    Name = o.baikhaosat.Name,
-                    FromDate = o.baikhaosat.FromDate,
-                    EndDate = o.baikhaosat.EndDate,
-                    Description = o.baikhaosat.Description,
-                    Note = o.baikhaosat.Note,
-                    Status = o.baikhaosat.Status,
-                    Type = o.baikhaosat.Type,
-                    SurveyRoundName = o.dotkhaosat.Name
+                    Id = o.Id,
+                    DeThiId = o.DeThiId,
+                    Name = o.Name,
+                    Description = o.Description,
+                    Note = o.Note,
+                    Status = o.Status.Value
                 });
 
             var data = await querySkip.ToListAsync();
@@ -62,39 +56,21 @@ namespace nuce.web.api.Services.Survey.Implements
 
         public async Task Create(UndergraduateTheSurveyCreate theSurvey)
         {
-            var surveyRound = await _context.AsEduSurveyUndergraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == theSurvey.DotKhaoSatId && o.Status == (int)SurveyRoundStatus.Active);
-            if(surveyRound == null)
-            {
-                throw new RecordNotFoundException("Id đợt khảo sát không tồn tại");
-            }
-
             var examQuestion = await _context.AsEduSurveyDeThi.FirstOrDefaultAsync(o => o.Id == theSurvey.DeThiId);
             if(examQuestion == null)
             {
-                throw new RecordNotFoundException("Id đề thi không tồn tại");
-            }
-
-            var theActivedSurvey = await _context.AsEduSurveyUndergraduateBaiKhaoSat
-                .FirstOrDefaultAsync(o => o.DotKhaoSatId == theSurvey.DotKhaoSatId && (o.Status == (int)TheSurveyStatus.New || o.Status == (int)TheSurveyStatus.Published));
-            if (theActivedSurvey != null)
-            {
-                throw new InvalidDataException($"Đợt khảo sát \"{surveyRound.Name}\" đang có bài khảo sát còn hoạt động");
+                throw new RecordNotFoundException("Id phiếu khảo sát không tồn tại");
             }
 
             _context.AsEduSurveyUndergraduateBaiKhaoSat.Add(new AsEduSurveyUndergraduateBaiKhaoSat
             {
                 Id = Guid.NewGuid(),
-                DotKhaoSatId = theSurvey.DotKhaoSatId.Value,
                 DeThiId = theSurvey.DeThiId.Value,
-                Name = theSurvey.Name,
                 NoiDungDeThi = examQuestion.NoiDungDeThi,
-                DapAn = examQuestion.DapAn,
-                FromDate = theSurvey.FromDate.Value,
-                EndDate = theSurvey.EndDate.Value,
+                Name = theSurvey.Name,
                 Description = theSurvey.Description?.Trim(),
                 Note = theSurvey.Note?.Trim(),
-                Status = (int)TheSurveyStatus.New,
-                Type = theSurvey.Type.Value,
+                Status = (int)TheSurveyStatus.New
             });
             await _context.SaveChangesAsync();
         }
@@ -112,25 +88,6 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new InvalidDataException("Bài khảo sát không phải mới tạo, không thể sửa");
             }
 
-            //đổi đợt khảo sát
-            if (theSurvey.DotKhaoSatId != theSurveyUpdate.DotKhaoSatId)
-            {
-                var surveyRound = await _context.AsEduSurveyUndergraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == theSurvey.DotKhaoSatId && o.Status == (int)SurveyRoundStatus.Active);
-                if (surveyRound == null)
-                {
-                    throw new RecordNotFoundException("Id đợt khảo sát không tồn tại");
-                }
-
-                //có bài đang active rồi
-                var theActivedSurvey = await _context.AsEduSurveyUndergraduateBaiKhaoSat.FirstOrDefaultAsync(o => o.DotKhaoSatId == theSurvey.DotKhaoSatId && o.Status == (int)TheSurveyStatus.New);
-                if (theActivedSurvey != null)
-                {
-                    throw new InvalidDataException($"Đợt khảo sát \"{surveyRound.Name}\" đang có bài khảo sát còn hoạt động");
-                }
-
-                theSurveyUpdate.DotKhaoSatId = theSurvey.DotKhaoSatId.Value;
-            }
-
             if(theSurveyUpdate.DeThiId != theSurvey.DeThiId)
             {
                 var examQuestion = await _context.AsEduSurveyDeThi.FirstOrDefaultAsync(o => o.Id == theSurvey.DeThiId);
@@ -140,15 +97,11 @@ namespace nuce.web.api.Services.Survey.Implements
                 }
                 theSurveyUpdate.DeThiId = theSurvey.DeThiId.Value;
                 theSurveyUpdate.NoiDungDeThi = examQuestion.NoiDungDeThi;
-                theSurveyUpdate.DapAn = examQuestion.DapAn;
             }
 
             theSurveyUpdate.Name = theSurvey.Name.Trim();
-            theSurveyUpdate.FromDate = theSurvey.FromDate.Value;
-            theSurveyUpdate.EndDate = theSurvey.EndDate.Value;
             theSurveyUpdate.Description = theSurvey.Description?.Trim();
             theSurveyUpdate.Note = theSurvey.Note?.Trim();
-            theSurveyUpdate.Type = theSurvey.Type.Value;
             await _context.SaveChangesAsync();
         }
 

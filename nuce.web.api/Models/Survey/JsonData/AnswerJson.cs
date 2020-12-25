@@ -39,5 +39,21 @@ namespace nuce.web.api.Models.Survey.JsonData
         /// Có là câu câu hỏi con của một câu trả lời
         /// </summary>
         public bool? IsAnswerChildQuestion { get; set; }
+        /// <summary>
+        /// Số sao vote
+        /// </summary>
+        public int? NumStart { get; set; }
+        /// <summary>
+        /// Tỉnh thành công tác
+        /// </summary>
+        public string City { get; set; }
+    }
+
+    /// <summary>
+    /// Có thêm trường bài khảo sát để sau tra trong đây để hiển thị đề đã được lưu vào bài khảo sát
+    /// </summary>
+    public class SelectedAnswerExtend : SelectedAnswer
+    {
+        public Guid TheSurveyId { get; set; }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Models.Survey;
+using nuce.web.api.Models.Survey.JsonData;
 using nuce.web.api.Repositories.Ctsv.Implements;
 using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Survey;
@@ -29,6 +31,17 @@ namespace nuce.web.api.Services.Survey.Implements
             {
                 throw new RecordNotFoundException();
             }
+
+            if(question.ParentCode != null)
+            {
+                throw new InvalidDataException("Câu hỏi là câu hỏi con của một câu hỏi khác, vui lòng thêm bằng cách thêm câu hỏi cha");
+            }
+
+            if( _surveyContext.AsEduSurveyCauTrucDe.FirstOrDefault(o => o.CauHoiId == question.Id) != null)
+            {
+                throw new InvalidDataException("Câu hỏi đã tồn tại");
+            }
+
             _surveyContext.AsEduSurveyCauTrucDe.Add(new AsEduSurveyCauTrucDe {
                 Id = Guid.NewGuid(),
                 CauHoiId = question.Id,
@@ -83,11 +96,14 @@ namespace nuce.web.api.Services.Survey.Implements
                 .SelectMany(o => o.answer.DefaultIfEmpty(), (r, answer) => new { r.questionOrder, answer })
                 .ToListAsync();
 
+            //var test1 = questionAnswerJoin.Where(o => o.questionOrder.payload.Code == "00071").ToList();
+
             var questionAnswersGroup = questionAnswerJoin.GroupBy(r => r.questionOrder.payload, r => r.answer).ToList();
 
             var QuestionJsonData = new List<Models.Survey.JsonData.QuestionJson>();
             foreach (var itemGroup in questionAnswersGroup)
             {
+                var test = itemGroup.Count();
                 var questionJson = new Models.Survey.JsonData.QuestionJson
                 {
                     Code = itemGroup.Key.Code,
@@ -98,17 +114,18 @@ namespace nuce.web.api.Services.Survey.Implements
                     Explain = itemGroup.Key.Explain,
                     Type = itemGroup.Key.Type,
                 };
-                questionJson.Answers = new List<Models.Survey.JsonData.AnswerJson>();
                 var answerOrder = itemGroup.OrderBy(o => o?.Order ?? 0);
                 AsEduSurveyCauHoi answerChildQuestion = null;
-                Models.Survey.JsonData.QuestionJson answerChildQuestionJson = null;
+                QuestionJson answerChildQuestionJson = null;
+                
+                questionJson.Answers = new List<AnswerJson>();
                 foreach (var answer in answerOrder)
                 {
                     if(answer == null)
                     {
                         break;
                     }
-                    if(answer.ChildQuestionId != null)
+                    if(answer.ChildQuestionId != null) //câu hỏi con của đáp án
                     {
                         answerChildQuestion = await _surveyContext.AsEduSurveyCauHoi.FirstOrDefaultAsync(o => o.Id == answer.ChildQuestionId);
                         if (answerChildQuestion == null)
@@ -116,7 +133,7 @@ namespace nuce.web.api.Services.Survey.Implements
                             throw new RecordNotFoundException("Không tìm thấy câu hỏi con của đáp án có mã: " + answer.Code);
                         }
 
-                        answerChildQuestionJson = new Models.Survey.JsonData.QuestionJson
+                        answerChildQuestionJson = new QuestionJson
                         {
                             Code =  $"{answer.Code}_{answerChildQuestion.Code}",
                             DifficultID = answerChildQuestion.DoKhoId,
@@ -130,6 +147,12 @@ namespace nuce.web.api.Services.Survey.Implements
                     else
                     {
                         answerChildQuestionJson = null;
+                    }
+
+                    //tồn tại đáp án rồi bỏ qua
+                    if(questionJson.Answers.FirstOrDefault(o => o.Code == answer.Code) != null)
+                    {
+                        continue;
                     }
 
                     var answerJson = new Models.Survey.JsonData.AnswerJson
@@ -152,25 +175,22 @@ namespace nuce.web.api.Services.Survey.Implements
                     questionJson.Answers.Add(answerJson);
                 }
 
-                if(itemGroup.Key.ParentCode != null) //là một câu hỏi con của câu hỏi khác. thêm con vào cha
+                if(itemGroup.Key.Type == QuestionType.GQ) //nếu có nhiều câu hỏi con
                 {
-                    var parent = QuestionJsonData.FirstOrDefault(o => o.Code == itemGroup.Key.ParentCode);
-                    if(parent != null)
+                    var childs = _surveyContext.AsEduSurveyCauHoi.Where(o => o.ParentCode == itemGroup.Key.Code).Select(o => new QuestionJson
                     {
-                        if(parent.ChildQuestion == null)
-                        {
-                            parent.ChildQuestion = new List<Models.Survey.JsonData.QuestionJson>() { questionJson };
-                        }
-                        else
-                        {
-                            parent.ChildQuestion.Add(questionJson);
-                        }
-                    }
+                        Code = o.Code,
+                        DifficultID = o.DoKhoId,
+                        Content = o.Content,
+                        Image = o.Image,
+                        Mark = (float)(o.Mark ?? 0),
+                        Explain = o.Explain,
+                        Type = o.Type,
+                    }).ToList();
+                    questionJson.ChildQuestion = childs;
                 }
-                else //thêm mới
-                {
-                    QuestionJsonData.Add(questionJson);
-                }
+
+                QuestionJsonData.Add(questionJson);
             }
             var options = new JsonSerializerOptions
             {

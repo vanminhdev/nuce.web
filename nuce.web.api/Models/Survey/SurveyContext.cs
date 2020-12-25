@@ -29,8 +29,10 @@ namespace nuce.web.api.Models.Survey
         public virtual DbSet<AsEduSurveyReportTotal> AsEduSurveyReportTotal { get; set; }
         public virtual DbSet<AsEduSurveyUndergraduateBaiKhaoSat> AsEduSurveyUndergraduateBaiKhaoSat { get; set; }
         public virtual DbSet<AsEduSurveyUndergraduateBaiKhaoSatSinhVien> AsEduSurveyUndergraduateBaiKhaoSatSinhVien { get; set; }
+        public virtual DbSet<AsEduSurveyUndergraduateReportTotal> AsEduSurveyUndergraduateReportTotal { get; set; }
         public virtual DbSet<AsEduSurveyUndergraduateStudent> AsEduSurveyUndergraduateStudent { get; set; }
         public virtual DbSet<AsEduSurveyUndergraduateSurveyRound> AsEduSurveyUndergraduateSurveyRound { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AsEduSurveyBaiKhaoSat>(entity =>
@@ -184,13 +186,13 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.CauHoiCode)
                     .IsRequired()
-                    .HasMaxLength(10);
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.CauHoiId).HasColumnName("CauHoiID");
 
                 entity.Property(e => e.Code)
                     .IsRequired()
-                    .HasMaxLength(10);
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.HideQuestion).HasMaxLength(2000);
 
@@ -268,6 +270,9 @@ namespace nuce.web.api.Models.Survey
             modelBuilder.Entity<AsEduSurveyGraduateBaiKhaoSatSinhVien>(entity =>
             {
                 entity.ToTable("AS_Edu_Survey_Graduate_BaiKhaoSat_SinhVien");
+
+                entity.HasIndex(e => new { e.StudentCode, e.BaiKhaoSatId, e.Status })
+                    .HasName("index_Graduate_BaiKhaoSat_SinhVien");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
@@ -563,12 +568,6 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.Description).HasMaxLength(2000);
 
-                entity.Property(e => e.DotKhaoSatId).HasColumnName("DotKhaoSatID");
-
-                entity.Property(e => e.EndDate).HasColumnType("datetime");
-
-                entity.Property(e => e.FromDate).HasColumnType("datetime");
-
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(100);
@@ -579,6 +578,9 @@ namespace nuce.web.api.Models.Survey
             modelBuilder.Entity<AsEduSurveyUndergraduateBaiKhaoSatSinhVien>(entity =>
             {
                 entity.ToTable("AS_Edu_Survey_Undergraduate_BaiKhaoSat_SinhVien");
+
+                entity.HasIndex(e => new { e.StudentCode, e.BaiKhaoSatId, e.Status })
+                    .HasName("index_Undergraduate_BaiKhaoSat_SinhVien");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
@@ -608,6 +610,21 @@ namespace nuce.web.api.Models.Survey
                     .IsRequired()
                     .HasMaxLength(50)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<AsEduSurveyUndergraduateReportTotal>(entity =>
+            {
+                entity.ToTable("AS_Edu_Survey_Undergraduate_ReportTotal");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.AnswerCode).HasMaxLength(50);
+
+                entity.Property(e => e.QuestionCode)
+                    .IsRequired()
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<AsEduSurveyUndergraduateStudent>(entity =>

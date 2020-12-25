@@ -78,88 +78,119 @@ namespace nuce.web.api.Controllers.Core
         [Route("Login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            var user = await _userService.FindByNameAsync(model.Username);
-            var userIsValidResult = await _userService.UserIsvalidAsync(model, user);
-            bool userIsValid = (bool)userIsValidResult.Data;
-
-            if (userIsValid)
+            try
             {
-                var authClaims = await _userService.AddClaimsAsync(model, user);
-
-                if(model.IsStudent == true)
+                var isSuccess = await _userService.UserLogin(model);
+                if (isSuccess)
                 {
-                    //nếu là sinh viên sắp tôt nghiệp thêm role là sắp tốt nghiệp
-                    var undergraduateStudent = await _asEduSurveyUndergraduateStudentService.GetByStudentCode(model.Username);
-                    if(undergraduateStudent != null)
-                    {
-                        authClaims.Add(new Claim(ClaimTypes.Role, "UndergraduateStudent"));
+                    var user = await _userService.FindByName(model.Username);
+                    var authClaims = await _userService.AddClaimsAsync(model, user);
 
-                        await _logService.WriteLog(new ActivityLogModel
-                        {
-                            Username = model.Username,
-                            LogCode = ActivityLogParameters.CODE_LOGIN,
-                            LogMessage = "Sinh viên sắp tốt nghiệp đăng nhập"
-                        });
-                    }
-                    else
+                    if (model.IsStudent == true)
                     {
-                        await _logService.WriteLog(new ActivityLogModel
+                        //nếu là sinh viên sắp tôt nghiệp thêm role là sắp tốt nghiệp
+                        var undergraduateStudent = await _asEduSurveyUndergraduateStudentService.GetByStudentCode(model.Username);
+                        if (undergraduateStudent != null)
                         {
-                            Username = model.Username,
-                            LogCode = ActivityLogParameters.CODE_LOGIN,
-                            LogMessage = "Sinh viên đăng nhập"
-                        });
+                            authClaims.Add(new Claim(ClaimTypes.Role, RoleNames.UndergraduateStudent));
+
+                            await _logService.WriteLog(new ActivityLogModel
+                            {
+                                Username = model.Username,
+                                LogCode = ActivityLogParameters.CODE_LOGIN,
+                                LogMessage = "Sinh viên sắp tốt nghiệp đăng nhập"
+                            });
+                        }
+                        else
+                        {
+                            await _logService.WriteLog(new ActivityLogModel
+                            {
+                                Username = model.Username,
+                                LogCode = ActivityLogParameters.CODE_LOGIN,
+                                LogMessage = "Sinh viên đăng nhập"
+                            });
+                        }
                     }
+
+                    var accessToken = _userService.CreateJWTAccessToken(authClaims);
+                    var refreshToken = _userService.CreateJWTRefreshToken(authClaims);
+
+                    //send token to http only cookies
+                    Response.Cookies.Append(UserParameters.JwtAccessToken, new JwtSecurityTokenHandler().WriteToken(accessToken),
+                        new CookieOptions() { HttpOnly = true, Expires = accessToken.ValidTo });
+                    Response.Cookies.Append(UserParameters.JwtRefreshToken, new JwtSecurityTokenHandler().WriteToken(refreshToken),
+                        new CookieOptions() { HttpOnly = true, Expires = refreshToken.ValidTo });
+
+                    return Ok();
                 }
-
-                var accessToken = _userService.CreateJWTAccessToken(authClaims);
-                var refreshToken = _userService.CreateJWTRefreshToken(authClaims);
-
-                //send token to http only cookies
-                Response.Cookies.Append(UserParameters.JwtAccessToken, new JwtSecurityTokenHandler().WriteToken(accessToken),
-                    new CookieOptions() { HttpOnly = true, Expires = accessToken.ValidTo });
-                Response.Cookies.Append(UserParameters.JwtRefreshToken, new JwtSecurityTokenHandler().WriteToken(refreshToken),
-                    new CookieOptions() { HttpOnly = true, Expires = refreshToken.ValidTo });
-
-                
-                return Ok();
+                return Unauthorized();
             }
-            return Unauthorized(userIsValidResult);
+            catch (CallEduWebServiceException e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (RecordNotFoundException e)
+            {
+                return NotFound(new { message = e.Message });
+            }
+            catch (HandleException.InvalidDataException e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Có lỗi xảy ra", detailMessage = mainMessage });
+            }
         }
 
         [HttpPost]
         [Route("Logingraduate")]
         public async Task<IActionResult> LoginGraduate([FromBody] LoginModel model)
         {
-            bool isSuccess = await _asEduSurveyGraduateStudentService.Login(model.Username, model.Password);
-            if (isSuccess)
+            try
             {
-                var authClaims = new List<Claim>
+                bool isSuccess = await _asEduSurveyGraduateStudentService.Login(model.Username, model.Password);
+                if (isSuccess)
                 {
-                    new Claim(ClaimTypes.Name, model.Username),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(ClaimTypes.Role, "GraduateStudent"),
-                    new Claim(UserParameters.MSSV, model.Username),
-                };
+                    var authClaims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, model.Username),
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                        new Claim(ClaimTypes.Role, RoleNames.GraduateStudent),
+                        new Claim(UserParameters.MSSV, model.Username),
+                    };
 
-                var accessToken = _userService.CreateJWTAccessToken(authClaims);
-                var refreshToken = _userService.CreateJWTRefreshToken(authClaims);
+                    var accessToken = _userService.CreateJWTAccessToken(authClaims);
+                    var refreshToken = _userService.CreateJWTRefreshToken(authClaims);
 
-                //send token to http only cookies
-                Response.Cookies.Append(UserParameters.JwtAccessToken, new JwtSecurityTokenHandler().WriteToken(accessToken),
-                    new CookieOptions() { HttpOnly = true, Expires = accessToken.ValidTo });
-                Response.Cookies.Append(UserParameters.JwtRefreshToken, new JwtSecurityTokenHandler().WriteToken(refreshToken),
-                    new CookieOptions() { HttpOnly = true, Expires = refreshToken.ValidTo });
+                    //send token to http only cookies
+                    Response.Cookies.Append(UserParameters.JwtAccessToken, new JwtSecurityTokenHandler().WriteToken(accessToken),
+                        new CookieOptions() { HttpOnly = true, Expires = accessToken.ValidTo });
+                    Response.Cookies.Append(UserParameters.JwtRefreshToken, new JwtSecurityTokenHandler().WriteToken(refreshToken),
+                        new CookieOptions() { HttpOnly = true, Expires = refreshToken.ValidTo });
 
-                await _logService.WriteLog(new ActivityLogModel
-                {
-                    Username = model.Username,
-                    LogCode = ActivityLogParameters.CODE_LOGIN,
-                    LogMessage = "Cựu sinh viên đăng nhập"
-                });
-                return Ok();
+                    await _logService.WriteLog(new ActivityLogModel
+                    {
+                        Username = model.Username,
+                        LogCode = ActivityLogParameters.CODE_LOGIN,
+                        LogMessage = "Cựu sinh viên đăng nhập"
+                    });
+                    return Ok();
+                }
+                return Unauthorized();
             }
-            return Unauthorized();
+            catch (RecordNotFoundException e)
+            {
+                return NotFound(new { message = e.Message });
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Có lỗi xảy ra", detailMessage = mainMessage });
+            }
         }
 
         [HttpPost]
@@ -302,7 +333,7 @@ namespace nuce.web.api.Controllers.Core
                 var claimStudent = jwtValidatedToken.Claims.FirstOrDefault(c => c.Type == UserParameters.MSSV);
                 bool isStudent = claimStudent != null;
                 var model = new LoginModel { Username = username, IsStudent = isStudent };
-                var user = await _userService.FindByNameAsync(username);
+                var user = await _userService.FindByName(username);
                 var claims = await _userService.AddClaimsAsync(model, user);
                 
                 var accessToken = _userService.CreateJWTAccessToken(claims);

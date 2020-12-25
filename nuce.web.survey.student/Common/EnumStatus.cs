@@ -12,6 +12,7 @@ namespace nuce.web.survey.student.Common
     {
         DoNot = 1,
         Doing = 2,
-        Done = 5
+        Done = 5,
+        RequestAuthorize = 6
     }
 }

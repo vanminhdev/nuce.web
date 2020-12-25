@@ -39,9 +39,8 @@
                         <th class="text-center" width="38%">Tên</th>
                         <th class="text-center">Từ ngày</th>
                         <th class="text-center">Đến ngày</th>
-                        <th class="text-center">Loại</th>
                         <th class="text-center">Trạng thái</th>
-                        <th class="text-center" style="min-width:190px"></th>
+                        <th class="text-center" style="min-width:230px"></th>
                     </tr>
                 </thead>
             </table>
@@ -69,15 +68,15 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-3 col-form-label">Từ ngày <span class="text-danger">*</span></label>
+                            <label class="col-3 col-form-label">Từ ngày</label>
                             <div class="col-9">
-                                <input type="date" class="form-control" name="fromDate" id="fromDate" required data-rule-dateLessThanOrEqual="#endDate">
+                                <input type="date" class="form-control" name="fromDate" id="fromDate" data-rule-dateLessThanOrEqual="#endDate">
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-3 col-form-label">Đến ngày <span class="text-danger">*</span></label>
+                            <label class="col-3 col-form-label">Đến ngày</label>
                             <div class="col-9">
-                                <input type="date" class="form-control" name="endDate" id="endDate" required data-rule-dateGreaterThanOrEqual="#fromDate">
+                                <input type="date" class="form-control" name="endDate" id="endDate" data-rule-dateGreaterThanOrEqual="#fromDate">
                             </div>
                         </div>
                         <div class="form-group row">
@@ -92,14 +91,6 @@
                                 <textarea type="text" class="form-control" name="note" id="note"></textarea>
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label class="col-3 col-form-label">Loại <span class="text-danger">*</span></label>
-                            <div class="col-9">
-                                <select class="form-control selectpicker custom-boostrap-select" name="type" id="type" data-rule-onlyAcceptListValue="1" >
-                                    <option value="1">Đánh giá chất lượng giảng dạy</option>
-                                </select>
-                            </div>
-                        </div>
                     </form>
                 </div>
             </div>
@@ -111,40 +102,18 @@
     </div>
 </div>
 
-<div class="modal fade" id="modal-yes-no-close" tabindex="-1" role="dialog" aria-labelledby="modal-yes-no-close" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modal-yes-no-title">Xác nhận kết thúc</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                Kết thúc đợt khảo sát ?
-            </div>
-            <input id="close-id" name="id" hidden />
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
-                <button id="choose-yes-close" type="button" class="btn btn-primary">Có</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="modal fade" id="modal-yes-no" tabindex="-1" role="dialog" aria-labelledby="modal-yes-no" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modal-yes-no-title">Xác nhận xoá</h5>
+                <h5 class="modal-title" id="modal-yes-no-title"></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body" id="modal-yes-no-content">
-                Xoá đợt khảo sát ?
+                 ?
             </div>
-            <input id="delete-id" name="id" hidden />
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
                 <button id="choose-yes" type="button" class="btn btn-primary">Có</button>
@@ -169,7 +138,7 @@
             language: dataTableConfig.language,
             columnDefs: [
                 {
-                    targets: [ 1, 2, 3, 4, 5],
+                    targets: [1, 2, 3],
                     className: 'text-center'
                 }
             ],
@@ -201,15 +170,16 @@
                     }
                 },
                 {
-                    data: "type"
-                },
-                {
                     data: null,
                     name: "status",
                     mRender: function (data, type, row) {
                         if (data.status === 1) {
-                            return '<span class="badge badge-pill badge-success">Hoạt động</span>';
+                            return '<span class="badge badge-pill badge-primary">Mới</span>';
                         } else if (data.status === 2) {
+                            return '<span class="badge badge-pill badge-secondary">Đóng cửa</span>';
+                        } else if (data.status === 3) {
+                            return '<span class="badge badge-pill badge-success">Mở cửa</span>';
+                        } else if (data.status === 5) {
                             return '<span class="badge badge-pill badge-secondary">Kết thúc</span>';
                         } else {
                             return data.status;
@@ -222,9 +192,17 @@
                         let html = '';
                         if (data.status === 1) {
                             html += `<button class="btn btn btn-outline-success ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
-                            html += `<button class="btn btn btn-outline-warning ml-1 mr-1" onclick="closeClick('${data.id}')">Kết thúc</button>`;
+                            html += `<button class="btn btn btn-outline-primary ml-1 mr-1" onclick="openClick('${data.id}')">Mở cửa</button>`;
+                            html += `<button class="btn btn btn-outline-danger ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
                         }
-                        if (data.status === 2) {
+                        else if (data.status === 2) {
+                            html += `<button class="btn btn btn-outline-success ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
+                            html += `<button class="btn btn btn-outline-primary ml-1 mr-1" onclick="openClick('${data.id}')">Mở cửa</button>`;
+                        }
+                        else if (data.status === 3) {
+                            html += `<button class="btn btn btn-outline-warning ml-1 mr-1" onclick="closeClick('${data.id}')">Đóng cửa</button>`;
+                        }
+                        else if (data.status === 5) {
                             html += `<button class="btn btn btn-outline-danger ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
                         }
                         return html;
@@ -284,7 +262,7 @@
             saveChanges.attr('type-handle', 'create');
         }
 
-        function updateClick(id) { 
+        function updateClick(id) {
             $('#modal-input').modal('show');
             $('#modal-title').html('Cập nhật đợt khảo sát');
             saveChanges.attr('type-handle', 'update');
@@ -311,69 +289,106 @@
         }
 
         function closeClick(id) {
-            $('#modal-yes-no-close').modal('show');
-            $('#close-id').val(id);
+            $('#modal-yes-no-title').html('Xác nhận đóng');
+            $('#modal-yes-no-content').html('Đóng cửa đợt khảo sát ?');
+            $('#modal-yes-no').modal('show');
+            $('#choose-yes').off();
+            $('#choose-yes').click(function () {
+                $.ajax({
+                    data: { id },
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/CloseUndergraduateSurveyRound',
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        toastSuccess('Đóng cửa thành công');
+                        table.ajax.reload();
+                        $('#modal-yes-no').modal('hide');
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
         }
 
-        $('#choose-yes-close').click(function () {
-            $.ajax({
-                data: { id: $('#close-id').val() },
-                dataType: 'json',
-                method: 'Post',
-                url: '/Survey/CloseUndergraduateSurveyRound',
-                complete: () => { }
-            }).done(function (res) {
-                if (res.statusCode === 200) {
-                    table.ajax.reload();
-                    $('#modal-yes-no-close').modal('hide');
-                }
-                else {
-                    try {
-                        let content = JSON.parse(res.content);
-                        toastError(content.message);
-                    } catch {
-                        toastError('Có lỗi xảy ra');
+        function openClick(id) {
+            $('#modal-yes-no-title').html('Xác nhận mở');
+            $('#modal-yes-no-content').html('Mở cửa đợt khảo sát ?');
+            $('#modal-yes-no').modal('show');
+            $('#choose-yes').off();
+            $('#choose-yes').click(function () {
+                $.ajax({
+                    data: { id },
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/OpenUndergraduateSurveyRound',
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        toastSuccess('Mở cửa thành công');
+                        table.ajax.reload();
+                        $('#modal-yes-no').modal('hide');
                     }
-                    console.log(res);
-                }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.log(textStatus + ': ' + errorThrown);
-                console.log(jqXHR);
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
             });
-        });
+        }
 
         function deleteClick(id) {
+            $('#modal-yes-no-title').html('Xác nhận xoá');
+            $('#modal-yes-no-content').html('Xoá đợt khảo sát ?');
             $('#modal-yes-no').modal('show');
-            $('#delete-id').val(id);
-        }
-
-        $('#choose-yes').click(function () {
-            $.ajax({
-                data: { id: $('#delete-id').val() },
-                dataType: 'json',
-                method: 'Post',
-                url: '/Survey/DeleteUndergraduateSurveyRound',
-                complete: () => { }
-            }).done(function (res) {
-                if (res.statusCode === 200) {
-                    toastSuccess('Xoá thành công');
-                    table.ajax.reload();
-                    $('#modal-yes-no').modal('hide');
-                }
-                else {
-                    try {
-                        let content = JSON.parse(res.content);
-                        toastError(content.message);
-                    } catch {
-                        toastError('Có lỗi xảy ra');
+            $('#choose-yes').off();
+            $('#choose-yes').click(function () {
+                $.ajax({
+                    data: { id },
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/DeleteUndergraduateSurveyRound',
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        toastSuccess('Xoá thành công');
+                        table.ajax.reload();
+                        $('#modal-yes-no').modal('hide');
                     }
-                    console.log(res);
-                }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.log(textStatus + ': ' + errorThrown);
-                console.log(jqXHR);
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
             });
-        });
+        }
 
     </script>
 }

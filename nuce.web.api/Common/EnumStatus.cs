@@ -29,9 +29,11 @@ namespace nuce.web.api.Common
     /// </summary>
     public enum SurveyRoundStatus
     {
-        Active = 1,
-        Deactive = 2,
+        New = 1,
+        Closed = 2,
+        Opened = 3,
         Deleted = 4,
+        End = 5
     }
 
     /// <summary>
@@ -51,6 +53,10 @@ namespace nuce.web.api.Common
     public enum SurveyStudentStatus
     {
         /// <summary>
+        /// Chưa được phát bài ks
+        /// </summary>
+        HaveNot = -1,
+        /// <summary>
         /// Chưa thực hiện
         /// </summary>
         DoNot = 1,
@@ -65,7 +71,11 @@ namespace nuce.web.api.Common
         /// <summary>
         /// Hoàn thành
         /// </summary>
-        Done = 5
+        Done = 5,
+        /// <summary>
+        /// Yêu cầu xác thực email số điện thoại
+        /// </summary>
+        RequestAuthorize = 6,
     }
 
     /// <summary>

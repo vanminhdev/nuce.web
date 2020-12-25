@@ -794,6 +794,13 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        public async Task<ActionResult> OpenUndergraduateSurveyRound(string id)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/UndergraduateSurveyRound/OpenSurveyRound?id={id}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
         public async Task<ActionResult> CloseUndergraduateSurveyRound(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/UndergraduateSurveyRound/CloseSurveyRound?id={id}");
@@ -814,6 +821,9 @@ namespace nuce.web.quanly.Controllers
         {
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateSurveyRound/GetSurveyRoundActive");
             ViewData["SurveyRoundActive"] = await response.Content.ReadAsStringAsync();
+
+            response = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateSurveyRound/GetAllSurveyRound");
+            ViewData["AllSurveyRound"] = await response.Content.ReadAsStringAsync();
 
             return View("~/Views/Survey/Undergraduate/UndergraduateStudent.cshtml");
         }
@@ -899,9 +909,6 @@ namespace nuce.web.quanly.Controllers
             var resTableStatus = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateTheSurveyStudent/GetGenerateTheSurveyStudentStatus");
             ViewData["TableTheSurveyStudentStatus"] = await resTableStatus.Content.ReadAsStringAsync();
 
-            var resSurveyRound = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateSurveyRound/GetSurveyRoundActive");
-            ViewData["SurveyRoundActive"] = await resSurveyRound.Content.ReadAsStringAsync();
-
             var resExam = await base.MakeRequestAuthorizedAsync("Get", $"/api/ExamQuestions/GetAll");
             ViewData["ExamQuestions"] = await resExam.Content.ReadAsStringAsync();
 
@@ -956,13 +963,6 @@ namespace nuce.web.quanly.Controllers
         public async Task<ActionResult> DeleteUndergraduateTheSurvey(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/UndergraduateTheSurvey/DeleteTheSurvey?id={id}");
-            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> CloseUndergraduateTheSurvey(string id)
-        {
-            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/UndergraduateTheSurvey/CloseTheSurvey?id={id}");
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
 

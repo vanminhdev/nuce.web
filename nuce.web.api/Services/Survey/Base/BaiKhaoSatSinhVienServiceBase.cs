@@ -35,7 +35,8 @@ namespace nuce.web.api.Services.Survey.Base
             return list;
         }
 
-        protected string AutoSaveBaiLam(List<SelectedAnswer> selectedAnswers, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, bool isAnswerCodesAdd = true)
+        protected string AutoSaveBaiLam(List<SelectedAnswer> selectedAnswers, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, 
+            int? numStar, string city, bool isAnswerCodesAdd = true)
         {
             var exsist = false; //đã tồn tại câu hỏi chưa
             //cập nhật cho câu hỏi tương ứng
@@ -51,7 +52,15 @@ namespace nuce.web.api.Services.Survey.Base
                     {
                         item.AnswerCodes = AddOrRemoveAnswerCodes(item.AnswerCodes, answerCodeInMulSelect, isAnswerCodesAdd);
                     }
-                    item.AnswerContent = answerContent; // câu trả lời text
+                    else if (numStar != null)
+                    {
+                        item.NumStart = numStar;
+                    }
+                    else if (city != null)
+                    {
+                        item.City = city;
+                    }
+                    item.AnswerContent = answerContent; //câu trả lời text
                     exsist = true;
                     break;
                 }
@@ -62,18 +71,26 @@ namespace nuce.web.api.Services.Survey.Base
                 var newSelectedAnswer = new SelectedAnswer
                 {
                     QuestionCode = questionCode,
-                    AnswerCode = answerCode,
+                    AnswerCode = answerCode, //là câu chọn 1
                     AnswerContent = answerContent
                 };
 
-                if (questionCode.Split('_').Length == 2) //là câu hỏi con
+                if (questionCode.Split('_').Length == 2) //là câu hỏi con của đáp án
                 {
                     newSelectedAnswer.IsAnswerChildQuestion = true;
                 }
-
+                
                 if (answerCodeInMulSelect != null && isAnswerCodesAdd) // lựa chọn chọn nhiều
                 {
                     newSelectedAnswer.AnswerCodes = new List<string>() { answerCodeInMulSelect };
+                }
+                else if (numStar != null)
+                {
+                    newSelectedAnswer.NumStart = numStar;
+                }
+                else if (city != null)
+                {
+                    newSelectedAnswer.City = city;
                 }
 
                 selectedAnswers.Add(newSelectedAnswer);

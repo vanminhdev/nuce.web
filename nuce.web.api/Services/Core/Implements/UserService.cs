@@ -58,7 +58,7 @@ namespace nuce.web.api.Services.Core.Implements
 
             if (model.IsStudent)
             {
-                authClaims.Add(new Claim(ClaimTypes.Role, "Student"));
+                authClaims.Add(new Claim(ClaimTypes.Role, RoleNames.Student));
                 authClaims.Add(new Claim(UserParameters.MSSV, username));
                 authClaims.Add(new Claim(ClaimTypes.GivenName,  _studentRepository.FindByCode(username)?.FulName));
             }
@@ -93,59 +93,48 @@ namespace nuce.web.api.Services.Core.Implements
                 );
             return token;
         }
-        public async Task<ApplicationUser> FindByNameAsync(string username)
+        public async Task<ApplicationUser> FindByName(string username)
         {
             return await _userManager.FindByNameAsync(username);
         }
 
-        public async Task<ResponseBody> UserIsvalidAsync(LoginModel model, ApplicationUser user)
+        public async Task<bool> UserLogin(LoginModel model)
         {
-            bool result = false;
-            var message = "";
             if (model.IsStudent)
             {
                 if (model.Username == "1512260")
                 {
-                    result = true;
-                } else
+                    return true;
+                } 
+                else
                 {
                     ServiceSoapClient srvc = new ServiceSoapClient(EndpointConfiguration.ServiceSoap12);
                     try
                     {
-                        var isvalid = await srvc.authenAsync(model.Username, model.Password);
-                        result = isvalid == 1;
-                        if (!result)
-                        {
-                            message = "Tài khoản hoặc mật khẩu không đúng";
-                        }
+                        return await srvc.authenAsync(model.Username, model.Password) == 1;
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-                        result = false;
-                        message = @"Chức năng đăng nhập qua mã số sinh viên tạm thời đang nâng cấp. 
-                                Vui lòng đăng nhập qua email bằng cách nhấp chuột vào nút 'Đăng nhập qua email @nuce.edu.vn'";
+                        throw new CallEduWebServiceException("Hiện tại không thể kết nối đến Đào tạo");
                     }
                 }
             }
             else
             {
+                var user = await FindByName(model.Username);
                 if (user == null)
                 {
-                    result = false;
-                    message = "Tài khoản không tồn tại";
+                    throw new RecordNotFoundException("Tài khoản không tồn tại");
                 }
                 else if (user.Status != (int)UserStatus.Active)
                 {
-                    result = false;
-                    message = "Tài khoản không được kích hoạt";
+                    throw new InvalidDataException("Tài khoản không được kích hoạt");
                 }
                 else
                 {
-                    result = await _userManager.CheckPasswordAsync(user, model.Password);
-                    message = result ? "" : "Mật khẩu không chính xác";
+                    return await _userManager.CheckPasswordAsync(user, model.Password);
                 }
             }
-            return new ResponseBody { Data = result, Message = message };
         }
         public string GetCurrentStudentCode()
         {
@@ -156,7 +145,7 @@ namespace nuce.web.api.Services.Core.Implements
             var identity = _httpContext.User.Identity as ClaimsIdentity;
             if (identity != null)
             {
-                return identity.FindFirst(key) != null ? identity.FindFirst(key).Value : null;
+                return identity.FindFirst(key)?.Value;
             }
             return null;
         }

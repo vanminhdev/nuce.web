@@ -35,7 +35,6 @@ namespace nuce.web.api.Services.Survey.Implements
             }
             if (!string.IsNullOrWhiteSpace(filter.Content))
             {
-                filter.Content = HttpUtility.HtmlEncode(filter.Content);
                 query = query.Where(u => u.Content.Contains(filter.Content));
             }
             if (!string.IsNullOrWhiteSpace(filter.Type))
@@ -116,6 +115,32 @@ namespace nuce.web.api.Services.Survey.Implements
             };
         }
 
+        //private void task()
+        //{
+        //    var questions = _surveyContext.AsEduSurveyCauHoi.OrderBy(o => o.Id).ToList();
+
+        //    for(int i = 0; i < questions.Count; i++)
+        //    {
+        //        questions[i].Code = $"{i + 1:00000}";
+        //    }
+
+        //    _surveyContext.SaveChanges();
+
+        //    var answers = _surveyContext.AsEduSurveyDapAn.OrderBy(o => o.Id).ToList();
+
+        //    for (int i = 0; i < answers.Count; i++)
+        //    {
+        //        answers[i].Code = $"{i + 1:00000}";
+
+        //        var q = _surveyContext.AsEduSurveyCauHoi.Find(answers[i].CauHoiId);
+
+        //        if(q != null)
+        //        {
+        //            answers[i].CauHoiCode = q.Code;
+        //        }
+        //    }
+        //}
+
         public async Task Create(QuestionCreateModel question)
         {
             var questionCreate = new AsEduSurveyCauHoi
@@ -123,7 +148,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 Id = Guid.NewGuid(),
                 BoCauHoiId = -1,
                 DoKhoId = 1,
-                Code = question.Code,
+                Code = $"{_surveyContext.AsEduSurveyCauHoi.Count() + 1:00000}",
                 Content = question.Content,
                 InsertedDate = DateTime.Now,
                 UpdatedDate = DateTime.Now,
@@ -133,6 +158,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 Status = (int)QuestionStatus.Active
             };
             _surveyContext.AsEduSurveyCauHoi.Add(questionCreate);
+
             await _surveyContext.SaveChangesAsync();
         }
 
@@ -153,7 +179,7 @@ namespace nuce.web.api.Services.Survey.Implements
             if(question.QuestionChildCodes != null)
             {
                 //xoá cái cũ
-                var oldChilds = await _surveyContext.AsEduSurveyCauHoi.Where(o => o.ParentCode == question.Code && o.Status != (int)QuestionStatus.Deleted).ToListAsync();
+                var oldChilds = await _surveyContext.AsEduSurveyCauHoi.Where(o => o.ParentCode == questionUpdate.Code && o.Status != (int)QuestionStatus.Deleted).ToListAsync();
                 foreach (var item in oldChilds)
                 {
                     item.ParentCode = null;
@@ -165,7 +191,7 @@ namespace nuce.web.api.Services.Survey.Implements
                     var questionChild = await _surveyContext.AsEduSurveyCauHoi.FirstOrDefaultAsync(o => o.Code == code && o.Status != (int)QuestionStatus.Deleted);
                     if(questionChild != null)
                     {
-                        questionChild.ParentCode = question.Code;
+                        questionChild.ParentCode = questionUpdate.Code;
                     }
                 }
             }

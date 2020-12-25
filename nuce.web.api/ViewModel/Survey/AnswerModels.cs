@@ -24,9 +24,9 @@ namespace nuce.web.api.ViewModel.Survey
 
     public class AnswerCreateModel
     {
-        [Required(AllowEmptyStrings = false)]
-        [NotContainWhiteSpace]
-        public string Code { get; set; }
+        //[Required(AllowEmptyStrings = false)]
+        //[NotContainWhiteSpace]
+        //public string Code { get; set; }
 
         [Required(AllowEmptyStrings = false)]
         public string Content { get; set; }
@@ -48,8 +48,8 @@ namespace nuce.web.api.ViewModel.Survey
 
     public class AnswerUpdateModel
     {
-        [Required(AllowEmptyStrings = false)]
-        public string Code { get; set; }
+        //[Required(AllowEmptyStrings = false)]
+        //public string Code { get; set; }
 
         [Required(AllowEmptyStrings = false)]
         public string Content { get; set; }

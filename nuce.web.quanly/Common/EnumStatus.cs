@@ -51,6 +51,10 @@ namespace nuce.web.quanly.Common
     public enum SurveyStudentStatus
     {
         /// <summary>
+        /// Chưa được phát bài ks
+        /// </summary>
+        HaveNot = -1,
+        /// <summary>
         /// Chưa thực hiện
         /// </summary>
         DoNot = 1,
@@ -65,7 +69,11 @@ namespace nuce.web.quanly.Common
         /// <summary>
         /// Hoàn thành
         /// </summary>
-        Done = 5
+        Done = 5,
+        /// <summary>
+        /// Yêu cầu xác thực email số điện thoại
+        /// </summary>
+        RequestAuthorize = 6,
     }
 
     /// <summary>

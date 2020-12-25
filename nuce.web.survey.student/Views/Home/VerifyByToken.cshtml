@@ -1,0 +1,37 @@
+﻿@using Newtonsoft.Json
+@using nuce.web.survey.student.Models
+@{
+    ViewData["Title"] = "Xác thực hoàn thành khảo sát";
+}
+
+@section Breadcrumb {
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Xác thực hoàn thành bài khảo sát</li>
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="text-center mt-3 m-fs-20">
+                @if ((int)ViewData["statusCode"] == (int)HttpStatusCode.OK)
+                {
+                    <p>
+                        Xác thực thành công!
+                    </p>
+                }
+                else if ((int)ViewData["statusCode"] == (int)HttpStatusCode.Unauthorized)
+                {
+                    <p>
+                        Xác thực không thành công! Token không hợp lệ
+                    </p>
+                }
+                else
+                {
+                    <p>
+                        Xác thực không thành công! @(((ResponseMessage)ViewData["content"]).message)
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

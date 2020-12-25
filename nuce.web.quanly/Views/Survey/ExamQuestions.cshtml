@@ -9,7 +9,7 @@
         <div class="col-md-9">
         </div>
         <div class="col-md-3 d-flex justify-content-end">
-            <a href="/survey/createexamquestions" class="btn btn-primary">Thêm đề khảo sát</a>
+            <a href="/survey/createexamquestions" class="btn btn-primary">Thêm phiếu khảo sát</a>
         </div>
     </div>
 
@@ -32,8 +32,8 @@
                             <td class="text-center">@Model[i].code</td>
                             <td>@Model[i].name</td>
                             <td class="text-center">
-                                <a class="btn btn-outline-success" href="/survey/examstructure?examQuestionId=@Model[i].id">Cấu trúc đề</a>
-                                <a class="btn btn-outline-info"  href="/survey/examdetail?examQuestionId=@Model[i].id">Nội dung đề</a>
+                                <a class="btn btn-outline-success" href="/survey/examstructure?examQuestionId=@Model[i].id">Cấu trúc phiếu</a>
+                                <a class="btn btn-outline-info"  href="/survey/examdetail?examQuestionId=@Model[i].id">Nội dung phiếu</a>
                             </td>
                         </tr>
                     }
