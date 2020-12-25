@@ -984,6 +984,7 @@
     <Content Include="Views\Home\Verification.cshtml" />
     <Content Include="Views\Home\VerifyByToken.cshtml" />
     <Content Include="Views\Contact\Index.cshtml" />
+    <Content Include="Views\Home\IndexUndergraduate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

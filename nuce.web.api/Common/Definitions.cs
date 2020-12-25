@@ -15,6 +15,13 @@ namespace nuce.web.api.Common
         };
     }
 
+    public class RoleNames
+    {
+        public static string UndergraduateStudent = "UndergraduateStudent";
+        public static string GraduateStudent = "GraduateStudent";
+        public static string Student = "Student";
+    }
+
     /// <summary>
     /// Loại thao tác
     /// </summary>
@@ -162,6 +169,7 @@ namespace nuce.web.api.Common
     {
         public static readonly string AsEduSurveyBaiKhaoSatSinhVien = "AS_Edu_Survey_BaiKhaoSat_SinhVien";
         public static readonly string AsEduSurveyReportTotal = "AS_Edu_Survey_ReportTotal";
+        public static readonly string AsEduSurveyUndergraduateReportTotal = "AS_Edu_Survey_Undergraduate_ReportTotal";
     }
 
     /// <summary>

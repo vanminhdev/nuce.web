@@ -59,13 +59,14 @@ namespace nuce.web.api.Services.Survey.Implements
             var examQuestion = await _context.AsEduSurveyDeThi.FirstOrDefaultAsync(o => o.Id == theSurvey.DeThiId);
             if(examQuestion == null)
             {
-                throw new RecordNotFoundException("Id đề thi không tồn tại");
+                throw new RecordNotFoundException("Id phiếu khảo sát không tồn tại");
             }
 
             _context.AsEduSurveyUndergraduateBaiKhaoSat.Add(new AsEduSurveyUndergraduateBaiKhaoSat
             {
                 Id = Guid.NewGuid(),
                 DeThiId = theSurvey.DeThiId.Value,
+                NoiDungDeThi = examQuestion.NoiDungDeThi,
                 Name = theSurvey.Name,
                 Description = theSurvey.Description?.Trim(),
                 Note = theSurvey.Note?.Trim(),
@@ -95,6 +96,7 @@ namespace nuce.web.api.Services.Survey.Implements
                     throw new RecordNotFoundException("Id đề thi không tồn tại");
                 }
                 theSurveyUpdate.DeThiId = theSurvey.DeThiId.Value;
+                theSurveyUpdate.NoiDungDeThi = examQuestion.NoiDungDeThi;
             }
 
             theSurveyUpdate.Name = theSurvey.Name.Trim();

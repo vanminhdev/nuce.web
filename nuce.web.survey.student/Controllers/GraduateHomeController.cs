@@ -59,9 +59,9 @@ namespace nuce.web.survey.student.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AutoSave(string theSurveyId, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, bool isAnswerCodesAdd = true)
+        public async Task<ActionResult> AutoSave(string theSurveyId, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, int? numStar, string city, bool isAnswerCodesAdd = true)
         {
-            var jsonStr = JsonConvert.SerializeObject(new { theSurveyId, questionCode, answerCode, answerCodeInMulSelect, isAnswerCodesAdd, answerContent });
+            var jsonStr = JsonConvert.SerializeObject(new { theSurveyId, questionCode, answerCode, answerCodeInMulSelect, isAnswerCodesAdd, answerContent, numStar, city });
             var stringContent = new StringContent(jsonStr, Encoding.UTF8, "application/json");
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/GraduateTheSurveyStudent/AutoSave", stringContent);
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);

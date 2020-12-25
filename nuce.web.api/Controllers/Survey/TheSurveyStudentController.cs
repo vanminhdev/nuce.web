@@ -105,7 +105,7 @@ namespace nuce.web.api.Controllers.Survey
                 var studentCode = _userService.GetCurrentStudentCode();
                 var ip = HttpContext.Connection.RemoteIpAddress.ToString();
                 await _asEduSurveyBaiKhaoSatSinhVienService.AutoSave(studentCode, content.ClassRoomCode, content.QuestionCode, content.AnswerCode, content.AnswerCodeInMulSelect,
-                    content.AnswerContent, content.IsAnswerCodesAdd == null || content.IsAnswerCodesAdd.Value);
+                    content.AnswerContent, content.NumStar, content.City, content.IsAnswerCodesAdd == null || content.IsAnswerCodesAdd.Value);
             }
             catch (DbUpdateException e)
             {

@@ -70,12 +70,22 @@ namespace nuce.web.quanly.Controllers
             {
                 case HttpStatusCode.OK:
                     return Redirect("/home");
-                case HttpStatusCode.Unauthorized:
+                case HttpStatusCode.NotFound:
+                    ViewData["LoginMessage"] = "Tài khoản không tồn tại";
+                    break;
+                case HttpStatusCode.InternalServerError:
                     var jsonString = await response.Content.ReadAsStringAsync();
-                    var message = (JsonConvert.DeserializeObject<ResponseMessage>(jsonString))?.message ?? "";
-                    ViewData["LoginMessage"] = message;
+                    var message = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
+                    ViewData["LoginMessage"] = message.message;
+                    ViewData["LoginFailed"] = jsonString;
+                    break;
+                case HttpStatusCode.Unauthorized:
+                    ViewData["LoginMessage"] = "Tài khoản hoặc mật khẩu không chính xác";
                     break;
                 default:
+                    jsonString = await response.Content.ReadAsStringAsync();
+                    ViewData["LoginMessage"] = "Đăng nhập không thành công";
+                    ViewData["LoginFailed"] = jsonString;
                     break;
             }
             return View("Index", new LoginModel());

@@ -17,9 +17,9 @@
             counter-increment: title-question-counter;
         }
 
-        .question-title:before {
-            content: counter(title-question-counter, upper-roman)". ";
-        }
+            .question-title:before {
+                content: counter(title-question-counter, upper-roman)". ";
+            }
 
         .tag-child-inline > * {
             display: inline;
@@ -150,19 +150,19 @@
         <div class="col">
             <div class="d-flex justify-content-center">
                 <div class="rating">
-                    <input questionCode="@question.Code" id="rating5" type="radio" name="rating" value="5" hidden>
+                    <input questionCode="@question.Code" id="rating5" type="radio" name="rating" numstar="5" hidden>
                     <label class="fas fa-star" for="rating5"></label>
 
-                    <input questionCode="@question.Code" id="rating4" type="radio" name="rating" value="4" hidden>
+                    <input questionCode="@question.Code" id="rating4" type="radio" name="rating" numstar="4" hidden>
                     <label class="fas fa-star" for="rating4"></label>
 
-                    <input questionCode="@question.Code" id="rating3" type="radio" name="rating" value="3" hidden>
+                    <input questionCode="@question.Code" id="rating3" type="radio" name="rating" numstar="3" hidden>
                     <label class="fas fa-star" for="rating3"></label>
 
-                    <input questionCode="@question.Code" id="rating2" type="radio" name="rating" value="2" hidden>
+                    <input questionCode="@question.Code" id="rating2" type="radio" name="rating" numstar="2" hidden>
                     <label class="fas fa-star" for="rating2"></label>
 
-                    <input questionCode="@question.Code" id="rating1" type="radio" name="rating" value="1" hidden>
+                    <input questionCode="@question.Code" id="rating1" type="radio" name="rating" numstar="1" hidden>
                     <label class="fas fa-star" for="rating1"></label>
                 </div>
             </div>
@@ -301,7 +301,7 @@
         <script>
             let selectedAnswer = @Html.Raw(ViewData["SelectedAnswer"]);
             selectedAnswer.forEach(element => {
-                if (element.IsAnswerChildQuestion === true) {
+                if (element.IsAnswerChildQuestion === true && $(`input[type=checkbox][answerCode=${element.QuestionCode.split("_")[0]}]`).is(':checked')) {
                     $(`#answerQuestion-${element.QuestionCode}`).show();
                 }
                 if (element.AnswerCode != undefined) {
@@ -310,9 +310,9 @@
                     element.AnswerCodes.forEach(function (c) {
                         $(`input[type=checkbox][questionCode=${element.QuestionCode}][answerCode=${c}]`).attr("checked", true);
                     });
-                } else if (element.AnswerContent != undefined && (element.AnswerContent == "1" || element.AnswerContent == "2" || element.AnswerContent == "3" || element.AnswerContent == "4" || element.AnswerContent == "5" )) {
+                } else if (element.NumStart != undefined) {
                     @* là câu hỏi star *@
-                    $(`input[type=radio][questionCode=${element.QuestionCode}][value=${element.AnswerContent}]`).attr('checked', true);
+                    $(`input[type=radio][questionCode=${element.QuestionCode}][numstar=${element.NumStart}]`).attr('checked', true);
                 } else if (element.AnswerContent !== undefined && element.AnswerContent !== "") {
                     $(`textarea[questionCode=${element.QuestionCode}]`).val(element.AnswerContent);
                 }
@@ -326,7 +326,7 @@
                 let seft = $(this);
                 let proSeft = this;
                 function handle() {
-                    let data = { theSurveyId: '@ViewData["TheSurveyId"]', questionCode: seft.attr('questionCode'), answerCode: seft.attr('answerCode'), answerContent: seft.val() };
+                    let data = { theSurveyId: '@ViewData["TheSurveyId"]', questionCode: seft.attr('questionCode'), answerCode: seft.attr('answerCode'), numStar: seft.attr('numstar') };
                     let isAnswerCodesAdd = proSeft.checked;
                     if (proSeft.checked == true && seft.attr('answerchildquestioncode') != undefined) {
                         $(`#answerQuestion-${seft.attr('answerchildquestioncode')}`).show();
@@ -417,7 +417,7 @@
                 }).done(function (res) {
                     $('#loading-screen').hide();
                     if (res.statusCode === 200) {
-                        location.href = '/home';
+                        location.href = '/home/indexundergraduate';
                     }
                     else {
                         console.log(res);

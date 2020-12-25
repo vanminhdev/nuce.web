@@ -24,21 +24,23 @@ namespace nuce.web.survey.student.Controllers
         [AuthorizeActionFilter("Student")]
         public async Task<ActionResult> Index()
         {
-            var accessToken = Request.Cookies[UserParameters.JwtAccessToken].Value;
-            var handler = new JwtSecurityTokenHandler();
-            var jwtSecurityToken = handler.ReadJwtToken(accessToken);
-            if(jwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(r => r.Value).FirstOrDefault(o => o == "UndergraduateStudent") != null)
-            {
-                var resUndergraduate = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateTheSurveyStudent/GetTheSurvey");
-                await base.HandleResponseAsync(resUndergraduate,
-                    action200Async: async res =>
-                    {
-                        var jsonString = await res.Content.ReadAsStringAsync();
-                        ViewData["UndergraduateTheSurvey"] = jsonString;
-                        return null;
-                    }
-                );
-            }
+            #region lấy cả bài trước tốt nghiệp
+            //var accessToken = Request.Cookies[UserParameters.JwtAccessToken].Value;
+            //var handler = new JwtSecurityTokenHandler();
+            //var jwtSecurityToken = handler.ReadJwtToken(accessToken);
+            //if(jwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(r => r.Value).FirstOrDefault(o => o == "UndergraduateStudent") != null)
+            //{
+            //    var resUndergraduate = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateTheSurveyStudent/GetTheSurvey");
+            //    await base.HandleResponseAsync(resUndergraduate,
+            //        action200Async: async res =>
+            //        {
+            //            var jsonString = await res.Content.ReadAsStringAsync();
+            //            ViewData["UndergraduateTheSurvey"] = jsonString;
+            //            return null;
+            //        }
+            //    );
+            //}
+            #endregion
 
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurveyStudent/GetTheSurvey");
             return await base.HandleResponseAsync(response,
@@ -55,41 +57,19 @@ namespace nuce.web.survey.student.Controllers
         [AuthorizeActionFilter("UndergraduateStudent")]
         public async Task<ActionResult> IndexUndergraduate()
         {
-            var accessToken = Request.Cookies[UserParameters.JwtAccessToken].Value;
-            var handler = new JwtSecurityTokenHandler();
-            var jwtSecurityToken = handler.ReadJwtToken(accessToken);
-            if (jwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(r => r.Value).FirstOrDefault(o => o == "UndergraduateStudent") != null)
-            {
-                var resUndergraduate = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateTheSurveyStudent/GetTheSurvey");
-                await base.HandleResponseAsync(resUndergraduate,
-                    action200Async: async res =>
-                    {
-                        var jsonString = await res.Content.ReadAsStringAsync();
-                        ViewData["UndergraduateTheSurvey"] = jsonString;
-                        return null;
-                    },
-                    action404Async: async res =>
-                    {
-                        var jsonString = await res.Content.ReadAsStringAsync();
-                        ViewData["message"] = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
-                        return null;
-                    }
-                );
-            }
-
-            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurveyStudent/GetTheSurvey");
-            return await base.HandleResponseAsync(response,
+            var resUndergraduate = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateTheSurveyStudent/GetTheSurvey");
+            return await base.HandleResponseAsync(resUndergraduate,
                 action200Async: async res =>
                 {
                     var jsonString = await res.Content.ReadAsStringAsync();
-                    ViewData["TheSurvey"] = jsonString;
-                    return View("Index");
+                    ViewData["UndergraduateTheSurvey"] = jsonString;
+                    return View();
                 },
                 action404Async: async res =>
                 {
                     var jsonString = await res.Content.ReadAsStringAsync();
                     ViewData["message"] = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
-                    return null;
+                    return View();
                 }
             );
         }

@@ -39,6 +39,10 @@ namespace nuce.web.api.ViewModel.Survey
         public bool? IsAnswerChildQuestion { get; set; }
 
         public string AnswerContent { get; set; }
+
+        public int? NumStar { get; set; }
+
+        public string City { get; set; }
     }
 
     public class GraduateSelectedAnswerAutoSave : SelectedAnswerAutoSaveBase

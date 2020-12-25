@@ -122,7 +122,9 @@ namespace nuce.web.api.Services.Survey.Implements
         /// <param name="isAnswerCodesAdd">là thêm đáp án lựa chọn nhiều hay bỏ đi</param>
         /// <param name="answerContent"></param>
         /// <returns></returns>
-        public async Task AutoSave(string studentCode, string classroomCode, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, bool isAnswerCodesAdd = true)
+        public async Task AutoSave(string studentCode, string classroomCode, string questionCode, string answerCode, 
+            string answerCodeInMulSelect, string answerContent, int? numStar, string city,
+            bool isAnswerCodesAdd = true)
         {
             var surveyStudent = await _context.AsEduSurveyBaiKhaoSatSinhVien
                 .FirstOrDefaultAsync(o => o.StudentCode == studentCode && o.ClassRoomCode == classroomCode && o.Status != (int)SurveyStudentStatus.Done && o.Status != (int)SurveyStudentStatus.Close);
@@ -141,7 +143,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 selectedAnswer = new List<SelectedAnswer>();
             }
 
-            surveyStudent.BaiLam = base.AutoSaveBaiLam(selectedAnswer, questionCode, answerCode, answerCodeInMulSelect, answerContent, isAnswerCodesAdd);
+            surveyStudent.BaiLam = base.AutoSaveBaiLam(selectedAnswer, questionCode, answerCode, answerCodeInMulSelect, answerContent, numStar, city, isAnswerCodesAdd);
 
             await _context.SaveChangesAsync();
         }

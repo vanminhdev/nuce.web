@@ -21,5 +21,7 @@ namespace nuce.web.survey.student.Models.JsonData
         public List<string> AnswerCodes { get; set; }
         public string AnswerContent { get; set; }
         public bool? IsAnswerChildQuestion { get; set; }
+        public int? NumStart { get; set; }
+        public string City { get; set; }
     }
 }

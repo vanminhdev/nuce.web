@@ -145,7 +145,7 @@ namespace nuce.web.api.Services.Survey.Implements
             var sinhvien = await _context.AsEduSurveyGraduateStudent.FirstOrDefaultAsync(o => o.ExMasv == masv);
             if (sinhvien == null)
             {
-                return false;
+                throw new RecordNotFoundException("Mã sinh viên không tồn tại trong danh sách");
             }
 
             if (sinhvien.Psw == pwd)

@@ -99,7 +99,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
                 var studentCode = _userService.GetCurrentStudentCode();
                 var ip = HttpContext.Connection.RemoteIpAddress.ToString();
                 await _asEduSurveyUndergraduateBaiKhaoSatSinhVienService.AutoSave(content.TheSurveyId.Value, studentCode, content.QuestionCode, content.AnswerCode,
-                    content.AnswerCodeInMulSelect, content.AnswerContent, content.IsAnswerCodesAdd == null || content.IsAnswerCodesAdd.Value);
+                    content.AnswerCodeInMulSelect, content.AnswerContent, content.NumStar, content.City, content.IsAnswerCodesAdd == null || content.IsAnswerCodesAdd.Value);
             }
             catch (DbUpdateException e)
             {

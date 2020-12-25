@@ -84,13 +84,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException("Không tìm thấy bài khảo sát");
             }
 
-            var examQuestion = await _context.AsEduSurveyDeThi.FirstOrDefaultAsync(o => o.Id == theSurvey.DeThiId);
-            if (examQuestion == null)
-            {
-                throw new RecordNotFoundException("Không tìm thấy nội dung bài khảo sát");
-            }
-
-            return examQuestion.NoiDungDeThi;
+            return theSurvey.NoiDungDeThi;
         }
 
         public async Task<List<UndergraduateTheSurveyStudent>> GetTheSurvey(string studentCode)
@@ -232,7 +226,7 @@ namespace nuce.web.api.Services.Survey.Implements
         /// <param name="isAnswerCodesAdd">là thêm đáp án lựa chọn nhiều hay bỏ đi</param>
         /// <param name="answerContent"></param>
         /// <returns></returns>
-        public async Task AutoSave(Guid theSurveyId, string studentCode, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, bool isAnswerCodesAdd = true)
+        public async Task AutoSave(Guid theSurveyId, string studentCode, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, int? numStar, string city, bool isAnswerCodesAdd = true)
         {
             if (!await IsOpenSurveyRound(studentCode))
             {
@@ -256,7 +250,7 @@ namespace nuce.web.api.Services.Survey.Implements
             {
                 selectedAnswer = new List<SelectedAnswer>();
             }
-            surveyStudent.BaiLam = base.AutoSaveBaiLam(selectedAnswer, questionCode, answerCode, answerCodeInMulSelect, answerContent, isAnswerCodesAdd);
+            surveyStudent.BaiLam = base.AutoSaveBaiLam(selectedAnswer, questionCode, answerCode, answerCodeInMulSelect, answerContent, numStar, city, isAnswerCodesAdd);
 
             await _context.SaveChangesAsync();
         }
