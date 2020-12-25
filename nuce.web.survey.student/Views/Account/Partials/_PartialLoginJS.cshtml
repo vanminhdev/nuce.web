@@ -1,0 +1,22 @@
+﻿@model nuce.web.survey.student.Models.LoginModel
+
+<script src="~/Content/js/helper/clientParameter.js"></script>
+<script>
+    var loginState = {
+        config: {
+            Student: CLIENT_PARAMETERS_CODE.NOTICE_1,
+            UndergraduateStudent: CLIENT_PARAMETERS_CODE.NOTICE_2,
+            GraduateStudent: CLIENT_PARAMETERS_CODE.NOTICE_3,
+        },
+        getData: function() {
+            _clientParameterHelper.getDataApi('' , CLIENT_PARAMETERS_TYPE.KHAO_SAT_SV, res => {
+                const code = loginState.config[`@Model.Type`] || '';
+                $('#login-ks-notice').html(_clientParameterHelper.getValueByCode(res, code));
+            });
+        },
+        init: function() {
+            loginState.getData();
+        },
+    };
+    loginState.init();
+</script> 

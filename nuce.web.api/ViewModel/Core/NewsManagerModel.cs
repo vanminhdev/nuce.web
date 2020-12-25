@@ -14,21 +14,20 @@ namespace nuce.web.api.ViewModel.Core
         //public List<NewsCatItem> OtherCategory { get; set; }
     }
 
-    public class CreateNewsCategoryModel
-    {
-        public string Role { get; set; }
-        public List<NewsCategoryParent> CategoryList { get; set; }
-    }
-
-    public class NewsCategoryParent : NewsCats
-    {
-        public List<NewsCats> Children { get; set; }
-    }
-
     public class ItemAvatarModel
     {
         public byte[] Data { get; set; }
         public string Extension { get; set; }
+    }
+    /// <summary>
+    /// Model tạo danh mục mới
+    /// </summary>
+    public class CreateNewsCategoryModel
+    {
+        public string Name { get; set; }
+        public int Parent { get; set; }
+        public string Role { get; set; }
+        public bool? DivideAfter { get; set; }
     }
 
 }

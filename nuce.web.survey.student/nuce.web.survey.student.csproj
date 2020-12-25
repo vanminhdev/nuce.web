@@ -920,6 +920,7 @@
     <Content Include="Content\js\bootstrap.min.js" />
     <Content Include="Content\js\dataTables.bootstrap4.min.js" />
     <Content Include="Content\js\dataTables.config.js" />
+    <Content Include="Content\js\helper\clientParameter.js" />
     <Content Include="Content\js\helper\common.js" />
     <Content Include="Content\js\helper\datetime.js" />
     <Content Include="Content\js\helper\form.helper.js" />
@@ -966,13 +967,11 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Shared\_LayoutEmpty.cshtml" />
     <Content Include="Views\Home\TheSurvey.cshtml" />
     <Content Include="Views\Error\Index.cshtml" />
     <Content Include="Views\Default\Index.cshtml" />
     <Content Include="Views\Account\LoginGraduate.cshtml" />
     <Content Include="Views\GraduateHome\Index.cshtml" />
-    <Content Include="Views\Shared\_LayoutLogin.cshtml" />
     <Content Include="Views\GraduateHome\TheSurvey.cshtml" />
     <Content Include="Views\Home\UndergraduateTheSurvey.cshtml" />
     <Content Include="Views\News\Index.cshtml" />
@@ -985,6 +984,7 @@
     <Content Include="Views\Home\VerifyByToken.cshtml" />
     <Content Include="Views\Contact\Index.cshtml" />
     <Content Include="Views\Home\IndexUndergraduate.cshtml" />
+    <Content Include="Views\Account\Partials\_PartialLoginJS.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

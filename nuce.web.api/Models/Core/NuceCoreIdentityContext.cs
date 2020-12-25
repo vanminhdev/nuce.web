@@ -19,6 +19,8 @@ namespace nuce.web.api.Models.Core
         public virtual DbSet<NewsCatItem> NewsCatItem { get; set; }
         public virtual DbSet<NewsCats> NewsCats { get; set; }
         public virtual DbSet<NewsItems> NewsItems { get; set; }
+        public virtual DbSet<FileUpload> FileUpload { get; set; }
+        public virtual DbSet<ClientParameters> ClientParameters { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -124,6 +126,60 @@ namespace nuce.web.api.Models.Core
                 entity.Property(e => e.UpdateUsername)
                     .IsRequired()
                     .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<ClientParameters>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Code)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EntryDatetime).HasColumnType("datetime");
+
+                entity.Property(e => e.EntryUsername).HasMaxLength(250);
+
+                entity.Property(e => e.Role)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Type)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UpdateDatetime).HasColumnType("datetime");
+
+                entity.Property(e => e.UpdateUsername).HasMaxLength(250);
+            });
+
+            modelBuilder.Entity<FileUpload>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Code)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EntryDatetime).HasColumnType("datetime");
+
+                entity.Property(e => e.EntryUsername).HasMaxLength(250);
+
+                entity.Property(e => e.FileType)
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Role)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Type)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UpdateDatetime).HasColumnType("datetime");
+
+                entity.Property(e => e.UpdateUsername).HasMaxLength(250);
             });
 
             OnModelCreatingPartial(modelBuilder);

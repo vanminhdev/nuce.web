@@ -1,4 +1,6 @@
-﻿@{
+﻿@using System.Configuration;
+
+@{
     var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
     var accessToken = Request.Cookies[nuce.web.quanly.Common.UserParameters.JwtAccessToken];
     var username = "";
@@ -202,7 +204,7 @@
                                     </a>
                                     <div class="dropdown-menu" aria-labelledby="navbarDropdown-admin">
                                         <a class="dropdown-item m-bg-hover-blue text-truncate" href="/usermanager/index">Quản lý tài khoản</a>
-                                        <a class="dropdown-item m-bg-hover-blue text-truncate" href="/frontendmanager/index?role=1">Quản trị giao diện</a>
+                                        <a class="dropdown-item m-bg-hover-blue text-truncate" href="/frontendmanager">Quản trị giao diện</a>
                                     </div>
                                 </li>
                                     if (roles.FirstOrDefault(r => r == "P_KhaoThi") != null)
@@ -420,6 +422,7 @@
         $('#web-email').html(COMMON_CONFIG.getDomainConfig().email);
     </script>
     <script>
+        var API_URL = `@ConfigurationManager.AppSettings.Get("API_URL")`;
         $.ajaxSetup({
             xhrFields: {
                 withCredentials: true

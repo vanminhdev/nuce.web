@@ -65,7 +65,7 @@
 }
 
 #footer {
-    background-image: url("../img/footer-background.png");
+    background-image: url("../images/footer-background.png");
     background-size: contain;
 }
 
@@ -109,6 +109,16 @@
 
 .m-table-bordered th {
     border-bottom: none !important;
+}
+
+.m-table-vertical-middle {
+    vertical-align: middle !important;
+}
+
+.m-file-icon {
+    background-image: url("../images/icons/file.png") !important;
+    background-position: -68px -4px !important;
+    background-size: 20%;
 }
 
 /* MEDIA QUERY */

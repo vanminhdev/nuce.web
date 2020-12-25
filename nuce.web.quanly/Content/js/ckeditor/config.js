@@ -39,4 +39,6 @@ CKEDITOR.editorConfig = function( config ) {
 	//customize
 	config.extraPlugins = 'embed,justify';
 	config.embed_provider = '//ckeditor.iframe.ly/api/oembed?url={url}&callback={callback}';
+
+	config.extraPlugins = 'colorbutton';
 };

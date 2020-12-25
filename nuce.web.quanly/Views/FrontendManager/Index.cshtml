@@ -1,116 +1,341 @@
 ﻿@using nuce.web.quanly.Models;
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Quản trị giao diện";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<style>
-    @@media (prefers-reduced-motion: reduce) {
-        .collapse-custom > .collapsing {
-            -webkit-transition: none;
-            transition: ease;
-            transition-duration: 0.5s;
-        }
-    }
 
-    .collapse-custom ul {
-        list-style-type: none;
-        margin-left: 30px;
-        transition: 0.5s;
-    }
+<div id="fe-manager-container" class="container service-categories-wrp collapse-custom mt-0">
+    <!-- append child -->
 
-    .caret {
-        cursor: pointer;
-        -webkit-user-select: none; /* Safari 3.1+ */
-        -moz-user-select: none; /* Firefox 2+ */
-        -ms-user-select: none; /* IE 10+ */
-        user-select: none;
-    }
-
-    .caret::before {
-        content: "\25B6";
-        color: black;
-        display: inline-block;
-        margin-right: 6px;
-    }
-
-    .caret-down::before {
-        -ms-transform: rotate(90deg); /* IE 9 */
-        -webkit-transform: rotate(90deg); /* Safari */
-        transform: rotate(90deg);
-    }
-
-    .nested {
-        display: none;
-    }
-
-    .active {
-        display: block;
-    }
-</style>
-<div class="container-fluid service-categories-wrp collapse-custom" style="margin-top: 0">
-    <ul class="font-weight-bold cursor-pointer">
-        <li>
-            <span class="caret">Quản trị tin tức</span>
-            <ul id="quantri-tintuc" class="p-0 nested">
-                @{
-                    List<NewsCatsModel> model = (List<NewsCatsModel>)Model;
-                }
-                @foreach (var item in model)
-                {
-                    if (item.parent == -1 && model.Any(cat => cat.parent == item.id))
-                    {
-                        <li class="font-weight-bold cursor-pointer">
-                            <span class="caret">@item.description</span>
-                            <ul id="children-@item.id" class="p-0 nested">
-                                @foreach (var child in model.Where(cat => cat.parent == item.id))
-                                {
-                                    <li>
-                                        &nbsp;&nbsp;&nbsp;
-                                        <a href="/newsmanagement/itemslist?catId=@child.id">
-                                            @child.description
-                                        </a>
-                                    </li>
-                                }
-                            </ul>
-                        </li>
-                    }
-                    else if (item.parent == -1)
-                    {
-                        <li class="font-weight-bold cursor-pointer">
-                            <a href="/newsmanagement/itemslist?catId=@item.id">
-                                @item.description
-                            </a>
-                        </li>
-                    }
-                }
-            </ul>
-        </li>
-        <li>
-            <span class="caret">Quản trị danh mục</span>
-        </li>
-        <li>
-            <span class="caret">Quản trị hình ảnh</span>
-        </li>
-        <li>
-            <span class="caret">Quản trị thông tin liên hệ</span>
-        </li>
-        <li>
-            <span class="caret">Quản trị nội dung</span>
-        </li>
-    </ul>
 </div>
-@section Scripts {
-    <script>
-        var toggler = document.getElementsByClassName("caret");
-        var i;
+<!-- Add Modal -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thêm danh mục</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="fw-700 font-14-sm">Tên</label>
+                    <input id="txtAddCatName" type="text" class="form-control" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Thoát</button>
+                <button type="button" class="btn btn-primary" onclick="feManagerState.addCategory()">Thêm</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Chỉnh sửa danh mục</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="fw-700 font-14-sm">Tên</label>
+                    <input id="txtEditCatName" type="text" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label class="fw-700 font-14-sm">
+                        <input type="checkbox" id="txtEditOnMenu" />
+                        <span>Hiển thị trên thanh menu</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="fw-700 font-14-sm">
+                        <input type="checkbox" id="txtEditActive" />
+                        <span>Active</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="fw-700 font-14-sm">
+                        <input type="checkbox" id="txtEditDivide" />
+                        <span>Divide Line</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Thoát</button>
+                <button type="button" class="btn btn-primary" onclick="feManagerState.updateCategory()">Cập nhật</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-        for (i = 0; i < toggler.length; i++) {
-            toggler[i].addEventListener("click", function() {
-                this.parentElement.querySelector(".nested").classList.toggle("active");
-                this.classList.toggle("caret-down");
-            });
+@section Scripts {
+    <link rel="stylesheet" href="~/Content/js/jstree/themes/default/style.min.css" />
+    <script src="~/Content/js/jstree/jstree.min.js"></script>
+    <script>
+        var buttonTemplate = {
+            add: `&nbsp;<span class="font-weight-bold" 
+                    data-toggle="modal" data-target="#addModal" data-not-redirect="1">
+                    <i class="fas fa-folder-plus" data-not-redirect="1"></i></span>`,
+            edit: function(id) {
+                return `&nbsp;<span class="font-weight-bold" onclick="feManagerState.openUpdateCategoryForm(feManagerState.categoryList, ${id})"
+                                data-toggle="modal" data-target="#editModal" data-not-redirect="1">
+                    <i class="fas fa-wrench" data-not-redirect="1"></i></span>`;
+            },
+        };                            
+
+        var feManagerState = {
+            categoryList: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model)),
+            selectedNode: {},
+            treeByRole: {
+                P_KhaoThi: [
+                    {
+                        text: `Quản trị hình ảnh`,
+                    },
+                    {
+                        text: `Quản trị thông tin`, // node text
+                        children: [
+                            {
+                                text: `Chú ý khảo sát`,
+                                a_attr: {
+                                    href: '/frontendmanager/edit?type=KSSV&richText=true'
+                                }
+                            },
+                            {
+                                text: 'Liên hệ',
+                                a_attr: {
+                                    href: '/frontendmanager/edit?type=CONTACT&richText=false'
+                                }
+                            },
+                        ],
+                    },
+                ],
+                P_CTSV: [],
+            },
+            dataTree: [
+                {
+                    id: 'tree-tintuc',
+                    text: `Quản trị danh mục & tin tức${buttonTemplate.add}`, // node text
+                    data: { 
+                        id: -1,
+                        role: '',
+                    },
+                    children: [],
+                },
+            ],
+            configJsTree: function() {},
+            convertCategory: function(raw = [], result = [], id = 'tree-tintuc') {
+                if (!Array.isArray(raw) || raw.length < 1) return;
+
+                const target = result.find(folder => folder.id === id);
+                
+                if (typeof target === 'undefined') return;
+
+                const parentList = [];
+                raw.forEach(cat => {
+                    if (cat.parent !== -1) return;
+
+                    const parent = {
+                        text: `${cat.description || ''}${buttonTemplate.add}${buttonTemplate.edit(cat.id)}`,
+                        data: cat,
+                    };
+                    const children = raw.filter(c => c.parent === cat.id);
+                    if (children.length > 0) {
+                        parent.children = [];
+                        children.forEach(child => {
+                            const son = {
+                                text: `${child.description || ''}${buttonTemplate.edit(child.id)}`,
+                                data: child,
+                                a_attr: {
+                                    href: `/newsmanagement/itemslist?catId=${child.id}`,
+                                },
+                            };
+                            parent.children.push(son);
+                        });
+                    } else {
+                        parent.a_attr = {
+                            href: `/newsmanagement/itemslist?catId=${cat.id}`,
+                        };
+                    };
+                    parentList.push(parent);
+                });
+                target.children = parentList;
+                target.data.role = raw[0].role;
+            },
+            initTreeContainer: function(parentId = '', nodeId = '') {
+                $(`#${parentId}`).append(`<div id=${nodeId}></div>`);
+            },
+            addCategory: function() {
+                const selected = feManagerState.selectedNode;
+                const treeId = selected.e.currentTarget.id;
+                const nodeName = $(`#txtAddCatName`).val();
+                const body = {
+                    name: nodeName,
+                    parent: selected.data.node.data.id,
+                    role: selected.data.node.data.role,
+                };
+                feManagerState.callApiCreateCat(treeId, JSON.stringify(body));
+            },
+            updateCategory: function() {
+                const selected = feManagerState.selectedNode;
+                const body = { ...selected.data.node.data };
+                const treeId = selected.e.currentTarget.id;
+
+                body.name = $('#txtEditCatName').val();
+                body.status = $('#txtEditActive').is(':checked') ? 1 : 0;
+                body.divideAfter = $('#txtEditDivide').is(':checked');
+                body.onMenu = $('#txtEditOnMenu').is(':checked');
+                body.description = body.name;
+                
+                feManagerState.callApiUpdateCat(treeId, body);
+            },
+            openUpdateCategoryForm: function(raw, id) {
+                const found = raw.find(cat => cat.id === id);
+                if (typeof found === 'undefined') return;
+                $('#txtEditCatName').val(found.description);
+                console.log(found);
+                $('#txtEditOnMenu').prop({ checked: found.onMenu || false });
+                $('#txtEditActive').prop({ checked: found.status === 1 });
+                $('#txtEditDivide').prop({ checked: found.divideAfter || false });
+            },
+            drawTree: function(jsTreeId, dataTree, categoryList) {
+                feManagerState.initTreeContainer('fe-manager-container', jsTreeId);
+                feManagerState.convertCategory(categoryList, dataTree, 'tree-tintuc');
+                feManagerState.configJsTree(jsTreeId, dataTree);
+            },
+            init: function() {
+                const roleList = feManagerState.categoryList.map(item => item.role);
+                const setRole = new Set(roleList);
+                let i = 0;
+                setRole.forEach(role => {
+                    i+=1;
+                    const jsTreeId = `${i}-jstree`;
+                    const dataTree = [...feManagerState.dataTree, ...feManagerState.treeByRole[role]];
+                    const categoryList = feManagerState.categoryList.filter(c => c.role === role);
+
+                    feManagerState.drawTree(jsTreeId, dataTree, categoryList);
+                });
+            },
+            refreshNodeData: function(treeId = '', newData = []) {
+                $(`#${treeId}`).jstree(true).settings.core.data = newData;
+                $(`#${treeId}`).jstree(true).refresh();
+            },
+            callApiCreateCat: function(treeId = '', body) {
+                $('#loading-screen').show();
+                $.ajax({
+                    type: 'POST',
+                    url: `@Url.Action("CreateCategory", "FrontendManager")`,
+                    data: body,
+                    contentType: 'application/json',
+                }).done(res => {
+                    if (res.StatusCode == 200) {
+                        const role = feManagerState.selectedNode.data.node.data.role;
+                        const resData = JSON.parse(res.Data);
+            
+                        const dataTree = [...feManagerState.dataTree, ...feManagerState.treeByRole[role]];
+                        feManagerState.categoryList.push(resData.data);
+                        const categoryList = feManagerState.categoryList.filter(c => c.role === role);
+
+                        feManagerState.convertCategory(categoryList, dataTree, 'tree-tintuc');
+                        feManagerState.refreshNodeData(treeId, dataTree);
+
+                        toastSuccess('Tạo thư mục thành công');
+                    } else {
+                        toastError(res.Message || 'Lỗi hệ thống');
+                    }
+                    $('#loading-screen').hide();
+                    $('#addModal').modal('hide');
+                }).fail(err => {
+                    toastError('Lỗi hệ thống');
+                    $('#loading-screen').hide();
+                    $('#addModal').modal('hide');
+                });
+            },
+            callApiUpdateCat: function(treeId, body) {
+                $('#loading-screen').show();
+                $.ajax({
+                    type: 'POST',
+                    url: `@Url.Action("UpdateCategory", "FrontendManager")`,
+                    data: JSON.stringify(body),
+                    contentType: 'application/json',
+                }).done(res => {
+                    if (res.StatusCode == 200) {
+                        console.log(res);
+                        const role = body.role;
+                        const dataTree = [...feManagerState.dataTree, ...feManagerState.treeByRole[role]];
+
+                        let found = feManagerState.categoryList.find(c => c.id === body.id);
+                        Object.keys(found).forEach(field => {
+                            found[field] = body[field];
+                        });
+
+                        const categoryList = feManagerState.categoryList.filter(c => c.role === role);
+                        console.log(categoryList);
+                        feManagerState.convertCategory(categoryList, dataTree, 'tree-tintuc');
+
+                        feManagerState.refreshNodeData(treeId, dataTree);
+                        toastSuccess('Cập nhật thành công');
+                    } else {
+                        toastError(res.Message || 'Lỗi hệ thống');
+                    }
+                    $('#loading-screen').hide();
+                    $('#editModal').modal('hide');
+                }).fail(err => {
+                    toastError('Lỗi hệ thống');
+                    $('#loading-screen').hide();
+                    $('#editModal').modal('hide');
+                });
+            },
+        };
+        @{
+            #region config jstree
         }
+        // 6 create an instance when the DOM is ready
+        feManagerState.configJsTree = function(id, data) {
+            $(`#${id}`).jstree({
+                core : {
+                    animation : 0,
+                    check_callback : function (op, node, par, pos, more) {
+                        console.log(node, pos, par);
+                        if (op === 'move_node' && !(node.parent === par.id)) {
+                            return false;
+                        }
+                        return true;
+                    },
+                    data,
+                    themes : { stripes : true },
+                },
+                dnd: {
+                    check_while_dragging: true,
+                    drag_check: function (data) {
+                        console.log(data);
+                    }
+                },
+                plugins : [
+                    'dnd'
+                ],
+            }).bind("select_node.jstree", function (e, data) {
+                 feManagerState.selectedNode = { e, data };
+                 const href = data.node.a_attr.href;
+                 console.log(data);
+                 if (typeof data.event === 'undefined') return;
+                 const oEvent = data.event.originalEvent;
+                 const notRedirect = oEvent.target.getAttribute('data-not-redirect') !== null;
+                 console.log(data);
+                 if (href !== '#' && href.includes('/') && !notRedirect) {
+                    document.location.href = href;
+                 }
+            });
+        };
+        @{
+            #endregion
+        }
+        feManagerState.init();
     </script>
 }

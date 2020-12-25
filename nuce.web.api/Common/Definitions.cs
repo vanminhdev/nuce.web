@@ -173,6 +173,15 @@ namespace nuce.web.api.Common
     }
 
     /// <summary>
+    /// Loại của tham số trả ra cho frontend
+    /// </summary>
+    public class ClientParameterTypes
+    {
+        public static readonly string KhaoKhaoSatSV = "KSSV";
+        public static readonly string Contact = "CONTACT";
+    }
+
+    /// <summary>
     /// Loại file upload
     /// </summary>
     public class ContentTypes

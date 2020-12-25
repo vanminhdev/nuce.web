@@ -12,3 +12,7 @@
 }
 
 @Html.Partial("~/Views/Account/Partials/_PartialLogin.cshtml", Model)
+
+@section Scripts {
+    @Html.Partial("~/Views/Account/Partials/_PartialLoginJS.cshtml", Model);
+}

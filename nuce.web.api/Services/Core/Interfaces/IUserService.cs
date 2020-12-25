@@ -23,6 +23,7 @@ namespace nuce.web.api.Services.Core.Interfaces
         public Task<bool> UserLogin(LoginModel model);
         public string GetCurrentStudentCode();
         public string GetClaimByKey(string key);
+        public List<string> GetClaimListByKey(string key);
         public long? GetCurrentStudentID();
         public AsAcademyStudent GetCurrentStudent();
         public string GetUserName();
