@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using nuce.web.api.Models.Core;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.ViewModel;
@@ -13,14 +16,18 @@ using nuce.web.api.ViewModel.Core;
 
 namespace nuce.web.api.Controllers.Core
 {
-    [Authorize(Roles = "P_KhaoThi")]
+    [Authorize(Roles = "Admin,P_KhaoThi,P_CTSV")]
     [Route("api/[controller]")]
     public class NewsManagerController : Controller
     {
         private readonly INewsManagerService _newsManagerService;
-        public NewsManagerController(INewsManagerService _newsManagerService)
+        private readonly IUserService _userService;
+        private readonly ILogger<NewsManagerController> _logger;
+        public NewsManagerController(INewsManagerService _newsManagerService, IUserService _userService, ILogger<NewsManagerController> _logger)
         {
             this._newsManagerService = _newsManagerService;
+            this._userService = _userService;
+            this._logger = _logger;
         }
         #region client
         /// <summary>
@@ -112,13 +119,56 @@ namespace nuce.web.api.Controllers.Core
         /// <summary>
         /// List danh mục theo quyền
         /// </summary>
-        /// <param name="role"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("admin/news-category/{role}")]
-        public IActionResult GetNewsCategoryAdmin(string role)
+        [Route("admin/news-category")]
+        public IActionResult GetNewsCategoryAdmin()
         {
-            return Ok(_newsManagerService.GetAllCategoryByRole(role, 1));
+            var loggedUserRoles = _userService.GetClaimListByKey(ClaimTypes.Role);
+            List<NewsCats> result = new List<NewsCats>();
+            foreach (var role in loggedUserRoles)
+            {
+                var tmp = _newsManagerService.GetAllCategoryByRoleAdmin(role);
+                result.AddRange(tmp);
+            }
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("admin/news-category/create")]
+        public async Task<IActionResult> CreateNewsCategoryAdmin([FromBody] CreateNewsCategoryModel model)
+        {
+            var loggedUserRoles = _userService.GetClaimListByKey(ClaimTypes.Role);
+            try
+            {
+                var rslt = await _newsManagerService.CreateNewsCatsAdmin(loggedUserRoles, model);
+                return Ok(new ResponseBody
+                {
+                    Data = rslt
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [Route("admin/news-category/update")]
+        public async Task<IActionResult> UpdateNewsCategoryAdmin([FromBody] NewsCats model)
+        {
+            var loggedUserRoles = _userService.GetClaimListByKey(ClaimTypes.Role);
+            try
+            {
+                await _newsManagerService.UpdateNewsCatsAdmin(loggedUserRoles, model);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
+            }
         }
 
         /// <summary>

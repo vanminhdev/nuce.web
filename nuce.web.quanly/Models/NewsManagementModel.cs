@@ -11,11 +11,13 @@ namespace nuce.web.quanly.Models
         public int id { get; set; }
         public string name { get; set; }
         public string description { get; set; }
-        public int type { get; set; }
-        public int parent { get; set; }
-        public int count { get; set; }
-        public int status { get; set; }
+        public int? type { get; set; }
+        public int? parent { get; set; }
+        public int? count { get; set; }
+        public int? status { get; set; }
         public string role { get; set; }
+        public bool? onMenu { get; set; }
+        public bool? divideAfter { get; set; }
     }
 
     public class NewsItemModel

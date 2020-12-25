@@ -10,23 +10,15 @@ namespace nuce.web.quanly.Controllers
 {
     public class FrontendManagerController : BaseController
     {
-        // GET: FrontendManager
-        private Dictionary<int, string> roleDict = new Dictionary<int, string>
-        {
-            { 1, "P_KhaoThi" },
-            { 2, "P_CTSV" },
-        };
-        // GET: NewsManagement
+        #region view
+        /// <summary>
+        /// Hiển thị tree quản trị
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        public async Task<ActionResult> Index(int role)
+        public async Task<ActionResult> Index()
         {
-            string roleName = "";
-            if (roleDict.ContainsKey(role))
-            {
-                roleName = roleDict[role];
-            }
-            TempData["role"] = role;
-            string api = $"api/NewsManager/admin/news-category/{roleName}";
+            string api = $"api/NewsManager/admin/news-category";
             var response = await base.MakeRequestAuthorizedAsync("get", api);
 
             return await base.HandleResponseAsync(response, action200Async: async res =>
@@ -35,7 +27,12 @@ namespace nuce.web.quanly.Controllers
                 return View("Index", model);
             });
         }
-
+        /// <summary>
+        /// Trang sửa những tham số là text
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="richText"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult> Edit(string type, bool richText = false)
         {
@@ -49,11 +46,56 @@ namespace nuce.web.quanly.Controllers
                 return View("Edit", model);
             });
         }
-
+        #endregion
+        /// <summary>
+        /// Hàm call api update tham số là text
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> UpdateClientParameter(List<UpdateClientParameterModel> model)
         {
             string api = $"api/ClientParameters/admin/update";
+
+            var content = base.MakeContent(model);
+
+            var response = await base.MakeRequestAuthorizedAsync("put", api, content);
+
+            return Json(new ResponseBody
+            {
+                Data = await response.Content.ReadAsStringAsync(),
+                StatusCode = response.StatusCode
+            }, JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
+        /// Hàm cal api tạo danh mục
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<ActionResult> CreateCategory(CreateCategoryModel model)
+        {
+            string api = $"api/NewsManager/admin/news-category/create";
+
+            var content = base.MakeContent(model);
+
+            var response = await base.MakeRequestAuthorizedAsync("post", api, content);
+
+            return Json(new ResponseBody
+            {
+                Data = await response.Content.ReadAsStringAsync(),
+                StatusCode = response.StatusCode
+            }, JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
+        /// Hàm cập nhật danh mục
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<ActionResult> UpdateCategory(NewsCatsModel model)
+        {
+            string api = $"/api/NewsManager/admin/news-category/update";
 
             var content = base.MakeContent(model);
 

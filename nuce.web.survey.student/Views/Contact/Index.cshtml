@@ -31,7 +31,7 @@
                     </div>
                     <div class="col-lg-10 col-md-10 col-11">
                         <h6 class="my-0 text-danger">Điện thoại</h6>
-1                       <p class="my-0" id="txtMobile">0912987567</p>
+1                       <p class="my-0" id="txtMobile"></p>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -83,9 +83,12 @@
         var contactState = {
             getData: function() {
                 _clientParameterHelper.getDataApi('' ,CLIENT_PARAMETERS_TYPE.CONTACT, res => {
-                    $('#txtAddress').html(_clientParameterHelper.getValueByCode(res, CLIENT_PARAMETERS_CODE.ADDRESS));
-                    $('#txtMobile').html(_clientParameterHelper.getValueByCode(res, CLIENT_PARAMETERS_CODE.MOBILE));
-                    $('#txtEmail').html(_clientParameterHelper.getValueByCode(res, CLIENT_PARAMETERS_CODE.EMAIL));
+                    const mobile = _clientParameterHelper.getValueByCode(res, CLIENT_PARAMETERS_CODE.MOBILE);
+                    const address = _clientParameterHelper.getValueByCode(res, CLIENT_PARAMETERS_CODE.ADDRESS);
+                    const email = _clientParameterHelper.getValueByCode(res, CLIENT_PARAMETERS_CODE.EMAIL);
+                    $('#txtAddress').html(address);
+                    $('#txtMobile').html(mobile);
+                    $('#txtEmail').html(email);
                 });
             },
             init: function() {

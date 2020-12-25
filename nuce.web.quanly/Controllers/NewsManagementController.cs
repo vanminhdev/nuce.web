@@ -14,31 +14,6 @@ namespace nuce.web.quanly.Controllers
 {
     public class NewsManagementController : BaseController
     {
-        private Dictionary<int, string> roleDict = new Dictionary<int, string>
-        {
-            { 1, "P_KhaoThi" },
-            { 2, "P_CTSV" },
-        };
-        // GET: NewsManagement
-        [HttpGet]
-        public async Task<ActionResult> Index(int role)
-        {
-            string roleName = "";
-            if (roleDict.ContainsKey(role))
-            {
-                roleName = roleDict[role];
-            }
-            TempData["role"] = role;
-            string api = $"api/NewsManager/admin/news-category/{roleName}";
-            var response = await base.MakeRequestAuthorizedAsync("get", api);
-
-            return await base.HandleResponseAsync(response, action200Async: async res =>
-            {
-                var model = await base.DeserializeResponseAsync<List<NewsCatsModel>>(res.Content);
-                return View("Index", model);
-            });
-        }
-
         [HttpGet]
         public ActionResult ItemsList(int catId)
         {
@@ -102,7 +77,12 @@ namespace nuce.web.quanly.Controllers
             var stringContent = base.MakeContent(request);
             var response = await base.MakeRequestAuthorizedAsync("post", api, stringContent);
 
-            return await HandleApiResponseUpdate(response);
+
+            return Json(new ResponseBody
+            {
+                Data = await response.Content.ReadAsStringAsync(),
+                StatusCode = response.StatusCode
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]

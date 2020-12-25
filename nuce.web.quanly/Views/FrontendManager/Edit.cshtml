@@ -9,7 +9,7 @@
     <div class="col-12">
         <a class="update-btn text-light p-2 mb-3"
             style="text-decoration: none; display: inline-block"
-            href="#">← Quay lại quản trị</a>
+            href="/frontendmanager">← Quay lại quản trị</a>
     </div>
     <div class="col-12 text-right">
         <button class="btn btn-outline-success"
@@ -96,7 +96,7 @@
                         value: item.value,
                         status: item.status,
                     };
-                    if ('@((bool)ViewData["richText"])') {
+                    if ('@((bool)ViewData["richText"])' === 'True') {
                         newItem.value = CKEDITOR.instances[`${idx}-value`].getData();
                     }
                     return newItem;
@@ -124,7 +124,7 @@
                 });
             },
             init: function() {
-                if ('@(ViewData["richText"])') {
+                if ('@((bool)ViewData["richText"])' === 'True') {
                     for(let i = 0; i < editParameterState.dataList.length; i+=1) {
                         CKEDITOR.replace(`${i}-value`);
                         $(`#${i}-value`).val(editParameterState.dataList[i].value);

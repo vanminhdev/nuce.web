@@ -10,25 +10,28 @@
     }
 </style>
 
-<div class="main-content-wrp mt-0">
-    <div class="row">
-        <div class="col-12">
-            <a class="update-btn text-light p-2 mb-3"
-               style="text-decoration: none; display: inline-block"
-               href="/newsmanagement/index?role=@TempData.Peek("role")">← Quay lại danh mục</a>
-        </div>
-        <div class="col-12 text-right">
-            <a id="create-news-item" href="" class="btn btn-primary" role="button">
-                Đăng bài
-            </a>
-        </div>
-        <div class="col-12">
-            <table id="news-items-list-datatable" 
-                    data-page-length='25' class="table th-border-none">
-            </table>
+<div class="container">
+    <div class="main-content-wrp mt-0">
+        <div class="row">
+            <div class="col-12">
+                <a class="update-btn text-light p-2 mb-3"
+                   style="text-decoration: none; display: inline-block"
+                   href="/frontendmanager">← Quay lại danh mục</a>
+            </div>
+            <div class="col-12 text-right">
+                <a id="create-news-item" href="" class="btn btn-primary" role="button">
+                    Đăng bài
+                </a>
+            </div>
+            <div class="col-12">
+                <table id="news-items-list-datatable"
+                       data-page-length='25' class="table th-border-none">
+                </table>
+            </div>
         </div>
     </div>
 </div>
+
 
 @section Scripts {
     <link href="~/content/css/bootstrap-datepicker3.min.css" rel="stylesheet" />

@@ -25,5 +25,15 @@ namespace nuce.web.quanly.Models
         public string value { get; set; }
         public int status { get; set; }
     }
+    /// <summary>
+    /// Model tạo danh mục
+    /// </summary>
+    public class CreateCategoryModel
+    {
+        public string name { get; set; }
+        public string role { get; set; }
+        public int parent { get; set; }
+        public bool? divideAfter { get; set; }
+    }
 
 }
