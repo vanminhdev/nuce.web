@@ -386,7 +386,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 template = 25,
                 subject = "Xác thực hoàn thành bài khảo sát",
                 email_identifier = "emails",
-                datetime = DateTime.Now.ToString("dd-MM-yyyy h:mm tt"),
+                datetime = DateTime.Now.ToString("dd-MM-yyyy hh:mm"),
                 send_later_email = 0,
                 timezone = 7
             });

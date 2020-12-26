@@ -911,6 +911,7 @@
     <Content Include="Content\images\xml.gif" />
     <Content Include="Content\images\yellow-warning.gif" />
     <Content Include="Content\images\yellow-warning_16px.gif" />
+    <Content Include="Content\img\banner-certificate.png" />
     <Content Include="Content\img\banner.jpg" />
     <Content Include="Content\img\footer-background.png" />
     <Content Include="Content\img\survey-student.jpg" />

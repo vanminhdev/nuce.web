@@ -50,6 +50,11 @@
         s0.parentNode.insertBefore(s1,s0);
         })();
     </script>
+    <style>
+        .dropdown {
+            transition: all 0.5s;
+        }
+    </style>
     @RenderSection("Style", required: false)
 </head>
 <body id="page-top">
@@ -176,7 +181,7 @@
     <section id="content-main" class="container" style="min-height: 600px;">
         @RenderBody()
     </section>
-
+    @* Scroll Top *@
     <div id="scroll-top-container" style="display: none">
         <a id="scroll-top" class="scroll-top d-flex justify-content-center align-items-center m-text-decoration-none"
            href="#page-top">
@@ -196,7 +201,7 @@
             </div>
         </div>
     </footer>
-
+    @*Toast*@
     <div>
         <div id="toast-success" class="toast" style="position: fixed; top: 20px; right: 30px; width: 400px; z-index:99999999999;">
             <div class="toast-header bg-success">
@@ -234,7 +239,7 @@
             </div>
         </div>
     </div>
-
+    @* Loading screen *@
     <div id="loading-screen" class="popup-fullscreen">
         <div class="d-flex justify-content-center align-items-center">
             <div class="loading-circle"></div>
