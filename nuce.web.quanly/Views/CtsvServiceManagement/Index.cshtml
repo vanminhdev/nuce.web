@@ -213,7 +213,7 @@
             </a>
         </div>
         <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer"
-            title="Đăng ký nhà ở KTX Pháp Vân - Tứ Hiệp">
+             title="Đăng ký nhà ở KTX Pháp Vân - Tứ Hiệp">
             <a href="/ctsvservicemanagement/detail?id=7"
                class="row justify-content-center">
                 <img src="~/content/images/services/KTX.jpg"
@@ -251,6 +251,51 @@
                             Đã xử lý xong:
                             <span class="main-color">
                                 @(Model[7].daXuLy)
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer"
+             title="Giấy giới thiệu">
+            <a href="/ctsvservicemanagement/detail?id=2"
+               class="row justify-content-center">
+                <img src="~/content/images/services/service2.png"
+                     alt="service"
+                     class="service-avatar col-10" />
+                <div class="col-10 mt-2 text-center text-uppercase main-color fw-600 font-14-sm font-18-md font-18 title-service overflow-text">
+                    Giấy giới thiệu
+                </div>
+                <div class="col-12">
+                    <hr class="w-100 line mt-2 mb-2" />
+                </div>
+                <div class="col-10 text-decoration-none">
+                    <div class="row">
+                        <div class="col-6 pl-0">
+                            Tổng số:
+                            <span class="main-color">
+                                @(Model[2].tongSo)
+                            </span>
+                        </div>
+                        <div class="col-6 text-left p-0">
+                            Mới gửi:
+                            <span class="main-color">
+                                @(Model[2].moiGui)
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 pl-0">
+                            Đang xử lý:
+                            <span class="main-color">
+                                @(Model[2].dangXuLy)
+                            </span>
+                        </div>
+                        <div class="col-6 text-left p-0">
+                            Đã xử lý xong:
+                            <span class="main-color">
+                                @(Model[2].daXuLy)
                             </span>
                         </div>
                     </div>

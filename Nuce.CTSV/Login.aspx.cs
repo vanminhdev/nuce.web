@@ -290,11 +290,14 @@ namespace Nuce.CTSV
                             Response.Cookies.Set(tmpCookie);
                         }
                     }
+                    else if (res.StatusCode == HttpStatusCode.BadGateway)
+                    {
+                        showThongBao(@"Chức năng đăng nhập qua mã số sinh viên tạm thời đang nâng cấp. 
+                                Vui lòng đăng nhập qua email bằng cách nhấp chuột vào nút 'Đăng nhập qua email @nuce.edu.vn'");
+                        return;
+                    }
                     else
                     {
-                        //string errorTemplate = @"<div class='alert alert-warning alert-dismissible' style='position: absolute; top: 0; right: 0;'>
-                        //                        <a href = '#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
-                        //                {0}</div>";
                         try
                         {
                             var error = await CustomizeHttp.DeserializeAsync<ResponseBody>(res.Content);

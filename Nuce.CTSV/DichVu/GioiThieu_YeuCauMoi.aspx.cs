@@ -60,9 +60,9 @@ namespace Nuce.CTSV
             }
 
             string strRandom = nuce.web.tienich.email.RandomString(6, false);
-            var body = new ApiModels.AddDichVuModel()
+            var body = new AddDichVuModel()
             {
-                type = (int)ApiModels.DichVu.GioiThieu,
+                type = (int)DichVu.GioiThieu,
                 donVi = strDonVi.Trim(),
                 denGap = strDenGap.Trim(),
                 veViec = strVeViec.Trim(),

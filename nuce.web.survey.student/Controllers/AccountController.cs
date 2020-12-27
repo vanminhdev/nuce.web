@@ -79,9 +79,15 @@ namespace nuce.web.survey.student.Controllers
                 case HttpStatusCode.NotFound:
                     ViewData["LoginMessage"] = "Tài khoản không tồn tại";
                     break;
-                case HttpStatusCode.InternalServerError:
+                case HttpStatusCode.BadGateway:
                     var jsonString = await response.Content.ReadAsStringAsync();
                     var message = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
+                    ViewData["LoginMessage"] = "Hiện tại không thể kết nối đến Đào tạo";
+                    ViewData["LoginFailed"] = jsonString;
+                    break;
+                case HttpStatusCode.InternalServerError:
+                    jsonString = await response.Content.ReadAsStringAsync();
+                    message = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
                     ViewData["LoginMessage"] = message.message;
                     ViewData["LoginFailed"] = jsonString;
                     break;
@@ -152,9 +158,15 @@ namespace nuce.web.survey.student.Controllers
                 case HttpStatusCode.NotFound:
                     ViewData["LoginMessage"] = "Tài khoản không tồn tại";
                     break;
-                case HttpStatusCode.InternalServerError:
+                case HttpStatusCode.BadGateway:
                     var jsonString = await response.Content.ReadAsStringAsync();
                     var message = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
+                    ViewData["LoginMessage"] = "Hiện tại không thể kết nối đến Đào tạo";
+                    ViewData["LoginFailed"] = jsonString;
+                    break;
+                case HttpStatusCode.InternalServerError:
+                    jsonString = await response.Content.ReadAsStringAsync();
+                    message = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
                     ViewData["LoginMessage"] = message.message;
                     ViewData["LoginFailed"] = jsonString;
                     break;
