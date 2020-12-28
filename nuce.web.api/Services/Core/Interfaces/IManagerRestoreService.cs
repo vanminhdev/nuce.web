@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.Core.Interfaces
 {
-    public interface IManagerBackupService
+    public interface IManagerRestoreService
     {
         public Task<PaginationModel<ManagerBackup>> HistoryBackup(ManagerBackupFilter filter, int skip = 0, int take = 20);
 
         public Task BackupSurveyDataBase();
 
-        public Task RestoreSurveyDataBase();
+        public Task RestoreSurveyDataBase(Guid idBackup);
     }
 }

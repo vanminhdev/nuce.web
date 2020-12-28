@@ -307,13 +307,13 @@
                     mRender: function (data, type, row) {
                         let html = '';
                         if (data.status === @((int)TheSurveyStatus.New)) {
-                            html += `<button class="btn btn btn-outline-success ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
+                            html += `<button class="btn btn btn-outline-success btn-sm ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
                         }
                         else if (data.status === @((int)TheSurveyStatus.Deactive)) {
-                            html += `<button class="btn btn btn-outline-info ml-1 mr-1" onclick="detailClick('${data.id}')">Xem</button>`;
+                            html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" onclick="detailClick('${data.id}')">Xem</button>`;
                         }
                         else if (data.status === @((int)TheSurveyStatus.Deactive)) {
-                            html += `<button class="btn btn btn-outline-danger ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
+                            html += `<button class="btn btn btn-outline-danger btn-sm ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
                         }
                         return html;
                     }

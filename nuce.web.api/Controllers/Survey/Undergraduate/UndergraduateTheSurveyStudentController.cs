@@ -39,6 +39,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             _asEduSurveyUndergraduateBaiKhaoSatSinhVienService = asEduSurveyUndergraduateBaiKhaoSatSinhVienService;
         }
 
+        
         [HttpGet]
         [Authorize(Roles = "UndergraduateStudent")]
         public async Task<IActionResult> GetTheSurvey()
@@ -74,6 +75,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             }
         }
 
+        #region làm bài ks
         [HttpGet]
         [Authorize(Roles = "UndergraduateStudent")]
         public async Task<IActionResult> GetSelectedAnswerAutoSave([Required] Guid? theSurveyId)
@@ -151,6 +153,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             }
             return Ok();
         }
+        #endregion
 
         #region generate bài ks sv
         [HttpGet]

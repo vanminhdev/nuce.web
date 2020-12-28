@@ -17,24 +17,10 @@ namespace nuce.web.api.Common
 
     public class RoleNames
     {
+        public static string FakeStudent = "FakeStudent";
         public static string UndergraduateStudent = "UndergraduateStudent";
         public static string GraduateStudent = "GraduateStudent";
         public static string Student = "Student";
-    }
-
-    /// <summary>
-    /// Loại thao tác
-    /// </summary>
-    public enum BackupType
-    {
-        /// <summary>
-        /// Lưu trữ
-        /// </summary>
-        Backup = 1,
-        /// <summary>
-        /// Khôi phục
-        /// </summary>
-        Restore = 2
     }
 
     /// <summary>
@@ -167,6 +153,9 @@ namespace nuce.web.api.Common
     /// </summary>
     public class TableNameTask
     {
+        public static readonly string AsAcademyStudentClassRoom = "AS_Academy_Student_ClassRoom";
+        public static readonly string AsAcademyStudent = "AS_Academy_Student";
+        public static readonly string AsAcademyCStudentClassRoom = "AS_Academy_C_Student_ClassRoom";
         public static readonly string AsEduSurveyBaiKhaoSatSinhVien = "AS_Edu_Survey_BaiKhaoSat_SinhVien";
         public static readonly string AsEduSurveyReportTotal = "AS_Edu_Survey_ReportTotal";
         public static readonly string AsEduSurveyUndergraduateReportTotal = "AS_Edu_Survey_Undergraduate_ReportTotal";
@@ -187,5 +176,6 @@ namespace nuce.web.api.Common
     public class ContentTypes
     {
         public static readonly string Xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        public static readonly string Xls = "application/vnd.ms-excel";
     }
 }

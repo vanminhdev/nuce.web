@@ -19,7 +19,7 @@ namespace nuce.web.api.Services.Survey.Interfaces
         public Task Update(Guid id, SurveyRoundUpdate surveyRound);
 
         public Task Delete(Guid id);
-
+        public Task Open(Guid id);
         public Task Close(Guid id);
 
         public Task<List<AsEduSurveyDotKhaoSat>> GetSurveyRoundActive();

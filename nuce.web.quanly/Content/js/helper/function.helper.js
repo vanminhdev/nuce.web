@@ -5,6 +5,18 @@
     return dd + '/' + mm + '/' + yyyy;
 }
 
+function dateTimeString(today) {
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var yyyy = today.getFullYear();
+
+    var hh = today.getHours();
+    var mm = today.getMinutes();
+    var ss = today.getSeconds();
+    return `${dd}/${mm}/${yyyy} ${hh}:${mm}:${ss}`;
+}
+
+
 //2020-01-01T00:00:00 -> dd/MM/yyyy
 function getDateString(date) {
     return dateString(new Date(date));
@@ -16,6 +28,14 @@ function getDateStringFromServerType(date) {
     }
     let regex = /(\d+)/g;
     return dateString(new Date(+date.match(regex)[0]));
+}
+
+function getDateTimeStringFromServerType(date) {
+    if (date == null || date === "") {
+        return '';
+    }
+    let regex = /(\d+)/g;
+    return dateTimeString(new Date(+date.match(regex)[0]));
 }
 
 function getDateyyyyMMdd(date) {

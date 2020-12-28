@@ -414,6 +414,13 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        public async Task<ActionResult> OpenSurveyRound(string id)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/SurveyRound/OpenSurveyRound?id={id}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
         public async Task<ActionResult> CloseSurveyRound(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/SurveyRound/CloseSurveyRound?id={id}");

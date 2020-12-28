@@ -62,6 +62,13 @@ namespace nuce.web.quanly.Controllers
             );
         }
 
+        [HttpPost]
+        public async Task<ActionResult> SyncLastStudentClassRoom()
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/SyncEduData/SyncLastStudentClassRoom");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
         public async Task<ActionResult> TruncateTable(string action)
         {
             string tableName = "";
@@ -130,7 +137,9 @@ namespace nuce.web.quanly.Controllers
                 }
             );
         }
+        #endregion
 
+        #region xem dữ liệu
         [HttpPost]
         public async Task<ActionResult> GetAllFaculties()
         {
@@ -233,17 +242,5 @@ namespace nuce.web.quanly.Controllers
             return await GetDataTabeFromApi<AsAcademyCStudentClassRoom>(request, "/api/SyncEduData/GetCurrentStudentClassRoom");
         }
         #endregion
-
-        [HttpGet]
-        public ActionResult Backup()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> BackupHistory(DataTableRequest request)
-        {
-            return await GetDataTabeFromApi<HistoryBackup>(request, "/api/ManagerBackup/GetHistoryBackup");
-        }
     }
 }

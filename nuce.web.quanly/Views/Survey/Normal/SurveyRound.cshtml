@@ -7,6 +7,7 @@
 @section Style {
     <link rel="stylesheet" href="~/content/css/dataTables.bootstrap4.min.css" />
     <link rel="stylesheet" href="~/content/css/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="~/content/css/bootstrap-datetimepicker.min.css" />
 }
 
 <div class="container">
@@ -111,40 +112,18 @@
     </div>
 </div>
 
-<div class="modal fade" id="modal-yes-no-close" tabindex="-1" role="dialog" aria-labelledby="modal-yes-no-close" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modal-yes-no-title">Xác nhận kết thúc</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                Kết thúc đợt khảo sát ?
-            </div>
-            <input id="close-id" name="id" hidden />
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
-                <button id="choose-yes-close" type="button" class="btn btn-primary">Có</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="modal fade" id="modal-yes-no" tabindex="-1" role="dialog" aria-labelledby="modal-yes-no" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modal-yes-no-title">Xác nhận xoá</h5>
+                <h5 class="modal-title" id="modal-yes-no-title"></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body" id="modal-yes-no-content">
-                Xoá đợt khảo sát ?
+                ?
             </div>
-            <input id="delete-id" name="id" hidden />
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
                 <button id="choose-yes" type="button" class="btn btn-primary">Có</button>
@@ -155,6 +134,7 @@
 
 @section Scripts {
     <script src="~/Content/js/bootstrap-select.min.js"></script>
+    <script src="~/Content/js/bootstrap-datetimepicker.min.js"></script>
     <script src="~/content/js/jquery.dataTables.min.js"></script>
     <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/content/js/dataTables.config.js"></script>
@@ -208,8 +188,12 @@
                     name: "status",
                     mRender: function (data, type, row) {
                         if (data.status === 1) {
-                            return '<span class="badge badge-pill badge-success">Hoạt động</span>';
+                            return '<span class="badge badge-pill badge-primary">Mới</span>';
                         } else if (data.status === 2) {
+                            return '<span class="badge badge-pill badge-secondary">Đóng</span>';
+                        } else if (data.status === 3) {
+                            return '<span class="badge badge-pill badge-success">Mở</span>';
+                        } else if (data.status === 5) {
                             return '<span class="badge badge-pill badge-secondary">Kết thúc</span>';
                         } else {
                             return data.status;
@@ -221,11 +205,19 @@
                     mRender: function (data, type, row) {
                         let html = '';
                         if (data.status === 1) {
-                            html += `<button class="btn btn btn-outline-success ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
-                            html += `<button class="btn btn btn-outline-warning ml-1 mr-1" onclick="closeClick('${data.id}')">Kết thúc</button>`;
+                            html += `<button class="btn btn btn-outline-success btn-sm ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
+                            html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="openClick('${data.id}')">Mở</button>`;
+                            html += `<button class="btn btn btn-outline-danger btn-sm ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
                         }
-                        if (data.status === 2) {
-                            html += `<button class="btn btn btn-outline-danger ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
+                        else if (data.status === 2) {
+                            html += `<button class="btn btn btn-outline-success btn-sm ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
+                            html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="openClick('${data.id}')">Mở</button>`;
+                        }
+                        else if (data.status === 3) {
+                            html += `<button class="btn btn btn-outline-warning btn-sm ml-1 mr-1" onclick="closeClick('${data.id}')">Đóng</button>`;
+                        }
+                        else if (data.status === 5) {
+                            html += `<button class="btn btn btn-outline-danger btn-sm ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
                         }
                         return html;
                     }
@@ -318,61 +310,106 @@
         }
 
         function closeClick(id) {
-            $('#modal-yes-no-close').modal('show');
-            $('#close-id').val(id);
+            $('#modal-yes-no-title').html('Xác nhận đóng');
+            $('#modal-yes-no-content').html('Đóng đợt khảo sát ?');
+            $('#modal-yes-no').modal('show');
+            $('#choose-yes').off();
+            $('#choose-yes').click(function () {
+                $.ajax({
+                    data: { id },
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/CloseSurveyRound',
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        toastSuccess('Đóng thành công');
+                        table.ajax.reload();
+                        $('#modal-yes-no').modal('hide');
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
         }
 
-        $('#choose-yes-close').click(function () {
-            $('#loading-screen').show();
-            $.ajax({
-                data: { id: $('#close-id').val() },
-                dataType: 'json',
-                method: 'Post',
-                url: '/Survey/CloseSurveyRound',
-                complete: () => { }
-            }).done(function (res) {
-                $('#loading-screen').hide();
-                if (res.statusCode === 200) {
-                    table.ajax.reload();
-                    $('#modal-yes-no-close').modal('hide');
-                }
-                else {
-                    console.log(res);
-                }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                $('#loading-screen').hide();
-                console.log(textStatus + ': ' + errorThrown);
-                console.log(jqXHR);
+        function openClick(id) {
+            $('#modal-yes-no-title').html('Xác nhận mở');
+            $('#modal-yes-no-content').html('Mở đợt khảo sát ?');
+            $('#modal-yes-no').modal('show');
+            $('#choose-yes').off();
+            $('#choose-yes').click(function () {
+                $.ajax({
+                    data: { id },
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/OpenSurveyRound',
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        toastSuccess('Mở thành công');
+                        table.ajax.reload();
+                        $('#modal-yes-no').modal('hide');
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
             });
-        });
+        }
 
         function deleteClick(id) {
+            $('#modal-yes-no-title').html('Xác nhận xoá');
+            $('#modal-yes-no-content').html('Xoá đợt khảo sát ?');
             $('#modal-yes-no').modal('show');
-            $('#delete-id').val(id);
-        }
-
-        $('#choose-yes').click(function () {
-            $.ajax({
-                data: { id: $('#delete-id').val() },
-                dataType: 'json',
-                method: 'Post',
-                url: '/Survey/DeleteSurveyRound',
-                complete: () => { }
-            }).done(function (res) {
-                if (res.statusCode === 200) {
-                    toastSuccess('Xoá thành công');
-                    table.ajax.reload();
-                    $('#modal-yes-no').modal('hide');
-                }
-                else {
-                    toastError('Có lỗi xảy ra');
-                    console.log(res);
-                }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.log(textStatus + ': ' + errorThrown);
-                console.log(jqXHR);
+            $('#choose-yes').off();
+            $('#choose-yes').click(function () {
+                $.ajax({
+                    data: { id },
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/DeleteSurveyRound',
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        toastSuccess('Xoá thành công');
+                        table.ajax.reload();
+                        $('#modal-yes-no').modal('hide');
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
             });
-        });
+        }
 
     </script>
 }

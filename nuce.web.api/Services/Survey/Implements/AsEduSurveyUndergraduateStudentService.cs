@@ -30,27 +30,28 @@ namespace nuce.web.api.Services.Survey.Implements
         public async Task<PaginationModel<UndergraduateStudent>> GetAll(UndergraduateStudentFilter filter, int skip = 0, int take = 20)
         {
             _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            var query = _context.AsEduSurveyUndergraduateStudent
-                .Join(_context.AsEduSurveyUndergraduateSurveyRound, o => o.DotKhaoSatId, o => o.Id, (sv, dotks) => new { sv, dotks });
-            var recordsTotal = query.Count();
+            IQueryable<AsEduSurveyUndergraduateStudent> dssv = _context.AsEduSurveyUndergraduateStudent;
+                
+            var recordsTotal = dssv.Count();
 
             if (!string.IsNullOrWhiteSpace(filter.Masv))
             {
-                query = query.Where(o => o.sv.Masv.Contains(filter.Masv));
+                dssv = dssv.Where(o => o.Masv.Contains(filter.Masv));
             }
 
             if (filter.DotKhaoSatId != null)
             {
-                query = query.Where(o => o.sv.DotKhaoSatId == filter.DotKhaoSatId);
+                dssv = dssv.Where(o => o.DotKhaoSatId == filter.DotKhaoSatId);
             }
 
-            var recordsFiltered = query.Count();
+            var recordsFiltered = dssv.Count();
 
-            var querySkip = query
-                .OrderBy(u => u.sv.Id)
+            var querySkip = dssv
                 .Skip(skip).Take(take);
 
-            var leftJoin = querySkip.GroupJoin(_context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien, o => o.sv.ExMasv, o => o.StudentCode, (svdotks, baikssv) => new { svdotks, baikssv })
+            var svdotks = querySkip.Join(_context.AsEduSurveyUndergraduateSurveyRound, o => o.DotKhaoSatId, o => o.Id, (sv, dotks) => new { sv, dotks });
+
+            var leftJoin = svdotks.GroupJoin(_context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien, o => o.sv.ExMasv, o => o.StudentCode, (svdotks, baikssv) => new { svdotks, baikssv })
                 .SelectMany(o => o.baikssv.DefaultIfEmpty(), (r, baikssv) => new { r.svdotks.sv, r.svdotks.dotks, baikssv });
 
             var data = await leftJoin

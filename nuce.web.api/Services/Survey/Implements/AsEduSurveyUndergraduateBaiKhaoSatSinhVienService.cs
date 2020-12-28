@@ -6,6 +6,7 @@ using nuce.web.api.HandleException;
 using nuce.web.api.Models.Status;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Models.Survey.JsonData;
+using nuce.web.api.Services.Shared;
 using nuce.web.api.Services.Survey.Base;
 using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Survey;
@@ -26,12 +27,15 @@ namespace nuce.web.api.Services.Survey.Implements
         private readonly SurveyContext _context;
         private readonly StatusContext _statusContext;
         private readonly IConfiguration _configuration;
+        private readonly FakerService _fakerService;
 
-        public AsEduSurveyUndergraduateBaiKhaoSatSinhVienService(SurveyContext context, StatusContext statusContext, IConfiguration configuration)
+        public AsEduSurveyUndergraduateBaiKhaoSatSinhVienService(SurveyContext context, StatusContext statusContext, IConfiguration configuration, FakerService fakerService)
         {
             _context = context;
             _statusContext = statusContext;
             _configuration = configuration;
+            _fakerService = fakerService;
+            _fakerService.NoTrackingIfFakeStudent(_context);
         }
 
         private async Task<bool> IsOpenSurveyRound(string studentCode)
@@ -68,7 +72,7 @@ namespace nuce.web.api.Services.Survey.Implements
             var baiKSsv = baiKSSinhViens.FirstOrDefault(o => o.BaiKhaoSatId == theSurveyId);
             if (baiKSsv == null)
             {
-                throw new RecordNotFoundException("Sinh viên không có bài khảo sát này hoặc bài khảo sát đã kết thúc");
+                throw new RecordNotFoundException("Sinh viên không có bài khảo sát này hoặc bài khảo sát đã hoàn thành");
             }
 
             if (baiKSsv.Status != (int)SurveyStudentStatus.Doing)
@@ -287,17 +291,8 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException("Không tìm thấy bài khảo sát");
             }
 
-            var examQuestions = await _context.AsEduSurveyDeThi.FirstOrDefaultAsync(o => o.Id == theSurvey.DeThiId);
-            if (examQuestions == null)
-            {
-                throw new RecordNotFoundException("Không tìm thấy nội dung bài khảo sát");
-            }
-
-            var questions = JsonSerializer.Deserialize<List<QuestionJson>>(examQuestions.NoiDungDeThi);
-            var answerSave = JsonSerializer.Deserialize<List<SelectedAnswer>>(surveyStudent.BaiLam);
-
-            var test = questions.Where(o => o.Type == QuestionType.SC || o.Type == QuestionType.MC).ToList();
-            string[] star = new string[]{ "1", "2", "3", "4", "5" };
+            var questions = JsonSerializer.Deserialize<List<QuestionJson>>(theSurvey.NoiDungDeThi);
+            //var answerSave = JsonSerializer.Deserialize<List<SelectedAnswer>>(surveyStudent.BaiLam);
 
             //bỏ qua một số câu hỏi không visible
 

@@ -221,11 +221,11 @@
                     mRender: function (data, type, row) {
                         let html = '';
                         if (data.status === 1) {
-                            html += `<button class="btn btn btn-outline-success ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
-                            html += `<button class="btn btn btn-outline-warning ml-1 mr-1" onclick="closeClick('${data.id}')">Kết thúc</button>`;
+                            html += `<button class="btn btn btn-outline-success btn-sm ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
+                            html += `<button class="btn btn btn-outline-warning btn-sm ml-1 mr-1" onclick="closeClick('${data.id}')">Kết thúc</button>`;
                         }
                         if (data.status === 2) {
-                            html += `<button class="btn btn btn-outline-danger ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
+                            html += `<button class="btn btn btn-outline-danger btn-sm ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
                         }
                         return html;
                     }

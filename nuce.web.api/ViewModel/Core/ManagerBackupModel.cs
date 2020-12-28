@@ -8,7 +8,5 @@ namespace nuce.web.api.ViewModel.Core
     public class ManagerBackupFilter
     {
         public string DatabaseName { get; set; }
-
-        public int? Type { get; set; }
     }
 }

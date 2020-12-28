@@ -1589,7 +1589,7 @@ namespace nuce.web.api.Services.EduData.Implements
         {
             _eduDataContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             IQueryable<AsAcademyStudent> query = _eduDataContext.AsAcademyStudent;
-            var recordsTotal = query.Count();
+            var recordsTotal = await query.CountAsync();
 
             if (!string.IsNullOrWhiteSpace(filter.Code))
             {
@@ -1604,7 +1604,7 @@ namespace nuce.web.api.Services.EduData.Implements
                 query = query.Where(u => u.ClassCode.Contains(filter.ClassCode));
             }
 
-            var recordsFiltered = query.Count();
+            var recordsFiltered = await query.CountAsync();
 
             var querySkip = query
                 .OrderBy(u => u.Id)

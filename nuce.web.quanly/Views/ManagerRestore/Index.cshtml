@@ -1,0 +1,201 @@
+﻿
+@{
+    ViewData["Title"] = "Sao lưu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Style {
+    <link rel="stylesheet" href="~/content/css/dataTables.bootstrap4.min.css" />
+    <link rel="stylesheet" href="~/content/css/bootstrap-select.min.css" />
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-row">
+                <div id="input-search" class="col-8 col-md mb-2">
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            @*<input class="form-control form-control" id="masv-search" type="text" placeholder="Tìm theo mã sinh viên" />*@
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 col-md-2 mb-2 d-flex align-items-start justify-content-center">
+                    <div class="d-flex">
+                        @*<div class="clear-input d-flex align-items-center mx-2" clear-input="#input-search" title="Nhập lại">
+                            <i class="fas fa-redo"></i>
+                        </div>
+                        <button id="btn-search" class="btn btn-secondary">Tìm kiếm</button>*@
+                    </div>
+                </div>
+                <div class="col-12 col-md mb-2 d-flex align-items-start justify-content-md-end justify-content-center">
+                    <div class="d-flex">
+                        <button class="btn btn-primary" id="btn-backup">Sao lưu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table id="datatable-backup" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center">Tên database</th>
+                        <th class="text-center">Ngày thực hiện</th>
+                        <th class="text-center"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-yes-no" tabindex="-1" role="dialog" aria-labelledby="modal-yes-no" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-yes-no-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-yes-no-content">
+                ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
+                <button id="choose-yes" type="button" class="btn btn-primary">Có</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/content/js/jquery.dataTables.min.js"></script>
+    <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/content/js/dataTables.config.js"></script>
+    <script src="~/content/js/bootstrap-select.min.js"></script>
+    <script>
+        $('#select-type').selectpicker();
+        let tableBackup = $('#datatable-backup').DataTable({
+            processing: true,
+            serverSide: true,
+            ordering: false,
+            lengthChange: false,
+            stateSave: false,
+            pageLength: 15,
+            language: dataTableConfig.language,
+            columnDefs: [
+                {
+                    targets: [0, 1, 2],
+                    className: 'text-center'
+                }
+            ],
+            ajax: {
+                url: '/ManagerRestore/BackupHistory',
+                dataType: 'json',
+                contentType: 'application/json',
+                type: "Post",
+                data: function (d) {
+                    return JSON.stringify(d);
+                },
+                complete: () => { }
+            },
+            columns: [
+                {
+                    data: "databaseName"
+                },
+                {
+                    data: null,
+                    render: function (data) {
+                        return getDateTimeStringFromServerType(data.date);
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data) {
+                        return `<button class="btn btn-outline-primary" title='Khôi phục lại sao lưu này' onclick="restoreDatabase('${data.id}')">Khôi phục</button>`;
+                    }
+                }
+            ]
+        });
+        $(`#datatable-backup_filter`).hide();
+        $("#btn-search").click(() => {
+            $('#datatable-backup').DataTable()
+                .column(0).search($("#database-name").val())
+                .draw();
+        });
+
+        $('#btn-backup').click(() => {
+            $('#modal-yes-no-title').html('Xác nhận');
+            $('#modal-yes-no-content').html('Xác nhận sao lưu cơ sở dữ liệu ?');
+            $('#modal-yes-no').modal('show');
+            $('#choose-yes').off("click");
+            $('#choose-yes').click(() => {
+                $('#loading-screen').show();
+                $.ajax({
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/ManagerRestore/BackupDatabaseSurvey',
+                    complete: () => { }
+                }).done(function (res) {
+                    $('#modal-yes-no').modal('hide');
+                    if (res.statusCode === 200) {
+                        $('#loading-screen').hide();
+                        toastSuccess('Sao lưu thành công');
+                        tableBackup.ajax.reload();
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    $('#modal-yes-no').modal('hide');
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+        });
+
+        function restoreDatabase(id) {
+            $('#modal-yes-no-title').html('Xác nhận');
+            $('#modal-yes-no-content').html('Xác nhận khôi phục cơ sở dữ liệu ? <br/> Mọi dữ liệu sẽ quay về trạng thái như phiên bản sao lưu này.');
+            $('#modal-yes-no').modal('show');
+            $('#choose-yes').off("click");
+            $('#choose-yes').click(() => {
+                $('#loading-screen').show();
+                $.ajax({
+                    data: { id },
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/ManagerRestore/RestoreDatabaseSurvey',
+                    complete: () => { }
+                }).done(function (res) {
+                    $('#modal-yes-no').modal('hide');
+                    $('#loading-screen').hide();
+                    if (res.statusCode === 200) {
+                        toastSuccess('Khôi phục thành công');
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    $('#modal-yes-no').modal('hide');
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+        }
+    </script>
+}

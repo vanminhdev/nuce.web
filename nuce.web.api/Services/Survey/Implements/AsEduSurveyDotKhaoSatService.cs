@@ -89,9 +89,9 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException();
             }
 
-            if (surveyRoundUpdate.Status != (int)SurveyRoundStatus.New)
+            if (surveyRoundUpdate.Status == (int)SurveyRoundStatus.Opened)
             {
-                throw new InvalidDataException("Đợt khảo sát không còn hoạt động, không thể sửa");
+                throw new InvalidDataException("Đợt khảo sát đang mở cửa, không thể sửa");
             }
 
             surveyRoundUpdate.Name = surveyRound.Name.Trim();
@@ -105,18 +105,46 @@ namespace nuce.web.api.Services.Survey.Implements
 
         public async Task Delete(Guid id)
         {
-            var surveyRoundUpdate = await _context.AsEduSurveyDotKhaoSat.FirstOrDefaultAsync(o => o.Id == id && o.Status != (int)SurveyRoundStatus.Deleted);
-            if (surveyRoundUpdate == null)
+            var surveyRound = await _context.AsEduSurveyDotKhaoSat.FirstOrDefaultAsync(o => o.Id == id && o.Status != (int)SurveyRoundStatus.Deleted);
+            if (surveyRound == null)
+            {
+                throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
+            }
+
+            if (surveyRound.Status == (int)SurveyRoundStatus.Opened)
+            {
+                throw new InvalidDataException("Đợt khảo sát đang mở cửa");
+            }
+
+            if (surveyRound.Status == (int)SurveyRoundStatus.Closed)
+            {
+                throw new InvalidDataException("Đợt khảo sát chưa kết thúc không thể xoá");
+            }
+
+            surveyRound.Status = (int)SurveyRoundStatus.Deleted;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task Open(Guid id)
+        {
+            var surveyRound = await _context.AsEduSurveyDotKhaoSat.FirstOrDefaultAsync(o => o.Id == id && o.Status != (int)SurveyRoundStatus.Deleted);
+            if (surveyRound == null)
             {
                 throw new RecordNotFoundException();
             }
 
-            if (surveyRoundUpdate.Status == (int)SurveyRoundStatus.New)
+            var lstOld = await _context.AsEduSurveyDotKhaoSat.Where(o => o.Status == (int)SurveyRoundStatus.Closed).Where(o => o.Id != surveyRound.Id).ToListAsync();
+            foreach (var item in lstOld)
             {
-                throw new InvalidDataException("Đợt khảo sát còn hoạt động không thể xoá");
+                item.Status = (int)SurveyRoundStatus.End;
             }
 
-            surveyRoundUpdate.Status = (int)SurveyRoundStatus.Deleted;
+            if (surveyRound.Status != (int)SurveyRoundStatus.Closed && surveyRound.Status != (int)SurveyRoundStatus.New)
+            {
+                throw new InvalidDataException("Đợt khảo sát không ở trạng thái đóng cửa hoặc mới tạo");
+            }
+
+            surveyRound.Status = (int)SurveyRoundStatus.Opened;
             await _context.SaveChangesAsync();
         }
 
@@ -128,20 +156,16 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException();
             }
             surveyRound.Status = (int)SurveyRoundStatus.Closed;
-            //kết thúc tất cả bài khảo sát là con của đợt này
-            var baiKhaoSats = await _context.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == surveyRound.Id).ToListAsync();
-            foreach (var item in baiKhaoSats)
-            {
-                item.Status = (int)TheSurveyStatus.Deactive;
-                //kết thúc tất cả bài khảo sát sinh viên là con của đợt khảo sát này
-                await _context.Database.ExecuteSqlRawAsync($"update AS_Edu_Survey_BaiKhaoSat_SinhVien set Status = {(int)SurveyStudentStatus.Close} where BaiKhaoSatID = '{item.Id}'");
-            }
             await _context.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Đợt khảo sát mở cửa, đóng cửa, vừa thêm
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<AsEduSurveyDotKhaoSat>> GetSurveyRoundActive()
         {
-            var surveyRounds = await _context.AsEduSurveyDotKhaoSat.Where(o => o.Status == (int)SurveyRoundStatus.New).ToListAsync();
+            var surveyRounds = await _context.AsEduSurveyDotKhaoSat.Where(o => o.Status == (int)SurveyRoundStatus.New || o.Status == (int)SurveyRoundStatus.Closed || o.Status == (int)SurveyRoundStatus.Opened).ToListAsync();
             return surveyRounds;
         }
 

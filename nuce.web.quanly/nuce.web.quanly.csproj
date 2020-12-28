@@ -140,6 +140,7 @@
     <Compile Include="Attributes\ValidationAttributes\NotOnlyContainWhiteSpaceAttribute.cs" />
     <Compile Include="Attributes\ValidationAttributes\OnlyNumberAttribute.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\RestoreController.cs" />
     <Compile Include="Controllers\CtsvServiceManagementController.cs" />
     <Compile Include="Controllers\FrontendManagerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -185,6 +186,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\css\bootstrap-datepicker3.min.css" />
+    <Content Include="Content\css\bootstrap-datetimepicker.min.css" />
     <Content Include="Content\css\bootstrap-select.min.css" />
     <Content Include="Content\css\bootstrap.min.css" />
     <Content Include="Content\css\dataTables.bootstrap4.min.css" />
@@ -919,6 +921,7 @@
     <Content Include="Content\images\yellow-warning_16px.gif" />
     <Content Include="Content\js\bootstrap-datepicker.min.js" />
     <Content Include="Content\js\bootstrap-datepicker.vi.min.js" />
+    <Content Include="Content\js\bootstrap-datetimepicker.min.js" />
     <Content Include="Content\js\bootstrap-select.min.js" />
     <Content Include="Content\js\bootstrap.min.js" />
     <Content Include="Content\js\ckeditor\adapters\jquery.js" />
@@ -1214,6 +1217,8 @@
     <Content Include="Content\js\jstree\themes\default\style.min.css" />
     <Content Include="Content\js\jstree\themes\default\throbber.gif" />
     <Content Include="Content\js\main.js" />
+    <Content Include="Content\js\moment-with-locales.min.js" />
+    <Content Include="Content\js\moment.min.js" />
     <Content Include="Content\js\popper.min.js" />
     <Content Include="Content\js\tiny_mce\langs\en.js" />
     <Content Include="Content\js\tiny_mce\license.txt" />
@@ -1472,13 +1477,13 @@
     <Content Include="Content\js\tiny_mce\utils\form_utils.js" />
     <Content Include="Content\js\tiny_mce\utils\mctabs.js" />
     <Content Include="Content\js\tiny_mce\utils\validate.js" />
-    <Content Include="favicon.ico" />
-    <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="favicon.ico" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Global.asax" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Account\Index.cshtml" />
     <Content Include="Views\Shared\_LayoutEmpty.cshtml" />
-    <Content Include="Content\css\bootstrap-select.css.map" />
     <Content Include="Content\js\bootstrap-select.min.js.map" />
     <Content Include="Views\UserManager\Index.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
@@ -1500,6 +1505,11 @@
     <Content Include="Content\js\ckeditor\samples\toolbarconfigurator\font\fontello.woff" />
     <Content Include="Content\js\ckeditor\samples\toolbarconfigurator\lib\codemirror\LICENSE" />
     <Content Include="Content\js\ckeditor\skins\moono-lisa\readme.md" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\css\bootstrap-select.css.map" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\nuce.web.quanly.pubxml" />
     <None Include="Properties\PublishProfiles\server test.pubxml" />
@@ -1540,7 +1550,6 @@
     <Content Include="Views\Survey\CreateExamQuestions.cshtml" />
     <Content Include="Views\SyncEduData\Index.cshtml" />
     <Content Include="Views\CtsvServiceManagement\Parameters.cshtml" />
-    <Content Include="Views\SyncEduData\Backup.cshtml" />
     <Content Include="Views\Survey\Statistic.cshtml" />
     <Content Include="Views\Survey\Graduate\GraduateSurveyRound.cshtml" />
     <Content Include="Views\Survey\Graduate\GraduateStudent.cshtml" />
@@ -1556,6 +1565,7 @@
     <Content Include="Views\NewsManagement\ItemsUpdate.cshtml" />
     <Content Include="Views\FrontendManager\Index.cshtml" />
     <Content Include="Views\FrontendManager\Edit.cshtml" />
+    <Content Include="Views\ManagerRestore\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

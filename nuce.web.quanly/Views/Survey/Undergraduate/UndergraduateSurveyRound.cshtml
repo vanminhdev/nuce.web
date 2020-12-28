@@ -176,9 +176,9 @@
                         if (data.status === 1) {
                             return '<span class="badge badge-pill badge-primary">Mới</span>';
                         } else if (data.status === 2) {
-                            return '<span class="badge badge-pill badge-secondary">Đóng cửa</span>';
+                            return '<span class="badge badge-pill badge-secondary">Đóng</span>';
                         } else if (data.status === 3) {
-                            return '<span class="badge badge-pill badge-success">Mở cửa</span>';
+                            return '<span class="badge badge-pill badge-success">Mở</span>';
                         } else if (data.status === 5) {
                             return '<span class="badge badge-pill badge-secondary">Kết thúc</span>';
                         } else {
@@ -191,19 +191,19 @@
                     mRender: function (data, type, row) {
                         let html = '';
                         if (data.status === 1) {
-                            html += `<button class="btn btn btn-outline-success ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
-                            html += `<button class="btn btn btn-outline-primary ml-1 mr-1" onclick="openClick('${data.id}')">Mở cửa</button>`;
-                            html += `<button class="btn btn btn-outline-danger ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
+                            html += `<button class="btn btn btn-outline-success btn-sm ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
+                            html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="openClick('${data.id}')">Mở</button>`;
+                            html += `<button class="btn btn btn-outline-danger btn-sm ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
                         }
                         else if (data.status === 2) {
-                            html += `<button class="btn btn btn-outline-success ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
-                            html += `<button class="btn btn btn-outline-primary ml-1 mr-1" onclick="openClick('${data.id}')">Mở cửa</button>`;
+                            html += `<button class="btn btn btn-outline-success btn-sm ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
+                            html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="openClick('${data.id}')">Mở</button>`;
                         }
                         else if (data.status === 3) {
-                            html += `<button class="btn btn btn-outline-warning ml-1 mr-1" onclick="closeClick('${data.id}')">Đóng cửa</button>`;
+                            html += `<button class="btn btn btn-outline-warning btn-sm ml-1 mr-1" onclick="closeClick('${data.id}')">Đóng</button>`;
                         }
                         else if (data.status === 5) {
-                            html += `<button class="btn btn btn-outline-danger ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
+                            html += `<button class="btn btn btn-outline-danger btn-sm ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
                         }
                         return html;
                     }
@@ -290,7 +290,7 @@
 
         function closeClick(id) {
             $('#modal-yes-no-title').html('Xác nhận đóng');
-            $('#modal-yes-no-content').html('Đóng cửa đợt khảo sát ?');
+            $('#modal-yes-no-content').html('Đóng đợt khảo sát ?');
             $('#modal-yes-no').modal('show');
             $('#choose-yes').off();
             $('#choose-yes').click(function () {
@@ -302,7 +302,7 @@
                     complete: () => { }
                 }).done(function (res) {
                     if (res.statusCode === 200) {
-                        toastSuccess('Đóng cửa thành công');
+                        toastSuccess('Đóng thành công');
                         table.ajax.reload();
                         $('#modal-yes-no').modal('hide');
                     }
@@ -324,7 +324,7 @@
 
         function openClick(id) {
             $('#modal-yes-no-title').html('Xác nhận mở');
-            $('#modal-yes-no-content').html('Mở cửa đợt khảo sát ?');
+            $('#modal-yes-no-content').html('Mở đợt khảo sát ?');
             $('#modal-yes-no').modal('show');
             $('#choose-yes').off();
             $('#choose-yes').click(function () {
@@ -336,7 +336,7 @@
                     complete: () => { }
                 }).done(function (res) {
                     if (res.statusCode === 200) {
-                        toastSuccess('Mở cửa thành công');
+                        toastSuccess('Mở thành công');
                         table.ajax.reload();
                         $('#modal-yes-no').modal('hide');
                     }

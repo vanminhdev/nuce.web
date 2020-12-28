@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.api.HandleException;
 using nuce.web.api.Models.EduData;
+using nuce.web.api.Services.EduData.BackgroundTasks;
 using nuce.web.api.Services.EduData.Interfaces;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.EduData;
@@ -24,11 +25,13 @@ namespace nuce.web.api.Controllers.EduData
     {
         private readonly ILogger<SyncEduDataController> _logger;
         private readonly ISyncEduDatabaseService _syncEduDatabaseService;
+        private readonly SyncEduDataBackgroundTask _syncEduDataBackgroundTask;
 
-        public SyncEduDataController(ILogger<SyncEduDataController> logger, ISyncEduDatabaseService syncEduDatabaseService)
+        public SyncEduDataController(ILogger<SyncEduDataController> logger, ISyncEduDatabaseService syncEduDatabaseService, SyncEduDataBackgroundTask syncEduDataBackgroundTask)
         {
             _logger = logger;
             _syncEduDatabaseService = syncEduDatabaseService;
+            _syncEduDataBackgroundTask = syncEduDataBackgroundTask;
         }
 
         #region đồng bộ cơ bản
@@ -406,13 +409,12 @@ namespace nuce.web.api.Controllers.EduData
         {
             try
             {
-                var message = await _syncEduDatabaseService.SyncLastStudentClassRoom();
-                return Ok(new { message });
+                await _syncEduDataBackgroundTask.SyncLastStudentClassroom();
+                return Ok();
             }
-            catch (DbUpdateException e)
+            catch (TableBusyException e)
             {
-                _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể cập nhật dữ liệu đồng bộ lớp môn học sinh viên kỳ trước" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
             catch (CallEduWebServiceException e)
             {

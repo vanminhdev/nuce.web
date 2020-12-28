@@ -136,7 +136,11 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException();
             }
 
-            _context.Database.ExecuteSqlRaw($"update As_Edu_Survey_Undergraduate_SurveyRound set status = {(int)SurveyRoundStatus.End} where status = {(int)SurveyRoundStatus.Closed}");
+            var lstOld = await _context.AsEduSurveyUndergraduateSurveyRound.Where(o => o.Status == (int)SurveyRoundStatus.Closed).Where(o => o.Id != surveyRound.Id).ToListAsync();
+            foreach (var item in lstOld)
+            {
+                item.Status = (int)SurveyRoundStatus.End;
+            }
 
             if (surveyRound.Status != (int)SurveyRoundStatus.Closed && surveyRound.Status != (int)SurveyRoundStatus.New)
             {

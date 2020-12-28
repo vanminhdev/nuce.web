@@ -190,6 +190,36 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpPut]
+        public async Task<IActionResult> OpenSurveyRound([Required(AllowEmptyStrings = false)] Guid? id)
+        {
+            try
+            {
+                await _asEduSurveyDotKhaoSatService.Open(id.Value);
+            }
+            catch (RecordNotFoundException)
+            {
+                return NotFound(new { message = "Không tìm thấy đợt khảo sát" });
+            }
+            catch (InvalidDataException e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không mở cửa được đợt khảo sát", detailMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không mở cửa được đợt khảo sát", detailMessage = mainMessage });
+            }
+            return Ok();
+        }
+
+
+        [HttpPut]
         public async Task<IActionResult> CloseSurveyRound([Required(AllowEmptyStrings = false)] Guid? id)
         {
             try

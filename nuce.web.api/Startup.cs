@@ -39,6 +39,8 @@ using System.Net;
 using nuce.web.api.Middlewares;
 using nuce.web.api.Services.Background;
 using nuce.web.api.Services.Survey.BackgroundTasks;
+using nuce.web.api.Services.Shared;
+using nuce.web.api.Services.EduData.BackgroundTasks;
 
 namespace nuce.web.api
 {
@@ -197,7 +199,7 @@ namespace nuce.web.api
             #region core service
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ILogService, LogService>();
-            services.AddScoped<IManagerBackupService, ManagerBackUpService>();
+            services.AddScoped<IManagerRestoreService, ManagerRestoreService>();
             services.AddScoped<INewsManagerService, NewsManagerService>();
             services.AddScoped<IClientParameterService, ClientParameterService>();
             #endregion
@@ -226,6 +228,8 @@ namespace nuce.web.api
             #endregion
             #region sync edu database service
             services.AddScoped<ISyncEduDatabaseService, SyncEduDatabaseService>();
+
+            services.AddScoped<SyncEduDataBackgroundTask>();
             #endregion
             #region ctsv service
             services.AddScoped<IXacNhanRepository, XacNhanRepository>();
@@ -257,6 +261,8 @@ namespace nuce.web.api
             services.AddHostedService<QueuedHostedService>();
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
             #endregion
+
+            services.AddScoped<FakerService, FakerService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -218,7 +218,7 @@
                                                 <a class="dropdown-item m-bg-hover-blue text-truncate" href="/syncedudata/index">Dữ liệu khảo sát hoạt động giáo dục</a>
                                                 <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/undergraduatestudent">Dữ liệu khảo sát trước tốt nghiệp</a>
                                                 <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/graduatestudent">Dữ liệu khảo sát việc làm</a>
-                                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="/syncedudata/backup">Sao lưu dữ liệu</a>
+                                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="/managerrestore">Sao lưu dữ liệu</a>
                                             </div>
                                         </li>
                                     }
@@ -241,8 +241,8 @@
                                             <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/graduatesurveyround">Đợt khảo sát cựu sinh viên</a>
                                             <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/graduatethesurvey">Bài khảo sát cựu sinh viên</a>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/undergraduatesurveyround">Đợt khảo sát sv sắp tốt nghiệp</a>
-                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/undergraduatethesurvey">Bài khảo sát sv sắp tốt nghiệp</a>
+                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/undergraduatesurveyround">Đợt khảo sát sv trước tốt nghiệp</a>
+                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/undergraduatethesurvey">Bài khảo sát sv trước tốt nghiệp</a>
                                         </div>
                                     </li>
                                 }
@@ -416,6 +416,7 @@
     <script src="~/content/js/jquery.validate.min.js"></script>
     <script src="~/content/js/popper.min.js"></script>
     <script src="~/content/js/bootstrap.min.js"></script>
+    <script src="~/content/js/moment.min.js"></script>
     <script src="~/Content/js/common/config.js"></script>
     <script>
         $('#web-mobile').html(COMMON_CONFIG.getDomainConfig().mobile);
@@ -428,7 +429,7 @@
                 withCredentials: true
             },
             complete: () => {
-                document.getElementById("render-body").scrollIntoView();
+                //document.getElementById("render-body").scrollIntoView();
             },
             crossDomain: true
         });

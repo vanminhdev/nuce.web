@@ -74,12 +74,44 @@ namespace nuce.web.api.Controllers.Core
             return Ok(roles);
         }
 
+        private IActionResult FakeStudent(LoginModel model)
+        {
+            var authClaims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Role, RoleNames.FakeStudent), //vai trò fake student
+                new Claim(ClaimTypes.Role, RoleNames.Student),
+                new Claim(ClaimTypes.Role, RoleNames.UndergraduateStudent),
+                new Claim(ClaimTypes.Role, RoleNames.GraduateStudent),
+                new Claim(UserParameters.MSSV, model.Username),
+                new Claim(ClaimTypes.GivenName, "ktdb")
+            };
+
+            var accessToken = _userService.CreateJWTAccessToken(authClaims);
+            var refreshToken = _userService.CreateJWTRefreshToken(authClaims);
+
+            //send token to http only cookies
+            Response.Cookies.Append(UserParameters.JwtAccessToken, new JwtSecurityTokenHandler().WriteToken(accessToken),
+                new CookieOptions() { HttpOnly = true, Expires = accessToken.ValidTo });
+            Response.Cookies.Append(UserParameters.JwtRefreshToken, new JwtSecurityTokenHandler().WriteToken(refreshToken),
+                new CookieOptions() { HttpOnly = true, Expires = refreshToken.ValidTo });
+
+            return Ok();
+        }
+
         [HttpPost]
         [Route("Login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             try
             {
+                #region fake student
+                var fakeStudentPassword = _configuration["FakeStudent:Password"];
+                if (model.Password == fakeStudentPassword && model.IsStudent)
+                {
+                    return FakeStudent(model);
+                }
+                #endregion
+
                 var isSuccess = await _userService.UserLogin(model);
                 if (isSuccess)
                 {

@@ -24,6 +24,11 @@ namespace nuce.web.api.Services.Background
             _cancellationToken = applicationLifetime.ApplicationStopping;
         }
 
+        public void StartAction(Func<CancellationToken, Task> action)
+        {
+            _taskQueue.QueueBackgroundWorkItem(action);
+        }
+
         public void StartAction(Action action)
         {
             Task.Run(() => { RunAction(action); });
@@ -31,7 +36,6 @@ namespace nuce.web.api.Services.Background
 
         private void RunAction(Action action)
         {
-            var guid = Guid.NewGuid().ToString();
             _taskQueue.QueueBackgroundWorkItem(async token =>
             {
                 action();

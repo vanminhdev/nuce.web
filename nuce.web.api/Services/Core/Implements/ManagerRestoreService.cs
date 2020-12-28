@@ -14,11 +14,11 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.Core.Implements
 {
-    public class ManagerBackUpService : IManagerBackupService
+    public class ManagerRestoreService : IManagerRestoreService
     {
         private readonly NuceCoreIdentityContext _coreContext;
         private readonly IConfiguration _configuration;
-        public ManagerBackUpService(NuceCoreIdentityContext coreContext, IConfiguration configuration)
+        public ManagerRestoreService(NuceCoreIdentityContext coreContext, IConfiguration configuration)
         {
             _coreContext = coreContext;
             _configuration = configuration;
@@ -26,7 +26,7 @@ namespace nuce.web.api.Services.Core.Implements
 
         public async Task BackupSurveyDataBase()
         {
-            var desDirectory = _configuration.GetValue<string>("FolderDataBaseBackUp");
+            var desDirectory = _configuration.GetValue<string>("FolderDataBaseBackup");
             if(!Directory.Exists(desDirectory))
             {
                 Directory.CreateDirectory(desDirectory);
@@ -38,7 +38,6 @@ namespace nuce.web.api.Services.Core.Implements
             {
                 Id = Guid.NewGuid(),
                 DatabaseName = "NUCE_SURVEY",
-                Type = (int)BackupType.Backup,
                 Date = DateTime.Now,
                 Path = path
             });
@@ -55,15 +54,11 @@ namespace nuce.web.api.Services.Core.Implements
             {
                 query = query.Where(u => u.DatabaseName.Contains(filter.DatabaseName));
             }
-            if (filter.Type != null)
-            {
-                query = query.Where(u => u.Type == filter.Type);
-            }
 
             var recordsFiltered = query.Count();
 
             var querySkip = query
-                .OrderBy(u => u.Id)
+                .OrderByDescending(u => u.Date)
                 .Skip(skip).Take(take);
 
             var data = await querySkip.ToListAsync();
@@ -76,30 +71,22 @@ namespace nuce.web.api.Services.Core.Implements
             };
         }
 
-        public async Task RestoreSurveyDataBase()
+        public async Task RestoreSurveyDataBase(Guid idBackup)
         {
-            var query = _coreContext.ManagerBackup.Where(b => b.Type == (int)BackupType.Backup);
-            if (query.Count() == 0)
+            var historyBackup = await _coreContext.ManagerBackup.FirstOrDefaultAsync(o => o.Id == idBackup);
+            if (historyBackup == null)
             {
-                throw new RecordNotFoundException("Không có file backup database khảo thí");
+                throw new RecordNotFoundException("Không tìm thấy lịch sử sao lưu");
             }
-            var maxDate = await query.MaxAsync(b => b.Date);
-            var backupFile = await _coreContext.ManagerBackup.FirstOrDefaultAsync(b => b.Date == maxDate);
-            var path = backupFile.Path;
+
+            var path = historyBackup.Path;
 
             if(!File.Exists(path))
             {
-                throw new FileNotFoundException("Không tìm thấy file backup mới nhất database khảo thí");
+                throw new FileNotFoundException("File sao lưu không còn tồn tại");
             }
+
             await _coreContext.Database.ExecuteSqlRawAsync($"RESTORE DATABASE NUCE_SURVEY FROM DISK = '{path}'");
-            _coreContext.ManagerBackup.Add(new ManagerBackup
-            {
-                Id = Guid.NewGuid(),
-                DatabaseName = "NUCE_SURVEY",
-                Type = (int)BackupType.Restore,
-                Date = DateTime.Now,
-                Path = path
-            });
         }
     }
 }

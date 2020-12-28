@@ -11,6 +11,7 @@ using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Core;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,13 +21,13 @@ namespace nuce.web.api.Controllers.Core
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize(Roles = "Admin")]
-    public class ManagerBackupController : ControllerBase
+    public class ManagerRestoreController : ControllerBase
     {
-        private readonly IManagerBackupService _managerBackupService;
-        private readonly ILogger<ManagerBackupController> _logger;
+        private readonly IManagerRestoreService _managerBackupService;
+        private readonly ILogger<ManagerRestoreController> _logger;
         private readonly ILogService _logService;
 
-        public ManagerBackupController(ILogger<ManagerBackupController> logger, ILogService logService, IManagerBackupService managerBackupService)
+        public ManagerRestoreController(ILogger<ManagerRestoreController> logger, ILogService logService, IManagerRestoreService managerBackupService)
         {
             _logger = logger;
             _logService = logService;
@@ -40,9 +41,6 @@ namespace nuce.web.api.Controllers.Core
             if (request.Columns != null)
             {
                 filter.DatabaseName = request.Columns.FirstOrDefault(c => c.Data == "databaseName" || c.Name == "databaseName")?.Search.Value ?? null;
-                var typeStr = request.Columns.FirstOrDefault(c => c.Data == "type" || c.Name == "type");
-                if(typeStr != null && typeStr.Search.Value != null)
-                    filter.Type = int.Parse(typeStr.Search.Value);
             }
             var skip = request.Start;
             var take = request.Length;
@@ -86,11 +84,11 @@ namespace nuce.web.api.Controllers.Core
         }
 
         [HttpPut]
-        public async Task<IActionResult> RestoreDatabaseSurvey()
+        public async Task<IActionResult> RestoreDatabaseSurvey([Required] Guid? id)
         {
             try
             {
-                await _managerBackupService.RestoreSurveyDataBase();
+                await _managerBackupService.RestoreSurveyDataBase(id.Value);
                 await _logService.WriteLog(new ActivityLogModel
                 {
                     Username = HttpContext.User.Identity.Name,
