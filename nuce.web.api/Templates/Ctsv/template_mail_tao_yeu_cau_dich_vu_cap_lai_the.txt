@@ -1,0 +1,16 @@
+<div style="color:black;">
+    <div style="padding:5px;">Xin chào [ho_ten]</div>
+    <div style="padding:5px;">
+        Hệ thống Quản lý thông tin sinh viên xác nhận bạn đã gửi thành công yêu cầu "[ten_dich_vu]". Yêu cầu được tạo lúc [ngay_tao].
+    </div>
+    <div style="padding:5px;">Nhà trường sẽ sớm xử lý và gửi thông tin phản hồi cho bạn qua email.</div>
+    <div style="padding:5px;">Sinh viên sẽ đến nhận thẻ tại phòng 302 nhà A1.</div>
+    <div style="padding:5px;">Nếu sinh viên có nhu cầu lấy giấy xác nhận để đi thi hoặc giải quyết nhu cầu cá nhân thì trực tiếp lên Phòng Công tác Chính trị và Quản lý Sinh viên tại phòng 302, nhà A1.</div>
+    <div style="padding:5px;">Trân trọng.</div>
+    <div style="padding:5px;">---------------------------</div>
+    <div style="padding:5px;">Phòng Công tác Chính trị và Quản lý Sinh viên Trường Đại học Xây dựng</div>
+    <div style="padding:5px;">Phòng 302 - 303 Tòa nhà A1 Trường đại học Xây Dựng, 55 Giải Phóng - Hai Bà Trưng - Hà Nội</div>
+    <div style="padding:5px;"></div>
+    <div style="padding:5px;">TEL: 02438697004</div>
+    <div style="padding:5px;">Email: ctsv@nuce.edu.vn</div>
+</div>

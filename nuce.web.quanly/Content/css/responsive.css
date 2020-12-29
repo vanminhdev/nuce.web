@@ -102,28 +102,25 @@
 }
 
 @media only screen and (min-width: 576px) {
-  .user-avatar {
-    height: 166px;
-    width: 166px;
-    left: 60px;
-  }
+    .user-avatar {
+        height: 166px;
+        width: 166px;
+        left: 60px;
+    }
 
-  .user-wrp {
-    margin-left: 230px;
-  }
+    .service-avatar {
+        height: 198px;
+        width: 290px;
+    }
 
-  .display-mobile {
-    display: none;
-  }
-
-  .service-avatar {
-    height: 198px;
-    width: 290px;
-  }
+    .display-mobile {
+        display: none;
+    }
 }
 
 
 @media screen and (min-width: 576px) and (max-width: 1024px) {
+
   .hotline-icon {
     height: 32px;
     width: 32px;
@@ -187,147 +184,152 @@
 }
 
 @media screen and (min-width: 767px) and (max-width: 1024px) {
-  .font-20-smd {
+    .font-20-smd {
     font-size: 20px;
-  }
+    }
 
-  .upload-white-icon {
+    .upload-white-icon {
     margin-right: 2px;
-  }
+    }
+}
 
+@media screen and (min-width: 767px) {
+    .user-wrp {
+        margin-left: 230px;
+    }
 }
 
 
 @media only screen and (max-width: 576px) {
 
-  html,
-  body {
-    font-size: 12px;
-  }
+    html,
+    body {
+        font-size: 12px;
+    }
 
-  .display-lg {
-    display: none;
-  }
+    .display-lg {
+        display: none;
+    }
 
-  .menu-wrp {
-    padding-left: 14px;
-    padding-right: 14px;
-  }
+    .menu-wrp {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
 
-  .upload-white-icon {
-    margin-right: 4px;
-  }
+    .upload-white-icon {
+        margin-right: 4px;
+    }
 
-  .service-categories-wrp {
-    padding-left: 14px;
-    padding-right: 14px;
-    margin-top: 50px;
-  }
+    .service-categories-wrp {
+        padding-left: 14px;
+        padding-right: 14px;
+        margin-top: 50px;
+    }
 
-  .menu-line {
-    margin-top: 20px;
-    margin-bottom: 30px;
-  }
+    .menu-line {
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
 
-  .service-banner {
-    background: url("../images/service-background-mobile.png") rgba(0, 0, 0, 0.45);
-    background-size: cover;
-  }
+    .service-banner {
+        background: url("../images/service-background-mobile.png") rgba(0, 0, 0, 0.45);
+        background-size: cover;
+    }
 
-  .news-banner {
-    background: url("../images/news-background-mobile.png") rgba(0, 0, 0, 0.45);
-    background-size: cover;
-  }
+    .news-banner {
+        background: url("../images/news-background-mobile.png") rgba(0, 0, 0, 0.45);
+        background-size: cover;
+    }
 
-  .profile-banner {
-    background: url("../images/profile-background-mobile.png") rgba(0, 0, 0, 0.45);
-    background-size: cover;
-  }
+    .profile-banner {
+        background: url("../images/profile-background-mobile.png") rgba(0, 0, 0, 0.45);
+        background-size: cover;
+    }
 
-  .update-profile-banner {
-    background: url("../images/update_profile-background-mobile.png") rgba(0, 0, 0, 0.45);
-    background-size: cover;
-  }
+    .update-profile-banner {
+        background: url("../images/update_profile-background-mobile.png") rgba(0, 0, 0, 0.45);
+        background-size: cover;
+    }
 
-  .manage-info-banner {
-    background: url("../images/service-background-mobile.png") rgba(0, 0, 0, 0.45);
-    background-size: cover;
-  }
+    .manage-info-banner {
+        background: url("../images/service-background-mobile.png") rgba(0, 0, 0, 0.45);
+        background-size: cover;
+    }
 
-  .main-content-wrp {
-    margin-top: 40px;
-  }
+    .main-content-wrp {
+        margin-top: 40px;
+    }
 
-  .new-item-wrp {
-    margin-bottom: 46px;
-  }
+    .new-item-wrp {
+        margin-bottom: 46px;
+    }
 
-  .user-avatar {
-    top: 120px;
-  }
+    .user-avatar {
+        top: 120px;
+    }
 
-  .search-icon {
-    height: 27px;
-    width: 27px;
-  }
+    .search-icon {
+        height: 27px;
+        width: 27px;
+    }
 
-  .status-badge {
-    padding: 7px 10px;
-  }
+    .status-badge {
+        padding: 7px 10px;
+    }
 
-  .search-bar-wrp .input-group-prepend,
-  .input-group-text {
-    zoom: 0.9;
-  }
+    .search-bar-wrp .input-group-prepend,
+    .input-group-text {
+        zoom: 0.9;
+    }
 
-  .service-title {
-    margin-bottom: 20px;
-  }
+    .service-title {
+        margin-bottom: 20px;
+    }
 
-  .upload-white-icon {
-    width: 19px;
-    height: 17px;
-  }
+    .upload-white-icon {
+        width: 19px;
+        height: 17px;
+    }
 
-  .font-9-sm {
-    font-size: 9px;
-  }
+    .font-9-sm {
+        font-size: 9px;
+    }
 
-  .font-10-sm {
-    font-size: 10px;
-  }
+    .font-10-sm {
+        font-size: 10px;
+    }
 
-  .font-13-sm {
-    font-size: 13px;
-  }
+    .font-13-sm {
+        font-size: 13px;
+    }
 
-  .font-14-sm {
-    font-size: 14px;
-  }
+    .font-14-sm {
+        font-size: 14px;
+    }
 
-  .font-15-sm {
-    font-size: 15px;
-  }
+    .font-15-sm {
+        font-size: 15px;
+    }
 
-  .font-16-sm {
-    font-size: 16px;
-  }
+    .font-16-sm {
+        font-size: 16px;
+    }
 
-  .font-18-sm {
-    font-size: 18px;
-  }
+    .font-18-sm {
+        font-size: 18px;
+    }
 
-  .font-20-sm {
-    font-size: 20px;
-  }
+    .font-20-sm {
+        font-size: 20px;
+    }
 
-  .font-22-sm {
-    font-size: 22px;
-  }
+    .font-22-sm {
+        font-size: 22px;
+    }
 
-  .logo {
-    zoom: 0.5;
-  }
+    .logo {
+        zoom: 0.5;
+    }
 }
 
 @media only screen and (max-width: 400px) {

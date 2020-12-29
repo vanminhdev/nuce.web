@@ -34,6 +34,8 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml;
 using OXRun = DocumentFormat.OpenXml.Wordprocessing.Run;
 using OXInline = DocumentFormat.OpenXml.Drawing.Wordprocessing.Inline;
+using System.Drawing;
+using nuce.web.api.Helper;
 
 namespace nuce.web.api.Services.Ctsv.Implements
 {
@@ -48,6 +50,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
         private readonly ILoaiDichVuRepository _loaiDichVuRepository;
         private readonly IStudentRepository _studentRepository;
         private readonly IVeXeBusRepository _veXeBusRepository;
+        private readonly ICapLaiTheRepository _capLaiTheRepository;
 
         private readonly IThamSoDichVuService _thamSoDichVuService;
         private readonly IUserService _userService;
@@ -55,6 +58,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
         private readonly IEmailService _emailService;
         private readonly ILogService _logService;
         private readonly IPathProvider _pathProvider;
+        private readonly IUploadFile _uploadFile;
         private readonly ILogger<DichVuService> _logger;
 
         public DichVuService(IXacNhanRepository _xacNhanRepository, IGioiThieuRepository _gioiThieuRepository,
@@ -63,11 +67,13 @@ namespace nuce.web.api.Services.Ctsv.Implements
             IUnitOfWork _unitOfWork, IEmailService _emailService, ILogService _logService,
             ILoaiDichVuRepository _loaiDichVuRepository, IStudentRepository _studentRepository,
             IThamSoDichVuService _thamSoDichVuService, IPathProvider _pathProvider,
-            ILogger<DichVuService> _logger, IVeXeBusRepository _veXeBusRepository
+            ILogger<DichVuService> _logger, IVeXeBusRepository _veXeBusRepository,
+            ICapLaiTheRepository _capLaiTheRepository, IUploadFile _uploadFile
         )
         {
             this._xacNhanRepository = _xacNhanRepository;
             this._gioiThieuRepository = _gioiThieuRepository;
+            this._capLaiTheRepository = _capLaiTheRepository;
             this._uuDaiRepository = _uuDaiRepository;
             this._vayVonRepository = _vayVonRepository;
             this._thueNhaRepository = _thueNhaRepository;
@@ -82,6 +88,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             this._emailService = _emailService;
             this._logService = _logService;
             this._logger = _logger;
+            this._uploadFile = _uploadFile;
         }
         #endregion
         /// <summary>
@@ -108,6 +115,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
             int requestStatus = (int)TrangThaiYeuCau.DaGuiLenNhaTruong;
 
             bool run = true;
+
+            string templateName = null;
 
             try
             {
@@ -165,6 +174,30 @@ namespace nuce.web.api.Services.Ctsv.Implements
                                 DeletedBy = -1
                             };
                             await _gioiThieuRepository.AddAsync(gioiThieu);
+                            break;
+                        case DichVu.CapLaiThe:
+                            if (_capLaiTheRepository.IsDuplicated(currentStudent.Id))
+                            {
+                                throw new DuplicateWaitObjectException();
+                            }
+                            AsAcademyStudentSvCapLaiTheSinhVien capLaiThe = new AsAcademyStudentSvCapLaiTheSinhVien
+                            {
+                                PhanHoi = model.PhanHoi,
+                                CreatedTime = now,
+                                DeletedTime = now,
+                                LastModifiedTime = now,
+                                Status = requestStatus,
+                                MaXacNhan = model.MaXacNhan,
+                                StudentId = studentID,
+                                StudentCode = currentStudent.Code,
+                                StudentName = currentStudent.FulName,
+                                Deleted = false,
+                                CreatedBy = studentID,
+                                LastModifiedBy = studentID,
+                                DeletedBy = -1
+                            };
+                            await _capLaiTheRepository.AddAsync(capLaiThe);
+                            templateName = "template_mail_tao_yeu_cau_dich_vu_cap_lai_the.txt";
                             break;
                         case DichVu.UuDaiGiaoDuc:
                             if (_uuDaiRepository.IsDuplicated(currentStudent.Id))
@@ -293,7 +326,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                             StudentID = studentID,
                             TinNhanCode = $"{dichVu.TinNhanCode}_THEM_MOI",
                             TinNhanTitle = dichVu.TieuDeTinNhan,
-                            TenDichVu = dichVu.TenDichVu
+                            TenDichVu = dichVu.TenDichVu,
+                            TemplateName = templateName,
                         };
                         var result = await _emailService.SendEmailNewServiceRequest(tinNhan);
                         if (result != null)
@@ -337,6 +371,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     return _xacNhanRepository.GetAll(studentId);
                 case DichVu.GioiThieu:
                     return _gioiThieuRepository.GetAll(studentId);
+                case DichVu.CapLaiThe:
+                    return _capLaiTheRepository.GetAll(studentId);
                 case DichVu.UuDaiGiaoDuc:
                     return _uuDaiRepository.GetAll(studentId);
                 case DichVu.VayVonNganHang:
@@ -350,7 +386,11 @@ namespace nuce.web.api.Services.Ctsv.Implements
             }
             return null;
         }
-
+        /// <summary>
+        /// lấy thông tin chi tiết yêu cầu dịch vụ
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public async Task<DataTableResponse<QuanLyDichVuDetailResponse>> GetRequestForAdmin(QuanLyDichVuDetailModel model)
         {
             var result = new List<QuanLyDichVuDetailResponse>();
@@ -382,6 +422,22 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     var gioiThieuList = gioiThieuGetAll.FinalData;
 
                     foreach (var yeuCau in gioiThieuList)
+                    {
+                        var student = studentList.FirstOrDefault(s => s.Code == yeuCau.StudentCode);
+                        var item = new QuanLyDichVuDetailResponse()
+                        {
+                            Student = student,
+                            DichVu = yeuCau
+                        };
+                        result.Add(item);
+                    }
+                    break;
+                case DichVu.CapLaiThe:
+                    var capLaiTheAll = await _capLaiTheRepository.GetAllForAdmin(model);
+
+                    var capLaiTheList = capLaiTheAll.FinalData;
+
+                    foreach (var yeuCau in capLaiTheList)
                     {
                         var student = studentList.FirstOrDefault(s => s.Code == yeuCau.StudentCode);
                         var item = new QuanLyDichVuDetailResponse()
@@ -484,6 +540,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 { (int)DichVu.XacNhan, _xacNhanRepository.GetRequestInfo() },
                 { (int)DichVu.GioiThieu, _gioiThieuRepository.GetRequestInfo() },
                 { (int)DichVu.ThueNha, _thueNhaRepository.GetRequestInfo() },
+                { (int)DichVu.CapLaiThe, _capLaiTheRepository.GetRequestInfo() },
                 { (int)DichVu.UuDaiGiaoDuc, _uuDaiRepository.GetRequestInfo() },
                 { (int)DichVu.VayVonNganHang, _vayVonRepository.GetRequestInfo() },
                 { (int)DichVu.VeBus, _veXeBusRepository.GetRequestInfo() }                
@@ -503,7 +560,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 if (quantityDictionary.ContainsKey(dichVu.Id))
                 {
                     var info = quantityDictionary[dichVu.Id];
-                    info.TenDichVu = dichVu.Description;
+                    info.TenDichVu = dichVu.Name;
                     info.LinkDichVu = dichVu.Param1;
 
                     SumDichVu.DaXuLy += info.DaXuLy;
@@ -727,6 +784,16 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
                     student = _studentRepository.FindByCode(gioiThieu.StudentCode);
                     break;
+                case DichVu.CapLaiThe:
+                    var capLaiThe = await _capLaiTheRepository.FindByIdAsync(model.RequestID);
+                    capLaiThe.Status = model.Status;
+                    capLaiThe.NgayHenTuNgay = model.NgayHenBatDau;
+                    capLaiThe.NgayHenDenNgay = model.NgayHenKetThuc;
+                    capLaiThe.PhanHoi = model.PhanHoi;
+                    ngayTao = capLaiThe.CreatedTime;
+
+                    student = _studentRepository.FindByCode(capLaiThe.StudentCode);
+                    break;
                 case DichVu.ThueNha:
                     var thueNha = await _thueNhaRepository.FindByIdAsync(model.RequestID);
                     thueNha.Status = model.Status;
@@ -881,6 +948,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     return await ExportExcelThueNha(dichVuList);
                 case DichVu.VeBus:
                     return await ExportExcelVeXeBus(dichVuList);
+                case DichVu.CapLaiThe:
+                    return await ExportExcelCapLaiThe(dichVuList);
                 default:
                     break;
             }
@@ -1524,6 +1593,93 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 return await FileToByteAsync(file);
             }
         }
+
+        private async Task<byte[]> ExportExcelCapLaiThe(List<DichVuExport> dichVuList)
+        {
+            List<long> ids = new List<long>();
+            foreach (var item in dichVuList)
+            {
+                ids.Add(item.ID);
+            }
+            var yeuCauList = (await _capLaiTheRepository.GetYeuCauDichVuStudent(ids)).ToList();
+
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                var style = XLWorkbook.DefaultStyle;
+                var ws = wb.Worksheets.Add("Sheet1");
+                ws.Style.Font.SetFontSize(12);
+                ws.Style.Font.SetFontName("Times New Roman");
+
+                int i = 0;
+                int firstRow = 1;
+                #region title
+                setStyle(ws, firstRow, ++i, "Mã số SV");
+                setStyle(ws, firstRow, ++i, "Họ và tên");
+                setStyle(ws, firstRow, ++i, "Ngày sinh");
+                setStyle(ws, firstRow, ++i, "Email");
+                setStyle(ws, firstRow, ++i, "Xã");
+                setStyle(ws, firstRow, ++i, "Huyện");
+                setStyle(ws, firstRow, ++i, "Tỉnh");
+                setStyle(ws, firstRow, ++i, "Lớp");
+                setStyle(ws, firstRow, ++i, "Niên khóa");
+                setStyle(ws, firstRow, ++i, "Khoa quản lý");
+                setStyle(ws, firstRow, ++i, "Số điện thoại");
+                setStyle(ws, firstRow, ++i, "Ngày ký");
+                setStyle(ws, firstRow, ++i, "Tháng ký");
+                setStyle(ws, firstRow, ++i, "Năm ký");
+
+                ws.Row(firstRow).Height = 32;
+
+                int colNum = i;
+
+                #endregion
+                #region value
+                int recordLen = yeuCauList.Count;
+                int col = 0;
+                for (int j = 0; j < recordLen; j++)
+                {
+                    var yeuCau = yeuCauList[j];
+                    DateTime ngaySinh = convertStudentDateOfBirth(yeuCau.Student.DateOfBirth);
+                    string studentCode = yeuCau.YeuCauDichVu.StudentCode ?? "";
+                    string studentName = yeuCau.YeuCauDichVu.StudentName ?? "";
+                    string email = yeuCau.Student.EmailNhaTruong ?? "";
+                    string phuong = yeuCau.Student.HkttPhuong ?? "";
+                    string quan = yeuCau.Student.HkttQuan ?? "";
+                    string tinh = yeuCau.Student.HkttTinh ?? "";
+                    string classCode = yeuCau.Student.ClassCode ?? "";
+                    string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
+                    string tenKhoa = yeuCau.Faculty?.Name ?? "";
+                    string mobile = yeuCau.Student.Mobile ?? "";
+
+                    DateTime now = DateTime.Now;
+                    int row = j + 2;
+
+                    col = 0;
+                    ws.Cell(row, ++col).SetValue(studentCode);
+                    ws.Cell(row, ++col).SetValue(studentName);
+                    ws.Cell(row, ++col).SetValue(ngaySinh.ToString("dd/MM/yyyy"));
+                    ws.Cell(row, ++col).SetValue(email);
+                    ws.Cell(row, ++col).SetValue(phuong);
+                    ws.Cell(row, ++col).SetValue(quan);
+                    ws.Cell(row, ++col).SetValue(tinh);
+                    ws.Cell(row, ++col).SetValue(classCode);
+                    ws.Cell(row, ++col).SetValue(nienKhoa);
+                    ws.Cell(row, ++col).SetValue(tenKhoa);
+                    ws.Cell(row, ++col).SetValue(mobile);
+                    ws.Cell(row, ++col).SetValue(now.Day);
+                    ws.Cell(row, ++col).SetValue(now.Month);
+                    ws.Cell(row, ++col).SetValue(now.Year);
+                }
+                for (int j = 0; j < col; j++)
+                {
+                    ws.Column(j + 1).AdjustToContents();
+                }
+                #endregion
+                string file = _pathProvider.MapPath($"Templates/Ctsv/cap_lai_the_{Guid.NewGuid().ToString()}.xlsx");
+                wb.SaveAs(file);
+                return await FileToByteAsync(file);
+            }
+        }
         #endregion
 
         #region Export Word (docx & zip)
@@ -1584,6 +1740,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     return await ExportWordXacNhan(id);
                 case DichVu.GioiThieu:
                     return await ExportWordGioiThieu(id);
+                case DichVu.CapLaiThe:
+                    return await ExportWordCapLaiThe(id);
                 case DichVu.UuDaiGiaoDuc:
                     return await ExportWordUuDai(id);
                 case DichVu.VayVonNganHang:
@@ -1763,7 +1921,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             var horizontalLine1 = new Shape(document, ShapeType.Line, GemBox.Document.Layout.Floating(
                  new HorizontalPosition(1, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
                 new VerticalPosition(3.5, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
-                new Size(125, 0)));
+                new GemBox.Document.Size(125, 0)));
             horizontalLine1.Outline.Width = 1;
             horizontalLine1.Outline.Fill.SetSolid(GemboxColor.Black);
             paragraph.Inlines.Add(horizontalLine1);
@@ -1771,7 +1929,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             var horizontalLine2 = new Shape(document, ShapeType.Line, GemBox.Document.Layout.Floating(
                 new HorizontalPosition(8.78, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
                new VerticalPosition(3.5, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
-               new Size(151, 0)));
+               new GemBox.Document.Size(151, 0)));
             horizontalLine2.Outline.Width = 1;
             horizontalLine2.Outline.Fill.SetSolid(GemboxColor.Black);
             paragraph.Inlines.Add(horizontalLine2);
@@ -2217,7 +2375,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             var horizontalLine1 = new Shape(document, ShapeType.Line, GemBox.Document.Layout.Floating(
                  new HorizontalPosition(5.2, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
                 new VerticalPosition(7.5, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
-                new Size(155, 0)));
+                new GemBox.Document.Size(155, 0)));
             horizontalLine1.Outline.Width = 1;
             horizontalLine1.Outline.Fill.SetSolid(GemboxColor.Black);
             paragraphTieuDe.Inlines.Add(horizontalLine1);
@@ -2756,7 +2914,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             var horizontalLine1 = new Shape(document, ShapeType.Line, GemBox.Document.Layout.Floating(
                  new HorizontalPosition(1.45, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
                 new VerticalPosition(3.5, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
-                new Size(80, 0)));
+                new GemBox.Document.Size(80, 0)));
             horizontalLine1.Outline.Width = 1;
             horizontalLine1.Outline.Fill.SetSolid(GemboxColor.Black);
             paragraph.Inlines.Add(horizontalLine1);
@@ -2764,7 +2922,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             var horizontalLine2 = new Shape(document, ShapeType.Line, GemBox.Document.Layout.Floating(
                 new HorizontalPosition(8.78, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
                new VerticalPosition(3.5, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
-               new Size(151, 0)));
+               new GemBox.Document.Size(151, 0)));
             horizontalLine2.Outline.Width = 1;
             horizontalLine2.Outline.Fill.SetSolid(GemboxColor.Black);
             paragraph.Inlines.Add(horizontalLine2);
@@ -3088,7 +3246,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             var horizontalLine1 = new Shape(document, ShapeType.Line, GemBox.Document.Layout.Floating(
                  new HorizontalPosition(5.2, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
                 new VerticalPosition(3.8, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
-                new Size(160, 0)));
+                new GemBox.Document.Size(160, 0)));
             horizontalLine1.Outline.Width = 1;
             horizontalLine1.Outline.Fill.SetSolid(GemboxColor.Black);
             paragraph.Inlines.Add(horizontalLine1);
@@ -3334,19 +3492,6 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         replaceTextTemplate(text, "<ten_nguoi_ky>", TenNguoiKy);
                     }
                     #endregion
-                    #region handle filled image in shape
-                    //if (!string.IsNullOrEmpty(newImgPath))
-                    //{
-                    //    var docList = mainPart.Document.Descendants<DocumentFormat.OpenXml.Drawing.Wordprocessing.DocProperties>().ToList();
-                    //    var tmp = docList.Where(p => p.Name.Value.Contains("SHAPE_FILL") && p.Parent is DocumentFormat.OpenXml.Drawing.Wordprocessing.Anchor);
-
-                    //    foreach (var el in tmp)
-                    //    {
-                    //        replaceShapeFilledImageTemplate(el, mainPart, newImgPath);
-                    //    }
-                    //}
-                    #endregion
-
                     mainPart.Document.Save();
                 }
                 await File.WriteAllBytesAsync(destination, templateStream.ToArray());
@@ -3416,6 +3561,112 @@ namespace nuce.web.api.Services.Ctsv.Implements
             }
             return new ExportFileOutputModel { document = null, filePath = destination };
         }
+
+        private async Task<ExportFileOutputModel> ExportWordCapLaiThe(int id)
+        {
+            var capLaiThe = await _capLaiTheRepository.FindByIdAsync(id);
+            if (capLaiThe == null)
+            {
+                throw new Exception("Yêu cầu không tồn tại");
+            }
+            var studentInfo = await _studentRepository.GetStudentDichVuInfoAsync(capLaiThe.StudentCode);
+            if (studentInfo == null)
+            {
+                throw new Exception("Sinh viên không tồn tại");
+            }
+
+            var paramSet = _thamSoDichVuService.GetParameters(DichVu.CapLaiThe)
+                                .ToDictionary(x => x.Name, x => x.Value);
+
+            string ChucDanhNguoiKy = paramSet.ContainsKey("ChucDanhNguoiKy") ? paramSet["ChucDanhNguoiKy"] : "";
+            string TenNguoiKy = paramSet.ContainsKey("TenNguoiKy") ? paramSet["TenNguoiKy"] : "";
+            string NoiNhanThe = paramSet.ContainsKey("NoiNhanThe") ? paramSet["NoiNhanThe"] : "";
+
+            string filePath = _pathProvider.MapPath($"Templates/Ctsv/cap_lai_the_sv.docx");
+            string destination = _pathProvider.MapPath($"Templates/Ctsv/cap-lai-the-sv-{DateTime.Now.ToFileTime()}.docx");
+
+            var now = DateTime.Now;
+
+            var ngayKy = now.ToString("dd");
+            var thangKy = now.Month.ToString();
+            var namKy = now.Year.ToString();
+            var ngaySinh = convertStudentDateOfBirth(studentInfo.Student.DateOfBirth);
+            
+            Image newImg = null;
+            try
+            {
+                string imgPath = $"ANHSV/{studentInfo.Student.Code}.jpg";
+                string fullImgPath = _pathProvider.MapPathStudentImage(imgPath);
+                var dataStream = await _uploadFile.DownloadFileAsync(fullImgPath);
+                // ảnh 4 * 6
+                int width = 1200;
+                int height = 1800;
+
+                Image img = Image.FromStream(dataStream);
+
+                Image resizedNewImg = _uploadFile.ResizeImage(img, width, 2000, false);
+                newImg = _uploadFile.CropImage(resizedNewImg, width, height);
+            }
+            catch (Exception)
+            {
+
+            }
+
+            byte[] templateBytes = await File.ReadAllBytesAsync(filePath);
+            using (MemoryStream templateStream = new MemoryStream())
+            {
+                templateStream.Write(templateBytes, 0, templateBytes.Length);
+                using (WordprocessingDocument doc = WordprocessingDocument.Open(templateStream, true))
+                {
+                    doc.ChangeDocumentType(WordprocessingDocumentType.Document);
+                    var mainPart = doc.MainDocumentPart;
+                    #region handle text
+                    var textList = mainPart.Document.Descendants<Text>().ToList();
+                    foreach (var text in textList)
+                    {
+                        replaceTextTemplate(text, "<ho_ten>", studentInfo.Student.FulName);
+                        replaceTextTemplate(text, "<mssv>", studentInfo.Student.Code);
+                        replaceTextTemplate(text, "<sdt>", studentInfo.Student.Mobile);
+                        replaceTextTemplate(text, "<email>", studentInfo.Student.EmailNhaTruong);
+                        replaceTextTemplate(text, "<ten_lop>", studentInfo.Student?.ClassCode);
+                        replaceTextTemplate(text, "<ten_khoa>", onlyTenKhoa(studentInfo.Faculty?.Name));
+                        replaceTextTemplate(text, "<nien_khoa>", studentInfo.AcademyClass?.SchoolYear);
+                        replaceTextTemplate(text, "<ngay_sinh>", ngaySinh.ToString("dd/MM/yyyy"));
+                        replaceTextTemplate(text, "<hktt_phuong>", onlyTenPhuong(studentInfo.Student.HkttPhuong));
+                        replaceTextTemplate(text, "<hktt_quan>", onlyTenQuan(studentInfo.Student.HkttQuan));
+                        replaceTextTemplate(text, "<hktt_tinh>", onlyTenTinh(studentInfo.Student.HkttTinh));
+                        replaceTextTemplate(text, "<ngay_ky>", ngayKy);
+                        replaceTextTemplate(text, "<thang_ky>", thangKy);
+                        replaceTextTemplate(text, "<nam_ky>", namKy);
+                        replaceTextTemplate(text, "<chuc_danh_nguoi_ky>", ChucDanhNguoiKy);
+                        replaceTextTemplate(text, "<ten_nguoi_ky>", TenNguoiKy);
+                        replaceTextTemplate(text, "<noi_nhan_the>", NoiNhanThe);
+                    }
+                    #endregion
+                    #region handle image
+                    var picture = mainPart.Document.Descendants<DocumentFormat.OpenXml.Drawing.Pictures.Picture>()
+                             .FirstOrDefault(p => "Picture 1" == p.NonVisualPictureProperties.NonVisualDrawingProperties.Name);
+                    var blip = picture.BlipFill.Blip;
+                    if (newImg != null)
+                    {
+                        ImagePart newImgPart = mainPart.AddImagePart(ImagePartType.Png);
+                        // Put image data into the ImagePart (from a filestream)
+                        var streamImg = _uploadFile.ImageToStream(newImg);
+                        newImgPart.FeedData(streamImg);
+                        // Point blip at new image
+                        blip.Embed = mainPart.GetIdOfPart(newImgPart);
+                    }
+                    else
+                    {
+                        blip.Embed = "";
+                    }
+                    #endregion
+                    mainPart.Document.Save();
+                }
+                await File.WriteAllBytesAsync(destination, templateStream.ToArray());
+            }
+            return new ExportFileOutputModel { document = null, filePath = destination };
+        }
         #endregion
 
         #region Helper
@@ -3435,6 +3686,26 @@ namespace nuce.web.api.Services.Ctsv.Implements
             }
             document.Save(filePath);
             return await FileToByteAsync(filePath);
+        }
+
+        private string onlyTenKhoa(string tenKhoa)
+        {
+            return StringHelper.WithoutPrefix(tenKhoa, "khoa");
+        }
+
+        private string onlyTenPhuong(string phuong)
+        {
+            return StringHelper.WithoutPrefix(phuong, "phường,xã");
+        }
+
+        private string onlyTenQuan(string quan)
+        {
+            return StringHelper.WithoutPrefix(quan, "huyện,quận");
+        }
+
+        private string onlyTenTinh(string tenTinh)
+        {
+            return StringHelper.WithoutPrefix(tenTinh, "tỉnh,thành phố");
         }
 
         private string getGender(string gender)

@@ -18,6 +18,7 @@ namespace nuce.web.quanly.Models
         public string role { get; set; }
         public bool? onMenu { get; set; }
         public bool? divideAfter { get; set; }
+        public bool? allowChildren { get; set; }
     }
 
     public class NewsItemModel

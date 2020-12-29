@@ -914,6 +914,8 @@
     <Content Include="Content\img\banner-certificate.png" />
     <Content Include="Content\img\banner.jpg" />
     <Content Include="Content\img\footer-background.png" />
+    <Content Include="Content\img\link-ktdb-ctsv.png" />
+    <Content Include="Content\img\link-ktdb-daotao.png" />
     <Content Include="Content\img\survey-student.jpg" />
     <Content Include="Content\js\bootstrap-datepicker.min.js" />
     <Content Include="Content\js\bootstrap-datepicker.vi.min.js" />

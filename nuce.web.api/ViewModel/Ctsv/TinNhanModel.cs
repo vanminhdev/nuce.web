@@ -17,5 +17,6 @@ namespace nuce.web.api.ViewModel.Ctsv
         public int YeuCauStatus { get; set; }
         public DateTime? NgayTao { get; set; }
         public DateTime? NgayHen { get; set; }
+        public string TemplateName { get; set; }
     }
 }

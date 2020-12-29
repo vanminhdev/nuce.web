@@ -73,7 +73,11 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 QuaTrinhHoc = quaTrinhHoc
             };
         }
-
+        /// <summary>
+        /// Thông tin bảng student
+        /// </summary>
+        /// <param name="studentCode"></param>
+        /// <returns></returns>
         public AsAcademyStudent GetStudentByCode(string studentCode)
         {
             var student = _studentRepository.FindByCode(studentCode);
@@ -91,8 +95,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
             }
             Image img = Image.FromStream(dataStream);
 
-            Image resizedNewImg = Resize(img, width ?? 0, 2000, false);
-            var newImg = cropImage(resizedNewImg, width ?? 0, height ?? 0);
+            Image resizedNewImg = _uploadFile.ResizeImage(img, width ?? 0, 2000, false);
+            var newImg = _uploadFile.CropImage(resizedNewImg, width ?? 0, height ?? 0);
 
             var result = _uploadFile.ImageToByte(newImg);
             return result;

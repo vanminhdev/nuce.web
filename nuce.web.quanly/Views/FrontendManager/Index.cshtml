@@ -131,6 +131,7 @@
             ],
             configJsTree: function() {},
             convertCategory: function(raw = [], result = [], id = 'tree-tintuc') {
+                console.log(raw);
                 if (!Array.isArray(raw) || raw.length < 1) return;
 
                 const target = result.find(folder => folder.id === id);
@@ -141,8 +142,14 @@
                 raw.forEach(cat => {
                     if (cat.parent !== -1) return;
 
+                    let parentText = `${cat.description || ''}${buttonTemplate.edit(cat.id)}`;
+                    console.log(cat);
+                    if (cat.allowChildren) {
+                        parentText = `${cat.description || ''}${buttonTemplate.add}${buttonTemplate.edit(cat.id)}`;
+                    }
+
                     const parent = {
-                        text: `${cat.description || ''}${buttonTemplate.add}${buttonTemplate.edit(cat.id)}`,
+                        text: parentText,
                         data: cat,
                     };
                     const children = raw.filter(c => c.parent === cat.id);

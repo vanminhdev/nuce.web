@@ -344,6 +344,7 @@ namespace Nuce.CTSV.ApiModels
         public static string GetAllowUpdateStudent = "api/Student/allow-update-student";
         public static string GetTinTuc = "api/News/get-news-items";
         public static string UploadStudentImage = "api/Student/upload-avatar";
+        public static string GetStudentAva = "api/student/avatar/";
     }
     #endregion
     #region ma dich vu

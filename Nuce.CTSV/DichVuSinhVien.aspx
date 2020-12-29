@@ -41,7 +41,7 @@
                     </div>
                 </a>           
             </div>
-            <div class="col-12 col-md-4 service-avatar-wrp cursor-pointer">
+            <%--<div class="col-12 col-md-4 service-avatar-wrp cursor-pointer">
                 <a
                     href="/dichvu/gioithieu.aspx"
                     class="row justify-content-center">
@@ -54,7 +54,7 @@
                         giấy giới thiệu
                     </div>
                 </a>
-            </div>
+            </div>--%>
             <div class="col-12 col-md-4 service-avatar-wrp cursor-pointer">
                 <a
                 href="/dichvu/thuenhasinhvien.aspx"
@@ -94,6 +94,20 @@
                     <div
                         class="col-10 mt-2 text-center text-uppercase main-color fw-600 font-14-sm font-18-md font-18 title-service">
                         làm vé tháng xe bus
+                    </div>
+                </a>
+            </div>
+            <div class="col-12 col-md-4 service-avatar-wrp cursor-pointer">
+                <a
+                    href="/dichvu/caplaithesinhvien.aspx"
+                    class="row justify-content-center">
+                    <img
+                        src="/Data/icons/the-sinh-vien-Max-Quality.jpg"
+                        alt="service"
+                        class="service-avatar col-10"/>
+                    <div
+                        class="col-10 mt-2 text-center text-uppercase main-color fw-600 font-14-sm font-18-md font-18 title-service">
+                        cấp lại thẻ sinh viên
                     </div>
                 </a>
             </div>

@@ -75,12 +75,13 @@
                 {
                     data: null,
                     mRender: function(data, type, row, meta) {
-                        return `<div>
-                                    <h4>${data.title || ''}</h4>
-                                    <p>${data.description || ''}</p>
-                                    <a href="/newsmanagement/itemsdetail?id=${data.id}">Đọc tiếp</a>
+                        return `<a href="/newsmanagement/itemsdetail?id=${data.id}" 
+                                    style="display: block"
+                                    class="m-text-decoration-none">
+                                    <h4 class="m-text-blue">${data.title || ''}</h4>
+                                    <p class="m-text-black">${data.description || ''}</p>
                                     <a href="/newsmanagement/itemsupdate?id=${data.id}" role="button" class="btn btn-outline-success">Cập nhật</a>
-                                </div>`;
+                                </a>`;
                     }
                 },
             ]

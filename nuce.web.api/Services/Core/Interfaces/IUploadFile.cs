@@ -17,5 +17,6 @@ namespace nuce.web.api.Services.Core.Interfaces
         public Image ResizeImage(Image image, int newWidth, int maxHeight, bool onlyResizeIfWider);
         public Image CropImage(Image src, int width, int height);
         public byte[] ImageToByte(Image image);
+        public Stream ImageToStream(Image image);
     }
 }

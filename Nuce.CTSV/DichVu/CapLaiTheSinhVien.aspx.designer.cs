@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Nuce.CTSV {
-    
-    
-    public partial class CapLaiTheSinhVien {
-        
+namespace Nuce.CTSV
+{
+
+
+    public partial class CapLaiTheSinhVien
+    {
+
         /// <summary>
         /// tbContent control.
         /// </summary>
@@ -20,14 +22,5 @@ namespace Nuce.CTSV {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl tbContent;
-        
-        /// <summary>
-        /// divThemMoi control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divThemMoi;
     }
 }

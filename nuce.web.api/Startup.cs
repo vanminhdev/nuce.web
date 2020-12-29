@@ -242,6 +242,7 @@ namespace nuce.web.api
             services.AddScoped<IQuaTrinhHocRepository, QuaTrinhHocRepository>();
             services.AddScoped<ILoaiDichVuRepository, LoaiDichVuRepository>();
             services.AddScoped<IVeXeBusRepository, VeXeBusRepository>();
+            services.AddScoped<ICapLaiTheRepository, CapLaiTheRepository>();
 
             services.AddScoped<IUploadFile, UploadFile>();
             services.AddScoped<IThamSoDichVuService, ThamSoDichVuService>();

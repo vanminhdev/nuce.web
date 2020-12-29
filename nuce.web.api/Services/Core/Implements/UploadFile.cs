@@ -104,5 +104,15 @@ namespace nuce.web.api.Services.Core.Implements
             byte[] xByte = (byte[])_imageConverter.ConvertTo(image, typeof(byte[]));
             return xByte;
         }
+
+        public Stream ImageToStream(Image image)
+        {
+            var stream = new MemoryStream();
+
+            image.Save(stream, ImageFormat.Bmp);
+            stream.Position = 0;
+
+            return stream;
+        }
     }
 }

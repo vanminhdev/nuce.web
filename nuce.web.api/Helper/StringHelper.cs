@@ -24,5 +24,25 @@ namespace nuce.web.api.Helper
             sb = sb.Replace('đ', 'd');
             return (sb.ToString().Normalize(NormalizationForm.FormD));
         }
+        /// <summary>
+        /// Trả về chuỗi đã loại bỏ tiền tố
+        /// List prefix ngăn cách bằng dấu phẩy
+        /// </summary>
+        /// <param name="originString"></param>
+        /// <param name="prefixStrList"></param>
+        /// <returns></returns>
+        public static string WithoutPrefix(string originString, string prefixStrList)
+        {
+            var normalizedOriginString = ConvertToLatin(originString);
+            var prefixList = prefixStrList.Split(',');
+            foreach (var prefixStr in prefixList)
+            {
+                if (normalizedOriginString.ToLower().StartsWith(ConvertToLatin(prefixStr).ToLower()))
+                {
+                    return originString.Substring(prefixStr.Length);
+                }
+            }
+            return originString;
+        }
     }
 }
