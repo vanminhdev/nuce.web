@@ -280,16 +280,6 @@ namespace nuce.web.api.Models.EduData
             {
                 entity.ToTable("AS_Academy_Semester");
 
-                entity.Property(e => e.CreatedTime)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.DeletedTime).HasColumnType("datetime");
-
-                entity.Property(e => e.LastModifiedTime)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
-
                 entity.Property(e => e.Name).HasMaxLength(250);
             });
 

@@ -27,6 +27,16 @@ jQuery.validator.addMethod("dateGreaterThanOrEqual", function (value, element, p
     return false;
 });
 
+jQuery.validator.addMethod("dateGreaterThanNow", function (value, element, param) {
+    let value1 = $(element).val();
+    let date1 = new Date(value1);
+    let date2 = new Date();
+    if (date1 >= date2) {
+        return true;
+    }
+    return false;
+});
+
 //giá trị cách nhau bởi dấu ,
 jQuery.validator.addMethod("onlyAcceptListValue", function (value, element, param) {
     param = '' + param; //đảm bảo là string

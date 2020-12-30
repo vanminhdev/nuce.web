@@ -37,6 +37,11 @@ namespace nuce.web.api.Controllers.Survey
             var filter = new TheSurveyFilter();
             if (request.Columns != null)
             {
+                var strDotKhaoSatId = request.Columns.FirstOrDefault(c => c.Data == "surveyRoundName" || c.Name == "surveyRoundName")?.Search.Value ?? null;
+                if(strDotKhaoSatId != null)
+                {
+                    filter.DotKhaoSatId = Guid.Parse(strDotKhaoSatId);
+                }
             }
             var skip = request.Start;
             var take = request.Length;

@@ -25,17 +25,22 @@ namespace nuce.web.api.ViewModel.Survey
 
         [Required]
         [CompareMoreThanLessThan(false, "EndDate", ErrorMessage = "Từ ngày phải nhỏ hơn đến ngày")]
+        [DatetimeGreaterNow]
         public DateTime? FromDate { get; set; }
 
         [Required]
         [CompareMoreThanLessThan(true, "FromDate", ErrorMessage = "Đến ngày phải lớn hơn từ ngày")]
+        [DatetimeGreaterNow]
         public DateTime? EndDate { get; set; }
 
         public string Description { get; set; }
 
         public string Note { get; set; }
+    }
 
-        [EnumDataType(typeof(SurveyRoundType))]
-        public int Type { get; set; }
+    public class AddEndDate
+    {
+        [Required]
+        public DateTime? EndDate { get; set; }
     }
 }

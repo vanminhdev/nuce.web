@@ -1,4 +1,4 @@
-﻿
+﻿@using nuce.web.quanly.Common
 @{
     ViewData["Title"] = "Đợt khảo sát sinh viên sắp tốt nghiệp";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -112,7 +112,7 @@
                 </button>
             </div>
             <div class="modal-body" id="modal-yes-no-content">
-                 ?
+                ?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
@@ -173,13 +173,13 @@
                     data: null,
                     name: "status",
                     mRender: function (data, type, row) {
-                        if (data.status === 1) {
+                        if (data.status === @((int)SurveyRoundStatus.New)) {
                             return '<span class="badge badge-pill badge-primary">Mới</span>';
-                        } else if (data.status === 2) {
+                        } else if (data.status === @((int)SurveyRoundStatus.Closed)) {
                             return '<span class="badge badge-pill badge-secondary">Đóng</span>';
-                        } else if (data.status === 3) {
+                        } else if (data.status === @((int)SurveyRoundStatus.Opened)) {
                             return '<span class="badge badge-pill badge-success">Mở</span>';
-                        } else if (data.status === 5) {
+                        } else if (data.status === @((int)SurveyRoundStatus.End)) {
                             return '<span class="badge badge-pill badge-secondary">Kết thúc</span>';
                         } else {
                             return data.status;
@@ -190,19 +190,19 @@
                     data: null,
                     mRender: function (data, type, row) {
                         let html = '';
-                        if (data.status === 1) {
+                        if (data.status === @((int)SurveyRoundStatus.New)) {
                             html += `<button class="btn btn btn-outline-success btn-sm ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
                             html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="openClick('${data.id}')">Mở</button>`;
                             html += `<button class="btn btn btn-outline-danger btn-sm ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
                         }
-                        else if (data.status === 2) {
+                        else if (data.status === @((int)SurveyRoundStatus.Closed)) {
                             html += `<button class="btn btn btn-outline-success btn-sm ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
                             html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="openClick('${data.id}')">Mở</button>`;
                         }
-                        else if (data.status === 3) {
+                        else if (data.status === @((int)SurveyRoundStatus.Opened)) {
                             html += `<button class="btn btn btn-outline-warning btn-sm ml-1 mr-1" onclick="closeClick('${data.id}')">Đóng</button>`;
                         }
-                        else if (data.status === 5) {
+                        else if (data.status === @((int)SurveyRoundStatus.End)) {
                             html += `<button class="btn btn btn-outline-danger btn-sm ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
                         }
                         return html;

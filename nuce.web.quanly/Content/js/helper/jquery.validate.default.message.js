@@ -17,6 +17,7 @@
     max: jQuery.validator.format("Nhập giá trị nhỏ hơn hoặc bằng {0}."),
     min: jQuery.validator.format("Nhập giá trị lớn hơn hoặc bằng {0}."),
     //custom rules
+    dateGreaterThanNow: "Thời gian phải lớn hơn ngày hiện tại",
     dateLessThanOrEqual: "Từ ngày phải nhỏ hơn hoặc bằng đến ngày",
     dateGreaterThanOrEqual: "Đến ngày phải lớn hơn hoặc bằng từ ngày",
     onlyAcceptListValue: "Giá trị không hợp lệ"

@@ -1,6 +1,6 @@
 ﻿@using nuce.web.quanly.Common
 @{
-    ViewData["Title"] = "Bài khảo sát sinh viên";
+    ViewData["Title"] = "Bài khảo sát";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -74,9 +74,9 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-3 col-form-label">Đề khảo sát <span class="text-danger">*</span></label>
+                            <label class="col-3 col-form-label">Phiếu khảo sát <span class="text-danger">*</span></label>
                             <div class="col-9">
-                                <select class="form-control selectpicker custom-boostrap-select" name="deThiId" id="deThiId" required title="Chọn đề khảo sát">
+                                <select class="form-control selectpicker custom-boostrap-select" name="deThiId" id="deThiId" required title="Chọn phiếu khảo sát">
                                 </select>
                             </div>
                         </div>
@@ -240,7 +240,7 @@
             ],
             ajax: {
                 url: '/Survey/GetAllTheSurvey',
-              HtmlHtmldataType: 'json',
+                dataType: 'json',
                 contentType: 'application/json',
                 type: "POST",
                 data: function (d) {

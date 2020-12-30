@@ -1,4 +1,4 @@
-﻿
+﻿@using nuce.web.quanly.Common
 @{
     ViewData["Title"] = "Đợt khảo sát sinh viên";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -7,7 +7,6 @@
 @section Style {
     <link rel="stylesheet" href="~/content/css/dataTables.bootstrap4.min.css" />
     <link rel="stylesheet" href="~/content/css/bootstrap-select.min.css" />
-    <link rel="stylesheet" href="~/content/css/bootstrap-datetimepicker.min.css" />
 }
 
 <div class="container">
@@ -37,11 +36,11 @@
             <table id="id-datatable" class="table table-bordered">
                 <thead>
                     <tr>
-                        <th class="text-center" width="38%">Tên</th>
+                        <th class="text-center" style="min-width:300px">Tên</th>
                         <th class="text-center">Từ ngày</th>
                         <th class="text-center">Đến ngày</th>
-                        <th class="text-center">Loại</th>
-                        <th class="text-center">Trạng thái</th>
+                        <th class="text-center" style="max-width:88px">Trạng thái</th>
+                        <th class="text-center" style="max-width:88px">Bài khảo sát</th>
                         <th class="text-center" style="min-width:190px"></th>
                     </tr>
                 </thead>
@@ -72,16 +71,16 @@
                         <div class="form-group row">
                             <label class="col-3 col-form-label">Từ ngày <span class="text-danger">*</span></label>
                             <div class="col-9">
-                                <input type="date" class="form-control" name="fromDate" id="fromDate" required data-rule-dateLessThanOrEqual="#endDate">
+                                <input type="datetime-local" class="form-control" name="fromDate" id="fromDate" required data-rule-dateLessThanOrEqual="#endDate" data-rule-dateGreaterThanNow="true">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-3 col-form-label">Đến ngày <span class="text-danger">*</span></label>
                             <div class="col-9">
-                                <input type="date" class="form-control" name="endDate" id="endDate" required data-rule-dateGreaterThanOrEqual="#fromDate">
+                                <input type="datetime-local" class="form-control" name="endDate" id="endDate" required data-rule-dateGreaterThanOrEqual="#fromDate" data-rule-dateGreaterThanNow="true">
                             </div>
                         </div>
-                        <div class="form-group row">
+                        @*<div class="form-group row">
                             <label class="col-3 col-form-label">Mô tả</label>
                             <div class="col-9">
                                 <textarea type="text" class="form-control" name="description" id="description"></textarea>
@@ -92,13 +91,34 @@
                             <div class="col-9">
                                 <textarea type="text" class="form-control" name="note" id="note"></textarea>
                             </div>
-                        </div>
+                        </div>*@
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
+                <button type="button" class="btn btn-primary" id="save-changes" type-handle="create">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg auto-clear-form-on-open" id="modal-giahan" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Gia hạn thêm ngày kết thúc</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form id="form-giahan" class="auto-validate">
                         <div class="form-group row">
-                            <label class="col-3 col-form-label">Loại <span class="text-danger">*</span></label>
+                            <label class="col-3 col-form-label">Đến ngày <span class="text-danger">*</span></label>
                             <div class="col-9">
-                                <select class="form-control selectpicker custom-boostrap-select" name="type" id="type" data-rule-onlyAcceptListValue="1">
-                                    <option value="1">Đợt khảo sát đánh giá chất lượng giảng dạy</option>
-                                </select>
+                                <input type="datetime-local" class="form-control" id="endDateAdd" required data-rule-dateGreaterThanNow="true">
                             </div>
                         </div>
                     </form>
@@ -106,7 +126,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
-                <button type="button" class="btn btn-primary" id="save-changes" type-handle="create">Lưu</button>
+                <button type="button" class="btn btn-primary" id="save-changes-giahan" type-handle="create">Lưu</button>
             </div>
         </div>
     </div>
@@ -134,7 +154,6 @@
 
 @section Scripts {
     <script src="~/Content/js/bootstrap-select.min.js"></script>
-    <script src="~/Content/js/bootstrap-datetimepicker.min.js"></script>
     <script src="~/content/js/jquery.dataTables.min.js"></script>
     <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/content/js/dataTables.config.js"></script>
@@ -149,7 +168,7 @@
             language: dataTableConfig.language,
             columnDefs: [
                 {
-                    targets: [ 1, 2, 3, 4, 5],
+                    targets: [ 1, 2, 3, 4, 5 ],
                     className: 'text-center'
                 }
             ],
@@ -170,54 +189,62 @@
                     data: null,
                     name: "fromDate",
                     mRender: function (data, type, row) {
-                        return getDateStringFromServerType(data.fromDate);
+                        return getDateTimeStringFromServerType(data.fromDate);
                     }
                 },
                 {
                     data: null,
                     name: "endDate",
                     mRender: function (data, type, row) {
-                        return getDateStringFromServerType(data.endDate);
+                        return getDateTimeStringFromServerType(data.endDate);
                     }
-                },
-                {
-                    data: "type"
                 },
                 {
                     data: null,
                     name: "status",
                     mRender: function (data, type, row) {
-                        if (data.status === 1) {
+                        let regex = /(\d+)/g;
+                        let fromDate = new Date(+data.fromDate.match(regex)[0]);
+                        let endDate = new Date(+data.endDate.match(regex)[0]);
+                        let currentDate = new Date();
+
+                        if (currentDate < fromDate) {
                             return '<span class="badge badge-pill badge-primary">Mới</span>';
-                        } else if (data.status === 2) {
-                            return '<span class="badge badge-pill badge-secondary">Đóng</span>';
-                        } else if (data.status === 3) {
+                        } else if (currentDate >= fromDate && currentDate < endDate && (data.status == @((int)SurveyRoundStatus.Opened) || data.status == @((int)SurveyRoundStatus.New))) {
                             return '<span class="badge badge-pill badge-success">Mở</span>';
-                        } else if (data.status === 5) {
-                            return '<span class="badge badge-pill badge-secondary">Kết thúc</span>';
-                        } else {
-                            return data.status;
+                        } else if (currentDate >= fromDate && currentDate < endDate && data.status == @((int)SurveyRoundStatus.Closed)) {
+                            return '<span class="badge badge-pill badge-secondary">Đóng tạm</span>';
+                        } else if (currentDate > endDate) {
+                            return '<span class="badge badge-pill badge-secondary">Đóng</span>';
                         }
+                    }
+                },
+                {
+                    data: null,
+                    mRender: function (data, type, row) {
+                        return `<a href='/survey/TheSurvey?surveyRoundId=${data.id}'>Danh sách<a/>`;
                     }
                 },
                 {
                     data: null,
                     mRender: function (data, type, row) {
                         let html = '';
-                        if (data.status === 1) {
+                        let regex = /(\d+)/g;
+                        let fromDate = new Date(+data.fromDate.match(regex)[0]);
+                        let endDate = new Date(+data.endDate.match(regex)[0]);
+                        let currentDate = new Date();
+
+                        if (currentDate < fromDate) {
                             html += `<button class="btn btn btn-outline-success btn-sm ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
-                            html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="openClick('${data.id}')">Mở</button>`;
                             html += `<button class="btn btn btn-outline-danger btn-sm ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
-                        }
-                        else if (data.status === 2) {
-                            html += `<button class="btn btn btn-outline-success btn-sm ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
-                            html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="openClick('${data.id}')">Mở</button>`;
-                        }
-                        else if (data.status === 3) {
-                            html += `<button class="btn btn btn-outline-warning btn-sm ml-1 mr-1" onclick="closeClick('${data.id}')">Đóng</button>`;
-                        }
-                        else if (data.status === 5) {
-                            html += `<button class="btn btn btn-outline-danger btn-sm ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
+                        } else if (currentDate >= fromDate && currentDate < endDate && (data.status == @((int)SurveyRoundStatus.Opened) || data.status == @((int)SurveyRoundStatus.New))) {
+                            html += `<button class="btn btn btn-outline-warning btn-sm ml-1 mr-1" onclick="closeClick('${data.id}')">Đóng tạm</button>`;
+                            html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="addEndDateClick('${data.id}')">Gia hạn</button>`;
+                        } else if (currentDate >= fromDate && currentDate < endDate && data.status == @((int)SurveyRoundStatus.Closed)) {
+                            html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="openClick('${data.id}')">Mở lại</button>`;
+                            html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="addEndDateClick('${data.id}')">Gia hạn</button>`;
+                        } else if (currentDate > endDate) {
+                            html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="addEndDateClick('${data.id}')">Gia hạn</button>`;
                         }
                         return html;
                     }
@@ -283,7 +310,7 @@
             saveChanges.attr('type-handle', 'create');
         }
 
-        function updateClick(id) { 
+        function updateClick(id) {
             $('#modal-input').modal('show');
             $('#modal-title').html('Cập nhật đợt khảo sát');
             saveChanges.attr('type-handle', 'update');
@@ -408,6 +435,41 @@
                     console.log(textStatus + ': ' + errorThrown);
                     console.log(jqXHR);
                 });
+            });
+        }
+
+        function addEndDateClick(id) {
+            $('#modal-giahan').modal('show');
+            $('#save-changes-giahan').off();
+            let form = $('#form-giahan');
+            $('#save-changes-giahan').click(function () {
+                if (form.valid()) {
+                    $.ajax({
+                        data: { id, endDate: $('#endDateAdd').val() },
+                        dataType: 'json',
+                        method: 'Post',
+                        url: '/Survey/AddEndDateSurveyRound',
+                        complete: () => { }
+                    }).done(function (res) {
+                        if (res.statusCode === 200) {
+                            toastSuccess('Gia hạn thành công');
+                            table.ajax.reload();
+                            $('#modal-giahan').modal('hide');
+                        }
+                        else {
+                            try {
+                                let content = JSON.parse(res.content);
+                                toastError(content.message);
+                            } catch {
+                                toastError('Có lỗi xảy ra');
+                            }
+                            console.log(res);
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        console.log(textStatus + ': ' + errorThrown);
+                        console.log(jqXHR);
+                    });
+                }
             });
         }
 

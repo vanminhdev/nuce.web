@@ -10,10 +10,9 @@ function dateTimeString(today) {
     var mm = String(today.getMonth() + 1).padStart(2, '0');
     var yyyy = today.getFullYear();
 
-    var hh = today.getHours();
-    var mm = today.getMinutes();
-    var ss = today.getSeconds();
-    return `${dd}/${mm}/${yyyy} ${hh}:${mm}:${ss}`;
+    var hours = String(today.getHours()).padStart(2, '0');
+    var minutes = String(today.getMinutes()).padStart(2, '0');
+    return `${dd}/${mm}/${yyyy} ${hours}:${minutes}`;
 }
 
 

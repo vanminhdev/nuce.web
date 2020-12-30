@@ -16,6 +16,7 @@ namespace nuce.web.api.ViewModel.Base
 
         [Range(1, int.MaxValue)]
         public int Length { get; set; }
+
         public DataTableSearch Search { get; set; }
     }
 

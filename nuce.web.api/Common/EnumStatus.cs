@@ -12,6 +12,26 @@ namespace nuce.web.api.Common
         Deleted = 4 
     }
 
+    public enum SemesterStatus
+    {
+        /// <summary>
+        /// Là kỳ hiện tại
+        /// </summary>
+        IsCurrent = 1,
+        /// <summary>
+        /// Là kỳ ngay trước
+        /// </summary>
+        IsLast = 2,
+        /// <summary>
+        /// Là kỳ trong quá khứ
+        /// </summary>
+        IsPast = 3,
+        /// <summary>
+        /// Bị xoá
+        /// </summary>
+        Deleted = 4
+    }
+
     public enum QuestionStatus
     {
         Active = 1,

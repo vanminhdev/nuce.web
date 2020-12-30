@@ -49,12 +49,6 @@ namespace nuce.web.api.Services.EduData.Interfaces
         public Task<string> SyncCurrentStudentClassRoom();
 
         /// <summary>
-        /// Đồng bộ sinh viên lớp học phần kỳ trước
-        /// </summary>
-        /// <returns></returns>
-        public Task<string> SyncLastStudentClassRoom();
-
-        /// <summary>
         /// Đồng bộ cập nhật lớp môn học hiện tại, cập nhật trường FromDate và EndDate
         /// Tác động trên bảng C ClassRoom
         /// </summary>

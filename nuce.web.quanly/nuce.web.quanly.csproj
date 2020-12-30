@@ -1566,6 +1566,7 @@
     <Content Include="Views\FrontendManager\Index.cshtml" />
     <Content Include="Views\FrontendManager\Edit.cshtml" />
     <Content Include="Views\ManagerRestore\Index.cshtml" />
+    <Content Include="Views\Survey\Normal\TheSurveyOfSurveyRound.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

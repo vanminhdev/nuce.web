@@ -21,8 +21,8 @@ namespace nuce.web.quanly.Models
         [MaxLength(10, ErrorMessage = "Mã dài tối đã 10 kí tự")]
         public string Code { get; set; }
 
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Tên đề khảo sát không được bỏ trống")]
-        [MaxLength(100, ErrorMessage = "Tên đề khảo sát dài tối đa 100 kí tự")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Tên phiếu khảo sát không được bỏ trống")]
+        [MaxLength(100, ErrorMessage = "Tên phiếu khảo sát dài tối đa 100 kí tự")]
         public string Name { get; set; }
     }
 

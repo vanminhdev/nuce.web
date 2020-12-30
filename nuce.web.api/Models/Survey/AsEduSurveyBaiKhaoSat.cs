@@ -11,8 +11,6 @@ namespace nuce.web.api.Models.Survey
         public string Name { get; set; }
         public string NoiDungDeThi { get; set; }
         public string DapAn { get; set; }
-        public DateTime FromDate { get; set; }
-        public DateTime EndDate { get; set; }
         public string Description { get; set; }
         public string Note { get; set; }
         public int Type { get; set; }

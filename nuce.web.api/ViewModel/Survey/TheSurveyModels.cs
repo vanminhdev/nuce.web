@@ -15,8 +15,6 @@ namespace nuce.web.api.ViewModel.Survey
         public Guid DotKhaoSatId { get; set; }
         public Guid DeThiId { get; set; }
         public string Name { get; set; }
-        public DateTime FromDate { get; set; }
-        public DateTime EndDate { get; set; }
         public string Description { get; set; }
         public string Note { get; set; }
         public int Type { get; set; }
@@ -26,6 +24,7 @@ namespace nuce.web.api.ViewModel.Survey
     }
     public class TheSurveyFilter
     {
+        public Guid? DotKhaoSatId { get; set; }
     }
 
     public class TheSurveyCreate : TheSurveyUpdate
@@ -43,14 +42,6 @@ namespace nuce.web.api.ViewModel.Survey
 
         [Required(AllowEmptyStrings = false)]
         public string Name { get; set; }
-
-        [Required]
-        [CompareMoreThanLessThan(false, "EndDate", ErrorMessage = "Từ ngày phải nhỏ hơn đến ngày")]
-        public DateTime? FromDate { get; set; }
-
-        [Required]
-        [CompareMoreThanLessThan(true, "FromDate", ErrorMessage = "Đến ngày phải lớn hơn từ ngày")]
-        public DateTime? EndDate { get; set; }
 
         public string Description { get; set; }
 

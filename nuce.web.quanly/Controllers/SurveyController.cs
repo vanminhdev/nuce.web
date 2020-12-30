@@ -433,11 +433,34 @@ namespace nuce.web.quanly.Controllers
             var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/SurveyRound/DeleteSurveyRound?id={id}");
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
+
+        [HttpPost]
+        public async Task<ActionResult> AddEndDateSurveyRound(string id, DateTime? endDate)
+        {
+            var content = new StringContent(JsonConvert.SerializeObject(new { endDate }), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/SurveyRound/AddEndDateSurveyRound?id={id}", content);
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
         #endregion
 
         #region bài khảo sát
+        //[HttpGet]
+        //public async Task<ActionResult> TheSurvey()
+        //{
+        //    var resTableStatus = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurveyStudent/GetGenerateTheSurveyStudentStatus");
+        //    ViewData["TableTheSurveyStudentStatus"] = await resTableStatus.Content.ReadAsStringAsync();
+
+        //    var resSurveyRound = await base.MakeRequestAuthorizedAsync("Get", $"/api/SurveyRound/GetSurveyRoundActive");
+        //    ViewData["SurveyRoundActive"] = await resSurveyRound.Content.ReadAsStringAsync();
+
+        //    var resExam = await base.MakeRequestAuthorizedAsync("Get", $"/api/ExamQuestions/GetAll");
+        //    ViewData["ExamQuestions"] = await resExam.Content.ReadAsStringAsync();
+
+        //    return View("~/Views/Survey/Normal/TheSurvey.cshtml");
+        //}
+
         [HttpGet]
-        public async Task<ActionResult> TheSurvey()
+        public async Task<ActionResult> TheSurvey(string surveyRoundId)
         {
             var resTableStatus = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurveyStudent/GetGenerateTheSurveyStudentStatus");
             ViewData["TableTheSurveyStudentStatus"] = await resTableStatus.Content.ReadAsStringAsync();
@@ -448,7 +471,8 @@ namespace nuce.web.quanly.Controllers
             var resExam = await base.MakeRequestAuthorizedAsync("Get", $"/api/ExamQuestions/GetAll");
             ViewData["ExamQuestions"] = await resExam.Content.ReadAsStringAsync();
 
-            return View("~/Views/Survey/Normal/TheSurvey.cshtml");
+            ViewData["surveyRoundId"] = surveyRoundId;
+            return View("~/Views/Survey/Normal/TheSurveyOfSurveyRound.cshtml");
         }
 
         [HttpPost]

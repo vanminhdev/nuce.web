@@ -230,6 +230,10 @@ namespace nuce.web.api.Controllers.Survey
             {
                 return NotFound(new { message = "Không tìm thấy đợt khảo sát" });
             }
+            catch (InvalidDataException e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
             catch (DbUpdateException e)
             {
                 _logger.LogError(e, e.Message);
@@ -243,6 +247,36 @@ namespace nuce.web.api.Controllers.Survey
             }
             return Ok();
         }
+
+        [HttpPut]
+        public async Task<IActionResult> AddEndDateSurveyRound([Required(AllowEmptyStrings = false)] Guid? id, [FromBody] AddEndDate data)
+        {
+            try
+            {
+                await _asEduSurveyDotKhaoSatService.AddEndDate(id.Value, data.EndDate.Value);
+            }
+            catch (RecordNotFoundException)
+            {
+                return NotFound(new { message = "Không tìm thấy đợt khảo sát" });
+            }
+            catch (InvalidDataException e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không kết thúc được đợt khảo sát", detailMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không kết thúc được đợt khảo sát", detailMessage = mainMessage });
+            }
+            return Ok();
+        }
+
         #endregion
     }
 }

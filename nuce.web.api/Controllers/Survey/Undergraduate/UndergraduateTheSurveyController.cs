@@ -117,7 +117,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             }
             catch (InvalidDataException e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không cập nhật được bài khảo sát", detailMessage = e.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
             catch (RecordNotFoundException e)
             {

@@ -49,10 +49,6 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.DotKhaoSatId).HasColumnName("DotKhaoSatID");
 
-                entity.Property(e => e.EndDate).HasColumnType("datetime");
-
-                entity.Property(e => e.FromDate).HasColumnType("datetime");
-
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(100);

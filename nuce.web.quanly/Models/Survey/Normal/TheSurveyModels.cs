@@ -16,8 +16,6 @@ namespace nuce.web.quanly.Models.Survey.Normal
         public string name { get; set; }
         public string noiDungDeThi { get; set; }
         public string dapAn { get; set; }
-        public DateTime fromDate { get; set; }
-        public DateTime endDate { get; set; }
         public string description { get; set; }
         public string note { get; set; }
         public int type { get; set; }
@@ -38,10 +36,6 @@ namespace nuce.web.quanly.Models.Survey.Normal
         public Guid? deThiId { get; set; }
 
         public string name { get; set; }
-
-        public DateTime? fromDate { get; set; }
-
-        public DateTime? endDate { get; set; }
 
         public string description { get; set; }
 

@@ -29,9 +29,11 @@ namespace nuce.web.quanly.Common
     /// </summary>
     public enum SurveyRoundStatus
     {
-        Active = 1,
-        Deactive = 2,
+        New = 1,
+        Closed = 2,
+        Opened = 3,
         Deleted = 4,
+        End = 5
     }
 
     /// <summary>

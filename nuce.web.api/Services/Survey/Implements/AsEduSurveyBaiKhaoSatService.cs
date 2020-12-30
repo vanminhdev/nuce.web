@@ -28,6 +28,11 @@ namespace nuce.web.api.Services.Survey.Implements
             var join = query.Join(_context.AsEduSurveyDotKhaoSat, o => o.DotKhaoSatId, o => o.Id, (baikhaosat, dotkhaosat) => new { baikhaosat, dotkhaosat });
 
             var recordsTotal = join.Count();
+            
+            if(filter.DotKhaoSatId != null)
+            {
+                join = join.Where(o => o.dotkhaosat.Id == filter.DotKhaoSatId);
+            }
 
             var recordsFiltered = join.Count();
 
@@ -40,8 +45,6 @@ namespace nuce.web.api.Services.Survey.Implements
                     DotKhaoSatId = o.baikhaosat.DotKhaoSatId,
                     DeThiId = o.baikhaosat.DeThiId,
                     Name = o.baikhaosat.Name,
-                    FromDate = o.baikhaosat.FromDate,
-                    EndDate = o.baikhaosat.EndDate,
                     Description = o.baikhaosat.Description,
                     Note = o.baikhaosat.Note,
                     Status = o.baikhaosat.Status,
@@ -61,10 +64,15 @@ namespace nuce.web.api.Services.Survey.Implements
 
         public async Task Create(TheSurveyCreate theSurvey)
         {
-            var surveyRound = await _context.AsEduSurveyDotKhaoSat.FirstOrDefaultAsync(o => o.Id == theSurvey.DotKhaoSatId && o.Status == (int)SurveyRoundStatus.New);
+            var surveyRound = await _context.AsEduSurveyDotKhaoSat.FirstOrDefaultAsync(o => o.Id == theSurvey.DotKhaoSatId);
             if(surveyRound == null)
             {
                 throw new RecordNotFoundException("Id đợt khảo sát không tồn tại");
+            }
+
+            if (DateTime.Now >= surveyRound.FromDate)
+            {
+                throw new InvalidDataException("Đợt khảo sát đã bắt đầu không thể thêm bài khảo sát");
             }
 
             var examQuestion = await _context.AsEduSurveyDeThi.FirstOrDefaultAsync(o => o.Id == theSurvey.DeThiId);
@@ -88,8 +96,6 @@ namespace nuce.web.api.Services.Survey.Implements
                 Name = theSurvey.Name.Trim(),
                 NoiDungDeThi = examQuestion.NoiDungDeThi,
                 DapAn = examQuestion.DapAn,
-                FromDate = theSurvey.FromDate.Value,
-                EndDate = theSurvey.EndDate.Value,
                 Description = theSurvey.Description?.Trim(),
                 Note = theSurvey.Note?.Trim(),
                 Status = (int)TheSurveyStatus.New,
@@ -143,8 +149,6 @@ namespace nuce.web.api.Services.Survey.Implements
                 theSurveyUpdate.DapAn = examQuestion.DapAn;
             }
             theSurveyUpdate.Name = theSurvey.Name.Trim();
-            theSurveyUpdate.FromDate = theSurvey.FromDate.Value;
-            theSurveyUpdate.EndDate = theSurvey.EndDate.Value;
             theSurveyUpdate.Description = theSurvey.Description?.Trim();
             theSurveyUpdate.Note = theSurvey.Note?.Trim();
             theSurveyUpdate.Type = theSurvey.Type.Value;

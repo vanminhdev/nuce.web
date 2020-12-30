@@ -60,6 +60,10 @@ namespace nuce.web.api.Controllers.Survey
                 _logger.LogError(e, e.Message);
                 return NotFound(new { message = "Không thống kê được đợt khảo sát", detailMessage = e.Message });
             }
+            catch (InvalidDataException e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
             catch (TableBusyException e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });

@@ -65,7 +65,7 @@ namespace nuce.web.api.Services.EduData.BackgroundTasks
 
                 _logger.LogInformation("sync last student classroom is start.");
 
-                var semester = await eduDataContext.AsAcademySemester.FirstOrDefaultAsync(o => o.IsCurrent && !o.Deleted);
+                var semester = await eduDataContext.AsAcademySemester.FirstOrDefaultAsync(o => o.Status == (int)SemesterStatus.IsLast);
                 while (true)
                 {
                     transaction = eduDataContext.Database.BeginTransaction();
