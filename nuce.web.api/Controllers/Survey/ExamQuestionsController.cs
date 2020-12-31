@@ -64,7 +64,7 @@ namespace nuce.web.api.Controllers.Survey
         {
             try
             {
-                await _asEduSurveyDeThiService.AddQuestion(data.ExamQuestionId, data.QuestionCode, data.Order.Value);
+                await _asEduSurveyDeThiService.AddQuestion(data.ExamQuestionId.Value, data.QuestionCode, data.Order.Value);
             }
             catch (RecordNotFoundException)
             {
@@ -88,15 +88,11 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpPost]
-        public async Task<IActionResult> GenerateExam(
-            [FromBody]
-            [Required(AllowEmptyStrings = false)]
-            [NotContainWhiteSpace]
-            string examQuestionId)
+        public async Task<IActionResult> GenerateExam(GenerateExam generateExam)
         {
             try
             {
-                await _asEduSurveyDeThiService.GenerateExam(examQuestionId);
+                await _asEduSurveyDeThiService.GenerateExam(generateExam);
             }
             catch (RecordNotFoundException)
             {

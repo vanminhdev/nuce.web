@@ -10,8 +10,8 @@ namespace nuce.web.api.Services.Survey.Interfaces
     {
         public Task<List<ExamQuestions>> GetAll();
         public Task<List<ExamStructure>> GetExamStructure(string id);
-        public Task AddQuestion(string examQuestionId, string maCauHoi, int order);
-        public Task GenerateExam(string examQuestionId);
+        public Task AddQuestion(Guid examQuestionId, string maCauHoi, int order);
+        public Task GenerateExam(GenerateExam generateExam);
         public Task<string> GetExamDetailJsonString(string examQuestionId);
         public Task CreateExamQuestions(string code, string name);
         public Task DeleteQuestionFromStructure(string id);

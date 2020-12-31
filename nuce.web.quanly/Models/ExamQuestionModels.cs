@@ -49,4 +49,10 @@ namespace nuce.web.quanly.Models
         [Required(ErrorMessage = "Số thứ tự không được để trống")]
         public int? order { get; set; }
     }
+
+    public class SortQuestion
+    {
+        public string cauHoiId { get; set; }
+        public int order { get; set; }
+    }
 }

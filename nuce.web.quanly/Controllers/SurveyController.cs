@@ -310,9 +310,10 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> GenerateExam(string examQuestionId)
+        public async Task<ActionResult> GenerateExam(string examQuestionId, List<SortQuestion> sortResult)
         {
-            var content = new StringContent($@"'{examQuestionId}'", Encoding.UTF8, "application/json");
+            var json = JsonConvert.SerializeObject(new { examQuestionId, sortResult });
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/ExamQuestions/GenerateExam", content);
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }

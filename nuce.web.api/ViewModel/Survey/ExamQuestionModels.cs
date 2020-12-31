@@ -40,12 +40,26 @@ namespace nuce.web.api.ViewModel.Survey
     {
         [Required]
         [NotContainWhiteSpace]
-        public string ExamQuestionId { get; set; }
+        public Guid? ExamQuestionId { get; set; }
 
         [Required]
         public string QuestionCode { get; set; }
 
         [Required]
         public int? Order { get; set; }
+    }
+
+    public class SortQuestion
+    {
+        public Guid CauHoiId { get; set; }
+        public int Order { get; set; }
+    }
+
+    public class GenerateExam
+    {
+        [Required]
+        public Guid? ExamQuestionId { get; set; }
+
+        public List<SortQuestion> SortResult { get; set; }
     }
 }

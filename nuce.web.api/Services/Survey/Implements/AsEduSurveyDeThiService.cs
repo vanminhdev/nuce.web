@@ -24,12 +24,12 @@ namespace nuce.web.api.Services.Survey.Implements
             _surveyContext = surveyContext;
         }
 
-        public async Task AddQuestion(string examQuestionId, string maCauHoi, int order)
+        public async Task AddQuestion(Guid examQuestionId, string maCauHoi, int order)
         {
             var question = await _surveyContext.AsEduSurveyCauHoi.FirstOrDefaultAsync(q => q.Code == maCauHoi);
             if(question == null)
             {
-                throw new RecordNotFoundException();
+                throw new RecordNotFoundException("Không tìm thấy câu hỏi");
             }
 
             if(question.ParentCode != null)
@@ -37,7 +37,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new InvalidDataException("Câu hỏi là câu hỏi con của một câu hỏi khác, vui lòng thêm bằng cách thêm câu hỏi cha");
             }
 
-            if( _surveyContext.AsEduSurveyCauTrucDe.FirstOrDefault(o => o.CauHoiId == question.Id) != null)
+            if( _surveyContext.AsEduSurveyCauTrucDe.FirstOrDefault(o => o.DeThiId == examQuestionId && o.CauHoiId == question.Id) != null)
             {
                 throw new InvalidDataException("Câu hỏi đã tồn tại");
             }
@@ -45,7 +45,7 @@ namespace nuce.web.api.Services.Survey.Implements
             _surveyContext.AsEduSurveyCauTrucDe.Add(new AsEduSurveyCauTrucDe {
                 Id = Guid.NewGuid(),
                 CauHoiId = question.Id,
-                DeThiId = Guid.Parse(examQuestionId),
+                DeThiId = examQuestionId,
                 Order = order
             });
             await _surveyContext.SaveChangesAsync();
@@ -76,18 +76,31 @@ namespace nuce.web.api.Services.Survey.Implements
             await _surveyContext.SaveChangesAsync();
         }
 
-        public async Task GenerateExam(string examQuestionId)
+        public async Task GenerateExam(GenerateExam generateExam)
         {
-            var examQuestion = await _surveyContext.AsEduSurveyDeThi.FindAsync(Guid.Parse(examQuestionId));
+
+            var examQuestion = await _surveyContext.AsEduSurveyDeThi.FindAsync(generateExam.ExamQuestionId.Value);
             if (examQuestion == null)
             {
-                throw new RecordNotFoundException("Không tìm thấy đề thi");
+                throw new RecordNotFoundException("Không tìm thấy phiếu khảo sát");
             }
+
+            var cautruc = _surveyContext.AsEduSurveyCauTrucDe.Where(o => o.DeThiId == examQuestion.Id);
+
+            foreach (var s in generateExam.SortResult)
+            {
+                var stru = cautruc.FirstOrDefault(o => o.CauHoiId == s.CauHoiId);
+                if(stru != null)
+                {
+                    stru.Order = s.Order;
+                }
+            }
+            _surveyContext.SaveChanges();
 
             var questions = _surveyContext.AsEduSurveyCauTrucDe
                 .Join(_surveyContext.AsEduSurveyCauHoi, examStructure => examStructure.CauHoiId, question => question.Id,
                 (examStructure, question) => new { examStructure, question })
-                .Where(result => result.examStructure.DeThiId.ToString() == examQuestionId)
+                .Where(result => result.examStructure.DeThiId == generateExam.ExamQuestionId.Value)
                 .OrderBy(result => result.examStructure.Order)
                 .Select(result => new { payload = result.question, result.examStructure.Order });
 
