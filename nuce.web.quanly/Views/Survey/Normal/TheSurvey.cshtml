@@ -13,17 +13,6 @@
     <div class="row mb-3">
         <div class="col-md-12">
             <div class="form-row d-flex justify-content-end">
-                @*<div class="col-12 col-md mb-2">
-            <input class="form-control form-control" id="name-search" type="text" placeholder="Tìm theo tên" />
-        </div>
-        <div class="col-12 col-md mb-2 d-flex flex-row">
-            <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
-                <i class="fas fa-redo"></i>
-            </div>
-            <div class="w-75">
-                <button id="btn-search" class="btn btn-secondary w-100">Tìm kiếm</button>
-            </div>
-        </div>*@
                 <div class="col-12 col-md-2 mb-2">
                     <button class="btn btn-primary w-100" onclick="createClick()">Thêm bài khảo sát</button>
                 </div>
@@ -40,12 +29,10 @@
                 <thead>
                     <tr>
                         <th class="text-center" style="min-width: 150px">Đợt khảo sát</th>
-                        <th class="text-center">Tên bài khảo sát</th>
-                        <th class="text-center">Từ ngày</th>
-                        <th class="text-center">Đến ngày</th>
-                        <th class="text-center" style="min-width: 140px;">Loại</th>
-                        <th class="text-center">Trạng thái</th>
-                        <th class="text-center" style="min-width:190px"></th>
+                        <th class="text-center">Phiếu khảo sát</th>
+                        <th class="text-center" style="min-width: 340px;">Loại</th>
+                        <th class="text-center" style="max-width: 100px;">Trạng thái</th>
+                        <th class="text-center" style="min-width:110px"></th>
                     </tr>
                 </thead>
             </table>
@@ -65,14 +52,8 @@
             <div class="modal-body">
                 <div class="container-fluid">
                     <form id="form-data" class="auto-validate">
-                        <input name="id" hidden />
-                        <div class="form-group row">
-                            <label class="col-3 col-form-label">Đợt khảo sát <span class="text-danger">*</span></label>
-                            <div class="col-9">
-                                <select class="form-control selectpicker custom-boostrap-select" name="dotKhaoSatId" id="dotKhaoSatId" required title="Chọn đợt khảo sát">
-                                </select>
-                            </div>
-                        </div>
+                        <input type="text" name="id" hidden />
+                        <input type="text" name="dotKhaoSatId" id="dotKhaoSatId" hidden>
                         <div class="form-group row">
                             <label class="col-3 col-form-label">Phiếu khảo sát <span class="text-danger">*</span></label>
                             <div class="col-9">
@@ -80,25 +61,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label class="col-3 col-form-label">Tên bài khảo sát <span class="text-danger">*</span></label>
-                            <div class="col-9">
-                                <input type="text" class="form-control" name="name" id="name" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-3 col-form-label">Từ ngày <span class="text-danger">*</span></label>
-                            <div class="col-9">
-                                <input type="date" class="form-control" name="fromDate" id="fromDate" required data-rule-dateLessThanOrEqual="#endDate">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-3 col-form-label">Đến ngày <span class="text-danger">*</span></label>
-                            <div class="col-9">
-                                <input type="date" class="form-control" name="endDate" id="endDate" required data-rule-dateGreaterThanOrEqual="#fromDate">
-                            </div>
-                        </div>
-                        <div class="form-group row">
+                        @*<div class="form-group row">
                             <label class="col-3 col-form-label">Mô tả</label>
                             <div class="col-9">
                                 <textarea type="text" class="form-control" name="description" id="description"></textarea>
@@ -109,16 +72,16 @@
                             <div class="col-9">
                                 <textarea type="text" class="form-control" name="note" id="note"></textarea>
                             </div>
-                        </div>
+                        </div>*@
                         <div class="form-group row">
                             <label class="col-3 col-form-label">Loại <span class="text-danger">*</span></label>
                             <div class="col-9">
                                 <select class="form-control selectpicker custom-boostrap-select" name="type" id="type" data-rule-onlyAcceptListValue="1,2,3,4,5">
-                                    <option value="1">Bài khảo sát cho môn lý thuyết</option>
-                                    <option value="2">Bài khảo sát cho môn thực hành, thí nghiệm và thực tập</option>
-                                    <option value="3">Bài khảo sát cho môn môn lý thuyết + thực hành</option>
-                                    <option value="4">Bài khảo sát cho môn đồ án</option>
-                                    <option value="5">Bài khảo sát cho môn không được phân loại</option>
+                                    <option value="1">Môn lý thuyết</option>
+                                    <option value="2">Môn thực hành, thí nghiệm và thực tập</option>
+                                    <option value="3">Môn môn lý thuyết + thực hành</option>
+                                    <option value="4">Môn đồ án</option>
+                                    <option value="5">Môn không được phân loại</option>
                                 </select>
                             </div>
                         </div>
@@ -143,7 +106,7 @@
                 </button>
             </div>
             <div class="modal-body" id="modal-yes-no-content">
-                
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
@@ -154,26 +117,16 @@
 </div>
 
 <div class="modal fade bd-example-modal-lg auto-clear-form-on-open" id="modal-publish" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Phát bài khảo sát</h5>
+                <h5 class="modal-title">Xác nhận phát bài khảo sát</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <div class="container-fluid">
-                    <form id="form-data-publish" class="auto-validate">
-                        <div class="form-group row">
-                            <label class="col-3 col-form-label">Đợt khảo sát <span class="text-danger">*</span></label>
-                            <div class="col-9">
-                                <select class="form-control selectpicker custom-boostrap-select" name="surveyRoundId" id="dotKhaoSatPublish" required title="Chọn đợt khảo sát">
-                                </select>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                Xác nhận phát bài khảo sát cho sinh viên? <br/>Thao tác này <b>mất nhiều thời gian</b> vui lòng đợi
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
@@ -189,19 +142,6 @@
     <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/content/js/dataTables.config.js"></script>
     <script>
-        let surveyRounds = JSON.parse('@Html.Raw(ViewData["SurveyRoundActive"])');
-        let dotKhaoSats = $('#dotKhaoSatId');
-        surveyRounds.forEach(e => {
-            dotKhaoSats.append(`<option value="${e.id}">${e.name} (từ ${getDateString(e.fromDate)} đến ${getDateString(e.endDate)})</option>`);
-        });
-        dotKhaoSats.selectpicker('refresh');
-
-        let dotKhaoSatPublish = $('#dotKhaoSatPublish');
-        surveyRounds.forEach(e => {
-            dotKhaoSatPublish.append(`<option value="${e.id}">${e.name} (từ ${getDateString(e.fromDate)} đến ${getDateString(e.endDate)})</option>`);
-        });
-        dotKhaoSatPublish.selectpicker('refresh');
-
         let examQuestions = JSON.parse('@Html.Raw(ViewData["ExamQuestions"])');
         let deThis = $('#deThiId');
         examQuestions.forEach(e => {
@@ -220,7 +160,9 @@
         }
         else if (tableTheSurveyStudentStatus.status === @((int)TableTaskStatus.Doing)) {
             btnPublish.prop('disabled', true);
-            btnPublish.html('<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang phát bài');
+            let loading = tableTheSurveyStudentStatus.message != null ? tableTheSurveyStudentStatus.message : "";
+            btnPublish.prop('title', loading);
+            btnPublish.html(`<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang phát`);
         }
         console.log('table the survey student status', tableTheSurveyStudentStatus);
 
@@ -234,7 +176,7 @@
             language: dataTableConfig.language,
             columnDefs: [
                 {
-                    targets: [2, 3, 5, 6],
+                    targets: [3],
                     className: 'text-center'
                 }
             ],
@@ -256,32 +198,18 @@
                 },
                 {
                     data: null,
-                    name: "fromDate",
-                    mRender: function (data, type, row) {
-                        return getDateStringFromServerType(data.fromDate);
-                    }
-                },
-                {
-                    data: null,
-                    name: "endDate",
-                    mRender: function (data, type, row) {
-                        return getDateStringFromServerType(data.endDate);
-                    }
-                },
-                {
-                    data: null,
                     name: "type",
                     mRender: function (data, type, row) {
                         if (data.type === 1) {
-                            return 'Bài ks cho môn lý thuyết';
+                            return 'Bài ks cho môn <b>lý thuyết</b>';
                         } else if (data.type === 2) {
-                            return 'Bài ks cho môn thực hành, thí nghiệm và thực tập';
+                            return 'Bài ks cho môn <b>thực hành, thí nghiệm và thực tập</b>';
                         } else if (data.type === 3) {
-                            return 'Bài ks cho môn môn lý thuyết + thực hành';
+                            return 'Bài ks cho môn môn <b>lý thuyết + thực hành</b>';
                         } else if (data.type === 4) {
-                            return 'Bài ks cho môn đồ án';
+                            return 'Bài ks cho môn <b>đồ án</>';
                         } else if (data.type === 5) {
-                            return 'Bài ks cho môn không được phân loại';
+                            return 'Bài ks cho môn <b>không</b> được <b>phân loại</b>';
                         } else {
                             return data.type;
                         }
@@ -308,12 +236,11 @@
                         let html = '';
                         if (data.status === @((int)TheSurveyStatus.New)) {
                             html += `<button class="btn btn btn-outline-success btn-sm ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
-                        }
-                        else if (data.status === @((int)TheSurveyStatus.Deactive)) {
-                            html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" onclick="detailClick('${data.id}')">Xem</button>`;
-                        }
-                        else if (data.status === @((int)TheSurveyStatus.Deactive)) {
                             html += `<button class="btn btn btn-outline-danger btn-sm ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
+                        }
+                        else if (data.status === @((int)TheSurveyStatus.Published)) {
+                            @*Bài khảo sát đã phát thì không sửa hoặc xoá*@
+                            html = '';
                         }
                         return html;
                     }
@@ -321,11 +248,9 @@
             ]
         });
         $('#id-datatable_filter').hide();
-        $("#btn-search").click(() => {
-            //table
-            //    .column(0).search($("#name-search").val())
-            //    .draw();
-        });
+
+        table.column(0).search('@ViewData["surveyRoundId"]');
+
         document.getElementById("footer").scrollIntoView();
 
         let saveChanges = $('#save-changes');
@@ -339,7 +264,7 @@
                     url = '/Survey/UpdateTheSurvey';
                 }
                 $.ajax({
-                    data: getFormData('#form-data'),
+                    data: $('#form-data').serializeArray(),
                     dataType: 'json',
                     method: 'Post',
                     url: url,
@@ -379,6 +304,7 @@
             $('#modal-input').modal('show');
             $('#modal-title').html('Thêm bài khảo sát');
             $('#modal-footer').show();
+            $('#dotKhaoSatId').val('@ViewData["surveyRoundId"]');
             saveChanges.attr('type-handle', 'create');
         }
 
@@ -386,6 +312,7 @@
             $('#modal-input').modal('show');
             $('#modal-title').html('Cập nhật bài khảo sát');
             $('#modal-footer').show();
+            $('#dotKhaoSatId').val('@ViewData["surveyRoundId"]');
             saveChanges.attr('type-handle', 'update');
             $.ajax({
                 dataType: 'json',
@@ -413,6 +340,7 @@
             $('#modal-input').modal('show');
             $('#modal-title').html('Chi tiết bài khảo sát');
             $('#modal-footer').hide();
+            $('#dotKhaoSatId').val('@ViewData["surveyRoundId"]');
             $.ajax({
                 dataType: 'json',
                 method: 'Get',
@@ -440,36 +368,34 @@
         })
 
         $('#save-changes-publish').click(function () {
-            let form = $('#form-data-publish');
-            if (form.valid()) {
-                $.ajax({
-                    data: getFormData('#form-data-publish'),
-                    dataType: 'json',
-                    method: 'Post',
-                    url: '/Survey/GenerateTheSurveyStudent',
-                    complete: () => { }
-                }).done(function (res) {
-                    if (res.statusCode === 200) {
-                        btnPublish.prop('disabled', true);
-                        btnPublish.html('<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang phát bài');
-                        toastSuccess('Bắt đầu Phát');
-                        //table.ajax.reload();
-                        $('#modal-publish').modal('hide');
+            $.ajax({
+                data: { surveyRoundId: '@ViewData["surveyRoundId"]' },
+                dataType: 'json',
+                method: 'Post',
+                url: '/Survey/GenerateTheSurveyStudent',
+                complete: () => { }
+            }).done(function (res) {
+                if (res.statusCode === 200) {
+                    table.ajax.reload();
+                    btnPublish.prop('disabled', true);
+                    btnPublish.html('<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang phát bài');
+                    toastSuccess('Bắt đầu Phát');
+                    //table.ajax.reload();
+                    $('#modal-publish').modal('hide');
+                }
+                else {
+                    try {
+                        let content = JSON.parse(res.content);
+                        toastError(content.message);
+                    } catch {
+                        toastError('Có lỗi xảy ra');
                     }
-                    else {
-                        try {
-                            let content = JSON.parse(res.content);
-                            toastError(content.message);
-                        } catch {
-                            toastError('Có lỗi xảy ra');
-                        }
-                        console.log(res);
-                    }
-                }).fail(function (jqXHR, textStatus, errorThrown) {
-                    console.log(textStatus + ': ' + errorThrown);
-                    console.log(jqXHR);
-                });
-            }
+                    console.log(res);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus + ': ' + errorThrown);
+                console.log(jqXHR);
+            });
         });
 
         function closeClick(id) {
@@ -535,3 +461,4 @@
         }
     </script>
 }
+

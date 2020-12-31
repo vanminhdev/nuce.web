@@ -86,11 +86,9 @@ namespace nuce.web.api.Services.Survey.Implements
                 Id = Guid.NewGuid(),
                 DotKhaoSatId = theSurvey.DotKhaoSatId.Value,
                 DeThiId = theSurvey.DeThiId.Value,
-                Name = theSurvey.Name,
+                Name = examQuestion.Name,
                 NoiDungDeThi = examQuestion.NoiDungDeThi,
                 DapAn = examQuestion.DapAn,
-                FromDate = theSurvey.FromDate.Value,
-                EndDate = theSurvey.EndDate.Value,
                 Description = theSurvey.Description?.Trim(),
                 Note = theSurvey.Note?.Trim(),
                 Status = (int)TheSurveyStatus.New,
@@ -141,11 +139,9 @@ namespace nuce.web.api.Services.Survey.Implements
                 theSurveyUpdate.DeThiId = theSurvey.DeThiId.Value;
                 theSurveyUpdate.NoiDungDeThi = examQuestion.NoiDungDeThi;
                 theSurveyUpdate.DapAn = examQuestion.DapAn;
+                theSurveyUpdate.Name = examQuestion.Name;
             }
 
-            theSurveyUpdate.Name = theSurvey.Name.Trim();
-            theSurveyUpdate.FromDate = theSurvey.FromDate.Value;
-            theSurveyUpdate.EndDate = theSurvey.EndDate.Value;
             theSurveyUpdate.Description = theSurvey.Description?.Trim();
             theSurveyUpdate.Note = theSurvey.Note?.Trim();
             theSurveyUpdate.Type = theSurvey.Type.Value;

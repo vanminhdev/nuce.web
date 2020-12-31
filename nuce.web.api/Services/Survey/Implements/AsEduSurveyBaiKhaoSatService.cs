@@ -78,7 +78,7 @@ namespace nuce.web.api.Services.Survey.Implements
             var examQuestion = await _context.AsEduSurveyDeThi.FirstOrDefaultAsync(o => o.Id == theSurvey.DeThiId);
             if(examQuestion == null)
             {
-                throw new RecordNotFoundException("Id đề thi không tồn tại");
+                throw new RecordNotFoundException("Id phiếu khảo sát không tồn tại");
             }
 
             var theActivedSurvey = await _context.AsEduSurveyBaiKhaoSat
@@ -92,8 +92,8 @@ namespace nuce.web.api.Services.Survey.Implements
             {
                 Id = Guid.NewGuid(),
                 DotKhaoSatId = theSurvey.DotKhaoSatId.Value,
-                DeThiId = theSurvey.DeThiId.Value,
-                Name = theSurvey.Name.Trim(),
+                DeThiId = examQuestion.Id,
+                Name = examQuestion.Name,
                 NoiDungDeThi = examQuestion.NoiDungDeThi,
                 DapAn = examQuestion.DapAn,
                 Description = theSurvey.Description?.Trim(),
@@ -145,10 +145,10 @@ namespace nuce.web.api.Services.Survey.Implements
                     throw new RecordNotFoundException("Id đề thi không tồn tại");
                 }
                 theSurveyUpdate.DeThiId = theSurvey.DeThiId.Value;
+                theSurveyUpdate.Name = examQuestion.Name;
                 theSurveyUpdate.NoiDungDeThi = examQuestion.NoiDungDeThi;
                 theSurveyUpdate.DapAn = examQuestion.DapAn;
             }
-            theSurveyUpdate.Name = theSurvey.Name.Trim();
             theSurveyUpdate.Description = theSurvey.Description?.Trim();
             theSurveyUpdate.Note = theSurvey.Note?.Trim();
             theSurveyUpdate.Type = theSurvey.Type.Value;
@@ -162,6 +162,12 @@ namespace nuce.web.api.Services.Survey.Implements
             {
                 throw new RecordNotFoundException();
             }
+
+            if(theSurvey.Status != (int)TheSurveyStatus.New)
+            {
+                throw new InvalidDataException("Bài khảo sát không phải là mới tạo, không thể xoá");
+            }
+
             theSurvey.Status = (int)TheSurveyStatus.Deleted;
             await _context.SaveChangesAsync();
         }
@@ -185,7 +191,6 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException();
             }
             theSurvey.Status = (int)TheSurveyStatus.Deactive;
-            await _context.Database.ExecuteSqlRawAsync($"update AS_Edu_Survey_BaiKhaoSat_SinhVien set Status = {(int)SurveyStudentStatus.Close} where BaiKhaoSatID = '{theSurvey.Id}'");
             await _context.SaveChangesAsync();
         }
     }

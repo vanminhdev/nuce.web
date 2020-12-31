@@ -40,6 +40,8 @@ namespace nuce.web.api.Services.Status.Implements
             if (task.Status == (int)TableTaskStatus.Done)
             {
                 task.Status = (int)TableTaskStatus.DoNot;
+                task.IsSuccess = true;
+                task.Message = null;
                 await _context.SaveChangesAsync();
             }
             return result;

@@ -83,6 +83,7 @@ namespace nuce.web.api.Controllers.Core
                 new Claim(ClaimTypes.Role, RoleNames.UndergraduateStudent),
                 new Claim(ClaimTypes.Role, RoleNames.GraduateStudent),
                 new Claim(UserParameters.MSSV, model.Username),
+                new Claim(ClaimTypes.Name, model.Username),
                 new Claim(ClaimTypes.GivenName, "ktdb")
             };
 
@@ -362,15 +363,35 @@ namespace nuce.web.api.Controllers.Core
                     return Unauthorized();
                 }
                 string username = claimName.Value;
-                var claimStudent = jwtValidatedToken.Claims.FirstOrDefault(c => c.Type == UserParameters.MSSV);
-                bool isStudent = claimStudent != null;
-                var model = new LoginModel { Username = username, IsStudent = isStudent };
-                var user = await _userService.FindByName(username);
-                var claims = await _userService.AddClaimsAsync(model, user);
-                
-                var accessToken = _userService.CreateJWTAccessToken(claims);
-                Response.Cookies.Append(UserParameters.JwtAccessToken, new JwtSecurityTokenHandler().WriteToken(accessToken),
-                        new CookieOptions() { HttpOnly = true, Expires = accessToken.ValidTo });
+
+                var roles = jwtValidatedToken.Claims.Where(o => o.Type == ClaimTypes.Role).ToList();
+                if (roles.FirstOrDefault(o => o.Value == RoleNames.FakeStudent) != null) //la fake student
+                {
+                    var authClaims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Role, RoleNames.FakeStudent), //vai trò fake student
+                        new Claim(ClaimTypes.Role, RoleNames.Student),
+                        new Claim(ClaimTypes.Role, RoleNames.UndergraduateStudent),
+                        new Claim(ClaimTypes.Role, RoleNames.GraduateStudent),
+                        new Claim(UserParameters.MSSV, username),
+                        new Claim(ClaimTypes.Name, username),
+                        new Claim(ClaimTypes.GivenName, "ktdb")
+                    };
+                    var accessToken = _userService.CreateJWTAccessToken(authClaims);
+                    Response.Cookies.Append(UserParameters.JwtAccessToken, new JwtSecurityTokenHandler().WriteToken(accessToken),
+                            new CookieOptions() { HttpOnly = true, Expires = accessToken.ValidTo });
+                }
+                else
+                {
+                    var claimStudent = jwtValidatedToken.Claims.FirstOrDefault(c => c.Type == UserParameters.MSSV);
+                    bool isStudent = claimStudent != null;
+                    var model = new LoginModel { Username = username, IsStudent = isStudent };
+                    var user = await _userService.FindByName(username);
+                    var claims = await _userService.AddClaimsAsync(model, user);
+                    var accessToken = _userService.CreateJWTAccessToken(claims);
+                    Response.Cookies.Append(UserParameters.JwtAccessToken, new JwtSecurityTokenHandler().WriteToken(accessToken),
+                            new CookieOptions() { HttpOnly = true, Expires = accessToken.ValidTo });
+                }
                 return Ok();
             }
             return Unauthorized();

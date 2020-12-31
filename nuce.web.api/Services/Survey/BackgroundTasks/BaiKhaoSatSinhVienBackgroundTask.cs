@@ -61,7 +61,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
 
             try
             {
-                var queryTheSurvey = surveyContext.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == surveyRound.Id && o.Status == (int)TheSurveyStatus.New);
+                var queryTheSurvey = surveyContext.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == surveyRound.Id && o.Status == (int)TheSurveyStatus.Published);
                 var theoreticalSubjects = queryTheSurvey.FirstOrDefault(o => o.Type == (int)TheSurveyType.TheoreticalSubjects);
                 if (theoreticalSubjects == null)
                 {
@@ -182,8 +182,12 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                     }
                     surveyContext.SaveChanges();
                     _logger.LogInformation($"Generate BaiKhaoSat_SinhVien loading {skip}/{numStudent}.");
+                    status.Message = $"{skip}/{numStudent}";
+                    statusContext.SaveChanges();
                     skip += take;
                 }
+                status.Message = $"{numStudent}/{numStudent}";
+                statusContext.SaveChanges();
 
                 _logger.LogInformation("Generate BaiKhaoSat_SinhVien is done.");
 
@@ -209,6 +213,58 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             if (status == (int)TableTaskStatus.Doing)
             {
                 throw new TableBusyException("Bảng đang làm việc, thao tác bị huỷ");
+            }
+
+            var scope = _scopeFactory.CreateScope();
+            var surveyContext = scope.ServiceProvider.GetRequiredService<SurveyContext>();
+
+
+            var transaction = surveyContext.Database.BeginTransaction();
+            try
+            {
+                var queryTheSurvey = surveyContext.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == surveyRoundId && o.Status != (int)TheSurveyStatus.Deleted);
+                var theoreticalSubjects = queryTheSurvey.FirstOrDefault(o => o.Type == (int)TheSurveyType.TheoreticalSubjects);
+                if (theoreticalSubjects == null)
+                {
+                    throw new RecordNotFoundException("Không có bài khảo sát chuẩn bị cho môn lý thuyết trong đợt khảo sát này");
+                }
+
+                var practicalSubjects = queryTheSurvey.FirstOrDefault(o => o.Type == (int)TheSurveyType.PracticalSubjects);
+                if (practicalSubjects == null)
+                {
+                    throw new RecordNotFoundException("Không có bài khảo sát chuẩn bị cho môn thực hành, thực tập, thí nghiệm trong đợt khảo sát này");
+                }
+
+                var theoreticalPracticalSubjects = queryTheSurvey.FirstOrDefault(o => o.Type == (int)TheSurveyType.TheoreticalPracticalSubjects);
+                if (theoreticalPracticalSubjects == null)
+                {
+                    throw new RecordNotFoundException("Không có bài khảo sát chuẩn bị cho môn lý thuyết + thực hành trong đợt khảo sát này");
+                }
+
+                var assignmentSubjects = queryTheSurvey.FirstOrDefault(o => o.Type == (int)TheSurveyType.AssignmentSubjects);
+                if (assignmentSubjects == null)
+                {
+                    throw new RecordNotFoundException("Không có bài khảo sát chuẩn bị cho môn đồ án trong đợt khảo sát này");
+                }
+
+                var defaultSubjects = queryTheSurvey.FirstOrDefault(o => o.Type == (int)TheSurveyType.DefaultSubjects);
+                if (defaultSubjects == null)
+                {
+                    throw new RecordNotFoundException("Không có bài khảo sát chuẩn bị cho môn không được phân loại trong đợt khảo sát này");
+                }
+
+                theoreticalSubjects.Status = (int)TheSurveyStatus.Published;
+                practicalSubjects.Status = (int)TheSurveyStatus.Published;
+                theoreticalPracticalSubjects.Status = (int)TheSurveyStatus.Published;
+                assignmentSubjects.Status = (int)TheSurveyStatus.Published;
+                defaultSubjects.Status = (int)TheSurveyStatus.Published;
+                await surveyContext.SaveChangesAsync();
+                transaction.Commit();
+            }
+            catch (Exception e)
+            {
+                transaction.Rollback();
+                throw e;
             }
 
             _backgroundTaskWorker.StartAction(() =>

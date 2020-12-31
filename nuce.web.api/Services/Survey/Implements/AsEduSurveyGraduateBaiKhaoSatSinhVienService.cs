@@ -50,13 +50,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException("Không tìm thấy bài khảo sát");
             }
 
-            var examQuestion = await _context.AsEduSurveyDeThi.FirstOrDefaultAsync(o => o.Id == theSurvey.DeThiId);
-            if (examQuestion == null)
-            {
-                throw new RecordNotFoundException("Không tìm thấy nội dung bài khảo sát");
-            }
-
-            return examQuestion.NoiDungDeThi;
+            return theSurvey.NoiDungDeThi;
         }
 
         public async Task<List<GraduateTheSurveyStudent>> GetTheSurvey(string studentCode)

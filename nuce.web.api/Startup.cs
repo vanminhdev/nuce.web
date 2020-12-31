@@ -36,7 +36,6 @@ using nuce.web.api.Models.Status;
 using nuce.web.api.Services.Status.Interfaces;
 using nuce.web.api.Services.Status.Implements;
 using System.Net;
-using nuce.web.api.Middlewares;
 using nuce.web.api.Services.Background;
 using nuce.web.api.Services.Survey.BackgroundTasks;
 using nuce.web.api.Services.Shared;
@@ -308,8 +307,6 @@ namespace nuce.web.api
             
             app.UseAuthentication();
             app.UseAuthorization();
-
-            app.UseUserStatusMiddleware();
 
             app.UseEndpoints(endpoints =>
             {

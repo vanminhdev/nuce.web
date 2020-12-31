@@ -40,9 +40,6 @@ namespace nuce.web.api.ViewModel.Survey
         [Required(AllowEmptyStrings = false)]
         public Guid? DeThiId { get; set; }
 
-        [Required(AllowEmptyStrings = false)]
-        public string Name { get; set; }
-
         public string Description { get; set; }
 
         public string Note { get; set; }

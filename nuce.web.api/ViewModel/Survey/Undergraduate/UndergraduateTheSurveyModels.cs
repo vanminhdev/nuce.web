@@ -33,14 +33,11 @@ namespace nuce.web.api.ViewModel.Survey.Undergraduate
         [Required(AllowEmptyStrings = false)]
         public Guid? DeThiId { get; set; }
 
-        [Required(AllowEmptyStrings = false)]
-        public string Name { get; set; }
+        //[CompareMoreThanLessThan(false, "EndDate", ErrorMessage = "Từ ngày phải nhỏ hơn đến ngày")]
+        //public DateTime? FromDate { get; set; }
 
-        [CompareMoreThanLessThan(false, "EndDate", ErrorMessage = "Từ ngày phải nhỏ hơn đến ngày")]
-        public DateTime? FromDate { get; set; }
-
-        [CompareMoreThanLessThan(true, "FromDate", ErrorMessage = "Đến ngày phải lớn hơn từ ngày")]
-        public DateTime? EndDate { get; set; }
+        //[CompareMoreThanLessThan(true, "FromDate", ErrorMessage = "Đến ngày phải lớn hơn từ ngày")]
+        //public DateTime? EndDate { get; set; }
 
         public string Description { get; set; }
 

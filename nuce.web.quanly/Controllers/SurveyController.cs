@@ -465,14 +465,11 @@ namespace nuce.web.quanly.Controllers
             var resTableStatus = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurveyStudent/GetGenerateTheSurveyStudentStatus");
             ViewData["TableTheSurveyStudentStatus"] = await resTableStatus.Content.ReadAsStringAsync();
 
-            var resSurveyRound = await base.MakeRequestAuthorizedAsync("Get", $"/api/SurveyRound/GetSurveyRoundActive");
-            ViewData["SurveyRoundActive"] = await resSurveyRound.Content.ReadAsStringAsync();
-
             var resExam = await base.MakeRequestAuthorizedAsync("Get", $"/api/ExamQuestions/GetAll");
             ViewData["ExamQuestions"] = await resExam.Content.ReadAsStringAsync();
 
             ViewData["surveyRoundId"] = surveyRoundId;
-            return View("~/Views/Survey/Normal/TheSurveyOfSurveyRound.cshtml");
+            return View("~/Views/Survey/Normal/TheSurvey.cshtml");
         }
 
         [HttpPost]

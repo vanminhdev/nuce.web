@@ -173,6 +173,10 @@ namespace nuce.web.api.Controllers.Survey
             {
                 return NotFound(new { message = "Không tìm thấy bài khảo sát" });
             }
+            catch (InvalidDataException e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
             catch (DbUpdateException e)
             {
                 _logger.LogError(e, e.Message);

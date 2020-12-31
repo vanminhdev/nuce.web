@@ -67,7 +67,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 Id = Guid.NewGuid(),
                 DeThiId = theSurvey.DeThiId.Value,
                 NoiDungDeThi = examQuestion.NoiDungDeThi,
-                Name = theSurvey.Name,
+                Name = examQuestion.Name,
                 Description = theSurvey.Description?.Trim(),
                 Note = theSurvey.Note?.Trim(),
                 Status = (int)TheSurveyStatus.New
@@ -97,9 +97,9 @@ namespace nuce.web.api.Services.Survey.Implements
                 }
                 theSurveyUpdate.DeThiId = theSurvey.DeThiId.Value;
                 theSurveyUpdate.NoiDungDeThi = examQuestion.NoiDungDeThi;
+                theSurveyUpdate.Name = examQuestion.Name;
             }
 
-            theSurveyUpdate.Name = theSurvey.Name.Trim();
             theSurveyUpdate.Description = theSurvey.Description?.Trim();
             theSurveyUpdate.Note = theSurvey.Note?.Trim();
             await _context.SaveChangesAsync();

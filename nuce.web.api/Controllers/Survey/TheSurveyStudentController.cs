@@ -55,9 +55,16 @@ namespace nuce.web.api.Controllers.Survey
         [Authorize(Roles = "Student")]
         public async Task<IActionResult> GetTheSurvey()
         {
-            var studentCode = _userService.GetCurrentStudentCode();
-            var result = await _asEduSurveyBaiKhaoSatSinhVienService.GetTheSurvey(studentCode);
-            return Ok(result);
+            try
+            {
+                var studentCode = _userService.GetCurrentStudentCode();
+                var result = await _asEduSurveyBaiKhaoSatSinhVienService.GetTheSurvey(studentCode);
+                return Ok(result);
+            }
+            catch (RecordNotFoundException e)
+            {
+                return NotFound(new { message = e.Message });
+            }
         }
 
         [HttpGet]
@@ -194,6 +201,11 @@ namespace nuce.web.api.Controllers.Survey
             catch (TableBusyException e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không tạo được bài khảo sát cho từng sinh viên", detailMessage = e.Message });
             }
             catch (RecordNotFoundException e)
             {

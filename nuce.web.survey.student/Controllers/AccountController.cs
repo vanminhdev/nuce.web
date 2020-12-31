@@ -29,7 +29,7 @@ namespace nuce.web.survey.student.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Login(LoginModel login)
+        public async Task<ActionResult> Login(LoginModel login, string target)
         {
             if (!ModelState.IsValid)
             {
@@ -71,11 +71,14 @@ namespace nuce.web.survey.student.Controllers
                     var handler = new JwtSecurityTokenHandler();
                     var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
                     var roles = jwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(r => r.Value).ToList();
-                    if (roles.Contains("UndergraduateStudent"))
+                    if(target == null)
                     {
-                        return Redirect("/home/indexundergraduate");
+                        return Redirect("/default");
                     }
-                    return Redirect("/home/index");
+                    else
+                    {
+                        return Redirect(target);
+                    }
                 case HttpStatusCode.NotFound:
                     ViewData["LoginMessage"] = "Tài khoản không tồn tại";
                     break;

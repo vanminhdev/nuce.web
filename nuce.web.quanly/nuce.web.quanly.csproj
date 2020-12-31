@@ -1558,7 +1558,6 @@
     <Content Include="Views\Survey\Undergraduate\UndergraduateSurveyRound.cshtml" />
     <Content Include="Views\Survey\Undergraduate\UndergraduateTheSurvey.cshtml" />
     <Content Include="Views\Survey\Normal\SurveyRound.cshtml" />
-    <Content Include="Views\Survey\Normal\TheSurvey.cshtml" />
     <Content Include="Views\NewsManagement\ItemsList.cshtml" />
     <Content Include="Views\NewsManagement\Create.cshtml" />
     <Content Include="Views\NewsManagement\ItemsDetail.cshtml" />
@@ -1566,7 +1565,7 @@
     <Content Include="Views\FrontendManager\Index.cshtml" />
     <Content Include="Views\FrontendManager\Edit.cshtml" />
     <Content Include="Views\ManagerRestore\Index.cshtml" />
-    <Content Include="Views\Survey\Normal\TheSurveyOfSurveyRound.cshtml" />
+    <Content Include="Views\Survey\Normal\TheSurvey.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
