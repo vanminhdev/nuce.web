@@ -274,7 +274,14 @@ namespace nuce.web.api.Services.Core.Implements
                                 .Where(c => c.Role == role && (status == null || c.Status == status) && (c.OnMenu ?? false) == onMenu)
                                 .OrderBy(c => c.Count);
         }
-
+        /// <summary>
+        /// Danh sách bài tin theo danh mục
+        /// </summary>
+        /// <param name="catId"></param>
+        /// <param name="seen"></param>
+        /// <param name="size"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
         public async Task<DataTableResponse<NewsItems>> FindItemsByCatId(int catId, int seen, int size, int? status)
         {
             var catChildren = _context.NewsCats.Where(cat => (cat.Parent == catId || cat.Id == catId) && (status == null || cat.Status == status));
@@ -298,6 +305,22 @@ namespace nuce.web.api.Services.Core.Implements
                 RecordsFiltered = takedData.Count(),
                 RecordsTotal = data.Count()
             };
+        }
+
+        public async Task<IQueryable<NewsItems>> GetCousinNewsItemsById(int id)
+        {
+            var newsItem = await _context.NewsItems.FindAsync(id);
+            if (newsItem == null)
+            {
+                throw new RecordNotFoundException("Bài tin không tồn tại");
+            }
+            var lesserList = _context.NewsItems.Where(ni => ni.EntryDatetime < newsItem.EntryDatetime && ni.CatId == newsItem.CatId)
+                                                .OrderByDescending(ni => ni.EntryDatetime)
+                                                .Take(2);
+            var greaterList = _context.NewsItems.Where(ni => ni.EntryDatetime > newsItem.EntryDatetime && ni.CatId == newsItem.CatId)
+                                                .OrderBy(ni => ni.EntryDatetime)
+                                                .Take(2);
+            return (lesserList.Concat(greaterList)).OrderByDescending(ni => ni.EntryDatetime);
         }
 
         public async Task<NewsItems> FindNewsItemById(int id, int? status)

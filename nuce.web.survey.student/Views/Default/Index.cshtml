@@ -46,7 +46,7 @@
                     </div>
                 </div>
                 <div class="row mt-3">
-                    <div class="col-12 col-md-4">
+                    <div class="col-4">
                         <a class="m-text-black m-text-decoration-none m-text-hover-blue" href="/home/index">
                             <div>
                                 <img src="~/Content/img/survey-student.jpg" class="w-100" />
@@ -56,7 +56,7 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-12 col-md-4">
+                    <div class="col-4">
                         <a class="m-text-black m-text-decoration-none m-text-hover-blue" href="/home/indexundergraduate">
                             <div>
                                 <img src="~/Content/img/survey-student.jpg" class="w-100" />
@@ -66,7 +66,7 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-12 col-md-4">
+                    <div class="col-4">
                         <a class="m-text-black m-text-decoration-none m-text-hover-blue" href="/graduatehome/index">
                             <div>
                                 <img src="~/Content/img/survey-student.jpg" class="w-100" />
@@ -119,7 +119,7 @@
             handleMainContent: function(data) {
                 if (!data) return;
                 const template = `<div>
-                                    <img src="[image]" class="img-fluid" alt="Responsive image" />
+                                    <img src="[image]" class="img-fluid w-100" alt="Responsive image" />
                                 </div>
                                 <div class="mt-2 text-justify">
                                     <a class="m-text-black m-text-decoration-none" href="[link]">
@@ -134,7 +134,7 @@
                                     </p>
                                 </div>`;
                 var entryDate = datetimeHelper.convertDateTime(new Date(data.entryDatetime));
-                const resultHtml = template.replace('[image]', `${API_URL}/api/NewsManager/news-items/avatar/${data.id}`)
+                const resultHtml = template.replace('[image]', `${API_URL}/api/NewsManager/news-items/avatar/${data.id}?width=350&height=233`)
                                             .replace('[title]', data.title || '')
                                             .replace('[description]', data.description || '')
                                             .replace('[link]', `/news/detail?catId=${data.catId}&itemId=${data.id}`)
@@ -167,7 +167,7 @@
                         title = `${title.substring(0, maxChar)}...`;
                     }
                     resultHtml += template.replace('[title]', `${title || ''}`)
-                                            .replace('[image]', `${API_URL}/api/NewsManager/news-items/avatar/${newsItem.id}`)
+                                            .replace('[image]', `${API_URL}/api/NewsManager/news-items/avatar/${newsItem.id}?width=105&height=70`)
                                             .replace('[link]', `/news/detail?catId=${newsItem.catId}&itemId=${newsItem.id}`);
                 };
                 $('#side-event').html(resultHtml);

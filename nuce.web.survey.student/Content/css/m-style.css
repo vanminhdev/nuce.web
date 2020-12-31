@@ -107,6 +107,23 @@
     border-bottom: none !important;
 }
 
+.m-hover-news-item-anchor-inside {
+
+}
+
+.m-hover-news-item-anchor-inside a:link {
+    text-decoration: none;
+}
+
+.m-hover-news-item-anchor-inside:hover {
+    background: #eee;
+}
+
+.m-hover-news-item-anchor-inside:hover .title {
+    color: #112B7F;
+}
+
+
 /* MEDIA QUERY */
 @media screen and (max-width: 768px) {
     .m-nav-item li {

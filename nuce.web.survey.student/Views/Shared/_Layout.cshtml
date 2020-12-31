@@ -32,13 +32,13 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Đại Học Xây Dựng | @ViewData["Title"]</title>
+    <title>Phòng Khảo thí | @ViewData["Title"]</title>
     <link rel="stylesheet" href="~/content/css/bootstrap.min.css" />
 
     <!-- Custom -->
     <link rel="stylesheet" href="~/content/css/m-util.css" />
     <link rel="stylesheet" href="~/content/css/m-style.css" />
-    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+    <link rel="stylesheet" href="~/Content/css/fontawesome-free-5.15.1-web/css/all.min.css" />
     <script type="text/javascript">
         var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
         (function(){
@@ -50,11 +50,6 @@
         s0.parentNode.insertBefore(s1,s0);
         })();
     </script>
-    <style>
-        .dropdown {
-            transition: all 0.5s;
-        }
-    </style>
     @RenderSection("Style", required: false)
 </head>
 <body id="page-top">
@@ -65,40 +60,7 @@
                     <div class="col">
                         <div class="d-md-flex justify-content-end pt-1 pb-1 m-fs-sm-12">
                             <div class="ml-2 mr-2 m-fs-14 font-weight-bold">
-                                @{
-                                    string strDayOfWeek = "";
-                                    var dayOfWeek = DateTime.Now.DayOfWeek;
-                                    if (dayOfWeek == DayOfWeek.Monday)
-                                    {
-                                        strDayOfWeek = "Thứ 2";
-                                    }
-                                    else if (dayOfWeek == DayOfWeek.Tuesday)
-                                    {
-                                        strDayOfWeek = "Thứ 3";
-                                    }
-                                    else if (dayOfWeek == DayOfWeek.Wednesday)
-                                    {
-                                        strDayOfWeek = "Thứ 4";
-                                    }
-                                    else if (dayOfWeek == DayOfWeek.Thursday)
-                                    {
-                                        strDayOfWeek = "Thứ 5";
-                                    }
-                                    else if (dayOfWeek == DayOfWeek.Friday)
-                                    {
-                                        strDayOfWeek = "Thứ 6";
-                                    }
-                                    else if (dayOfWeek == DayOfWeek.Saturday)
-                                    {
-                                        strDayOfWeek = "Thứ 7";
-                                    }
-                                    else if (dayOfWeek == DayOfWeek.Sunday)
-                                    {
-                                        strDayOfWeek = "Chủ nhật";
-                                    }
-                                }
-
-                                @(strDayOfWeek), ngày @(DateTime.Now.ToString("dd/MM/yyyy"))
+                                @(DayOfWeekDict.Value[DateTime.Now.DayOfWeek]), ngày @(DateTime.Now.ToString("dd/MM/yyyy"))
                             </div>
                         </div>
                     </div>
@@ -110,7 +72,7 @@
                 <img src="~/content/img/banner.jpg" class="img-fluid" />
             </div>
         </div>
-        <div class="container">
+        <div class="container" id="container-menu">
             <nav class="navbar m-navbar navbar-expand-lg navbar-dark m-bg-blue pt-0 pb-0 pr-0">
                 <a class="navbar-brand" href="/default">
                     <i class="fas fa-home text-white"></i>
@@ -203,7 +165,7 @@
     </footer>
     @*Toast*@
     <div>
-        <div id="toast-success" class="toast" style="position: fixed; top: 20px; right: 30px; width: 400px; z-index:99999999999;">
+        <div id="toast-success" class="toast" style="display: none; position: fixed; top: 20px; right: 30px; width: 400px; z-index:99999999999;">
             <div class="toast-header bg-success">
                 <strong class="mr-auto text-white">Thành công</strong>
                 <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
@@ -215,7 +177,7 @@
             </div>
         </div>
 
-        <div id="toast-warning" class="toast" style="position: fixed; top: 20px; right: 30px; width: 400px; z-index:99999999999;">
+        <div id="toast-warning" class="toast" style="display: none; position: fixed; top: 20px; right: 30px; width: 400px; z-index:99999999999;">
             <div class="toast-header bg-warning">
                 <strong class="mr-auto text-white">Cảnh báo</strong>
                 <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
@@ -227,7 +189,7 @@
             </div>
         </div>
 
-        <div id="toast-error" class="toast" style="position: fixed; top: 20px; right: 30px; width: 400px; z-index:99999999999;">
+        <div id="toast-error" class="toast" style="display: none; position: fixed; top: 20px; right: 30px; width: 400px; z-index:99999999999;">
             <div class="toast-header bg-danger">
                 <strong class="mr-auto text-white">Thất bại</strong>
                 <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
@@ -385,6 +347,15 @@
         $(document).ready(function() {
             commonHelper.toggleElementOnScroll('scroll-top-container');
             commonHelper.smoothScrollByAnchor('scroll-top');
+
+            const offsetTop = $('#container-menu').offset().top;
+            $(window).scroll(function() {
+                if ($(this).scrollTop() > offsetTop) {
+                    $('#container-menu').addClass('m-sticky-menu');
+                    return;
+                }
+                $('#container-menu').removeClass('m-sticky-menu');
+            });
         });
     </script>
     <script src="~/Content/js/helper/jquery.validate.custom.rule.js"></script>

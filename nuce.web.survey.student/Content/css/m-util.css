@@ -78,7 +78,7 @@
 }
 
 .m-btn-width-80 {
-    width: 80px;
+    min-width: 80px;
 }
 
 .scroll-top {
@@ -91,6 +91,20 @@
     display: none;
     border-radius: 50%;
     color: #112B7F;
+}
+
+.m-sticky-menu {
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, 0);
+    font-size: 14px;
+    transition: font-size ease-in-out 1s;
+}
+
+.m-sticky-menu .m-navbar{
+    box-shadow: 0px 8px 1px #fff;
 }
 
 @media (max-width: 767.98px) {

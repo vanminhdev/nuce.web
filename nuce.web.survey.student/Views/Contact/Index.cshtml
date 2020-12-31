@@ -15,7 +15,7 @@
     <div class="col-12">
         <div class="row">
             <div class="col-md-5 mb-3">
-                <h5 class="text-justify text-center mb-4">Phòng Khảo thí và Đảm bảo chất lượng</h5>
+                <h5 class="text-justify text-center mb-4">Phòng Khảo thí và Đảm bảo chất lượng giáo dục</h5>
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-1 d-flex align-items-center justify-content-center m-text-blue pr-0">
                         <i class="fas fa-home"></i>
@@ -106,17 +106,15 @@
                 $('#loading-screen').show();
                 $.ajax({
                     type: 'post',
-                    url: `${API_URL}/api/Contact/email/ktdb`,
+                    url: `${API_URL}/api/contact/email/ktdb`,
                     data: JSON.stringify(body),
                     contentType: 'application/json',
                 })
                 .done(res => {
                     toastSuccess('Đã gửi');
-                    $('#loading-screen').hide();
                 })
                 .fail(err => {
                     toastError(err.Message || 'Lỗi hệ thống');
-                    $('#loading-screen').hide();
                 })
                 .always(() => {
                     $('#loading-screen').hide();

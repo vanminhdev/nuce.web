@@ -22,5 +22,6 @@ namespace nuce.web.api.Services.Core.Interfaces
         public Task<ItemAvatarModel> GetNewsItemAvatar(int id, int? width, int? height);
         public Task<NewsCats> CreateNewsCatsAdmin(List<string> roles, CreateNewsCategoryModel model);
         public Task UpdateNewsCatsAdmin(List<string> roles, NewsCats model);
+        public Task<IQueryable<NewsItems>> GetCousinNewsItemsById(int id);
     }
 }
