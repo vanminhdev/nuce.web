@@ -1,70 +1,68 @@
 ﻿
 @{
     ViewBag.Title = "Cập nhật bản tin";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "";
 }
 
-    <div class="container">
-        <div class="row main-content-wrp mt-0">
-            <div class="col-12">
-                <a class="update-btn text-light p-2 mb-3"
-                   style="text-decoration: none; display: inline-block"
-                   href="/newsmanagement/itemslist?catId=@TempData.Peek("catId")">
-                    ← Quay lại danh sách bài tin
-                </a>
+<div class="row">
+    <div class="col-6">
+        <a class="update-btn text-light p-2 mb-3"
+            style="text-decoration: none; display: inline-block"
+           onclick="return feManagerState.changeComponent('/newsmanagement/itemslist?catId=@TempData.Peek("catId")')">
+            ← Quay lại danh sách bài tin
+        </a>
+    </div>
+    <div class="col-6 text-right">
+        <button class="btn btn-outline-success"
+                onclick="onUpdate()">
+            Cập nhật
+        </button>
+    </div>
+    <div class="col-lg-12">
+        <form id="form-data" class="auto-validate">
+            <div class="form-group">
+                <div class="font-14-sm fw-600 font-18">Tiêu đề</div>
+                <input id="txtTitle" name="title" type="text" class="form-control" required />
             </div>
-            <div class="col-12 text-right">
-                <button class="btn btn-outline-success"
-                        onclick="onUpdate()">
-                    Cập nhật
-                </button>
-            </div>
-            <div class="col-lg-12">
-                <form id="form-data" class="auto-validate">
-                    <div class="form-group">
-                        <div class="font-14-sm fw-600 font-18">Tiêu đề</div>
-                        <input id="txtTitle" name="title" type="text" class="form-control" required />
-                    </div>
+            <div class="row">
+                <div class="col-12">
                     <div class="row">
-                        <div class="col-12 col-md-6">
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="font-14-sm font-weight-bold mb-2">
-                                        Ảnh đại diện
-                                    </div>
-                                    <div class="custom-file">
-                                        <input id="file" type="file" onchange="onChangeFileUpload(this)" />
-                                    </div>
-                                    <div class="font-10-sm mt-2 sub-upload-file">
-                                        Dung lượng < 1MB. Định dạng hỗ trợ: jpg, jpeg, png, gift
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <img id="imgAvaPreview"
-                                         src="/style/public/images/person1.png"
-                                         alt=""
-                                         class="upload-user-avatar" />
-                                </div>
+                        <div class="col-6">
+                            <div class="font-14-sm font-weight-bold mb-2">
+                                Ảnh đại diện
+                            </div>
+                            <div class="custom-file">
+                                <input id="file" type="file" class="m-input-file-no-tooltip"
+                                       onchange="onChangeFileUpload(this)" />
+                            </div>
+                            <div class="font-10-sm mt-2 sub-upload-file">
+                                Dung lượng < 1MB. Định dạng hỗ trợ: jpg, jpeg, png, gift
                             </div>
                         </div>
+                        <div class="col-6">
+                            <img id="imgAvaPreview"
+                                    src="/style/public/images/person1.png"
+                                    alt=""
+                                    class="upload-user-avatar" />
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <div class="font-14-sm fw-600 font-18">Mô tả</div>
-                        <input id="txtDescription" name="description" type="text" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <div class="font-14-sm fw-600 font-18">Nội dung</div>
-                        <textarea id="news-content"></textarea>
-                    </div>
-                </form>
+                </div>
             </div>
-        </div>
+            <div class="form-group">
+                <div class="font-14-sm fw-600 font-18">Mô tả</div>
+                <input id="txtDescription" name="description" type="text" class="form-control" />
+            </div>
+            <div class="form-group">
+                <div class="font-14-sm fw-600 font-18">Nội dung</div>
+                <textarea id="news-content"></textarea>
+            </div>
+        </form>
     </div>
+</div>
 
-@section Scripts {
+@*@section Scripts {*@
     <script src="~/Content/js/common/fileHelper.js"></script>
     <script>
-
         var state = {
             newsItem: {},
         };
@@ -141,5 +139,5 @@
         init();
 
     </script>
-}
+@*}*@
 

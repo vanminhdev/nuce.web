@@ -121,6 +121,10 @@
     background-size: 20%;
 }
 
+.m-input-file-no-tooltip {
+    color: transparent;
+}
+
 /* MEDIA QUERY */
 @media screen and (max-width: 768px) {
     .m-nav-item li {
