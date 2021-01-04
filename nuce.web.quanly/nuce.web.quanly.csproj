@@ -1636,6 +1636,7 @@
     <Content Include="Views\FrontendManager\Index.cshtml" />
     <Content Include="Views\FrontendManager\Edit.cshtml" />
     <Content Include="Views\CtsvServiceManagement\Partials\_PartialServiceOverview.cshtml" />
+    <Content Include="Views\Survey\EditSurveyNotice.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

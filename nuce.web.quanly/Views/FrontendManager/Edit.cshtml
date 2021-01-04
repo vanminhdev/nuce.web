@@ -36,6 +36,11 @@
                     <tbody>
                         @{ 
                             List<ClientParameterModel> model = (List<ClientParameterModel>)Model;
+                            if (ViewData.ContainsKey("code") && !string.IsNullOrEmpty(ViewData["code"]?.ToString()))
+                            {
+                                model = model.Where(param => param.code == ViewData["code"]?.ToString())
+                                            .ToList();
+                            }
                             int i = 0;
                             foreach (var item in model)
                             {

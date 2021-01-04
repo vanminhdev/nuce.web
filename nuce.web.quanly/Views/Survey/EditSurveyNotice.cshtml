@@ -1,0 +1,20 @@
+﻿
+@{
+    ViewBag.Title = "Chú ý khảo sát";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div id="main-pane">
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let paraCode = '@TempData.Peek("paracode")';
+        let href = `/frontendmanager/edit?type=KSSV&code=${paraCode}&richText=true`;
+        $('#main-pane').load(href);
+    </script>    
+}
+

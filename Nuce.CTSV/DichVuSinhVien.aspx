@@ -41,7 +41,7 @@
                     </div>
                 </a>           
             </div>
-            <%--<div class="col-12 col-md-4 service-avatar-wrp cursor-pointer">
+            <div class="col-12 col-md-4 service-avatar-wrp cursor-pointer">
                 <a
                     href="/dichvu/gioithieu.aspx"
                     class="row justify-content-center">
@@ -54,7 +54,7 @@
                         giấy giới thiệu
                     </div>
                 </a>
-            </div>--%>
+            </div>
             <div class="col-12 col-md-4 service-avatar-wrp cursor-pointer">
                 <a
                 href="/dichvu/thuenhasinhvien.aspx"

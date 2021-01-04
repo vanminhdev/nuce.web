@@ -22,3 +22,15 @@
         return COMMON_CONFIG.domain.default;
     },
 };
+
+var SPECIAL_CATEGORY = {
+    /* Liên hệ */
+    7: {
+        jsTreeConfig: {
+            a_attr: {
+                href: '/frontendmanager/edit?type=CONTACT&code=&richText=false',
+                class: 'alink',
+            }
+        },
+    },
+};

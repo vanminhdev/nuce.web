@@ -219,6 +219,7 @@
         var API_URL = `@ConfigurationManager.AppSettings.Get("API_URL")`;
         var THONGBAO_ID = Number(@ConfigurationManager.AppSettings.Get("THONGBAO_ID") ?? "0");
         var TINTUC_ID = Number(@ConfigurationManager.AppSettings.Get("TINTUC_ID") ?? "0");
+
         $.ajaxSetup({
             xhrFields: {
                 withCredentials: true
@@ -321,23 +322,27 @@
                         let dropdownDetailHtml = '';
                         children.forEach(child => {
                            dropdownDetailHtml += dropdownDetailTemplate.replace('[name]', child.description)
-                                                                    .replace('[link]', `/news?catId=${child.id}`);
+                                                                    .replace('[link]', `${child.menuHref}`);
                             if (child.divideAfter) {
                                 dropdownDetailHtml += `<div class="dropdown-divider"></div>`;
                             }
                         });
                         dropdownHtml += dropdownTemplate.replace('[dropdown-detail-template]', dropdownDetailHtml);
                     }
-                    const tempHtml = menuItemTemplate.replace('[name]', cat.description)
-                        .replace('[dropdown-template]', dropdownHtml);
+                    let tempHtml = '';
+                    if (cat.menuHref) {
+                        tempHtml = `<li class="nav-item m-nav-item-hover">
+                                <a class="nav-link text-white mt-1 mb-1" href="${cat.menuHref}">
+                                    ${cat.description}
+                                </a>
+                            </li>`
+                    } else {
+                        tempHtml = menuItemTemplate.replace('[name]', cat.description)
+                                        .replace('[dropdown-template]', dropdownHtml);
+                    }
                     stringHtml += tempHtml;
                 }
             });
-            stringHtml += `<li class="nav-item m-nav-item-hover">
-                                <a class="nav-link text-white mt-1 mb-1" href="/contact">
-                                    Liên hệ
-                                </a>
-                            </li>`;
             $('#nav-item-container').html(stringHtml);
         };
 

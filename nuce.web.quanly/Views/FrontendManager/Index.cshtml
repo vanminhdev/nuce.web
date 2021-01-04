@@ -91,6 +91,8 @@
     <link rel="stylesheet" href="~/Content/js/jstree/themes/default/style.min.css" />
     <script src="~/Content/js/jstree/jstree.min.js"></script>
 
+    <script src="~/Content/js/common/config.js"></script>
+
     <script>
         var buttonTemplate = {
             add: `&nbsp;<span class="font-weight-bold"
@@ -113,22 +115,6 @@
                     },
                     {
                         text: `Quản trị thông tin`, // node text
-                        children: [
-                            {
-                                text: `Chú ý khảo sát`,
-                                a_attr: {
-                                    href: '/frontendmanager/edit?type=KSSV&richText=true',
-                                    class: 'alink',
-                                }
-                            },
-                            {
-                                text: 'Liên hệ',
-                                a_attr: {
-                                    href: '/frontendmanager/edit?type=CONTACT&richText=false',
-                                    class: 'alink',
-                                }
-                            },
-                        ],
                     },
                 ],
                 P_CTSV: [],
@@ -163,7 +149,7 @@
                         parentText = `${cat.description || ''}${buttonTemplate.add}${buttonTemplate.edit(cat.id)}`;
                     }
 
-                    const parent = {
+                    let parent = {
                         text: parentText,
                         data: cat,
                     };
@@ -181,6 +167,10 @@
                             };
                             parent.children.push(son);
                         });
+                    } else if (cat.id in SPECIAL_CATEGORY) {
+                        parent = SPECIAL_CATEGORY[cat.id].jsTreeConfig;
+                        parent.text = `${cat.description}${buttonTemplate.edit(cat.id)}`;
+                        parent.data = { ...cat };
                     } else {
                         parent.a_attr = {
                             href: `/newsmanagement/itemslist?catId=${cat.id}`,

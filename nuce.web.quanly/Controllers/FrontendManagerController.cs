@@ -34,9 +34,10 @@ namespace nuce.web.quanly.Controllers
         /// <param name="richText"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<ActionResult> Edit(string type, bool richText = false)
+        public async Task<ActionResult> Edit(string type, string code = "", bool richText = false)
         {
             ViewData["richText"] = richText;
+            ViewData["code"] = code;
             string api = $"api/ClientParameters/admin/{type}";
             var response = await base.MakeRequestAuthorizedAsync("get", api);
 

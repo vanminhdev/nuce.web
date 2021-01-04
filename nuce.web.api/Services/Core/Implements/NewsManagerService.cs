@@ -163,16 +163,23 @@ namespace nuce.web.api.Services.Core.Implements
                 {
                     throw new RecordNotFoundException("Danh mục cha không tồn tại");
                 }
+                
             }
             if (!roles.Contains(parent.Role))
             {
                 throw new UnauthorizedAccessException("Bạn không có quyền");
+            }
+            if (!(parent.AllowChildren ?? false))
+            {
+                throw new Exception("Danh mục cha không được phép tạo con");
             }
             var modelRole = parent.Role;
 
             var modelCount = _context.NewsCats.Count() + 1;
 
             var modelId = await _context.NewsCats.MaxAsync(c => c.Id) + 1;
+
+            string modelHref = model.Parent != -1 ? $"/news?catId={modelId}" : "";
 
             var newsCat = new NewsCats
             {
@@ -184,7 +191,8 @@ namespace nuce.web.api.Services.Core.Implements
                 DivideAfter = false,
                 Status = 1,
                 Role = modelRole,
-                Count = modelCount
+                Count = modelCount,
+                MenuHref = modelHref
             };
 
             try
