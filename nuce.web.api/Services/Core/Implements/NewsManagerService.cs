@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using nuce.web.api.HandleException;
+using nuce.web.api.Helper;
 using nuce.web.api.Models.Core;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.ViewModel.Base;
@@ -20,14 +21,12 @@ namespace nuce.web.api.Services.Core.Implements
     {
         private readonly NuceCoreIdentityContext _context;
         private readonly IUserService _userService;
-        private readonly IUploadFile _uploadFile;
         private readonly IConfiguration _configuration;
         public NewsManagerService(NuceCoreIdentityContext _nuceCoreContext, IUserService _userService,
-                                IUploadFile _uploadFile, IConfiguration _configuration)
+                                IConfiguration _configuration)
         {
             this._context = _nuceCoreContext;
             this._userService = _userService;
-            this._uploadFile = _uploadFile;
             this._configuration = _configuration;
         }
         
@@ -80,13 +79,13 @@ namespace nuce.web.api.Services.Core.Implements
 
         public async Task<string> UploadNewsItemAvatar(IFormFile formFile, int id)
         {
-            if (!_uploadFile.isValidImageUpload(formFile))
+            if (!FileHelper.isValidImageUpload(formFile))
             {
                 throw new Exception("Ảnh không hợp lệ");
             }
             // 1mb
             long maxSize = 1024 * 1024;
-            if (!_uploadFile.isValidSize(formFile, maxSize))
+            if (!FileHelper.isValidSize(formFile, maxSize))
             {
                 throw new Exception("Dung lượng phải nhỏ hơn 1MB");
             }
@@ -107,7 +106,7 @@ namespace nuce.web.api.Services.Core.Implements
 
             try
             {
-                await _uploadFile.SaveFileAsync(formFile, filePath);
+                await FileHelper.SaveFileAsync(formFile, filePath);
             }
             catch (Exception ex)
             {
@@ -260,10 +259,10 @@ namespace nuce.web.api.Services.Core.Implements
             }
             Image img = Image.FromFile(imgPath);
 
-            Image resizedNewImg = _uploadFile.ResizeImage(img, width ?? 0, 2000, false);
-            var newImg = _uploadFile.CropImage(resizedNewImg, width ?? 0, height ?? 0);
+            Image resizedNewImg = FileHelper.ResizeImage(img, width ?? 0, 40000, false);
+            var newImg = FileHelper.CropImage(resizedNewImg, width ?? 0, height ?? 0);
 
-            var result = _uploadFile.ImageToByte(newImg);
+            var result = FileHelper.ImageToByte(newImg);
             return new ItemAvatarModel { Data = result, Extension = extension };
         }
         #endregion

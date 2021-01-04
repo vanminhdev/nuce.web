@@ -201,6 +201,7 @@ namespace nuce.web.api
             services.AddScoped<INewsManagerService, NewsManagerService>();
             services.AddScoped<IClientParameterService, ClientParameterService>();
             services.AddScoped<ISendEmailService, SendEmailService>();
+            services.AddScoped<IUserFileService, UserFileService>();
             #endregion
             #region config service
             services.AddScoped<IStatusService, StatusService>();
@@ -244,7 +245,6 @@ namespace nuce.web.api
             services.AddScoped<IVeXeBusRepository, VeXeBusRepository>();
             services.AddScoped<ICapLaiTheRepository, CapLaiTheRepository>();
 
-            services.AddScoped<IUploadFile, UploadFile>();
             services.AddScoped<IThamSoDichVuService, ThamSoDichVuService>();
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<IDichVuService, DichVuService>();

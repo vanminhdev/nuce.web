@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using nuce.web.api.Services.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,13 +9,14 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace nuce.web.api.Services.Core.Implements
+namespace nuce.web.api.Helper
 {
-    public class UploadFile : IUploadFile
+    public static class FileHelper
     {
-        private string[] IMAGE_MIMETYPE = { "image/jpg", "image/jpeg", "image/pjpeg", "image/gif", "image/x-png", "image/png" };
-        private string[] IMAGE_EXTENSION = { ".jpg", ".png", ".gif", ".jpeg" };
-        public async Task SaveFileAsync(IFormFile file, string path)
+        private static string[] IMAGE_MIMETYPE = { "image/jpg", "image/jpeg", "image/pjpeg", "image/gif", "image/x-png", "image/png" };
+        private static string[] IMAGE_EXTENSION = { ".jpg", ".png", ".gif", ".jpeg" };
+
+        public static async Task SaveFileAsync(IFormFile file, string path)
         {
             using (var reader = new StreamReader(file.OpenReadStream()))
             {
@@ -27,7 +27,7 @@ namespace nuce.web.api.Services.Core.Implements
             }
         }
 
-        public bool isValidImageUpload(IFormFile file)
+        public static bool isValidImageUpload(this IFormFile file)
         {
             if (!string.IsNullOrEmpty(file.ContentType) && !IMAGE_MIMETYPE.Contains(file.ContentType.ToLower()))
             {
@@ -41,13 +41,13 @@ namespace nuce.web.api.Services.Core.Implements
             return true;
         }
 
-        public bool isValidSize(IFormFile file, long max)
+        public static bool isValidSize(IFormFile file, long max)
         {
             var size = file.Length;
             return size <= max;
         }
-        
-        public async Task<MemoryStream> DownloadFileAsync(string path)
+
+        public static async Task<MemoryStream> DownloadFileAsync(string path)
         {
             var uri = new Uri(path, UriKind.Absolute);
             using (var webClient = new WebClient())
@@ -58,7 +58,7 @@ namespace nuce.web.api.Services.Core.Implements
             }
         }
 
-        public Image ResizeImage(Image image, int newWidth, int maxHeight, bool onlyResizeIfWider)
+        public static Image ResizeImage(this Image image, int newWidth, int maxHeight, bool onlyResizeIfWider)
         {
             if (onlyResizeIfWider && image.Width <= newWidth) newWidth = image.Width;
 
@@ -84,7 +84,7 @@ namespace nuce.web.api.Services.Core.Implements
             return res;
         }
 
-        public Image CropImage(Image src, int width, int height)
+        public static Image CropImage(this Image src, int width, int height)
         {
             Rectangle cropRect = new Rectangle(0, 0, width, height);
             Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
@@ -98,14 +98,14 @@ namespace nuce.web.api.Services.Core.Implements
             }
         }
 
-        public byte[] ImageToByte(Image image)
+        public static byte[] ImageToByte(this Image image)
         {
             ImageConverter _imageConverter = new ImageConverter();
             byte[] xByte = (byte[])_imageConverter.ConvertTo(image, typeof(byte[]));
             return xByte;
         }
 
-        public Stream ImageToStream(Image image)
+        public static Stream ImageToStream(this Image image)
         {
             var stream = new MemoryStream();
 
@@ -113,6 +113,16 @@ namespace nuce.web.api.Services.Core.Implements
             stream.Position = 0;
 
             return stream;
+        }
+        /// <summary>
+        /// Bỏ . trong extension
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public static string FileExtensionWithoutDot(this string filename)
+        {
+            string extension = Path.GetExtension(filename);
+            return extension.Substring(1, extension.Length - 1);
         }
     }
 }

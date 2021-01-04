@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceConnectDaoTao", "Ser
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nuce.web.survey.student", "nuce.web.survey.student\nuce.web.survey.student.csproj", "{D02A414A-16BB-40A2-BAA4-324D7A32732C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nuce.web.shared", "nuce.web.shared\nuce.web.shared.csproj", "{5B7BAC6C-8066-43CC-9A07-F8F836E7AAD3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nuce.web.shared", "nuce.web.shared\nuce.web.shared.csproj", "{5B7BAC6C-8066-43CC-9A07-F8F836E7AAD3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

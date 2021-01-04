@@ -58,7 +58,6 @@ namespace nuce.web.api.Services.Ctsv.Implements
         private readonly IEmailService _emailService;
         private readonly ILogService _logService;
         private readonly IPathProvider _pathProvider;
-        private readonly IUploadFile _uploadFile;
         private readonly ILogger<DichVuService> _logger;
 
         public DichVuService(IXacNhanRepository _xacNhanRepository, IGioiThieuRepository _gioiThieuRepository,
@@ -68,7 +67,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             ILoaiDichVuRepository _loaiDichVuRepository, IStudentRepository _studentRepository,
             IThamSoDichVuService _thamSoDichVuService, IPathProvider _pathProvider,
             ILogger<DichVuService> _logger, IVeXeBusRepository _veXeBusRepository,
-            ICapLaiTheRepository _capLaiTheRepository, IUploadFile _uploadFile
+            ICapLaiTheRepository _capLaiTheRepository
         )
         {
             this._xacNhanRepository = _xacNhanRepository;
@@ -88,7 +87,6 @@ namespace nuce.web.api.Services.Ctsv.Implements
             this._emailService = _emailService;
             this._logService = _logService;
             this._logger = _logger;
-            this._uploadFile = _uploadFile;
         }
         #endregion
         /// <summary>
@@ -3597,15 +3595,15 @@ namespace nuce.web.api.Services.Ctsv.Implements
             {
                 string imgPath = $"ANHSV/{studentInfo.Student.Code}.jpg";
                 string fullImgPath = _pathProvider.MapPathStudentImage(imgPath);
-                var dataStream = await _uploadFile.DownloadFileAsync(fullImgPath);
+                var dataStream = await FileHelper.DownloadFileAsync(fullImgPath);
                 // ảnh 4 * 6
                 int width = 1200;
                 int height = 1800;
 
                 Image img = Image.FromStream(dataStream);
 
-                Image resizedNewImg = _uploadFile.ResizeImage(img, width, 2000, false);
-                newImg = _uploadFile.CropImage(resizedNewImg, width, height);
+                Image resizedNewImg = FileHelper.ResizeImage(img, width, 2000, false);
+                newImg = FileHelper.CropImage(resizedNewImg, width, height);
             }
             catch (Exception)
             {
@@ -3651,7 +3649,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     {
                         ImagePart newImgPart = mainPart.AddImagePart(ImagePartType.Png);
                         // Put image data into the ImagePart (from a filestream)
-                        var streamImg = _uploadFile.ImageToStream(newImg);
+                        var streamImg = FileHelper.ImageToStream(newImg);
                         newImgPart.FeedData(streamImg);
                         // Point blip at new image
                         blip.Embed = mainPart.GetIdOfPart(newImgPart);

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using nuce.web.api.Helper;
 using nuce.web.api.Models.Ctsv;
 using nuce.web.api.Repositories.Ctsv.Interfaces;
 using nuce.web.api.Services.Core.Interfaces;
@@ -33,7 +34,6 @@ namespace nuce.web.api.Services.Ctsv.Implements
         private readonly IParameterService _paramService;
         private readonly ILogger<StudentService> _logger;
         private readonly IPathProvider _pathProvider;
-        private readonly IUploadFile _uploadFile;
         public StudentService(
             IStudentRepository _studentRepository,
             IUserService _userService, IUnitOfWork _unitOfWork,
@@ -42,8 +42,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             IGiaDinhRepository _giaDinhRepository,
             IParameterService _paramService,
             ILogger<StudentService> _logger,
-            IPathProvider _pathProvider,
-            IUploadFile _uploadFile
+            IPathProvider _pathProvider
         )
         {
             this._studentRepository = _studentRepository;
@@ -55,7 +54,6 @@ namespace nuce.web.api.Services.Ctsv.Implements
             this._paramService = _paramService;
             this._logger = _logger;
             this._pathProvider = _pathProvider;
-            this._uploadFile = _uploadFile;
         }
         #endregion
 
@@ -88,17 +86,17 @@ namespace nuce.web.api.Services.Ctsv.Implements
         {
             string imgPath = $"ANHSV/{code}.jpg";
             string fullImgPath = _pathProvider.MapPathStudentImage(imgPath);
-            var dataStream = await _uploadFile.DownloadFileAsync(fullImgPath);
+            var dataStream = await FileHelper.DownloadFileAsync(fullImgPath);
             if (width == null || height == null)
             {
                 return dataStream.ToArray();
             }
             Image img = Image.FromStream(dataStream);
 
-            Image resizedNewImg = _uploadFile.ResizeImage(img, width ?? 0, 2000, false);
-            var newImg = _uploadFile.CropImage(resizedNewImg, width ?? 0, height ?? 0);
+            Image resizedNewImg = FileHelper.ResizeImage(img, width ?? 0, 2000, false);
+            var newImg = FileHelper.CropImage(resizedNewImg, width ?? 0, height ?? 0);
 
-            var result = _uploadFile.ImageToByte(newImg);
+            var result = FileHelper.ImageToByte(newImg);
             return result;
         }
 
@@ -213,13 +211,13 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
         public async Task<string> UpdateStudentImage(IFormFile formFile, string studentCode)
         {
-            if (!_uploadFile.isValidImageUpload(formFile))
+            if (!FileHelper.isValidImageUpload(formFile))
             {
                 throw new Exception("Ảnh không hợp lệ");
             }
             // 1mb
             long maxSize = 1024 * 1024;
-            if (!_uploadFile.isValidSize(formFile, maxSize))
+            if (!FileHelper.isValidSize(formFile, maxSize))
             {
                 throw new Exception("Dung lượng phải nhỏ hơn 1MB");
             }
@@ -237,7 +235,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
             try
             {
-                await _uploadFile.SaveFileAsync(formFile, filePath);
+                await FileHelper.SaveFileAsync(formFile, filePath);
             }
             catch (Exception ex)
             {

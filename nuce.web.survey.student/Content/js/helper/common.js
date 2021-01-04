@@ -20,4 +20,26 @@
     isFunction: function(functionToCheck) {
         return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
     },
-}
+};
+
+var _autoLayoutImage = {
+    /* {id: {} || ...} */
+    config: {
+        'banner-header': 'KTDB_BANNER_HEADER',
+        'banner-certificate': 'KTDB_BANNER_MAIN_1',
+        'survey-undergraduate-img': 'KTDB_SURVEY_UNDERGRADUATE',
+        'survey-student-img': 'KTDB_SURVEY_STUDENT',
+        'survey-graduated-img': 'KTDB_SURVEY_GRADUATED',
+        'link-ktdb-ctsv-img': 'KTDB_FAST_LINK_CTSV',
+        'link-ktdb-daotao-img': 'KTDB_FAST_LINK_EDU',
+    },
+    load: function() {
+        Object.keys(_autoLayoutImage.config).forEach(elementId => {
+            if ($(`#${elementId}`) !== null) {
+                $(`#${elementId}`).prop({
+                    src: `${API_URL}/api/UserFile/image/${_autoLayoutImage.config[elementId]}`,
+                });
+            }
+        });
+    },
+};

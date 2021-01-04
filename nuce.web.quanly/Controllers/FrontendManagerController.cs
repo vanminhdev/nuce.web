@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -46,6 +47,17 @@ namespace nuce.web.quanly.Controllers
                 var model = await base.DeserializeResponseAsync<List<ClientParameterModel>>(res.Content);
                 return View("Edit", model);
             });
+        }
+        /// <summary>
+        /// Trang sửa những tham số là hình ảnh
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult Image(string type)
+        {
+            TempData["type"] = type;
+            return View("Image");
         }
         #endregion
         /// <summary>
@@ -106,6 +118,34 @@ namespace nuce.web.quanly.Controllers
             {
                 Data = await response.Content.ReadAsStringAsync(),
                 StatusCode = response.StatusCode
+            }, JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
+        /// Hàm cập nhật ảnh cho website
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<ActionResult> UploadImage(string imgCode)
+        {
+            if (Request.Files.Count == 0)
+            {
+                return null;
+            }
+            HttpPostedFileBase image = Request.Files[0];
+            byte[] content = new byte[image.ContentLength];
+            await image.InputStream.ReadAsync(content, 0, content.Length);
+
+            var multipartFormData = new MultipartFormDataContent();
+            multipartFormData.Add(new ByteArrayContent(content), "file", image.FileName);
+
+            string api = $"api/UserFile/upload/image/{imgCode}";
+
+            var response = await base.MakeRequestAuthorizedAsync("post", api, multipartFormData);
+
+            return Json(new ResponseBody
+            {
+                StatusCode = response.StatusCode,
+                Data = await response.Content.ReadAsStringAsync(),
             }, JsonRequestBehavior.AllowGet);
         }
     }
