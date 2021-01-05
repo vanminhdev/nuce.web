@@ -10,6 +10,7 @@ using nuce.web.api.Models.Core;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Core;
+using nuce.web.shared;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -21,7 +22,7 @@ namespace nuce.web.api.Controllers.Core
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [AppAuthorize(RoleList.Admin)]
+    [AppAuthorize(RoleNames.Admin)]
     public class ManagerRestoreController : ControllerBase
     {
         private readonly IManagerRestoreService _managerBackupService;

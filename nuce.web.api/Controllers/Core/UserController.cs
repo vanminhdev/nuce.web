@@ -24,6 +24,7 @@ using nuce.web.api.ViewModel.Core.NuceIdentity;
 using nuce.web.api.Services.Survey.Interfaces;
 using System.Collections.Generic;
 using nuce.web.api.Attributes.ValidationAttributes;
+using nuce.web.shared;
 
 namespace nuce.web.api.Controllers.Core
 {
@@ -32,7 +33,7 @@ namespace nuce.web.api.Controllers.Core
     public class UserController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly NuceCoreIdentityContext _identityContext;
         private readonly ILogger<UserController> _logger;
         private readonly IUserService _userService;
@@ -41,7 +42,7 @@ namespace nuce.web.api.Controllers.Core
         private readonly IAsEduSurveyGraduateStudentService _asEduSurveyGraduateStudentService;
         private readonly IAsEduSurveyUndergraduateStudentService _asEduSurveyUndergraduateStudentService;
 
-        public UserController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, NuceCoreIdentityContext identityContext,
+        public UserController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, NuceCoreIdentityContext identityContext,
             ILogger<UserController> logger, IUserService userService, IConfiguration configuration, ILogService logService, 
             IAsEduSurveyGraduateStudentService asEduSurveyGraduateStudentService, IAsEduSurveyUndergraduateStudentService asEduSurveyUndergraduateStudentService)
         {
@@ -406,7 +407,7 @@ namespace nuce.web.api.Controllers.Core
         }
 
 
-        [AppAuthorize(RoleList.Admin)]
+        [AppAuthorize(RoleNames.Admin)]
         [HttpPost]
         [Route("GetAllUser")]
         public async Task<IActionResult> GetAllUser(
@@ -428,7 +429,7 @@ namespace nuce.web.api.Controllers.Core
             );
         }
 
-        [AppAuthorize(RoleList.Admin)]
+        [AppAuthorize(RoleNames.Admin)]
         [HttpGet]
         [Route("GetUserById")]
         public async Task<IActionResult> GetUserById([Required(AllowEmptyStrings = false)] string id)
@@ -449,7 +450,7 @@ namespace nuce.web.api.Controllers.Core
             }
         }
 
-        [AppAuthorize(RoleList.Admin)]
+        [AppAuthorize(RoleNames.Admin)]
         [HttpPut]
         [Route("ActiveUser")]
         public async Task<IActionResult> ActiveUser([Required(AllowEmptyStrings = false)] string id)
@@ -475,7 +476,7 @@ namespace nuce.web.api.Controllers.Core
             return Ok();
         }
 
-        [AppAuthorize(RoleList.Admin)]
+        [AppAuthorize(RoleNames.Admin)]
         [HttpPut]
         [Route("DeactiveUser")]
         public async Task<IActionResult> DeactiveUser([Required(AllowEmptyStrings = false)] string id)
@@ -501,7 +502,7 @@ namespace nuce.web.api.Controllers.Core
             return Ok();
         }
 
-        [AppAuthorize(RoleList.Admin)]
+        [AppAuthorize(RoleNames.Admin)]
         [HttpDelete]
         [Route("DeleteUser")]
         public async Task<IActionResult> DeleteUser([Required(AllowEmptyStrings = false)] string id)
@@ -527,7 +528,7 @@ namespace nuce.web.api.Controllers.Core
             return Ok();
         }
 
-        [AppAuthorize(RoleList.Admin)]
+        [AppAuthorize(RoleNames.Admin)]
         [HttpPut]
         [Route("UpdateUser")]
         public async Task<IActionResult> UpdateUser(
@@ -555,7 +556,7 @@ namespace nuce.web.api.Controllers.Core
             }
         }
 
-        [AppAuthorize(RoleList.Admin)]
+        [AppAuthorize(RoleNames.Admin)]
         [HttpPut]
         [Route("ResetPassword")]
         public async Task<IActionResult> ResetPassword(

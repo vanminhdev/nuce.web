@@ -17,12 +17,13 @@ using nuce.web.api.Services.EduData.Interfaces;
 using nuce.web.api.Services.Status.Interfaces;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.EduData;
+using nuce.web.shared;
 
 namespace nuce.web.api.Controllers.EduData
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [AppAuthorize(RoleList.Admin)]
+    [AppAuthorize(RoleNames.Admin)]
     public class SyncEduDataController : ControllerBase
     {
         private readonly ILogger<SyncEduDataController> _logger;

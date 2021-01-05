@@ -14,6 +14,7 @@ using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
+using nuce.web.shared;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
