@@ -6,6 +6,7 @@
 
 @section Style {
     <link rel="stylesheet" href="~/content/css/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="~/content/css/dataTables.bootstrap4.min.css" />
 }
 
 <div class="container">
@@ -14,6 +15,24 @@
             <button class="btn btn-primary" id="btn-statistic-survey">
                 Thống kê
             </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table id="id-datatable" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center" style="min-width:300px">Đợt khảo sát</th>
+                        <th class="text-center">Bài khảo sát</th>
+                        <th class="text-center">Mã lớp</th>
+                        <th class="text-center">Mã giảng viên</th>
+                        <th class="text-center">Mã câu hỏi</th>
+                        <th class="text-center">Mã đáp án</th>
+                        <th class="text-center">Số lượng</th>
+                        <th class="text-center">Nội dung</th>
+                    </tr>
+                </thead>
+            </table>
         </div>
     </div>
 </div>
@@ -50,8 +69,11 @@
 
 @section Scripts {
     <script src="~/Content/js/bootstrap-select.min.js"></script>
+    <script src="~/content/js/jquery.dataTables.min.js"></script>
+    <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/content/js/dataTables.config.js"></script>
     <script>
-        let surveyRounds = JSON.parse('@Html.Raw(ViewData["SurveyRoundEnd"])');
+        let surveyRounds = JSON.parse('@Html.Raw(ViewData["SurveyRoundClosedOrEnd"])');
         let dotKhaoSats = $('#dotKhaoSat');
         surveyRounds.forEach(e => {
             dotKhaoSats.append(`<option value="${e.id}">${e.name} (từ ${getDateString(e.fromDate)} đến ${getDateString(e.endDate)})</option>`);
@@ -110,6 +132,65 @@
         });
 
 
+    </script>
+    <script>
+        var table = $('#id-datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ordering: false,
+            lengthChange: false,
+            stateSave: false,
+            pageLength: 20,
+            language: dataTableConfig.language,
+            columnDefs: [
+                {
+                    targets: [ 1 ],
+                    className: 'text-center'
+                }
+            ],
+            ajax: {
+                url: '/Survey/GetRawReportTotalNormalSurvey',
+                dataType: 'json',
+                contentType: 'application/json',
+                type: "POST",
+                data: function (d) {
+                    return JSON.stringify(d);
+                },
+            },
+            columns: [
+                {
+                    data: "surveyRoundName"
+                },
+                {
+                    data: "theSurveyName"
+                },
+                {
+                    data: "classRoomCode"
+                },
+                {
+                    data: "lecturerCode"
+                },
+                {
+                    data: "questionCode"
+                },
+                {
+                    data: "answerCode"
+                },
+                {
+                    data: "total"
+                },
+                {
+                    data: "content"
+                }
+            ]
+        });
+        $('#id-datatable_filter').hide();
+        $("#btn-search").click(() => {
+            //table
+            //    .column(0).search($("#name-search").val())
+            //    .draw();
+        });
+        document.getElementById("footer").scrollIntoView();
     </script>
 }
 

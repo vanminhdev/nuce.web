@@ -9,7 +9,5 @@ namespace nuce.web.api.Services.Status.Interfaces
     public interface IStatusService
     {
         public Task<AsStatusTableTask> GetStatusTableTask(string tableName);
-        public Task<int> GetCurrentSemesterId();
-        public Task<int> GetLastSemesterId();
     }
 }

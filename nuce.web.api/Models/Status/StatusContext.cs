@@ -15,28 +15,10 @@ namespace nuce.web.api.Models.Status
         {
         }
 
-        public virtual DbSet<AsAcademySemester> AsAcademySemester { get; set; }
         public virtual DbSet<AsStatusTableTask> AsStatusTableTask { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<AsAcademySemester>(entity =>
-            {
-                entity.ToTable("AS_Academy_Semester");
-
-                entity.Property(e => e.CreatedTime)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.DeletedTime).HasColumnType("datetime");
-
-                entity.Property(e => e.LastModifiedTime)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.Name).HasMaxLength(250);
-            });
-
             modelBuilder.Entity<AsStatusTableTask>(entity =>
             {
                 entity.ToTable("AS_Status_Table_Task");

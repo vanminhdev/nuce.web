@@ -116,8 +116,7 @@ namespace nuce.web.quanly.Models
     {
         public long id { get; set; }
         public int? semesterId { get; set; }
-        public long? classRoomId { get; set; }
-        public long? studentId { get; set; }
+        public string classRoomCode { get; set; }
         public string studentCode { get; set; }
     }
 

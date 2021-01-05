@@ -25,7 +25,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace nuce.web.api.Controllers.Survey
+namespace nuce.web.api.Controllers.Survey.Normal
 {
     /// <summary>
     /// Bài khảo sát sinh viên
@@ -51,6 +51,7 @@ namespace nuce.web.api.Controllers.Survey
             _statusService = statusService;
         }
 
+        #region lấy bài và làm bài ks
         [HttpGet]
         [Authorize(Roles = "Student")]
         public async Task<IActionResult> GetTheSurvey()
@@ -167,7 +168,9 @@ namespace nuce.web.api.Controllers.Survey
             }
             return Ok();
         }
+        #endregion
 
+        #region gán bài ks
         [HttpGet]
         [Authorize(Roles = "P_KhaoThi")]
         public async Task<IActionResult> GetGenerateTheSurveyStudentStatus()
@@ -218,5 +221,6 @@ namespace nuce.web.api.Controllers.Survey
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không tạo được bài khảo sát cho từng sinh viên", detailMessage = mainMessage });
             }
         }
+        #endregion
     }
 }

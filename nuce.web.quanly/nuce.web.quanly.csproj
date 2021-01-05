@@ -168,6 +168,7 @@
     <Compile Include="Models\EduDataModels.cs" />
     <Compile Include="Models\ExamQuestionModels.cs" />
     <Compile Include="Models\FrontendManagerModel.cs" />
+    <Compile Include="Models\Survey\Normal\Statistic\ReportTotalNormal.cs" />
     <Compile Include="Models\Survey\Normal\SurveyRoundModels.cs" />
     <Compile Include="Models\Survey\Normal\TheSurveyModels.cs" />
     <Compile Include="Models\Survey\Undergraduate\UndergraduateStudentModels.cs" />
@@ -1550,7 +1551,7 @@
     <Content Include="Views\Survey\CreateExamQuestions.cshtml" />
     <Content Include="Views\SyncEduData\Index.cshtml" />
     <Content Include="Views\CtsvServiceManagement\Parameters.cshtml" />
-    <Content Include="Views\Survey\Statistic.cshtml" />
+    <Content Include="Views\Survey\Normal\Statistic.cshtml" />
     <Content Include="Views\Survey\Graduate\GraduateSurveyRound.cshtml" />
     <Content Include="Views\Survey\Graduate\GraduateStudent.cshtml" />
     <Content Include="Views\Survey\Graduate\GraduateTheSurvey.cshtml" />

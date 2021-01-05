@@ -1,4 +1,4 @@
-﻿
+﻿@using nuce.web.quanly.Common
 @{
     ViewData["Title"] = "Đồng bộ dữ liệu";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -492,7 +492,7 @@
                         </div>
                         <div class="col-12">
                             <div class="form-row">
-                                <div id="s-last-student-classroom" class="col-8 col-md-8 mb-2">
+                                <div id="s-last-student-classroom" class="col-7 col-md-7 mb-2">
                                     <div class="row justify-content-end">
                                         <div class="col-12 col-md-4">
                                             <input id="code-last-student-classroom" class="form-control form-control-sm" type="text" placeholder="Mã sinh viên" />
@@ -519,8 +519,7 @@
                                     <tr>
                                         <th class="text-center">Id</th>
                                         <th class="text-center">Id kỳ</th>
-                                        <th class="text-center">Id lớp</th>
-                                        <th class="text-center">Id SV</th>
+                                        <th class="text-center">Mã lớp</th>
                                         <th class="text-center">Mã SV</th>
                                     </tr>
                                 </thead>
@@ -720,6 +719,27 @@
     <script src="~/content/js/jquery.dataTables.min.js"></script>
     <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/content/js/dataTables.config.js"></script>
+    <script>
+        @*Trạng thái đồng bộ background*@
+        let btnLStuCla = $('#btn-sync-last-student-classroom');
+        let lastStudentClassroomStatus = @Html.Raw(ViewData["LastStudentClassroomStatus"]);
+        if (lastStudentClassroomStatus.status === @((int)TableTaskStatus.Done)) {
+            if (!lastStudentClassroomStatus.isSuccess) {
+                toastWarning('Có lỗi xảy ra khi đồng bộ sinh viên');
+            } else {
+                toastSuccess('Đồng bộ sinh viên lớp môn học thành công');
+            }
+        }
+        else if (lastStudentClassroomStatus.status === @((int)TableTaskStatus.Doing)) {
+            btnLStuCla.prop('disabled', true);
+            let loading = lastStudentClassroomStatus.message != null ? lastStudentClassroomStatus.message : "";
+            btnLStuCla.prop('title', loading);
+            btnLStuCla.html(`<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang đồng bộ`);
+        }
+        console.log('last student classroom status ', lastStudentClassroomStatus);
+
+
+    </script>
     <script>
         let tableFacuty = $('#datatable-faculty').DataTable({
             processing: true,
@@ -1281,10 +1301,7 @@
                     data: "semesterId"
                 },
                 {
-                    data: "classRoomId"
-                },
-                {
-                    data: "studentId"
+                    data: "classRoomCode"
                 },
                 {
                     data: "studentCode"
@@ -1336,7 +1353,7 @@
         $('#datatable-last-student-classroom_filter').hide();
         $('#btn-search-last-student-classroom').click(() => {
             $('#datatable-last-student-classroom').DataTable()
-                .column(4).search($("#code-last-student-classroom").val())
+                .column(3).search($("#code-last-student-classroom").val())
                 .draw();
         });
 

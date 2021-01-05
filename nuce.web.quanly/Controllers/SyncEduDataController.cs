@@ -17,8 +17,11 @@ namespace nuce.web.quanly.Controllers
     public class SyncEduDataController : BaseController
     {
         [HttpGet]
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
+            var resLastStudentClassroom = await base.MakeRequestAuthorizedAsync("Get", $"/api/SyncEduData/GetStatusSyncLastStudentClassroomTask");
+            ViewData["LastStudentClassroomStatus"] = await resLastStudentClassroom.Content.ReadAsStringAsync();
+
             return View();
         }
 
@@ -37,7 +40,6 @@ namespace nuce.web.quanly.Controllers
                 case "SyncStudent":
                 case "SyncLastClassRoom":
                 case "SyncLastLecturerClassRoom":
-                case "SyncLastStudentClassRoom":
                 case "SyncCurrentClassRoom":
                 case "SyncCurrentLecturerClassRoom":
                 case "SyncCurrentStudentClassRoom":
@@ -57,7 +59,7 @@ namespace nuce.web.quanly.Controllers
                 {
                     var jsonString = await response.Content.ReadAsStringAsync();
                     var resMess = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
-                    return Json(new { type = "error", message = "Đồng bộ không thành công", detailMessage = resMess.message }, JsonRequestBehavior.AllowGet);
+                    return Json(new { type = "error", message = resMess.message, detailMessage = resMess.detailMessage }, JsonRequestBehavior.AllowGet);
                 }
             );
         }

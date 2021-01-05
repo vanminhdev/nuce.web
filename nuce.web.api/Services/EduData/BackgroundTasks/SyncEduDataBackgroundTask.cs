@@ -140,11 +140,6 @@ namespace nuce.web.api.Services.EduData.BackgroundTasks
             }
 
             _backgroundTaskWorker.StartAction(SyncLastStudentClassroomBG);
-
-            //_backgroundTaskWorker.StartAction(async () =>
-            //{
-            //    await SyncLastStudentClassroomBG();
-            //});
         }
     }
 }

@@ -5,6 +5,7 @@ using nuce.web.quanly.Models;
 using nuce.web.quanly.Models.JsonData;
 using nuce.web.quanly.Models.Survey.Graduate;
 using nuce.web.quanly.Models.Survey.Normal;
+using nuce.web.quanly.Models.Survey.Normal.Statistic;
 using nuce.web.quanly.Models.Survey.Undergraduate;
 using nuce.web.quanly.ViewModel.Base;
 using System;
@@ -342,28 +343,7 @@ namespace nuce.web.quanly.Controllers
         }
         #endregion
 
-        #region thống kê
-        [HttpGet]
-        public async Task<ActionResult> Statistic()
-        {
-            var resTableStatus = await base.MakeRequestAuthorizedAsync("Get", $"/api/Statistic/GetStatusReportTotalNormalSurveyTask");
-            ViewData["TableReportNormalStatus"] = await resTableStatus.Content.ReadAsStringAsync();
-
-            var resSurveyRound = await base.MakeRequestAuthorizedAsync("Get", $"/api/SurveyRound/GetSurveyRoundEnd");
-            ViewData["SurveyRoundEnd"] = await resSurveyRound.Content.ReadAsStringAsync();
-
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> ReportTotalNormalSurvey(string surveyRoundId)
-        {
-            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/Statistic/ReportTotalNormalSurvey?surveyRoundId={surveyRoundId}");
-            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
-        }
-        #endregion
-
-        #region đợt khảo sát
+        #region đợt khảo sát sv thường
         [HttpGet]
         public ActionResult SurveyRound()
         {
@@ -444,7 +424,7 @@ namespace nuce.web.quanly.Controllers
         }
         #endregion
 
-        #region bài khảo sát
+        #region bài khảo sát sv thường
         //[HttpGet]
         //public async Task<ActionResult> TheSurvey()
         //{
@@ -535,6 +515,33 @@ namespace nuce.web.quanly.Controllers
         public async Task<ActionResult> GenerateTheSurveyStudent(string surveyRoundId)
         {
             var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/TheSurveyStudent/GenerateTheSurveyStudent?surveyRoundId={surveyRoundId}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        #region thống kê sv thường
+        [HttpGet]
+        public async Task<ActionResult> StatisticNormalSurvey()
+        {
+            var resTableStatus = await base.MakeRequestAuthorizedAsync("Get", $"/api/Statistic/GetStatusReportTotalNormalSurveyTask");
+            ViewData["TableReportNormalStatus"] = await resTableStatus.Content.ReadAsStringAsync();
+
+            var resSurveyRound = await base.MakeRequestAuthorizedAsync("Get", $"/api/SurveyRound/GetSurveyRoundClosedOrEnd");
+            ViewData["SurveyRoundClosedOrEnd"] = await resSurveyRound.Content.ReadAsStringAsync();
+
+            return View("~/Views/Survey/Normal/Statistic.cshtml");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetRawReportTotalNormalSurvey(DataTableRequest request)
+        {
+            return await GetDataTabeFromApi<ReportTotalNormal>(request, "/api/Statistic/GetRawReportTotalNormalSurvey");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> ReportTotalNormalSurvey(string surveyRoundId)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/Statistic/ReportTotalNormalSurvey?surveyRoundId={surveyRoundId}");
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
         #endregion

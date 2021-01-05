@@ -9,10 +9,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using nuce.web.api.Attributes.ValidationAttributes;
+using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Models.EduData;
 using nuce.web.api.Services.EduData.BackgroundTasks;
 using nuce.web.api.Services.EduData.Interfaces;
+using nuce.web.api.Services.Status.Interfaces;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.EduData;
 
@@ -26,12 +28,14 @@ namespace nuce.web.api.Controllers.EduData
         private readonly ILogger<SyncEduDataController> _logger;
         private readonly ISyncEduDatabaseService _syncEduDatabaseService;
         private readonly SyncEduDataBackgroundTask _syncEduDataBackgroundTask;
+        private readonly IStatusService _statusService;
 
-        public SyncEduDataController(ILogger<SyncEduDataController> logger, ISyncEduDatabaseService syncEduDatabaseService, SyncEduDataBackgroundTask syncEduDataBackgroundTask)
+        public SyncEduDataController(ILogger<SyncEduDataController> logger, ISyncEduDatabaseService syncEduDatabaseService, SyncEduDataBackgroundTask syncEduDataBackgroundTask, IStatusService statusService)
         {
             _logger = logger;
             _syncEduDatabaseService = syncEduDatabaseService;
             _syncEduDataBackgroundTask = syncEduDataBackgroundTask;
+            _statusService = statusService;
         }
 
         #region đồng bộ cơ bản
@@ -425,6 +429,21 @@ namespace nuce.web.api.Controllers.EduData
             {
                 _logger.LogError(e, e.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetStatusSyncLastStudentClassroomTask()
+        {
+            try
+            {
+                var status = await _statusService.GetStatusTableTask(TableNameTask.AsAcademyStudentClassRoom);
+                return Ok(new { status.Status, status.IsSuccess, status.Message });
+            }
+            catch (RecordNotFoundException e)
+            {
+                _logger.LogError(e, e.Message);
+                return NotFound(new { message = "Không lấy được trạng thái", detailMessage = e.Message });
             }
         }
         #endregion

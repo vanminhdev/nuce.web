@@ -23,6 +23,6 @@ namespace nuce.web.api.Services.Survey.Interfaces
         public Task Close(Guid id);
         public Task AddEndDate(Guid id, DateTime endDate);
         public Task<List<AsEduSurveyDotKhaoSat>> GetSurveyRoundActive();
-        public Task<List<AsEduSurveyDotKhaoSat>> GetSurveyRoundEnd();
+        public Task<List<AsEduSurveyDotKhaoSat>> GetSurveyRoundClosedOrEnd();
     }
 }

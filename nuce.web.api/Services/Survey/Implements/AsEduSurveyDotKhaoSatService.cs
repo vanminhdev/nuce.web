@@ -220,9 +220,9 @@ namespace nuce.web.api.Services.Survey.Implements
             return surveyRounds;
         }
 
-        public async Task<List<AsEduSurveyDotKhaoSat>> GetSurveyRoundEnd()
+        public async Task<List<AsEduSurveyDotKhaoSat>> GetSurveyRoundClosedOrEnd()
         {
-            var surveyRounds = await _context.AsEduSurveyDotKhaoSat.Where(o => o.Status == (int)SurveyRoundStatus.Closed || o.EndDate <= DateTime.Now)
+            var surveyRounds = await _context.AsEduSurveyDotKhaoSat.Where(o => o.Status == (int)SurveyRoundStatus.Closed || o.EndDate <= DateTime.Now || o.Status == (int)SurveyRoundStatus.End)
                 .OrderByDescending(o => o.FromDate).ToListAsync();
             return surveyRounds;
         }

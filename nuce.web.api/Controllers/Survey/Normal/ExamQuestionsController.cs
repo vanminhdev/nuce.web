@@ -15,7 +15,7 @@ using nuce.web.api.HandleException;
 using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Survey;
 
-namespace nuce.web.api.Controllers.Survey
+namespace nuce.web.api.Controllers.Survey.Normal
 {
     /// <summary>
     /// Đề thi

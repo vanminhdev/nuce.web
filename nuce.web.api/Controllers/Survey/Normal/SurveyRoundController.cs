@@ -14,7 +14,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace nuce.web.api.Controllers.Survey
+namespace nuce.web.api.Controllers.Survey.Normal
 {
     /// <summary>
     /// Đợt khảo sát
@@ -73,11 +73,11 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetSurveyRoundEnd()
+        public async Task<IActionResult> GetSurveyRoundClosedOrEnd()
         {
             try
             {
-                var result = await _asEduSurveyDotKhaoSatService.GetSurveyRoundEnd();
+                var result = await _asEduSurveyDotKhaoSatService.GetSurveyRoundClosedOrEnd();
                 return Ok(result);
             }
             catch (Exception e)

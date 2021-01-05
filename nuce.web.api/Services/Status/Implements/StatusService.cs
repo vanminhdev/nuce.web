@@ -46,27 +46,5 @@ namespace nuce.web.api.Services.Status.Implements
             }
             return result;
         }
-
-        public async Task<int> GetCurrentSemesterId()
-        {
-            var semesterId = -1;
-            var semester = await _context.AsAcademySemester.FirstOrDefaultAsync(s => s.IsCurrent == true && s.Enabled == true && s.Deleted == false);
-            if (semester != null)
-            {
-                semesterId = semester.Id;
-            }
-            return semesterId;
-        }
-
-        public async Task<int> GetLastSemesterId()
-        {
-            var semesterId = -1;
-            var semester = await _context.AsAcademySemester.FirstOrDefaultAsync(s => s.IsCurrent == false && s.Enabled == true && s.Deleted == false);
-            if (semester != null)
-            {
-                semesterId = semester.Id;
-            }
-            return semesterId;
-        }
     }
 }

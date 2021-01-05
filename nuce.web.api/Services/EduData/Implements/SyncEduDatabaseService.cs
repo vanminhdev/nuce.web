@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
+using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Models.EduData;
 using nuce.web.api.Models.Survey;
@@ -34,6 +35,30 @@ namespace nuce.web.api.Services.EduData.Implements
             _statusService = statusService;
         }
 
+        #region lấy id kì học
+        private async Task<int> GetCurrentSemesterId()
+        {
+            var semesterId = -1;
+            var semester = await _eduDataContext.AsAcademySemester.FirstOrDefaultAsync(s => s.Status == (int)SemesterStatus.IsCurrent);
+            if (semester != null)
+            {
+                semesterId = semester.Id;
+            }
+            return semesterId;
+        }
+
+        private async Task<int> GetLastSemesterId()
+        {
+            var semesterId = -1;
+            var semester = await _eduDataContext.AsAcademySemester.FirstOrDefaultAsync(s => s.Status == (int)SemesterStatus.IsLast);
+            if (semester != null)
+            {
+                semesterId = semester.Id;
+            }
+            return semesterId;
+        }
+        #endregion
+
         #region đồng bộ cơ bản
         public async Task SyncAcademics()
         {
@@ -57,14 +82,14 @@ namespace nuce.web.api.Services.EduData.Implements
                     {
                         _eduDataContext.AsAcademyAcademics.Add(new AsAcademyAcademics
                         {
-                            SemesterId = await _statusService.GetCurrentSemesterId(),
+                            SemesterId = await GetCurrentSemesterId(),
                             Code = maNganh,
                             Name = tenNg
                         });
                     }
                     else
                     {
-                        nganh.SemesterId = await _statusService.GetCurrentSemesterId();
+                        nganh.SemesterId = await GetCurrentSemesterId();
                         nganh.Code = maNganh;
                         nganh.Name = tenNg;
                     }
@@ -185,7 +210,7 @@ namespace nuce.web.api.Services.EduData.Implements
                     {
                         _eduDataContext.AsAcademyDepartment.Add(new AsAcademyDepartment
                         {
-                            SemesterId = await _statusService.GetCurrentSemesterId(),
+                            SemesterId = await GetCurrentSemesterId(),
                             Code = maBM,
                             Name = tenBM,
                             FacultyId = khoa.Id,
@@ -195,7 +220,7 @@ namespace nuce.web.api.Services.EduData.Implements
                     }
                     else
                     {
-                        boMon.SemesterId = await _statusService.GetCurrentSemesterId();
+                        boMon.SemesterId = await GetCurrentSemesterId();
                         boMon.Code = maBM;
                         boMon.Name = tenBM;
                         boMon.FacultyId = khoa.Id;
@@ -247,7 +272,7 @@ namespace nuce.web.api.Services.EduData.Implements
                         {
                             Code = maKH,
                             Name = tenKhoa,
-                            SemesterId = await _statusService.GetCurrentSemesterId(),
+                            SemesterId = await GetCurrentSemesterId(),
                             COrder = order + 1
                         });
                     }
@@ -255,7 +280,7 @@ namespace nuce.web.api.Services.EduData.Implements
                     {
                         khoa.Code = maKH;
                         khoa.Name = tenKhoa;
-                        khoa.SemesterId = await _statusService.GetCurrentSemesterId();
+                        khoa.SemesterId = await GetCurrentSemesterId();
                         khoa.COrder = order + 1;
                     }
                 }
@@ -465,7 +490,7 @@ namespace nuce.web.api.Services.EduData.Implements
                     {
                         _eduDataContext.AsAcademySubject.Add(new AsAcademySubject
                         {
-                            SemesterId = await _statusService.GetCurrentSemesterId(),
+                            SemesterId = await GetCurrentSemesterId(),
                             Code = MaMH,
                             Name = TenMH,
                             DepartmentId = boMonId,
@@ -474,7 +499,7 @@ namespace nuce.web.api.Services.EduData.Implements
                     }
                     else // nếu có rồi thì cập nhật
                     {
-                        monHoc.SemesterId = await _statusService.GetCurrentSemesterId();
+                        monHoc.SemesterId = await GetCurrentSemesterId();
                         monHoc.Code = MaMH;
                         monHoc.Name = TenMH;
                         monHoc.DepartmentId = boMonId;
@@ -563,7 +588,7 @@ namespace nuce.web.api.Services.EduData.Implements
                     {
                         _eduDataContext.AsAcademyClassRoom.Add(new AsAcademyClassRoom
                         {
-                            SemesterId = await _statusService.GetLastSemesterId(),
+                            SemesterId = await GetLastSemesterId(),
                             Code = MaDK,
                             GroupCode = MaNh,
                             ClassCode = Malop,
@@ -725,7 +750,7 @@ namespace nuce.web.api.Services.EduData.Implements
                             {
                                 _eduDataContext.AsAcademyLecturerClassRoom.Add(new AsAcademyLecturerClassRoom
                                 {
-                                    SemesterId = await _statusService.GetLastSemesterId(),
+                                    SemesterId = await GetLastSemesterId(),
                                     ClassRoomId = lopId,
                                     ClassRoomCode = strMaDK,
                                     LecturerId = canBoId,
@@ -734,7 +759,7 @@ namespace nuce.web.api.Services.EduData.Implements
                             }
                             else
                             {
-                                lecturerClassRoom.SemesterId = await _statusService.GetLastSemesterId();
+                                lecturerClassRoom.SemesterId = await GetLastSemesterId();
                                 lecturerClassRoom.ClassRoomId = lopId;
                                 lecturerClassRoom.ClassRoomCode = strMaDK;
                                 lecturerClassRoom.LecturerId = canBoId;
@@ -795,7 +820,7 @@ namespace nuce.web.api.Services.EduData.Implements
                     {
                         _eduDataContext.AsAcademyCClassRoom.Add(new AsAcademyCClassRoom
                         {
-                            SemesterId = await _statusService.GetCurrentSemesterId(),
+                            SemesterId = await GetCurrentSemesterId(),
                             Code = MaDK,
                             GroupCode = MaNh,
                             ClassCode = Malop,
@@ -957,7 +982,7 @@ namespace nuce.web.api.Services.EduData.Implements
                             {
                                 _eduDataContext.AsAcademyCLecturerClassRoom.Add(new AsAcademyCLecturerClassRoom
                                 {
-                                    SemesterId = await _statusService.GetCurrentSemesterId(),
+                                    SemesterId = await GetCurrentSemesterId(),
                                     ClassRoomId = lopId,
                                     ClassRoomCode = strMaDK,
                                     LecturerId = canBoId,
@@ -966,7 +991,7 @@ namespace nuce.web.api.Services.EduData.Implements
                             }
                             else
                             {
-                                cLecturerClassRoom.SemesterId = await _statusService.GetCurrentSemesterId();
+                                cLecturerClassRoom.SemesterId = await GetCurrentSemesterId();
                                 cLecturerClassRoom.ClassRoomId = lopId;
                                 cLecturerClassRoom.ClassRoomCode = strMaDK;
                                 cLecturerClassRoom.LecturerId = canBoId;
@@ -1035,7 +1060,7 @@ namespace nuce.web.api.Services.EduData.Implements
                                     ClassRoomCode = strMaDK,
                                     StudentId = studentId,
                                     StudentCode = strMaSV,
-                                    SemesterId = await _statusService.GetCurrentSemesterId()
+                                    SemesterId = await GetCurrentSemesterId()
                                 });
                             }
                         }
@@ -1181,19 +1206,19 @@ namespace nuce.web.api.Services.EduData.Implements
 
             if (!string.IsNullOrWhiteSpace(filter.Code))
             {
-                query = query.Where(u => u.Code.Contains(filter.Code));
+                query = query.Where(u => u.Code == filter.Code);
             }
             if (!string.IsNullOrWhiteSpace(filter.GroupCode))
             {
-                query = query.Where(u => u.GroupCode.Contains(filter.GroupCode));
+                query = query.Where(u => u.GroupCode == filter.GroupCode);
             }
             if (!string.IsNullOrWhiteSpace(filter.ClassCode))
             {
-                query = query.Where(u => u.ClassCode.Contains(filter.ClassCode));
+                query = query.Where(u => u.ClassCode == filter.ClassCode);
             }
             if (!string.IsNullOrWhiteSpace(filter.SubjectCode))
             {
-                query = query.Where(u => u.SubjectCode.Contains(filter.SubjectCode));
+                query = query.Where(u => u.SubjectCode == filter.SubjectCode);
             }
 
             var recordsFiltered = query.Count();
@@ -1220,11 +1245,11 @@ namespace nuce.web.api.Services.EduData.Implements
 
             if (!string.IsNullOrWhiteSpace(filter.ClassRoomCode))
             {
-                query = query.Where(u => u.ClassRoomCode.Contains(filter.ClassRoomCode));
+                query = query.Where(u => u.ClassRoomCode == filter.ClassRoomCode);
             }
             if (!string.IsNullOrWhiteSpace(filter.LecturerCode))
             {
-                query = query.Where(u => u.LecturerCode.Contains(filter.LecturerCode));
+                query = query.Where(u => u.LecturerCode == filter.LecturerCode);
             }
 
             var recordsFiltered = query.Count();
@@ -1251,7 +1276,7 @@ namespace nuce.web.api.Services.EduData.Implements
 
             if (!string.IsNullOrWhiteSpace(filter.StudentCode))
             {
-                query = query.Where(u => u.StudentCode.Contains(filter.StudentCode));
+                query = query.Where(u => u.StudentCode == filter.StudentCode);
             }
 
             var recordsFiltered = query.Count();
@@ -1280,19 +1305,19 @@ namespace nuce.web.api.Services.EduData.Implements
 
             if (!string.IsNullOrWhiteSpace(filter.Code))
             {
-                query = query.Where(u => u.Code.Contains(filter.Code));
+                query = query.Where(u => u.Code == filter.Code);
             }
             if (!string.IsNullOrWhiteSpace(filter.GroupCode))
             {
-                query = query.Where(u => u.GroupCode.Contains(filter.GroupCode));
+                query = query.Where(u => u.GroupCode == filter.GroupCode);
             }
             if (!string.IsNullOrWhiteSpace(filter.ClassCode))
             {
-                query = query.Where(u => u.ClassCode.Contains(filter.ClassCode));
+                query = query.Where(u => u.ClassCode == filter.ClassCode);
             }
             if (!string.IsNullOrWhiteSpace(filter.SubjectCode))
             {
-                query = query.Where(u => u.SubjectCode.Contains(filter.SubjectCode));
+                query = query.Where(u => u.SubjectCode == filter.SubjectCode);
             }
 
             var recordsFiltered = query.Count();
@@ -1319,11 +1344,11 @@ namespace nuce.web.api.Services.EduData.Implements
 
             if (!string.IsNullOrWhiteSpace(filter.ClassRoomCode))
             {
-                query = query.Where(u => u.ClassRoomCode.Contains(filter.ClassRoomCode));
+                query = query.Where(u => u.ClassRoomCode == filter.ClassRoomCode);
             }
             if (!string.IsNullOrWhiteSpace(filter.LecturerCode))
             {
-                query = query.Where(u => u.LecturerCode.Contains(filter.LecturerCode));
+                query = query.Where(u => u.LecturerCode == filter.LecturerCode);
             }
 
             var recordsFiltered = query.Count();
@@ -1346,14 +1371,14 @@ namespace nuce.web.api.Services.EduData.Implements
         {
             _eduDataContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             IQueryable<AsAcademyStudentClassRoom> query = _eduDataContext.AsAcademyStudentClassRoom;
-            var recordsTotal = query.Count();
+            var recordsTotal = await query.CountAsync();
 
             if (!string.IsNullOrWhiteSpace(filter.StudentCode))
             {
-                query = query.Where(u => u.StudentCode.Contains(filter.StudentCode));
+                query = query.Where(u => u.StudentCode == filter.StudentCode);
             }
 
-            var recordsFiltered = query.Count();
+            var recordsFiltered = await query.CountAsync();
 
             var querySkip = query
                 .OrderBy(u => u.Id)
@@ -1391,11 +1416,11 @@ namespace nuce.web.api.Services.EduData.Implements
 
             if (!string.IsNullOrWhiteSpace(filter.Code))
             {
-                query = query.Where(u => u.Code.Contains(filter.Code));
+                query = query.Where(u => u.Code == filter.Code);
             }
             if (!string.IsNullOrWhiteSpace(filter.Name))
             {
-                query = query.Where(u => u.Name.Contains(filter.Name));
+                query = query.Where(u => u.Name == filter.Name);
             }
 
             var recordsFiltered = query.Count();
@@ -1423,15 +1448,15 @@ namespace nuce.web.api.Services.EduData.Implements
 
             if (!string.IsNullOrWhiteSpace(filter.Code))
             {
-                query = query.Where(u => u.Code.Contains(filter.Code));
+                query = query.Where(u => u.Code == filter.Code);
             }
             if (!string.IsNullOrWhiteSpace(filter.Name))
             {
-                query = query.Where(u => u.Name.Contains(filter.Name));
+                query = query.Where(u => u.Name == filter.Name);
             }
             if (!string.IsNullOrWhiteSpace(filter.DepartmentCode))
             {
-                query = query.Where(u => u.DepartmentCode.Contains(filter.DepartmentCode));
+                query = query.Where(u => u.DepartmentCode == filter.DepartmentCode);
             }
 
             var recordsFiltered = query.Count();
@@ -1458,11 +1483,11 @@ namespace nuce.web.api.Services.EduData.Implements
 
             if (!string.IsNullOrWhiteSpace(filter.Code))
             {
-                query = query.Where(u => u.Code.Contains(filter.Code));
+                query = query.Where(u => u.Code == filter.Code);
             }
             if (!string.IsNullOrWhiteSpace(filter.Name))
             {
-                query = query.Where(u => u.Name.Contains(filter.Name));
+                query = query.Where(u => u.Name == filter.Name);
             }
 
             var recordsFiltered = query.Count();
@@ -1489,15 +1514,15 @@ namespace nuce.web.api.Services.EduData.Implements
 
             if (!string.IsNullOrWhiteSpace(filter.Code))
             {
-                query = query.Where(u => u.Code.Contains(filter.Code));
+                query = query.Where(u => u.Code == filter.Code);
             }
             if (!string.IsNullOrWhiteSpace(filter.FullName))
             {
-                query = query.Where(u => u.FullName.Contains(filter.FullName));
+                query = query.Where(u => u.FullName == filter.FullName);
             }
             if (!string.IsNullOrWhiteSpace(filter.DepartmentCode))
             {
-                query = query.Where(u => u.DepartmentCode.Contains(filter.DepartmentCode));
+                query = query.Where(u => u.DepartmentCode == filter.DepartmentCode);
             }
 
             var recordsFiltered = query.Count();
@@ -1524,15 +1549,15 @@ namespace nuce.web.api.Services.EduData.Implements
 
             if (!string.IsNullOrWhiteSpace(filter.Code))
             {
-                query = query.Where(u => u.Code.Contains(filter.Code));
+                query = query.Where(u => u.Code == filter.Code);
             }
             if (!string.IsNullOrWhiteSpace(filter.FullName))
             {
-                query = query.Where(u => u.FullName.Contains(filter.FullName));
+                query = query.Where(u => u.FullName == filter.FullName);
             }
             if (!string.IsNullOrWhiteSpace(filter.ClassCode))
             {
-                query = query.Where(u => u.ClassCode.Contains(filter.ClassCode));
+                query = query.Where(u => u.ClassCode == filter.ClassCode);
             }
 
             var recordsFiltered = await query.CountAsync();

@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 
 namespace nuce.web.api.Services.Survey.BackgroundTasks
 {
@@ -117,134 +118,106 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             var surveyContext = scope.ServiceProvider.GetRequiredService<SurveyContext>();
             var statusContext = scope.ServiceProvider.GetRequiredService<StatusContext>();
 
-            var surveyRound = surveyContext.AsEduSurveyDotKhaoSat.FirstOrDefault(o => o.Id == surveyRoundId && o.Status != (int)SurveyRoundStatus.Deleted);
-            if (surveyRound == null)
-            {
-                throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
-            }
-
-            //đợt khảo sát chưa kết thúc
-            if (surveyRound.Status != (int)SurveyRoundStatus.Closed && surveyRound.Status != (int)SurveyRoundStatus.End)
-            {
-                throw new InvalidDataException("Đợt khảo sát chưa đóng hoặc chưa kết thúc");
-            }
-
             var status = statusContext.AsStatusTableTask.FirstOrDefault(o => o.TableName == TableNameTask.AsEduSurveyReportTotal);
             if (status == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy bản ghi cập nhật trạng thái cho bảng thống kê khảo sát sinh viên");
             }
-
             //bảng đang làm việc
             if (status.Status == (int)TableTaskStatus.Doing)
             {
                 throw new TableBusyException("Đang thống kê, thao tác bị huỷ");
             }
-
             status.Status = (int)TableTaskStatus.Doing;
             statusContext.SaveChanges();
 
             try
             {
-                _logger.LogInformation("report total normal is start.");
-                surveyContext.Database.ExecuteSqlRaw($"TRUNCATE TABLE {TableNameTask.AsEduSurveyReportTotal}");
-                var query = surveyContext.AsEduSurveyBaiKhaoSatSinhVien;
-                var countTheSurveyStudent = query.Count();
-                var skip = 0;
-                var take = 500;
-                var semesterId = -1;
-
-                var lectureClassroomCode = surveyContext.AsEduSurveyBaiKhaoSatSinhVien
-                    .GroupBy(o => new { o.LecturerCode, o.ClassRoomCode, o.BaiKhaoSatId })
-                    .Select(r => new { r.Key.LecturerCode, r.Key.ClassRoomCode, r.Key.BaiKhaoSatId });
-
-                List<SelectedAnswer> selectedAnswers;
-                while (skip <= countTheSurveyStudent)
+                var surveyRound = surveyContext.AsEduSurveyDotKhaoSat.FirstOrDefault(o => o.Id == surveyRoundId && o.Status != (int)SurveyRoundStatus.Deleted);
+                if (surveyRound == null)
                 {
-                    var list = lectureClassroomCode
+                    throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
+                }
+
+                //đợt khảo sát chưa kết thúc
+                if (surveyRound.Status != (int)SurveyRoundStatus.Closed && surveyRound.Status != (int)SurveyRoundStatus.End)
+                {
+                    throw new InvalidDataException("Đợt khảo sát chưa đóng hoặc chưa kết thúc");
+                }
+
+                //do chỉ có một bài ks nên lấy id của bài ks đó
+                var theSurvey = surveyContext.AsEduSurveyBaiKhaoSat.FirstOrDefault(o => o.DotKhaoSatId == surveyRound.Id);
+                if(theSurvey == null)
+                {
+                    throw new RecordNotFoundException("Không tìm thấy bài khảo sát của đợt khảo sát này");
+                }
+
+                _logger.LogInformation("report total normal is start.");
+                //surveyContext.Database.ExecuteSqlRaw($"TRUNCATE TABLE {TableNameTask.AsEduSurveyReportTotal}");
+                var baikshoanthanh = surveyContext.AsEduSurveyBaiKhaoSatSinhVien.Where(o => o.BaiKhaoSatId == theSurvey.Id).Where(o => o.Status == (int)SurveyStudentStatus.Done);
+                var skip = 0;
+                var take = 1000;
+                
+                var tongBaiKsHoanThanh = baikshoanthanh.Count();
+
+                List<SelectedAnswerExtend> selectedAnswers;
+                while (skip <= tongBaiKsHoanThanh)
+                {
+                    var chiaNhoBaiKsHoanThanh = baikshoanthanh
                     .Skip(skip).Take(take)
                     .ToList();
 
-                    foreach (var lectureClassroom in list)
+                    var groupLopGiangVien = chiaNhoBaiKsHoanThanh
+                    .GroupBy(o => new { o.LecturerCode, o.ClassRoomCode, o.BaiKhaoSatId })
+                    .Select(r => new { r.Key.LecturerCode, r.Key.ClassRoomCode, r.Key.BaiKhaoSatId });
+
+                    foreach (var lectureClassroom in groupLopGiangVien)
                     {
                         var lectureCode = lectureClassroom.LecturerCode;
                         var classroomCode = lectureClassroom.ClassRoomCode;
-                        var baikhaosatId = lectureClassroom.BaiKhaoSatId;
 
                         //từng giảng viên lớp môn học
-                        var answers = surveyContext.AsEduSurveyBaiKhaoSatSinhVien.Where(o => o.ClassRoomCode == classroomCode && o.LecturerCode == lectureCode && !string.IsNullOrEmpty(o.BaiLam)).ToList();
-                        selectedAnswers = new List<SelectedAnswer>();
+                        var answers = baikshoanthanh.Where(o => o.ClassRoomCode == classroomCode && o.LecturerCode == lectureCode && !string.IsNullOrEmpty(o.BaiLam)).ToList();
+                        selectedAnswers = new List<SelectedAnswerExtend>();
 
                         foreach (var answer in answers)
                         {
-                            var json = JsonSerializer.Deserialize<List<SelectedAnswer>>(answer.BaiLam);
+                            var json = JsonSerializer.Deserialize<List<SelectedAnswerExtend>>(answer.BaiLam);
+                            json.ForEach(o => o.TheSurveyId = theSurvey.Id);
                             selectedAnswers.AddRange(json);
                         }
 
-                        //loại câu chọn 1
-                        var groupSingleChoiceSelectedAnswers = selectedAnswers.Where(o => o.AnswerCode != null).GroupBy(o => new { o.QuestionCode, o.AnswerCode });
-                        foreach (var item in groupSingleChoiceSelectedAnswers)
-                        {
-                            surveyContext.AsEduSurveyReportTotal.Add(new AsEduSurveyReportTotal
-                            {
-                                Id = Guid.NewGuid(),
-                                SemesterId = semesterId,
-                                CampaignId = baikhaosatId,
-                                ClassRoomCode = classroomCode,
-                                LecturerCode = lectureCode,
-                                QuestionCode = item.Key.QuestionCode,
-                                QuestionType = QuestionType.SC,
-                                AnswerCode = item.Key.AnswerCode,
-                                Total = item.Count()
-                            });
-                        }
+                        var total = AnswerSelectedReportTotal(selectedAnswers);
 
-                        //loại câu chọn nhiều
-                        var groupMultiChoiceSelectedAnswers = selectedAnswers
-                            .Where(o => o.AnswerCodes != null && o.AnswerCodes.Count > 0)
-                            .SelectMany(o => o.AnswerCodes, (r, AnswerCode) => new { r.QuestionCode, AnswerCode })
-                            .GroupBy(o => new { o.QuestionCode, o.AnswerCode });
-
-                        foreach (var item in groupMultiChoiceSelectedAnswers)
+                        foreach (var item in total)
                         {
-                            surveyContext.AsEduSurveyReportTotal.Add(new AsEduSurveyReportTotal
+                            var thongkecuthe = surveyContext.AsEduSurveyReportTotal.FirstOrDefault(o => o.ClassRoomCode == classroomCode && o.LecturerCode == lectureCode && o.TheSurveyId == theSurvey.Id);
+                            if (thongkecuthe == null)
                             {
-                                Id = Guid.NewGuid(),
-                                SemesterId = semesterId,
-                                CampaignId = baikhaosatId,
-                                ClassRoomCode = classroomCode,
-                                LecturerCode = lectureCode,
-                                QuestionCode = item.Key.QuestionCode,
-                                QuestionType = QuestionType.MC,
-                                AnswerCode = item.Key.AnswerCode,
-                                Total = item.Count()
-                            });
-                        }
-
-                        //loại câu trả lời text
-                        var groupShortAnswerSelectedAnswers = selectedAnswers.Where(o => o.AnswerContent != null).GroupBy(o => new { o.QuestionCode }, o => new { o.AnswerContent });
-                        foreach (var item in groupShortAnswerSelectedAnswers)
-                        {
-                            string strAllAnswerContent = "";
-                            foreach (var str in item)
-                            {
-                                strAllAnswerContent += $",{str.AnswerContent}";
+                                surveyContext.AsEduSurveyReportTotal.Add(new AsEduSurveyReportTotal
+                                {
+                                    Id = Guid.NewGuid(),
+                                    SurveyRoundId = surveyRound.Id,
+                                    TheSurveyId = item.TheSurveyId,
+                                    ClassRoomCode = classroomCode,
+                                    LecturerCode = lectureCode,
+                                    QuestionCode = item.QuestionCode,
+                                    AnswerCode = item.AnswerCode,
+                                    Content = item.Content,
+                                    Total = item.Total,
+                                });
                             }
-                            surveyContext.AsEduSurveyReportTotal.Add(new AsEduSurveyReportTotal
+                            else
                             {
-                                Id = Guid.NewGuid(),
-                                SemesterId = semesterId,
-                                CampaignId = baikhaosatId,
-                                ClassRoomCode = classroomCode,
-                                LecturerCode = lectureCode,
-                                QuestionCode = item.Key.QuestionCode,
-                                QuestionType = QuestionType.SA,
-                                Content = strAllAnswerContent
-                            });
+                                thongkecuthe.QuestionCode = item.QuestionCode;
+                                thongkecuthe.AnswerCode = item.AnswerCode;
+                                thongkecuthe.Content = item.Content;
+                                thongkecuthe.Total = item.Total;
+                            }
                         }
                     }
                     surveyContext.SaveChanges();
-                    _logger.LogInformation($"report total normal loading: {skip}/{countTheSurveyStudent}");
+                    _logger.LogInformation($"report total normal loading: {skip}/{tongBaiKsHoanThanh}");
                     skip += take;
                 }
 
@@ -274,6 +247,22 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 throw new TableBusyException("Bảng đang làm việc, thao tác bị huỷ");
             }
 
+            var scope = _scopeFactory.CreateScope();
+            var surveyContext = scope.ServiceProvider.GetRequiredService<SurveyContext>();
+            var statusContext = scope.ServiceProvider.GetRequiredService<StatusContext>();
+
+            var surveyRound = surveyContext.AsEduSurveyDotKhaoSat.FirstOrDefault(o => o.Id == surveyRoundId && o.Status != (int)SurveyRoundStatus.Deleted);
+            if (surveyRound == null)
+            {
+                throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
+            }
+
+            //đợt khảo sát chưa kết thúc
+            if (surveyRound.Status != (int)SurveyRoundStatus.Closed && surveyRound.Status != (int)SurveyRoundStatus.End)
+            {
+                throw new InvalidDataException("Đợt khảo sát chưa đóng hoặc chưa kết thúc");
+            }
+            
             _backgroundTaskWorker.StartAction(() =>
             {
                 ReportTotalNormalSurveyBG(surveyRoundId);

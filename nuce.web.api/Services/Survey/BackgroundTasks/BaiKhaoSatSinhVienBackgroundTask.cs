@@ -97,7 +97,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 var query = eduContext.AsAcademyStudentClassRoom.OrderBy(o => o.Id);
                 var numStudent = query.Count();
                 var skip = 0;
-                var take = 500;
+                var take = 1000;
 
                 List<AsAcademyStudentClassRoom> studentClassrooms;
                 AsAcademyLecturerClassRoom lectureClassroom = null;
@@ -124,9 +124,11 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                         classroom = eduContext.AsAcademyClassRoom.FirstOrDefault(o => o.Code == sc.ClassRoomCode);
                         if (classroom != null)
                         {
+                            //lớp có môn học là gì
                             subject = eduContext.AsAcademySubject.FirstOrDefault(o => o.Code == classroom.SubjectCode);
                             if (subject != null)
                             {
+                                //loại môn của môn đó
                                 subjectExtend = eduContext.AsAcademySubjectExtend.FirstOrDefault(o => o.Code == subject.Code);
                                 baiKhaoSatId = defaultSubjects.Id; //mặc định
                                 if (subjectExtend != null && subjectExtend.Type != null)
@@ -155,8 +157,9 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                             subject = null;
                         }
 
+                        var recordBaikssv = surveyContext.AsEduSurveyBaiKhaoSatSinhVien.FirstOrDefault(o => o.StudentCode == sc.StudentCode && o.ClassRoomCode == sc.ClassRoomCode);
                         //nếu chưa có thì thêm
-                        if (surveyContext.AsEduSurveyBaiKhaoSatSinhVien.FirstOrDefault(o => o.StudentCode == sc.StudentCode && o.ClassRoomCode == sc.ClassRoomCode) == null)
+                        if (recordBaikssv == null)
                         {
                             surveyContext.AsEduSurveyBaiKhaoSatSinhVien.Add(new AsEduSurveyBaiKhaoSatSinhVien
                             {
@@ -178,6 +181,16 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                 Status = (int)SurveyStudentStatus.DoNot,
                                 Type = 1,
                             });
+                        }
+                        else //có rồi thì update một số trường bị thiếu
+                        {
+                            recordBaikssv.DepartmentCode = lecturer != null ? lecturer.DepartmentCode : "";
+                            recordBaikssv.LecturerCode = lecturer != null ? lecturer.Code : "";
+                            recordBaikssv.LecturerName = lecturer != null ? lecturer.FullName : "";
+                            recordBaikssv.SubjectCode = subject != null ? subject.Code : "";
+                            recordBaikssv.SubjectName = subject != null ? subject.Name : "";
+                            recordBaikssv.SubjectType = subjectExtend != null ? subjectExtend.Type != null ? subjectExtend.Type.Value : -1 : -1;
+                            recordBaikssv.StudentId = sc.StudentId != null ? sc.StudentId.Value : -1;
                         }
                     }
                     surveyContext.SaveChanges();

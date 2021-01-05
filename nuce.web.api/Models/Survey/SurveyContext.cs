@@ -545,11 +545,6 @@ namespace nuce.web.api.Models.Survey
                 entity.Property(e => e.QuestionCode)
                     .IsRequired()
                     .HasMaxLength(50);
-
-                entity.Property(e => e.QuestionType)
-                    .IsRequired()
-                    .HasMaxLength(15)
-                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<AsEduSurveyUndergraduateBaiKhaoSat>(entity =>

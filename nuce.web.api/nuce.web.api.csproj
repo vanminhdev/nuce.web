@@ -47,6 +47,7 @@
     <Folder Include="Resources\Core\" />
     <Folder Include="Resources\Ctsv\" />
     <Folder Include="Resources\Survey\" />
+    <Folder Include="Services\EduData\Base\" />
   </ItemGroup>
 
   <ItemGroup>
