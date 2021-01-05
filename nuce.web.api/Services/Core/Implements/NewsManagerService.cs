@@ -76,7 +76,12 @@ namespace nuce.web.api.Services.Core.Implements
                 throw ex;
             }
         }
-
+        /// <summary>
+        /// Upload avatar bài tin
+        /// </summary>
+        /// <param name="formFile"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<string> UploadNewsItemAvatar(IFormFile formFile, int id)
         {
             if (!FileHelper.isValidImageUpload(formFile))
@@ -96,7 +101,8 @@ namespace nuce.web.api.Services.Core.Implements
                 throw new Exception("Bài tin không tồn tại");
             }
             var baseDir = @$"{_configuration.GetValue<string>("FolderResources")}";
-            var dir = Path.Combine(baseDir, "Images");
+            string subDir = "Images";
+            var dir = Path.Combine(baseDir, subDir);
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
@@ -113,7 +119,7 @@ namespace nuce.web.api.Services.Core.Implements
                 throw ex;
             }
 
-            newsItem.Avatar = filePath;
+            newsItem.Avatar = Path.Combine(subDir, newFileName);
             await _context.SaveChangesAsync();
             return newsItem.Avatar;
         }
@@ -249,15 +255,17 @@ namespace nuce.web.api.Services.Core.Implements
             }
 
             var imgPath = newsItemData.Avatar;
-            string extension = Path.GetExtension(imgPath);
-            extension = extension.Substring(1, extension.Length - 1);
+            string extension = FileHelper.FileExtensionWithoutDot(imgPath);
+
+            var baseDir = @$"{_configuration.GetValue<string>("FolderResources")}";
+            string fullPath = Path.Combine(baseDir, imgPath);
 
             if (width == null || height == null)
             {
-                var data = await File.ReadAllBytesAsync(imgPath);
+                var data = await File.ReadAllBytesAsync(fullPath);
                 return new ItemAvatarModel { Data = data, Extension = extension };
             }
-            Image img = Image.FromFile(imgPath);
+            Image img = Image.FromFile(fullPath);
 
             Image resizedNewImg = FileHelper.ResizeImage(img, width ?? 0, 40000, false);
             var newImg = FileHelper.CropImage(resizedNewImg, width ?? 0, height ?? 0);

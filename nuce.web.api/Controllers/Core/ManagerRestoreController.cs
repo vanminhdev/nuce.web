@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Models.Core;
@@ -20,7 +21,7 @@ namespace nuce.web.api.Controllers.Core
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [AppAuthorize(RoleList.Admin)]
     public class ManagerRestoreController : ControllerBase
     {
         private readonly IManagerRestoreService _managerBackupService;

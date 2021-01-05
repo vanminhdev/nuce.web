@@ -23,6 +23,7 @@ using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
 using nuce.web.api.Services.Survey.Interfaces;
 using System.Collections.Generic;
+using nuce.web.api.Attributes.ValidationAttributes;
 
 namespace nuce.web.api.Controllers.Core
 {
@@ -405,7 +406,7 @@ namespace nuce.web.api.Controllers.Core
         }
 
 
-        [Authorize(Roles = "Admin")]
+        [AppAuthorize(RoleList.Admin)]
         [HttpPost]
         [Route("GetAllUser")]
         public async Task<IActionResult> GetAllUser(
@@ -427,7 +428,7 @@ namespace nuce.web.api.Controllers.Core
             );
         }
 
-        [Authorize(Roles = "Admin")]
+        [AppAuthorize(RoleList.Admin)]
         [HttpGet]
         [Route("GetUserById")]
         public async Task<IActionResult> GetUserById([Required(AllowEmptyStrings = false)] string id)
@@ -448,7 +449,7 @@ namespace nuce.web.api.Controllers.Core
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [AppAuthorize(RoleList.Admin)]
         [HttpPut]
         [Route("ActiveUser")]
         public async Task<IActionResult> ActiveUser([Required(AllowEmptyStrings = false)] string id)
@@ -474,7 +475,7 @@ namespace nuce.web.api.Controllers.Core
             return Ok();
         }
 
-        [Authorize(Roles = "Admin")]
+        [AppAuthorize(RoleList.Admin)]
         [HttpPut]
         [Route("DeactiveUser")]
         public async Task<IActionResult> DeactiveUser([Required(AllowEmptyStrings = false)] string id)
@@ -500,7 +501,7 @@ namespace nuce.web.api.Controllers.Core
             return Ok();
         }
 
-        [Authorize(Roles = "Admin")]
+        [AppAuthorize(RoleList.Admin)]
         [HttpDelete]
         [Route("DeleteUser")]
         public async Task<IActionResult> DeleteUser([Required(AllowEmptyStrings = false)] string id)
@@ -526,7 +527,7 @@ namespace nuce.web.api.Controllers.Core
             return Ok();
         }
 
-        [Authorize(Roles = "Admin")]
+        [AppAuthorize(RoleList.Admin)]
         [HttpPut]
         [Route("UpdateUser")]
         public async Task<IActionResult> UpdateUser(
@@ -554,7 +555,7 @@ namespace nuce.web.api.Controllers.Core
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [AppAuthorize(RoleList.Admin)]
         [HttpPut]
         [Route("ResetPassword")]
         public async Task<IActionResult> ResetPassword(

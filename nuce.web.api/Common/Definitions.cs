@@ -170,6 +170,13 @@ namespace nuce.web.api.Common
         public static readonly string Contact = "CONTACT";
     }
 
+    public static class RoleList
+    {
+        public const string Admin = "Admin";
+        public const string KhaoThi = "P_KhaoThi";
+        public const string CTSV = "P_CTSV";     
+    }
+
     /// <summary>
     /// Loại file upload
     /// </summary>
