@@ -15,5 +15,7 @@ namespace nuce.web.api.Models.Core
         public string Role { get; set; }
         public bool? OnMenu { get; set; }
         public bool? DivideAfter { get; set; }
+        public bool? AllowChildren { get; set; }
+        public string MenuHref { get; set; }
     }
 }

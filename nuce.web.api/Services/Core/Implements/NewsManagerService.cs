@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using nuce.web.api.HandleException;
+using nuce.web.api.Helper;
 using nuce.web.api.Models.Core;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.ViewModel.Base;
@@ -20,14 +21,12 @@ namespace nuce.web.api.Services.Core.Implements
     {
         private readonly NuceCoreIdentityContext _context;
         private readonly IUserService _userService;
-        private readonly IUploadFile _uploadFile;
         private readonly IConfiguration _configuration;
         public NewsManagerService(NuceCoreIdentityContext _nuceCoreContext, IUserService _userService,
-                                IUploadFile _uploadFile, IConfiguration _configuration)
+                                IConfiguration _configuration)
         {
             this._context = _nuceCoreContext;
             this._userService = _userService;
-            this._uploadFile = _uploadFile;
             this._configuration = _configuration;
         }
         
@@ -80,13 +79,13 @@ namespace nuce.web.api.Services.Core.Implements
 
         public async Task<string> UploadNewsItemAvatar(IFormFile formFile, int id)
         {
-            if (!_uploadFile.isValidImageUpload(formFile))
+            if (!FileHelper.isValidImageUpload(formFile))
             {
                 throw new Exception("Ảnh không hợp lệ");
             }
             // 1mb
             long maxSize = 1024 * 1024;
-            if (!_uploadFile.isValidSize(formFile, maxSize))
+            if (!FileHelper.isValidSize(formFile, maxSize))
             {
                 throw new Exception("Dung lượng phải nhỏ hơn 1MB");
             }
@@ -107,7 +106,7 @@ namespace nuce.web.api.Services.Core.Implements
 
             try
             {
-                await _uploadFile.SaveFileAsync(formFile, filePath);
+                await FileHelper.SaveFileAsync(formFile, filePath);
             }
             catch (Exception ex)
             {
@@ -163,16 +162,23 @@ namespace nuce.web.api.Services.Core.Implements
                 {
                     throw new RecordNotFoundException("Danh mục cha không tồn tại");
                 }
+                
             }
             if (!roles.Contains(parent.Role))
             {
                 throw new UnauthorizedAccessException("Bạn không có quyền");
+            }
+            if (!(parent.AllowChildren ?? false))
+            {
+                throw new Exception("Danh mục cha không được phép tạo con");
             }
             var modelRole = parent.Role;
 
             var modelCount = _context.NewsCats.Count() + 1;
 
             var modelId = await _context.NewsCats.MaxAsync(c => c.Id) + 1;
+
+            string modelHref = model.Parent != -1 ? $"/news?catId={modelId}" : "";
 
             var newsCat = new NewsCats
             {
@@ -184,7 +190,8 @@ namespace nuce.web.api.Services.Core.Implements
                 DivideAfter = false,
                 Status = 1,
                 Role = modelRole,
-                Count = modelCount
+                Count = modelCount,
+                MenuHref = modelHref
             };
 
             try
@@ -252,10 +259,10 @@ namespace nuce.web.api.Services.Core.Implements
             }
             Image img = Image.FromFile(imgPath);
 
-            Image resizedNewImg = _uploadFile.ResizeImage(img, width ?? 0, 2000, false);
-            var newImg = _uploadFile.CropImage(resizedNewImg, width ?? 0, height ?? 0);
+            Image resizedNewImg = FileHelper.ResizeImage(img, width ?? 0, 40000, false);
+            var newImg = FileHelper.CropImage(resizedNewImg, width ?? 0, height ?? 0);
 
-            var result = _uploadFile.ImageToByte(newImg);
+            var result = FileHelper.ImageToByte(newImg);
             return new ItemAvatarModel { Data = result, Extension = extension };
         }
         #endregion
@@ -274,7 +281,14 @@ namespace nuce.web.api.Services.Core.Implements
                                 .Where(c => c.Role == role && (status == null || c.Status == status) && (c.OnMenu ?? false) == onMenu)
                                 .OrderBy(c => c.Count);
         }
-
+        /// <summary>
+        /// Danh sách bài tin theo danh mục
+        /// </summary>
+        /// <param name="catId"></param>
+        /// <param name="seen"></param>
+        /// <param name="size"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
         public async Task<DataTableResponse<NewsItems>> FindItemsByCatId(int catId, int seen, int size, int? status)
         {
             var catChildren = _context.NewsCats.Where(cat => (cat.Parent == catId || cat.Id == catId) && (status == null || cat.Status == status));
@@ -298,6 +312,22 @@ namespace nuce.web.api.Services.Core.Implements
                 RecordsFiltered = takedData.Count(),
                 RecordsTotal = data.Count()
             };
+        }
+
+        public async Task<IQueryable<NewsItems>> GetCousinNewsItemsById(int id)
+        {
+            var newsItem = await _context.NewsItems.FindAsync(id);
+            if (newsItem == null)
+            {
+                throw new RecordNotFoundException("Bài tin không tồn tại");
+            }
+            var lesserList = _context.NewsItems.Where(ni => ni.EntryDatetime < newsItem.EntryDatetime && ni.CatId == newsItem.CatId)
+                                                .OrderByDescending(ni => ni.EntryDatetime)
+                                                .Take(2);
+            var greaterList = _context.NewsItems.Where(ni => ni.EntryDatetime > newsItem.EntryDatetime && ni.CatId == newsItem.CatId)
+                                                .OrderBy(ni => ni.EntryDatetime)
+                                                .Take(2);
+            return (lesserList.Concat(greaterList)).OrderByDescending(ni => ni.EntryDatetime);
         }
 
         public async Task<NewsItems> FindNewsItemById(int id, int? status)

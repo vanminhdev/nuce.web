@@ -113,6 +113,19 @@ namespace nuce.web.api.Controllers.Core
                 return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
             }
         }
+
+        /// <summary>
+        /// Danh sách bài tin xung quanh 1 bài tin
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("news-items/{id}/surround")]
+        public async Task<IActionResult> GetNewsItemByCategory(int id)
+        {
+            return Ok(await _newsManagerService.GetCousinNewsItemsById(id));
+        }
         #endregion
 
         #region admin

@@ -76,9 +76,6 @@
                 <h5 class="card-header">Chú ý</h5>
                 <div class="card-body">
                     <div class="#verify-ks-notice">
-                        * Địa chỉ email <b>không được sử dụng</b> email nhà trường cung cấp vd: <i>abc@@nuce.edu.vn</i>, <b>khuyên dùng</b> tài khoản gmail<br/>
-                        * Sau khi điền đẩy đủ thông tin sẽ có một email xác thực được gửi đến địa chỉ email anh/chị cung cấp, email có thể được gửi tới trong vòng từ 1 đến 3 phút<br/>
-                        * Khi cần hỗ trợ vui lòng liên hệ theo hotline 0912987567 hoặc qua email ks.ktdb@nuce.edu.vn
                     </div>
                 </div>
             </div>
@@ -87,6 +84,22 @@
 </div>
 
 @section Scripts {
+    <script src="~/Content/js/helper/enum.js"></script>
+    <script src="~/Content/js/helper/clientParameter.js"></script>
+    <script>
+        var verifyState = {
+            getData: function() {
+                _clientParameterHelper.getDataApi('' , CLIENT_PARAMETERS_TYPE.KHAO_SAT_SV, res => {
+                    const code = CLIENT_PARAMETERS_CODE.KTDB_NOTICE_VERIFY;
+                    $('#verify-ks-notice').html(_clientParameterHelper.getValueByCode(res, code));
+                });
+            },
+            init: function() {
+                verifyState.getData();
+            },
+        };
+        verifyState.init();
+    </script>
     <script>
         let formData = $('#form-data');
         $('#btn-xac-thuc').click(() => {

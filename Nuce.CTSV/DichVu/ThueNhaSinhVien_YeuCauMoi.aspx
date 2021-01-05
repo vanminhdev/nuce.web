@@ -30,7 +30,7 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <script src='https://www.google.com/recaptcha/api.js'></script>
-    <div class="col-sm-12">
+    <div class="col-sm-12 my-4">
         <div style="text-align: center; font-weight: bold; color: red;" runat="server" id="divThongBao"></div>
     </div>
     <div class="col-12">

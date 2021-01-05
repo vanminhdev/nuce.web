@@ -17,7 +17,23 @@
         <div>
             <p id="news-item-date" class="m-date-article m-fs-13 text-right"></p>
         </div>
-        <div id="news-item-content" class="mt-4"></div>
+        <div id="news-item-content" class="mt-4">
+
+        </div>
+        <div id="other-news-container" class="mt-2">
+            <a class="mb-2"
+               style="display: block; text-decoration: none">
+                <div class="m-border-b-blue d-flex">
+                    <span class="m-bg-blue m-text-white p-1 pl-2 pr-2 text-uppercase">
+                        <i class="fas fa-cogs mr-2"></i>
+                        Các bài liên quan
+                    </span>
+                </div>
+            </a>
+            <div id="other-news" class="pt-1">
+
+            </div>
+        </div>
     </div>
     <div class="col-md-4 col-12">
         @Html.Partial("~/Views/News/Partials/_PartialGroupNews.cshtml")
@@ -60,15 +76,51 @@
                         $('#news-item-date').html(datetimeHelper.convertDateTime(new Date(res.entryDatetime)));
                         handleContentImage();
                         generateCategoryNameBreadcrumb();
-                        $.ajax({
-                            type: 'get',
-                            url: `/news/UpdateCatId?catId=${res.catId}`,
-                            dataType: 'json',
-                            contentType: 'application/json',
-                        });
                     }
                 },
             });
+        };
+
+        var getSurroundItems = function() {
+            $.ajax({
+                type: 'get',
+                url: `${API_URL}/api/NewsManager/news-items/${state.id}/surround`,
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function(res) {
+                    if (res != null && Array.isArray(res)) {
+                        handleSurroundItems(res);
+                    }
+                },
+            });
+        };
+
+        var handleSurroundItems = function(data = []) {
+            console.log(data);
+            let strHtml = '';
+            data.forEach((item, idx) => {
+                const entryDate = datetimeHelper.convertDateTime(new Date(item.entryDatetime));
+                let borderTop = '';
+                if (idx > 0) {
+                    borderTop += `border-top`;
+                }
+                strHtml += `<div class="m-hover-news-item-anchor-inside ${borderTop} row py-1">
+                                <div class="col-3">
+                                    <img src="${API_URL}/api/NewsManager/news-items/avatar/${item.id}" 
+                                            style="max-width: 100%; height: auto;">
+                                </div>
+
+                                <div class="col-9">
+                                    <a style="display: block; text-decoration: none"
+                                        class="text-dark p-1"
+                                        href="/news/detail?catId=${item.catId}&itemId=${item.id}">
+                                        <h6 class="title">${item.title}</h6>
+                                        <p class="m-date-article m-fs-13">${entryDate || ''}</p>
+                                    </a>
+                                </div>
+                            </div>`;
+            });
+            $('#other-news').html(strHtml);
         };
 
         var handleContentImage = function() {
@@ -79,6 +131,7 @@
 
         var init = function() {
             getNewsItemDetail();
+            getSurroundItems();
         }
 
         init();

@@ -9,30 +9,30 @@
     }
 }
 
-@*@section Breadcrumb {
-    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
-    <li class="breadcrumb-item active" aria-current="page">
-        @if (Model.Type == "Student")
+<h5 class="text-center mb-3 m-text-blue">
+    @{
+        switch (Model.Type)
         {
-            <span>Khảo sát phản hồi của sv về hoạt động giảng dạy của gv</span>
+            case "GraduateStudent":
+            <span>Khảo sát tình hình việc làm sinh viên sau tốt nghiệp</span>
+                break;
+            case "UndergraduateStudent":
+                <span>Khảo sát phản hồi của sinh viên về chất lượng đào tạo trước tốt nghiệp</span>
+                break;
+            case "Student":
+                <span>Khảo sát phản hồi của sinh viên về hoạt động giảng dạy của giảng viên</span>
+                break;
+            default:
+                break;
         }
-        else if (Model.Type == "UndergraduateStudent")
-        {
-            <span>Khảo sát phản hồi của sv về chất lượng đào tạo trước tốt nghiệp</span>
-        }
-        else if (Model.Type == "GraduateStudent")
-        {
-            loginAction = "/account/logingraduate";
-            <span>Khảo sát tình hình việc làm sv sau tốt nghiệp</span>
-        }
-    </li>
-}*@
+    }
+</h5>
 
 <section id="body" class="login-form">
     <div class="container mt-2">
         <div class="row">
             <div class="col-md-6 col-12 mt-0 d-flex">
-                <div class="card w-100 m-box-shadow-right-bottom">
+                <div class="card w-100 h-100 m-box-shadow-right-bottom">
                     <h5 class="card-header">Đăng nhập</h5>
                     <div class="card-body">
                         <form method="post" action="@loginAction" class="pb-2">
@@ -56,16 +56,11 @@
                 </div>
             </div>
             <div class="col-md-6 col-12 mt-md-0 mt-2">
-                <div class="card w-100 m-box-shadow-right-bottom">
+                <div class="card w-100 h-100 m-box-shadow-right-bottom">
                     <h5 class="card-header">Chú ý</h5>
                     <div class="card-body">
                         <div id="login-ks-notice">
-                            * Tên đăng nhập là mã số sinh viên. Nếu mã số sinh viên có ít hơn 7 kí tự thì bổ sung các số 0 phía trước để mã số sinh viên có đủ 7 kí tự. <br>
-                            <i>Ví dụ: mã số sinh viên là "123" thì tên đăng nhập là "0000123"</i><br>
-                            * Mật khẩu là họ tên đầy đủ không dấu, không viết hoa, không dấu cách.<br>
-                            <i>Ví dụ: Họ và tên là "Nguyễn Văn A" thì mật khẩu là "nguyenvana"</i><br>
-                            * Trường hợp anh/chị không nhớ chính xác mã số sinh viên vui lòng gửi email tới địa chỉ ks.ktdb@nuce.edu.vn<br>
-                            * Khi cần hỗ trợ vui lòng liên hệ theo hotline 0912987567 hoặc qua email ks.ktdb@nuce.edu.vn
+                            @* HTML format *@
                         </div>
                     </div>
                 </div>
@@ -74,5 +69,5 @@
     </div>
 </section>
 <script>
-     console.log("@ViewData["LoginFailed"]");
+     console.log(@Html.Raw(ViewData["LoginFailed"]));
 </script>

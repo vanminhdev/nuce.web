@@ -5,10 +5,27 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <span id="btn-toggle"
+                    class="cursor-pointer"
+                    data-toggle="collapse" data-target="#fe-manager-container" 
+                    aria-expanded="false" aria-controls="fe-manager-container">
+                <i class="fas fa-angle-double-right fa-2x"
+                   style="transition: all 0.2s"></i>
+            </span>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div id="fe-manager-container" class="col-4 collapse show overflow-hidden border-right border-top"
+             style="transition: all 0.2s">
 
-<div id="fe-manager-container" class="container service-categories-wrp collapse-custom mt-0">
-    <!-- append child -->
+        </div>
+        <div id="right-pane" class="col-8" style="transition: width 0.3s; transition-delay: 0.2s">
 
+        </div>
+    </div>
 </div>
 <!-- Add Modal -->
 <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -76,19 +93,33 @@
 </div>
 
 @section Scripts {
+    <link href="~/content/css/bootstrap-datepicker3.min.css" rel="stylesheet" />
+
+    <script src="~/content/js/jquery.dataTables.min.js"></script>
+    <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/content/js/dataTables.config.js"></script>
+    <script src="~/content/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/content/js/bootstrap-datepicker.vi.min.js"></script>
+
     <link rel="stylesheet" href="~/Content/js/jstree/themes/default/style.min.css" />
     <script src="~/Content/js/jstree/jstree.min.js"></script>
+
+    <script src="~/Content/js/common/config.js"></script>
+
     <script>
         var buttonTemplate = {
-            add: `&nbsp;<span class="font-weight-bold" 
+            add: `<span class="font-weight-bold"
                     data-toggle="modal" data-target="#addModal" data-not-redirect="1">
-                    <i class="fas fa-folder-plus" data-not-redirect="1"></i></span>`,
+                    <i class="fas fa-folder-plus" data-not-redirect="1"></i></span>&nbsp;`,
             edit: function(id) {
-                return `&nbsp;<span class="font-weight-bold" onclick="feManagerState.openUpdateCategoryForm(feManagerState.categoryList, ${id})"
+                return `<span class="font-weight-bold" onclick="feManagerState.openUpdateCategoryForm(feManagerState.categoryList, ${id})"
                                 data-toggle="modal" data-target="#editModal" data-not-redirect="1">
-                    <i class="fas fa-wrench" data-not-redirect="1"></i></span>`;
+                    <i class="fas fa-wrench" data-not-redirect="1"></i></span>&nbsp;`;
             },
-        };                            
+            catName: function(name = '') {
+                return `<span title="${name}">${name}</span>`;
+            },
+        };
 
         var feManagerState = {
             categoryList: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model)),
@@ -97,23 +128,12 @@
                 P_KhaoThi: [
                     {
                         text: `Quản trị hình ảnh`,
+                        a_attr: {
+                            href: `/frontendmanager/image?type=KTDB`,
+                        }
                     },
                     {
                         text: `Quản trị thông tin`, // node text
-                        children: [
-                            {
-                                text: `Chú ý khảo sát`,
-                                a_attr: {
-                                    href: '/frontendmanager/edit?type=KSSV&richText=true'
-                                }
-                            },
-                            {
-                                text: 'Liên hệ',
-                                a_attr: {
-                                    href: '/frontendmanager/edit?type=CONTACT&richText=false'
-                                }
-                            },
-                        ],
                     },
                 ],
                 P_CTSV: [],
@@ -121,8 +141,8 @@
             dataTree: [
                 {
                     id: 'tree-tintuc',
-                    text: `Quản trị danh mục & tin tức${buttonTemplate.add}`, // node text
-                    data: { 
+                    text: `${buttonTemplate.add}${buttonTemplate.catName('Quản trị danh mục & tin tức')}`, // node text
+                    data: {
                         id: -1,
                         role: '',
                     },
@@ -131,18 +151,25 @@
             ],
             configJsTree: function() {},
             convertCategory: function(raw = [], result = [], id = 'tree-tintuc') {
+                console.log(raw);
                 if (!Array.isArray(raw) || raw.length < 1) return;
 
                 const target = result.find(folder => folder.id === id);
-                
+
                 if (typeof target === 'undefined') return;
 
                 const parentList = [];
                 raw.forEach(cat => {
                     if (cat.parent !== -1) return;
 
-                    const parent = {
-                        text: `${cat.description || ''}${buttonTemplate.add}${buttonTemplate.edit(cat.id)}`,
+                    let parentText = `${buttonTemplate.edit(cat.id)}${buttonTemplate.catName(cat.description || '')}`;
+                    console.log(cat);
+                    if (cat.allowChildren) {
+                        parentText = `${buttonTemplate.add}${buttonTemplate.edit(cat.id)}${buttonTemplate.catName(cat.description || '')}`;
+                    }
+
+                    let parent = {
+                        text: parentText,
                         data: cat,
                     };
                     const children = raw.filter(c => c.parent === cat.id);
@@ -150,17 +177,23 @@
                         parent.children = [];
                         children.forEach(child => {
                             const son = {
-                                text: `${child.description || ''}${buttonTemplate.edit(child.id)}`,
+                                text: `${buttonTemplate.edit(child.id)}${buttonTemplate.catName(child.description || '')}`,
                                 data: child,
                                 a_attr: {
                                     href: `/newsmanagement/itemslist?catId=${child.id}`,
+                                    class: 'alink',
                                 },
                             };
                             parent.children.push(son);
                         });
+                    } else if (cat.id in SPECIAL_CATEGORY) {
+                        parent = SPECIAL_CATEGORY[cat.id].jsTreeConfig;
+                        parent.text = `${buttonTemplate.edit(cat.id)}${buttonTemplate.catName(cat.description)}`;
+                        parent.data = { ...cat };
                     } else {
                         parent.a_attr = {
                             href: `/newsmanagement/itemslist?catId=${cat.id}`,
+                            class: 'alink',
                         };
                     };
                     parentList.push(parent);
@@ -192,7 +225,7 @@
                 body.divideAfter = $('#txtEditDivide').is(':checked');
                 body.onMenu = $('#txtEditOnMenu').is(':checked');
                 body.description = body.name;
-                
+
                 feManagerState.callApiUpdateCat(treeId, body);
             },
             openUpdateCategoryForm: function(raw, id) {
@@ -221,6 +254,7 @@
 
                     feManagerState.drawTree(jsTreeId, dataTree, categoryList);
                 });
+                //$('#right-pane').load(`/newsmanagement/create?catId=5`);
             },
             refreshNodeData: function(treeId = '', newData = []) {
                 $(`#${treeId}`).jstree(true).settings.core.data = newData;
@@ -237,7 +271,7 @@
                     if (res.StatusCode == 200) {
                         const role = feManagerState.selectedNode.data.node.data.role;
                         const resData = JSON.parse(res.Data);
-            
+
                         const dataTree = [...feManagerState.dataTree, ...feManagerState.treeByRole[role]];
                         feManagerState.categoryList.push(resData.data);
                         const categoryList = feManagerState.categoryList.filter(c => c.role === role);
@@ -266,7 +300,6 @@
                     contentType: 'application/json',
                 }).done(res => {
                     if (res.StatusCode == 200) {
-                        console.log(res);
                         const role = body.role;
                         const dataTree = [...feManagerState.dataTree, ...feManagerState.treeByRole[role]];
 
@@ -276,7 +309,6 @@
                         });
 
                         const categoryList = feManagerState.categoryList.filter(c => c.role === role);
-                        console.log(categoryList);
                         feManagerState.convertCategory(categoryList, dataTree, 'tree-tintuc');
 
                         feManagerState.refreshNodeData(treeId, dataTree);
@@ -291,6 +323,10 @@
                     $('#loading-screen').hide();
                     $('#editModal').modal('hide');
                 });
+            },
+            changeComponent: function(href = '') {
+                $('#right-pane').load(href);
+                return false;
             },
         };
         @{
@@ -329,7 +365,8 @@
                  const notRedirect = oEvent.target.getAttribute('data-not-redirect') !== null;
                  console.log(data);
                  if (href !== '#' && href.includes('/') && !notRedirect) {
-                    document.location.href = href;
+//                    document.location.href = href;
+                    feManagerState.changeComponent(href);
                  }
             });
         };
@@ -337,5 +374,13 @@
             #endregion
         }
         feManagerState.init();
+        
+    </script>
+    @* ux *@
+    <script>
+        $('#btn-toggle').click(function() {
+            $('#right-pane').toggleClass('col-12').toggleClass('col-8');
+            $(this).find('i').toggleClass('m-rotate-90');
+        });
     </script>
 }

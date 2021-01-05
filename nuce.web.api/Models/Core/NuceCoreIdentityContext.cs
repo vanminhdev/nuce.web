@@ -82,6 +82,10 @@ namespace nuce.web.api.Models.Core
 
                 entity.Property(e => e.Description).IsRequired();
 
+                entity.Property(e => e.MenuHref)
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(200);

@@ -1,4 +1,6 @@
-﻿@{
+﻿@using nuce.web.quanly.Models
+
+@{
     ViewBag.Title = "Quản lý dịch vụ";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -47,219 +49,62 @@
     </div>
     <div class="row">
         <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer">
-            <a href="/ctsvservicemanagement/detail?id=1"
-               class="row justify-content-center">
-                <img src="~/content/images/services/giay-xac-nhan.jpg"
-                     alt="service"
-                     class="service-avatar col-10" />
-                <div class="col-12 mt-2 text-center text-uppercase main-color fw-600 font-14-sm font-18-md font-18 title-service overflow-text">
-                    dịch vụ xin giấy xác nhận
-                </div>
-                <div class="col-12">
-                    <hr class="w-100 line mt-2 mb-2" />
-                </div>
-                <div class="col-10 text-decoration-none">
-                    <div class="row">
-                        <div class="col-6 pl-0">
-                            Tổng số: <span class="main-color">@(Model[1].tongSo)</span>
-                        </div>
-                        <div class="col-6 text-left p-0">
-                            Mới gửi: <span class="main-color">@(Model[1].moiGui)</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-6 pl-0">
-                            Đang xử lý: <span class="main-color">@(Model[1].dangXuLy)</span>
-                        </div>
-                        <div class="col-6 text-left p-0">
-                            Đã xử lý xong: <span class="main-color">@(Model[1].daXuLy)</span>
-                        </div>
-                    </div>
-                </div>
-            </a>
+            @Html.Partial("~/Views/CtsvServiceManagement/Partials/_PartialServiceOverview.cshtml", new PartialServiceManagementModel {
+                detail = (ServiceManagementModel)Model[1],
+                id = 1,
+                image = "giay-xac-nhan.jpg"
+            })
         </div>
         <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer">
-            <a href="/ctsvservicemanagement/detail?id=8"
-               class="row justify-content-center">
-                <img src="~/content/images/services/dich-vu-ho-tro.jpg"
-                     alt="service"
-                     class="service-avatar col-10" />
-                <div class="col-10 mt-2 text-center text-uppercase main-color fw-600 font-14-sm font-18-md font-18 title-service  overflow-text">
-                    làm vé tháng xe bus
-                </div>
-                <div class="col-12">
-                    <hr class="w-100 line mt-2 mb-2" />
-                </div>
-                <div class="col-10 text-decoration-none">
-                    <div class="row">
-                        <div class="col-6 pl-0">
-                            Tổng số:
-                            <span class="main-color">
-                                @(Model[8].tongSo)
-                            </span>
-                        </div>
-                        <div class="col-6 text-left p-0">
-                            Mới gửi:
-                            <span class="main-color">
-                                @(Model[8].moiGui)
-                            </span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-6 pl-0">
-                            Đang xử lý:
-                            <span class="main-color">
-                                @(Model[8].dangXuLy)
-                            </span>
-                        </div>
-                        <div class="col-6 text-left p-0">
-                            Đã xử lý xong:
-                            <span class="main-color">
-                                @(Model[8].daXuLy)
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer"
-             title="vay vốn ngân hàng chính sách - xã hội">
-            <a href="/ctsvservicemanagement/detail?id=6"
-               class="row justify-content-center">
-                <img src="~/content/images/services/VAY_VON.jpg"
-                     alt="service"
-                     class="service-avatar col-10" />
-                <div class="col-10 mt-2 text-center text-uppercase main-color fw-600 font-14-sm font-18-md font-18 title-service  overflow-text">
-                    vay vốn ngân hàng chính sách - xã hội
-                </div>
-
-                <div class="col-12">
-                    <hr class="w-100 line mt-2 mb-2" />
-                </div>
-                <div class="col-10 text-decoration-none">
-                    <div class="row">
-                        <div class="col-6 pl-0">
-                            Tổng số:
-                            <span class="main-color">
-                                @(Model[6].tongSo)
-                            </span>
-                        </div>
-                        <div class="col-6 text-left p-0">
-                            Mới gửi:
-                            <span class="main-color">
-                                @(Model[6].moiGui)
-                            </span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-6 pl-0">
-                            Đang xử lý:
-                            <span class="main-color">
-                                @(Model[6].dangXuLy)
-                            </span>
-                        </div>
-                        <div class="col-6 text-left p-0">
-                            Đã xử lý xong:
-                            <span class="main-color">
-                                @(Model[6].daXuLy)
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </a>
+            @Html.Partial("~/Views/CtsvServiceManagement/Partials/_PartialServiceOverview.cshtml", new PartialServiceManagementModel
+            {
+                detail = (ServiceManagementModel)Model[8],
+                id = 8,
+                image = "dich-vu-ho-tro.jpg"
+            })
         </div>
         <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer">
-            <a href="/ctsvservicemanagement/detail?id=4"
-               class="row justify-content-center">
-                <img src="~/content/images/services/Uu-dai-giao-duc-Max-Quality.jpg"
-                     alt="service"
-                     class="service-avatar col-10" />
-                <div class="col-10 mt-2 text-center text-uppercase main-color fw-600 font-14-sm font-18-md font-18 title-service overflow-text">
-                    ưu đãi trong giáo dục
-                </div>
-                <div class="col-12">
-                    <hr class="w-100 line mt-2 mb-2" />
-                </div>
-                <div class="col-10 text-decoration-none">
-                    <div class="row">
-                        <div class="col-6 pl-0">
-                            Tổng số:
-                            <span class="main-color">
-                                @(Model[4].tongSo)
-                            </span>
-                        </div>
-                        <div class="col-6 text-left p-0">
-                            Mới gửi:
-                            <span class="main-color">
-                                @(Model[4].moiGui)
-                            </span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-6 pl-0">
-                            Đang xử lý:
-                            <span class="main-color">
-                                @(Model[4].dangXuLy)
-                            </span>
-                        </div>
-                        <div class="col-6 text-left p-0">
-                            Đã xử lý xong:
-                            <span class="main-color">
-                                @(Model[4].daXuLy)
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </a>
+            @Html.Partial("~/Views/CtsvServiceManagement/Partials/_PartialServiceOverview.cshtml", new PartialServiceManagementModel
+            {
+                detail = (ServiceManagementModel)Model[6],
+                id = 6,
+                image = "VAY_VON.jpg"
+            })
         </div>
-        <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer"
-            title="Đăng ký nhà ở KTX Pháp Vân - Tứ Hiệp">
-            <a href="/ctsvservicemanagement/detail?id=7"
-               class="row justify-content-center">
-                <img src="~/content/images/services/KTX.jpg"
-                     alt="service"
-                     class="service-avatar col-10" />
-                <div class="col-10 mt-2 text-center text-uppercase main-color fw-600 font-14-sm font-18-md font-18 title-service overflow-text">
-                    Đăng ký nhà ở KTX Pháp Vân - Tứ Hiệp
-                </div>
-                <div class="col-12">
-                    <hr class="w-100 line mt-2 mb-2" />
-                </div>
-                <div class="col-10 text-decoration-none">
-                    <div class="row">
-                        <div class="col-6 pl-0">
-                            Tổng số:
-                            <span class="main-color">
-                                @(Model[7].tongSo)
-                            </span>
-                        </div>
-                        <div class="col-6 text-left p-0">
-                            Mới gửi:
-                            <span class="main-color">
-                                @(Model[7].moiGui)
-                            </span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-6 pl-0">
-                            Đang xử lý:
-                            <span class="main-color">
-                                @(Model[7].dangXuLy)
-                            </span>
-                        </div>
-                        <div class="col-6 text-left p-0">
-                            Đã xử lý xong:
-                            <span class="main-color">
-                                @(Model[7].daXuLy)
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </a>
+        <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer">
+            @Html.Partial("~/Views/CtsvServiceManagement/Partials/_PartialServiceOverview.cshtml", new PartialServiceManagementModel
+            {
+                detail = (ServiceManagementModel)Model[4],
+                id = 4,
+                image = "Uu-dai-giao-duc-Max-Quality.jpg"
+            })
+        </div>
+        <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer">
+            @Html.Partial("~/Views/CtsvServiceManagement/Partials/_PartialServiceOverview.cshtml", new PartialServiceManagementModel
+            {
+                detail = (ServiceManagementModel)Model[7],
+                id = 7,
+                image = "KTX.jpg"
+            })
+        </div>
+        <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer">
+            @Html.Partial("~/Views/CtsvServiceManagement/Partials/_PartialServiceOverview.cshtml", new PartialServiceManagementModel
+            {
+                detail = (ServiceManagementModel)Model[2],
+                id = 2,
+                image = "service2.png"
+            })
+        </div>
+        <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer">
+            @Html.Partial("~/Views/CtsvServiceManagement/Partials/_PartialServiceOverview.cshtml", new PartialServiceManagementModel
+            {
+                detail = (ServiceManagementModel)Model[3],
+                id = 3,
+                image = "the-sinh-vien-Max-Quality.jpg"
+            })
         </div>
     </div>
 </div>
-
 
 @section Scripts {
     <script>

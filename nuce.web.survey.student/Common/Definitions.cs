@@ -83,4 +83,18 @@ namespace nuce.web.survey.student.Common
         /// </summary>
         public static string StarRating = "StarRating";
     }
+
+    public class DayOfWeekDict
+    {
+        public static Dictionary<DayOfWeek, string> Value = new Dictionary<DayOfWeek, string>
+        {
+            { DayOfWeek.Monday, "Thứ 2" },
+            { DayOfWeek.Tuesday, "Thứ 3" },
+            { DayOfWeek.Wednesday, "Thứ 4" },
+            { DayOfWeek.Thursday, "Thứ 5" },
+            { DayOfWeek.Friday, "Thứ 6" },
+            { DayOfWeek.Saturday, "Thứ 7" },
+            { DayOfWeek.Sunday, "Chủ nhật" },
+        };
+    };
 }

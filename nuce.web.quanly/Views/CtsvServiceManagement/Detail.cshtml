@@ -81,7 +81,7 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <table id="qldv-detail-datatable" data-page-length='25' class="table">
+                <table id="qldv-detail-datatable" data-page-length='25' class="table m-table-no-border-y">
                 </table>
             </div>
         </div>
@@ -271,6 +271,14 @@
             1: {
                 name: 'dịch vụ xin giấy xác nhận',
                 key: 'XAC_NHAN',
+            },
+            2: {
+                name: 'giấy giới thiệu',
+                key: 'GIOI_THIEU',
+            },
+            3: {
+                name: 'cấp lại thẻ sinh viên',
+                key: 'CAP_LAI_THE_SV',
             },
             4: {
                 name: 'ưu đãi trong giáo dục',
@@ -474,6 +482,13 @@
                 case dichVuEnum.XAC_NHAN:
                     mainContentSection = `<div class="mb-3">${dichVu.lyDo}</div>`;
                     break;
+                case dichVuEnum.GIOI_THIEU:
+                    mainContentSection = `<div class="mb-3">
+                                    <b>Kính gửi: </b>${dichVu.donVi}<br>
+                                    <b>Đến gặp: </b>${dichVu.denGap}<br>
+                                    <b>Về việc: </b>${dichVu.veViec}<br>
+                                </div>`;
+                    break;
                 case dichVuEnum.VAY_VON:
                     var ThuocDien = {
                         1: 'Không miễn giảm',
@@ -638,7 +653,6 @@
                 }
             },
             drawCallback: function() {
-                console.log('hi');
                 replaceFailedAvatar();
             },
             headerCallback: function( thead, data, start, end, display ) {

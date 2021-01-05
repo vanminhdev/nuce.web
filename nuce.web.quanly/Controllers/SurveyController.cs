@@ -1009,5 +1009,14 @@ namespace nuce.web.quanly.Controllers
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
         #endregion
+
+        #region Cập nhật chú ý khảo sát
+        [HttpGet]
+        public ActionResult editsurveynotice(string paracode)
+        {
+            TempData["paracode"] = paracode;
+            return View("EditSurveyNotice");
+        }
+        #endregion
     }
 }

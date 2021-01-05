@@ -7,6 +7,9 @@ using System.Web;
 
 namespace nuce.web.quanly.Models
 {
+    /// <summary>
+    /// Thông tin tổng quát dịch vụ
+    /// </summary>
     public class ServiceManagementModel
     {
         public string tenDichVu { get; set; }
@@ -17,6 +20,17 @@ namespace nuce.web.quanly.Models
         public int dangXuLy { get; set; }
         public int stt { get; set; }
     }
+
+    /// <summary>
+    /// Partial view thông tin tổng quát dịch vụ
+    /// </summary>
+    public class PartialServiceManagementModel
+    {
+        public int id { get; set; }
+        public string image { get; set; }
+        public ServiceManagementModel detail { get; set; }
+    }
+
 
     public class StudentModel
     {

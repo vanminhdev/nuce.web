@@ -21,7 +21,12 @@ namespace nuce.web.api.Controllers.Ctsv
         {
             this._studentService = _studentService;
         }
-
+        /// <summary>
+        /// Thông tin sv
+        /// 
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
         [Route("{code}")]
         [HttpGet]
         public IActionResult GetStudent(string code)

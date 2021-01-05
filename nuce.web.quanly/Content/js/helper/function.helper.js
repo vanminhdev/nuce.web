@@ -88,3 +88,16 @@ function toastError(message) {
     $('#toast-error-message').html(message);
     $('#toast-error').toast('show');
 }
+
+$('.toast').each((index, el) => {
+    $(el).on('show.bs.toast', function () {
+        $(el).css({
+            display: 'block'
+        });
+    });
+    $(el).on('hidden.bs.toast', function () {
+        $(el).css({
+            display: 'none',
+        });
+    });
+});

@@ -15,7 +15,7 @@
     <div class="col-12">
         <div class="row">
             <div class="col-md-5 mb-3">
-                <h5 class="text-justify text-center mb-4">Phòng Khảo thí và Đảm bảo chất lượng</h5>
+                <h5 class="text-justify text-center mb-4">Phòng Khảo thí và Đảm bảo chất lượng giáo dục</h5>
                 <div class="row mb-3">
                     <div class="col-lg-2 col-md-2 col-1 d-flex align-items-center justify-content-center m-text-blue pr-0">
                         <i class="fas fa-home"></i>
@@ -31,7 +31,7 @@
                     </div>
                     <div class="col-lg-10 col-md-10 col-11">
                         <h6 class="my-0 text-danger">Điện thoại</h6>
-1                       <p class="my-0" id="txtMobile"></p>
+                        <p class="my-0" id="txtMobile"></p>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -53,22 +53,24 @@
                 <p class="m-fs-14 text-secondary text-justify">
                     Nếu bạn cần hỗ trợ, hãy gửi thông tin vào biểu mẫu dưới đây. Chúng tôi sẽ cố gắng phản hồi sớm nhất!
                 </p>
-                <div class="form-group">
-                    <label class="text-warning font-weight-bold">Họ tên (*)</label>
-                    <input type="text" class="form-control" />
-                </div>
-                <div class="form-group">
-                    <label class="text-warning font-weight-bold">Email (*)</label>
-                    <input type="email" class="form-control" />
-                </div>
-                <div class="form-group">
-                    <label>Nội dung</label>
-                    <textarea class="form-control" placeholder="Nội dung">
-
-                    </textarea>
-                </div>
+                <form id="form-send-email" class="auto-validate">
+                    <div class="form-group">
+                        <label class="text-warning font-weight-bold">Họ tên</label>
+                        <input type="text" class="form-control" name="name" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="text-warning font-weight-bold">Email</label>
+                        <input type="email" class="form-control" name="email" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="text-warning font-weight-bold">Nội dung</label>
+                        <textarea class="form-control" rows="5"
+                                  name="content" required></textarea>
+                    </div>
+                </form>
                 <div class="d-flex flex-row justify-content-end">
-                    <button class="btn btn-primary m-btn-width-80">
+                    <button class="btn btn-primary m-btn-width-80"
+                            onclick="contactState.submitForm()">
                         Gửi
                     </button>
                 </div>
@@ -91,9 +93,37 @@
                     $('#txtEmail').html(email);
                 });
             },
+            submitForm: function() {
+                let form = $('#form-send-email');
+                if (!form.valid()) return;
+                
+                const body = {};
+
+                const formObj = form.serializeArray();
+                formObj.forEach(input => {
+                    body[input.name] = input.value;
+                });
+                $('#loading-screen').show();
+                $.ajax({
+                    type: 'post',
+                    url: `${API_URL}/api/contact/email/ktdb`,
+                    data: JSON.stringify(body),
+                    contentType: 'application/json',
+                })
+                .done(res => {
+                    toastSuccess('Đã gửi');
+                })
+                .fail(err => {
+                    toastError(err.Message || 'Lỗi hệ thống');
+                })
+                .always(() => {
+                    $('#loading-screen').hide();
+                });
+                return false;
+            },
             init: function() {
                 contactState.getData();
-            }
+            },
         };
         contactState.init();
     </script>    

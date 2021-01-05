@@ -1,0 +1,44 @@
+﻿@model nuce.web.quanly.Models.PartialServiceManagementModel
+
+<a href="/ctsvservicemanagement/detail?id=@Model.id"
+    class="row justify-content-center" title="@Model.detail.tenDichVu">
+    <img src="~/content/images/services/@Model.image"
+            alt="service"
+            class="service-avatar col-10" />
+    <div class="col-10 mt-2 text-center text-uppercase main-color fw-600 font-14-sm font-18-md font-18 title-service overflow-text">
+        @(Model.detail.tenDichVu)
+    </div>
+    <div class="col-12">
+        <hr class="w-100 line mt-2 mb-2" />
+    </div>
+    <div class="col-10 text-decoration-none">
+        <div class="row">
+            <div class="col-6 pl-0">
+                Tổng số:
+                <span class="main-color">
+                    @(Model.detail.tongSo)
+                </span>
+            </div>
+            <div class="col-6 text-left p-0">
+                Mới gửi:
+                <span class="main-color">
+                    @(Model.detail.moiGui)
+                </span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6 pl-0">
+                Đang xử lý:
+                <span class="main-color">
+                    @(Model.detail.dangXuLy)
+                </span>
+            </div>
+            <div class="col-6 text-left p-0">
+                Đã xử lý xong:
+                <span class="main-color">
+                    @(Model.detail.daXuLy)
+                </span>
+            </div>
+        </div>
+    </div>
+</a>

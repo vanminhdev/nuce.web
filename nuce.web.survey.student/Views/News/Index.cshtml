@@ -8,23 +8,11 @@
 
 <style>
     .th-border-none th {
-        border: none
+        border: none !important;
     }
 
     .th-border-none td {
         padding: 0;
-    }
-
-    .news-item-container a:link {
-        text-decoration: none;
-    }
-
-    .news-item-container:hover {
-        background: #eee;
-    }
-
-    .news-item-container:hover #title {
-        color: #112B7F;
     }
 </style>
 
@@ -94,11 +82,11 @@
                     data: null,
                     mRender: function(data, type, row, meta) {
                         var entryDate = datetimeHelper.convertDateTime(new Date(data.entryDatetime));
-                        return `<div class="news-item-container p-2">
+                        return `<div class="news-item-container m-hover-news-item-anchor-inside p-2">
                                     <a href="/news/detail?catId=${data.catId}&itemId=${data.id}"
                                         style="display: block;"
                                         class="text-dark">
-                                        <h5 id="title">${data.title || ''}</h5>
+                                        <h5 id="title" class="title">${data.title || ''}</h5>
                                         <p class="m-date-article m-fs-13 mb-1">${entryDate || ''}</p>
                                     </a>
                                 </div>`;

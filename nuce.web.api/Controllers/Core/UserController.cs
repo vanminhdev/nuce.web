@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
-using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -22,7 +21,6 @@ using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Core;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using nuce.web.api.Services.Survey.Interfaces;
 using System.Collections.Generic;
 
@@ -160,13 +158,13 @@ namespace nuce.web.api.Controllers.Core
             }
             catch (CallEduWebServiceException e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+                return StatusCode(StatusCodes.Status502BadGateway, new { message = e.Message });
             }
             catch (RecordNotFoundException e)
             {
                 return NotFound(new { message = e.Message });
             }
-            catch (HandleException.InvalidDataException e)
+            catch (InvalidDataException e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }

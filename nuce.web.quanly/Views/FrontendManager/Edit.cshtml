@@ -2,15 +2,10 @@
 
 @{
     ViewBag.Title = "Cập nhật tham số";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "";
 }
 
 <div class="container">
-    <div class="col-12">
-        <a class="update-btn text-light p-2 mb-3"
-            style="text-decoration: none; display: inline-block"
-            href="/frontendmanager">← Quay lại quản trị</a>
-    </div>
     <div class="col-12 text-right">
         <button class="btn btn-outline-success"
                 id="btn-update"
@@ -41,6 +36,11 @@
                     <tbody>
                         @{ 
                             List<ClientParameterModel> model = (List<ClientParameterModel>)Model;
+                            if (ViewData.ContainsKey("code") && !string.IsNullOrEmpty(ViewData["code"]?.ToString()))
+                            {
+                                model = model.Where(param => param.code == ViewData["code"]?.ToString())
+                                            .ToList();
+                            }
                             int i = 0;
                             foreach (var item in model)
                             {
@@ -79,7 +79,7 @@
         </div>
     </div>
 </div>
-@section Scripts {
+@*@section Scripts {*@
     <script>
         var editParameterState = {
             dataList: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(model)),
@@ -134,4 +134,4 @@
         };
         editParameterState.init();
     </script>
-}
+@*}*@

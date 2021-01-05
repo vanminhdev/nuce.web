@@ -22,9 +22,9 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpGet]
-        public ActionResult Create(int catId)
+        public async Task<ActionResult> Create(int catId)
         {
-            ViewData["catId"] = catId;
+            TempData["catId"] = catId;
             return View("Create");
         }
 
