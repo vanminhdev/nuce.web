@@ -10,7 +10,7 @@
         height: 100%;
     }
 </style>
-<div class="row main-content-wrp child-fill-parent mt-0">
+<div class="row mt-0">
     <div class="col-12">
         <a class="update-btn text-light cursor-pointer p-2 mb-3"
             style="text-decoration: none; display: inline-block"
@@ -18,11 +18,13 @@
             ← Quay lại danh sách bài tin
         </a>
     </div>
-    @{ NewsItemModel model = (NewsItemModel)Model; }
-    <h3 class="font-15-sm fw-600 font-25 font-weight-bold text-justify">
-        @(model.title)
-    </h3>
-    <div class="mt-2">
-        @Html.Raw(model.newContent)
+    <div class="col-12">
+        @{ NewsItemModel model = (NewsItemModel)Model; }
+        <h3 class="font-15-sm fw-600 font-25 font-weight-bold text-justify">
+            @(model.title)
+        </h3>
+        <div class="mt-2">
+            @Html.Raw(model.newContent)
+        </div>
     </div>
 </div>

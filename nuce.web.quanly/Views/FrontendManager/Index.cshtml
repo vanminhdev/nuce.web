@@ -7,10 +7,22 @@
 
 <div class="container">
     <div class="row">
-        <div id="fe-manager-container" class="col-4 overflow-hidden border-right">
+        <div class="col">
+            <span id="btn-toggle"
+                    class="cursor-pointer"
+                    data-toggle="collapse" data-target="#fe-manager-container" 
+                    aria-expanded="false" aria-controls="fe-manager-container">
+                <i class="fas fa-angle-double-right fa-2x"
+                   style="transition: all 0.2s"></i>
+            </span>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div id="fe-manager-container" class="col-4 collapse show overflow-hidden border-right border-top"
+             style="transition: all 0.2s">
 
         </div>
-        <div class="col-8" id="right-pane">
+        <div id="right-pane" class="col-8" style="transition: width 0.3s; transition-delay: 0.2s">
 
         </div>
     </div>
@@ -363,5 +375,12 @@
         }
         feManagerState.init();
         
+    </script>
+    @* ux *@
+    <script>
+        $('#btn-toggle').click(function() {
+            $('#right-pane').toggleClass('col-12').toggleClass('col-8');
+            $(this).find('i').toggleClass('m-rotate-90');
+        });
     </script>
 }
