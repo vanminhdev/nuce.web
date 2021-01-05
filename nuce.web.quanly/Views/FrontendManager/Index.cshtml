@@ -7,7 +7,8 @@
 
 <div class="container">
     <div class="row">
-        <div id="fe-manager-container" class="col-4">
+        <div id="fe-manager-container" class="col-4 overflow-hidden border-right">
+
         </div>
         <div class="col-8" id="right-pane">
 
@@ -95,13 +96,16 @@
 
     <script>
         var buttonTemplate = {
-            add: `&nbsp;<span class="font-weight-bold"
+            add: `<span class="font-weight-bold"
                     data-toggle="modal" data-target="#addModal" data-not-redirect="1">
-                    <i class="fas fa-folder-plus" data-not-redirect="1"></i></span>`,
+                    <i class="fas fa-folder-plus" data-not-redirect="1"></i></span>&nbsp;`,
             edit: function(id) {
-                return `&nbsp;<span class="font-weight-bold" onclick="feManagerState.openUpdateCategoryForm(feManagerState.categoryList, ${id})"
+                return `<span class="font-weight-bold" onclick="feManagerState.openUpdateCategoryForm(feManagerState.categoryList, ${id})"
                                 data-toggle="modal" data-target="#editModal" data-not-redirect="1">
-                    <i class="fas fa-wrench" data-not-redirect="1"></i></span>`;
+                    <i class="fas fa-wrench" data-not-redirect="1"></i></span>&nbsp;`;
+            },
+            catName: function(name = '') {
+                return `<span title="${name}">${name}</span>`;
             },
         };
 
@@ -125,7 +129,7 @@
             dataTree: [
                 {
                     id: 'tree-tintuc',
-                    text: `Quản trị danh mục & tin tức${buttonTemplate.add}`, // node text
+                    text: `${buttonTemplate.add}${buttonTemplate.catName('Quản trị danh mục & tin tức')}`, // node text
                     data: {
                         id: -1,
                         role: '',
@@ -146,10 +150,10 @@
                 raw.forEach(cat => {
                     if (cat.parent !== -1) return;
 
-                    let parentText = `${cat.description || ''}${buttonTemplate.edit(cat.id)}`;
+                    let parentText = `${buttonTemplate.edit(cat.id)}${buttonTemplate.catName(cat.description || '')}`;
                     console.log(cat);
                     if (cat.allowChildren) {
-                        parentText = `${cat.description || ''}${buttonTemplate.add}${buttonTemplate.edit(cat.id)}`;
+                        parentText = `${buttonTemplate.add}${buttonTemplate.edit(cat.id)}${buttonTemplate.catName(cat.description || '')}`;
                     }
 
                     let parent = {
@@ -161,7 +165,7 @@
                         parent.children = [];
                         children.forEach(child => {
                             const son = {
-                                text: `${child.description || ''}${buttonTemplate.edit(child.id)}`,
+                                text: `${buttonTemplate.edit(child.id)}${buttonTemplate.catName(child.description || '')}`,
                                 data: child,
                                 a_attr: {
                                     href: `/newsmanagement/itemslist?catId=${child.id}`,
@@ -172,7 +176,7 @@
                         });
                     } else if (cat.id in SPECIAL_CATEGORY) {
                         parent = SPECIAL_CATEGORY[cat.id].jsTreeConfig;
-                        parent.text = `${cat.description}${buttonTemplate.edit(cat.id)}`;
+                        parent.text = `${buttonTemplate.edit(cat.id)}${buttonTemplate.catName(cat.description)}`;
                         parent.data = { ...cat };
                     } else {
                         parent.a_attr = {
@@ -284,7 +288,6 @@
                     contentType: 'application/json',
                 }).done(res => {
                     if (res.StatusCode == 200) {
-                        console.log(res);
                         const role = body.role;
                         const dataTree = [...feManagerState.dataTree, ...feManagerState.treeByRole[role]];
 
@@ -294,7 +297,6 @@
                         });
 
                         const categoryList = feManagerState.categoryList.filter(c => c.role === role);
-                        console.log(categoryList);
                         feManagerState.convertCategory(categoryList, dataTree, 'tree-tintuc');
 
                         feManagerState.refreshNodeData(treeId, dataTree);

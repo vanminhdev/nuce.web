@@ -38,11 +38,11 @@ namespace nuce.web.api.Services.Core.Implements
             {
                 throw new Exception("Ảnh không hợp lệ");
             }
-            // 1mb
-            long maxSize = 1024 * 1024;
+            // 2mb
+            long maxSize = 2 * 1024 * 1024;
             if (!FileHelper.isValidSize(formFile, maxSize))
             {
-                throw new Exception("Dung lượng phải nhỏ hơn 1MB");
+                throw new Exception("Dung lượng phải nhỏ hơn 2 MB");
             }
 
             var oldFileUpload = _context.FileUpload.FirstOrDefault(f => f.Code == fileCode);
