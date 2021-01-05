@@ -52,7 +52,6 @@ namespace nuce.web.api.Services.Survey.Implements
             {
                 throw new RecordNotFoundException("Không tìm thấy đợt khảo sát của sinh viên");
             }
-            return true;
             if (DateTime.Now >= surveyRound.FromDate && DateTime.Now < surveyRound.EndDate && (surveyRound.Status == (int)SurveyRoundStatus.Opened || surveyRound.Status == (int)SurveyRoundStatus.New))
             {
                 return true;

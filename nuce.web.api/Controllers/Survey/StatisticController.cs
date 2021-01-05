@@ -106,6 +106,20 @@ namespace nuce.web.api.Controllers.Survey
                 }
             );
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetTempDataNormalSurvey([Required] Guid? surveyRoundId)
+        {
+            try
+            {
+                var result = await _asEduSurveyReportTotalService.GetTempDataNormalSurvey(surveyRoundId);
+                return Ok(result);
+            }
+            catch (RecordNotFoundException e)
+            {
+                return NotFound(new { message = e.Message });
+            }
+        }
         #endregion
 
         #region thống kê sinh viên trước tốt nghiệp

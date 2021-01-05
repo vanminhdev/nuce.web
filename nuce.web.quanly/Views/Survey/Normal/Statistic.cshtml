@@ -7,12 +7,23 @@
 @section Style {
     <link rel="stylesheet" href="~/content/css/bootstrap-select.min.css" />
     <link rel="stylesheet" href="~/content/css/dataTables.bootstrap4.min.css" />
+    <style>
+        .m-mw-100 {
+            max-width: 100px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
 }
 
 <div class="container">
     <div class="row">
         <div class="col-12 d-flex justify-content-end">
-            <button class="btn btn-primary" id="btn-statistic-survey">
+            <button class="btn btn-success mr-2" id="btn-export">
+                Kết xuất báo cáo
+            </button>
+            <button class="btn btn-primary mr-2" id="btn-statistic-survey">
                 Thống kê
             </button>
         </div>
@@ -22,7 +33,7 @@
             <table id="id-datatable" class="table table-bordered">
                 <thead>
                     <tr>
-                        <th class="text-center" style="min-width:300px">Đợt khảo sát</th>
+                        <th class="text-center">Đợt khảo sát</th>
                         <th class="text-center">Bài khảo sát</th>
                         <th class="text-center">Mã lớp</th>
                         <th class="text-center">Mã giảng viên</th>
@@ -144,9 +155,13 @@
             language: dataTableConfig.language,
             columnDefs: [
                 {
-                    targets: [ 1 ],
+                    targets: [ 6 ],
                     className: 'text-center'
-                }
+                },
+                {
+                    targets: [7],
+                    className: 'm-mw-100'
+                },
             ],
             ajax: {
                 url: '/Survey/GetRawReportTotalNormalSurvey',
@@ -180,7 +195,14 @@
                     data: "total"
                 },
                 {
-                    data: "content"
+                    data: null,
+                    name: "content",
+                    mRender: function (data, type, row) {
+                        if (data.content != null) {
+                            return `<span title="${data.content}">${data.content}</span>`;
+                        }
+                        return '';
+                    }
                 }
             ]
         });

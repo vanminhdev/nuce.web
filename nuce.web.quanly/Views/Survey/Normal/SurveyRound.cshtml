@@ -152,6 +152,40 @@
     </div>
 </div>
 
+<div class="modal fade bd-example-modal-lg auto-clear-form-on-open" id="modal-thong-ke" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thống kê tạm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="border-bottom-width: 1px; width: 70%;">Tên khoa</th>
+                                <th class="text-center" style="border-bottom-width: 1px; width: 120px;">Số lượng</th>
+                                <th class="text-center" style="border-bottom-width: 1px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script src="~/Content/js/bootstrap-select.min.js"></script>
     <script src="~/content/js/jquery.dataTables.min.js"></script>
@@ -240,12 +274,14 @@
                         } else if (currentDate >= fromDate && currentDate < endDate && (data.status == @((int)SurveyRoundStatus.Opened) || data.status == @((int)SurveyRoundStatus.New))) {
                             html += `<button class="btn btn btn-outline-warning btn-sm ml-1 mr-1" onclick="closeClick('${data.id}')">Đóng tạm</button>`;
                             html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="addEndDateClick('${data.id}')">Gia hạn</button>`;
+
                         } else if (currentDate >= fromDate && currentDate < endDate && data.status == @((int)SurveyRoundStatus.Closed)) {
                             html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="openClick('${data.id}')">Mở lại</button>`;
                             html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="addEndDateClick('${data.id}')">Gia hạn</button>`;
                         } else if (currentDate > endDate) {
                             html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="addEndDateClick('${data.id}')">Gia hạn</button>`;
                         }
+                        html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê tạm" onclick="thongKeTamClick('${data.id}')">T.kê tạm</button>`;
                         return html;
                     }
                 }
@@ -473,5 +509,8 @@
             });
         }
 
+        function thongKeTamClick(id) {
+            $('#modal-thong-ke').modal('show');
+        }
     </script>
 }

@@ -10,5 +10,6 @@ namespace nuce.web.api.Services.Survey.Interfaces
     public interface IAsEduSurveyReportTotalService
     {
         public Task<PaginationModel<ReportTotalNormal>> GetRawReportTotalNormalSurvey(ReportTotalNormalFilter filter, int skip = 0, int take = 20);
+        public Task<List<TempDataNormal>> GetTempDataNormalSurvey(Guid? surveyRoundId);
     }
 }

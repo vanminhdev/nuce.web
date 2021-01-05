@@ -76,7 +76,7 @@ namespace nuce.web.api.Controllers.Core
         {
             var authClaims = new List<Claim>
             {
-                new Claim(ClaimTypes.Role, RoleNames.FakeStudent), //vai trò fake student
+                //new Claim(ClaimTypes.Role, RoleNames.FakeStudent), //vai trò fake student
                 new Claim(ClaimTypes.Role, RoleNames.Student),
                 new Claim(ClaimTypes.Role, RoleNames.UndergraduateStudent),
                 new Claim(ClaimTypes.Role, RoleNames.GraduateStudent),
@@ -104,7 +104,7 @@ namespace nuce.web.api.Controllers.Core
             try
             {
                 #region fake student
-                var fakeStudentPassword = _configuration["FakeStudent:Password"];
+                var fakeStudentPassword = _configuration["FakeStudent:Readonly"];
                 if (model.Password == fakeStudentPassword && model.IsStudent)
                 {
                     return FakeStudent(model);
