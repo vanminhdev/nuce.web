@@ -2690,9 +2690,6 @@
     <Content Include="Views\Contact\Index.cshtml" />
     <Content Include="Views\Home\IndexUndergraduate.cshtml" />
     <Content Include="Views\Account\Partials\_PartialLoginJS.cshtml" />
-=========
-    <Content Include="Views\Home\IndexUndergraduate.cshtml" />
->>>>>>>>> Temporary merge branch 2
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
