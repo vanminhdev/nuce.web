@@ -1,4 +1,6 @@
-﻿using nuce.web.quanly.Models;
+﻿using nuce.web.quanly.Attributes.ActionFilter;
+using nuce.web.quanly.Models;
+using nuce.web.shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,8 @@ using System.Web.Mvc;
 
 namespace nuce.web.quanly.Controllers
 {
+    [AuthorizeActionFilter(RoleNames.KhaoThi_Edit_NewsItem, RoleNames.KhaoThi_Add_NewsItem, RoleNames.KhaoThi_Approve_NewsItem,
+            RoleNames.KhaoThi_Add_Cat, RoleNames.KhaoThi_Edit_Cat, RoleNames.KhaoThi_Upload_WebImage, RoleNames.KhaoThi_Edit_Contact)]
     public class FrontendManagerController : BaseController
     {
         #region view
@@ -35,6 +39,7 @@ namespace nuce.web.quanly.Controllers
         /// <param name="richText"></param>
         /// <returns></returns>
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate, RoleNames.KhaoThi_Survey_Undergraduate, RoleNames.KhaoThi_Survey_Normal, RoleNames.KhaoThi_Edit_Contact)]
         public async Task<ActionResult> Edit(string type, string code = "", bool richText = false)
         {
             ViewData["richText"] = richText;
@@ -54,6 +59,7 @@ namespace nuce.web.quanly.Controllers
         /// <param name="type"></param>
         /// <returns></returns>
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Upload_WebImage)]
         public ActionResult Image(string type)
         {
             TempData["type"] = type;
@@ -66,6 +72,7 @@ namespace nuce.web.quanly.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Edit_Contact, RoleNames.KhaoThi_Survey_Graduate, RoleNames.KhaoThi_Survey_Undergraduate, RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> UpdateClientParameter(List<UpdateClientParameterModel> model)
         {
             string api = $"api/ClientParameters/admin/update";
@@ -86,6 +93,7 @@ namespace nuce.web.quanly.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Add_Cat)]
         public async Task<ActionResult> CreateCategory(CreateCategoryModel model)
         {
             string api = $"api/NewsManager/admin/news-category/create";
@@ -106,6 +114,7 @@ namespace nuce.web.quanly.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Edit_Cat)]
         public async Task<ActionResult> UpdateCategory(NewsCatsModel model)
         {
             string api = $"/api/NewsManager/admin/news-category/update";
@@ -125,6 +134,7 @@ namespace nuce.web.quanly.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Upload_WebImage)]
         public async Task<ActionResult> UploadImage(string imgCode)
         {
             if (Request.Files.Count == 0)

@@ -7,7 +7,7 @@
 <div class="row">
     <div class="col-6">
         <a class="update-btn text-light cursor-pointer p-2 mb-3"
-            style="text-decoration: none; display: inline-block"
+           style="text-decoration: none; display: inline-block"
            onclick="return feManagerState.changeComponent('/newsmanagement/itemslist?catId=@TempData.Peek("catId")')">
             ← Quay lại danh sách bài tin
         </a>
@@ -41,9 +41,9 @@
                         </div>
                         <div class="col-6">
                             <img id="imgAvaPreview"
-                                    src="/style/public/images/person1.png"
-                                    alt=""
-                                    class="upload-user-avatar" />
+                                 src="/style/public/images/person1.png"
+                                 alt=""
+                                 class="upload-user-avatar" />
                         </div>
                     </div>
                 </div>
@@ -61,8 +61,12 @@
 </div>
 
 @*@section Scripts {*@
-    <script src="~/Content/js/common/fileHelper.js"></script>
-    <script>
+<script src="~/Content/js/common/fileHelper.js"></script>
+<script src="~/Content/js/helper/jquery.validate.custom.rule.js"></script>
+<script src="~/Content/js/helper/jquery.validate.default.message.js"></script>
+<script src="~/Content/js/helper/form.helper.js"></script>
+<script src="~/Content/js/helper/function.helper.js"></script>
+<script>
         var state = {
             newsItem: {},
         };
@@ -86,7 +90,7 @@
         var callApiUpdate = function(body) {
             $('#loading-screen').show();
             const data = JSON.stringify(body);
-            
+
             $.ajax({
                 type: 'POST',
                 url: `@Url.Action("UpdateNewsItem", "NewsManagement")`,
@@ -124,7 +128,7 @@
         var callApiSaveAvatar = function(file) {
             var formData = new FormData();
             // Attach file
-            formData.append(file.type, file); 
+            formData.append(file.type, file);
 
             $.ajax({
                 url: `/newsmanagement/uploadavatar?id=${state.newsItem.id}`,
@@ -138,6 +142,6 @@
 
         init();
 
-    </script>
+</script>
 @*}*@
 

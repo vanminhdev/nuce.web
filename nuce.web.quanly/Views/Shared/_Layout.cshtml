@@ -1,4 +1,5 @@
 ﻿@using System.Configuration;
+@using nuce.web.shared;
 
 @{
     var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
@@ -188,18 +189,24 @@
                             }
                             else
                             {
-                                if (roles.FirstOrDefault(r => r == "Admin") != null)
+                                if (roles.FirstOrDefault(r => MenuRoleGroup.Category.Contains(r) || MenuRoleGroup.News.Contains(r) || MenuRoleGroup.Account.Contains(r)) != null)
                                 {
                                     <li class="nav-item dropdown m-nav-item-hover">
                                         <a class="nav-link mt-1 mb-1 m-text-white-ace" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             Quản trị
                                         </a>
                                         <div class="dropdown-menu" aria-labelledby="navbarDropdown-admin">
-                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/usermanager/index">Quản lý tài khoản</a>
-                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/frontendmanager">Quản trị giao diện</a>
+                                            @if (roles.FirstOrDefault(r => MenuRoleGroup.Account.Contains(r)) != null)
+                                            {
+                                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="/usermanager/index">Quản trị tài khoản</a>
+                                            }
+                                            @if (roles.FirstOrDefault(r => MenuRoleGroup.Category.Contains(r) || MenuRoleGroup.News.Contains(r)) != null)
+                                            {
+                                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="/frontendmanager">Quản trị giao diện</a>
+                                            }
                                         </div>
                                     </li>
-                                    if (roles.FirstOrDefault(r => r == "P_KhaoThi") != null)
+                                    if (roles.FirstOrDefault(r => MenuRoleGroup.SurveyObject.Contains(r) || r == RoleNames.KhaoThi_Backup_Database) != null)
                                     {
                                         <li class="nav-item dropdown m-nav-item-hover">
                                             <a class="nav-link mt-1 mb-1 m-text-white-ace"
@@ -207,15 +214,27 @@
                                                 Dữ liệu đối tượng khảo sát
                                             </a>
                                             <div class="dropdown-menu" aria-labelledby="navbarDropdown-sync">
-                                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="/syncedudata/index">Dữ liệu khảo sát hoạt động giáo dục</a>
-                                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/undergraduatestudent">Dữ liệu khảo sát trước tốt nghiệp</a>
-                                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/graduatestudent">Dữ liệu khảo sát việc làm</a>
-                                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="/managerrestore">Sao lưu dữ liệu</a>
+                                                @if (roles.FirstOrDefault(r => r == RoleNames.KhaoThi_Survey_Normal) != null)
+                                                {
+                                                    <a class="dropdown-item m-bg-hover-blue text-truncate" href="/syncedudata/index">Dữ liệu khảo sát hoạt động giáo dục</a>
+                                                }
+                                                @if (roles.FirstOrDefault(r => r == RoleNames.KhaoThi_Survey_Undergraduate) != null)
+                                                {
+                                                    <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/undergraduatestudent">Dữ liệu khảo sát trước tốt nghiệp</a>
+                                                }
+                                                @if (roles.FirstOrDefault(r => r == RoleNames.KhaoThi_Survey_Graduate) != null)
+                                                {
+                                                    <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/graduatestudent">Dữ liệu khảo sát việc làm</a>
+                                                }
+                                                @if (roles.FirstOrDefault(r => r == RoleNames.KhaoThi_Backup_Database) != null)
+                                                {
+                                                    <a class="dropdown-item m-bg-hover-blue text-truncate" href="/managerrestore">Sao lưu dữ liệu</a>
+                                                }
                                             </div>
                                         </li>
                                     }
                                 }
-                                if (roles.FirstOrDefault(r => r == "P_KhaoThi") != null)
+                                if (roles.FirstOrDefault(r => MenuRoleGroup.SurveyObject.Contains(r)) != null)
                                 {
                                     <li class="nav-item dropdown m-nav-item-hover">
                                         <a class="nav-link mt-1 mb-1 m-text-white-ace"
@@ -226,17 +245,26 @@
                                             <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/question">Quản lý câu hỏi</a>
                                             <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/examquestions">Quản lý phiếu khảo sát</a>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/surveyround">Đợt khảo sát sinh viên</a>
-                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/StatisticNormalSurvey">Thống kê</a>
-                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/editsurveynotice?paracode=KTDB_NOTICE_1">Chú ý khảo sát sinh viên</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/graduatesurveyround">Đợt khảo sát cựu sinh viên</a>
-                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/graduatethesurvey">Bài khảo sát cựu sinh viên</a>
-                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/editsurveynotice?paracode=KTDB_NOTICE_3">Chú ý khảo sát cựu sinh viên</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/undergraduatesurveyround">Đợt khảo sát sv trước tốt nghiệp</a>
-                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/undergraduatethesurvey">Bài khảo sát sv trước tốt nghiệp</a>
-                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/editsurveynotice?paracode=KTDB_NOTICE_2">Chú ý khảo sát sắp tốt nghiệp</a>
+                                            @if (roles.FirstOrDefault(r => r == RoleNames.KhaoThi_Survey_Normal) != null)
+                                            {
+                                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/surveyround">Đợt khảo sát sinh viên</a>
+                                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/StatisticNormalSurvey">Thống kê</a>
+                                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/editsurveynotice?paracode=KTDB_NOTICE_1">Chú ý khảo sát sinh viên</a>
+                                                <div class="dropdown-divider"></div>
+                                            }
+                                            @if (roles.FirstOrDefault(r => r == RoleNames.KhaoThi_Survey_Graduate) != null)
+                                            {
+                                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/graduatesurveyround">Đợt khảo sát cựu sinh viên</a>
+                                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/graduatethesurvey">Bài khảo sát cựu sinh viên</a>
+                                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/editsurveynotice?paracode=KTDB_NOTICE_3">Chú ý khảo sát cựu sinh viên</a>
+                                                <div class="dropdown-divider"></div>
+                                            }
+                                            @if (roles.FirstOrDefault(r => r == RoleNames.KhaoThi_Survey_Undergraduate) != null)
+                                            {
+                                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/undergraduatesurveyround">Đợt khảo sát sv trước tốt nghiệp</a>
+                                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/undergraduatethesurvey">Bài khảo sát sv trước tốt nghiệp</a>
+                                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/editsurveynotice?paracode=KTDB_NOTICE_2">Chú ý khảo sát trước tốt nghiệp</a>
+                                            }
                                         </div>
                                     </li>
                                 }

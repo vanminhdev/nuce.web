@@ -274,8 +274,8 @@ namespace nuce.web.api.Services.Core.Implements
                 throw new RecordNotFoundException();
             }
             //userUpdate.UserName = user.UserName.Trim();
-            userUpdate.Email = user.Email.Trim();
-            userUpdate.PhoneNumber = user.PhoneNumber.Trim();
+            userUpdate.Email = user.Email?.Trim();
+            userUpdate.PhoneNumber = user.PhoneNumber?.Trim();
             //userUpdate.Status = (int)user.Status;
             var oldRoles = (await _userManager.GetRolesAsync(userUpdate)).ToList();
             var newRoles = user.Roles;

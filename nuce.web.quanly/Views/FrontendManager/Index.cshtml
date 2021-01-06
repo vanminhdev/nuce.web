@@ -1,17 +1,53 @@
 ﻿@using nuce.web.quanly.Models;
+@using System.Configuration;
+@using nuce.web.shared;
+
+@{
+    var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+    var accessToken = Request.Cookies[nuce.web.quanly.Common.UserParameters.JwtAccessToken];
+    var username = "";
+    var roles = new List<string>();
+    if (accessToken != null)
+    {
+
+        var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
+
+        //username
+        var usernameClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Name);
+        if (usernameClaim != null)
+        {
+            username = usernameClaim.Value;
+        }
+
+        //role
+        roles = jwtSecurityToken.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Role).Select(r => r.Value).ToList();
+    }
+}
 
 @{
     ViewBag.Title = "Quản trị giao diện";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@section Style{
+    <style>
+        #right-pane #header {
+            display: none !important;
+        }
+
+        #right-pane #footer {
+            display: none !important;
+        }
+    </style>
+}
+
 <div class="container">
     <div class="row">
         <div class="col">
             <span id="btn-toggle"
-                    class="cursor-pointer"
-                    data-toggle="collapse" data-target="#fe-manager-container" 
-                    aria-expanded="false" aria-controls="fe-manager-container">
+                  class="cursor-pointer"
+                  data-toggle="collapse" data-target="#fe-manager-container"
+                  aria-expanded="false" aria-controls="fe-manager-container">
                 <i class="fas fa-angle-double-right fa-2x"
                    style="transition: all 0.2s"></i>
             </span>
@@ -45,7 +81,10 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Thoát</button>
-                <button type="button" class="btn btn-primary" onclick="feManagerState.addCategory()">Thêm</button>
+                @if (roles.Contains(RoleNames.KhaoThi_Add_Cat))
+                {
+                    <button type="button" class="btn btn-primary" onclick="feManagerState.addCategory()">Thêm</button>
+                }
             </div>
         </div>
     </div>
@@ -86,20 +125,19 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Thoát</button>
-                <button type="button" class="btn btn-primary" onclick="feManagerState.updateCategory()">Cập nhật</button>
+                @if (roles.Contains(RoleNames.KhaoThi_Edit_Cat))
+                {
+                    <button type="button" class="btn btn-primary" onclick="feManagerState.updateCategory()">Cập nhật</button>
+                }
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <link href="~/content/css/bootstrap-datepicker3.min.css" rel="stylesheet" />
-
     <script src="~/content/js/jquery.dataTables.min.js"></script>
     <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/content/js/dataTables.config.js"></script>
-    <script src="~/content/js/bootstrap-datepicker.min.js"></script>
-    <script src="~/content/js/bootstrap-datepicker.vi.min.js"></script>
 
     <link rel="stylesheet" href="~/Content/js/jstree/themes/default/style.min.css" />
     <script src="~/Content/js/jstree/jstree.min.js"></script>
@@ -132,9 +170,9 @@
                             href: `/frontendmanager/image?type=KTDB`,
                         }
                     },
-                    {
+                    /*{
                         text: `Quản trị thông tin`, // node text
-                    },
+                    },*/
                 ],
                 P_CTSV: [],
             },
@@ -374,7 +412,7 @@
             #endregion
         }
         feManagerState.init();
-        
+
     </script>
     @* ux *@
     <script>

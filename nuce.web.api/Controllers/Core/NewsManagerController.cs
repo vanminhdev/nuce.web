@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.api.Models.Core;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.ViewModel;
@@ -17,7 +18,7 @@ using nuce.web.shared;
 
 namespace nuce.web.api.Controllers.Core
 {
-    [Authorize(Roles = "Admin,P_KhaoThi,P_CTSV")]
+    [AppAuthorize(RoleNames.Admin, RoleNames.KhaoThi)]
     [Route("api/[controller]")]
     public class NewsManagerController : Controller
     {
@@ -135,6 +136,8 @@ namespace nuce.web.api.Controllers.Core
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [AppAuthorize(RoleNames.KhaoThi_Add_Cat, RoleNames.KhaoThi_Edit_Cat, RoleNames.KhaoThi_Upload_WebImage, RoleNames.KhaoThi_Edit_Contact,
+            RoleNames.KhaoThi_Add_NewsItem, RoleNames.KhaoThi_Approve_NewsItem, RoleNames.KhaoThi_Edit_NewsItem)]
         [Route("admin/news-category")]
         public IActionResult GetNewsCategoryAdmin()
         {
@@ -147,7 +150,11 @@ namespace nuce.web.api.Controllers.Core
             }
             return Ok(result);
         }
-
+        /// <summary>
+        /// Tạo danh mục mới
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [Authorize(RoleNames.KhaoThi_Add_Cat)]
         [HttpPost]
         [Route("admin/news-category/create")]
@@ -168,7 +175,12 @@ namespace nuce.web.api.Controllers.Core
                 return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
             }
         }
-
+        /// <summary>
+        /// Cập nhật danh mục
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [AppAuthorize(RoleNames.KhaoThi_Edit_Cat)]
         [HttpPut]
         [Route("admin/news-category/update")]
         public async Task<IActionResult> UpdateNewsCategoryAdmin([FromBody] NewsCats model)
@@ -186,6 +198,79 @@ namespace nuce.web.api.Controllers.Core
             }
         }
 
+        /// <summary>
+        /// Đăng bài
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [AppAuthorize(RoleNames.KhaoThi_Add_NewsItem)]
+        [HttpPost]
+        [Route("admin/news-items/create")]
+        public async Task<IActionResult> CreateNewsItem([FromBody]CreateNewsItemModel model)
+        {
+            try
+            {
+                var id = await _newsManagerService.CreateNewsItems(model);
+                return Ok(id);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật ảnh bài tin
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [AppAuthorize(RoleNames.KhaoThi_Add_NewsItem, RoleNames.KhaoThi_Edit_NewsItem)]
+        [Route("admin/news-items/avatar/{id}")]
+        public async Task<IActionResult> UploadAvatar(IFormFile file, int id)
+        {
+            try
+            {
+                var result = await _newsManagerService.UploadNewsItemAvatar(file, id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Chỉnh sửa nội dung bài tin
+        /// </summary>
+        /// <param name="newsItem"></param>
+        /// <returns></returns>
+        [AppAuthorize(RoleNames.KhaoThi_Edit_NewsItem)]
+        [HttpPut]
+        [Route("admin/news-items/update")]
+        public async Task<IActionResult> UpdateNewsItem([FromBody]NewsItems newsItem)
+        {
+            try
+            {
+                await _newsManagerService.UpdateNewsItems(newsItem);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [Route("admin/news-items/lock")]
+        public IActionResult LockNewsItem()
+        {
+            return Ok();
+        }
+        #endregion
+
+        #region common
         /// <summary>
         /// Chi tiết bài tin
         /// </summary>
@@ -220,58 +305,6 @@ namespace nuce.web.api.Controllers.Core
             {
                 return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
             }
-        }
-
-        [HttpPost]
-        [Route("admin/news-items/create")]
-        public async Task<IActionResult> CreateNewsItem([FromBody]CreateNewsItemModel model)
-        {
-            try
-            {
-                var id = await _newsManagerService.CreateNewsItems(model);
-                return Ok(id);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
-            }
-        }
-
-        [HttpPut]
-        [Route("admin/news-items/avatar/{id}")]
-        public async Task<IActionResult> UploadAvatar(IFormFile file, int id)
-        {
-            try
-            {
-                var result = await _newsManagerService.UploadNewsItemAvatar(file, id);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
-            }
-        }
-
-        [HttpPut]
-        [Route("admin/news-items/update")]
-        public async Task<IActionResult> UpdateNewsItem([FromBody]NewsItems newsItem)
-        {
-            try
-            {
-                await _newsManagerService.UpdateNewsItems(newsItem);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
-            }
-        }
-
-        [HttpPut]
-        [Route("admin/news-items/lock")]
-        public IActionResult LockNewsItem()
-        {
-            return Ok();
         }
         #endregion
     }

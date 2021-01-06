@@ -57,6 +57,7 @@ namespace nuce.web.api.Controllers.Core
             _asEduSurveyUndergraduateStudentService = asEduSurveyUndergraduateStudentService;
         }
 
+        
         [HttpGet]
         [Route("TestAPI")]
         public IActionResult TestAPI()
@@ -70,7 +71,15 @@ namespace nuce.web.api.Controllers.Core
         [Route("GetAllRole")]
         public async Task<IActionResult> GetAllRole()
         {
-            var roles = await _roleManager.Roles.ToListAsync();
+            var loggedUserRoles = _userService.GetClaimListByKey(ClaimTypes.Role);
+            var roles = new List<ApplicationRole>();
+            if (loggedUserRoles.Contains("Admin"))
+            {
+                roles = await _roleManager.Roles.ToListAsync();
+            } else
+            {
+                roles = await _roleManager.Roles.Where(r => loggedUserRoles.Contains(r.Parent)).ToListAsync();
+            }            
             return Ok(roles);
         }
 
@@ -277,6 +286,13 @@ namespace nuce.web.api.Controllers.Core
             user.SecurityStamp = Guid.NewGuid().ToString();
             user.Status = (int)UserStatus.Active;
 
+            #region thêm quyền bố
+            var parentRoles = _identityContext.Roles.Where(r => model.Roles.Contains(r.Id))
+                                                .Select(r => r.Parent)
+                                                .Distinct();
+            model.Roles.AddRange(parentRoles);
+            #endregion
+
             using (var transaction = _identityContext.Database.BeginTransaction())
             {
                 try
@@ -406,8 +422,7 @@ namespace nuce.web.api.Controllers.Core
             return Ok();
         }
 
-
-        [AppAuthorize(RoleNames.Admin)]
+        [AppAuthorize(ApiRole.Account)]
         [HttpPost]
         [Route("GetAllUser")]
         public async Task<IActionResult> GetAllUser(
@@ -429,7 +444,7 @@ namespace nuce.web.api.Controllers.Core
             );
         }
 
-        [AppAuthorize(RoleNames.Admin)]
+        [AppAuthorize(ApiRole.Account)]
         [HttpGet]
         [Route("GetUserById")]
         public async Task<IActionResult> GetUserById([Required(AllowEmptyStrings = false)] string id)
@@ -450,7 +465,8 @@ namespace nuce.web.api.Controllers.Core
             }
         }
 
-        [AppAuthorize(RoleNames.Admin)]
+        [AppAuthorize(RoleNames.Admin, RoleNames.KhaoThi_Add_Account,
+                    RoleNames.KhaoThi_Lock_Account, RoleNames.KhaoThi_Pick_Role)]
         [HttpPut]
         [Route("ActiveUser")]
         public async Task<IActionResult> ActiveUser([Required(AllowEmptyStrings = false)] string id)
@@ -476,7 +492,7 @@ namespace nuce.web.api.Controllers.Core
             return Ok();
         }
 
-        [AppAuthorize(RoleNames.Admin)]
+        [AppAuthorize(RoleNames.Admin, RoleNames.KhaoThi_Add_Account,RoleNames.KhaoThi_Pick_Role)]
         [HttpPut]
         [Route("DeactiveUser")]
         public async Task<IActionResult> DeactiveUser([Required(AllowEmptyStrings = false)] string id)
@@ -502,7 +518,7 @@ namespace nuce.web.api.Controllers.Core
             return Ok();
         }
 
-        [AppAuthorize(RoleNames.Admin)]
+        [AppAuthorize(RoleNames.Admin, RoleNames.KhaoThi_Delete_Account)]
         [HttpDelete]
         [Route("DeleteUser")]
         public async Task<IActionResult> DeleteUser([Required(AllowEmptyStrings = false)] string id)
@@ -528,7 +544,7 @@ namespace nuce.web.api.Controllers.Core
             return Ok();
         }
 
-        [AppAuthorize(RoleNames.Admin)]
+        [AppAuthorize(RoleNames.Admin, RoleNames.KhaoThi_Pick_Role)]
         [HttpPut]
         [Route("UpdateUser")]
         public async Task<IActionResult> UpdateUser(
@@ -556,7 +572,7 @@ namespace nuce.web.api.Controllers.Core
             }
         }
 
-        [AppAuthorize(RoleNames.Admin)]
+        [AppAuthorize(RoleNames.Admin, RoleNames.KhaoThi_Reset_Password)]
         [HttpPut]
         [Route("ResetPassword")]
         public async Task<IActionResult> ResetPassword(

@@ -8,17 +8,19 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.api.Common;
 using nuce.web.api.Models.Core;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Core;
+using nuce.web.shared;
 
 namespace nuce.web.api.Controllers.Core
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin,P_KhaoThi,P_CTSV")]
+    [AppAuthorize(RoleNames.Admin, RoleNames.KhaoThi, RoleNames.CTSV)]
     public class ClientParametersController : ControllerBase
     {
         private readonly IClientParameterService _clientParameterService;
@@ -32,6 +34,11 @@ namespace nuce.web.api.Controllers.Core
             this._logger = _logger;
         }
         #region client
+        /// <summary>
+        /// Dành cho phía client lấy ra tham số để hiện thị
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("{type}")]
         [AllowAnonymous]
@@ -42,6 +49,13 @@ namespace nuce.web.api.Controllers.Core
         #endregion
 
         #region admin
+        /// <summary>
+        /// Lấy các tham số để hiển thị trên website theo loại 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        [AppAuthorize(RoleNames.KhaoThi_Edit_Contact, RoleNames.KhaoThi_Survey_Graduate,
+            RoleNames.KhaoThi_Survey_Undergraduate, RoleNames.KhaoThi_Survey_Normal)]
         [HttpGet]
         [Route("admin/{type}")]
         public IActionResult GetParametersByTypeAdmin(string type)
@@ -55,7 +69,13 @@ namespace nuce.web.api.Controllers.Core
             }
             return Ok(result);
         }
-
+        /// <summary>
+        /// Cập nhật các tham số nội dung trên website
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [AppAuthorize(RoleNames.KhaoThi_Edit_Contact, RoleNames.KhaoThi_Survey_Graduate,
+            RoleNames.KhaoThi_Survey_Undergraduate, RoleNames.KhaoThi_Survey_Normal)]
         [HttpPut]
         [Route("admin/update")]
         public async Task<IActionResult> UpdateParametersAdmin(List<UpdateClientParameterModel> model)

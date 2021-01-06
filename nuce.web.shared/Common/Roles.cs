@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace nuce.web.shared
 {
+    /// <summary>
+    /// Danh sách chi tiết các role
+    /// </summary>
     public class RoleNames
     {
         public const string Admin = "Admin";
@@ -28,6 +31,10 @@ namespace nuce.web.shared
         /// </summary>
         public const string KhaoThi_Approve_NewsItem = "P_KhaoThi_Approve_NewsItem";
         /// <summary>
+        /// Khảo thí chỉnh sửa bài
+        /// </summary>
+        public const string KhaoThi_Edit_NewsItem = "P_KhaoThi_Edit_NewsItem";
+        /// <summary>
         /// Khảo thí upload ảnh cho website
         /// </summary>
         public const string KhaoThi_Upload_WebImage = "P_KhaoThi_Upload_WebImage";
@@ -39,6 +46,10 @@ namespace nuce.web.shared
         /// Khảo thí tạo tài khoản
         /// </summary>
         public const string KhaoThi_Add_Account = "P_KhaoThi_Add_Account";
+        /// <summary>
+        /// Khảo thí cập nhật tài khoản
+        /// </summary>
+        public const string KhaoThi_Edit_Account = "P_KhaoThi_Edit_Account";
         /// <summary>
         /// Khảo thí phân chức năng cho user
         /// </summary>
@@ -91,4 +102,68 @@ namespace nuce.web.shared
         /// </summary>
         public const string Student = "Student";
     }
+    /// <summary>
+    /// Hiển thị menu
+    /// </summary>
+    public class MenuRoleGroup
+    {
+        public static IEnumerable<string> Account = new List<string>
+        {
+            RoleNames.Admin,
+            RoleNames.KhaoThi_Add_Account,
+            RoleNames.KhaoThi_Edit_Account,
+            RoleNames.KhaoThi_Delete_Account,
+            RoleNames.KhaoThi_Lock_Account,
+            RoleNames.KhaoThi_Pick_Role,
+            RoleNames.KhaoThi_Reset_Password,
+        };
+
+        public static List<string> Category = new List<string>
+        {
+            RoleNames.KhaoThi_Add_Cat,
+            RoleNames.KhaoThi_Edit_Cat,
+            RoleNames.KhaoThi_Edit_Contact,
+            RoleNames.KhaoThi_Upload_WebImage
+        };
+
+        public static List<string> News = new List<string>
+        {
+            RoleNames.KhaoThi_Add_NewsItem,
+            RoleNames.KhaoThi_Edit_NewsItem,
+            RoleNames.KhaoThi_Approve_NewsItem,
+        };
+
+        public static List<string> SurveyObject = new List<string>
+        {
+            RoleNames.KhaoThi_Survey_Normal,
+            RoleNames.KhaoThi_Survey_Graduate,
+            RoleNames.KhaoThi_Survey_Undergraduate
+        };
+
+    }
+    /// <summary>
+    /// Role Prefix
+    /// </summary>
+    public class ApiRole
+    {
+        public const string Account = RoleNames.Admin
+                                    + "," + RoleNames.KhaoThi_Add_Account
+                                    + "," + RoleNames.KhaoThi_Edit_Account
+                                    + "," + RoleNames.KhaoThi_Delete_Account
+                                    + "," + RoleNames.KhaoThi_Lock_Account
+                                    + "," + RoleNames.KhaoThi_Pick_Role
+                                    + "," + RoleNames.KhaoThi_Reset_Password;
+
+        public const string Category = RoleNames.KhaoThi_Add_Cat
+                                    + "," + RoleNames.KhaoThi_Edit_Cat;
+
+        public const string News = RoleNames.KhaoThi_Add_NewsItem
+                                    + "," + RoleNames.KhaoThi_Edit_NewsItem
+                                    + "," + RoleNames.KhaoThi_Approve_NewsItem;
+
+        public const string SurveyObject = RoleNames.KhaoThi_Survey_Normal
+                                    + "," + RoleNames.GraduateStudent
+                                    + "," + RoleNames.UndergraduateStudent;
+    }
+    
 }

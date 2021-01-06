@@ -128,7 +128,7 @@
                     Vai trò <span class="text-danger">*</span>
                 </div>
                 <div class="col-12 col-md-10">
-                    @Html.DropDownListFor(m => m.UserUpdateBind.roles, new SelectList(nuce.web.quanly.Common.Definitions.Roles, "Key", "Value"), new { id = "select-roles", @class = "selectpicker form-control custom-boostrap-select", @multiple = true, title = "Chọn vài trò" })
+                    @Html.DropDownListFor(m => m.UserUpdateBind.roles, new SelectList(Model.RoleList, "id", "description"), new { id = "select-roles", @class = "selectpicker form-control custom-boostrap-select", @multiple = true, title = "Chọn vài trò" })
                     @Html.ValidationMessageFor(m => m.UserUpdateBind.roles, "", new { @class = "form-text text-danger" })
                 </div>
             </div>

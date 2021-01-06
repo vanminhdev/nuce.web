@@ -10,10 +10,11 @@ using nuce.web.quanly.ViewModel.Base;
 using System.Net.Http;
 using System.Net;
 using nuce.web.quanly.Attributes.ActionFilter;
+using nuce.web.shared;
 
 namespace nuce.web.quanly.Controllers
 {
-    [AuthorizeActionFilter("P_CTSV")]
+    [AuthorizeActionFilter(RoleNames.CTSV)]
     public class CtsvServiceManagementController : BaseController
     {
         // GET: Admin/CtsvServiceManagement

@@ -1,5 +1,7 @@
-﻿using nuce.web.quanly.Models;
+﻿using nuce.web.quanly.Attributes.ActionFilter;
+using nuce.web.quanly.Models;
 using nuce.web.quanly.ViewModel.Base;
+using nuce.web.shared;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +14,7 @@ using System.Web.Mvc;
 
 namespace nuce.web.quanly.Controllers
 {
+    [AuthorizeActionFilter(RoleNames.KhaoThi_Add_NewsItem, RoleNames.KhaoThi_Edit_NewsItem)]
     public class NewsManagementController : BaseController
     {
         [HttpGet]
@@ -21,25 +24,47 @@ namespace nuce.web.quanly.Controllers
             return View("ItemsList");
         }
 
+        /// <summary>
+        /// View trang Tạo tin
+        /// </summary>
+        /// <param name="catId"></param>
+        /// <returns></returns>
         [HttpGet]
-        public async Task<ActionResult> Create(int catId)
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Add_NewsItem)]
+        public ActionResult Create(int catId)
         {
             TempData["catId"] = catId;
             return View("Create");
         }
 
+        /// <summary>
+        /// View detail tin
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult> ItemsDetail(int id)
         {
             return await GetNewsItem(id, "ItemsDetail");
         }
 
+        /// <summary>
+        /// View trang update tin
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Edit_NewsItem)]
         public async Task<ActionResult> ItemsUpdate(int id)
         {
             return await GetNewsItem(id, "ItemsUpdate");
         }
 
+        /// <summary>
+        /// View danh sách tin
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> GetItemsListByCatId(GetNewsItemByCatIdModel request)
         {
@@ -69,7 +94,13 @@ namespace nuce.web.quanly.Controllers
             });
         }
 
+        /// <summary>
+        /// Đăng tin
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Add_NewsItem)]
         public async Task<ActionResult> CreateNewsItem(CreateNewsItemModel request)
         {
             string api = "api/NewsManager/admin/news-items/create";
@@ -106,7 +137,13 @@ namespace nuce.web.quanly.Controllers
             return await HandleApiResponseUpdate(response);
         }
 
+        /// <summary>
+        /// Cập nhật bài tin
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Edit_NewsItem)]
         public async Task<ActionResult> UpdateNewsItem(NewsItemModel request)
         {
             string api = "api/NewsManager/admin/news-items/update";

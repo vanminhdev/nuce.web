@@ -1,4 +1,4 @@
-﻿function autoValidate() {
+﻿var autoValidate = function() {
     $('.auto-validate').each(function () {
         let form = $(this);
         let validator = form.validate({
@@ -29,7 +29,7 @@ $(document).ready(function () {
     autoValidate();
 });
 
-function getFormData(id) {
+var getFormData = function(id) {
     let data = {};
     let form = $(id);
     let elements = form.find('input,textarea,select');
@@ -41,7 +41,7 @@ function getFormData(id) {
     return data;
 }
 
-function fillFormData(id, data) {
+var fillFormData = function(id, data) {
     for (const property in data) {
         let element = $(`${id} [name=${property}]`);
         if (element.attr('type') === 'date') {
