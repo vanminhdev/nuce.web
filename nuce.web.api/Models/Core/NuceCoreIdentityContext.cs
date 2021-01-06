@@ -1,14 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace nuce.web.api.Models.Core
 {
-    public partial class NuceCoreIdentityContext : IdentityDbContext<ApplicationUser>
+    public partial class NuceCoreIdentityContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
     {
         public NuceCoreIdentityContext(DbContextOptions<NuceCoreIdentityContext> options) : base(options)
         {

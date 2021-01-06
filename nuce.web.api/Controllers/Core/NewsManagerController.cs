@@ -11,6 +11,7 @@ using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Core;
+using nuce.web.shared;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -147,6 +148,7 @@ namespace nuce.web.api.Controllers.Core
             return Ok(result);
         }
 
+        [Authorize(RoleNames.KhaoThi_Add_Cat)]
         [HttpPost]
         [Route("admin/news-category/create")]
         public async Task<IActionResult> CreateNewsCategoryAdmin([FromBody] CreateNewsCategoryModel model)

@@ -76,7 +76,7 @@ namespace nuce.web.api
             #endregion
 
             #region config usermanager
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<NuceCoreIdentityContext>()
                 .AddDefaultTokenProviders();
             #endregion

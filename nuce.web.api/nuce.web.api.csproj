@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\Core\AspNetRoles.cs" />
     <Compile Remove="Models\Core\NuceCoreContext.cs" />
   </ItemGroup>
 
@@ -49,6 +50,10 @@
     <Folder Include="Resources\Ctsv\" />
     <Folder Include="Resources\Survey\" />
     <Folder Include="Services\EduData\Base\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\nuce.web.shared\nuce.web.shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

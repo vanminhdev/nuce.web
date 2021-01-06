@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using nuce.web.api.Common;
+using nuce.web.shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;

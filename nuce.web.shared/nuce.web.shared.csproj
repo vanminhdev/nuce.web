@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <Folder Include="Attributes\ValidationAttributes\" />
-    <Folder Include="Common\" />
   </ItemGroup>
 
 </Project>

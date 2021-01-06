@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Models.Core
 {
-    public partial class NuceCoreIdentityContext : IdentityDbContext<ApplicationUser>
+    public partial class NuceCoreIdentityContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
     {
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole[] {
-                new IdentityRole{Id = "Admin", Name = "Admin", NormalizedName = "Admin" },
+            modelBuilder.Entity<ApplicationRole>().HasData(new ApplicationRole[] {
+                new ApplicationRole{Id = "Admin", Name = "Admin", NormalizedName = "Admin" },
             });
         }
     }
