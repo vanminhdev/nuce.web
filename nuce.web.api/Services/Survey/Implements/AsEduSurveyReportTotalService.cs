@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
@@ -14,6 +15,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Mime;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -25,13 +29,15 @@ namespace nuce.web.api.Services.Survey.Implements
         private readonly SurveyContext _context;
         private readonly EduDataContext _eduContext;
         private readonly IStatusService _statusService;
+        private readonly IConfiguration _configuration;
 
-        public AsEduSurveyReportTotalService(ILogger<AsEduSurveyReportTotalService> logger, SurveyContext context, EduDataContext eduContext, IStatusService statusService)
+        public AsEduSurveyReportTotalService(ILogger<AsEduSurveyReportTotalService> logger, SurveyContext context, EduDataContext eduContext, IStatusService statusService, IConfiguration configuration)
         {
             _logger = logger;
             _context = context;
             _eduContext = eduContext;
             _statusService = statusService;
+            _configuration = configuration;
         }
 
         public async Task<PaginationModel<ReportTotalNormal>> GetRawReportTotalNormalSurvey(ReportTotalNormalFilter filter, int skip = 0, int take = 20)
@@ -39,7 +45,6 @@ namespace nuce.web.api.Services.Survey.Implements
             _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             IQueryable<AsEduSurveyReportTotal> query = null;
             var recordsTotal = _context.AsEduSurveyReportTotal.Count();
-
 
             var recordsFiltered = recordsTotal;
             if(query != null)
@@ -74,56 +79,59 @@ namespace nuce.web.api.Services.Survey.Implements
             };
         }
 
-        public async Task<List<TempDataNormal>> GetTempDataNormalSurvey(Guid? surveyRoundId)
+        class DataUrgingEmail
         {
-            _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            var surveyRound = await _context.AsEduSurveyDotKhaoSat.FirstOrDefaultAsync(o => o.Id == surveyRoundId && o.Status != (int)SurveyRoundStatus.Deleted);
-            if (surveyRound == null)
+            public string percent { get; set; }
+        }
+
+        class UrgingEmail
+        {
+            public string email { get; set; }
+            public DataUrgingEmail data { get; set; }
+        }
+
+        public async Task SendUrgingEmail()
+        {
+            var status = await _statusService.GetStatusTableTaskNotResetMessage(TableNameTask.TempDataNormalSurvey);
+            if (status.Status == (int)TableTaskStatus.Doing)
             {
-                throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
+                throw new TableBusyException("Đang thống kê tạm, thao tác bị huỷ");
             }
 
-            //do chỉ có một bài ks nên lấy id của bài ks đó
-            var idbaikscuadotnay = _context.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == surveyRound.Id).Select(o => o.Id).ToList();
-            if (idbaikscuadotnay.Count == 0)
+            var lstKhoa = JsonSerializer.Deserialize<List<TempDataNormal>>(status.Message);
+            var lstEmailTarget = new List<UrgingEmail>();
+            foreach(var khoa in lstKhoa)
             {
-                throw new RecordNotFoundException("Không tìm thấy bài khảo sát của đợt khảo sát này");
-            }
-
-            var tatCaBaiLamKs = _context.AsEduSurveyBaiKhaoSatSinhVien.Where(o => idbaikscuadotnay.Contains(o.BaiKhaoSatId));
-            var result = new List<TempDataNormal>();
-
-            var facultys = await _eduContext.AsAcademyFaculty.ToListAsync();
-            foreach(var f in facultys)
-            {
-                _logger.LogInformation($"Đang thong ke tam cho khoa có mã {f.Code}");
-                var classF = await _eduContext.AsAcademyClass.Where(o => o.FacultyCode == f.Code).Select(o => o.Code).ToListAsync();
-                //tất cả sv có đk
-                var allStudents = await _eduContext.AsAcademyStudent
-                    .Where(o => classF.Contains(o.ClassCode))
-                    .Where(o => _eduContext.AsAcademyStudentClassRoom.FirstOrDefault(sc => sc.StudentCode == o.Code) != null)
-                    .Select(o => o.Code)
-                    .ToListAsync();
-
-                //sinh viên có đk
-                var tatCaBaiKs = _context.AsEduSurveyBaiKhaoSatSinhVien.Where(o => allStudents.Contains(o.StudentCode));
-
-                //số bài ks được phát
-                var total = tatCaBaiKs.Count();
-
-                //số bài hoàn thành
-                var num = tatCaBaiKs.Count(o => o.Status == (int)SurveyStudentStatus.Done);
-
-                result.Add(new TempDataNormal
+                if(khoa.Total > 0 && khoa.Num/khoa.Total < 0.5)
                 {
-                    FacultyCode = f.Code,
-                    FacultyName = f.Name,
-                    Total = total,
-                    Num = num
-                });
+                    var thongTin = await _eduContext.AsAcademyFaculty.FirstOrDefaultAsync(o => o.Code == khoa.FacultyCode);
+                    lstEmailTarget.Add(new UrgingEmail
+                    {
+                        email = "vanminh.dev@gmail.com",
+                        data = new DataUrgingEmail
+                        {
+                            percent = "abc"
+                        }
+                    });
+                }
             }
-            _logger.LogInformation($"Thong ke tam hoan thanh");
-            return result;
+            HttpClient client = new HttpClient();
+            var strContent = JsonSerializer.Serialize(new
+            {
+                emails = lstEmailTarget,
+                template = 25,
+                subject = "V/v Thông báo số lượng bài khảo sát của sinh viên về hoạt động giáo dục",
+                email_identifier = "emails",
+                datetime = DateTime.Now.ToString("dd-MM-yyyy hh:mm"),
+                send_later_email = 0,
+                timezone = 7
+            });
+            var content = new StringContent(strContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var response = await client.PostAsync(_configuration.GetValue<string>("ApiSendEmail"), content);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new SendEmailException("Yêu cầu api gửi email không thành công");
+            }
         }
     }
 }

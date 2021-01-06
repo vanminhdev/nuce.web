@@ -38,12 +38,6 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             var surveyContext = scope.ServiceProvider.GetRequiredService<SurveyContext>();
             var statusContext = scope.ServiceProvider.GetRequiredService<StatusContext>();
 
-            var surveyRound = surveyContext.AsEduSurveyDotKhaoSat.FirstOrDefault(o => o.Id == surveyRoundId && o.Status == (int)SurveyRoundStatus.New);
-            if (surveyRound == null)
-            {
-                throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
-            }
-
             var status = statusContext.AsStatusTableTask.FirstOrDefault(o => o.TableName == TableNameTask.AsEduSurveyBaiKhaoSatSinhVien);
             if (status == null)
             {
@@ -61,6 +55,17 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
 
             try
             {
+                var surveyRound = surveyContext.AsEduSurveyDotKhaoSat.FirstOrDefault(o => o.Id == surveyRoundId && o.Status != (int)SurveyRoundStatus.Deleted);
+                if (surveyRound == null)
+                {
+                    throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
+                }
+
+                if (surveyRound.Status == (int)SurveyRoundStatus.End || DateTime.Now >= surveyRound.EndDate || surveyRound.Status == (int)SurveyRoundStatus.Closed)
+                {
+                    throw new InvalidInputDataException("Đợt khảo sát không còn hoạt động");
+                }
+
                 var queryTheSurvey = surveyContext.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == surveyRound.Id && o.Status == (int)TheSurveyStatus.Published);
                 var theoreticalSubjects = queryTheSurvey.FirstOrDefault(o => o.Type == (int)TheSurveyType.TheoreticalSubjects);
                 if (theoreticalSubjects == null)
@@ -231,6 +236,16 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             var scope = _scopeFactory.CreateScope();
             var surveyContext = scope.ServiceProvider.GetRequiredService<SurveyContext>();
 
+            var surveyRound = surveyContext.AsEduSurveyDotKhaoSat.FirstOrDefault(o => o.Id == surveyRoundId && o.Status != (int)SurveyRoundStatus.Deleted);
+            if (surveyRound == null)
+            {
+                throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
+            }
+
+            if (surveyRound.Status == (int)SurveyRoundStatus.End || DateTime.Now >= surveyRound.EndDate || surveyRound.Status == (int)SurveyRoundStatus.Closed)
+            {
+                throw new InvalidInputDataException("Đợt khảo sát không còn hoạt động");
+            }
 
             var transaction = surveyContext.Database.BeginTransaction();
             try

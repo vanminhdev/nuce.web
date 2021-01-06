@@ -11,11 +11,15 @@ using nuce.web.api.Models.Survey.JsonData;
 using nuce.web.api.Services.Background;
 using nuce.web.api.Services.Status.Interfaces;
 using nuce.web.api.Services.Survey.Interfaces;
+using nuce.web.api.ViewModel.Survey.Normal.Statistic;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.Survey.BackgroundTasks
 {
@@ -77,7 +81,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 string strAllAnswerContent = "";
                 foreach (var str in item)
                 {
-                    strAllAnswerContent += $",{str.AnswerContent}";
+                    strAllAnswerContent += $";{str.AnswerContent}";
                 }
                 result.Add(new AnswerSelectedReportTotal
                 {
@@ -147,7 +151,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 //đợt khảo sát chưa kết thúc
                 if(!(surveyRound.Status == (int)SurveyRoundStatus.Closed || surveyRound.Status == (int)SurveyRoundStatus.End || DateTime.Now >= surveyRound.EndDate))
                 {
-                    throw new InvalidDataException("Đợt khảo sát chưa đóng hoặc chưa kết thúc");
+                    throw new HandleException.InvalidInputDataException("Đợt khảo sát chưa đóng hoặc chưa kết thúc");
                 }
 
                 //do chỉ có một bài ks nên lấy id của bài ks đó
@@ -244,7 +248,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             }
         }
 
-        public async System.Threading.Tasks.Task ReportTotalNormalSurvey(Guid surveyRoundId)
+        public async Task ReportTotalNormalSurvey(Guid surveyRoundId)
         {
             var status = await _statusService.GetStatusTableTask(TableNameTask.AsEduSurveyReportTotal);
             if (status.Status == (int)TableTaskStatus.Doing)
@@ -265,12 +269,204 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             //đợt khảo sát chưa kết thúc
             if (!(surveyRound.Status == (int)SurveyRoundStatus.Closed || surveyRound.Status == (int)SurveyRoundStatus.End || DateTime.Now >= surveyRound.EndDate))
             {
-                throw new InvalidDataException("Đợt khảo sát chưa đóng hoặc chưa kết thúc");
+                throw new HandleException.InvalidInputDataException("Đợt khảo sát chưa đóng hoặc chưa kết thúc");
             }
 
             _backgroundTaskWorker.StartAction(() =>
             {
                 ReportTotalNormalSurveyBG(surveyRoundId);
+            });
+        }
+
+
+        private void TempDataNormalSurveyBG(Guid surveyRoundId)
+        {
+            var scope = _scopeFactory.CreateScope();
+            var surveyContext = scope.ServiceProvider.GetRequiredService<SurveyContext>();
+            var eduContext = scope.ServiceProvider.GetRequiredService<EduDataContext>();
+            var statusContext = scope.ServiceProvider.GetRequiredService<StatusContext>();
+
+            var status = statusContext.AsStatusTableTask.FirstOrDefault(o => o.TableName == TableNameTask.TempDataNormalSurvey);
+            if (status == null)
+            {
+                throw new RecordNotFoundException("Không tìm thấy bản ghi cập nhật trạng thái cho bảng thống kê khảo sát sinh viên");
+            }
+            //bảng đang làm việc
+            if (status.Status == (int)TableTaskStatus.Doing)
+            {
+                throw new TableBusyException("Đang thống kê, thao tác bị huỷ");
+            }
+            status.Status = (int)TableTaskStatus.Doing;
+            statusContext.SaveChanges();
+
+            try
+            {
+                var surveyRound = surveyContext.AsEduSurveyDotKhaoSat.FirstOrDefault(o => o.Id == surveyRoundId && o.Status != (int)SurveyRoundStatus.Deleted);
+                if (surveyRound == null)
+                {
+                    throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
+                }
+
+                //do chỉ có một bài ks nên lấy id của bài ks đó
+                var idbaikscuadotnay = surveyContext.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == surveyRound.Id).Select(o => o.Id).ToList();
+                if (idbaikscuadotnay.Count == 0)
+                {
+                    throw new RecordNotFoundException("Không tìm thấy bài khảo sát của đợt khảo sát này");
+                }
+
+                var tatCaBaiLamKs = surveyContext.AsEduSurveyBaiKhaoSatSinhVien.Where(o => idbaikscuadotnay.Contains(o.BaiKhaoSatId));
+                var result = new List<TempDataNormal>();
+
+                var facultys = eduContext.AsAcademyFaculty.ToList();
+                foreach (var f in facultys)
+                {
+                    _logger.LogInformation($"Đang thong ke tam cho khoa co ma {f.Code}");
+                    var classF = eduContext.AsAcademyClass.Where(o => o.FacultyCode == f.Code).Select(o => o.Code).ToList();
+                    //tất cả sv có đk
+                    var allStudents = eduContext.AsAcademyStudent
+                        .Where(o => classF.Contains(o.ClassCode))
+                        .Where(o => eduContext.AsAcademyStudentClassRoom.FirstOrDefault(sc => sc.StudentCode == o.Code) != null)
+                        .Select(o => o.Code)
+                        .ToList();
+
+                    //sinh viên có đk
+                    var tatCaBaiKs = surveyContext.AsEduSurveyBaiKhaoSatSinhVien.Where(o => allStudents.Contains(o.StudentCode));
+
+                    //số bài ks được phát
+                    var total = tatCaBaiKs.Count();
+
+                    //số bài hoàn thành
+                    var num = tatCaBaiKs.Count(o => o.Status == (int)SurveyStudentStatus.Done);
+
+                    result.Add(new TempDataNormal
+                    {
+                        FacultyCode = f.Code,
+                        FacultyName = f.Name,
+                        Total = total,
+                        Num = num
+                    });
+                }
+                _logger.LogInformation($"Thong ke tam hoan thanh");
+
+                //hoàn thành
+                status.Status = (int)TableTaskStatus.Done;
+                status.IsSuccess = true;
+                status.Message = JsonSerializer.Serialize(result);
+                statusContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                status.Status = (int)TableTaskStatus.Done;
+                status.IsSuccess = false;
+                status.Message = e.Message;
+                statusContext.SaveChanges();
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// Thống kê tạm
+        /// </summary>
+        public async Task TempDataNormalSurvey(Guid surveyRoundId)
+        {
+            var status = await _statusService.GetStatusTableTask(TableNameTask.TempDataNormalSurvey);
+            if (status.Status == (int)TableTaskStatus.Doing)
+            {
+                throw new TableBusyException("Đang thống kê tạm, thao tác bị huỷ");
+            }
+
+            var scope = _scopeFactory.CreateScope();
+            var surveyContext = scope.ServiceProvider.GetRequiredService<SurveyContext>();
+            var statusContext = scope.ServiceProvider.GetRequiredService<StatusContext>();
+
+            var surveyRound = surveyContext.AsEduSurveyDotKhaoSat.FirstOrDefault(o => o.Id == surveyRoundId && o.Status != (int)SurveyRoundStatus.Deleted);
+            if (surveyRound == null)
+            {
+                throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
+            }
+
+            _backgroundTaskWorker.StartAction(() =>
+            {
+                TempDataNormalSurveyBG(surveyRoundId);
+            });
+        }
+
+        private void ExportReportTotalNormalSurveyBG(List<Guid> surveyRoundIds)
+        {
+            var scope = _scopeFactory.CreateScope();
+            var surveyContext = scope.ServiceProvider.GetRequiredService<SurveyContext>();
+            var statusContext = scope.ServiceProvider.GetRequiredService<StatusContext>();
+
+            var status = statusContext.AsStatusTableTask.FirstOrDefault(o => o.TableName == TableNameTask.ExportReportTotalNormalSurvey);
+            if (status == null)
+            {
+                throw new RecordNotFoundException("Không tìm thấy bản ghi cập nhật trạng thái");
+            }
+            //bảng đang làm việc
+            if (status.Status == (int)TableTaskStatus.Doing)
+            {
+                throw new TableBusyException("Đang thống kê, thao tác bị huỷ");
+            }
+            status.Status = (int)TableTaskStatus.Doing;
+            statusContext.SaveChanges();
+
+            try
+            {
+                ExcelPackage excel = new ExcelPackage();
+                var workSheet = excel.Workbook.Worksheets.Add("Sheet1");
+                workSheet.DefaultRowHeight = 12;
+
+                #region kết xuất
+
+                #endregion
+
+                //lưu
+                var fileName = Guid.NewGuid().ToString() + ".xlsx";
+                var filePath = System.IO.Path.GetTempPath() + fileName;
+                using (FileStream fs = new FileStream(filePath, FileMode.Create))
+                {
+                    excel.SaveAs(fs);
+                }
+
+                //hoàn thành
+                status.Status = (int)TableTaskStatus.Done;
+                status.IsSuccess = true;
+                status.Message = fileName;
+                statusContext.SaveChanges();
+            }
+            catch(Exception e)
+            {
+                status.Status = (int)TableTaskStatus.Done;
+                status.IsSuccess = false;
+                status.Message = e.Message;
+                statusContext.SaveChanges();
+                throw e;
+            }
+        }
+
+        public async Task ExportReportTotalNormalSurvey(List<Guid> surveyRoundIds)
+        {
+            var status = await _statusService.GetStatusTableTask(TableNameTask.ExportReportTotalNormalSurvey);
+            if (status.Status == (int)TableTaskStatus.Doing)
+            {
+                throw new TableBusyException("Đang kết xuất, thao tác bị huỷ");
+            }
+
+            var scope = _scopeFactory.CreateScope();
+            var surveyContext = scope.ServiceProvider.GetRequiredService<SurveyContext>();
+
+            surveyRoundIds.ForEach(id =>
+            {
+                var surveyRound = surveyContext.AsEduSurveyDotKhaoSat.FirstOrDefault(o => o.Id == id && o.Status != (int)SurveyRoundStatus.Deleted);
+                if (surveyRound == null)
+                {
+                    throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
+                }
+            });
+
+            _backgroundTaskWorker.StartAction(() =>
+            {
+                ExportReportTotalNormalSurveyBG(surveyRoundIds);
             });
         }
         #endregion
@@ -381,7 +577,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             //đợt khảo sát chưa kết thúc
             if (surveyRound.Status != (int)SurveyRoundStatus.Closed && surveyRound.Status != (int)SurveyRoundStatus.End)
             {
-                throw new InvalidDataException("Đợt khảo sát chưa đóng hoặc chưa kết thúc");
+                throw new HandleException.InvalidInputDataException("Đợt khảo sát chưa đóng hoặc chưa kết thúc");
             }
 
             _backgroundTaskWorker.StartAction(() =>

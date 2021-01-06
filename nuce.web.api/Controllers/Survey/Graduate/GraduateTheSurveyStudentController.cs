@@ -115,7 +115,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
                 var ip = HttpContext.Connection.RemoteIpAddress.ToString();
                 await _asEduSurveyGraduateBaiKhaoSatSinhVienService.SaveSelectedAnswer(theSurveyId.Value, studentCode, ip);
             }
-            catch (InvalidDataException e)
+            catch (InvalidInputDataException e)
             {
                 _logger.LogError(e, e.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không lưu được bài khảo sát", detailMessage = e.Message });

@@ -120,7 +120,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             {
                 await _asEduSurveyGraduateDotKhaoSatService.Update(id.Value, surveyRound);
             }
-            catch (InvalidDataException e)
+            catch (InvalidInputDataException e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không cập nhật được đợt khảo sát", detailMessage = e.Message });
             }

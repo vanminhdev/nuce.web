@@ -11,7 +11,9 @@ using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey.Normal.Statistic;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace nuce.web.api.Controllers.Survey
@@ -63,7 +65,7 @@ namespace nuce.web.api.Controllers.Survey
                 _logger.LogError(e, e.Message);
                 return NotFound(new { message = "Không thống kê được đợt khảo sát", detailMessage = e.Message });
             }
-            catch (InvalidDataException e)
+            catch (InvalidInputDataException e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
@@ -107,17 +109,158 @@ namespace nuce.web.api.Controllers.Survey
             );
         }
 
-        [HttpGet]
+        [HttpPut]
         public async Task<IActionResult> GetTempDataNormalSurvey([Required] Guid? surveyRoundId)
         {
             try
             {
-                var result = await _asEduSurveyReportTotalService.GetTempDataNormalSurvey(surveyRoundId);
-                return Ok(result);
+                await _surveyStatisticBackgroundTask.TempDataNormalSurvey(surveyRoundId.Value);
+                return Ok();
             }
             catch (RecordNotFoundException e)
             {
                 return NotFound(new { message = e.Message });
+            }
+            catch (TableBusyException e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thống kê tạm được", detailMessage = mainMessage });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetStatusTempDataNormalSurveyTask()
+        {
+            try
+            {
+                var status = await _statusService.GetStatusTableTaskNotResetMessage(TableNameTask.TempDataNormalSurvey);
+                return Ok(new { status.Status, status.IsSuccess, status.Message });
+            }
+            catch (RecordNotFoundException e)
+            {
+                _logger.LogError(e, e.Message);
+                return NotFound(new { message = "Không lấy được trạng thái", detailMessage = e.Message });
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> SendUrgingEmail()
+        {
+            try
+            {
+                await _asEduSurveyReportTotalService.SendUrgingEmail();
+                return Ok();
+            }
+            catch (SendEmailException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không gửi được email", detailMessage = e.Message });
+            }
+            catch (RecordNotFoundException e)
+            {
+                return NotFound(new { message = e.Message });
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không gửi được email", detailMessage = mainMessage });
+            }
+        }
+        #endregion
+
+        #region kết xuất báo cáo ks sv thường
+        [HttpPost]
+        public async Task<IActionResult> ExportReportTotalNormalSurvey([Required] List<Guid> surveyRoundIds)
+        {
+            try
+            {
+                await _surveyStatisticBackgroundTask.ExportReportTotalNormalSurvey(surveyRoundIds);
+            }
+            catch (RecordNotFoundException e)
+            {
+                return NotFound(new { message = e.Message });
+            }
+            catch (InvalidInputDataException e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (TableBusyException e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không kết xuất được báo cáo", detailMessage = mainMessage });
+            }
+            return Ok();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetStatusExportReportTotalNormalSurveyTask()
+        {
+            try
+            {
+                var status = await _statusService.GetStatusTableTaskNotResetMessage(TableNameTask.ExportReportTotalNormalSurvey);
+                return Ok(new { status.Status, status.IsSuccess, status.Message });
+            }
+            catch (RecordNotFoundException e)
+            {
+                _logger.LogError(e, e.Message);
+                return NotFound(new { message = "Không lấy được trạng thái", detailMessage = e.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CheckExistReportTotalNormalSurvey()
+        {
+            try
+            {
+                var status = await _statusService.GetStatusTableTask(TableNameTask.ExportReportTotalNormalSurvey);
+                var path = System.IO.Path.GetTempPath() + status.Message;
+                if (!System.IO.File.Exists(path))
+                {
+                    return NotFound(new { message = "File kết xuất không tồn tại" });
+                }
+                return Ok();
+            }
+            catch (RecordNotFoundException e)
+            {
+                _logger.LogError(e, e.Message);
+                return NotFound(new { message = "Không lấy được trạng thái", detailMessage = e.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DownloadReportTotalNormalSurvey()
+        {
+            try
+            {
+                var status = await _statusService.GetStatusTableTask(TableNameTask.ExportReportTotalNormalSurvey);
+                var path = System.IO.Path.GetTempPath() + status.Message;
+                if (!System.IO.File.Exists(path))
+                {
+                    return NotFound(new { message = "File kết xuất không tồn tại" });
+                }
+                var templateContent = await System.IO.File.ReadAllBytesAsync(path);
+                return File(templateContent, ContentTypes.Xlsx, Path.GetFileName(path));
+            }
+            catch (RecordNotFoundException e)
+            {
+                _logger.LogError(e, e.Message);
+                return NotFound(new { message = "Không lấy được trạng thái", detailMessage = e.Message });
             }
         }
         #endregion
@@ -150,7 +293,7 @@ namespace nuce.web.api.Controllers.Survey
                 _logger.LogError(e, e.Message);
                 return NotFound(new { message = e.Message });
             }
-            catch (InvalidDataException e)
+            catch (InvalidInputDataException e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }

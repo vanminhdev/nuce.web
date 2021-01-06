@@ -166,7 +166,7 @@ namespace nuce.web.api.Controllers.Core
             {
                 return NotFound(new { message = e.Message });
             }
-            catch (InvalidDataException e)
+            catch (InvalidInputDataException e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }

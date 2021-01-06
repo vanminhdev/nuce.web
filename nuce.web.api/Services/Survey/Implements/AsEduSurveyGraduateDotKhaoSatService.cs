@@ -85,7 +85,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             if (surveyRoundUpdate.Status != (int)SurveyRoundStatus.New)
             {
-                throw new InvalidDataException("Đợt khảo sát không còn hoạt động, không thể sửa");
+                throw new InvalidInputDataException("Đợt khảo sát không còn hoạt động, không thể sửa");
             }
 
             surveyRoundUpdate.Name = surveyRound.Name.Trim();
@@ -107,7 +107,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             if(surveyRoundUpdate.Status == (int)SurveyRoundStatus.New)
             {
-                throw new InvalidDataException("Đợt khảo sát còn hoạt động không thể xoá");
+                throw new InvalidInputDataException("Đợt khảo sát còn hoạt động không thể xoá");
             }
 
             surveyRoundUpdate.Status = (int)SurveyRoundStatus.Deleted;

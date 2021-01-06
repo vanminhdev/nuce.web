@@ -48,7 +48,7 @@ namespace nuce.web.api.Services.Survey.Implements
             }
             catch
             {
-                throw new InvalidDataException("Câu hỏi Id không hợp lệ");
+                throw new InvalidInputDataException("Câu hỏi Id không hợp lệ");
             }
             answerCreate.CauHoiCode = answer.CauHoiCode;
             answerCreate.Content = answer.Content;

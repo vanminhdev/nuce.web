@@ -249,7 +249,7 @@
         });
         $('#id-datatable_filter').hide();
 
-        table.column(0).search('@ViewData["surveyRoundId"]');
+        table.column(0).search('@ViewData["surveyRoundId"]').draw();
 
         document.getElementById("footer").scrollIntoView();
 

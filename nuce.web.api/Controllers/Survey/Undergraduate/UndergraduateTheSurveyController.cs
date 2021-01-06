@@ -85,7 +85,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             {
                 return NotFound(new { message = "Không tạo được bài khảo sát", detailMessage = e.Message });
             }
-            catch (InvalidDataException e)
+            catch (InvalidInputDataException e)
             {
                 return StatusCode(StatusCodes.Status409Conflict, new { message = "Không tạo được bài khảo sát", detailMessage = e.Message });
             }
@@ -115,7 +115,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
                 _logger.LogError(e, e.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không cập nhật được bài khảo sát", detailMessage = e.Message });
             }
-            catch (InvalidDataException e)
+            catch (InvalidInputDataException e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }

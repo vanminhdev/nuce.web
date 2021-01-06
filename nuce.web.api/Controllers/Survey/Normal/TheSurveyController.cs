@@ -86,7 +86,7 @@ namespace nuce.web.api.Controllers.Survey.Normal
             {
                 await _asEduSurveyBaiKhaoSatService.Create(theSurvey);
             }
-            catch (InvalidDataException e)
+            catch (InvalidInputDataException e)
             {
                 return Conflict(new { message = e.Message });
             }
@@ -120,7 +120,7 @@ namespace nuce.web.api.Controllers.Survey.Normal
                 _logger.LogError(e, e.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không cập nhật được bài khảo sát", detailMessage = e.Message });
             }
-            catch (InvalidDataException e)
+            catch (InvalidInputDataException e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không cập nhật được bài khảo sát", detailMessage = e.Message });
             }
@@ -173,7 +173,7 @@ namespace nuce.web.api.Controllers.Survey.Normal
             {
                 return NotFound(new { message = "Không tìm thấy bài khảo sát" });
             }
-            catch (InvalidDataException e)
+            catch (InvalidInputDataException e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }

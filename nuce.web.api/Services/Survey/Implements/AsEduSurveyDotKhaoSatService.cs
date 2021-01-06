@@ -63,15 +63,23 @@ namespace nuce.web.api.Services.Survey.Implements
         {
             if (await _context.AsEduSurveyDotKhaoSat.FirstOrDefaultAsync(o => o.Status == (int)SurveyRoundStatus.New) != null)
             {
-                throw new InvalidDataException("Một thời điểm chỉ có một đợt khảo sát mới");
+                throw new InvalidInputDataException("Một thời điểm chỉ có một đợt khảo sát mới");
             }
 
             var surveyRoundActive = await _context.AsEduSurveyDotKhaoSat.Where(o => o.Status != (int)SurveyRoundStatus.Deleted)
-                .FirstOrDefaultAsync(o => (DateTime.Now >= o.FromDate && DateTime.Now < o.EndDate) || o.Status == (int)SurveyRoundStatus.End);
+                .FirstOrDefaultAsync(o => (DateTime.Now >= o.FromDate && DateTime.Now < o.EndDate));
             if (surveyRoundActive != null)
             {
-                throw new InvalidDataException("Một thời điểm chỉ có một đợt khảo sát được hoạt động");
+                throw new InvalidInputDataException("Một thời điểm chỉ có một đợt khảo sát được hoạt động trong khoảng thời gian của đợt khảo sát đó");
             }
+
+            //đóng tất cả các đợt khảo sát trước đang đóng hoặc quá ngày kết thúc
+            var lstDotKs = await _context.AsEduSurveyDotKhaoSat.Where(o => o.Status == (int)SurveyRoundStatus.Closed || DateTime.Now >= o.EndDate).ToListAsync();
+            foreach(var item in lstDotKs)
+            {
+                item.Status = (int)SurveyRoundStatus.End;
+            }
+            await _context.SaveChangesAsync();
 
             _context.AsEduSurveyDotKhaoSat.Add(new AsEduSurveyDotKhaoSat
             {
@@ -97,7 +105,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             if(DateTime.Now >= surveyRoundUpdate.FromDate && DateTime.Now < surveyRoundUpdate.EndDate)
             {
-                throw new InvalidDataException("Đợt khảo sát đang trong thời gian hoạt động không thể sửa");
+                throw new InvalidInputDataException("Đợt khảo sát đang trong thời gian hoạt động không thể sửa");
             }
 
             surveyRoundUpdate.Name = surveyRound.Name.Trim();
@@ -119,22 +127,22 @@ namespace nuce.web.api.Services.Survey.Implements
 
             if (DateTime.Now >= surveyRound.FromDate && DateTime.Now < surveyRound.EndDate)
             {
-                throw new InvalidDataException("Đợt khảo sát đang mở");
+                throw new InvalidInputDataException("Đợt khảo sát đang mở");
             }
 
             if (surveyRound.Status == (int)SurveyRoundStatus.Opened)
             {
-                throw new InvalidDataException("Đợt khảo sát đang mở");
+                throw new InvalidInputDataException("Đợt khảo sát đang mở");
             }
 
             if (surveyRound.Status == (int)SurveyRoundStatus.Closed)
             {
-                throw new InvalidDataException("Đợt khảo sát chưa kết thúc không thể xoá");
+                throw new InvalidInputDataException("Đợt khảo sát chưa kết thúc không thể xoá");
             }
 
             if (await _context.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == surveyRound.Id).FirstOrDefaultAsync() != null)
             {
-                throw new InvalidDataException("Đợt khảo sát đã có bài khảo sát không thể xoá");
+                throw new InvalidInputDataException("Đợt khảo sát đã có bài khảo sát không thể xoá");
             }
 
             if (surveyRound.Status == (int)SurveyRoundStatus.New && DateTime.Now < surveyRound.FromDate)
@@ -164,7 +172,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             if (surveyRound.Status != (int)SurveyRoundStatus.Closed && surveyRound.Status != (int)SurveyRoundStatus.New)
             {
-                throw new InvalidDataException("Đợt khảo sát không ở trạng thái đóng cửa hoặc mới tạo");
+                throw new InvalidInputDataException("Đợt khảo sát không ở trạng thái đóng cửa hoặc mới tạo");
             }
 
             surveyRound.Status = (int)SurveyRoundStatus.Opened;
@@ -181,7 +189,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             if (!(DateTime.Now >= surveyRound.FromDate && DateTime.Now < surveyRound.EndDate))
             {
-                throw new InvalidDataException("Đợt khảo sát đang không mở không thể đóng");
+                throw new InvalidInputDataException("Đợt khảo sát đang không mở không thể đóng");
             }
             surveyRound.Status = (int)SurveyRoundStatus.Closed;
             await _context.SaveChangesAsync();
@@ -197,12 +205,12 @@ namespace nuce.web.api.Services.Survey.Implements
 
             if(endDate <= surveyRound.FromDate)
             {
-                throw new InvalidDataException("Ngày kết thúc phải lớn hơn ngày bắt đầu");
+                throw new InvalidInputDataException("Ngày kết thúc phải lớn hơn ngày bắt đầu");
             }
 
             if (endDate <= DateTime.Now)
             {
-                throw new InvalidDataException("Ngày kết thúc phải lớn hơn ngày hiện tại");
+                throw new InvalidInputDataException("Ngày kết thúc phải lớn hơn ngày hiện tại");
             }
 
             surveyRound.EndDate = endDate;

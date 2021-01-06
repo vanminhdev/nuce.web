@@ -70,7 +70,7 @@ namespace nuce.web.api.Controllers.Survey.Normal
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không tìm thấy câu hỏi" });
             }
-            catch (InvalidDataException e)
+            catch (InvalidInputDataException e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }

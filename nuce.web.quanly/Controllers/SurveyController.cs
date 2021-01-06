@@ -345,30 +345,18 @@ namespace nuce.web.quanly.Controllers
 
         #region đợt khảo sát sv thường
         [HttpGet]
-        public ActionResult SurveyRound()
+        public async Task<ActionResult> SurveyRound()
         {
+            var resTableStatus = await base.MakeRequestAuthorizedAsync("Get", $"/api/Statistic/GetStatusTempDataNormalSurveyTask");
+            ViewData["TempDataNormalSurvey"] = await resTableStatus.Content.ReadAsStringAsync();
+
             return View("~/Views/Survey/Normal/SurveyRound.cshtml");
         }
 
         [HttpPost]
         public async Task<ActionResult> GetAllSurveyRound(DataTableRequest request)
         {
-            var stringContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/SurveyRound/GetSurveyRound", stringContent);
-            return await base.HandleResponseAsync(response,
-                action200Async: async res =>
-                {
-                    var jsonString = await response.Content.ReadAsStringAsync();
-                    var data = JsonConvert.DeserializeObject<DataTableResponse<SurveyRound>>(jsonString);
-                    return Json(new
-                    {
-                        draw = data.Draw,
-                        recordsTotal = data.RecordsTotal,
-                        recordsFiltered = data.RecordsFiltered,
-                        data = data.Data
-                    });
-                }
-            );
+            return await GetDataTabeFromApi<SurveyRound>(request, "/api/SurveyRound/GetSurveyRound");
         }
 
         [HttpGet]
@@ -420,6 +408,20 @@ namespace nuce.web.quanly.Controllers
         {
             var content = new StringContent(JsonConvert.SerializeObject(new { endDate }), Encoding.UTF8, "application/json");
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/SurveyRound/AddEndDateSurveyRound?id={id}", content);
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetTempDataNormalSurvey(string id)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/Statistic/GetTempDataNormalSurvey?surveyRoundId={id}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> SendUrgingEmail()
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/Statistic/SendUrgingEmail");
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
         #endregion
@@ -526,6 +528,21 @@ namespace nuce.web.quanly.Controllers
             var resTableStatus = await base.MakeRequestAuthorizedAsync("Get", $"/api/Statistic/GetStatusReportTotalNormalSurveyTask");
             ViewData["TableReportNormalStatus"] = await resTableStatus.Content.ReadAsStringAsync();
 
+            //trạng thái export file
+            var resExportStatus = await base.MakeRequestAuthorizedAsync("Get", $"/api/Statistic/GetStatusExportReportTotalNormalSurveyTask");
+            ViewData["ExportReportTotalNormalStatus"] = await resExportStatus.Content.ReadAsStringAsync();
+
+            //tồn tại file export file
+            var resExistReportTotalNormalSurvey = await base.MakeRequestAuthorizedAsync("Get", $"/api/Statistic/CheckExistReportTotalNormalSurvey");
+            if(resExistReportTotalNormalSurvey.IsSuccessStatusCode)
+            {
+                ViewData["isExistReportTotalNormalSurvey"] = true;
+            } 
+            else
+            {
+                ViewData["isExistReportTotalNormalSurvey"] = false;
+            }
+
             var resSurveyRound = await base.MakeRequestAuthorizedAsync("Get", $"/api/SurveyRound/GetSurveyRoundClosedOrEnd");
             ViewData["SurveyRoundClosedOrEnd"] = await resSurveyRound.Content.ReadAsStringAsync();
 
@@ -542,6 +559,32 @@ namespace nuce.web.quanly.Controllers
         public async Task<ActionResult> ReportTotalNormalSurvey(string surveyRoundId)
         {
             var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/Statistic/ReportTotalNormalSurvey?surveyRoundId={surveyRoundId}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> ExportReportTotalNormalSurvey(List<string> surveyRoundIds)
+        {
+            var content = new StringContent(JsonConvert.SerializeObject(surveyRoundIds), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/Statistic/ExportReportTotalNormalSurvey", content);
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> DownloadReportTotalNormalSurvey()
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/Statistic/DownloadReportTotalNormalSurvey");
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                using (Stream streamToReadFrom = await response.Content.ReadAsStreamAsync())
+                {
+                    using (MemoryStream memoryStream = new MemoryStream())
+                    {
+                        await streamToReadFrom.CopyToAsync(memoryStream);
+                        return File(memoryStream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Kết xuất.xlsx");
+                    }
+                }
+            }
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
         #endregion

@@ -78,7 +78,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 .FirstOrDefaultAsync(o => o.DotKhaoSatId == theSurvey.DotKhaoSatId && (o.Status == (int)TheSurveyStatus.New || o.Status == (int)TheSurveyStatus.Published));
             if (theActivedSurvey != null)
             {
-                throw new InvalidDataException($"Đợt khảo sát \"{surveyRound.Name}\" đang có bài khảo sát còn hoạt động");
+                throw new InvalidInputDataException($"Đợt khảo sát \"{surveyRound.Name}\" đang có bài khảo sát còn hoạt động");
             }
 
             _context.AsEduSurveyGraduateBaiKhaoSat.Add(new AsEduSurveyGraduateBaiKhaoSat
@@ -107,7 +107,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             if (theSurveyUpdate.Status != (int)TheSurveyStatus.New)
             {
-                throw new InvalidDataException("Bài khảo sát không phải mới tạo, không thể sửa");
+                throw new InvalidInputDataException("Bài khảo sát không phải mới tạo, không thể sửa");
             }
 
             //đổi đợt khảo sát
@@ -123,7 +123,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 var theActivedSurvey = await _context.AsEduSurveyGraduateBaiKhaoSat.FirstOrDefaultAsync(o => o.DotKhaoSatId == theSurvey.DotKhaoSatId && o.Status == (int)TheSurveyStatus.New);
                 if (theActivedSurvey != null)
                 {
-                    throw new InvalidDataException($"Đợt khảo sát \"{surveyRound.Name}\" đang có bài khảo sát còn hoạt động");
+                    throw new InvalidInputDataException($"Đợt khảo sát \"{surveyRound.Name}\" đang có bài khảo sát còn hoạt động");
                 }
 
                 theSurveyUpdate.DotKhaoSatId = theSurvey.DotKhaoSatId.Value;
@@ -158,7 +158,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             if (theSurvey.Status == (int)TheSurveyStatus.New)
             {
-                throw new InvalidDataException("Bài khảo sát còn hoạt động không thể xoá");
+                throw new InvalidInputDataException("Bài khảo sát còn hoạt động không thể xoá");
             }
 
             theSurvey.Status = (int)TheSurveyStatus.Deleted;

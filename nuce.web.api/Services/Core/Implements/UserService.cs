@@ -122,7 +122,7 @@ namespace nuce.web.api.Services.Core.Implements
                 }
                 else if (user.Status != (int)UserStatus.Active)
                 {
-                    throw new InvalidDataException("Tài khoản không được kích hoạt");
+                    throw new InvalidInputDataException("Tài khoản không được kích hoạt");
                 }
                 else
                 {

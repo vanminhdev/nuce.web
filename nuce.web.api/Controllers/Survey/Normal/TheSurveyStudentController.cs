@@ -146,7 +146,7 @@ namespace nuce.web.api.Controllers.Survey.Normal
                 var ip = HttpContext.Connection.RemoteIpAddress.ToString();
                 await _asEduSurveyBaiKhaoSatSinhVienService.SaveSelectedAnswer(studentCode, classRoomCode, ip);
             }
-            catch (InvalidDataException e)
+            catch (InvalidInputDataException e)
             {
                 _logger.LogError(e, e.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không lưu được bài khảo sát", detailMessage = e.Message });
@@ -205,10 +205,14 @@ namespace nuce.web.api.Controllers.Survey.Normal
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
+            catch (InvalidInputDataException e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
             catch (DbUpdateException e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không tạo được bài khảo sát cho từng sinh viên", detailMessage = e.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không gán được bài khảo sát cho từng sinh viên", detailMessage = e.Message });
             }
             catch (RecordNotFoundException e)
             {
@@ -218,7 +222,7 @@ namespace nuce.web.api.Controllers.Survey.Normal
             {
                 var mainMessage = UtilsException.GetMainMessage(e);
                 _logger.LogError(e, mainMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không tạo được bài khảo sát cho từng sinh viên", detailMessage = mainMessage });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không gán được bài khảo sát cho từng sinh viên", detailMessage = mainMessage });
             }
         }
         #endregion

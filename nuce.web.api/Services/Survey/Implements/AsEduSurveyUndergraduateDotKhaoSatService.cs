@@ -64,12 +64,12 @@ namespace nuce.web.api.Services.Survey.Implements
         {
             if(await _context.AsEduSurveyUndergraduateSurveyRound.FirstOrDefaultAsync(o => o.Status == (int)SurveyRoundStatus.New) != null)
             {
-                throw new InvalidDataException("Một thời điểm chỉ có một đợt khảo sát mới");
+                throw new InvalidInputDataException("Một thời điểm chỉ có một đợt khảo sát mới");
             }
 
             if (await _context.AsEduSurveyUndergraduateSurveyRound.FirstOrDefaultAsync(o => o.Status == (int)SurveyRoundStatus.Opened) != null)
             {
-                throw new InvalidDataException("Đang có đợt khảo sát còn hoạt động không thể thêm mới");
+                throw new InvalidInputDataException("Đang có đợt khảo sát còn hoạt động không thể thêm mới");
             }
 
             _context.AsEduSurveyUndergraduateSurveyRound.Add(new AsEduSurveyUndergraduateSurveyRound
@@ -95,7 +95,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             if (surveyRoundUpdate.Status == (int)SurveyRoundStatus.Opened)
             {
-                throw new InvalidDataException("Đợt khảo sát đang mở cửa, không thể sửa");
+                throw new InvalidInputDataException("Đợt khảo sát đang mở cửa, không thể sửa");
             }
 
             surveyRoundUpdate.Name = surveyRound.Name.Trim();
@@ -116,12 +116,12 @@ namespace nuce.web.api.Services.Survey.Implements
 
             if(surveyRoundUpdate.Status == (int)SurveyRoundStatus.Opened)
             {
-                throw new InvalidDataException("Đợt khảo sát đang mở cửa");
+                throw new InvalidInputDataException("Đợt khảo sát đang mở cửa");
             }
 
             if (surveyRoundUpdate.Status == (int)SurveyRoundStatus.Closed)
             {
-                throw new InvalidDataException("Đợt khảo sát chưa kết thúc không thể xoá");
+                throw new InvalidInputDataException("Đợt khảo sát chưa kết thúc không thể xoá");
             }
 
             surveyRoundUpdate.Status = (int)SurveyRoundStatus.Deleted;
@@ -144,7 +144,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             if (surveyRound.Status != (int)SurveyRoundStatus.Closed && surveyRound.Status != (int)SurveyRoundStatus.New)
             {
-                throw new InvalidDataException("Đợt khảo sát không ở trạng thái đóng cửa hoặc mới tạo");
+                throw new InvalidInputDataException("Đợt khảo sát không ở trạng thái đóng cửa hoặc mới tạo");
             }
 
             surveyRound.Status = (int)SurveyRoundStatus.Opened;

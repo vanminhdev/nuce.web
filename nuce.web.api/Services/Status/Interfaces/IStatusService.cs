@@ -9,5 +9,6 @@ namespace nuce.web.api.Services.Status.Interfaces
     public interface IStatusService
     {
         public Task<AsStatusTableTask> GetStatusTableTask(string tableName);
+        public Task<AsStatusTableTask> GetStatusTableTaskNotResetMessage(string tableName);
     }
 }

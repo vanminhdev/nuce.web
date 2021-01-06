@@ -72,7 +72,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             if (DateTime.Now >= surveyRound.FromDate)
             {
-                throw new InvalidDataException("Đợt khảo sát đã bắt đầu không thể thêm bài khảo sát");
+                throw new InvalidInputDataException("Đợt khảo sát đã bắt đầu không thể thêm bài khảo sát");
             }
 
             var examQuestion = await _context.AsEduSurveyDeThi.FirstOrDefaultAsync(o => o.Id == theSurvey.DeThiId);
@@ -85,7 +85,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 .FirstOrDefaultAsync(o => o.DotKhaoSatId == theSurvey.DotKhaoSatId && (o.Status == (int)TheSurveyStatus.New || o.Status == (int)TheSurveyStatus.Published) && o.Type == theSurvey.Type );
             if (theActivedSurvey != null)
             {
-                throw new InvalidDataException($"Đợt khảo sát \"{surveyRound.Name}\" đang có bài khảo sát cùng loại còn hoạt động");
+                throw new InvalidInputDataException($"Đợt khảo sát \"{surveyRound.Name}\" đang có bài khảo sát cùng loại còn hoạt động");
             }
 
             _context.AsEduSurveyBaiKhaoSat.Add(new AsEduSurveyBaiKhaoSat
@@ -114,7 +114,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             if (theSurveyUpdate.Status != (int)TheSurveyStatus.New)
             {
-                throw new InvalidDataException("Bài khảo sát không phải mới tạo, không thể sửa");
+                throw new InvalidInputDataException("Bài khảo sát không phải mới tạo, không thể sửa");
             }
 
             //đổi đợt khảo sát
@@ -130,7 +130,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 .FirstOrDefaultAsync(o => o.DotKhaoSatId == theSurvey.DotKhaoSatId && (o.Status == (int)TheSurveyStatus.New || o.Status == (int)TheSurveyStatus.Published) && o.Type == theSurvey.Type);
                 if (theActivedSurvey != null)
                 {
-                    throw new InvalidDataException($"Đợt khảo sát \"{surveyRound.Name}\" đang có bài khảo sát cùng loại còn hoạt động");
+                    throw new InvalidInputDataException($"Đợt khảo sát \"{surveyRound.Name}\" đang có bài khảo sát cùng loại còn hoạt động");
                 }
 
                 theSurveyUpdate.DotKhaoSatId = theSurvey.DotKhaoSatId.Value;
@@ -165,7 +165,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             if(theSurvey.Status != (int)TheSurveyStatus.New)
             {
-                throw new InvalidDataException("Bài khảo sát không phải là mới tạo, không thể xoá");
+                throw new InvalidInputDataException("Bài khảo sát không phải là mới tạo, không thể xoá");
             }
 
             theSurvey.Status = (int)TheSurveyStatus.Deleted;

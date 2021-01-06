@@ -228,6 +228,8 @@ namespace nuce.web.api.Common
         public static readonly string AsEduSurveyBaiKhaoSatSinhVien = "AS_Edu_Survey_BaiKhaoSat_SinhVien";
         public static readonly string AsEduSurveyReportTotal = "AS_Edu_Survey_ReportTotal";
         public static readonly string AsEduSurveyUndergraduateReportTotal = "AS_Edu_Survey_Undergraduate_ReportTotal";
+        public static readonly string TempDataNormalSurvey = "TempDataNormalSurvey";
+        public static readonly string ExportReportTotalNormalSurvey = "ExportReportTotalNormalSurvey";
     }
 
     /// <summary>

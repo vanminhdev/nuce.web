@@ -153,7 +153,7 @@
 </div>
 
 <div class="modal fade bd-example-modal-lg auto-clear-form-on-open" id="modal-thong-ke" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-dialog modal-lg mt-0" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Thống kê tạm</h5>
@@ -166,12 +166,13 @@
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th class="text-center" style="border-bottom-width: 1px; width: 70%;">Tên khoa</th>
+                                <th class="text-center" style="border-bottom-width: 1px; width: 1px;">Mã khoa</th>
+                                <th class="text-center" style="border-bottom-width: 1px;">Tên khoa</th>
                                 <th class="text-center" style="border-bottom-width: 1px; width: 120px;">Số lượng</th>
-                                <th class="text-center" style="border-bottom-width: 1px;"></th>
+                                <th class="text-center" style="border-bottom-width: 1px; width: 1px">%</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="tbody-thong-ke-tam">
                             <tr>
                                 
                             </tr>
@@ -181,6 +182,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                <button id="btn-gui-mail-nhac" type="button" class="btn btn-info">Gửi mail nhắc nhở</button>
+                <button id="btn-thong-ke-lai" type="button" data-dismiss="modal" class="btn btn-primary">Thống kê lại</button>
             </div>
         </div>
     </div>
@@ -191,6 +194,54 @@
     <script src="~/content/js/jquery.dataTables.min.js"></script>
     <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/content/js/dataTables.config.js"></script>
+    <script>
+        let tempReportNomalStatus = @Html.Raw(ViewData["TempDataNormalSurvey"]);
+        let dangThongKe = false;
+        if (tempReportNomalStatus.status === @((int)TableTaskStatus.Done)) {
+            if (!tempReportNomalStatus.isSuccess) {
+                toastWarning('Có lỗi xảy ra khi thống kê tạm');
+            } else {
+                toastSuccess('Thống kê tạm thành công');
+            }
+        }
+        else if (tempReportNomalStatus.status === @((int)TableTaskStatus.Doing)) {
+            dangThongKe = true;
+        }
+
+        if (tempReportNomalStatus.status !== @((int)TableTaskStatus.Doing)) {
+            let message = JSON.parse(tempReportNomalStatus.message);
+            let str = "";
+            message.forEach(item => {
+                let percent = item.Num / item.Total * 100;
+                if (!isNaN(percent)) {
+                    if (percent < 30) {
+                        str += `<tr class="text-danger">`;
+                    } else if (percent < 50) {
+                        str += `<tr class="text-warning">`;
+                    } else {
+                        str += `<tr>`;
+                    }
+                }
+                else {
+                    str += `<tr class="text-danger">`;
+                }
+
+                str += `<td class="text-center">${item.FacultyCode}</td>`;
+                str += `<td>${item.FacultyName}</td>`;
+                str += `<td class="text-center">${item.Num}/${item.Total}</td>`;
+                
+                if (!isNaN(percent)) {
+                    str += `<td class="text-center">${Number(percent).toFixed(2)}</td>`;
+                }
+                else {
+                    str += `<td class="text-center">0</td>`;
+                }
+                str += `</tr>`;
+            });
+            $('#tbody-thong-ke-tam').html(str);
+        }
+        console.log('t.kê tạm ', tempReportNomalStatus);
+    </script>
     <script>
         var table = $('#id-datatable').DataTable({
             processing: true,
@@ -211,6 +262,12 @@
                 dataType: 'json',
                 contentType: 'application/json',
                 type: "POST",
+                complete: function () {
+                    if (dangThongKe) {
+                        $('button[title="Thống kê tạm"]').prop('disabled', true);
+                        $('button[title="Thống kê tạm"]').html('<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang t.kê');
+                    }
+                },
                 data: function (d) {
                     return JSON.stringify(d);
                 },
@@ -248,8 +305,10 @@
                             return '<span class="badge badge-pill badge-success">Mở</span>';
                         } else if (currentDate >= fromDate && currentDate < endDate && data.status == @((int)SurveyRoundStatus.Closed)) {
                             return '<span class="badge badge-pill badge-secondary">Đóng tạm</span>';
-                        } else if (currentDate > endDate) {
+                        } else if (currentDate > endDate && data.status != @((int)SurveyRoundStatus.End)) {
                             return '<span class="badge badge-pill badge-secondary">Đóng</span>';
+                        } else {
+                            return '<span class="badge badge-pill badge-secondary">Kết thúc</span>';
                         }
                     }
                 },
@@ -274,14 +333,15 @@
                         } else if (currentDate >= fromDate && currentDate < endDate && (data.status == @((int)SurveyRoundStatus.Opened) || data.status == @((int)SurveyRoundStatus.New))) {
                             html += `<button class="btn btn btn-outline-warning btn-sm ml-1 mr-1" onclick="closeClick('${data.id}')">Đóng tạm</button>`;
                             html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="addEndDateClick('${data.id}')">Gia hạn</button>`;
-
+                            html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê tạm" onclick="xemThongKeTam('${data.id}', this)">T.kê tạm</button>`;
                         } else if (currentDate >= fromDate && currentDate < endDate && data.status == @((int)SurveyRoundStatus.Closed)) {
                             html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="openClick('${data.id}')">Mở lại</button>`;
                             html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="addEndDateClick('${data.id}')">Gia hạn</button>`;
-                        } else if (currentDate > endDate) {
+                            html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê tạm" onclick="xemThongKeTam('${data.id}', this)">T.kê tạm</button>`;
+                        } else if (currentDate > endDate && data.status != @((int)SurveyRoundStatus.End)) {
                             html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="addEndDateClick('${data.id}')">Gia hạn</button>`;
+                            html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê tạm" onclick="xemThongKeTam('${data.id}', this)">T.kê tạm</button>`;
                         }
-                        html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê tạm" onclick="thongKeTamClick('${data.id}')">T.kê tạm</button>`;
                         return html;
                     }
                 }
@@ -508,9 +568,71 @@
                 }
             });
         }
+    </script>
+    <script>
+        function xemThongKeTam(id, context) {
+            let seft = $(context);
+            if (!seft.is(":disabled")) {
+                $('#modal-thong-ke').modal('show');
+            }
 
-        function thongKeTamClick(id) {
-            $('#modal-thong-ke').modal('show');
+            $('#btn-thong-ke-lai').off();
+            $('#btn-thong-ke-lai').click(() => {
+                $.ajax({
+                    dataType: 'json',
+                    method: 'Get',
+                    url: `/Survey/GetTempDataNormalSurvey?id=${id}`,
+                    timeout: 0,
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        seft.prop('disabled', true);
+                        seft.html('<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang t.kê');
+                        toastSuccess("Đang thống kê tạm");
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        }
+                        catch {
+                            console.log(res);
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    seft.prop('disabled', false);
+                    seft.html('T.kê tạm');
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+
+            $('#btn-gui-mail-nhac').off();
+            $('#btn-gui-mail-nhac').click(() => {
+                $.ajax({
+                    dataType: 'json',
+                    method: 'Get',
+                    url: `/Survey/SendUrgingEmail`,
+                    timeout: 0,
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        toastSuccess("Gửi mail thành công");
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        }
+                        catch {
+                            console.log(res);
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
         }
     </script>
 }

@@ -114,7 +114,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             {
                 await _asEduSurveyUndergraduateDotKhaoSatService.Create(surveyRound);
             }
-            catch (InvalidDataException e)
+            catch (InvalidInputDataException e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
@@ -139,7 +139,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             {
                 await _asEduSurveyUndergraduateDotKhaoSatService.Update(id.Value, surveyRound);
             }
-            catch (InvalidDataException e)
+            catch (InvalidInputDataException e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không cập nhật được đợt khảo sát", detailMessage = e.Message });
             }
@@ -168,7 +168,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             {
                 await _asEduSurveyUndergraduateDotKhaoSatService.Delete(id.Value);
             }
-            catch (InvalidDataException e)
+            catch (InvalidInputDataException e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
@@ -201,7 +201,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             {
                 return NotFound(new { message = "Không tìm thấy đợt khảo sát" });
             }
-            catch (InvalidDataException e)
+            catch (InvalidInputDataException e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }

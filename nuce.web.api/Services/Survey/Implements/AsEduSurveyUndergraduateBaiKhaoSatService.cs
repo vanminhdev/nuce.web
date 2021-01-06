@@ -85,7 +85,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             if (theSurveyUpdate.Status != (int)TheSurveyStatus.New)
             {
-                throw new InvalidDataException("Bài khảo sát không phải mới tạo, không thể sửa");
+                throw new InvalidInputDataException("Bài khảo sát không phải mới tạo, không thể sửa");
             }
 
             if(theSurveyUpdate.DeThiId != theSurvey.DeThiId)
@@ -115,7 +115,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             if (theSurvey.Status == (int)TheSurveyStatus.New)
             {
-                throw new InvalidDataException("Bài khảo sát còn hoạt động không thể xoá");
+                throw new InvalidInputDataException("Bài khảo sát còn hoạt động không thể xoá");
             }
 
             theSurvey.Status = (int)TheSurveyStatus.Deleted;

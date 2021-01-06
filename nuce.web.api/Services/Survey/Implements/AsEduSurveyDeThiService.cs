@@ -34,12 +34,12 @@ namespace nuce.web.api.Services.Survey.Implements
 
             if(question.ParentCode != null)
             {
-                throw new InvalidDataException("Câu hỏi là câu hỏi con của một câu hỏi khác, vui lòng thêm bằng cách thêm câu hỏi cha");
+                throw new InvalidInputDataException("Câu hỏi là câu hỏi con của một câu hỏi khác, vui lòng thêm bằng cách thêm câu hỏi cha");
             }
 
             if( _surveyContext.AsEduSurveyCauTrucDe.FirstOrDefault(o => o.DeThiId == examQuestionId && o.CauHoiId == question.Id) != null)
             {
-                throw new InvalidDataException("Câu hỏi đã tồn tại");
+                throw new InvalidInputDataException("Câu hỏi đã tồn tại");
             }
 
             _surveyContext.AsEduSurveyCauTrucDe.Add(new AsEduSurveyCauTrucDe {
