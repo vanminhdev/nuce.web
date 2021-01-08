@@ -1,35 +1,24 @@
-﻿<%@ Page Title="Dịch vụ sinh viên" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="MuonHocBaGoc.aspx.cs" Inherits="Nuce.CTSV.MuonHocBaGoc" %>
+﻿<%@ Page Title="Dịch vụ sinh viên" Language="C#" MasterPageFile="~/Site.Master" Async="true" AutoEventWireup="true" CodeBehind="MuonHocBaGoc.aspx.cs" Inherits="Nuce.CTSV.MuonHocBaGoc" %>
 
+<asp:Content ID="BannerContent" ContentPlaceHolderID="Banner" runat="server">
+    dịch vụ
+</asp:Content>
+
+<asp:Content ID="BreadCrumContent" ContentPlaceHolderID="BreadCrum" runat="server">
+    <div class="d-flex align-items-center">
+        <a href="/dichvusinhvien.aspx">dịch vụ</a>
+        <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
+    </div>
+    <div class="main-color text-decoration-none">mượn học bạ gốc</div>
+</asp:Content>
+<asp:Content ID="BreadCrumContentMobile" ContentPlaceHolderID="BreadCrumMobile" runat="server">
+    <div class="d-flex align-items-center">
+        <a href="/dichvusinhvien.aspx">dịch vụ</a>
+        <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
+    </div>
+    <div class="main-color text-decoration-none">mượn học bạ gốc</div>
+</asp:Content>
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-
-    <style>
-        ul.breadcrumb {
-            padding: 10px 16px;
-            list-style: none;
-            background-color: #fafafd;
-        }
-
-            ul.breadcrumb li {
-                display: inline;
-                font-size: 14px;
-            }
-
-                ul.breadcrumb li + li:before {
-                    padding: 8px;
-                    color: black;
-                    content: "/\00a0";
-                }
-
-                ul.breadcrumb li a {
-                    color: #0275d8;
-                    text-decoration: none;
-                }
-
-                    ul.breadcrumb li a:hover {
-                        color: #01447e;
-                        text-decoration: underline;
-                    }
-    </style>
 
     <div id="myModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -61,7 +50,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title" id="lblThongBaoXoa">Bạn có chắc chắn muốn thực hiện ?</h4>
+                    <h4 class="modal-title" id="lblThongBaoXoa">Bạn có chắc chắn muốn thực hiện?</h4>
                     <div id="edit_header_ThongBao1"></div>
                 </div>
                 <div class="modal-body" style="text-align: center;">
@@ -89,34 +78,38 @@
         </div>
     </div>
     <div class="container-fluid">
-        <div class="row row-no-gutters">
-            <div class="col-sm-8">
-                <ul class="breadcrumb">
-                    <li><a href="/dichvusinhvien">Dịch Vụ</a></li>
-                    <li>Mượn bằng gốc</li>
-                </ul>
-            </div>
-            <div class="col-sm-4" style="text-align: right;">
-                <button type="button" class="btn btn-primary" onclick="MuonHocBaGoc.ThemMoi();">Thêm mới</button>
-            </div>
-        </div>
-        <div class="card shadow mb-4 d-flex">
-            <div class="table-responsive">
-                <table class="table" style="margin-bottom: 0px;">
-                    <thead>
-                        <tr>
-                            <th style="text-align: center;">STT</th>
-                            <th style="text-align: center;">Ngày tạo</th>
-                            <th style="text-align: center;">Lý do</th>
-                            <th style="text-align: center;">Trạng thái</th>
-                        </tr>
-                    </thead>
-                    <tbody runat="server" id="tbContent">
-                    </tbody>
-                </table>
+        <div class="col-12">
+            <div class="row justify-content-end">
+                <div class="col-12 col-md-3">
+                    <button
+                        class="confirm-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2"
+                        type="button"
+                        onclick="MuonHocBaGoc.ThemMoi();"
+                        >
+                        Thêm mới
+                    </button>
+                </div>
             </div>
         </div>
-        <div class="row row-no-gutters">
+
+        <div class="col-12">
+            <div
+                class="text-uppercase font-15-sm fw-600 font-25 service-title"
+                >
+                đã gửi và xác nhận
+            </div>
+
+            <table class="table table-bordered custom-table">
+                <thead class="text-uppercase text-center text-light">
+                    <tr>
+                        <th scope="col">STT</th>
+                        <th scope="col">ngày tạo</th>
+                        <th scope="col">nội dung</th>
+                        <th scope="col">trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody runat="server" id="tbContent"></tbody>
+            </table>
         </div>
     </div>
     <script>
@@ -134,7 +127,6 @@
         var MuonHocBaGoc = {
             ID: -1,
             Status: 1,
-            Type: 5,
             Data: [],
             url: "/Handler/",
             initData: function () {
@@ -157,7 +149,7 @@
                 if (MuonHocBaGoc.ID > 0) {
                     try {
                         //Update
-                        $.getJSON(this.url + "CapNhatMaYeuCauDichVu.aspx?ID=" + MuonHocBaGoc.ID + "&&Ma=" + strMa + "&&Type=" + MuonHocBaGoc.Type, function (data) {
+                        $.getJSON(this.url + "CapNhatMaYeuCauDichVu.aspx?ID=" + MuonHocBaGoc.ID + "&&Ma=" + strMa + "&&Type=1", function (data) {
                             $("#edit_header_ThongBao").show();
                             if (data == 1) {
                                 $("#edit_header_ThongBao").html("Cập nhật thành công");
@@ -192,7 +184,7 @@
                 //Update
                 $("#edit_header_ThongBao1").show();
                 try {
-                    $.getJSON(this.url + "HuyDichVu.aspx?ID=" + MuonHocBaGoc.ID + "&&Type=" + MuonHocBaGoc.Type, function (data) {
+                    $.getJSON(this.url + "HuyDichVu.aspx?ID=" + MuonHocBaGoc.ID + "&&Type=1", function (data) {
                         if (data == 1) {
 
                             $("#edit_header_ThongBao1").html("Thực hiện thành công");
@@ -227,7 +219,7 @@
                 //Update
                 $("#edit_header_ThongBao2").show();
                 try {
-                    $.getJSON(this.url + "HoanThanhDichVu.aspx?ID=" + MuonHocBaGoc.ID + "&&Type=" + MuonHocBaGoc.Type, function (data) {
+                    $.getJSON(this.url + "HoanThanhDichVu.aspx?ID=" + MuonHocBaGoc.ID + "&&Type=1", function (data) {
                         if (data == 1) {
 
                             $("#edit_header_ThongBao2").html("Thực hiện thành công");

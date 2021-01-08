@@ -1,79 +1,63 @@
-﻿<%@ Page Title="Dịch vụ sinh viên" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="MuonHocBaGoc_YeuCauMoi.aspx.cs" Inherits="Nuce.CTSV.MuonHocBaGoc_YeuCauMoi" %>
+﻿<%@ Page Title="Dịch vụ sinh viên" Language="C#" MasterPageFile="~/Site.Master" Async="true" AutoEventWireup="true" CodeBehind="MuonHocBaGoc_YeuCauMoi.aspx.cs" Inherits="Nuce.CTSV.MuonHocBaGoc_YeuCauMoi" %>
 
+<asp:Content ID="BannerContent" ContentPlaceHolderID="Banner" runat="server">
+    dịch vụ
+</asp:Content>
+
+<asp:Content ID="BreadCrumContent" ContentPlaceHolderID="BreadCrum" runat="server">
+    <div class="d-flex align-items-center">
+        <a href="/dichvusinhvien.aspx">dịch vụ</a>
+        <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
+    </div>
+    <div class="d-flex align-items-center">
+        <a href="/dichvu/MuonHocBaGoc.aspx">mượn học bạ gốc</a>
+        <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
+    </div>
+    <div class="main-color text-decoration-none">yêu cầu mới</div>
+</asp:Content>
+<asp:Content ID="BreadCrumContentMobile" ContentPlaceHolderID="BreadCrumMobile" runat="server">
+    <div class="d-flex align-items-center">
+        <a href="/dichvusinhvien.aspx">dịch vụ</a>
+        <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
+    </div>
+    <div class="d-flex align-items-center">
+        <a href="/dichvu/MuonHocBaGoc.aspx">mượn học bạ gốc</a>
+        <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
+    </div>
+    <div class="main-color text-decoration-none">yêu cầu mới</div>
+</asp:Content>
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-    <link id="bsdp-css" href="/bootstrap-datepicker/css/bootstrap-datepicker3.min.css" rel="stylesheet">
-    <script src="/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
-    <script src="/bootstrap-datepicker/locales/bootstrap-datepicker.uk.min.js" charset="UTF-8"></script>
-    <script src="/bootstrap-datepicker/locales/bootstrap-datepicker.vi.min.js" charset="UTF-8"></script>
     <script src='https://www.google.com/recaptcha/api.js'></script>
-    <style>
-        ul.breadcrumb {
-            padding: 10px 16px;
-            list-style: none;
-            background-color: #fafafd;
-        }
-
-            ul.breadcrumb li {
-                display: inline;
-                font-size: 14px;
-            }
-
-                ul.breadcrumb li + li:before {
-                    padding: 8px;
-                    color: black;
-                    content: "/\00a0";
-                }
-
-                ul.breadcrumb li a {
-                    color: #0275d8;
-                    text-decoration: none;
-                }
-
-                    ul.breadcrumb li a:hover {
-                        color: #01447e;
-                        text-decoration: underline;
-                    }
-    </style>
-    <div class="container-fluid">
-        <div class="row row-no-gutters">
-            <div class="col-sm-12">
-                <ul class="breadcrumb">
-                    <li><a href="/dichvusinhvien">Dịch Vụ</a></li>
-                    <li><a href="/dichvu/MuonHocBaGoc">Mượn bằng gốc</a></li>
-                    <li>Yêu cầu mới</li>
-                </ul>
+    <div class="col-sm-12 my-4">
+        <div style="text-align: center; font-weight: bold; color: red;" runat="server" id="divThongBao"></div>
+    </div>
+    <div class="col-12">
+        <div class="row justify-content-end">
+        <div class="col-12">
+            <div class="main-color text-uppercase font-15-sm fw-600 font-25 service-title">
+                giấy xác nhận
             </div>
+            <div class="form-group">
+                <div class="form-group">
+                    <label class="font-14-sm fw-600 font-18" for="txtLyDoMuonHocBaGoc">Mục đích:</label>
+                    <asp:TextBox ID="txtLyDoMuonHocBaGoc" runat="server" class="form-control"></asp:TextBox>
+                </div>
+                <div class="form-group">
+                    <label class="font-14-sm fw-600 font-18" for="txtThoiGianMuon">Thời gian mượn:</label>
+                    <asp:TextBox ID="txtThoiGianMuon" runat="server" class="form-control"></asp:TextBox>
+                </div>
+            </div>
+            <div class='g-recaptcha' data-sitekey='6Lf3Lc8ZAAAAANyHCgqSpM_NDwBTJQZIsEnUQJ1s'></div>
+            <%--<div class="form-group">
+                <button type="button" id="btnModalUpdate" class="btn btn-primary mt-2" data-toggle="modal" data-target="#myModalUpdate">Gửi yêu cầu</button>
+            </div>--%>
         </div>
-        <div class="card shadow mb-4">
-            <div style="width: 50%;">
-                <div class="col-sm-12">
-                    <div style="padding-top: 5px; text-align: center; font-weight: bold; color: red;" runat="server" id="divThongBao">
-                    </div>
-                </div>
-                <div class="col-sm-12">
-                    <div class="form-group">
-                        <label for="Email">Lý do:</label>
-                        <asp:TextBox ID="txtLyDoXacNhan" runat="server" class="form-control" TextMode="MultiLine" placeholder="Lý do"></asp:TextBox>
-                    </div>
-                    <div class="form-group">
-                        <label for="NgayTra">Ngày trả (dd/mm/yyyy):</label>
-                        <asp:TextBox ID="txtNgayTra" runat="server" class="form-control" placeholder="dd/mm/yyyy"></asp:TextBox>
-                    </div>
-                    <%--   <div class="form-group">
-                        <label for="Image2">Captcha:</label>
-                        <asp:Image ID="Image2" runat="server" Height="55px" ImageUrl="/Extent/Captcha.aspx" Width="186px" />
-                    </div>
-                    <div class="form-group">
-                        <label for="captcha">Nhập mã captcha:</label>
-                        <asp:TextBox ID="txtCaptcha" runat="server" class="form-control" TextMode="SingleLine"></asp:TextBox>
-                    </div>--%>
-                    <div class='g-recaptcha' data-sitekey='6Lf3Lc8ZAAAAANyHCgqSpM_NDwBTJQZIsEnUQJ1s'></div>
-                    <div class="form-group">
-                        <button type="button" id="btnModalUpdate" class="btn btn-primary mt-2" data-toggle="modal" data-target="#myModalUpdate">Gửi yêu cầu</button>
-                        <%-- <asp:Button class="btn btn-primary" ID="btnCapNhat" runat="server" Text="Gửi yêu cầu" OnClick="btnCapNhat_Click" />--%>
-                    </div>
-                </div>
-            </div>
+
+        <div class="col-12 col-md-3 mt-4" runat="server" id="divBtnContainer">
+            <button type="button" id="btnModalUpdate" 
+                    class="confirm-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2"
+                    data-toggle="modal" data-target="#myModalUpdate">Gửi yêu cầu</button>
+        </div>
         </div>
     </div>
     <div style="display: none;">
@@ -89,7 +73,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Bạn có chắc chắn muốn gửi yêu cầu tới Nhà trường ?</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Bạn có chắc chắn muốn gửi yêu cầu tới Nhà trường?</h5>
                     <button
                         class="close"
                         type="button"
@@ -107,14 +91,13 @@
                         type="button"
                         data-dismiss="modal">
                         Thoát
-           
                     </button>
-                    <button type="button" class="btn btn-primary" id="btnCapNhat1" onclick="muonhocbagoc_yeucaumoi.update();">Xác nhận</button>
+                    <button type="button" class="btn btn-primary" id="btnCapNhat1" onclick="MuonHocBaGoc_yeucaumoi.update();">Xác nhận</button>
                 </div>
             </div>
         </div>
     </div>
-     <div
+    <div
         class="modal fade"
         id="myModalThongBao"
         tabindex="-1"
@@ -144,7 +127,7 @@
                         Thoát
            
                     </button>
-                    <button type="button" class="btn btn-primary" id="btnVeDanhSach" onclick="muonhocbagoc_yeucaumoi.vedanhsach();">Quay lại danh sách</button>
+                    <button type="button" class="btn btn-primary" id="btnVeDanhSach" onclick="MuonHocBaGoc_yeucaumoi.vedanhsach();">Quay lại danh sách</button>
                 </div>
             </div>
         </div>
@@ -161,26 +144,30 @@
                 return ret.join("&").replace(/%20/g, "+");
             }
         })(jQuery);
-        var muonhocbagoc_yeucaumoi = {
+        var MuonHocBaGoc_yeucaumoi = {
             update: function () {
                 document.getElementById("<%=btnCapNhat.ClientID %>").click();
+                //alert($("#" + "<%=txtLyDoMuonHocBaGoc.ClientID %>").val());
             },
             vedanhsach: function () {
                 window.location.href = "/dichvu/MuonHocBaGoc";
+            },
+            setValueLyDo: function (obj)
+            {
+                //alert(obj.value);
+                if (obj.value == "-1") {
+                    $("#" + "<%=txtLyDoMuonHocBaGoc.ClientID %>").val("");
+                    $("#frmMuonHocBaGoc").show();
+                }
+                else {
+                    $("#frmMuonHocBaGoc").hide();
+                    $("#" + "<%=txtLyDoMuonHocBaGoc.ClientID %>").val(obj.value);
+                }
             }
         };
-
         $(document).ready(function () {
-            var date_input = $('#'+"<%=txtNgayTra.ClientID %>"); //our date input has the name "date"
-            //var container = $('.bootstrap-iso form').length > 0 ? $('.bootstrap-iso form').parent() : "body";
-            var options = {
-                format: 'dd/mm/yyyy',
-            //    container: container,
-                todayHighlight: true,
-                autoclose: true,
-            };
-            date_input.datepicker(options);
-        })
+            
+        });
     </script>
-       <span runat="server" id="spScript"></span>
+    <span runat="server" id="spScript"></span>
 </asp:Content>

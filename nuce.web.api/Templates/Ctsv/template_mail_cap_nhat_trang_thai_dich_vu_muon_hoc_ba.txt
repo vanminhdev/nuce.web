@@ -1,0 +1,13 @@
+<div style='color:black;'>
+    <div style='padding:5px;'>Xin chào: [ten_sinh_vien]</div>
+    <div style='padding:5px;'>Hệ thống Quản lý thông tin sinh viên xin thống báo về việc [trang_thai_yeu_cau] [ten_dich_vu], bạn đã tạo lúc [ngay_tao_gio_tao].</div>
+    [HEN_GAP]
+    <div style='padding:5px;'><b>Sinh viên khi đi cần mang theo sổ hộ khẩu (bản gốc).</b></div>
+    <div style='padding:5px;'>Trân trọng</div>
+    <div style='padding:5px;'>----------------------</div>
+    <div style='padding:5px;'>Phòng Công tác Chính trị và Quản lý Sinh viên Trường Đại học Xây dựng</div>
+    <div style='padding:5px;'>Phòng 302 - 303 Tòa nhà A1 Trường đại học Xây Dựng, 55 Giải Phóng - Hai Bà Trưng - Hà Nội</div>
+    <div style='padding:5px;'></div>
+    <div style='padding:5px;'>TEL: 02438697004</div>
+    <div style='padding:5px;'>Email: ctsv@nuce.edu.vn</div>
+</div>

@@ -51,6 +51,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
         private readonly IStudentRepository _studentRepository;
         private readonly IVeXeBusRepository _veXeBusRepository;
         private readonly ICapLaiTheRepository _capLaiTheRepository;
+        private readonly IMuonHocBaRepository _muonHocBaRepository;
 
         private readonly IThamSoDichVuService _thamSoDichVuService;
         private readonly IUserService _userService;
@@ -67,7 +68,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             ILoaiDichVuRepository _loaiDichVuRepository, IStudentRepository _studentRepository,
             IThamSoDichVuService _thamSoDichVuService, IPathProvider _pathProvider,
             ILogger<DichVuService> _logger, IVeXeBusRepository _veXeBusRepository,
-            ICapLaiTheRepository _capLaiTheRepository
+            ICapLaiTheRepository _capLaiTheRepository, IMuonHocBaRepository _muonHocBaRepository
         )
         {
             this._xacNhanRepository = _xacNhanRepository;
@@ -79,6 +80,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             this._veXeBusRepository = _veXeBusRepository;
             this._loaiDichVuRepository = _loaiDichVuRepository;
             this._studentRepository = _studentRepository;
+            this._muonHocBaRepository = _muonHocBaRepository;
 
             this._pathProvider = _pathProvider;
             this._thamSoDichVuService = _thamSoDichVuService;
@@ -196,6 +198,39 @@ namespace nuce.web.api.Services.Ctsv.Implements
                             };
                             await _capLaiTheRepository.AddAsync(capLaiThe);
                             templateName = "template_mail_tao_yeu_cau_dich_vu_cap_lai_the.txt";
+                            break;
+                        case DichVu.MuonHocBaGoc:
+                            if (_muonHocBaRepository.IsDuplicated(currentStudent.Id))
+                            {
+                                throw new DuplicateWaitObjectException();
+                            }
+                            AsAcademyStudentSvMuonHocBaGoc muonHocBa = new AsAcademyStudentSvMuonHocBaGoc
+                            {
+                                PhanHoi = model.PhanHoi,
+                                CreatedTime = now,
+                                DeletedTime = now,
+                                LastModifiedTime = now,
+                                Status = requestStatus,
+                                MaXacNhan = model.MaXacNhan,
+                                StudentId = studentID,
+                                StudentCode = currentStudent.Code,
+                                StudentName = currentStudent.FulName,
+                                Deleted = false,
+                                CreatedBy = studentID,
+                                LastModifiedBy = studentID,
+                                DeletedBy = -1,
+                                LyDo = model.LyDo,
+                                ThoiGianMuon = model.ThoiGianMuon
+                            };
+                            await _muonHocBaRepository.AddAsync(muonHocBa);
+                            await _unitOfWork.SaveAsync();
+                            await UpdateRequestStatus(new UpdateRequestStatusModel
+                            {
+                                AutoUpdateNgayHen = true,
+                                Status = 4,
+                                Type = (int)DichVu.MuonHocBaGoc,
+                                RequestID = (int)muonHocBa.Id
+                            });
                             break;
                         case DichVu.UuDaiGiaoDuc:
                             if (_uuDaiRepository.IsDuplicated(currentStudent.Id))
@@ -315,22 +350,25 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     }
                     if (run)
                     {
-                        var dichVu = Common.Ctsv.DichVuDictionary[model.Type];
-                        TinNhanModel tinNhan = new TinNhanModel
+                        if (!model.NotSendEmail)
                         {
-                            StudentCode = currentStudent.Code,
-                            StudentEmail = currentStudent.EmailNhaTruong,
-                            StudentName = currentStudent.FulName,
-                            StudentID = studentID,
-                            TinNhanCode = $"{dichVu.TinNhanCode}_THEM_MOI",
-                            TinNhanTitle = dichVu.TieuDeTinNhan,
-                            TenDichVu = dichVu.TenDichVu,
-                            TemplateName = templateName,
-                        };
-                        var result = await _emailService.SendEmailNewServiceRequest(tinNhan);
-                        if (result != null)
-                        {
-                            throw new Exception(result.Message);
+                            var dichVu = Common.Ctsv.DichVuDictionary[model.Type];
+                            TinNhanModel tinNhan = new TinNhanModel
+                            {
+                                StudentCode = currentStudent.Code,
+                                StudentEmail = currentStudent.EmailNhaTruong,
+                                StudentName = currentStudent.FulName,
+                                StudentID = studentID,
+                                TinNhanCode = $"{dichVu.TinNhanCode}_THEM_MOI",
+                                TinNhanTitle = dichVu.TieuDeTinNhan,
+                                TenDichVu = dichVu.TenDichVu,
+                                TemplateName = templateName,
+                            };
+                            var result = await _emailService.SendEmailNewServiceRequest(tinNhan);
+                            if (result != null)
+                            {
+                                throw new Exception(result.Message);
+                            }
                         }
                         await _unitOfWork.SaveAsync();
                     }
@@ -371,6 +409,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     return _gioiThieuRepository.GetAll(studentId);
                 case DichVu.CapLaiThe:
                     return _capLaiTheRepository.GetAll(studentId);
+                case DichVu.MuonHocBaGoc:
+                    return _muonHocBaRepository.GetAll(studentId);
                 case DichVu.UuDaiGiaoDuc:
                     return _uuDaiRepository.GetAll(studentId);
                 case DichVu.VayVonNganHang:
@@ -436,6 +476,22 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     var capLaiTheList = capLaiTheAll.FinalData;
 
                     foreach (var yeuCau in capLaiTheList)
+                    {
+                        var student = studentList.FirstOrDefault(s => s.Code == yeuCau.StudentCode);
+                        var item = new QuanLyDichVuDetailResponse()
+                        {
+                            Student = student,
+                            DichVu = yeuCau
+                        };
+                        result.Add(item);
+                    }
+                    break;
+                case DichVu.MuonHocBaGoc:
+                    var muonHobaAll = await _muonHocBaRepository.GetAllForAdmin(model);
+
+                    var muonHocBaList = muonHobaAll.FinalData;
+
+                    foreach (var yeuCau in muonHocBaList)
                     {
                         var student = studentList.FirstOrDefault(s => s.Code == yeuCau.StudentCode);
                         var item = new QuanLyDichVuDetailResponse()
@@ -539,6 +595,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 { (int)DichVu.GioiThieu, _gioiThieuRepository.GetRequestInfo() },
                 { (int)DichVu.ThueNha, _thueNhaRepository.GetRequestInfo() },
                 { (int)DichVu.CapLaiThe, _capLaiTheRepository.GetRequestInfo() },
+                { (int)DichVu.MuonHocBaGoc, _muonHocBaRepository.GetRequestInfo() },
                 { (int)DichVu.UuDaiGiaoDuc, _uuDaiRepository.GetRequestInfo() },
                 { (int)DichVu.VayVonNganHang, _vayVonRepository.GetRequestInfo() },
                 { (int)DichVu.VeBus, _veXeBusRepository.GetRequestInfo() }                
@@ -759,6 +816,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
             AsAcademyStudent student = null;
             DateTime? ngayTao = DateTime.Now;
+            string templateMail = null;
             #region dich vu
             switch (loaiDichVu)
             {
@@ -791,6 +849,18 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ngayTao = capLaiThe.CreatedTime;
 
                     student = _studentRepository.FindByCode(capLaiThe.StudentCode);
+                    break;
+                case DichVu.MuonHocBaGoc:
+                    var muonHocBa = await _muonHocBaRepository.FindByIdAsync(model.RequestID);
+                    muonHocBa.Status = model.Status;
+                    muonHocBa.NgayHenTuNgay = model.NgayHenBatDau;
+                    muonHocBa.NgayHenDenNgay = model.NgayHenKetThuc;
+                    muonHocBa.PhanHoi = model.PhanHoi;
+                    ngayTao = muonHocBa.CreatedTime;
+
+                    student = _studentRepository.FindByCode(muonHocBa.StudentCode);
+
+                    templateMail = "template_mail_cap_nhat_trang_thai_dich_vu_muon_hoc_ba.txt";
                     break;
                 case DichVu.ThueNha:
                     var thueNha = await _thueNhaRepository.FindByIdAsync(model.RequestID);
@@ -855,6 +925,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     YeuCauStatus = model.Status,
                     NgayHen = model.NgayHenBatDau,
                     NgayTao = ngayTao,
+                    TemplateName = templateMail,
                 };
                 var sendEmailRs = await _emailService.SendEmailUpdateStatusRequest(tinNhan);
                 if (sendEmailRs != null)
@@ -940,6 +1011,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     return await ExportExcelGioiThieu(dichVuList);
                 case DichVu.UuDaiGiaoDuc:
                     return await ExportExcelUuDai(dichVuList);
+                case DichVu.MuonHocBaGoc:
+                    return await ExportExcelMuonHocBaGoc(dichVuList);
                 case DichVu.VayVonNganHang:
                     return await ExportExcelVayVon(dichVuList);
                 case DichVu.ThueNha:
@@ -1678,6 +1751,102 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 return await FileToByteAsync(file);
             }
         }
+
+        private async Task<byte[]> ExportExcelMuonHocBaGoc(List<DichVuExport> dichVuList)
+        {
+            List<long> ids = new List<long>();
+            foreach (var item in dichVuList)
+            {
+                ids.Add(item.ID);
+            }
+            var yeuCauList = (await _muonHocBaRepository.GetYeuCauDichVuStudent(ids)).ToList();
+
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                var style = XLWorkbook.DefaultStyle;
+                var ws = wb.Worksheets.Add("Sheet1");
+                ws.Style.Font.SetFontSize(12);
+                ws.Style.Font.SetFontName("Times New Roman");
+
+                int i = 0;
+                int firstRow = 1;
+                #region title
+                setStyle(ws, firstRow, ++i, "Mã số SV");
+                setStyle(ws, firstRow, ++i, "Họ và tên");
+                setStyle(ws, firstRow, ++i, "Ngày sinh");
+                setStyle(ws, firstRow, ++i, "Email");
+                setStyle(ws, firstRow, ++i, "Xã");
+                setStyle(ws, firstRow, ++i, "Huyện");
+                setStyle(ws, firstRow, ++i, "Tỉnh");
+                setStyle(ws, firstRow, ++i, "Lớp");
+                setStyle(ws, firstRow, ++i, "Khoa quản lý");
+                setStyle(ws, firstRow, ++i, "Số điện thoại");
+
+                setStyle(ws, firstRow, ++i, "Thời gian mượn");
+                setStyle(ws, firstRow, ++i, "Mục đích");
+
+                setStyle(ws, firstRow, ++i, "Ngày ký");
+                setStyle(ws, firstRow, ++i, "Tháng ký");
+                setStyle(ws, firstRow, ++i, "Năm ký");
+
+                ws.Row(firstRow).Height = 32;
+
+                int colNum = i;
+
+                #endregion
+                #region value
+                int recordLen = yeuCauList.Count;
+                int col = 0;
+                for (int j = 0; j < recordLen; j++)
+                {
+                    var yeuCau = yeuCauList[j];
+                    DateTime ngaySinh = convertStudentDateOfBirth(yeuCau.Student.DateOfBirth);
+                    string studentCode = yeuCau.YeuCauDichVu.StudentCode ?? "";
+                    string studentName = yeuCau.YeuCauDichVu.StudentName ?? "";
+                    string email = yeuCau.Student.EmailNhaTruong ?? "";
+                    string phuong = yeuCau.Student.HkttPhuong ?? "";
+                    string quan = yeuCau.Student.HkttQuan ?? "";
+                    string tinh = yeuCau.Student.HkttTinh ?? "";
+                    string classCode = yeuCau.Student.ClassCode ?? "";
+                    string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
+                    string tenKhoa = yeuCau.Faculty?.Name ?? "";
+                    string mobile = yeuCau.Student.Mobile ?? "";
+
+                    string thoiGianMuon = yeuCau.YeuCauDichVu.ThoiGianMuon ?? "";
+                    string mucDich = yeuCau.YeuCauDichVu.LyDo ?? "";
+
+                    DateTime now = DateTime.Now;
+                    int row = j + 2;
+
+                    col = 0;
+                    ws.Cell(row, ++col).SetValue(studentCode);
+                    ws.Cell(row, ++col).SetValue(studentName);
+                    ws.Cell(row, ++col).SetValue(ngaySinh.ToString("dd/MM/yyyy"));
+                    ws.Cell(row, ++col).SetValue(email);
+                    ws.Cell(row, ++col).SetValue(phuong);
+                    ws.Cell(row, ++col).SetValue(quan);
+                    ws.Cell(row, ++col).SetValue(tinh);
+                    ws.Cell(row, ++col).SetValue(classCode);
+                    ws.Cell(row, ++col).SetValue(tenKhoa);
+                    ws.Cell(row, ++col).SetValue(mobile);
+
+                    ws.Cell(row, ++col).SetValue(thoiGianMuon);
+                    ws.Cell(row, ++col).SetValue(mucDich);
+
+                    ws.Cell(row, ++col).SetValue(now.Day);
+                    ws.Cell(row, ++col).SetValue(now.Month);
+                    ws.Cell(row, ++col).SetValue(now.Year);
+                }
+                for (int j = 0; j < col; j++)
+                {
+                    ws.Column(j + 1).AdjustToContents();
+                }
+                #endregion
+                string file = _pathProvider.MapPath($"Templates/Ctsv/muon_hoc_ba_goc_{Guid.NewGuid().ToString()}.xlsx");
+                wb.SaveAs(file);
+                return await FileToByteAsync(file);
+            }
+        }
         #endregion
 
         #region Export Word (docx & zip)
@@ -1740,6 +1909,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     return await ExportWordGioiThieu(id);
                 case DichVu.CapLaiThe:
                     return await ExportWordCapLaiThe(id);
+                case DichVu.MuonHocBaGoc:
+                    return await ExportWordMuonHocBaGoc(id);
                 case DichVu.UuDaiGiaoDuc:
                     return await ExportWordUuDai(id);
                 case DichVu.VayVonNganHang:
@@ -3665,6 +3836,61 @@ namespace nuce.web.api.Services.Ctsv.Implements
             }
             return new ExportFileOutputModel { document = null, filePath = destination };
         }
+
+        private async Task<ExportFileOutputModel> ExportWordMuonHocBaGoc(int id)
+        {
+            var muonHocBa = await _muonHocBaRepository.FindByIdAsync(id);
+            if (muonHocBa == null)
+            {
+                throw new Exception("Yêu cầu không tồn tại");
+            }
+            var studentInfo = await _studentRepository.GetStudentDichVuInfoAsync(muonHocBa.StudentCode);
+            if (studentInfo == null)
+            {
+                throw new Exception("Sinh viên không tồn tại");
+            }
+
+
+            string filePath = _pathProvider.MapPath($"Templates/Ctsv/muon_hoc_ba_goc.docx");
+            string destination = _pathProvider.MapPath($"Templates/Ctsv/muon_hoc_ba_goc-{DateTime.Now.ToFileTime()}.docx");
+
+            var now = DateTime.Now;
+
+            string tenKhoa = onlyTenKhoa(studentInfo.Faculty?.Name);
+
+            var ngayKy = now.ToString("dd");
+            var thangKy = now.Month.ToString();
+            var namKy = now.Year.ToString();
+
+            byte[] templateBytes = await File.ReadAllBytesAsync(filePath);
+            using (MemoryStream templateStream = new MemoryStream())
+            {
+                templateStream.Write(templateBytes, 0, templateBytes.Length);
+                using (WordprocessingDocument doc = WordprocessingDocument.Open(templateStream, true))
+                {
+                    doc.ChangeDocumentType(WordprocessingDocumentType.Document);
+                    var mainPart = doc.MainDocumentPart;
+                    #region handle text
+                    var textList = mainPart.Document.Descendants<Text>().ToList();
+                    foreach (var text in textList)
+                    {
+                        replaceTextTemplate(text, "<ho_ten>", studentInfo.Student.FulName);
+                        replaceTextTemplate(text, "<mssv>", studentInfo.Student.Code);
+                        replaceTextTemplate(text, "<ten_lop>", studentInfo.Student.ClassCode);
+                        replaceTextTemplate(text, "<ten_khoa>", tenKhoa);
+                        replaceTextTemplate(text, "<thoi_gian_muon>", muonHocBa.ThoiGianMuon);
+                        replaceTextTemplate(text, "<muc_dich>", muonHocBa.LyDo);
+                        replaceTextTemplate(text, "<ngay_ky>", ngayKy);
+                        replaceTextTemplate(text, "<thang_ky>", thangKy);
+                        replaceTextTemplate(text, "<nam_ky>", namKy);
+                    }
+                    #endregion
+                    mainPart.Document.Save();
+                }
+                await File.WriteAllBytesAsync(destination, templateStream.ToArray());
+            }
+            return new ExportFileOutputModel { document = null, filePath = destination };
+        }
         #endregion
 
         #region Helper
@@ -3796,6 +4022,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
         private void replaceTextTemplate(Text model, string oldValue, string newValue)
         {
+            if (oldValue == null)
+            {
+                oldValue = "";
+            }
+            if (newValue == null)
+            {
+                newValue = "";
+            }
             if (!model.Text.Contains(oldValue)) return;
             if (!newValue.Contains('\r'))
             {
