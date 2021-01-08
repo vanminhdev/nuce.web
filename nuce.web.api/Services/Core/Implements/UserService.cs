@@ -59,6 +59,9 @@ namespace nuce.web.api.Services.Core.Implements
 
             if (model.IsStudent)
             {
+                // Role: SV
+                // MÃ: SV
+                // Tên: SV
                 authClaims.Add(new Claim(ClaimTypes.Role, RoleNames.Student));
                 authClaims.Add(new Claim(UserParameters.MSSV, username));
                 authClaims.Add(new Claim(ClaimTypes.GivenName,  _studentRepository.FindByCode(username)?.FulName));

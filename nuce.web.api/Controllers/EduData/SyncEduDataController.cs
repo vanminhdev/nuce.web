@@ -23,7 +23,7 @@ namespace nuce.web.api.Controllers.EduData
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [AppAuthorize(RoleNames.Admin)]
+    [AppAuthorize(RoleNames.Admin, RoleNames.KhaoThi_Survey_Normal)]
     public class SyncEduDataController : ControllerBase
     {
         private readonly ILogger<SyncEduDataController> _logger;

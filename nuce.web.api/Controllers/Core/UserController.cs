@@ -125,10 +125,11 @@ namespace nuce.web.api.Controllers.Core
                 var isSuccess = await _userService.UserLogin(model);
                 if (isSuccess)
                 {
+
                     var user = await _userService.FindByName(model.Username);
                     var authClaims = await _userService.AddClaimsAsync(model, user);
 
-                    if (model.IsStudent == true)
+                    if (model.IsStudent)
                     {
                         //nếu là sinh viên sắp tôt nghiệp thêm role là sắp tốt nghiệp
                         var undergraduateStudent = await _asEduSurveyUndergraduateStudentService.GetByStudentCode(model.Username);
