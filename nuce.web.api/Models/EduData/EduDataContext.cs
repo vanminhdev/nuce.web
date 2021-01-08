@@ -52,6 +52,9 @@ namespace nuce.web.api.Models.EduData
             {
                 entity.ToTable("AS_Academy_C_ClassRoom");
 
+                entity.HasIndex(e => e.Code)
+                    .HasName("IX_C_Classroom_Code");
+
                 entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.ClassCode)
@@ -106,6 +109,9 @@ namespace nuce.web.api.Models.EduData
             {
                 entity.ToTable("AS_Academy_C_Student_ClassRoom");
 
+                entity.HasIndex(e => e.StudentCode)
+                    .HasName("IX_C_Student_ClassRoom_StudentCode");
+
                 entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.ClassRoomCode)
@@ -155,6 +161,9 @@ namespace nuce.web.api.Models.EduData
             modelBuilder.Entity<AsAcademyClassRoom>(entity =>
             {
                 entity.ToTable("AS_Academy_ClassRoom");
+
+                entity.HasIndex(e => e.Code)
+                    .HasName("IX_Classroom_Code");
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
@@ -220,6 +229,8 @@ namespace nuce.web.api.Models.EduData
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
+                entity.Property(e => e.Email).HasMaxLength(100);
+
                 entity.Property(e => e.Name).HasMaxLength(100);
 
                 entity.Property(e => e.SemesterId).HasColumnName("SemesterID");
@@ -228,6 +239,9 @@ namespace nuce.web.api.Models.EduData
             modelBuilder.Entity<AsAcademyLecturer>(entity =>
             {
                 entity.ToTable("AS_Academy_Lecturer");
+
+                entity.HasIndex(e => e.Code)
+                    .HasName("IX_Lecturer_Code");
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
@@ -287,6 +301,9 @@ namespace nuce.web.api.Models.EduData
             {
                 entity.ToTable("AS_Academy_Student");
 
+                entity.HasIndex(e => e.Code)
+                    .HasName("IX_Student_Code");
+
                 entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.BirthPlace).HasMaxLength(500);
@@ -324,6 +341,9 @@ namespace nuce.web.api.Models.EduData
             modelBuilder.Entity<AsAcademyStudentClassRoom>(entity =>
             {
                 entity.ToTable("AS_Academy_Student_ClassRoom");
+
+                entity.HasIndex(e => e.StudentCode)
+                    .HasName("IX_Student_ClassRoom_StudentCode");
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 

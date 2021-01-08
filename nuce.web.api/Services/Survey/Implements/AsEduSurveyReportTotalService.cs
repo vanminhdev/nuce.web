@@ -110,7 +110,7 @@ namespace nuce.web.api.Services.Survey.Implements
                         email = "vanminh.dev@gmail.com",
                         data = new DataUrgingEmail
                         {
-                            percent = "abc"
+                            percent = $"{khoa.Num}/{khoa.Total}"
                         }
                     });
                 }
