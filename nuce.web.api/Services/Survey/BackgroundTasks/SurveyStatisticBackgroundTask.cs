@@ -13,8 +13,10 @@ using nuce.web.api.Services.Status.Interfaces;
 using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Survey.Normal.Statistic;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -121,6 +123,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
         }
 
         #region thống kê sinh viên thường
+        #region thống kê dữ liệu thô
         private void ReportTotalNormalSurveyBG(Guid surveyRoundId)
         {
             var scope = _scopeFactory.CreateScope();
@@ -277,8 +280,9 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 ReportTotalNormalSurveyBG(surveyRoundId);
             });
         }
+        #endregion
 
-
+        #region thống kê tạm
         private void TempDataNormalSurveyBG(Guid surveyRoundId)
         {
             var scope = _scopeFactory.CreateScope();
@@ -307,16 +311,16 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                     throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
                 }
 
-                //do chỉ có một bài ks nên lấy id của bài ks đó
                 var idbaikscuadotnay = surveyContext.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == surveyRound.Id).Select(o => o.Id).ToList();
                 if (idbaikscuadotnay.Count == 0)
                 {
                     throw new RecordNotFoundException("Không tìm thấy bài khảo sát của đợt khảo sát này");
                 }
 
-                var tatCaBaiLamKs = surveyContext.AsEduSurveyBaiKhaoSatSinhVien.Where(o => idbaikscuadotnay.Contains(o.BaiKhaoSatId));
+                var tatCaBaiKsCuaDotNay = surveyContext.AsEduSurveyBaiKhaoSatSinhVien.Where(o => idbaikscuadotnay.Contains(o.BaiKhaoSatId));
                 var result = new List<TempDataNormal>();
 
+                _logger.LogInformation($"Bat dau thong ke tam");
                 var facultys = eduContext.AsAcademyFaculty.ToList();
                 foreach (var f in facultys)
                 {
@@ -329,8 +333,8 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                         .Select(o => o.Code)
                         .ToList();
 
-                    //sinh viên có đk
-                    var tatCaBaiKs = surveyContext.AsEduSurveyBaiKhaoSatSinhVien.Where(o => allStudents.Contains(o.StudentCode));
+                    //bài ks sinh viên của khoa này
+                    var tatCaBaiKs = tatCaBaiKsCuaDotNay.Where(o => allStudents.Contains(o.StudentCode));
 
                     //số bài ks được phát
                     var total = tatCaBaiKs.Count();
@@ -364,9 +368,6 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             }
         }
 
-        /// <summary>
-        /// Thống kê tạm
-        /// </summary>
         public async Task TempDataNormalSurvey(Guid surveyRoundId)
         {
             var status = await _statusService.GetStatusTableTask(TableNameTask.TempDataNormalSurvey);
@@ -390,11 +391,250 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 TempDataNormalSurveyBG(surveyRoundId);
             });
         }
+        #endregion
+
+        #region kết xuất làm báo cáo
+        private void StyleExcelExport(ExcelWorksheet worksheet)
+        {
+            worksheet.DefaultRowHeight = 14.25;
+            worksheet.DefaultColWidth = 8.5;
+
+            worksheet.Cells.Style.Border.Top.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells.Style.WrapText = true;
+
+            worksheet.Cells.Style.Font.Name = "Arial";
+            worksheet.Cells.Style.Font.Size = 11;
+
+            worksheet.Row(1).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            worksheet.Row(1).Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+
+            worksheet.Row(2).Height = 67.5;
+            worksheet.Row(2).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            worksheet.Row(2).Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+            worksheet.Row(3).Height = 30;
+
+            worksheet.Column(1).Width = 44.86;
+            worksheet.Column(2).Width = 33;
+
+            worksheet.Cells["A2"].Value = "Khoa";
+            worksheet.Cells["B2"].Value = "Bộ môn";
+            worksheet.Cells["C2"].Value = "Số sv tham gia khảo sát";
+            worksheet.Cells["D2"].Value = "Số sv được khảo sát";
+            worksheet.Cells["E2"].Value = "Số phiếu thu về";
+            worksheet.Cells["F2"].Value = "Số phiếu ks phát ra";
+            worksheet.Cells["G2"].Value = "Số giảng viên đã được ks";
+            worksheet.Cells["H2"].Value = "Số giảng viên cần lấy ý kiến ks";
+        }
+
+        private void ThongKeTungLoaiBaiKS(ExcelWorksheet wsLyThuyet, EduDataContext eduContext, SurveyContext surveyContext,
+            IQueryable<AsEduSurveyBaiKhaoSatSinhVien> baiLamKhaoSatCacDotDangXet, List<AsEduSurveyBaiKhaoSat> baiKhaoSats, 
+            List<QuestionJson> deLyThuyet, int loaiMon)
+        {
+            //lấy khoa
+            int row = 4;
+            int rowCauHoi = 2;
+            int rowDapAn = 3;
+            int col = 1;
+            var facultys = eduContext.AsAcademyFaculty.Where(o => o.Code == "KX").ToList();
+            foreach (var f in facultys)
+            {
+                col = 1;
+                _logger.LogInformation($"Dang ket xuat loai {loaiMon} khoa co ma {f.Code}");
+                //lấy bộ môn
+                var departments = eduContext.AsAcademyDepartment.Where(o => o.FacultyCode == f.Code).ToList();
+
+                //các biến lấy tổng
+                var tongSoSVThamGiaKhaoSat = 0;
+                var tongSoSVDuocKhaoSat = 0;
+                var tongSoPhieuThuVe = 0;
+                var tongSoPhieuPhatRa = 0;
+                var tongSoGiangVienCanKs = 0;
+                var tongSoGiangVienDaDuocKs = 0;
+
+                //lấy môn học của bộ môn
+                foreach (var d in departments)
+                {
+                    _logger.LogInformation($"Dang ket xuat loai {loaiMon} bo mon co ma {d.Code} cua khoa {f.Code}");
+                    var monHocCuaBoMon = eduContext.AsAcademySubject.Where(o => o.DepartmentCode == d.Code)
+                        .Join(eduContext.AsAcademySubjectExtend, o => o.Code, o => o.Code, (monhoc, loaimon) => new { monhoc, loaimon.Type })
+                        .Select(o => new {
+                            o.monhoc.Code,
+                            o.monhoc.DepartmentCode,
+                            o.monhoc.Name,
+                            o.Type
+                        });
+
+                    #region môn lý thuyết
+                    var monLyThuyetCuaBoMonCodes = monHocCuaBoMon.Where(o => o.Type == loaiMon).Select(o => o.Code).ToList();
+                    if(monLyThuyetCuaBoMonCodes.Count == 0) //bộ môn không có môn loại này
+                    {
+                        continue;
+                    }
+
+                    //các bài làm của môn lý thuyết của bộ môn đang xét
+                    var baiLamKhaoSatLyThuyet = baiLamKhaoSatCacDotDangXet.Where(o => monLyThuyetCuaBoMonCodes.Contains(o.SubjectCode));
+                    var baiLamKhaoSatLyThuyetHoanThanh = baiLamKhaoSatLyThuyet.Where(o => o.Status == (int)SurveyStudentStatus.Done).Select(o => new { o.StudentCode, o.LecturerCode });
+
+                    var soPhieuPhatRa = baiLamKhaoSatLyThuyet.Count();
+                    tongSoPhieuPhatRa += soPhieuPhatRa;
+                    var soPhieuThuVe = baiLamKhaoSatLyThuyetHoanThanh.Count();
+                    tongSoPhieuThuVe += soPhieuThuVe;
+
+                    var soSVThamGiaKhaoSat = baiLamKhaoSatLyThuyet.GroupBy(o => o.StudentCode).Select(o => o.Key).Count();
+                    tongSoSVThamGiaKhaoSat += soSVThamGiaKhaoSat;
+                    var soSVDuocKhaoSat = baiLamKhaoSatLyThuyetHoanThanh.GroupBy(o => o.StudentCode).Select(o => o.Key).Count();
+                    tongSoSVDuocKhaoSat += soSVDuocKhaoSat;
+
+                    var soGiangVienCanKs = baiLamKhaoSatLyThuyet.GroupBy(o => o.LecturerCode).Select(o => o.Key).Count();
+                    tongSoGiangVienCanKs += soGiangVienCanKs;
+                    var soGiangVienDaDuocKs = baiLamKhaoSatLyThuyetHoanThanh.GroupBy(o => o.LecturerCode).Select(o => o.Key).Count();
+                    tongSoGiangVienDaDuocKs += soGiangVienDaDuocKs;
+
+                    #region ghi ra excel
+                    wsLyThuyet.Cells[row, col++].Value = f.Name;
+                    wsLyThuyet.Cells[row, col++].Value = d.Name;
+                    wsLyThuyet.Cells[row, col++].Value = soSVThamGiaKhaoSat;
+                    wsLyThuyet.Cells[row, col++].Value = soSVDuocKhaoSat;
+                    wsLyThuyet.Cells[row, col++].Value = soPhieuThuVe;
+                    wsLyThuyet.Cells[row, col++].Value = soPhieuPhatRa;
+                    wsLyThuyet.Cells[row, col++].Value = soGiangVienDaDuocKs;
+                    wsLyThuyet.Cells[row, col++].Value = soGiangVienCanKs;
+                    #endregion
+
+                    #region tổng hợp dữ liệu thống kê thô
+                    var surveyRoundIdLyThuyets = baiKhaoSats.Where(o => o.Type == loaiMon).Select(o => o.Id).ToList();
+                    var reportTotalLyThuyet = surveyContext.AsEduSurveyReportTotal.Where(o => surveyRoundIdLyThuyets.Contains(o.SurveyRoundId));
+                    var index = 0;
+                    foreach (var cauhoi in deLyThuyet)
+                    {
+                        if (cauhoi.Type == QuestionType.SC)
+                        {
+                            var colStart = col;
+                            wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {++index}: {cauhoi.Content}";
+
+                            var dTB = 0;
+                            var sumTB = 0;
+                            foreach (var dapan in cauhoi.Answers)
+                            {
+                                wsLyThuyet.Cells[rowDapAn, col].Value = dapan.Content;
+                                var ketqua = reportTotalLyThuyet.FirstOrDefault(o => o.QuestionCode == cauhoi.Code && o.AnswerCode == dapan.Code);
+                                if (ketqua != null)
+                                {
+                                    var total = ketqua.Total != null ? ketqua.Total.Value : 0;
+                                    wsLyThuyet.Cells[row, col].Value = total;
+                                    sumTB += total;
+                                    try
+                                    {
+                                        dTB += int.Parse(dapan.Content) * total;
+                                    }
+                                    catch
+                                    {
+
+                                    }
+                                }
+                                else
+                                {
+                                    wsLyThuyet.Cells[row, col].Value = 0;
+                                }
+                                col++;
+                            }
+                            wsLyThuyet.Cells[rowDapAn, col].Value = "đTB";
+
+                            if (sumTB > 0)
+                            {
+                                wsLyThuyet.Cells[row, col].Value = (double)dTB / sumTB;
+                            }
+                            else
+                            {
+                                wsLyThuyet.Cells[row, col].Value = 0;
+                            }
+
+                            var colEnd = col++;
+                            wsLyThuyet.Cells[rowCauHoi, colStart, rowCauHoi, colEnd].Merge = true;
+                        }
+                        else if (cauhoi.Type == QuestionType.MC)
+                        {
+                            var colStart = col;
+                            wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {++index}: {cauhoi.Content}";
+                            wsLyThuyet.Cells[rowCauHoi, col].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                            wsLyThuyet.Cells[rowCauHoi, col].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(255, 255, 0));
+                            foreach (var dapan in cauhoi.Answers)
+                            {
+                                wsLyThuyet.Cells[rowDapAn, col].Value = dapan.Content;
+                                var ketqua = reportTotalLyThuyet.FirstOrDefault(o => o.QuestionCode == cauhoi.Code && o.AnswerCode == dapan.Code);
+                                if (ketqua != null)
+                                {
+                                    var total = ketqua.Total != null ? ketqua.Total.Value : 0;
+                                    wsLyThuyet.Cells[row, col].Value = total;
+                                }
+                                else
+                                {
+                                    wsLyThuyet.Cells[row, col].Value = 0;
+                                }
+
+                                //câu hỏi con của đáp án
+                                if (dapan.AnswerChildQuestion != null)
+                                {
+                                    wsLyThuyet.Cells[rowDapAn, col].Value = dapan.AnswerChildQuestion.Content;
+                                    var ketquaCon = reportTotalLyThuyet.FirstOrDefault(o => o.QuestionCode == $"{dapan.Code}_{dapan.AnswerChildQuestion.Code}" && o.AnswerCode == dapan.Code);
+                                    wsLyThuyet.Cells[row, col].Value = ketquaCon?.Content ?? "";
+                                }
+                                col++;
+                            }
+                            var colEnd = col - 1;
+                            wsLyThuyet.Cells[rowCauHoi, colStart, rowCauHoi, colEnd].Merge = true;
+                        }
+                        else if (cauhoi.Type == QuestionType.GQ)
+                        {
+                            index++;
+                            var indexChild = 0;
+                            foreach (var cauhoicon in cauhoi.ChildQuestion)
+                            {
+                                if(cauhoicon.Type == QuestionType.SA)
+                                {
+                                    wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {index}.{++indexChild}: {cauhoicon.Content}";
+                                    wsLyThuyet.Column(col).Width = 48;
+                                    var ketqua = reportTotalLyThuyet.FirstOrDefault(o => o.QuestionCode == cauhoicon.Code);
+                                    wsLyThuyet.Cells[row, col].Value = ketqua?.Content ?? "";
+                                }
+                                col++;
+                            }
+                        }
+                    }
+                    #endregion
+
+                    #endregion
+                    col = 1;
+                    row++;
+                }
+
+                #region tổng số
+                col = 1;
+                wsLyThuyet.Row(row).Style.Fill.PatternType = ExcelFillStyle.Solid;
+                wsLyThuyet.Row(row).Style.Fill.BackgroundColor.SetColor(Color.FromArgb(255, 255, 0));
+                wsLyThuyet.Cells[row, col++].Value = $"{f.Name}({f.Code})";
+                col = 3;
+                wsLyThuyet.Cells[row, col++].Value = tongSoSVThamGiaKhaoSat;
+                wsLyThuyet.Cells[row, col++].Value = tongSoSVDuocKhaoSat;
+                wsLyThuyet.Cells[row, col++].Value = tongSoPhieuThuVe;
+                wsLyThuyet.Cells[row, col++].Value = tongSoPhieuPhatRa;
+                wsLyThuyet.Cells[row, col++].Value = tongSoGiangVienDaDuocKs;
+                wsLyThuyet.Cells[row, col++].Value = tongSoGiangVienCanKs;
+
+
+                row++;
+                #endregion
+            }
+        }
 
         private void ExportReportTotalNormalSurveyBG(List<Guid> surveyRoundIds)
         {
             var scope = _scopeFactory.CreateScope();
             var surveyContext = scope.ServiceProvider.GetRequiredService<SurveyContext>();
+            var eduContext = scope.ServiceProvider.GetRequiredService<EduDataContext>();
             var statusContext = scope.ServiceProvider.GetRequiredService<StatusContext>();
 
             var status = statusContext.AsStatusTableTask.FirstOrDefault(o => o.TableName == TableNameTask.ExportReportTotalNormalSurvey);
@@ -412,12 +652,53 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
 
             try
             {
+                #region lấy đợt ks, đề bài ks
+                var dotKhaoSats = surveyContext.AsEduSurveyDotKhaoSat.Where(o => surveyRoundIds.Contains(o.Id)).ToList();
+                var baiKhaoSats = surveyContext.AsEduSurveyBaiKhaoSat.Where(o => surveyRoundIds.Contains(o.DotKhaoSatId) && o.Status != (int)TheSurveyStatus.Deleted).ToList();
+
+                var dotKhaoSatThuNhat = dotKhaoSats.FirstOrDefault(); // vì nếu các đợt là giống nhau về đề ks thì lấy thằng đầu tiên
+                var baiKhaoSatCuaDotThuNhats = surveyContext.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == dotKhaoSatThuNhat.Id && o.Status != (int)TheSurveyStatus.Deleted).ToList();
+
+                var baiKsLyThuyet = baiKhaoSatCuaDotThuNhats.FirstOrDefault(o => o.Type == (int)TheSurveyType.TheoreticalSubjects);
+                var deLyThuyet = JsonSerializer.Deserialize<List<QuestionJson>>(baiKsLyThuyet.NoiDungDeThi);
+
+                var baiKsThucHanh = baiKhaoSatCuaDotThuNhats.FirstOrDefault(o => o.Type == (int)TheSurveyType.TheoreticalPracticalSubjects);
+                var deLyThuyetThucHanh = JsonSerializer.Deserialize<List<QuestionJson>>(baiKsThucHanh.NoiDungDeThi);
+
+                var baiKsThucHanhThiNghiem = baiKhaoSatCuaDotThuNhats.FirstOrDefault(o => o.Type == (int)TheSurveyType.PracticalSubjects);
+                var deThucHanhThiNghiem = JsonSerializer.Deserialize<List<QuestionJson>>(baiKsThucHanhThiNghiem.NoiDungDeThi);
+
+                var baiKsDeDoAn = baiKhaoSatCuaDotThuNhats.FirstOrDefault(o => o.Type == (int)TheSurveyType.AssignmentSubjects);
+                var deDoAn = JsonSerializer.Deserialize<List<QuestionJson>>(baiKsDeDoAn.NoiDungDeThi);
+                #endregion
+
+                var baiKhaoSatIds = baiKhaoSats.Select(o => o.Id).ToList();
+                var baiLamKhaoSatCacDotDangXet = surveyContext.AsEduSurveyBaiKhaoSatSinhVien.Where(o => baiKhaoSatIds.Contains(o.BaiKhaoSatId));
+
+                #region định nghĩa excel
                 ExcelPackage excel = new ExcelPackage();
-                var workSheet = excel.Workbook.Worksheets.Add("Sheet1");
-                workSheet.DefaultRowHeight = 12;
+                var wsTongHopChung = excel.Workbook.Worksheets.Add("Tổng hợp chung");
+
+                var wsLyThuyet = excel.Workbook.Worksheets.Add("Lý thuyết");
+                StyleExcelExport(wsLyThuyet);
+
+                var wsLyThuyetThucHanh = excel.Workbook.Worksheets.Add("Lý thuyết thực hành");
+                StyleExcelExport(wsLyThuyetThucHanh);
+
+                var wsThucHanh = excel.Workbook.Worksheets.Add("Thực hành");
+                StyleExcelExport(wsThucHanh);
+
+                var wsDoAn = excel.Workbook.Worksheets.Add("Đồ án");
+                StyleExcelExport(wsDoAn);
+                #endregion
 
                 #region kết xuất
-
+                _logger.LogInformation($"Bat dau ket xuat");
+                ThongKeTungLoaiBaiKS(wsLyThuyet, eduContext, surveyContext, baiLamKhaoSatCacDotDangXet, baiKhaoSats, deLyThuyet, (int)TheSurveyType.TheoreticalSubjects);
+                ThongKeTungLoaiBaiKS(wsLyThuyetThucHanh, eduContext, surveyContext, baiLamKhaoSatCacDotDangXet, baiKhaoSats, deLyThuyetThucHanh, (int)TheSurveyType.TheoreticalPracticalSubjects);
+                ThongKeTungLoaiBaiKS(wsThucHanh, eduContext, surveyContext, baiLamKhaoSatCacDotDangXet, baiKhaoSats, deThucHanhThiNghiem, (int)TheSurveyType.PracticalSubjects);
+                ThongKeTungLoaiBaiKS(wsDoAn, eduContext, surveyContext, baiLamKhaoSatCacDotDangXet, baiKhaoSats, deDoAn, (int)TheSurveyType.AssignmentSubjects);
+                _logger.LogInformation($"ket xuat hoan thanh");
                 #endregion
 
                 //lưu
@@ -455,20 +736,110 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             var scope = _scopeFactory.CreateScope();
             var surveyContext = scope.ServiceProvider.GetRequiredService<SurveyContext>();
 
-            surveyRoundIds.ForEach(id =>
+            string ndDeLyThuyet = null;
+            string ndDeLyThuyetThucHanh = null;
+            string ndDeThucHanhThiNghiem = null;
+            string ndDeDoAn = null;
+
+            #region kiem tra ngoại lệ
+            foreach(var id in surveyRoundIds)
             {
                 var surveyRound = surveyContext.AsEduSurveyDotKhaoSat.FirstOrDefault(o => o.Id == id && o.Status != (int)SurveyRoundStatus.Deleted);
                 if (surveyRound == null)
                 {
                     throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
                 }
-            });
+                if (DateTime.Now < surveyRound.EndDate)
+                {
+                    throw new InvalidInputDataException($"Đợt khảo sát {surveyRound.Name} chưa kết thúc");
+                }
+
+                var baiKhaoSats = surveyContext.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == surveyRound.Id).ToList();
+                if (baiKhaoSats.Count == 0)
+                {
+                    throw new InvalidInputDataException($"Đợt khảo sát {surveyRound.Name} không có bài khảo sát nào");
+                }
+
+                var baiKhaoSatLyThuyet = baiKhaoSats.FirstOrDefault(o => o.Type == (int)TheSurveyType.TheoreticalSubjects);
+                if (baiKhaoSatLyThuyet == null)
+                {
+                    throw new InvalidInputDataException($"Đợt khảo sát {surveyRound.Name} không có bài khảo sát cho môn lý thuyết");
+                }
+
+                if(ndDeLyThuyet == null)
+                {
+                    ndDeLyThuyet = baiKhaoSatLyThuyet.NoiDungDeThi;
+                }
+                else
+                {
+                    if(ndDeLyThuyet != baiKhaoSatLyThuyet.NoiDungDeThi)
+                    {
+                        throw new InvalidInputDataException($"Các đợt khảo sát không có phiếu khảo sát cho môn lý thuyết giống nhau");
+                    }
+                }
+
+                var baiKhaoSatLyThuyetThucHanh = baiKhaoSats.FirstOrDefault(o => o.Type == (int)TheSurveyType.TheoreticalPracticalSubjects);
+                if (baiKhaoSatLyThuyetThucHanh == null)
+                {
+                    throw new InvalidInputDataException($"Đợt khảo sát {surveyRound.Name} không có bài khảo sát cho môn lý thuyết + thực hành");
+                }
+
+                if (ndDeLyThuyetThucHanh == null)
+                {
+                    ndDeLyThuyetThucHanh = baiKhaoSatLyThuyetThucHanh.NoiDungDeThi;
+                }
+                else
+                {
+                    if (ndDeLyThuyetThucHanh != baiKhaoSatLyThuyetThucHanh.NoiDungDeThi)
+                    {
+                        throw new InvalidInputDataException($"Các đợt khảo sát không có phiếu khảo sát cho môn lý thuyết + thực hành giống nhau");
+                    }
+                }
+
+                var baiKhaoSatThucHanhThiNghiem = baiKhaoSats.FirstOrDefault(o => o.Type == (int)TheSurveyType.PracticalSubjects);
+                if (baiKhaoSatThucHanhThiNghiem == null)
+                {
+                    throw new InvalidInputDataException($"Đợt khảo sát {surveyRound.Name} không có bài khảo sát cho môn thực hành, thí nghiệm, thực tập");
+                }
+
+                if (ndDeThucHanhThiNghiem == null)
+                {
+                    ndDeThucHanhThiNghiem = baiKhaoSatThucHanhThiNghiem.NoiDungDeThi;
+                }
+                else
+                {
+                    if (ndDeThucHanhThiNghiem != baiKhaoSatThucHanhThiNghiem.NoiDungDeThi)
+                    {
+                        throw new InvalidInputDataException($"Các đợt khảo sát không có phiếu khảo sát cho môn thực hành, thí nghiệm, thực tâp giống nhau");
+                    }
+                }
+
+                var baiKhaoSatDoAn = baiKhaoSats.FirstOrDefault(o => o.Type == (int)TheSurveyType.AssignmentSubjects);
+                if (baiKhaoSatDoAn == null)
+                {
+                    throw new InvalidInputDataException($"Đợt khảo sát {surveyRound.Name} không có bài khảo sát cho môn đồ án");
+                }
+
+                if (ndDeDoAn == null)
+                {
+                    ndDeDoAn = baiKhaoSatDoAn.NoiDungDeThi;
+                }
+                else
+                {
+                    if (ndDeDoAn != baiKhaoSatDoAn.NoiDungDeThi)
+                    {
+                        throw new InvalidInputDataException($"Các đợt khảo sát không có phiếu khảo sát cho môn đồ án giống nhau");
+                    }
+                }
+            }
+            #endregion
 
             _backgroundTaskWorker.StartAction(() =>
             {
                 ExportReportTotalNormalSurveyBG(surveyRoundIds);
             });
         }
+        #endregion
         #endregion
 
         #region thống kê sinh viên trước tốt nghiệp
@@ -556,7 +927,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             }
         }
 
-        public async System.Threading.Tasks.Task ReportTotalUndergraduateSurvey(Guid surveyRoundId)
+        public async Task ReportTotalUndergraduateSurvey(Guid surveyRoundId)
         {
             var status = await _statusService.GetStatusTableTask(TableNameTask.AsEduSurveyUndergraduateReportTotal);
             if (status.Status == (int)TableTaskStatus.Doing)

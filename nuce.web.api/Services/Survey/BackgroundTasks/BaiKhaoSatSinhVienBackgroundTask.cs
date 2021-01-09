@@ -142,13 +142,13 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                     {
                                         baiKhaoSatId = theoreticalSubjects.Id;
                                     }
-                                    else if (subjectExtend.Type == (int)TheSurveyType.PracticalSubjects)
-                                    {
-                                        baiKhaoSatId = practicalSubjects.Id;
-                                    }
                                     else if (subjectExtend.Type == (int)TheSurveyType.TheoreticalPracticalSubjects)
                                     {
                                         baiKhaoSatId = theoreticalPracticalSubjects.Id;
+                                    }
+                                    else if (subjectExtend.Type == (int)TheSurveyType.PracticalSubjects)
+                                    {
+                                        baiKhaoSatId = practicalSubjects.Id;
                                     }
                                     else if (subjectExtend.Type == (int)TheSurveyType.AssignmentSubjects)
                                     {
@@ -160,6 +160,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                         else
                         {
                             subject = null;
+                            continue; //môn đó không tồn tại là bỏ qua luôn
                         }
 
                         var recordBaikssv = surveyContext.AsEduSurveyBaiKhaoSatSinhVien.FirstOrDefault(o => o.StudentCode == sc.StudentCode && o.ClassRoomCode == sc.ClassRoomCode);
