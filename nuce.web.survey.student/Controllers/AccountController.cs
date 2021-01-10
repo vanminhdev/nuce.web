@@ -40,7 +40,7 @@ namespace nuce.web.survey.student.Controllers
             {
                 username = login.Username,
                 password = login.Password,
-                isStudent = true
+                loginUserType = 1
             });
 
             var content = new StringContent(userNamePasswordJsonString, Encoding.UTF8, "application/json");
@@ -129,7 +129,8 @@ namespace nuce.web.survey.student.Controllers
             var userNamePasswordJsonString = JsonConvert.SerializeObject(new
             {
                 username = login.Username,
-                password = login.Password
+                password = login.Password,
+                loginUserType = 1
             });
 
             var content = new StringContent(userNamePasswordJsonString, Encoding.UTF8, "application/json");

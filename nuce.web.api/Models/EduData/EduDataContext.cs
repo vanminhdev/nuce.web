@@ -223,6 +223,8 @@ namespace nuce.web.api.Models.EduData
                 entity.Property(e => e.Name).HasMaxLength(100);
 
                 entity.Property(e => e.SemesterId).HasColumnName("SemesterID");
+
+                entity.Property(e => e.Name).HasMaxLength(100);
             });
 
             modelBuilder.Entity<AsAcademyLecturer>(entity =>

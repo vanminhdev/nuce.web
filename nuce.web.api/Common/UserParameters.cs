@@ -7,10 +7,11 @@ namespace nuce.web.api.Common
 {
     public static class UserParameters
     {
-        public static readonly string MSSV = "Masv";
+        public static readonly string UserCode = "UserCode";
         public static readonly string FullName = "FullName";
         public static readonly string JwtAccessToken = "JWT-token";
         public static readonly string JwtRefreshToken = "JWT-refresh-token";
+        public static readonly List<LoginUserType> LoginViaDaotao = new List<LoginUserType> { LoginUserType.Student, LoginUserType.Lecturer };
     }
     public static class ActivityLogParameters
     {
@@ -22,4 +23,14 @@ namespace nuce.web.api.Common
         public static readonly string CODE_BACKUP_DATABASE = "CODE_BACKUP_DATABASE";
         public static readonly string CODE_RESTORE_DATABASE = "CODE_RESTORE_DATABASE";
     }
+
+    public enum LoginUserType
+    {
+        Common = 0,
+        Student = 1,
+        Faculty = 2,
+        Department = 3,
+        Lecturer = 4
+    };
+
 }

@@ -1,16 +1,17 @@
-﻿using System;
+﻿using nuce.web.survey.student.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace nuce.web.survey.student.Common
 {
-    public class RoleNames
-    {
-        public static string UndergraduateStudent = "UndergraduateStudent";
-        public static string GraduateStudent = "GraduateStudent";
-        public static string Student = "Student";
-    }
+    //public class RoleNames
+    //{
+    //    public static string UndergraduateStudent = "UndergraduateStudent";
+    //    public static string GraduateStudent = "GraduateStudent";
+    //    public static string Student = "Student";
+    //}
 
     public class QuestionType
     {
@@ -97,4 +98,14 @@ namespace nuce.web.survey.student.Common
             { DayOfWeek.Sunday, "Chủ nhật" },
         };
     };
+
+    public static class SurveyResultLogin
+    {
+        public static List<LoginUserType> Types = new List<LoginUserType>
+        {
+            new LoginUserType{Text = "Khoa/Ban", Value = 2},
+            new LoginUserType{Text = "Bộ môn", Value = 3},
+            new LoginUserType{Text = "Giảng viên", Value = 4},
+        };
+    }
 }

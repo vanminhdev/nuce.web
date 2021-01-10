@@ -27,7 +27,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
+    [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate, RoleNames.UndergraduateStudent)]
     public class UndergraduateStudentController : ControllerBase
     {
         private readonly ILogger<UndergraduateStudentController> _logger;

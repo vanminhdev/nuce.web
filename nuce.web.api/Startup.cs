@@ -40,6 +40,8 @@ using nuce.web.api.Services.Background;
 using nuce.web.api.Services.Survey.BackgroundTasks;
 using nuce.web.api.Services.Shared;
 using nuce.web.api.Services.EduData.BackgroundTasks;
+using nuce.web.api.Repositories.EduData.Interfaces;
+using nuce.web.api.Repositories.EduData.Implements;
 
 namespace nuce.web.api
 {
@@ -203,6 +205,7 @@ namespace nuce.web.api
             services.AddScoped<IClientParameterService, ClientParameterService>();
             services.AddScoped<ISendEmailService, SendEmailService>();
             services.AddScoped<IUserFileService, UserFileService>();
+            services.AddScoped<IInitializeService, InitializeService>();
             #endregion
             #region config service
             services.AddScoped<IStatusService, StatusService>();
@@ -231,6 +234,11 @@ namespace nuce.web.api
             services.AddScoped<ISyncEduDatabaseService, SyncEduDatabaseService>();
 
             services.AddScoped<SyncEduDataBackgroundTask>();
+            #endregion
+            #region edu data repo
+            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            services.AddScoped<IFacultyRepository, FacultyRepository>();
+            services.AddScoped<ILecturerRepository, LecturerRepository>();
             #endregion
             #region ctsv service
             services.AddScoped<IXacNhanRepository, XacNhanRepository>();

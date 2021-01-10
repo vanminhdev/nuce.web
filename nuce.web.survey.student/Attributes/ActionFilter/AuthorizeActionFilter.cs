@@ -1,4 +1,5 @@
-﻿using nuce.web.survey.student.Common;
+﻿using nuce.web.shared;
+using nuce.web.survey.student.Common;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -25,6 +26,11 @@ namespace nuce.web.survey.student.Attributes.ActionFilter
         public AuthorizeActionFilter(string rolesCheck = null)
         {
             _rolesCheck = rolesCheck;
+        }
+
+        public AuthorizeActionFilter(params string[] rolesCheck)
+        {
+            _rolesCheck = string.Join(",", rolesCheck);
         }
 
         private void CheckRole(ActionExecutingContext filterContext, string accessToken)
@@ -54,9 +60,9 @@ namespace nuce.web.survey.student.Attributes.ActionFilter
         {
             var roleCheckSplited = _rolesCheck.Split(',');
             var roleCheckFirst = roleCheckSplited.FirstOrDefault();
-            if (roleCheckSplited.FirstOrDefault(s => s == "UndergraduateStudent") != null)
+            if (roleCheckSplited.FirstOrDefault(s => s == RoleNames.UndergraduateStudent) != null)
             {
-                roleCheckFirst = "UndergraduateStudent";
+                roleCheckFirst = RoleNames.UndergraduateStudent;
             }
 
             var accessTokenCookie = filterContext.RequestContext.HttpContext.Request.Cookies[UserParameters.JwtAccessToken];
@@ -112,17 +118,30 @@ namespace nuce.web.survey.student.Attributes.ActionFilter
 
         private void RedirecLoginPage(string role, ActionExecutingContext filterContext)
         {
-            if (role == "Student")
+            if (role == RoleNames.Student)
             {
                 filterContext.Result = new RedirectResult("/account/login");
-            } else if (role == "UndergraduateStudent")
+            } else if (role == RoleNames.UndergraduateStudent)
             {
                 filterContext.Result = new RedirectResult("/account/loginundergraduate");
             }
-            else if (role == "GraduateStudent")
+            else if (role == RoleNames.GraduateStudent)
             {
                 filterContext.Result = new RedirectResult("/account/logingraduate");
-            } else
+            }
+            else if (role == RoleNames.KhaoThi_Survey_KhoaBan)
+            {
+                filterContext.Result = new RedirectResult("/surveyresult/login?loginType=2");
+            }
+            else if (role == RoleNames.KhaoThi_Survey_Department)
+            {
+                filterContext.Result = new RedirectResult("/surveyresult/login?loginType=3");
+            }
+            else if (role == RoleNames.KhaoThi_Survey_GiangVien)
+            {
+                filterContext.Result = new RedirectResult("/surveyresult/login?loginType=4");
+            }
+            else
             {
                 filterContext.Result = new RedirectResult("/account/login");
             }

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using nuce.web.shared;
 using nuce.web.survey.student.Attributes.ActionFilter;
 using nuce.web.survey.student.Models;
 using nuce.web.survey.student.Models.JsonData;
@@ -13,7 +14,7 @@ using System.Web.Mvc;
 
 namespace nuce.web.survey.student.Controllers
 {
-    [AuthorizeActionFilter("GraduateStudent")]
+    [AuthorizeActionFilter(RoleNames.GraduateStudent)]
     public class GraduateHomeController : BaseController
     {
         [HttpGet]

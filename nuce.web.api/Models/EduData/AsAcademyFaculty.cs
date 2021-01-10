@@ -10,5 +10,6 @@ namespace nuce.web.api.Models.EduData
         public string Code { get; set; }
         public string Name { get; set; }
         public int COrder { get; set; }
+        public string Email { get; set; }
     }
 }

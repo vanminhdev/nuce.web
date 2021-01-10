@@ -11,34 +11,45 @@ using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Core;
 using nuce.web.shared;
+using nuce.web.shared.Common;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace nuce.web.api.Controllers.Core
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [AppAuthorize(RoleNames.Admin)]
+    [AppAuthorize(RoleNames.Admin, RoleNames.KhaoThi)]
     public class ManagerRestoreController : ControllerBase
     {
         private readonly IManagerRestoreService _managerBackupService;
         private readonly ILogger<ManagerRestoreController> _logger;
         private readonly ILogService _logService;
+        private readonly IUserService _userService;
 
-        public ManagerRestoreController(ILogger<ManagerRestoreController> logger, ILogService logService, IManagerRestoreService managerBackupService)
+        public ManagerRestoreController(ILogger<ManagerRestoreController> logger, ILogService logService, IManagerRestoreService managerBackupService, IUserService _userService)
         {
             _logger = logger;
             _logService = logService;
             _managerBackupService = managerBackupService;
+            this._userService = _userService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetHistoryBackup([FromBody] DataTableRequest request)
+        [AppAuthorize(RoleNames.Admin, RoleNames.KhaoThi_Survey_Normal, RoleNames.KhaoThi_Survey_Undergraduate, RoleNames.KhaoThi_Survey_Graduate)]
+        [Route("{type}")]
+        public async Task<IActionResult> GetHistoryBackup(BackupTypes.Survey type, [FromBody] DataTableRequest request)
         {
+            var userRoles = _userService.GetClaimListByKey(ClaimTypes.Role);
+            if (!_managerBackupService.isBackupTypeValid(userRoles, type))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = "Bạn không đủ quyền" });
+            }
             var filter = new ManagerBackupFilter();
             if (request.Columns != null)
             {
@@ -46,7 +57,7 @@ namespace nuce.web.api.Controllers.Core
             }
             var skip = request.Start;
             var take = request.Length;
-            var result = await _managerBackupService.HistoryBackup(filter, skip, take);
+            var result = await _managerBackupService.HistoryBackup(type, filter, skip, take);
             return Ok(
                 new DataTableResponse<ManagerBackup>
                 {
@@ -59,16 +70,23 @@ namespace nuce.web.api.Controllers.Core
         }
 
         [HttpPost]
-        public async Task<IActionResult> BackupDatabaseSurvey()
+        [Route("{type}")]
+        [AppAuthorize(RoleNames.Admin, RoleNames.KhaoThi_Survey_Normal, RoleNames.KhaoThi_Survey_Undergraduate, RoleNames.KhaoThi_Survey_Graduate)]
+        public async Task<IActionResult> BackupDatabaseSurvey(BackupTypes.Survey type)
         {
+            var userRoles = _userService.GetClaimListByKey(ClaimTypes.Role);
+            if (!_managerBackupService.isBackupTypeValid(userRoles, type))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = "Bạn không đủ quyền" });
+            }
             try
             {
-                await _managerBackupService.BackupSurveyDataBase();
+                await _managerBackupService.BackupSurveyDataBase(type);
                 await _logService.WriteLog(new ActivityLogModel
                 {
                     Username = HttpContext.User.Identity.Name,
                     LogCode = ActivityLogParameters.CODE_BACKUP_DATABASE,
-                    LogMessage = $"Backup database NUCE_SURVEY"
+                    LogMessage = $"Backup database NUCE_SURVEY {type.ToString()}"
                 });
             }
             catch (DbUpdateException e)

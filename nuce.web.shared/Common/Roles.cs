@@ -67,38 +67,47 @@ namespace nuce.web.shared
         /// </summary>
         public const string KhaoThi_Delete_Account = "P_KhaoThi_Delete_Account";
         /// <summary>
-        /// Khảo thí sinh viên thường
+        /// Khảo thí Chuyên viên phụ trách khảo sát sinh viên thường
         /// </summary>
         public const string KhaoThi_Survey_Normal = "P_KhaoThi_Survey_Normal";
         /// <summary>
-        /// Khảo thí sinh viên trước tốt nghiệp
+        /// Khảo thí Chuyên viên phụ trách khảo sát sinh viên trước tốt nghiệp
         /// </summary>
         public const string KhaoThi_Survey_Undergraduate = "P_KhaoThi_Survey_Undergraduate";
         /// <summary>
-        /// Khảo thí cựu sinh viên
+        /// Khảo thí Chuyên viên phụ trách khảo sát cựu sinh viên
         /// </summary>
         public const string KhaoThi_Survey_Graduate = "P_KhaoThi_Survey_Graduate";
         /// <summary>
         /// Khảo thí backup dữ liệu
         /// </summary>
         public const string KhaoThi_Backup_Database = "P_KhaoThi_Backup_Database";
-
+        /// <summary>
+        /// Khảo thí KHOA BAN tham gia khảo sát/xem kết quả ks
+        /// </summary>
         public const string KhaoThi_Survey_KhoaBan = "P_KhaoThi_Survey_KhoaBan";
+        /// <summary>
+        /// Khảo thí BỘ MÔN tham gia khảo sát/xem kết quả ks
+        /// </summary>
+        public const string KhaoThi_Survey_Department = "P_KhaoThi_Survey_Department";
+        /// <summary>
+        /// Khảo thí GIẢNG VIÊN tham gia khảo sát/xem kết quả ks
+        /// </summary>
         public const string KhaoThi_Survey_GiangVien = "P_KhaoThi_Survey_Lecturer";
         /// <summary>
         /// Khảo thí fake user vào chỉ để xem
         /// </summary>
         public const string FakeStudent = "FakeStudent";
         /// <summary>
-        /// Khảo thí sv
+        /// Khảo thí Sinh viên trước tốt nghiệp đăng nhập để khảo sát
         /// </summary>
         public const string UndergraduateStudent = "UndergraduateStudent";
         /// <summary>
-        /// Khảo thí sv
+        /// Khảo thí Sinh viên đã tốt nghiệp đăng nhập để khảo sát
         /// </summary>
         public const string GraduateStudent = "GraduateStudent";
         /// <summary>
-        /// Khảo thí sv
+        /// Khảo thí Sinh viên thường đăng nhập để khảo sát
         /// </summary>
         public const string Student = "Student";
     }

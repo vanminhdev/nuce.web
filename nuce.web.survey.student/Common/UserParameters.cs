@@ -7,7 +7,7 @@ namespace nuce.web.survey.student.Common
 {
     public static class UserParameters
     {
-        public static string MSSV = "Masv";
+        public static string UserCode = "UserCode";
         public static string JwtAccessToken = "JWT-token";
         public static string JwtRefreshToken = "JWT-refresh-token";
         public static string Roles = "Roles";

@@ -92,7 +92,7 @@
                 }
             ],
             ajax: {
-                url: '/ManagerRestore/BackupHistory',
+                url: '/ManagerRestore/BackupHistory?type=@ViewData["type"]',
                 dataType: 'json',
                 contentType: 'application/json',
                 type: "Post",
@@ -136,7 +136,7 @@
                 $.ajax({
                     dataType: 'json',
                     method: 'Post',
-                    url: '/ManagerRestore/BackupDatabaseSurvey',
+                    url: '/ManagerRestore/BackupDatabaseSurvey?type=@ViewData["type"]',
                     complete: () => { }
                 }).done(function (res) {
                     $('#modal-yes-no').modal('hide');
@@ -173,7 +173,7 @@
                     data: { id },
                     dataType: 'json',
                     method: 'Post',
-                    url: '/ManagerRestore/RestoreDatabaseSurvey',
+                    url: '/ManagerRestore/RestoreDatabaseSurvey?type=@ViewData["type"]',
                     complete: () => { }
                 }).done(function (res) {
                     $('#modal-yes-no').modal('hide');
