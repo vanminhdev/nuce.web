@@ -9,5 +9,6 @@ namespace nuce.web.api.Models.Core
         public string DatabaseName { get; set; }
         public DateTime Date { get; set; }
         public string Path { get; set; }
+        public int Type { get; set; }
     }
 }

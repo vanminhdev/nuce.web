@@ -27,6 +27,11 @@ namespace nuce.web.quanly.Attributes.ActionFilter
             _rolesCheck = rolesCheck;
         }
 
+        public AuthorizeActionFilter(params string[] rolesCheck)
+        {
+            _rolesCheck = string.Join(",", rolesCheck);
+        }
+
         private void CheckRole(ActionExecutingContext filterContext, string accessToken)
         {
             // rolesCheck khác null mới kiểm tra vai trò không thì thôi

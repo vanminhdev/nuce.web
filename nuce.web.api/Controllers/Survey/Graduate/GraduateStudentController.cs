@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Helper;
@@ -11,6 +12,7 @@ using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey.Graduate;
+using nuce.web.shared;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -24,7 +26,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize(Roles = "P_KhaoThi")]
+    [AppAuthorize(RoleNames.KhaoThi_Survey_Graduate, RoleNames.GraduateStudent)]
     public class GraduateStudentController : ControllerBase
     {
         private readonly ILogger<GraduateStudentController> _logger;

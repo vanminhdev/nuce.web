@@ -17,6 +17,9 @@ namespace nuce.web.api.ViewModel.Ctsv
         public int YeuCauStatus { get; set; }
         public DateTime? NgayTao { get; set; }
         public DateTime? NgayHen { get; set; }
+        /// <summary>
+        /// Tên template trong thư mục "Templates/Ctsv" thay vì template mặc định
+        /// </summary>
         public string TemplateName { get; set; }
     }
 }

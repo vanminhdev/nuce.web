@@ -35,5 +35,6 @@ namespace nuce.web.api.Services.Core.Interfaces
         public Task DeleteUserAsync(string id);
         public Task UpdateUserAsync(string id, UserUpdateModel user);
         public Task ResetPasswordAsync(string id, string newPassword);
+        public Task<ApplicationUser> CreateUser(UserCreateModel model);
     }
 }

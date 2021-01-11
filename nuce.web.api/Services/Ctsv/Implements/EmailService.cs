@@ -53,7 +53,13 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
             bool henGap = (TrangThaiYeuCau)status == TrangThaiYeuCau.DaXuLyVaCoLichHen;
 
-            var dir = _pathProvider.MapPath("Templates/Ctsv/template_mail_cap_nhat_trang_thai.txt");
+            string filePath = "Templates/Ctsv/template_mail_cap_nhat_trang_thai.txt";
+            if (!string.IsNullOrEmpty(model.TemplateName))
+            {
+                filePath = $"Templates/Ctsv/{model.TemplateName}";
+            }
+            var dir = _pathProvider.MapPath(filePath);
+
             if (!File.Exists(dir))
             {
                 return new ResponseBody { Message = "Template không tồn tại", StatusCode = System.Net.HttpStatusCode.NotFound };

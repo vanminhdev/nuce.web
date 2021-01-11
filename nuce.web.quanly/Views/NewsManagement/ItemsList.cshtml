@@ -18,15 +18,18 @@
     </div>
     <div class="col-12">
         <table id="news-items-list-datatable"
-                data-page-length='25' class="table th-border-none">
+               data-page-length='25' class="table th-border-none">
         </table>
     </div>
 </div>
 
 
 @*@section Scripts {*@
-    
-    <script>
+<script src="~/content/js/jquery.dataTables.min.js"></script>
+<script src="~/content/js/dataTables.bootstrap4.min.js"></script>
+<script src="~/content/js/dataTables.config.js"></script>
+
+<script>
         var state = {
             catId: null,
         };
@@ -60,13 +63,13 @@
                 {
                     data: null,
                     mRender: function(data, type, row, meta) {
-                        return `<a href="/newsmanagement/itemsdetail?id=${data.id}" 
+                        return `<a href="/newsmanagement/itemsdetail?id=${data.id}"
                                     onclick="return feManagerState.changeComponent('/newsmanagement/itemsdetail?id=${data.id}');"
                                     style="display: block"
                                     class="m-text-decoration-none">
                                     <h4 class="m-text-blue">${data.title || ''}</h4>
                                     <p class="m-text-black">${data.description || ''}</p>
-                                    <a href="/newsmanagement/itemsupdate?id=${data.id}" 
+                                    <a href="/newsmanagement/itemsupdate?id=${data.id}"
                                         role="button" class="btn btn-outline-success"
                                         onclick="return feManagerState.changeComponent('/newsmanagement/itemsupdate?id=${data.id}');">
                                         Cập nhật
@@ -93,6 +96,6 @@
 
         init();
 
-    </script>
+</script>
 @*}*@
 

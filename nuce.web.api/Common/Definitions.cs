@@ -233,7 +233,7 @@ namespace nuce.web.api.Common
     }
 
     /// <summary>
-    /// Loại của tham số trả ra cho frontend
+    /// Loại của tham số trả ra cho giao diện trang client
     /// </summary>
     public class ClientParameterTypes
     {

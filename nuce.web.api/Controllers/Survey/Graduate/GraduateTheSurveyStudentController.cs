@@ -8,6 +8,7 @@ using nuce.web.api.HandleException;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Survey;
+using nuce.web.shared;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -18,6 +19,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [AppAuthorize(RoleNames.KhaoThi_Survey_Graduate, RoleNames.GraduateStudent)]
     public class GraduateTheSurveyStudentController : ControllerBase
     {
         private readonly ILogger<GraduateTheSurveyStudentController> _logger;

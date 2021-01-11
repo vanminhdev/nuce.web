@@ -8,14 +8,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.ViewModel;
+using nuce.web.shared;
 
 namespace nuce.web.api.Controllers.Core
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin,P_KhaoThi")]
     public class UserFileController : ControllerBase
     {
         private readonly IUserFileService _userFileService;
@@ -28,34 +29,8 @@ namespace nuce.web.api.Controllers.Core
             this._logger = _logger;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="code"></param>
-        /// <param name="file"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("upload/image/{code}")]
-        public async Task<IActionResult> UploadImage(string code, IFormFile file)
-        {
-            try
-            {
-                var loggedUserRoles = _userService.GetClaimListByKey(ClaimTypes.Role);
-                string username = _userService.GetUserName();
-                await _userFileService.UploadUserImage(file, code, username, loggedUserRoles);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return BadRequest(new ResponseBody
-                {
-                    StatusCode = HttpStatusCode.BadRequest,
-                    Data = ex,
-                    Message = ex.Message
-                });
-            }
-        }
+        
+        #region client
         /// <summary>
         /// Lấy ảnh cho website 
         /// </summary>
@@ -82,5 +57,38 @@ namespace nuce.web.api.Controllers.Core
                 return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
             }
         }
+        #endregion
+
+        #region admin
+        /// <summary>
+        /// Admin up ảnh lên cho website
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        [AppAuthorize(RoleNames.KhaoThi_Upload_WebImage)]
+        [HttpPost]
+        [Route("upload/image/{code}")]
+        public async Task<IActionResult> UploadImage(string code, IFormFile file)
+        {
+            try
+            {
+                var loggedUserRoles = _userService.GetClaimListByKey(ClaimTypes.Role);
+                string username = _userService.GetUserName();
+                await _userFileService.UploadUserImage(file, code, username, loggedUserRoles);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return BadRequest(new ResponseBody
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    Data = ex,
+                    Message = ex.Message
+                });
+            }
+        }
+        #endregion
     }
 }

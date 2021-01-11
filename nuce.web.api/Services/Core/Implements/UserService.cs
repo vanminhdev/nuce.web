@@ -10,6 +10,8 @@ using nuce.web.api.HandleException;
 using nuce.web.api.Models.Core;
 using nuce.web.api.Models.Ctsv;
 using nuce.web.api.Repositories.Ctsv.Interfaces;
+using nuce.web.api.Repositories.EduData.Implements;
+using nuce.web.api.Repositories.EduData.Interfaces;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Base;
@@ -33,12 +35,18 @@ namespace nuce.web.api.Services.Core.Implements
         private readonly HttpContext _httpContext;
         private readonly IStudentRepository _studentRepository;
         private readonly NuceCoreIdentityContext _identityContext;
+        private readonly ILecturerRepository _lecturerRepository;
+        private readonly IDepartmentRepository   _departmentRepository;
+        private readonly IFacultyRepository _facultyRepository;
 
         public UserService(UserManager<ApplicationUser> _userManager,
                 IConfiguration configuration, 
                 IHttpContextAccessor httpContextAccessor,
                 IStudentRepository _studentRepository,
-                NuceCoreIdentityContext nuceCoreIdentityContext
+                NuceCoreIdentityContext nuceCoreIdentityContext,
+                ILecturerRepository _lecturerRepository,
+                IDepartmentRepository _departmentRepository,
+                IFacultyRepository _facultyRepository
         )
         {
             this._userManager = _userManager;
@@ -46,22 +54,34 @@ namespace nuce.web.api.Services.Core.Implements
             _httpContext = httpContextAccessor.HttpContext;
             _configuration = configuration;
             _identityContext = nuceCoreIdentityContext;
+            this._lecturerRepository = _lecturerRepository;
+            this._departmentRepository = _departmentRepository;
+            this._facultyRepository = _facultyRepository;
         }
         public async Task<List<Claim>> AddClaimsAsync(LoginModel model, ApplicationUser user)
         {
-            string username = model.IsStudent ? model.Username : user.UserName;
+            string username = UserParameters.LoginViaDaotao.Contains(model.LoginUserType) ? model.Username : user.UserName;
 
             var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, username),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                };
+                    new Claim(UserParameters.UserCode, username)
+            };
 
-            if (model.IsStudent)
+            if (model.LoginUserType == LoginUserType.Student)
             {
+                // Role: SV
+                // MÃ: SV
+                // Tên: SV
                 authClaims.Add(new Claim(ClaimTypes.Role, RoleNames.Student));
-                authClaims.Add(new Claim(UserParameters.MSSV, username));
-                authClaims.Add(new Claim(ClaimTypes.GivenName,  _studentRepository.FindByCode(username)?.FulName));
+                authClaims.Add(new Claim(ClaimTypes.GivenName, _studentRepository.FindByCode(username)?.FulName));
+            }
+            else if (model.LoginUserType == LoginUserType.Lecturer)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, RoleNames.KhaoThi_Survey_GiangVien));
+                string givenName = (await _lecturerRepository.FindByCode(username))?.FullName;
+                authClaims.Add(new Claim(ClaimTypes.GivenName, givenName));
             }
             else
             {
@@ -71,6 +91,17 @@ namespace nuce.web.api.Services.Core.Implements
                     authClaims.Add(new Claim(ClaimTypes.Role, userRole));
                 }
             }
+            #region gán tên cho tài khoản của khoa & bộ môn
+            if (model.LoginUserType == LoginUserType.Faculty)
+            {
+                string givenName = (await _facultyRepository.FindByCode(username))?.Name;
+                authClaims.Add(new Claim(ClaimTypes.GivenName, givenName));
+            } else if (model.LoginUserType == LoginUserType.Department)
+            {
+                string givenName = (await _departmentRepository.FindByCode(username))?.Name;
+                authClaims.Add(new Claim(ClaimTypes.GivenName, givenName));
+            }
+            #endregion
             return authClaims;
         }
         public JwtSecurityToken CreateJWTAccessToken(List<Claim> claims)
@@ -101,17 +132,19 @@ namespace nuce.web.api.Services.Core.Implements
 
         public async Task<bool> UserLogin(LoginModel model)
         {
-            if (model.IsStudent)
+            
+            if (UserParameters.LoginViaDaotao.Contains(model.LoginUserType))
             {
-                ServiceSoapClient srvc = new ServiceSoapClient(EndpointConfiguration.ServiceSoap12);
-                try
-                {
-                    return await srvc.authenAsync(model.Username, model.Password) == 1;
-                }
-                catch (Exception)
-                {
-                    throw new CallEduWebServiceException("Hiện tại không thể kết nối đến Đào tạo");
-                }
+                return true;
+                //ServiceSoapClient srvc = new ServiceSoapClient(EndpointConfiguration.ServiceSoap12);
+                //try
+                //{
+                //    return await srvc.authenAsync(model.Username, model.Password) == 1;
+                //}
+                //catch (Exception)
+                //{
+                //    throw new CallEduWebServiceException("Hiện tại không thể kết nối đến Đào tạo");
+                //}
             }
             else
             {
@@ -132,7 +165,7 @@ namespace nuce.web.api.Services.Core.Implements
         }
         public string GetCurrentStudentCode()
         {
-            return GetClaimByKey(UserParameters.MSSV);
+            return GetClaimByKey(UserParameters.UserCode);
         }
         public string GetClaimByKey(string key)
         {
@@ -274,8 +307,8 @@ namespace nuce.web.api.Services.Core.Implements
                 throw new RecordNotFoundException();
             }
             //userUpdate.UserName = user.UserName.Trim();
-            userUpdate.Email = user.Email.Trim();
-            userUpdate.PhoneNumber = user.PhoneNumber.Trim();
+            userUpdate.Email = user.Email?.Trim();
+            userUpdate.PhoneNumber = user.PhoneNumber?.Trim();
             //userUpdate.Status = (int)user.Status;
             var oldRoles = (await _userManager.GetRolesAsync(userUpdate)).ToList();
             var newRoles = user.Roles;
@@ -319,6 +352,58 @@ namespace nuce.web.api.Services.Core.Implements
             }
             var token = await _userManager.GeneratePasswordResetTokenAsync(userReset);
             await _userManager.ResetPasswordAsync(userReset, token, newPassword.Trim());
+        }
+        public async Task<ApplicationUser> CreateUser(UserCreateModel model)
+        {
+            var userExists = await _userManager.FindByNameAsync(model.Username);
+            if (userExists != null)
+            {
+                throw new SystemException("Tên tài khoản đã tồn tại");
+            }
+
+            //tai khoan
+            var user = new ApplicationUser();
+            user.UserName = model.Username.Trim();
+            if (!string.IsNullOrWhiteSpace(model.Email))
+                user.Email = model.Email.Trim();
+            if (!string.IsNullOrWhiteSpace(model.PhoneNumber))
+                user.PhoneNumber = model.PhoneNumber.Trim();
+            user.SecurityStamp = Guid.NewGuid().ToString();
+            user.Status = (int)UserStatus.Active;
+
+            #region thêm quyền bố
+            var parentRoles = _identityContext.Roles.Where(r => model.Roles.Contains(r.Id))
+                                                .Select(r => r.Parent)
+                                                .Distinct();
+            model.Roles.AddRange(parentRoles);
+            #endregion
+
+            using (var transaction = _identityContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    //tạo tài khoản
+                    var result = await _userManager.CreateAsync(user, model.Password.Trim());
+                    if (!result.Succeeded)
+                    {
+                        throw new DbUpdateException("Không tạo được tài khoản");
+                    }
+                    //thêm vai trò
+                    foreach (var role in model.Roles)
+                    {
+                        await _userManager.AddToRoleAsync(user, role);
+                    }
+
+                    transaction.Commit();
+                    
+                    return user;
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    throw e;
+                }
+            }
         }
     }
 }

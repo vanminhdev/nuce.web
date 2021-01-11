@@ -11,6 +11,7 @@ namespace nuce.web.survey.student.Attributes.ActionFilter
         void IActionFilter.OnActionExecuting(ActionExecutingContext filterContext)
         {
             var session = filterContext.HttpContext.Session;
+            // chưa biết
             if (session["masv"] != null)
             {
                 return;

@@ -39,7 +39,7 @@ namespace nuce.web.quanly.Models
         public int status { get; set; }
 
         [Required(ErrorMessage = "Vai trò không được để trống")]
-        [Roles(ErrorMessage = "Vai trò không hợp lệ")]
+        //[Roles(ErrorMessage = "Vai trò không hợp lệ")]
         public List<string> roles { get; set; }
     }
 
@@ -61,9 +61,13 @@ namespace nuce.web.quanly.Models
 
     public class UserDetail
     {
-        public UserUpdate UserUpdateBind { get;set; }
+        public UserUpdate UserUpdateBind { get; set; }
         public Password ResetPassword { get; set; }
         public string ChangeStatus { get; set; }
+        /// <summary>
+        /// List role để chọn
+        /// </summary>
+        public List<RoleInfoModel> RoleList = new List<RoleInfoModel>();
     }
 
     public class UserCreate
@@ -87,7 +91,32 @@ namespace nuce.web.quanly.Models
         [EmailAddress]
         public string email { get; set; }
 
-        [Roles(ErrorMessage = "Vai trò không hợp lệ")]
+        //[Roles(ErrorMessage = "Vai trò không hợp lệ")]
         public List<string> roles { get; set; }
     }
+
+    public class RoleInfoModel
+    {
+        public string parent { get; set; }
+        public string description { get; set; }
+        public string id { get; set; }
+        public string name { get; set; }
+        public string normalizedName { get; set; }
+        public string concurrencyStamp { get; set; }
+    }
+
+    public class UserCreateModel
+    {
+        public UserCreate UserCreate { get; set; }
+        /// <summary>
+        /// List Role để chọn
+        /// </summary>
+        public List<RoleInfoModel> RoleList = new List<RoleInfoModel>();
+    }
+
+    //public class RoleInfoViewModel
+    //{
+    //    public List<RoleInfoModel> RoleList = new List<RoleInfoModel>();
+    //}
+
 }

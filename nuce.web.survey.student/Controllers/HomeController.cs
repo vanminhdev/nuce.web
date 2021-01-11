@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using nuce.web.survey.student.Attributes.ActionFilter;
-using nuce.web.survey.student.Common;
+using nuce.web.shared;
 using nuce.web.survey.student.Models;
 using nuce.web.survey.student.Models.JsonData;
 using System;
@@ -21,7 +21,7 @@ namespace nuce.web.survey.student.Controllers
     {
         #region sinh viên thường
         [HttpGet]
-        [AuthorizeActionFilter("Student")]
+        [AuthorizeActionFilter(RoleNames.Student)]
         public async Task<ActionResult> Index()
         {
             #region lấy cả bài trước tốt nghiệp
@@ -54,7 +54,7 @@ namespace nuce.web.survey.student.Controllers
         }
 
         [HttpGet]
-        [AuthorizeActionFilter("UndergraduateStudent")]
+        [AuthorizeActionFilter(RoleNames.UndergraduateStudent)]
         public async Task<ActionResult> IndexUndergraduate()
         {
             var resUndergraduate = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateTheSurveyStudent/GetTheSurvey");
@@ -75,7 +75,7 @@ namespace nuce.web.survey.student.Controllers
         }
 
         [HttpGet]
-        [AuthorizeActionFilter("Student")]
+        [AuthorizeActionFilter(RoleNames.Student)]
         public async Task<ActionResult> TheSurvey(string theSurveyId, string classRoomCode)
         {
             var resSelectedAnswer = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurveyStudent/GetSelectedAnswerAutoSave?classRoomCode={classRoomCode}");
@@ -104,7 +104,7 @@ namespace nuce.web.survey.student.Controllers
         }
 
         [HttpPost]
-        [AuthorizeActionFilter("Student")]
+        [AuthorizeActionFilter(RoleNames.Student)]
         public async Task<ActionResult> AutoSave(string classRoomCode, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, bool isAnswerCodesAdd = true)
         {
             var jsonStr = JsonConvert.SerializeObject(new { classRoomCode, questionCode, answerCode, answerCodeInMulSelect, isAnswerCodesAdd, answerContent });
@@ -114,7 +114,7 @@ namespace nuce.web.survey.student.Controllers
         }
 
         [HttpPost]
-        [AuthorizeActionFilter("Student")]
+        [AuthorizeActionFilter(RoleNames.Student)]
         public async Task<ActionResult> TheSurveySubmit(string classRoomCode)
         {
             var stringContent = new StringContent($"'{classRoomCode}'", Encoding.UTF8, "application/json");
@@ -125,7 +125,7 @@ namespace nuce.web.survey.student.Controllers
 
         #region sinh viên sắp tốt nghiệp
         [HttpGet]
-        [AuthorizeActionFilter("UndergraduateStudent")]
+        [AuthorizeActionFilter(RoleNames.UndergraduateStudent)]
         public async Task<ActionResult> UndergraduateTheSurvey(string theSurveyId)
         {
             var resSelectedAnswer = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateTheSurveyStudent/GetSelectedAnswerAutoSave?theSurveyId={theSurveyId}");
@@ -154,7 +154,7 @@ namespace nuce.web.survey.student.Controllers
         }
 
         [HttpPost]
-        [AuthorizeActionFilter("UndergraduateStudent")]
+        [AuthorizeActionFilter(RoleNames.UndergraduateStudent)]
         public async Task<ActionResult> UndergraduateAutoSave(string theSurveyId, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, bool isAnswerCodesAdd = true)
         {
             var jsonStr = JsonConvert.SerializeObject(new { theSurveyId, questionCode, answerCode, answerCodeInMulSelect, isAnswerCodesAdd, answerContent });
@@ -164,7 +164,7 @@ namespace nuce.web.survey.student.Controllers
         }
 
         [HttpPost]
-        [AuthorizeActionFilter("UndergraduateStudent")]
+        [AuthorizeActionFilter(RoleNames.UndergraduateStudent)]
         public async Task<ActionResult> UndergraduateTheSurveySubmit(string theSurveyId)
         {
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/UndergraduateTheSurveyStudent/SaveSelectedAnswer?theSurveyId={theSurveyId}");
@@ -172,14 +172,14 @@ namespace nuce.web.survey.student.Controllers
         }
 
         [HttpGet]
-        [AuthorizeActionFilter("UndergraduateStudent")]
+        [AuthorizeActionFilter(RoleNames.UndergraduateStudent)]
         public ActionResult Verification()
         {
             return View();
         }
 
         [HttpPost]
-        [AuthorizeActionFilter("UndergraduateStudent")]
+        [AuthorizeActionFilter(RoleNames.UndergraduateStudent)]
         public async Task<ActionResult> Verification(string email, string phone)
         {
             var content = new StringContent(JsonConvert.SerializeObject(new { email, phone }), Encoding.UTF8, "application/json");

@@ -1,11 +1,11 @@
-﻿function dateString(today) {
+﻿var dateString = function(today) {
     var dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0');
     var yyyy = today.getFullYear();
     return dd + '/' + mm + '/' + yyyy;
 }
 
-function dateTimeString(today) {
+var dateTimeString = function(today) {
     var dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0');
     var yyyy = today.getFullYear();
@@ -17,11 +17,11 @@ function dateTimeString(today) {
 
 
 //2020-01-01T00:00:00 -> dd/MM/yyyy
-function getDateString(date) {
+var getDateString = function(date) {
     return dateString(new Date(date));
 }
 
-function getDateStringFromServerType(date) {
+var getDateStringFromServerType = function(date) {
     if (date == null || date === "") {
         return '';
     }
@@ -29,7 +29,7 @@ function getDateStringFromServerType(date) {
     return dateString(new Date(+date.match(regex)[0]));
 }
 
-function getDateTimeStringFromServerType(date) {
+var getDateTimeStringFromServerType = function(date) {
     if (date == null || date === "") {
         return '';
     }
@@ -37,7 +37,7 @@ function getDateTimeStringFromServerType(date) {
     return dateTimeString(new Date(+date.match(regex)[0]));
 }
 
-function getDateyyyyMMdd(date) {
+var getDateyyyyMMdd = function(date) {
     var mm = date.getMonth() + 1;
     var dd = date.getDate();
 
@@ -47,7 +47,7 @@ function getDateyyyyMMdd(date) {
     ].join('-');
 };
 
-const debounce = (func, delay) => {
+/*const debounce = (func, delay) {
     let debounceTimer;
     return function () {
         const context = this;
@@ -55,14 +55,14 @@ const debounce = (func, delay) => {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => func.apply(context, args), delay);
     }
-}
+}*/
 
 
 $('.toast').toast({
     delay: 4000
 });
 
-function toastSuccess(message) {
+var toastSuccess = function(message) {
     if (message == undefined || message == "") {
         message = "Thành công";
         console.log("default toast message");
@@ -71,7 +71,7 @@ function toastSuccess(message) {
     $('#toast-success').toast('show');
 }
 
-function toastWarning(message) {
+var toastWarning = function(message) {
     if (message == undefined || message == "") {
         message = "Cảnh báo";
         console.log("default toast message");
@@ -80,7 +80,7 @@ function toastWarning(message) {
     $('#toast-warning').toast('show');
 }
 
-function toastError(message) {
+var toastError = function(message) {
     if (message == undefined || message == "") {
         message = "Lỗi";
         console.log("default toast message");

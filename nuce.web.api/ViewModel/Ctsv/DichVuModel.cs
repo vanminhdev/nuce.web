@@ -7,6 +7,10 @@ using static nuce.web.api.Common.Ctsv;
 
 namespace nuce.web.api.ViewModel.Ctsv
 {
+    /// <summary>
+    /// Model tạo mới yêu cầu dịch vụ
+    /// Dùng chung cho các dịch vụ
+    /// </summary>
     public class DichVuModel
     {
         public int Type { get; set; }
@@ -19,10 +23,30 @@ namespace nuce.web.api.ViewModel.Ctsv
         public string VeViec { get; set; }
         public string MaXacNhan { get; set; }
         public string PhanHoi { get; set; }
+        /// <summary>
+        /// xe bus
+        /// </summary>
         public int VeBusTuyenType { get; set; }
+        /// <summary>
+        /// xe bus
+        /// </summary>
         public string VeBusTuyenCode { get; set; }
+        /// <summary>
+        /// xe bus
+        /// </summary>
         public string VeBusTuyenName { get; set; }
+        /// <summary>
+        /// xe bus
+        /// </summary>
         public string VeBusNoiNhanThe { get; set; }
+        /// <summary>
+        /// mượn học bạ gốc
+        /// </summary>
+        public string ThoiGianMuon { get; set; }
+        /// <summary>
+        /// Option gửi mail cho sv khi tạo mới yêu cầu
+        /// </summary>
+        public bool NotSendEmail { get; set; }
     }
 
     public class AllTypeDichVuModel
@@ -50,7 +74,9 @@ namespace nuce.web.api.ViewModel.Ctsv
         public object DichVu { get; set; }
         public AsAcademyStudent Student { get; set; }
     }
-
+    /// <summary>
+    /// Model cập nhật trạng thái yêu cầu
+    /// </summary>
     public class UpdateRequestStatusModel
     {
         public int Type { get; set; }
@@ -60,6 +86,9 @@ namespace nuce.web.api.ViewModel.Ctsv
         public DateTime? NgayHenKetThuc { get; set; }
         public bool AutoUpdateNgayHen { get; set; }
         public int Status { get; set; }
+        /// <summary>
+        /// Chứa các yêu cầu dịch vụ khi cập nhật nhiều yêu cầu sang trạng thái 4 | Đã xử lý có lịch hẹn
+        /// </summary>
         public List<DichVuExport> DichVuList { get; set; }
     }
 

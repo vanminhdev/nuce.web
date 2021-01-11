@@ -1,4 +1,5 @@
 ﻿using nuce.web.api.Attributes.ValidationAttributes;
+using nuce.web.api.Common;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -17,6 +18,6 @@ namespace nuce.web.api.ViewModel.Core.NuceIdentity
         [NotContainWhiteSpace]
         public string Password { get; set; }
 
-        public bool IsStudent { get; set; } = false;
+        public LoginUserType LoginUserType { get; set; }
     }
 }

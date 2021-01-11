@@ -284,6 +284,10 @@
                 name: 'ưu đãi trong giáo dục',
                 key: 'UU_DAI',
             },
+            5: {
+                name: ' mượn học bạ gốc',
+                key: 'MUON_HOC_BA_GOC',
+            },
             6: {
                 name: 'vay vốn ngân hàng chính sách - xã hội',
                 key: 'VAY_VON',
@@ -450,6 +454,54 @@
             });
         }
 
+        var getMainContentSection = function(dichVu) {
+            let result = '';
+            switch (Number(serviceType)) {
+                case dichVuEnum.XAC_NHAN:
+                    result = `<div class="mb-3">${dichVu.lyDo}</div>`;
+                    break;
+                case dichVuEnum.GIOI_THIEU:
+                    result = `<div class="mb-3">
+                                    <b>Kính gửi: </b>${dichVu.donVi}<br>
+                                    <b>Đến gặp: </b>${dichVu.denGap}<br>
+                                    <b>Về việc: </b>${dichVu.veViec}<br>
+                                </div>`;
+                    break;
+                case dichVuEnum.VAY_VON:
+                    const ThuocDien = {
+                        1: 'Không miễn giảm',
+                        2: 'Giảm học phí',
+                        3: 'Miễn học phí',
+                    };
+                    const ThuocDoiTuong = {
+                        1: 'Mồ côi',
+                        2: 'Không mồ côi',
+                    };
+                    result = `<div class="mb-3"><b>Thuộc diện: </b>${ThuocDien[dichVu.thuocDien]}<br><b>Thuộc đối tượng: </b>${ThuocDoiTuong[dichVu.thuocDoiTuong]}</div>`;
+                    break;
+                case dichVuEnum.MUON_HOC_BA_GOC:
+                    result = `<div class="mb-3">
+                                    <b>Thời gian mượn: </b>${dichVu.thoiGianMuon || ''}<br>
+                                    <b>Mục đích: </b>${dichVu.lyDo}<br>
+                                </div>`;
+                    break;
+                case dichVuEnum.THUE_KTX:
+                    result = '';
+                    break;
+                case dichVuEnum.VE_XE_BUS:
+                    if (dichVu.tuyenType === '1') {
+                        result = `<div>Loại tuyến: Một tuyến</div><div>Số tuyến: ${dichVu.tuyenCode || ''}</div>`;
+                    } else if (dichVu.tuyenType === '2') {
+                        result = `<div>Loại tuyến: Liên tuyến</div>`;
+                    }
+                    result += `<div>Nơi nhận thẻ: ${dichVu.noiNhanThe}</div>`;
+                    break;
+                default:
+                    break;
+            }
+            return result;
+        }
+
         var template = function(data) {
             const dichVu = data.DichVu;
             const student = data.Student;
@@ -477,44 +529,8 @@
 
             const statusTextClass = templateStatus[statusCode];
 
-            let mainContentSection = ``;
-            switch (Number(serviceType)) {
-                case dichVuEnum.XAC_NHAN:
-                    mainContentSection = `<div class="mb-3">${dichVu.lyDo}</div>`;
-                    break;
-                case dichVuEnum.GIOI_THIEU:
-                    mainContentSection = `<div class="mb-3">
-                                    <b>Kính gửi: </b>${dichVu.donVi}<br>
-                                    <b>Đến gặp: </b>${dichVu.denGap}<br>
-                                    <b>Về việc: </b>${dichVu.veViec}<br>
-                                </div>`;
-                    break;
-                case dichVuEnum.VAY_VON:
-                    var ThuocDien = {
-                        1: 'Không miễn giảm',
-                        2: 'Giảm học phí',
-                        3: 'Miễn học phí',
-                    };
-                    var ThuocDoiTuong = {
-                        1: 'Mồ côi',
-                        2: 'Không mồ côi',
-                    };
-                    mainContentSection = `<div class="mb-3"><b>Thuộc diện: </b>${ThuocDien[dichVu.thuocDien]}<br><b>Thuộc đối tượng: </b>${ThuocDoiTuong[dichVu.thuocDoiTuong]}</div>`;
-                    break;
-                case dichVuEnum.THUE_KTX:
-                    mainContentSection = '';
-                    break;
-                case dichVuEnum.VE_XE_BUS:
-                    if (dichVu.tuyenType === '1') {
-                        mainContentSection = `<div>Loại tuyến: Một tuyến</div><div>Số tuyến: ${dichVu.tuyenCode || ''}</div>`;
-                    } else if (dichVu.tuyenType === '2') {
-                        mainContentSection = `<div>Loại tuyến: Liên tuyến</div>`;
-                    }
-                    mainContentSection += `<div>Nơi nhận thẻ: ${dichVu.noiNhanThe}</div>`;
-                    break;
-                default:
-                    break;
-            }
+            const mainContentSection = getMainContentSection(dichVu);
+            
             let noteSection = '';
 
             if ([4, 6].includes(statusCode)) {

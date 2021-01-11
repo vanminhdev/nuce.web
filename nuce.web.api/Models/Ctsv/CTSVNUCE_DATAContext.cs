@@ -631,6 +631,8 @@ namespace nuce.web.api.Models.Ctsv
                 entity.Property(e => e.StudentName)
                     .IsRequired()
                     .HasMaxLength(100);
+
+                entity.Property(e => e.ThoiGianMuon).HasMaxLength(500);
             });
 
             modelBuilder.Entity<AsAcademyStudentSvThietLapThamSoDichVu>(entity =>

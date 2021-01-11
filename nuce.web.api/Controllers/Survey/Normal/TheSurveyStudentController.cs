@@ -18,6 +18,7 @@ using nuce.web.api.Services.Status.Interfaces;
 using nuce.web.api.Services.Survey.BackgroundTasks;
 using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Survey;
+using nuce.web.shared;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -32,6 +33,7 @@ namespace nuce.web.api.Controllers.Survey.Normal
     /// </summary>
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [AppAuthorize(RoleNames.KhaoThi_Survey_Normal, RoleNames.Student)]
     public class TheSurveyStudentController : ControllerBase
     {
         private readonly ILogger<TheSurveyStudentController> _logger;

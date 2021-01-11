@@ -20,6 +20,8 @@
 		- thư mục jsondata: là các model đưa dữ liệu đã query về dạng json string
 			
 	1.5. context Ctsv: công tác sinh viên
+		- cli:
+			dotnet ef dbcontext scaffold "Data Source=.\sqlexpress;Initial Catalog=CTSVNUCE_DATA;Integrated Security=True" Microsoft.EntityFrameworkCore.SqlServer -o Models/Ctsv -c CTSVNUCE_DATAContext -f --project nuce.web.api
 	1.6. context status: lưu trạng thái làm việc của các bảng mất nhiều thời gian
 		-cli:
 			dotnet ef dbcontext scaffold "Data Source=.\sqlexpress;Initial Catalog=NUCE_SURVEY;Integrated Security=True" Microsoft.EntityFrameworkCore.SqlServer -o Models/Status -c StatusContext -f -t AS_Status_Table_Task -t AS_Academy_Semester
