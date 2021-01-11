@@ -29,7 +29,7 @@ namespace nuce.web.api.Services.Core.Implements
                                 {
                                     Email = f.Email,
                                     Password = password,
-                                    Username = f.Code,
+                                    Username = $"F{f.Code}",
                                     Roles = new List<string> { RoleNames.KhaoThi_Survey_KhoaBan },
                                 });
             var deparmentList = (await _eduDataContext.AsAcademyDepartment.Where(d => d.Code != "**").ToListAsync())
@@ -37,7 +37,7 @@ namespace nuce.web.api.Services.Core.Implements
                                 {
                                     Email = "",
                                     Password = password,
-                                    Username = d.Code,
+                                    Username = $"D{d.Code}",
                                     Roles = new List<string> { RoleNames.KhaoThi_Survey_Department },
                                 });
             var allAccountModels = facultyList.Concat(deparmentList);
