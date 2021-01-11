@@ -9,16 +9,18 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Survey;
+using nuce.web.shared;
 
 namespace nuce.web.api.Controllers.Survey.Normal
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize(Roles = "P_KhaoThi")]
+    [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
     public class AnswerController : ControllerBase
     {
         private readonly ILogger<AnswerController> _logger;

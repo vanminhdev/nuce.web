@@ -27,7 +27,6 @@ namespace nuce.web.api.Controllers.Survey.Graduate
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate, RoleNames.UndergraduateStudent)]
     public class UndergraduateStudentController : ControllerBase
     {
         private readonly ILogger<UndergraduateStudentController> _logger;
@@ -46,6 +45,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpPost]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<IActionResult> GetUndergraduateStudent([FromBody] DataTableRequest request)
         {
             var filter = new UndergraduateStudentFilter();
@@ -74,6 +74,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpGet]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<IActionResult> GetUndergraduateStudentById(
             [Required(AllowEmptyStrings = false)]
             string id)
@@ -96,6 +97,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpGet]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<IActionResult> DownloadTemplateUploadFile()
         {
             var path = _pathProvider.MapPath("Templates/Survey/MauUploadTruocTotNghiep.xlsx");
@@ -108,6 +110,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpPost]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<IActionResult> UploadFile(
             [Required]
             IFormFile fileUpload, 
@@ -220,6 +223,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpDelete]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<IActionResult> DeleteAll()
         {
             try

@@ -14,6 +14,7 @@ using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Survey;
+using nuce.web.shared;
 
 namespace nuce.web.api.Controllers.Survey.Normal
 {
@@ -22,7 +23,7 @@ namespace nuce.web.api.Controllers.Survey.Normal
     /// </summary>
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize(Roles = "P_KhaoThi")]
+    [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
     public class ExamQuestionsController : ControllerBase
     {
         private readonly ILogger<ExamQuestionsController> _logger;

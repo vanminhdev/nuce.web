@@ -23,7 +23,6 @@ namespace nuce.web.api.Controllers.Survey.Graduate
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate, RoleNames.UndergraduateStudent)]
     public class UndergraduateTheSurveyStudentController : ControllerBase
     {
         private readonly ILogger<UndergraduateTheSurveyStudentController> _logger;
@@ -43,7 +42,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
 
         
         [HttpGet]
-        [Authorize(Roles = "UndergraduateStudent")]
+        [AppAuthorize(RoleNames.UndergraduateStudent)]
         public async Task<IActionResult> GetTheSurvey()
         {
             var studentCode = _userService.GetCurrentStudentCode();
@@ -59,7 +58,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpGet]
-        [Authorize(Roles = "UndergraduateStudent")]
+        [AppAuthorize(RoleNames.UndergraduateStudent)]
         public async Task<IActionResult> GetTheSurveyContent(
             [Required(AllowEmptyStrings = false)]
             Guid? id)
@@ -79,7 +78,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
 
         #region làm bài ks
         [HttpGet]
-        [Authorize(Roles = "UndergraduateStudent")]
+        [AppAuthorize(RoleNames.UndergraduateStudent)]
         public async Task<IActionResult> GetSelectedAnswerAutoSave([Required] Guid? theSurveyId)
         {
             try
@@ -95,7 +94,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpPut]
-        [Authorize(Roles = "UndergraduateStudent")]
+        [AppAuthorize(RoleNames.UndergraduateStudent)]
         public async Task<IActionResult> AutoSave([FromBody] GraduateSelectedAnswerAutoSave content)
         {
             try
@@ -124,7 +123,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpPut]
-        [Authorize(Roles = "UndergraduateStudent")]
+        [AppAuthorize(RoleNames.UndergraduateStudent)]
         public async Task<IActionResult> SaveSelectedAnswer([Required] Guid? theSurveyId)
         {
             try
@@ -159,7 +158,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
 
         #region generate bài ks sv
         [HttpGet]
-        [Authorize(Roles = "P_KhaoThi")]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<IActionResult> GetGenerateTheSurveyStudentStatus()
         {
             try
@@ -180,7 +179,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpPost]
-        [Authorize(Roles = "P_KhaoThi")]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<IActionResult> GenerateTheSurveyStudent(
             [Required]
             Guid? theSurveyId)
@@ -209,7 +208,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
 
         #region xác thực hoàn thành bài ks
         [HttpPost]
-        [Authorize(Roles = "UndergraduateStudent")]
+        [AppAuthorize(RoleNames.UndergraduateStudent)]
         public async Task<IActionResult> Verification([FromBody] VerificationStudent verification)
         {
             try

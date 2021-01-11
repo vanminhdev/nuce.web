@@ -33,7 +33,6 @@ namespace nuce.web.api.Controllers.Survey.Normal
     /// </summary>
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [AppAuthorize(RoleNames.KhaoThi_Survey_Normal, RoleNames.Student)]
     public class TheSurveyStudentController : ControllerBase
     {
         private readonly ILogger<TheSurveyStudentController> _logger;
@@ -55,7 +54,7 @@ namespace nuce.web.api.Controllers.Survey.Normal
 
         #region lấy bài và làm bài ks
         [HttpGet]
-        [Authorize(Roles = "Student")]
+        [AppAuthorize(RoleNames.Student)]
         public async Task<IActionResult> GetTheSurvey()
         {
             try
@@ -71,7 +70,7 @@ namespace nuce.web.api.Controllers.Survey.Normal
         }
 
         [HttpGet]
-        [Authorize(Roles = "Student")]
+        [AppAuthorize(RoleNames.Student)]
         public async Task<IActionResult> GetTheSurveyContent([Required(AllowEmptyStrings = false)] Guid? id, [Required(AllowEmptyStrings = false)] string classroomCode)
         {
             try
@@ -88,7 +87,7 @@ namespace nuce.web.api.Controllers.Survey.Normal
         }
 
         [HttpGet]
-        [Authorize(Roles = "Student")]
+        [AppAuthorize(RoleNames.Student)]
         public async Task<IActionResult> GetSelectedAnswerAutoSave(
             [Required(AllowEmptyStrings = false)]
             [NotContainWhiteSpace]
@@ -107,7 +106,7 @@ namespace nuce.web.api.Controllers.Survey.Normal
         }
 
         [HttpPut]
-        [Authorize(Roles = "Student")]
+        [AppAuthorize(RoleNames.Student)]
         public async Task<IActionResult> AutoSave([FromBody] SelectedAnswerAutoSave content)
         {
             try
@@ -136,7 +135,7 @@ namespace nuce.web.api.Controllers.Survey.Normal
         }
 
         [HttpPut]
-        [Authorize(Roles = "Student")]
+        [AppAuthorize(RoleNames.Student)]
         public async Task<IActionResult> SaveSelectedAnswer([FromBody]
             [Required(AllowEmptyStrings = false)]
             [NotContainWhiteSpace]
@@ -174,7 +173,7 @@ namespace nuce.web.api.Controllers.Survey.Normal
 
         #region gán bài ks
         [HttpGet]
-        [Authorize(Roles = "P_KhaoThi")]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<IActionResult> GetGenerateTheSurveyStudentStatus()
         {
             try
@@ -195,7 +194,7 @@ namespace nuce.web.api.Controllers.Survey.Normal
         }
 
         [HttpPost]
-        [Authorize(Roles = "P_KhaoThi")]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<IActionResult> GenerateTheSurveyStudent([Required(AllowEmptyStrings = false)] Guid? surveyRoundId)
         {
             try

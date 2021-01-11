@@ -8,6 +8,7 @@ using nuce.web.quanly.Models.Survey.Normal;
 using nuce.web.quanly.Models.Survey.Normal.Statistic;
 using nuce.web.quanly.Models.Survey.Undergraduate;
 using nuce.web.quanly.ViewModel.Base;
+using nuce.web.shared;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -25,7 +26,6 @@ using System.Web.Mvc;
 
 namespace nuce.web.quanly.Controllers
 {
-    [AuthorizeActionFilter("P_KhaoThi")]
     public class SurveyController : BaseController
     {
         [HttpGet]
@@ -36,12 +36,14 @@ namespace nuce.web.quanly.Controllers
 
         #region question
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public ActionResult Question()
         {
             return View();
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> GetAllQuestion(DataTableRequest request)
         {
             var stringContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
@@ -63,12 +65,14 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public ActionResult CreateQuestion()
         {
             return View(new QuestionCreate());
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> CreateQuestionSubmit(QuestionCreate question)
         {
             if (!ModelState.IsValid)
@@ -95,6 +99,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> DetailQuestion(string questionId)
         {
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/Question/GetById?id={questionId}");
@@ -109,6 +114,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> UpdateQuestion(QuestionDetail question)
         {
             var content = new StringContent(JsonConvert.SerializeObject(question), Encoding.UTF8, "application/json");
@@ -119,6 +125,7 @@ namespace nuce.web.quanly.Controllers
 
         #region answer
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> Answer(string questionId)
         {
             string questionContent = "";
@@ -146,6 +153,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> CreateAnswer(string questionId)
         {
             Question question = new Question();
@@ -167,6 +175,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> CreateAnswerSubmit(AnswerCreateOfQuestion answer)
         {
             if (!ModelState.IsValid)
@@ -184,6 +193,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> DetailAnswer(string id, string questionId)
         {
             string questionContent = "";
@@ -212,6 +222,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> UpdateAnswer(UpdateAnswer detail)
         {
             if (!ModelState.IsValid)
@@ -232,6 +243,7 @@ namespace nuce.web.quanly.Controllers
 
         #region đề khảo sát
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> ExamQuestions()
         {
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/ExamQuestions/GetAll");
@@ -246,6 +258,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public ActionResult ExamStructure(string examQuestionId)
         {
             ViewData["ExamQuestionId"] = examQuestionId;
@@ -253,6 +266,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> GetStructure(string examQuestionId)
         {
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/ExamQuestions/GetExamStructure?examQuestionId={examQuestionId}");
@@ -267,12 +281,14 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public ActionResult CreateExamQuestions()
         {
             return View(new ExamQuestionsCreate());
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> CreateExamQuestions(ExamQuestionsCreate exam)
         {
             if (!ModelState.IsValid)
@@ -299,6 +315,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> AddQuestionExam(AddQuestionExam question)
         {
             if (!ModelState.IsValid)
@@ -311,6 +328,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> GenerateExam(string examQuestionId, List<SortQuestion> sortResult)
         {
             var json = JsonConvert.SerializeObject(new { examQuestionId, sortResult });
@@ -320,6 +338,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> ExamDetail(string examQuestionId)
         {
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/ExamQuestions/GetExamDetailJsonString?examQuestionId={examQuestionId}");
@@ -336,6 +355,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> DeleteQuestionFromStructure(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/ExamQuestions/DeleteQuestionFromStructure?id={id}");
@@ -345,6 +365,7 @@ namespace nuce.web.quanly.Controllers
 
         #region đợt khảo sát sv thường
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> SurveyRound()
         {
             var resTableStatus = await base.MakeRequestAuthorizedAsync("Get", $"/api/Statistic/GetStatusTempDataNormalSurveyTask");
@@ -354,12 +375,14 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> GetAllSurveyRound(DataTableRequest request)
         {
             return await GetDataTabeFromApi<SurveyRound>(request, "/api/SurveyRound/GetSurveyRound");
         }
 
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> GetSurveyRoundById(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/SurveyRound/GetSurveyRoundById?id={id}");
@@ -367,6 +390,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> CreateSurveyRound(SurveyRoundCreate data)
         {
             var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
@@ -375,6 +399,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> UpdateSurveyRound(SurveyRoundUpdate data)
         {
             var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
@@ -383,6 +408,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> OpenSurveyRound(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/SurveyRound/OpenSurveyRound?id={id}");
@@ -390,6 +416,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> CloseSurveyRound(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/SurveyRound/CloseSurveyRound?id={id}");
@@ -397,6 +424,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> DeleteSurveyRound(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/SurveyRound/DeleteSurveyRound?id={id}");
@@ -404,6 +432,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> AddEndDateSurveyRound(string id, DateTime? endDate)
         {
             var content = new StringContent(JsonConvert.SerializeObject(new { endDate }), Encoding.UTF8, "application/json");
@@ -412,6 +441,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> GetTempDataNormalSurvey(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/Statistic/GetTempDataNormalSurvey?surveyRoundId={id}");
@@ -419,6 +449,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> SendUrgingEmail()
         {
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/Statistic/SendUrgingEmail");
@@ -443,6 +474,7 @@ namespace nuce.web.quanly.Controllers
         //}
 
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> TheSurvey(string surveyRoundId)
         {
             var resTableStatus = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurveyStudent/GetGenerateTheSurveyStudentStatus");
@@ -456,6 +488,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> GetAllTheSurvey(DataTableRequest request)
         {
             var stringContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
@@ -477,6 +510,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> GetTheSurveyById(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurvey/GetTheSurveyById?id={id}");
@@ -484,6 +518,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> CreateTheSurvey(TheSurveyCreate data)
         {
             var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
@@ -492,6 +527,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> UpdateTheSurvey(GraduateTheSurveyUpdate data)
         {
             var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
@@ -500,6 +536,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> DeleteTheSurvey(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/TheSurvey/DeleteTheSurvey?id={id}");
@@ -507,6 +544,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> CloseTheSurvey(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/TheSurvey/CloseTheSurvey?id={id}");
@@ -514,6 +552,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> GenerateTheSurveyStudent(string surveyRoundId)
         {
             var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/TheSurveyStudent/GenerateTheSurveyStudent?surveyRoundId={surveyRoundId}");
@@ -523,6 +562,7 @@ namespace nuce.web.quanly.Controllers
 
         #region thống kê sv thường
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> StatisticNormalSurvey()
         {
             var resTableStatus = await base.MakeRequestAuthorizedAsync("Get", $"/api/Statistic/GetStatusReportTotalNormalSurveyTask");
@@ -550,12 +590,14 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> GetRawReportTotalNormalSurvey(DataTableRequest request)
         {
             return await GetDataTabeFromApi<ReportTotalNormal>(request, "/api/Statistic/GetRawReportTotalNormalSurvey");
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> ReportTotalNormalSurvey(string surveyRoundId)
         {
             var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/Statistic/ReportTotalNormalSurvey?surveyRoundId={surveyRoundId}");
@@ -563,6 +605,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> ExportReportTotalNormalSurvey(List<string> surveyRoundIds)
         {
             var content = new StringContent(JsonConvert.SerializeObject(surveyRoundIds), Encoding.UTF8, "application/json");
@@ -571,6 +614,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> DownloadReportTotalNormalSurvey()
         {
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/Statistic/DownloadReportTotalNormalSurvey");
@@ -591,12 +635,14 @@ namespace nuce.web.quanly.Controllers
 
         #region đợt khảo sát đã tốt nghiệp
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public ActionResult GraduateSurveyRound()
         {
             return View("~/Views/Survey/Graduate/GraduateSurveyRound.cshtml");
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<ActionResult> GetAllGraduateSurveyRound(DataTableRequest request)
         {
             var stringContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
@@ -618,6 +664,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<ActionResult> GetGraduateSurveyRoundById(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/GraduateSurveyRound/GetSurveyRoundById?id={id}");
@@ -625,6 +672,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<ActionResult> CreateGraduateSurveyRound(GraduateSurveyRoundCreate data)
         {
             var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
@@ -633,6 +681,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<ActionResult> UpdateGraduateSurveyRound(GraduateSurveyRoundUpdate data)
         {
             var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
@@ -641,6 +690,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<ActionResult> CloseGraduateSurveyRound(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/GraduateSurveyRound/CloseSurveyRound?id={id}");
@@ -648,6 +698,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<ActionResult> DeleteGraduateSurveyRound(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/GraduateSurveyRound/DeleteSurveyRound?id={id}");
@@ -657,6 +708,7 @@ namespace nuce.web.quanly.Controllers
 
         #region sinh viên đã tốt nghiệp
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<ActionResult> GraduateStudent()
         {
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/GraduateSurveyRound/GetSurveyRoundActive");
@@ -666,6 +718,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<ActionResult> GetAllGraduateStudent(DataTableRequest request)
         {
             var stringContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
@@ -687,6 +740,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<ActionResult> DownloadTemplateUploadFile()
         {
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/GraduateStudent/DownloadTemplateUploadFile");
@@ -705,6 +759,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<ActionResult> UploadFileGraudate(HttpPostedFileBase fileUpload, string surveyRoundId)
         {
             var contentLength = fileUpload.ContentLength;
@@ -732,6 +787,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<ActionResult> DeleteAllGraduateStudent()
         {
             var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/GraduateStudent/DeleteAll");
@@ -741,6 +797,7 @@ namespace nuce.web.quanly.Controllers
 
         #region bài khảo sát đã tốt nghiệp
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<ActionResult> GraduateTheSurvey()
         {
             var resTableStatus = await base.MakeRequestAuthorizedAsync("Get", $"/api/GraduateTheSurveyStudent/GetGenerateTheSurveyStudentStatus");
@@ -756,6 +813,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<ActionResult> GetAllGraduateTheSurvey(DataTableRequest request)
         {
             var stringContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
@@ -777,6 +835,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<ActionResult> GetGraduateTheSurveyById(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/GraduateTheSurvey/GetTheSurveyById?id={id}");
@@ -784,6 +843,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<ActionResult> CreateGraduateTheSurvey(GraduateTheSurveyCreate data)
         {
             var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
@@ -792,6 +852,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<ActionResult> UpdateGraduateTheSurvey(GraduateTheSurveyUpdate data)
         {
             var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
@@ -800,6 +861,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<ActionResult> DeleteGraduateTheSurvey(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/GraduateTheSurvey/DeleteTheSurvey?id={id}");
@@ -807,6 +869,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<ActionResult> CloseGraduateTheSurvey(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/GraduateTheSurvey/CloseTheSurvey?id={id}");
@@ -814,6 +877,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<ActionResult> GenerateGraduateTheSurveyStudent(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/GraduateTheSurveyStudent/GenerateTheSurveyStudent?theSurveyId={id}");
@@ -823,12 +887,14 @@ namespace nuce.web.quanly.Controllers
 
         #region đợt khảo sát sắp tốt nghiệp
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public ActionResult UndergraduateSurveyRound()
         {
             return View("~/Views/Survey/Undergraduate/UndergraduateSurveyRound.cshtml");
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<ActionResult> GetAllUndergraduateSurveyRound(DataTableRequest request)
         {
             var stringContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
@@ -850,6 +916,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<ActionResult> GetUndergraduateSurveyRoundById(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateSurveyRound/GetSurveyRoundById?id={id}");
@@ -857,6 +924,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<ActionResult> CreateUndergraduateSurveyRound(GraduateSurveyRoundCreate data)
         {
             var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
@@ -865,6 +933,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<ActionResult> UpdateUndergraduateSurveyRound(GraduateSurveyRoundUpdate data)
         {
             var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
@@ -873,6 +942,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<ActionResult> OpenUndergraduateSurveyRound(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/UndergraduateSurveyRound/OpenSurveyRound?id={id}");
@@ -880,6 +950,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<ActionResult> CloseUndergraduateSurveyRound(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/UndergraduateSurveyRound/CloseSurveyRound?id={id}");
@@ -887,6 +958,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<ActionResult> DeleteUndergraduateSurveyRound(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/UndergraduateSurveyRound/DeleteSurveyRound?id={id}");
@@ -896,6 +968,7 @@ namespace nuce.web.quanly.Controllers
 
         #region sinh viên sắp tốt nghiệp
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<ActionResult> UndergraduateStudent()
         {
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateSurveyRound/GetSurveyRoundActive");
@@ -908,6 +981,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<ActionResult> GetAllUndergraduateStudent(DataTableRequest request)
         {
             var stringContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
@@ -929,6 +1003,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<ActionResult> DownloadTemplateUploadFileUndergraudate()
         {
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateStudent/DownloadTemplateUploadFile");
@@ -947,6 +1022,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<ActionResult> UploadFileUndergraudate(HttpPostedFileBase fileUpload, string surveyRoundId)
         {
             var contentLength = fileUpload.ContentLength;
@@ -974,6 +1050,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<ActionResult> DeleteAllUndergraduateStudent()
         {
             var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/UndergraduateStudent/DeleteAll");
@@ -983,6 +1060,7 @@ namespace nuce.web.quanly.Controllers
 
         #region bài khảo sát sắp tốt nghiệp
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<ActionResult> UndergraduateTheSurvey()
         {
             var resTableStatus = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateTheSurveyStudent/GetGenerateTheSurveyStudentStatus");
@@ -995,6 +1073,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<ActionResult> GetAllUndergraduateTheSurvey(DataTableRequest request)
         {
             var stringContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
@@ -1016,6 +1095,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<ActionResult> GetUndergraduateTheSurveyById(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateTheSurvey/GetTheSurveyById?id={id}");
@@ -1023,6 +1103,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<ActionResult> CreateUndergraduateTheSurvey(UndergraduateTheSurveyCreate data)
         {
             var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
@@ -1031,6 +1112,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<ActionResult> UpdateUndergraduateTheSurvey(UndergraduateTheSurveyUpdate data)
         {
             var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
@@ -1039,6 +1121,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<ActionResult> DeleteUndergraduateTheSurvey(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/UndergraduateTheSurvey/DeleteTheSurvey?id={id}");
@@ -1046,6 +1129,7 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<ActionResult> GenerateUndergraduateTheSurveyStudent(string id)
         {
             var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/UndergraduateTheSurveyStudent/GenerateTheSurveyStudent?theSurveyId={id}");

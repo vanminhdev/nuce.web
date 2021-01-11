@@ -20,7 +20,7 @@ namespace nuce.web.api.Controllers.Survey.Normal
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [AppAuthorize(RoleNames.KhaoThi_Survey_Normal, RoleNames.Student)]
+    [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
     public class TheSurveyController : ControllerBase
     {
         private readonly ILogger<TheSurveyController> _logger;

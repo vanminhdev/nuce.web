@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Services.Status.Interfaces;
@@ -10,6 +11,7 @@ using nuce.web.api.Services.Survey.BackgroundTasks;
 using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey.Normal.Statistic;
+using nuce.web.shared;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -20,7 +22,6 @@ namespace nuce.web.api.Controllers.Survey
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize(Roles = "P_KhaoThi")]
     public class StatisticController : ControllerBase
     {
         private readonly ILogger<StatisticController> _logger;
@@ -39,6 +40,7 @@ namespace nuce.web.api.Controllers.Survey
 
         #region thống kê sinh viên thường
         [HttpGet]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<IActionResult> GetStatusReportTotalNormalSurveyTask()
         {
             try
@@ -54,6 +56,7 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpPost]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<IActionResult> ReportTotalNormalSurvey([Required] Guid? surveyRoundId)
         {
             try
@@ -88,6 +91,7 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpPost]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<IActionResult> GetRawReportTotalNormalSurvey([FromBody] DataTableRequest request)
         {
             var filter = new ReportTotalNormalFilter();
@@ -110,6 +114,7 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpPut]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<IActionResult> GetTempDataNormalSurvey([Required] Guid? surveyRoundId)
         {
             try
@@ -134,6 +139,7 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpGet]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<IActionResult> GetStatusTempDataNormalSurveyTask()
         {
             try
@@ -149,6 +155,7 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpPut]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<IActionResult> SendUrgingEmail()
         {
             try
@@ -176,6 +183,7 @@ namespace nuce.web.api.Controllers.Survey
 
         #region kết xuất báo cáo ks sv thường
         [HttpPost]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<IActionResult> ExportReportTotalNormalSurvey([Required] List<Guid> surveyRoundIds)
         {
             try
@@ -209,6 +217,7 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpGet]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<IActionResult> GetStatusExportReportTotalNormalSurveyTask()
         {
             try
@@ -224,6 +233,7 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpGet]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<IActionResult> CheckExistReportTotalNormalSurvey()
         {
             try
@@ -244,6 +254,7 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpGet]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<IActionResult> DownloadReportTotalNormalSurvey()
         {
             try
@@ -267,6 +278,7 @@ namespace nuce.web.api.Controllers.Survey
 
         #region thống kê sinh viên trước tốt nghiệp
         [HttpGet]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<IActionResult> GetStatusReportTotalUndergraduateSurveyTask()
         {
             try
@@ -282,6 +294,7 @@ namespace nuce.web.api.Controllers.Survey
         }
 
         [HttpPost]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<IActionResult> ReportTotalUndergraduateSurvey([Required] Guid? surveyRoundId)
         {
             try

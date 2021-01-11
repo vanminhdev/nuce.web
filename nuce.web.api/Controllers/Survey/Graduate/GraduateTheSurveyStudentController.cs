@@ -19,7 +19,6 @@ namespace nuce.web.api.Controllers.Survey.Graduate
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [AppAuthorize(RoleNames.KhaoThi_Survey_Graduate, RoleNames.GraduateStudent)]
     public class GraduateTheSurveyStudentController : ControllerBase
     {
         private readonly ILogger<GraduateTheSurveyStudentController> _logger;
@@ -35,7 +34,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpGet]
-        [Authorize(Roles = "GraduateStudent")]
+        [AppAuthorize(RoleNames.GraduateStudent)]
         public async Task<IActionResult> GetTheSurvey()
         {
             var studentCode = _userService.GetCurrentStudentCode();
@@ -44,7 +43,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpGet]
-        [Authorize(Roles = "GraduateStudent")]
+        [AppAuthorize(RoleNames.GraduateStudent)]
         public async Task<IActionResult> GetTheSurveyContent(
             [Required(AllowEmptyStrings = false)]
             Guid? id)
@@ -63,7 +62,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpGet]
-        [Authorize(Roles = "GraduateStudent")]
+        [AppAuthorize(RoleNames.GraduateStudent)]
         public async Task<IActionResult> GetSelectedAnswerAutoSave([Required] Guid? theSurveyId)
         {
             try
@@ -79,7 +78,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpPut]
-        [Authorize(Roles = "GraduateStudent")]
+        [AppAuthorize(RoleNames.GraduateStudent)]
         public async Task<IActionResult> AutoSave([FromBody] GraduateSelectedAnswerAutoSave content)
         {
             try
@@ -108,7 +107,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpPut]
-        [Authorize(Roles = "GraduateStudent")]
+        [AppAuthorize(RoleNames.GraduateStudent)]
         public async Task<IActionResult> SaveSelectedAnswer([Required] Guid? theSurveyId)
         {
             try
@@ -141,7 +140,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpGet]
-        [Authorize(Roles = "P_KhaoThi")]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<IActionResult> GetGenerateTheSurveyStudentStatus()
         {
             try
@@ -162,7 +161,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpPost]
-        [Authorize(Roles = "P_KhaoThi")]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<IActionResult> GenerateTheSurveyStudent(
             [Required]
             Guid? theSurveyId)
