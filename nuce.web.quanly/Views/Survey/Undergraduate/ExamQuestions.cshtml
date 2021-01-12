@@ -1,0 +1,229 @@
+﻿@{
+    ViewData["Title"] = "Phiếu khảo sát";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style {
+    <link rel="stylesheet" href="~/content/css/dataTables.bootstrap4.min.css" />
+    <link rel="stylesheet" href="~/content/css/bootstrap-select.min.css" />
+}
+
+<div class="container">
+    <div class="row mb-3">
+        <div class="col-md-9">
+        </div>
+        <div class="col-md-3 d-flex justify-content-end">
+            <button id="btn-them-phieu" class="btn btn-primary">Thêm phiếu khảo sát</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table id="id-datatable" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center" width="1px">STT</th>
+                        <th class="text-center" width="100px">Mã</th>
+                        <th class="text-center">Tên</th>
+                        <th class="text-center" style="min-width: 370px;"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-yes-no" tabindex="-1" role="dialog" aria-labelledby="modal-yes-no" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-yes-no-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-yes-no-content">
+                ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
+                <button id="choose-yes" type="button" class="btn btn-primary">Có</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg auto-clear-form-on-open" id="modal-input" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-title">Thêm phiếu khảo sát</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form id="form-data" class="auto-validate">
+                        <input name="id" hidden />
+                        <div class="form-group row">
+                            <label class="col-3 col-form-label">Tên phiếu khảo sát <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <input type="text" class="form-control" name="name" id="name" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
+                <button type="button" class="btn btn-primary" id="save-changes" type-handle="create">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/content/js/jquery.dataTables.min.js"></script>
+    <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/content/js/dataTables.config.js"></script>
+    <script>
+        var table = $('#id-datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ordering: false,
+            lengthChange: false,
+            stateSave: false,
+            pageLength: 20,
+            language: dataTableConfig.language,
+            columnDefs: [
+                {
+                    targets: [0, 1, 3],
+                    className: 'text-center'
+                }
+            ],
+            ajax: {
+                url: '/Survey/GetExamQuestions',
+                dataType: 'json',
+                contentType: 'application/json',
+                type: "POST",
+                complete: function () { },
+                data: function (d) {
+                    return JSON.stringify(d);
+                },
+            },
+            columns: [
+                {
+                    data: null,
+                },
+                {
+                    data: "code",
+                },
+                {
+                    data: "name",
+                },
+                {
+                    data: null,
+                    mRender: function (data, type, row) {
+                        let html = `<a class="btn btn-outline-success" href="/survey/examstructure?examQuestionId=${data.id}">Cấu trúc phiếu</a>
+                                    <a class="btn btn-outline-info" href="/survey/examdetail?examQuestionId=${data.id}">Nội dung phiếu</a>
+                                    <button class="btn btn-outline-danger" onclick="deleteExam('${data.id}')">Xoá</button>`;
+                        return html;
+                    }
+                }
+            ]
+        });
+        $('#id-datatable_filter').hide();
+        table.on('draw.dt', function () {
+            var PageInfo = $('#id-datatable').DataTable().page.info();
+            table.column(0, { page: 'current' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1 + PageInfo.start;
+            });
+        });
+        $("#btn-search").click(() => {
+            //table
+            //    .column(0).search($("#name-search").val())
+            //    .draw();
+        });
+        document.getElementById("footer").scrollIntoView();
+    </script>
+    <script>
+        let saveChanges = $('#save-changes');
+        saveChanges.click(function () {
+            let form = $('#form-data');
+            if (form.valid()) {
+                let url;
+                if (saveChanges.attr('type-handle') === 'create') {
+                    url = '/Survey/CreateExamQuestions';
+                } else if (saveChanges.attr('type-handle') === 'update') {
+                    url = '/Survey/UpdateExamQuestions';
+                }
+                $.ajax({
+                    data: form.serializeArray(),
+                    dataType: 'json',
+                    method: 'Post',
+                    url: url,
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        toastSuccess('Lưu thành công');
+                        table.ajax.reload();
+                        $('#modal-input').modal('hide');
+                    } else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            }
+        });
+
+        $('#btn-them-phieu').click(() => {
+            $('#modal-input').modal('show');
+            $('#modal-title').html('Thêm phiếu khảo sát');
+            saveChanges.attr('type-handle', 'create');
+        });
+
+        function deleteExam(id) {
+            $('#modal-yes-no-title').html('Xác nhận xoá');
+            $('#modal-yes-no-content').html('Xoá phiếu khảo sát ?');
+            $('#modal-yes-no').modal('show');
+            $('#choose-yes').off();
+            $('#choose-yes').click(function () {
+                $.ajax({
+                    data: { id },
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/survey/deleteExam',
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        toastSuccess('Xoá thành công');
+                        table.ajax.reload();
+                        $('#modal-yes-no').modal('hide');
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+        }
+    </script>
+}

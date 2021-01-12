@@ -1,0 +1,209 @@
+﻿@using nuce.web.quanly.Common
+@using Newtonsoft.Json
+@{
+    ViewData["Title"] = "Câu hỏi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style {
+    <link rel="stylesheet" href="~/content/css/dataTables.bootstrap4.min.css" />
+    <link rel="stylesheet" href="~/content/css/bootstrap-select.min.css" />
+}
+
+<div class="container">
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="form-row">
+                <div class="col-12 col-md mb-2">
+                    <input class="form-control form-control" id="ma-cauhoi" type="text" placeholder="Tìm theo mã" />
+                </div>
+                <div class="col-6 col-md mb-2">
+                    <input class="form-control form-control" id="noidung" type="text" placeholder="Tìm theo nội dung" />
+                </div>
+                <div class="col-6 col-md mb-2">
+                    @Html.DropDownList("type", new SelectList(Definitions.QuestionType, "Key", "Value"),
+                        new { @id="loai", @class = "selectpicker form-control custom-boostrap-select", title = "Tìm theo loại câu hỏi" })
+                </div>
+                <div class="col-12 col-md mb-2 d-flex flex-row">
+                    <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
+                        <i class="fas fa-redo"></i>
+                    </div>
+                    <div class="w-75">
+                        <button id="btn-search" class="btn btn-secondary w-100">Tìm kiếm</button>
+                    </div>
+                </div>
+                <div class="col-12 col-md mb-2">
+                    <a href="/survey/createquestion" class="btn btn-primary w-100">Thêm câu hỏi</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table id="id-datatable" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center" width="1px">STT</th>
+                        <th class="text-center" width="1px">Mã</th>
+                        <th class="text-center" width="1px">Mã Cha</th>
+                        <th class="text-center">Nội dung</th>
+                        <th class="text-center" style="min-width:120px">Loại</th>
+                        <th class="text-center" width="1px">Thứ tự</th>
+                        <th class="text-center" style="min-width:160px"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-yes-no" tabindex="-1" role="dialog" aria-labelledby="modal-yes-no" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-yes-no-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-yes-no-content">
+                ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
+                <button id="choose-yes" type="button" class="btn btn-primary">Có</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/content/js/bootstrap-select.min.js"></script>
+    <script src="~/content/js/jquery.dataTables.min.js"></script>
+    <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/content/js/dataTables.config.js"></script>
+    <script>
+        var table = $('#id-datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ordering: false,
+            lengthChange: false,
+            stateSave: true,
+            pageLength: 10,
+            columnDefs: [
+                {
+                    targets: [0,1,2,4,5],
+                    className: 'text-center'
+                }
+            ],
+            language: dataTableConfig.language,
+            ajax: {
+                url: '/Survey/GetAllQuestion',
+                dataType: 'json',
+                contentType: 'application/json',
+                type: "POST",
+                data: function (d) {
+                    return JSON.stringify(d);
+                },
+            },
+            columns: [
+                {
+                    data: null
+                },
+                {
+                    data: "code"
+                },
+                {
+                    data: null,
+                    name: "parentCode",
+                    mRender: function (data, type, row) {
+                        if (data.parentCode != null) {
+                            return data.parentCode;
+                        } else {
+                            return '-'
+                        }
+                    }
+                },
+                {
+                    data: "content"
+                },
+                {
+                    data: null,
+                    name: "type",
+                    mRender: function (data, type, row) {
+                        let questionType = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(Definitions.QuestionType.ToList()))');
+                        let result = questionType.find(element => element.Key == data.type);
+                        return result.Value;
+                    }
+                },
+                {
+                    data: "order"
+                },
+                {
+                    data: null,
+                    mRender: function (data, type, row) {
+                        let str = ``;
+                        str += `<a class="btn btn-outline-success btn-sm" href="/survey/detailquestion?questionId=${data.id}">Sửa</a> `;
+                        if (data.type != '@QuestionType.SA' && data.type != '@QuestionType.StarRating' && data.type != '@QuestionType.CityC' && data.type != '@QuestionType.T') {
+                            str += `<a class="btn btn-outline-info btn-sm" href="/survey/answer?questionId=${data.id}">Đáp án</a>`;
+                        }
+                        str += ` <button class="btn btn-outline-danger btn-sm" onclick="deleteQuestion('${data.id}')">Xoá</button>`;
+                        return str;
+                    }
+                }
+            ]
+        });
+        table.on('draw.dt', function () {
+            var PageInfo = $('#id-datatable').DataTable().page.info();
+            table.column(0, { page: 'current' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1 + PageInfo.start;
+            });
+        });
+        $('#id-datatable_filter').hide();
+        $("#btn-search").click(() => {
+            table
+                .column(1).search($("#ma-cauhoi").val())
+                .column(3).search($("#noidung").val())
+                .column(4).search($("#loai").val())
+                .draw();
+        });
+        document.getElementById("footer").scrollIntoView();
+
+        function deleteQuestion(id) {
+            $('#modal-yes-no-title').html('Xác nhận xoá');
+            $('#modal-yes-no-content').html('Xoá câu hỏi khảo sát ?');
+            $('#modal-yes-no').modal('show');
+            $('#choose-yes').off();
+            $('#choose-yes').click(function () {
+                $.ajax({
+                    data: { id },
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/survey/deleteQuestion',
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        toastSuccess('Xoá thành công');
+                        table.ajax.reload();
+                        $('#modal-yes-no').modal('hide');
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+        }
+    </script>
+}
+
+

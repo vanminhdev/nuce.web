@@ -21,16 +21,16 @@ namespace nuce.web.api.Controllers.Survey.Normal
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
-    public class ExamQuestionsController : ControllerBase
+    [AppAuthorize(RoleNames.KhaoThi_Survey_Graduate)]
+    public class GraduateExamQuestionsController : ControllerBase
     {
-        private readonly ILogger<ExamQuestionsController> _logger;
-        private readonly IAsEduSurveyDeThiService _deThiService;
+        private readonly ILogger<GraduateExamQuestionsController> _logger;
+        private readonly IAsEduSurveyGraduateDeThiService _deThiService;
 
-        public ExamQuestionsController(ILogger<ExamQuestionsController> logger, IAsEduSurveyDeThiService asEduSurveyDeThiService)
+        public GraduateExamQuestionsController(ILogger<GraduateExamQuestionsController> logger, IAsEduSurveyGraduateDeThiService deThiService)
         {
             _logger = logger;
-            _deThiService = asEduSurveyDeThiService;
+            _deThiService = deThiService;
         }
 
         [HttpPost]
