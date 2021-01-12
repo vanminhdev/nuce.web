@@ -19,5 +19,9 @@ namespace nuce.web.api.Repositories.EduData.Implements
         {
             return _context.AsAcademyDepartment.FirstOrDefaultAsync(d => d.Code == code);
         }
+        public IQueryable<AsAcademyLecturer> GetLecturer(string code)
+        {
+            return _context.AsAcademyLecturer.Where(l => l.DepartmentCode == code);
+        }
     }
 }

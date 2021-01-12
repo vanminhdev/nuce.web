@@ -125,7 +125,6 @@ namespace nuce.web.api.Controllers.Core
                 var isSuccess = await _userService.UserLogin(model);
                 if (isSuccess)
                 {
-
                     var user = await _userService.FindByName(model.Username);
                     var authClaims = await _userService.AddClaimsAsync(model, user);
                     #region xử lý add thêm role cho sv

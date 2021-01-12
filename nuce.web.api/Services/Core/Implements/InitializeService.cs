@@ -24,20 +24,28 @@ namespace nuce.web.api.Services.Core.Implements
         public async Task CreateFacultyDepartmentUsers()
         {
             string password = "123456@aA";
-            var facultyList = (await _eduDataContext.AsAcademyFaculty.Where(f => f.Code != "**" && !string.IsNullOrEmpty(f.Name) && !string.IsNullOrEmpty(f.Email)).ToListAsync())
+            var facultyCodeList = (await _eduDataContext.AsAcademyFaculty.ToListAsync()).Select(f => f.Code);
+            var facultyList = (await _eduDataContext.AsAcademyDepartment
+                                    .Where(d => (d.Code != "**" && 
+                                                facultyCodeList.Contains(d.Code) && 
+                                                d.Code == d.FacultyCode) || d.Code == "KMT")
+                                    .ToListAsync()
+                                )
                                 .Select(f => new UserCreateModel
                                 {
-                                    Email = f.Email,
+                                    Email = "",
                                     Password = password,
-                                    Username = $"F{f.Code}",
+                                    Username = f.Code,
                                     Roles = new List<string> { RoleNames.KhaoThi_Survey_KhoaBan },
                                 });
-            var deparmentList = (await _eduDataContext.AsAcademyDepartment.Where(d => d.Code != "**").ToListAsync())
+            var finalFacultyCodeList = facultyList.Select(f => f.Username);
+            var deparmentList = (await _eduDataContext.AsAcademyDepartment
+                                .Where(d => d.Code != "**" && !finalFacultyCodeList.Contains(d.Code)).ToListAsync())
                                 .Select(d => new UserCreateModel
                                 {
                                     Email = "",
                                     Password = password,
-                                    Username = $"D{d.Code}",
+                                    Username = d.Code,
                                     Roles = new List<string> { RoleNames.KhaoThi_Survey_Department },
                                 });
             var allAccountModels = facultyList.Concat(deparmentList);

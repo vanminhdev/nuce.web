@@ -153,6 +153,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\UserHelper.cs" />
     <Compile Include="Models\AccountModel.cs" />
     <Compile Include="Models\Base\DataTableRequest.cs" />
     <Compile Include="Models\Base\DataTableResponse.cs" />
@@ -160,6 +161,7 @@
     <Compile Include="Models\JsonData\QuestionJson.cs" />
     <Compile Include="Models\NewsModel.cs" />
     <Compile Include="Models\ResponseMessage.cs" />
+    <Compile Include="Models\SurveyResultModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,8 +1,11 @@
 ﻿using Newtonsoft.Json;
 using nuce.web.shared;
+using nuce.web.shared.Models.Survey;
 using nuce.web.survey.student.Attributes.ActionFilter;
 using nuce.web.survey.student.Common;
+using nuce.web.survey.student.Helper;
 using nuce.web.survey.student.Models;
+using nuce.web.survey.student.Models.Base;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -19,6 +22,7 @@ namespace nuce.web.survey.student.Controllers
 {
     public class SurveyResultController : BaseController
     {
+        #region view
         // GET: SurveyResult
         /// <summary>
         /// View Login cho cả 3 loại user
@@ -32,27 +36,66 @@ namespace nuce.web.survey.student.Controllers
                LoginUserType = loginType
             });
         }
-        // GET: SurveyResult
-        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Department)]
-        [HttpGet]
-        public ActionResult Department()
-        {
-            return View("Department");
-        }
-        // GET: SurveyResult
+        /// <summary>
+        /// View Kết quả khoa ban
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
         [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_KhoaBan)]
         [HttpGet]
-        public ActionResult Faculty()
+        public ActionResult Faculty(string code)
         {
-            return View("Faculty");
+            var model = new SurveyResultModel
+            {
+                FacultyCode = code ?? UserHelper.username,
+            };
+            return View("Faculty", model);
         }
-        // GET: SurveyResult
-        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_GiangVien)]
+        /// <summary>
+        /// View Kết quả bộ môn
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="facultyCode"></param>
+        /// <returns></returns>
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_KhoaBan, RoleNames.KhaoThi_Survey_Department)]
         [HttpGet]
-        public ActionResult Lecturer()
+        public ActionResult Department(string code, string facultyCode)
         {
-            return View("Lecturer");
+            var model = new SurveyResultModel
+            {
+                DepartmentCode = code ?? UserHelper.username,
+                FacultyCode = facultyCode,
+            };
+
+            return View("Department", model);
         }
+        /// <summary>
+        /// View kết quả giảng viên
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="facultyCode"></param>
+        /// <param name="departmentCode"></param>
+        /// <returns></returns>
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_KhoaBan, RoleNames.KhaoThi_Survey_Department, RoleNames.KhaoThi_Survey_GiangVien)]
+        [HttpGet]
+        public ActionResult Lecturer(string code, string facultyCode, string departmentCode)
+        {
+            var model = new SurveyResultModel
+            {
+                LecturerCode = code ?? UserHelper.username,
+                FacultyCode = facultyCode,
+                DepartmentCode = departmentCode,
+            };
+            return View("Lecturer", model);
+        }
+        #endregion
+
+        #region action (call api)
+        /// <summary>
+        /// Call api login
+        /// </summary>
+        /// <param name="login"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> PostLogin(LoginModel login)
         {
@@ -94,13 +137,13 @@ namespace nuce.web.survey.student.Controllers
             switch (login.LoginUserType)
             {
                 case 2:
-                    target = "/surveyresult/faculty";
+                    target = $"/surveyresult/faculty?code={login.Username}";
                     break;
                 case 3:
-                    target = "/surveyresult/department";
+                    target = $"/surveyresult/department?code={login.Username}&facultyCode=";
                     break;
                 case 4:
-                    target = "/surveyresult/lecturer";
+                    target = $"/surveyresult/lecturer?code={login.Username}&facultyCode=&departmentCode=";
                     break;
                 default:
                     break;
@@ -140,5 +183,54 @@ namespace nuce.web.survey.student.Controllers
             }
             return View("login", new LoginModel());
         }
+        /// <summary>
+        /// Call api lấy kết quả khoa
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_KhoaBan)]
+        [HttpPost]
+        public async Task<ActionResult> GetFacultyResult(string code, DataTableRequest request)
+        {
+            var stringContent = new StringContent(JsonConvert.SerializeObject(request.Search), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/SurveyResult/faculty/{code}", stringContent);
+            return await base.HandleResponseAsync(response,
+                action200Async: async res =>
+                {
+                    var data = await base.DeserializeResponseAsync<FacultyResultModel>(response.Content);
+                    ViewData["facultyname"] = data.FacultyName;
+                    return Json(new
+                    {
+                        draw = request.Draw += 1,
+                        data = data.Result,
+                        recordsTotal = data.Result.Count,
+                        recordsFiltered = data.Result.Count,
+                    });
+                }
+            );
+        }
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_KhoaBan, RoleNames.KhaoThi_Survey_Department)]
+        [HttpPost]
+        public async Task<ActionResult> GetDepartmentResult(string code, DataTableRequest request)
+        {
+            var stringContent = new StringContent(JsonConvert.SerializeObject(request.Search), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/SurveyResult/department/{code}", stringContent);
+            return await base.HandleResponseAsync(response,
+                action200Async: async res =>
+                {
+                    var data = await base.DeserializeResponseAsync<DepartmentResultModel>(response.Content);
+                    ViewData["facultyname"] = data.FacultyName;
+                    ViewData["departmentName"] = data.DepartmentName;
+                    return Json(new
+                    {
+                        draw = request.Draw += 1,
+                        data = data.Result,
+                        recordsTotal = data.Result.Count,
+                        recordsFiltered = data.Result.Count,
+                    });
+                }
+            );
+        }
+        #endregion
     }
 }

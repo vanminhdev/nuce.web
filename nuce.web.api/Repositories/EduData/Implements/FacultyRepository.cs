@@ -20,5 +20,21 @@ namespace nuce.web.api.Repositories.EduData.Implements
         {
             return _context.AsAcademyFaculty.FirstOrDefaultAsync(f => f.Code == code);
         }
+
+        public IQueryable<AsAcademyDepartment> GetDepartment(string code)
+        {
+            var data = _context.AsAcademyDepartment.AsNoTracking()
+                            .Where(d => d.Code == code)
+                            .Join(_context.AsAcademyFaculty.AsNoTracking(),
+                                d => d.FacultyId,
+                                f => f.Id,
+                                (d, f) => f)
+                            .Join(_context.AsAcademyDepartment.AsNoTracking(),
+                                f => f.Code,
+                                d => d.FacultyCode,
+                                (f, d) => d
+                            );
+            return data;
+        }
     }
 }
