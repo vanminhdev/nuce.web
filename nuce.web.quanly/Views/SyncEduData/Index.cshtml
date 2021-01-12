@@ -26,9 +26,9 @@
         <li class="nav-item">
             <a class="nav-link" id="last-semester-tab" data-toggle="tab" href="#last-semester" role="tab" aria-controls="last-semester" aria-selected="false">Đồng bộ kỳ trước</a>
         </li>
-        <li class="nav-item">
+        @*<li class="nav-item">
             <a class="nav-link" id="current-semester-tab" data-toggle="tab" href="#current-semester" role="tab" aria-controls="current-semester" aria-selected="false">Đồng bộ kỳ hiện tại</a>
-        </li>
+        </li>*@
     </ul>
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="basic" role="tabpanel" aria-labelledby="basic-tab">
@@ -443,7 +443,6 @@
                                 <div id="s-last-lecturer-classroom" class="col-8 col-md-8 mb-2">
                                     <div class="row">
                                         <div class="col-12 col-md-4">
-                                            <input id="code-last-lecturer-classroom" class="form-control form-control-sm" type="text" placeholder="Mã" />
                                         </div>
                                         <div class="col-12 col-md-4">
                                             <input id="classroom-code-last-lecturer-classroom" class="form-control form-control-sm" type="text" placeholder="Mã lớp môn học" />
@@ -1270,7 +1269,7 @@
         ];
         initDataTable("datatable-last-lecturer-classroom", lastLecturerClassroomColumns, "/SyncEduData/GetLastLecturerClassRoom", "btn-sync-last-lecturer-classroom", "btn-delete-last-lecturer-classroom", "SyncLastLecturerClassRoom", "message-last-lecturer-classroom");
         $("#btn-search-last-lecturer-classroom").click(() => {
-            $('#datatable-current-lecturer-classroom').DataTable()
+            $('#datatable-last-lecturer-classroom').DataTable()
                 .column(3).search($("#classroom-code-last-lecturer-classroom").val())
                 .column(5).search($("#lecturer-code-last-lecturer-classroom").val())
                 .draw();

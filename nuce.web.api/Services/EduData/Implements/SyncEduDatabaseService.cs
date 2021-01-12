@@ -537,13 +537,13 @@ namespace nuce.web.api.Services.EduData.Implements
 
         #region tìm cán bộ có mã tương ứng trong lớp ghép 
         private string getCanBoTrongLopGhepTuongUng(List<ThoiKhoaBieuJoinToDangKy> list,
-            string MaMH, string Thu, string TietDB, string MaPH, string TuanHoc)
+            string MaMH, string Thu, string TietBD, string MaPH, string TuanHoc)
         {
             foreach (var item in list)
             {
                 if (item.MaMH.Equals(MaMH)
                   && item.Thu.Equals(Thu)
-                  && item.TietDB.Equals(TietDB)
+                  && item.TietDB.Equals(TietBD)
                   && item.MaPH.Equals(MaPH)
                   && item.TuanHoc.Equals(TuanHoc)
                   && !string.IsNullOrWhiteSpace(item.MaCB.ToString()))
@@ -715,6 +715,7 @@ namespace nuce.web.api.Services.EduData.Implements
                         tkbJoinDK.MaCB = strMaCB;
                     list_ThoiKhoaBieu_Join_DangKy1_V2.Add(tkbJoinDK);
                 }
+                var test = list_ThoiKhoaBieu_Join_DangKy1_V1.Where(o => o.MaDK.Replace(" ", "") == "05035362XD8").ToList();
                 #endregion
 
                 #region xử lý chèn vào csdl
@@ -728,6 +729,10 @@ namespace nuce.web.api.Services.EduData.Implements
                 foreach (var item in list_ThoiKhoaBieu_Join_DangKy1_V2)
                 {
                     var strMaDK = item.MaDK.Replace(" ", "");
+                    if(strMaDK == "02030663XD1")
+                    {
+
+                    }
                     var strMaCB = item.MaCB;
                     if (!string.IsNullOrWhiteSpace(strMaDK) && !string.IsNullOrWhiteSpace(strMaCB))
                     {
@@ -1339,25 +1344,54 @@ namespace nuce.web.api.Services.EduData.Implements
         public async Task<PaginationModel<AsAcademyLecturerClassRoom>> GetLastLecturerClassRoom(LecturerClassRoomFilter filter, int skip = 0, int take = 20)
         {
             _eduDataContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            IQueryable<AsAcademyLecturerClassRoom> query = _eduDataContext.AsAcademyLecturerClassRoom;
-            var recordsTotal = query.Count();
+            if(await _eduDataContext.AsAcademyLecturerClassRoom.CountAsync() == 0)
+            {
+                return new PaginationModel<AsAcademyLecturerClassRoom>
+                {
+                    RecordsTotal = 0,
+                    RecordsFiltered = 0,
+                    Data = new List<AsAcademyLecturerClassRoom>()
+                };
+            }
+
+            var query = _eduDataContext.AsAcademyClassRoom
+                .GroupJoin(_eduDataContext.AsAcademyLecturerClassRoom, o => o.Code, o => o.ClassRoomCode, (classroom, lectureClassroom) => new { classroom, lectureClassroom })
+                .SelectMany(o => o.lectureClassroom.DefaultIfEmpty(), (r, lecturerClassroom) => new { r.classroom, lecturerClassroom });
+
+            var recordsTotal = await query.CountAsync();
 
             if (!string.IsNullOrWhiteSpace(filter.ClassRoomCode))
             {
-                query = query.Where(u => u.ClassRoomCode == filter.ClassRoomCode);
+                query = query.Where(o => o.classroom.Code == filter.ClassRoomCode);
             }
             if (!string.IsNullOrWhiteSpace(filter.LecturerCode))
             {
-                query = query.Where(u => u.LecturerCode == filter.LecturerCode);
+                if(filter.LecturerCode == "null")
+                {
+                    query = query.Where(o => o.lecturerClassroom == null);
+                }
+                else
+                {
+                    query = query.Where(o => o.lecturerClassroom != null && o.lecturerClassroom.LecturerCode == filter.LecturerCode);
+                }
             }
 
-            var recordsFiltered = query.Count();
+            var recordsFiltered = await query.CountAsync();
 
             var querySkip = query
-                .OrderBy(u => u.Id)
+                .OrderBy(o => o.lecturerClassroom != null ? o.lecturerClassroom.Id : int.MaxValue)
                 .Skip(skip).Take(take);
 
-            var data = await querySkip.ToListAsync();
+            var data = await querySkip
+                .Select(o => new AsAcademyLecturerClassRoom { 
+                    SemesterId = o.lecturerClassroom != null ? o.lecturerClassroom.SemesterId : -1,
+                    Id = o.lecturerClassroom != null ? o.lecturerClassroom.Id : -1,
+                    ClassRoomId = o.classroom.Id,
+                    ClassRoomCode = o.classroom.Code,
+                    LecturerId = o.lecturerClassroom != null ? o.lecturerClassroom.LecturerId : null,
+                    LecturerCode = o.lecturerClassroom != null ? o.lecturerClassroom.LecturerCode : ""
+                })
+                .ToListAsync();
 
             return new PaginationModel<AsAcademyLecturerClassRoom>
             {

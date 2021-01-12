@@ -44,18 +44,19 @@ namespace nuce.web.api.Services.Survey.Implements
         {
             _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             IQueryable<AsEduSurveyReportTotal> query = null;
-            var recordsTotal = _context.AsEduSurveyReportTotal.Count();
+            var recordsTotal = await _context.AsEduSurveyReportTotal.CountAsync();
 
             var recordsFiltered = recordsTotal;
             if(query != null)
             {
-                recordsFiltered = query.Count();
+                recordsFiltered = await query.CountAsync();
             }
 
             var result = await _context.AsEduSurveyReportTotal
                 .Skip(skip).Take(take)
                 .Join(_context.AsEduSurveyDotKhaoSat, o => o.SurveyRoundId, o => o.Id, (report, surveyRound) => new { report, surveyRound })
                 .Join(_context.AsEduSurveyBaiKhaoSat, o => o.report.TheSurveyId, o => o.Id, (reportSurveyRound, theSurvey) => new { reportSurveyRound, theSurvey })
+                .OrderByDescending(o => o.reportSurveyRound.surveyRound.FromDate)
                 .Select(o => new ReportTotalNormal
                 {
                     SurveyRoundId = o.reportSurveyRound.surveyRound.Id,

@@ -177,6 +177,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 .ToList();
 
                 var totalLectureClassroom = groupLopGiangVien.Count();
+                var count = 0;
                 foreach (var lectureClassroom in groupLopGiangVien)
                 {
                     var lectureCode = lectureClassroom.LecturerCode;
@@ -225,10 +226,9 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                         }
                     }
 
-                    _logger.LogInformation($"thong ke xong lop co ma gv: {lectureCode}, ma lop: {classroomCode}");
+                    _logger.LogInformation($"thong ke hoan thanh {++count}/{totalLectureClassroom}, ma gv: {lectureCode}, ma lop: {classroomCode}");
                 }
                 var test = surveyContext.SaveChanges();
-
                 _logger.LogInformation("report total normal is done.");
 
                 //hoàn thành
