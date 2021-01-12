@@ -44,6 +44,12 @@ namespace nuce.web.api.Common
         Deleted = 4
     }
 
+    public enum ExamQuestionStatus
+    {
+        Active = 1,
+        Deleted = 4
+    }
+
     /// <summary>
     /// Đợt khảo sát
     /// </summary>

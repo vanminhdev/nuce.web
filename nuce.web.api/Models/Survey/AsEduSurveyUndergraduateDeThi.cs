@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace nuce.web.api.Models.Survey
 {
-    public partial class AsEduSurveyDeThi
+    public partial class AsEduSurveyUndergraduateDeThi
     {
         public Guid Id { get; set; }
         public string Code { get; set; }

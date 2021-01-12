@@ -121,6 +121,14 @@ namespace nuce.web.quanly.Controllers
             var response = await base.MakeRequestAuthorizedAsync("PUT", $"/api/question/update?id={question.id}", content);
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() });
         }
+
+        [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
+        public async Task<ActionResult> DeleteQuestion(string id)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/Question/Delete?id={id}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
         #endregion
 
         #region answer
@@ -239,22 +247,37 @@ namespace nuce.web.quanly.Controllers
                 }
             );
         }
+
+        [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
+        public async Task<ActionResult> DeleteAnswer(string id)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/Answer/Delete?id={id}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
         #endregion
 
-        #region đề khảo sát
+        #region phiếu khảo sát
         [HttpGet]
         [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
-        public async Task<ActionResult> ExamQuestions()
+        public ActionResult ExamQuestions()
         {
-            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/ExamQuestions/GetAll");
-            return await base.HandleResponseAsync(response,
-                action200Async: async res =>
-                {
-                    var jsonString = await response.Content.ReadAsStringAsync();
-                    var result = JsonConvert.DeserializeObject<List<ExamQuestions>>(jsonString);
-                    return View(result);
-                }
-            );
+            return View();
+        }
+
+        [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
+        public async Task<ActionResult> GetExamQuestions(DataTableRequest request)
+        {
+            return await GetDataTabeFromApi<ExamQuestions>(request, "/api/ExamQuestions/GetAll");
+        }
+
+        [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
+        public async Task<ActionResult> DeleteExam(string id)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/ExamQuestions/Delete?id={id}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
@@ -291,27 +314,9 @@ namespace nuce.web.quanly.Controllers
         [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<ActionResult> CreateExamQuestions(ExamQuestionsCreate exam)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(exam);
-            }
             var content = new StringContent(JsonConvert.SerializeObject(exam), Encoding.UTF8, "application/json");
             var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/ExamQuestions/Create", content);
-            return await base.HandleResponseAsync(response,
-                action200: res =>
-                {
-                    ViewData["CreateSuccessMessage"] = "Thêm thành công";
-                    return View(exam);
-                },
-                action500Async: async res =>
-                {
-                    ViewData["CreateErrorMessage"] = "Thêm không thành công";
-                    var jsonString = await response.Content.ReadAsStringAsync();
-                    var resMess = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
-                    ViewData["CreateErrorMessageDetail"] = resMess.message;
-                    return View(exam);
-                }
-            );
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -1139,7 +1144,7 @@ namespace nuce.web.quanly.Controllers
 
         #region Cập nhật chú ý khảo sát
         [HttpGet]
-        public ActionResult editsurveynotice(string paracode)
+        public ActionResult Editsurveynotice(string paracode)
         {
             TempData["paracode"] = paracode;
             return View("EditSurveyNotice");

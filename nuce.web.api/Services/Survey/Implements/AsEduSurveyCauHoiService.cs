@@ -31,7 +31,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             if (!string.IsNullOrWhiteSpace(filter.Code))
             {
-                query = query.Where(u => u.Code.Contains(filter.Code));
+                query = query.Where(u => u.Code == filter.Code);
             }
             if (!string.IsNullOrWhiteSpace(filter.Content))
             {

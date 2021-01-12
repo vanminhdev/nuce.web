@@ -5,6 +5,7 @@ using nuce.web.api.Models.Survey;
 using nuce.web.api.Models.Survey.JsonData;
 using nuce.web.api.Repositories.Ctsv.Implements;
 using nuce.web.api.Services.Survey.Interfaces;
+using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey;
 using System;
 using System.Collections.Generic;
@@ -24,20 +25,54 @@ namespace nuce.web.api.Services.Survey.Implements
             _surveyContext = surveyContext;
         }
 
+        public async Task<PaginationModel<ExamQuestions>> GetAll(ExamQuestionsFilter filter, int skip = 0, int take = 20)
+        {
+            _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            var query = _surveyContext.AsEduSurveyDeThi.Where(q => q.Status != (int)QuestionStatus.Deleted);
+            var recordsTotal = query.Count();
+
+            if (!string.IsNullOrWhiteSpace(filter.Name))
+            {
+                query = query.Where(u => u.Name.Contains(filter.Name));
+            }
+
+            var recordsFiltered = query.Count();
+
+            var querySkip = query
+                .Skip(skip).Take(take);
+
+            var data = await querySkip
+                .OrderBy(o => o.Code)
+                .Select(o => new ExamQuestions
+                {
+                    Id = o.Id,
+                    Code = o.Code,
+                    Name = o.Name
+                })
+                .ToListAsync();
+
+            return new PaginationModel<ExamQuestions>
+            {
+                RecordsTotal = recordsTotal,
+                RecordsFiltered = recordsFiltered,
+                Data = data
+            };
+        }
+
         public async Task AddQuestion(Guid examQuestionId, string maCauHoi, int order)
         {
             var question = await _surveyContext.AsEduSurveyCauHoi.FirstOrDefaultAsync(q => q.Code == maCauHoi);
-            if(question == null)
+            if (question == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy câu hỏi");
             }
 
-            if(question.ParentCode != null)
+            if (question.ParentCode != null)
             {
                 throw new InvalidInputDataException("Câu hỏi là câu hỏi con của một câu hỏi khác, vui lòng thêm bằng cách thêm câu hỏi cha");
             }
 
-            if( _surveyContext.AsEduSurveyCauTrucDe.FirstOrDefault(o => o.DeThiId == examQuestionId && o.CauHoiId == question.Id) != null)
+            if ( _surveyContext.AsEduSurveyCauTrucDe.FirstOrDefault(o => o.DeThiId == examQuestionId && o.CauHoiId == question.Id) != null)
             {
                 throw new InvalidInputDataException("Câu hỏi đã tồn tại");
             }
@@ -51,17 +86,29 @@ namespace nuce.web.api.Services.Survey.Implements
             await _surveyContext.SaveChangesAsync();
         }
 
-        public async Task CreateExamQuestions(string code, string name)
+        public async Task Create(ExamQuestionsCreate exam)
         {
             var examQuestions = new AsEduSurveyDeThi()
             {
                 Id = Guid.NewGuid(),
-                Code = code,
-                Name = name,
+                Code = $"{_surveyContext.AsEduSurveyDeThi.Count() + 1:00000}",
+                Name = exam.Name,
                 NoiDungDeThi = "",
-                DapAn = ""
+                DapAn = "",
+                Status = (int)ExamQuestionStatus.Active
             };
             _surveyContext.AsEduSurveyDeThi.Add(examQuestions);
+            await _surveyContext.SaveChangesAsync();
+        }
+
+        public async Task Delete(Guid id)
+        {
+            var dethi = await _surveyContext.AsEduSurveyDeThi.FirstOrDefaultAsync(q => q.Id == id);
+            if (dethi == null)
+            {
+                throw new RecordNotFoundException();
+            }
+            dethi.Status = (int)ExamQuestionStatus.Deleted;
             await _surveyContext.SaveChangesAsync();
         }
 
@@ -225,6 +272,7 @@ namespace nuce.web.api.Services.Survey.Implements
                     Name = eq.Name
                 }).ToListAsync();
         }
+
 
         public async Task<string> GetExamDetailJsonString(string examQuestionId)
         {

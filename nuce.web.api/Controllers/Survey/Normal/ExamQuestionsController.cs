@@ -13,14 +13,12 @@ using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Services.Survey.Interfaces;
+using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey;
 using nuce.web.shared;
 
 namespace nuce.web.api.Controllers.Survey.Normal
 {
-    /// <summary>
-    /// Đề thi
-    /// </summary>
     [Route("api/[controller]/[action]")]
     [ApiController]
     [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
@@ -35,11 +33,26 @@ namespace nuce.web.api.Controllers.Survey.Normal
             _asEduSurveyDeThiService = asEduSurveyDeThiService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [HttpPost]
+        public async Task<IActionResult> GetAll([FromBody] DataTableRequest request)
         {
-            var lst = await _asEduSurveyDeThiService.GetAll();
-            return Ok(lst);
+            var filter = new ExamQuestionsFilter();
+            if (request.Columns != null)
+            {
+                filter.Name = request.Columns.FirstOrDefault(c => c.Data == "name" || c.Name == "name")?.Search.Value ?? null;
+            }
+            var skip = request.Start;
+            var take = request.Length;
+            var result = await _asEduSurveyDeThiService.GetAll(filter, skip, take);
+            return Ok(
+                new DataTableResponse<ExamQuestions>
+                {
+                    Draw = ++request.Draw,
+                    RecordsTotal = result.RecordsTotal,
+                    RecordsFiltered = result.RecordsFiltered,
+                    Data = result.Data
+                }
+            );
         }
 
         [HttpGet]
@@ -139,7 +152,7 @@ namespace nuce.web.api.Controllers.Survey.Normal
         {
             try
             {
-                await _asEduSurveyDeThiService.CreateExamQuestions(exam.Code, exam.Name);
+                await _asEduSurveyDeThiService.Create(exam);
             }
             catch (DbUpdateException e)
             {
@@ -176,6 +189,31 @@ namespace nuce.web.api.Controllers.Survey.Normal
             {
                 _logger.LogError(e, e.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Xoá không thành công", detailMessage = e.Message });
+            }
+            return Ok();
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete([Required(AllowEmptyStrings = false)] Guid? id)
+        {
+            try
+            {
+                await _asEduSurveyDeThiService.Delete(id.Value);
+            }
+            catch (RecordNotFoundException)
+            {
+                return NotFound(new { message = "Không tìm thấy phiếu khảo sát" });
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không xoá được phiếu khảo sát", detailMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message, detailMessage = mainMessage });
             }
             return Ok();
         }
