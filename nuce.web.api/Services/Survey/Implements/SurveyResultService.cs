@@ -145,6 +145,71 @@ namespace nuce.web.api.Services.Survey.Implements
                 SoPhieuThuVe = 20,
                 SoSvDuocKhaoSat = 100,
                 SoSvThamGiaKhaoSat = 10,
+                DeMuc = new List<DeMuc>
+                {
+                    new DeMuc {
+                        Title = "NỘI DUNG VÀ LỊCH TRÌNH GIẢNG DẠY",
+                        CauHoi = new List<ChiTietCauHoi>
+                        {
+                            new ChiTietCauHoi
+                            {
+                                Content = "Câu 1: Nội dung giảng dạy, mục tiêu của học phần, vị trí học phần trong chương trình đào tạo, đề cương chi tiết của học phần được giảng viên giới thiệu đầy đủ rõ ràng khi bắt đầu học phần.",
+                            },
+                            new ChiTietCauHoi
+                            {
+                                Content = "Câu 2: Các quy định và kế hoạch kiểm tra, thực hiện đánh giá điểm quá trình được giảng viên phổ biến rõ ràng, đầy đủ khi bắt đầu học phần.",
+                            },
+                            new ChiTietCauHoi
+                            {
+                                Content = "Câu 3: Giáo trình chính thức và tài liệu tham khảo được giảng viên giời thiệu chi tiết, đầy đủ; giảng viên hỗ trợ sinh viên trong việc tìm tài liệu học tập một cách hiệu quả",
+                            },
+                            new ChiTietCauHoi
+                            {
+                                Content = "Câu 1: Nội dung giảng dạy, mục tiêu của học phần, vị trí học phần trong chương trình đào tạo, đề cương chi tiết của học phần được giảng viên giới thiệu đầy đủ rõ ràng khi bắt đầu học phần.",
+                            },
+                            new ChiTietCauHoi
+                            {
+                                Content = "Câu 1: Nội dung giảng dạy, mục tiêu của học phần, vị trí học phần trong chương trình đào tạo, đề cương chi tiết của học phần được giảng viên giới thiệu đầy đủ rõ ràng khi bắt đầu học phần.",
+                            },
+                            new ChiTietCauHoi
+                            {
+                                Content = "Câu 1: Nội dung giảng dạy, mục tiêu của học phần, vị trí học phần trong chương trình đào tạo, đề cương chi tiết của học phần được giảng viên giới thiệu đầy đủ rõ ràng khi bắt đầu học phần.",
+                            },
+                                }
+                            },
+                    new DeMuc {
+                        Title = "PHƯƠNG PHÁP GIẢNG DẠY CỦA GIẢNG VIÊN",
+                        CauHoi = new List<ChiTietCauHoi>
+                        {
+                            new ChiTietCauHoi
+                            {
+                                Content = "Câu 1: Nội dung giảng dạy, mục tiêu của học phần, vị trí học phần trong chương trình đào tạo, đề cương chi tiết của học phần được giảng viên giới thiệu đầy đủ rõ ràng khi bắt đầu học phần.",
+                            },
+                            new ChiTietCauHoi
+                            {
+                                Content = "Câu 2: Các quy định và kế hoạch kiểm tra, thực hiện đánh giá điểm quá trình được giảng viên phổ biến rõ ràng, đầy đủ khi bắt đầu học phần.",
+                            },
+                            new ChiTietCauHoi
+                            {
+                                Content = "Câu 3: Giáo trình chính thức và tài liệu tham khảo được giảng viên giời thiệu chi tiết, đầy đủ; giảng viên hỗ trợ sinh viên trong việc tìm tài liệu học tập một cách hiệu quả",
+                            },
+                            new ChiTietCauHoi
+                            {
+                                Content = "Câu 1: Nội dung giảng dạy, mục tiêu của học phần, vị trí học phần trong chương trình đào tạo, đề cương chi tiết của học phần được giảng viên giới thiệu đầy đủ rõ ràng khi bắt đầu học phần.",
+                            },
+                            new ChiTietCauHoi
+                            {
+                                Content = "Câu 1: Nội dung giảng dạy, mục tiêu của học phần, vị trí học phần trong chương trình đào tạo, đề cương chi tiết của học phần được giảng viên giới thiệu đầy đủ rõ ràng khi bắt đầu học phần.",
+                            },
+                            new ChiTietCauHoi
+                            {
+                                Content = "Câu 1: Nội dung giảng dạy, mục tiêu của học phần, vị trí học phần trong chương trình đào tạo, đề cương chi tiết của học phần được giảng viên giới thiệu đầy đủ rõ ràng khi bắt đầu học phần.",
+                            },
+                                }
+                            },
+
+                },
+                
             };
 
             return result;

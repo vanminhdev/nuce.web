@@ -372,7 +372,7 @@ namespace nuce.web.api.Services.Core.Implements
             user.Status = (int)UserStatus.Active;
 
             #region thêm quyền bố
-            var parentRoles = _identityContext.Roles.Where(r => model.Roles.Contains(r.Id))
+            var parentRoles = _identityContext.Roles.Where(r => model.Roles.Contains(r.Id) && r.Parent != null)
                                                 .Select(r => r.Parent)
                                                 .Distinct();
             model.Roles.AddRange(parentRoles);

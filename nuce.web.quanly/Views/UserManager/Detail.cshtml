@@ -47,31 +47,31 @@
         @Html.TextBoxFor(m => m.UserUpdateBind.username, new { @type = "hidden" })
         @Html.TextBoxFor(m => m.UserUpdateBind.status, new { @type = "hidden" })
         @*<div class="col-12 form-group">
-            <div class="row">
-                <div class="col-6 col-md-3">
-                    <div class="font-14-sm font-weight-bold mb-2">
-                        Ảnh đại diện <span class="sub-color">*</span>
+                <div class="row">
+                    <div class="col-6 col-md-3">
+                        <div class="font-14-sm font-weight-bold mb-2">
+                            Ảnh đại diện <span class="sub-color">*</span>
+                        </div>
+                        <div class="custom-file">
+                            <input id="input-file"
+                                   type="file"
+                                   class="custom-file-input" />
+                            <label for="input-file"
+                                   class="custom-file-label text-truncate text-center">
+                                <img src="~/content/images/icons/upload.png"
+                                     alt="upload-icon"
+                                     class="mr-1" />
+                                Chọn file
+                            </label>
+                        </div>
                     </div>
-                    <div class="custom-file">
-                        <input id="input-file"
-                               type="file"
-                               class="custom-file-input" />
-                        <label for="input-file"
-                               class="custom-file-label text-truncate text-center">
-                            <img src="~/content/images/icons/upload.png"
-                                 alt="upload-icon"
-                                 class="mr-1" />
-                            Chọn file
-                        </label>
+                    <div class="col-6 col-md-3">
+                        <img src="~/content/images/person1.png"
+                             alt=""
+                             class="upload-user-avatar" />
                     </div>
                 </div>
-                <div class="col-6 col-md-3">
-                    <img src="~/content/images/person1.png"
-                         alt=""
-                         class="upload-user-avatar" />
-                </div>
-            </div>
-        </div>*@
+            </div>*@
         <div class="col-12 form-group">
             <div class="row mr-0 ml-0 align-items-center">
                 <div class="font-14-sm fw-600 col-12 col-md-2 pr-0 pl-0">
@@ -141,7 +141,9 @@
             </div>
         </div>
     </div>
-
+    @{
+        #region Khôi phục mật khẩu
+    }
     <div class="fw-600 text-uppercase font-14-sm font-18 mb-2 main-color">
         Khôi phục mật khẩu
     </div>
@@ -202,7 +204,12 @@
             </div>
         </div>
     </div>
-
+    @{
+        #endregion
+    }
+    @{
+        #region thay đổi trạng thái tk
+    }
     <div class="fw-600 text-uppercase font-14-sm font-18 mb-2 main-color">
         Thay đổi trạng thái tài khoản
     </div>
@@ -256,6 +263,9 @@
             </div>
         </div>
     </div>
+    @{
+        #endregion
+    }
 </form>
 
 

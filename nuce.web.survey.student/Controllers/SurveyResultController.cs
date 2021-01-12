@@ -38,6 +38,7 @@ namespace nuce.web.survey.student.Controllers
         }
         /// <summary>
         /// View Kết quả khoa ban
+        /// Chú ý thứ tự Role Authorize: Role đầu dùng để điều hướng sang đúng loại login nếu chưa có token
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
@@ -53,11 +54,12 @@ namespace nuce.web.survey.student.Controllers
         }
         /// <summary>
         /// View Kết quả bộ môn
+        /// Chú ý thứ tự Role Authorize: Role đầu dùng để điều hướng sang đúng loại login nếu chưa có token
         /// </summary>
         /// <param name="code"></param>
         /// <param name="facultyCode"></param>
         /// <returns></returns>
-        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_KhoaBan, RoleNames.KhaoThi_Survey_Department)]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Department, RoleNames.KhaoThi_Survey_KhoaBan)]
         [HttpGet]
         public ActionResult Department(string code, string facultyCode)
         {
@@ -71,20 +73,27 @@ namespace nuce.web.survey.student.Controllers
         }
         /// <summary>
         /// View kết quả giảng viên
+        /// Chú ý thứ tự Role Authorize: Role đầu dùng để điều hướng sang đúng loại login nếu chưa có token
         /// </summary>
         /// <param name="code"></param>
         /// <param name="facultyCode"></param>
         /// <param name="departmentCode"></param>
         /// <returns></returns>
-        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_KhoaBan, RoleNames.KhaoThi_Survey_Department, RoleNames.KhaoThi_Survey_GiangVien)]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_GiangVien, RoleNames.KhaoThi_Survey_KhoaBan, RoleNames.KhaoThi_Survey_Department)]
         [HttpGet]
-        public ActionResult Lecturer(string code, string facultyCode, string departmentCode)
+        public async Task<ActionResult> Lecturer(string code, string facultyCode, string departmentCode)
         {
+            code = code ?? UserHelper.username;
+            var stringContent = new StringContent("", Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/SurveyResult/lecturer/{code}", stringContent);
+            var data = await base.DeserializeResponseAsync<SurveyResultResponseModel>(response.Content);
+
             var model = new SurveyResultModel
             {
                 LecturerCode = code ?? UserHelper.username,
                 FacultyCode = facultyCode,
                 DepartmentCode = departmentCode,
+                Data = data
             };
             return View("Lecturer", model);
         }
@@ -209,6 +218,12 @@ namespace nuce.web.survey.student.Controllers
                 }
             );
         }
+        /// <summary>
+        /// Call api lấy kết quả bộ môn
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_KhoaBan, RoleNames.KhaoThi_Survey_Department)]
         [HttpPost]
         public async Task<ActionResult> GetDepartmentResult(string code, DataTableRequest request)
