@@ -387,9 +387,9 @@ namespace nuce.web.api.Models.EduData
 
             modelBuilder.Entity<AsAcademySubjectExtend>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("AS_Academy_Subject_Extend");
+
+                entity.Property(e => e.Id).HasColumnName("Id");
 
                 entity.Property(e => e.Code)
                     .HasMaxLength(50)

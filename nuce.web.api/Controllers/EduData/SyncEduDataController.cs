@@ -119,7 +119,10 @@ namespace nuce.web.api.Controllers.EduData
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
         }
-
+        /// <summary>
+        /// Đồng bộ môn học
+        /// </summary>
+        /// <returns></returns>
         [HttpPut]
         public async Task<IActionResult> SyncSubject()
         {

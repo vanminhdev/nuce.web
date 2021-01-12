@@ -228,6 +228,8 @@ namespace nuce.web.api
             services.AddScoped<IAsEduSurveyUndergraduateBaiKhaoSatService, AsEduSurveyUndergraduateBaiKhaoSatService>();
             services.AddScoped<IAsEduSurveyUndergraduateBaiKhaoSatSinhVienService, AsEduSurveyUndergraduateBaiKhaoSatSinhVienService>();
 
+            services.AddScoped<ISurveyResultService, SurveyResultService>();
+
             services.AddScoped<SurveyStatisticBackgroundTask>();
             #endregion
             #region sync edu database service

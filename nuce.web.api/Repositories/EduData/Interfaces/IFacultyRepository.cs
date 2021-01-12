@@ -9,5 +9,6 @@ namespace nuce.web.api.Repositories.EduData.Interfaces
     public interface IFacultyRepository
     {
         public Task<AsAcademyFaculty> FindByCode(string code);
+        public IQueryable<AsAcademyDepartment> GetDepartment(string code);
     }
 }

@@ -478,6 +478,12 @@ namespace nuce.web.api.Services.EduData.Implements
                     temp = item.GetElementsByTagName("MaBM");
                     var MaBM = temp.Count > 0 ? temp[0].InnerText : null;
 
+                    temp = item.GetElementsByTagName("TinhChatMH");
+                    string strLoaiMonHoc = temp.Count > 0 ? temp[0].InnerText : null;
+
+                    int loaiMonHoc = 0;
+                    int.TryParse(strLoaiMonHoc, out loaiMonHoc);
+
                     var boMonId = -1;
                     var boMon = await _eduDataContext.AsAcademyDepartment.FirstOrDefaultAsync(d => d.Code == MaBM);
                     if (boMon != null)
@@ -505,6 +511,24 @@ namespace nuce.web.api.Services.EduData.Implements
                         monHoc.DepartmentId = boMonId;
                         monHoc.DepartmentCode = MaBM;
                     }
+                    #region Subject Extend
+                    var monHocExtend = await _eduDataContext.AsAcademySubjectExtend
+                                            .FirstOrDefaultAsync(f => f.Code == MaMH);
+                    if (monHocExtend == null) // thêm vào nếu chưa có
+                    {
+                        _eduDataContext.AsAcademySubjectExtend.Add(new AsAcademySubjectExtend
+                        {
+                            Code = MaMH,
+                            Name = TenMH,
+                            Type = loaiMonHoc
+                        });
+                    }
+                    else // nếu có rồi thì cập nhật
+                    {
+                        monHocExtend.Name = TenMH;
+                        monHocExtend.Type = loaiMonHoc;
+                    }
+                    #endregion
                 }
                 await _eduDataContext.SaveChangesAsync();
                 transaction.Commit();
