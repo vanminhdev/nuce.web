@@ -742,6 +742,7 @@ on a.MaDK=b.MaDK");
       ,[khongmg]
       ,[SoTCTL]
       ,[ts]
+     ,[TinhChatMH]
   FROM [dbo].[MonHoc]
   ");
             return Microsoft.ApplicationBlocks.Data.SqlHelper.ExecuteDataset(strConnectionString, CommandType.Text, strSql).Tables[0];
