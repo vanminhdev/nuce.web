@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using nuce.web.api.Services.Survey.Interfaces;
 
-namespace nuce.web.api.Controllers.Survey
+namespace nuce.web.api.Controllers.Survey.Normal
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -17,6 +17,7 @@ namespace nuce.web.api.Controllers.Survey
         {
             this._surveyResultService = _surveyResultService;
         }
+
         [Route("faculty/{code}")]
         [HttpPost]
         public IActionResult FacultyResult(string code)
