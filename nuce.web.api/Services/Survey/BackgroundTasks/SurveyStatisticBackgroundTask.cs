@@ -439,7 +439,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 col = 1;
                 _logger.LogInformation($"Dang ket xuat loai {loaiMon} khoa co ma {f.Code}");
                 //lấy bộ môn
-                var departments = eduContext.AsAcademyDepartment.Where(o => o.FacultyCode == f.Code && o.Code != f.Code).ToList();
+                var departments = eduContext.AsAcademyDepartment.Where(o => o.FacultyCode == f.Code).ToList();
 
                 //các biến lấy tổng
                 var tongSoSVThamGiaKhaoSat = 0;
@@ -623,10 +623,9 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                             //tổng hợp toàn trường
                             float dTBTotalToanTruong = 0;
                             float sumTotalToanTruong = 0;
-                            int totalDiem = 6;
+                            int totalDiem = (colTotal) - (colTotal - cauhoi.Answers.Count);
                             for (int i = colTotal - 1; i >= colTotal - cauhoi.Answers.Count; i--)
                             {
-                                totalDiem--;
                                 try
                                 {
                                     sumdTBTotal += (int)wsLyThuyet.Cells[rowTotal, i].Value;
@@ -638,6 +637,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                 }
                                 sumTotalToanTruong += tongToanTruong[i];
                                 dTBTotalToanTruong += tongToanTruong[i] * totalDiem;
+                                totalDiem--;
                             }
 
                             //tổng hợp tb khoa
@@ -815,19 +815,21 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                     //tổng hợp toàn trường
                                     float dTBTotalToanTruong = 0;
                                     float sumTotalToanTruong = 0;
+                                    int totalDiem = (colTotal) - (colTotal - cauhoicon.Answers.Count);
                                     for (int i = colTotal - 1; i >= colTotal - cauhoicon.Answers.Count; i--)
                                     {
                                         try
                                         {
                                             sumdTBTotal += (int)wsLyThuyet.Cells[rowTotal, i].Value;
-                                            dTBTotal += (int)wsLyThuyet.Cells[rowTotal, i].Value * i;
+                                            dTBTotal += (int)wsLyThuyet.Cells[rowTotal, i].Value * totalDiem;
                                         }
                                         catch
                                         {
 
                                         }
                                         sumTotalToanTruong += tongToanTruong[i];
-                                        dTBTotalToanTruong += tongToanTruong[i] * i;
+                                        dTBTotalToanTruong += tongToanTruong[i] * totalDiem;
+                                        totalDiem--;
                                     }
 
                                     //tổng hợp tb khoa
