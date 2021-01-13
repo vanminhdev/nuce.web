@@ -14,11 +14,11 @@ using System.Web;
 
 namespace nuce.web.api.Services.Survey.Implements
 {
-    class AsEduSurveyCauHoiService : IAsEduSurveyCauHoiService
+    class AsEduSurveyUndergraduateCauHoiService : IAsEduSurveyUndergraduateCauHoiService
     {
         private readonly SurveyContext _surveyContext;
 
-        public AsEduSurveyCauHoiService(SurveyContext surveyContext)
+        public AsEduSurveyUndergraduateCauHoiService(SurveyContext surveyContext)
         {
             _surveyContext = surveyContext;
         }
@@ -26,12 +26,12 @@ namespace nuce.web.api.Services.Survey.Implements
         public async Task<PaginationModel<QuestionModel>> GetAllActiveStatus(QuestionFilter filter, int skip = 0, int take = 20)
         {
             _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            var query = _surveyContext.AsEduSurveyCauHoi.Where(q => q.Status != (int)QuestionStatus.Deleted);
+            var query = _surveyContext.AsEduSurveyUndergraduateCauHoi.Where(q => q.Status != (int)QuestionStatus.Deleted);
             var recordsTotal = query.Count();
 
             if (!string.IsNullOrWhiteSpace(filter.Code))
             {
-                query = query.Where(u => u.Code.Contains(filter.Code));
+                query = query.Where(u => u.Code == filter.Code);
             }
             if (!string.IsNullOrWhiteSpace(filter.Content))
             {
@@ -70,7 +70,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
         public async Task<List<QuestionModel>> GetAllByStatus(QuestionStatus status)
         {
-            var list = await _surveyContext.AsEduSurveyCauHoi.AsNoTracking()
+            var list = await _surveyContext.AsEduSurveyUndergraduateCauHoi.AsNoTracking()
                 .OrderBy(q => q.Order)
                 .Where(q => q.Status == (int)status).ToListAsync();
             return
@@ -86,11 +86,11 @@ namespace nuce.web.api.Services.Survey.Implements
         public async Task<QuestionModel> GetById(Guid Id)
         {
             _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            var question = await _surveyContext.AsEduSurveyCauHoi
+            var question = await _surveyContext.AsEduSurveyUndergraduateCauHoi
                 .Where(q => q.Status != (int)QuestionStatus.Deleted && q.Id == Id)
                 .FirstOrDefaultAsync();
 
-            var childs = await _surveyContext.AsEduSurveyCauHoi.Where(o => o.ParentCode == question.Code && o.Status != (int)QuestionStatus.Deleted).ToListAsync();
+            var childs = await _surveyContext.AsEduSurveyUndergraduateCauHoi.Where(o => o.ParentCode == question.Code && o.Status != (int)QuestionStatus.Deleted).ToListAsync();
 
             if (question == null)
             {
@@ -117,7 +117,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
         //private void task()
         //{
-        //    var questions = _surveyContext.AsEduSurveyCauHoi.OrderBy(o => o.Id).ToList();
+        //    var questions = _surveyContext.AsEduSurveyUndergraduateCauHoi.OrderBy(o => o.Id).ToList();
 
         //    for(int i = 0; i < questions.Count; i++)
         //    {
@@ -132,7 +132,7 @@ namespace nuce.web.api.Services.Survey.Implements
         //    {
         //        answers[i].Code = $"{i + 1:00000}";
 
-        //        var q = _surveyContext.AsEduSurveyCauHoi.Find(answers[i].CauHoiId);
+        //        var q = _surveyContext.AsEduSurveyUndergraduateCauHoi.Find(answers[i].CauHoiId);
 
         //        if(q != null)
         //        {
@@ -143,12 +143,12 @@ namespace nuce.web.api.Services.Survey.Implements
 
         public async Task Create(QuestionCreateModel question)
         {
-            var questionCreate = new AsEduSurveyCauHoi
+            var questionCreate = new AsEduSurveyUndergraduateCauHoi
             {
                 Id = Guid.NewGuid(),
                 BoCauHoiId = -1,
                 DoKhoId = 1,
-                Code = $"{_surveyContext.AsEduSurveyCauHoi.Count() + 1:00000}",
+                Code = $"{_surveyContext.AsEduSurveyUndergraduateCauHoi.Count() + 1:00000}",
                 Content = question.Content,
                 InsertedDate = DateTime.Now,
                 UpdatedDate = DateTime.Now,
@@ -157,14 +157,14 @@ namespace nuce.web.api.Services.Survey.Implements
                 Type = question.Type,
                 Status = (int)QuestionStatus.Active
             };
-            _surveyContext.AsEduSurveyCauHoi.Add(questionCreate);
+            _surveyContext.AsEduSurveyUndergraduateCauHoi.Add(questionCreate);
 
             await _surveyContext.SaveChangesAsync();
         }
 
         public async Task Update(Guid id, QuestionUpdateModel question)
         {
-            var questionUpdate = _surveyContext.AsEduSurveyCauHoi
+            var questionUpdate = _surveyContext.AsEduSurveyUndergraduateCauHoi
                 .FirstOrDefault(q => q.Id == id);
             if(questionUpdate == null)
             {
@@ -179,7 +179,7 @@ namespace nuce.web.api.Services.Survey.Implements
             if(question.QuestionChildCodes != null)
             {
                 //xoá cái cũ
-                var oldChilds = await _surveyContext.AsEduSurveyCauHoi.Where(o => o.ParentCode == questionUpdate.Code && o.Status != (int)QuestionStatus.Deleted).ToListAsync();
+                var oldChilds = await _surveyContext.AsEduSurveyUndergraduateCauHoi.Where(o => o.ParentCode == questionUpdate.Code && o.Status != (int)QuestionStatus.Deleted).ToListAsync();
                 foreach (var item in oldChilds)
                 {
                     item.ParentCode = null;
@@ -188,7 +188,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 //thêm lại
                 foreach (var code in question.QuestionChildCodes)
                 {
-                    var questionChild = await _surveyContext.AsEduSurveyCauHoi.FirstOrDefaultAsync(o => o.Code == code && o.Status != (int)QuestionStatus.Deleted);
+                    var questionChild = await _surveyContext.AsEduSurveyUndergraduateCauHoi.FirstOrDefaultAsync(o => o.Code == code && o.Status != (int)QuestionStatus.Deleted);
                     if(questionChild != null)
                     {
                         questionChild.ParentCode = questionUpdate.Code;
@@ -200,7 +200,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
         public async Task Delete(Guid id)
         {
-            var question = await _surveyContext.AsEduSurveyCauHoi.FirstOrDefaultAsync(q => q.Id == id);
+            var question = await _surveyContext.AsEduSurveyUndergraduateCauHoi.FirstOrDefaultAsync(q => q.Id == id);
             if(question == null)
             {
                 throw new RecordNotFoundException();

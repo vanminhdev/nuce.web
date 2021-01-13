@@ -62,8 +62,8 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             //loại câu chọn nhiều
             var groupMultiChoiceSelectedAnswers = selectedList
                 .Where(o => o.AnswerCodes != null && o.AnswerCodes.Count > 0)
-                .SelectMany(o => o.AnswerCodes, (r, AnswerCode) => new {r.TheSurveyId, r.QuestionCode, AnswerCode })
-                .GroupBy(o => new {o.TheSurveyId, o.QuestionCode, o.AnswerCode });
+                .SelectMany(o => o.AnswerCodes, (r, AnswerCode) => new { r.TheSurveyId, r.QuestionCode, AnswerCode })
+                .GroupBy(o => new { o.TheSurveyId, o.QuestionCode, o.AnswerCode });
 
             foreach (var item in groupMultiChoiceSelectedAnswers)
             {
@@ -77,7 +77,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             }
 
             //loại câu trả lời text
-            var groupShortAnswerSelectedAnswers = selectedList.Where(o => o.AnswerContent != null).GroupBy(o => new {o.TheSurveyId, o.QuestionCode }, o => new { o.AnswerContent });
+            var groupShortAnswerSelectedAnswers = selectedList.Where(o => o.AnswerContent != null).GroupBy(o => new { o.TheSurveyId, o.QuestionCode }, o => new { o.AnswerContent });
             foreach (var item in groupShortAnswerSelectedAnswers)
             {
                 string strAllAnswerContent = "";
@@ -95,7 +95,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
 
             //loại vote sao
             var groupVoteStarSelectedAnswers = selectedList.Where(o => o.NumStart != null).GroupBy(o => new { o.TheSurveyId, o.QuestionCode, o.NumStart }, o => new { o.NumStart });
-            foreach(var item in groupVoteStarSelectedAnswers)
+            foreach (var item in groupVoteStarSelectedAnswers)
             {
                 result.Add(new AnswerSelectedReportTotal
                 {
@@ -145,94 +145,90 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
 
             try
             {
-                var surveyRound = surveyContext.AsEduSurveyDotKhaoSat.FirstOrDefault(o => o.Id == surveyRoundId && o.Status != (int)SurveyRoundStatus.Deleted);
+                var surveyRound = surveyContext.AsEduSurveyDotKhaoSat.AsNoTracking().FirstOrDefault(o => o.Id == surveyRoundId && o.Status != (int)SurveyRoundStatus.Deleted);
                 if (surveyRound == null)
                 {
                     throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
                 }
 
                 //đợt khảo sát chưa kết thúc
-                if(!(surveyRound.Status == (int)SurveyRoundStatus.Closed || surveyRound.Status == (int)SurveyRoundStatus.End || DateTime.Now >= surveyRound.EndDate))
+                if (!(surveyRound.Status == (int)SurveyRoundStatus.Closed || surveyRound.Status == (int)SurveyRoundStatus.End || DateTime.Now >= surveyRound.EndDate))
                 {
                     throw new HandleException.InvalidInputDataException("Đợt khảo sát chưa đóng hoặc chưa kết thúc");
                 }
 
                 //do chỉ có một bài ks nên lấy id của bài ks đó
-                var idbaikscuadotnay = surveyContext.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == surveyRound.Id).Select(o => o.Id).ToList();
-                if(idbaikscuadotnay.Count == 0)
+                var idbaikscuadotnay = surveyContext.AsEduSurveyBaiKhaoSat.AsNoTracking().Where(o => o.DotKhaoSatId == surveyRound.Id).Select(o => o.Id).ToList();
+                if (idbaikscuadotnay.Count == 0)
                 {
                     throw new RecordNotFoundException("Không tìm thấy bài khảo sát của đợt khảo sát này");
                 }
 
                 _logger.LogInformation("report total normal is start.");
                 //surveyContext.Database.ExecuteSqlRaw($"TRUNCATE TABLE {TableNameTask.AsEduSurveyReportTotal}");
-                var baikshoanthanh = surveyContext.AsEduSurveyBaiKhaoSatSinhVien.Where(o => idbaikscuadotnay.Contains(o.BaiKhaoSatId)).Where(o => o.Status == (int)SurveyStudentStatus.Done);
-                var skip = 0;
-                var take = 1000;
-                
+                var baikshoanthanh = surveyContext.AsEduSurveyBaiKhaoSatSinhVien.AsNoTracking().Where(o => idbaikscuadotnay.Contains(o.BaiKhaoSatId)).Where(o => o.Status == (int)SurveyStudentStatus.Done);
+
                 var tongBaiKsHoanThanh = baikshoanthanh.Count();
-
                 List<SelectedAnswerExtend> selectedAnswers;
-                while (skip <= tongBaiKsHoanThanh)
+
+                var groupLopGiangVien = baikshoanthanh
+                .GroupBy(o => new { o.LecturerCode, o.ClassRoomCode, o.BaiKhaoSatId })
+                .Select(r => new { r.Key.LecturerCode, r.Key.ClassRoomCode, r.Key.BaiKhaoSatId })
+                .ToList();
+
+                var totalLectureClassroom = groupLopGiangVien.Count();
+                var count = 0;
+                foreach (var lectureClassroom in groupLopGiangVien)
                 {
-                    var chiaNhoBaiKsHoanThanh = baikshoanthanh
-                    .Skip(skip).Take(take)
-                    .ToList();
+                    var lectureCode = lectureClassroom.LecturerCode;
+                    var classroomCode = lectureClassroom.ClassRoomCode;
 
-                    var groupLopGiangVien = chiaNhoBaiKsHoanThanh
-                    .GroupBy(o => new { o.LecturerCode, o.ClassRoomCode, o.BaiKhaoSatId })
-                    .Select(r => new { r.Key.LecturerCode, r.Key.ClassRoomCode, r.Key.BaiKhaoSatId });
+                    //từng giảng viên lớp môn học
+                    var cacBaiLam = baikshoanthanh.Where(o => o.ClassRoomCode == classroomCode && o.LecturerCode == lectureCode).ToList();
+                    selectedAnswers = new List<SelectedAnswerExtend>();
 
-                    foreach (var lectureClassroom in groupLopGiangVien)
+                    foreach (var bailam in cacBaiLam)
                     {
-                        var lectureCode = lectureClassroom.LecturerCode;
-                        var classroomCode = lectureClassroom.ClassRoomCode;
-
-                        //từng giảng viên lớp môn học
-                        var cacBaiLam = baikshoanthanh.Where(o => o.ClassRoomCode == classroomCode && o.LecturerCode == lectureCode && !string.IsNullOrEmpty(o.BaiLam)).ToList();
-                        selectedAnswers = new List<SelectedAnswerExtend>();
-
-                        foreach (var bailam in cacBaiLam)
+                        if (string.IsNullOrEmpty(bailam.BaiLam))
                         {
-                            var json = JsonSerializer.Deserialize<List<SelectedAnswerExtend>>(bailam.BaiLam);
-                            json.ForEach(o => o.TheSurveyId = bailam.BaiKhaoSatId);
-                            selectedAnswers.AddRange(json);
+                            continue;
                         }
+                        var json = JsonSerializer.Deserialize<List<SelectedAnswerExtend>>(bailam.BaiLam);
+                        json.ForEach(o => o.TheSurveyId = bailam.BaiKhaoSatId);
+                        selectedAnswers.AddRange(json);
+                    }
 
-                        var total = AnswerSelectedReportTotal(selectedAnswers);
-
-                        foreach (var item in total)
+                    var total = AnswerSelectedReportTotal(selectedAnswers);
+                    foreach (var item in total)
+                    {
+                        var thongkecuthe = surveyContext.AsEduSurveyReportTotal
+                            .FirstOrDefault(o => o.ClassRoomCode == classroomCode && o.LecturerCode == lectureCode && o.TheSurveyId == item.TheSurveyId &&
+                            o.QuestionCode == item.QuestionCode && o.AnswerCode == o.AnswerCode);
+                        if (thongkecuthe == null)
                         {
-                            var thongkecuthe = surveyContext.AsEduSurveyReportTotal.FirstOrDefault(o => o.ClassRoomCode == classroomCode && o.LecturerCode == lectureCode && o.TheSurveyId == item.TheSurveyId);
-                            if (thongkecuthe == null)
+                            surveyContext.AsEduSurveyReportTotal.Add(new AsEduSurveyReportTotal
                             {
-                                surveyContext.AsEduSurveyReportTotal.Add(new AsEduSurveyReportTotal
-                                {
-                                    Id = Guid.NewGuid(),
-                                    SurveyRoundId = surveyRound.Id,
-                                    TheSurveyId = item.TheSurveyId,
-                                    ClassRoomCode = classroomCode,
-                                    LecturerCode = lectureCode,
-                                    QuestionCode = item.QuestionCode,
-                                    AnswerCode = item.AnswerCode,
-                                    Content = item.Content,
-                                    Total = item.Total,
-                                });
-                            }
-                            else
-                            {
-                                thongkecuthe.QuestionCode = item.QuestionCode;
-                                thongkecuthe.AnswerCode = item.AnswerCode;
-                                thongkecuthe.Content = item.Content;
-                                thongkecuthe.Total = item.Total;
-                            }
+                                Id = Guid.NewGuid(),
+                                SurveyRoundId = surveyRound.Id,
+                                TheSurveyId = item.TheSurveyId,
+                                ClassRoomCode = classroomCode,
+                                LecturerCode = lectureCode,
+                                QuestionCode = item.QuestionCode,
+                                AnswerCode = item.AnswerCode,
+                                Content = item.Content,
+                                Total = item.Total,
+                            });
+                        }
+                        else //nếu có rồi thì cập nhật
+                        {
+                            thongkecuthe.Content = item.Content;
+                            thongkecuthe.Total = item.Total;
                         }
                     }
-                    surveyContext.SaveChanges();
-                    _logger.LogInformation($"report total normal loading: {skip}/{tongBaiKsHoanThanh}");
-                    skip += take;
-                }
 
+                    _logger.LogInformation($"thong ke hoan thanh {++count}/{totalLectureClassroom}, ma gv: {lectureCode}, ma lop: {classroomCode}");
+                }
+                var test = surveyContext.SaveChanges();
                 _logger.LogInformation("report total normal is done.");
 
                 //hoàn thành
@@ -245,7 +241,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             {
                 status.Status = (int)TableTaskStatus.Done;
                 status.IsSuccess = false;
-                status.Message = e.Message;
+                status.Message = UtilsException.GetMainMessage(e);
                 statusContext.SaveChanges();
                 throw e;
             }
@@ -399,13 +395,9 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             worksheet.DefaultRowHeight = 14.25;
             worksheet.DefaultColWidth = 8.5;
 
-            worksheet.Cells.Style.Border.Top.Style = ExcelBorderStyle.Thin;
-            worksheet.Cells.Style.Border.Left.Style = ExcelBorderStyle.Thin;
-            worksheet.Cells.Style.Border.Right.Style = ExcelBorderStyle.Thin;
-            worksheet.Cells.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
             worksheet.Cells.Style.WrapText = true;
 
-            worksheet.Cells.Style.Font.Name = "Arial";
+            //worksheet.Cells.Style.Font.Name = "Arial";
             worksheet.Cells.Style.Font.Size = 11;
 
             worksheet.Row(1).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
@@ -430,7 +422,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
         }
 
         private void ThongKeTungLoaiBaiKS(ExcelWorksheet wsLyThuyet, EduDataContext eduContext, SurveyContext surveyContext,
-            IQueryable<AsEduSurveyBaiKhaoSatSinhVien> baiLamKhaoSatCacDotDangXet, List<AsEduSurveyBaiKhaoSat> baiKhaoSats, 
+            IQueryable<AsEduSurveyBaiKhaoSatSinhVien> baiLamKhaoSatCacDotDangXet, List<AsEduSurveyBaiKhaoSat> baiKhaoSats,
             List<QuestionJson> deLyThuyet, int loaiMon)
         {
             //lấy khoa
@@ -438,7 +430,9 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             int rowCauHoi = 2;
             int rowDapAn = 3;
             int col = 1;
-            var facultys = eduContext.AsAcademyFaculty.Where(o => o.Code == "KX").ToList();
+            var facultys = eduContext.AsAcademyFaculty.Where(o => o.Code == "IT").ToList();
+
+            var tongToanTruong = new Dictionary<int, float>();
             foreach (var f in facultys)
             {
                 col = 1;
@@ -454,25 +448,28 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 var tongSoGiangVienCanKs = 0;
                 var tongSoGiangVienDaDuocKs = 0;
 
+                var rowTotal = row + departments.Count();
+
                 //lấy môn học của bộ môn
                 foreach (var d in departments)
                 {
                     _logger.LogInformation($"Dang ket xuat loai {loaiMon} bo mon co ma {d.Code} cua khoa {f.Code}");
                     var monHocCuaBoMon = eduContext.AsAcademySubject.Where(o => o.DepartmentCode == d.Code)
                         .Join(eduContext.AsAcademySubjectExtend, o => o.Code, o => o.Code, (monhoc, loaimon) => new { monhoc, loaimon.Type })
-                        .Select(o => new {
+                        .Select(o => new
+                        {
                             o.monhoc.Code,
                             o.monhoc.DepartmentCode,
                             o.monhoc.Name,
                             o.Type
                         });
 
-                    #region môn lý thuyết
+                    #region môn
                     var monLyThuyetCuaBoMonCodes = monHocCuaBoMon.Where(o => o.Type == loaiMon).Select(o => o.Code).ToList();
-                    if(monLyThuyetCuaBoMonCodes.Count == 0) //bộ môn không có môn loại này
-                    {
-                        continue;
-                    }
+                    //if(monLyThuyetCuaBoMonCodes.Count == 0) //bộ môn không có môn loại này
+                    //{
+                    //    continue;
+                    //}
 
                     //các bài làm của môn lý thuyết của bộ môn đang xét
                     var baiLamKhaoSatLyThuyet = baiLamKhaoSatCacDotDangXet.Where(o => monLyThuyetCuaBoMonCodes.Contains(o.SubjectCode));
@@ -493,15 +490,63 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                     var soGiangVienDaDuocKs = baiLamKhaoSatLyThuyetHoanThanh.GroupBy(o => o.LecturerCode).Select(o => o.Key).Count();
                     tongSoGiangVienDaDuocKs += soGiangVienDaDuocKs;
 
-                    #region ghi ra excel
+                    #region tổng hợp số lượng
                     wsLyThuyet.Cells[row, col++].Value = f.Name;
                     wsLyThuyet.Cells[row, col++].Value = d.Name;
                     wsLyThuyet.Cells[row, col++].Value = soSVThamGiaKhaoSat;
+                    if (tongToanTruong.ContainsKey(col - 1))
+                    {
+                        tongToanTruong[col - 1] += soSVThamGiaKhaoSat;
+                    }
+                    else
+                    {
+                        tongToanTruong.Add(col - 1, soSVThamGiaKhaoSat);
+                    }
                     wsLyThuyet.Cells[row, col++].Value = soSVDuocKhaoSat;
+                    if (tongToanTruong.ContainsKey(col - 1))
+                    {
+                        tongToanTruong[col - 1] += soSVDuocKhaoSat;
+                    }
+                    else
+                    {
+                        tongToanTruong.Add(col - 1, soSVDuocKhaoSat);
+                    }
                     wsLyThuyet.Cells[row, col++].Value = soPhieuThuVe;
+                    if (tongToanTruong.ContainsKey(col - 1))
+                    {
+                        tongToanTruong[col - 1] += soPhieuThuVe;
+                    }
+                    else
+                    {
+                        tongToanTruong.Add(col - 1, soPhieuThuVe);
+                    }
                     wsLyThuyet.Cells[row, col++].Value = soPhieuPhatRa;
+                    if (tongToanTruong.ContainsKey(col - 1))
+                    {
+                        tongToanTruong[col - 1] += soPhieuPhatRa;
+                    }
+                    else
+                    {
+                        tongToanTruong.Add(col - 1, soPhieuPhatRa);
+                    }
                     wsLyThuyet.Cells[row, col++].Value = soGiangVienDaDuocKs;
+                    if (tongToanTruong.ContainsKey(col - 1))
+                    {
+                        tongToanTruong[col - 1] += soGiangVienDaDuocKs;
+                    }
+                    else
+                    {
+                        tongToanTruong.Add(col - 1, soGiangVienDaDuocKs);
+                    }
                     wsLyThuyet.Cells[row, col++].Value = soGiangVienCanKs;
+                    if (tongToanTruong.ContainsKey(col - 1))
+                    {
+                        tongToanTruong[col - 1] += soGiangVienCanKs;
+                    }
+                    else
+                    {
+                        tongToanTruong.Add(col - 1, soGiangVienCanKs);
+                    }
                     #endregion
 
                     #region tổng hợp dữ liệu thống kê thô
@@ -516,24 +561,40 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                             wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {++index}: {cauhoi.Content}";
 
                             var dTB = 0;
-                            var sumTB = 0;
+                            var sumTotal = 0;
+                            var diem = 0;
+                            var colTotal = col + cauhoi.Answers.Count();
                             foreach (var dapan in cauhoi.Answers)
                             {
+                                diem++;
+
+                                //tổng hợp
+                                if (wsLyThuyet.Cells[rowTotal, col].Value == null)
+                                {
+                                    wsLyThuyet.Cells[rowTotal, col].Value = 0;
+                                }
+
+                                //tổng toàn trường
+                                if (!tongToanTruong.ContainsKey(col))
+                                {
+                                    tongToanTruong.Add(col, 0);
+                                }
+
                                 wsLyThuyet.Cells[rowDapAn, col].Value = dapan.Content;
                                 var ketqua = reportTotalLyThuyet.FirstOrDefault(o => o.QuestionCode == cauhoi.Code && o.AnswerCode == dapan.Code);
                                 if (ketqua != null)
                                 {
                                     var total = ketqua.Total != null ? ketqua.Total.Value : 0;
                                     wsLyThuyet.Cells[row, col].Value = total;
-                                    sumTB += total;
-                                    try
-                                    {
-                                        dTB += int.Parse(dapan.Content) * total;
-                                    }
-                                    catch
-                                    {
+                                    sumTotal += total;
 
-                                    }
+                                    //tổng hợp
+                                    wsLyThuyet.Cells[rowTotal, col].Value = (int)(wsLyThuyet.Cells[rowTotal, col].Value) + total;
+
+                                    //tổng toàn trường
+                                    tongToanTruong[col] += total;
+
+                                    dTB += diem * total;
                                 }
                                 else
                                 {
@@ -543,13 +604,69 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                             }
                             wsLyThuyet.Cells[rowDapAn, col].Value = "đTB";
 
-                            if (sumTB > 0)
+                            if (sumTotal > 0)
                             {
-                                wsLyThuyet.Cells[row, col].Value = (double)dTB / sumTB;
+                                wsLyThuyet.Cells[row, col].Value = (double)dTB / sumTotal;
                             }
                             else
                             {
                                 wsLyThuyet.Cells[row, col].Value = 0;
+                            }
+
+                            //tổng hợp trung bình
+                            float dTBTotal = 0;
+                            float sumdTBTotal = 0;
+
+                            //tổng hợp toàn trường
+                            float dTBTotalToanTruong = 0;
+                            float sumTotalToanTruong = 0;
+                            for (int i = colTotal - 1; i >= colTotal - cauhoi.Answers.Count; i--)
+                            {
+                                try
+                                {
+                                    sumdTBTotal += (int)wsLyThuyet.Cells[rowTotal, i].Value;
+                                    dTBTotal += (int)wsLyThuyet.Cells[rowTotal, i].Value * i;
+                                }
+                                catch
+                                {
+
+                                }
+                                sumTotalToanTruong += tongToanTruong[i];
+                                dTBTotalToanTruong += tongToanTruong[i] * i;
+                            }
+
+                            //tổng hợp tb khoa
+                            if (sumdTBTotal > 0)
+                            {
+                                wsLyThuyet.Cells[rowTotal, colTotal].Value = (float)dTBTotal / sumdTBTotal;
+                            }
+                            else
+                            {
+                                wsLyThuyet.Cells[rowTotal, colTotal].Value = 0;
+                            }
+
+                            //tổng tb toàn trường
+                            if (sumTotalToanTruong > 0)
+                            {
+                                if (tongToanTruong.ContainsKey(colTotal))
+                                {
+                                    tongToanTruong[colTotal] = (float)dTBTotalToanTruong / sumTotalToanTruong;
+                                }
+                                else
+                                {
+                                    tongToanTruong.Add(colTotal, (float)dTBTotalToanTruong / sumTotalToanTruong);
+                                }
+                            }
+                            else
+                            {
+                                if (tongToanTruong.ContainsKey(colTotal))
+                                {
+                                    tongToanTruong[colTotal] = 0;
+                                }
+                                else
+                                {
+                                    tongToanTruong.Add(colTotal, 0);
+                                }
                             }
 
                             var colEnd = col++;
@@ -563,12 +680,30 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                             wsLyThuyet.Cells[rowCauHoi, col].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(255, 255, 0));
                             foreach (var dapan in cauhoi.Answers)
                             {
+                                //tổng hợp
+                                if (wsLyThuyet.Cells[rowTotal, col].Value == null)
+                                {
+                                    wsLyThuyet.Cells[rowTotal, col].Value = 0;
+                                }
+
+                                //tổng toàn trường
+                                if (!tongToanTruong.ContainsKey(col))
+                                {
+                                    tongToanTruong.Add(col, 0);
+                                }
+
                                 wsLyThuyet.Cells[rowDapAn, col].Value = dapan.Content;
                                 var ketqua = reportTotalLyThuyet.FirstOrDefault(o => o.QuestionCode == cauhoi.Code && o.AnswerCode == dapan.Code);
                                 if (ketqua != null)
                                 {
                                     var total = ketqua.Total != null ? ketqua.Total.Value : 0;
                                     wsLyThuyet.Cells[row, col].Value = total;
+
+                                    //tổng hợp
+                                    wsLyThuyet.Cells[rowTotal, col].Value = (int)(wsLyThuyet.Cells[rowTotal, col].Value) + total;
+
+                                    //tổng toàn trường
+                                    tongToanTruong[col] += total;
                                 }
                                 else
                                 {
@@ -578,6 +713,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                 //câu hỏi con của đáp án
                                 if (dapan.AnswerChildQuestion != null)
                                 {
+                                    col++;
                                     wsLyThuyet.Cells[rowDapAn, col].Value = dapan.AnswerChildQuestion.Content;
                                     var ketquaCon = reportTotalLyThuyet.FirstOrDefault(o => o.QuestionCode == $"{dapan.Code}_{dapan.AnswerChildQuestion.Code}" && o.AnswerCode == dapan.Code);
                                     wsLyThuyet.Cells[row, col].Value = ketquaCon?.Content ?? "";
@@ -587,13 +723,188 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                             var colEnd = col - 1;
                             wsLyThuyet.Cells[rowCauHoi, colStart, rowCauHoi, colEnd].Merge = true;
                         }
+                        else if (cauhoi.Type == QuestionType.SA)
+                        {
+                            wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {++index}: {cauhoi.Content}";
+                            wsLyThuyet.Column(col).Width = 48;
+                            var ketqua = reportTotalLyThuyet.FirstOrDefault(o => o.QuestionCode == cauhoi.Code);
+                            wsLyThuyet.Cells[row, col].Value = ketqua?.Content ?? "";
+                            col++;
+                        }
                         else if (cauhoi.Type == QuestionType.GQ)
                         {
                             index++;
                             var indexChild = 0;
                             foreach (var cauhoicon in cauhoi.ChildQuestion)
                             {
-                                if(cauhoicon.Type == QuestionType.SA)
+                                if (cauhoicon.Type == QuestionType.SC)
+                                {
+                                    var colStart = col;
+                                    wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {index}.{++indexChild}: {cauhoicon.Content}";
+                                    var dTB = 0;
+                                    var sumTotal = 0;
+                                    var diem = 0;
+                                    var colTotal = col + cauhoicon.Answers.Count();
+                                    foreach (var dapan in cauhoicon.Answers)
+                                    {
+                                        diem++;
+
+                                        //tổng hợp
+                                        if (wsLyThuyet.Cells[rowTotal, col].Value == null)
+                                        {
+                                            wsLyThuyet.Cells[rowTotal, col].Value = 0;
+                                        }
+
+                                        //tổng toàn trường
+                                        if (!tongToanTruong.ContainsKey(col))
+                                        {
+                                            tongToanTruong.Add(col, 0);
+                                        }
+
+                                        wsLyThuyet.Cells[rowDapAn, col].Value = dapan.Content;
+                                        var ketqua = reportTotalLyThuyet.FirstOrDefault(o => o.QuestionCode == cauhoicon.Code && o.AnswerCode == dapan.Code);
+                                        if (ketqua != null)
+                                        {
+                                            var total = ketqua.Total != null ? ketqua.Total.Value : 0;
+                                            wsLyThuyet.Cells[row, col].Value = total;
+                                            sumTotal += total;
+
+                                            //tổng hợp
+                                            wsLyThuyet.Cells[rowTotal, col].Value = (int)(wsLyThuyet.Cells[rowTotal, col].Value) + total;
+
+                                            //tổng toàn trường
+                                            tongToanTruong[col] += total;
+
+                                            dTB += diem * total;
+                                        }
+                                        else
+                                        {
+                                            wsLyThuyet.Cells[row, col].Value = 0;
+                                        }
+                                        col++;
+                                    }
+                                    wsLyThuyet.Cells[rowDapAn, col].Value = "đTB";
+
+                                    if (sumTotal > 0)
+                                    {
+                                        wsLyThuyet.Cells[row, col].Value = (double)dTB / sumTotal;
+                                    }
+                                    else
+                                    {
+                                        wsLyThuyet.Cells[row, col].Value = 0;
+                                    }
+
+                                    //tổng hợp trung bình
+                                    float dTBTotal = 0;
+                                    float sumdTBTotal = 0;
+
+                                    //tổng hợp toàn trường
+                                    float dTBTotalToanTruong = 0;
+                                    float sumTotalToanTruong = 0;
+                                    for (int i = colTotal - 1; i >= colTotal - cauhoicon.Answers.Count; i--)
+                                    {
+                                        try
+                                        {
+                                            sumdTBTotal += (int)wsLyThuyet.Cells[rowTotal, i].Value;
+                                            dTBTotal += (int)wsLyThuyet.Cells[rowTotal, i].Value * i;
+                                        }
+                                        catch
+                                        {
+
+                                        }
+                                        sumTotalToanTruong += tongToanTruong[i];
+                                        dTBTotalToanTruong += tongToanTruong[i] * i;
+                                    }
+
+                                    //tổng hợp tb khoa
+                                    if (sumdTBTotal > 0)
+                                    {
+                                        wsLyThuyet.Cells[rowTotal, colTotal].Value = (float)dTBTotal / sumdTBTotal;
+                                    }
+                                    else
+                                    {
+                                        wsLyThuyet.Cells[rowTotal, colTotal].Value = 0;
+                                    }
+
+                                    //tổng tb toàn trường
+                                    if (sumTotalToanTruong > 0)
+                                    {
+                                        if (tongToanTruong.ContainsKey(colTotal))
+                                        {
+                                            tongToanTruong[colTotal] = (float)dTBTotalToanTruong / sumTotalToanTruong;
+                                        }
+                                        else
+                                        {
+                                            tongToanTruong.Add(colTotal, (float)dTBTotalToanTruong / sumTotalToanTruong);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (tongToanTruong.ContainsKey(colTotal))
+                                        {
+                                            tongToanTruong[colTotal] = 0;
+                                        }
+                                        else
+                                        {
+                                            tongToanTruong.Add(colTotal, 0);
+                                        }
+                                    }
+
+                                    var colEnd = col++;
+                                    wsLyThuyet.Cells[rowCauHoi, colStart, rowCauHoi, colEnd].Merge = true;
+                                }
+                                else if (cauhoicon.Type == QuestionType.MC)
+                                {
+                                    var colStart = col;
+                                    wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {++index}: {cauhoicon.Content}";
+                                    wsLyThuyet.Cells[rowCauHoi, col].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                    wsLyThuyet.Cells[rowCauHoi, col].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(255, 255, 0));
+                                    foreach (var dapan in cauhoicon.Answers)
+                                    {
+                                        //tổng hợp
+                                        if (wsLyThuyet.Cells[rowTotal, col].Value == null)
+                                        {
+                                            wsLyThuyet.Cells[rowTotal, col].Value = 0;
+                                        }
+
+                                        //tổng toàn trường
+                                        if (!tongToanTruong.ContainsKey(col))
+                                        {
+                                            tongToanTruong.Add(col, 0);
+                                        }
+
+                                        wsLyThuyet.Cells[rowDapAn, col].Value = dapan.Content;
+                                        var ketqua = reportTotalLyThuyet.FirstOrDefault(o => o.QuestionCode == cauhoicon.Code && o.AnswerCode == dapan.Code);
+                                        if (ketqua != null)
+                                        {
+                                            var total = ketqua.Total != null ? ketqua.Total.Value : 0;
+                                            wsLyThuyet.Cells[row, col].Value = total;
+
+                                            //tổng hợp
+                                            wsLyThuyet.Cells[rowTotal, col].Value = (int)(wsLyThuyet.Cells[rowTotal, col].Value) + total;
+
+                                            //tổng toàn trường
+                                            tongToanTruong[col] += total;
+                                        }
+                                        else
+                                        {
+                                            wsLyThuyet.Cells[row, col].Value = 0;
+                                        }
+
+                                        //câu hỏi con của đáp án
+                                        if (dapan.AnswerChildQuestion != null)
+                                        {
+                                            col++;
+                                            wsLyThuyet.Cells[rowDapAn, col].Value = dapan.AnswerChildQuestion.Content;
+                                            var ketquaCon = reportTotalLyThuyet.FirstOrDefault(o => o.QuestionCode == $"{dapan.Code}_{dapan.AnswerChildQuestion.Code}" && o.AnswerCode == dapan.Code);
+                                            wsLyThuyet.Cells[row, col].Value = ketquaCon?.Content ?? "";
+                                        }
+                                        col++;
+                                    }
+                                    var colEnd = col - 1;
+                                    wsLyThuyet.Cells[rowCauHoi, colStart, rowCauHoi, colEnd].Merge = true;
+                                }
+                                if (cauhoicon.Type == QuestionType.SA)
                                 {
                                     wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {index}.{++indexChild}: {cauhoicon.Content}";
                                     wsLyThuyet.Column(col).Width = 48;
@@ -628,6 +939,19 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 row++;
                 #endregion
             }
+            col = 1;
+            wsLyThuyet.Row(row).Style.Fill.PatternType = ExcelFillStyle.Solid;
+            wsLyThuyet.Row(row).Style.Fill.BackgroundColor.SetColor(Color.FromArgb(255, 255, 0));
+            wsLyThuyet.Cells[row, col].Value = "Toàn trường";
+            foreach (var item in tongToanTruong)
+            {
+                wsLyThuyet.Cells[row, item.Key].Value = item.Value;
+            }
+
+            wsLyThuyet.Cells[1, 1, row, wsLyThuyet.Dimension.Columns - 1].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+            wsLyThuyet.Cells[1, 1, row, wsLyThuyet.Dimension.Columns - 1].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            wsLyThuyet.Cells[1, 1, row, wsLyThuyet.Dimension.Columns - 1].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+            wsLyThuyet.Cells[1, 1, row, wsLyThuyet.Dimension.Columns - 1].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
         }
 
         private void ExportReportTotalNormalSurveyBG(List<Guid> surveyRoundIds)
@@ -715,7 +1039,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 status.Message = fileName;
                 statusContext.SaveChanges();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 status.Status = (int)TableTaskStatus.Done;
                 status.IsSuccess = false;
@@ -742,7 +1066,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             string ndDeDoAn = null;
 
             #region kiem tra ngoại lệ
-            foreach(var id in surveyRoundIds)
+            foreach (var id in surveyRoundIds)
             {
                 var surveyRound = surveyContext.AsEduSurveyDotKhaoSat.FirstOrDefault(o => o.Id == id && o.Status != (int)SurveyRoundStatus.Deleted);
                 if (surveyRound == null)
@@ -766,13 +1090,13 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                     throw new InvalidInputDataException($"Đợt khảo sát {surveyRound.Name} không có bài khảo sát cho môn lý thuyết");
                 }
 
-                if(ndDeLyThuyet == null)
+                if (ndDeLyThuyet == null)
                 {
                     ndDeLyThuyet = baiKhaoSatLyThuyet.NoiDungDeThi;
                 }
                 else
                 {
-                    if(ndDeLyThuyet != baiKhaoSatLyThuyet.NoiDungDeThi)
+                    if (ndDeLyThuyet != baiKhaoSatLyThuyet.NoiDungDeThi)
                     {
                         throw new InvalidInputDataException($"Các đợt khảo sát không có phiếu khảo sát cho môn lý thuyết giống nhau");
                     }
@@ -875,7 +1199,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                     var dsBaiLam = join
                     .Skip(skip).Take(take)
                     .ToList();
-                    
+
                     selectedAnswers = new List<SelectedAnswerExtend>();
 
                     foreach (var bailam in dsBaiLam)
@@ -890,7 +1214,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
 
                     var total = AnswerSelectedReportTotal(selectedAnswers);
 
-                    foreach(var item in total)
+                    foreach (var item in total)
                     {
                         surveyContext.AsEduSurveyUndergraduateReportTotal.Add(new AsEduSurveyUndergraduateReportTotal
                         {

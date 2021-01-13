@@ -5,6 +5,7 @@ using nuce.web.api.Models.Survey;
 using nuce.web.api.Models.Survey.JsonData;
 using nuce.web.api.Repositories.Ctsv.Implements;
 using nuce.web.api.Services.Survey.Interfaces;
+using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey;
 using System;
 using System.Collections.Generic;
@@ -15,34 +16,68 @@ using System.Web;
 
 namespace nuce.web.api.Services.Survey.Implements
 {
-    class AsEduSurveyDeThiService : IAsEduSurveyDeThiService
+    class AsEduSurveyUndergraudateDeThiService : IAsEduSurveyUndergraduateDeThiService
     {
         private readonly SurveyContext _surveyContext;
 
-        public AsEduSurveyDeThiService(SurveyContext surveyContext)
+        public AsEduSurveyUndergraudateDeThiService(SurveyContext surveyContext)
         {
             _surveyContext = surveyContext;
         }
 
+        public async Task<PaginationModel<ExamQuestions>> GetAll(ExamQuestionsFilter filter, int skip = 0, int take = 20)
+        {
+            _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            var query = _surveyContext.AsEduSurveyUndergraduateDeThi.Where(q => q.Status != (int)QuestionStatus.Deleted);
+            var recordsTotal = query.Count();
+
+            if (!string.IsNullOrWhiteSpace(filter.Name))
+            {
+                query = query.Where(u => u.Name.Contains(filter.Name));
+            }
+
+            var recordsFiltered = query.Count();
+
+            var querySkip = query
+                .Skip(skip).Take(take);
+
+            var data = await querySkip
+                .OrderBy(o => o.Code)
+                .Select(o => new ExamQuestions
+                {
+                    Id = o.Id,
+                    Code = o.Code,
+                    Name = o.Name
+                })
+                .ToListAsync();
+
+            return new PaginationModel<ExamQuestions>
+            {
+                RecordsTotal = recordsTotal,
+                RecordsFiltered = recordsFiltered,
+                Data = data
+            };
+        }
+
         public async Task AddQuestion(Guid examQuestionId, string maCauHoi, int order)
         {
-            var question = await _surveyContext.AsEduSurveyCauHoi.FirstOrDefaultAsync(q => q.Code == maCauHoi);
-            if(question == null)
+            var question = await _surveyContext.AsEduSurveyUndergraduateCauHoi.FirstOrDefaultAsync(q => q.Code == maCauHoi);
+            if (question == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy câu hỏi");
             }
 
-            if(question.ParentCode != null)
+            if (question.ParentCode != null)
             {
                 throw new InvalidInputDataException("Câu hỏi là câu hỏi con của một câu hỏi khác, vui lòng thêm bằng cách thêm câu hỏi cha");
             }
 
-            if( _surveyContext.AsEduSurveyCauTrucDe.FirstOrDefault(o => o.DeThiId == examQuestionId && o.CauHoiId == question.Id) != null)
+            if ( _surveyContext.AsEduSurveyUndergraduateCauTrucDe.FirstOrDefault(o => o.DeThiId == examQuestionId && o.CauHoiId == question.Id) != null)
             {
                 throw new InvalidInputDataException("Câu hỏi đã tồn tại");
             }
 
-            _surveyContext.AsEduSurveyCauTrucDe.Add(new AsEduSurveyCauTrucDe {
+            _surveyContext.AsEduSurveyUndergraduateCauTrucDe.Add(new AsEduSurveyUndergraduateCauTrucDe {
                 Id = Guid.NewGuid(),
                 CauHoiId = question.Id,
                 DeThiId = examQuestionId,
@@ -51,41 +86,53 @@ namespace nuce.web.api.Services.Survey.Implements
             await _surveyContext.SaveChangesAsync();
         }
 
-        public async Task CreateExamQuestions(string code, string name)
+        public async Task Create(ExamQuestionsCreate exam)
         {
-            var examQuestions = new AsEduSurveyDeThi()
+            var examQuestions = new AsEduSurveyUndergraduateDeThi()
             {
                 Id = Guid.NewGuid(),
-                Code = code,
-                Name = name,
+                Code = $"{_surveyContext.AsEduSurveyUndergraduateDeThi.Count() + 1:00000}",
+                Name = exam.Name,
                 NoiDungDeThi = "",
-                DapAn = ""
+                DapAn = "",
+                Status = (int)ExamQuestionStatus.Active
             };
-            _surveyContext.AsEduSurveyDeThi.Add(examQuestions);
+            _surveyContext.AsEduSurveyUndergraduateDeThi.Add(examQuestions);
+            await _surveyContext.SaveChangesAsync();
+        }
+
+        public async Task Delete(Guid id)
+        {
+            var dethi = await _surveyContext.AsEduSurveyUndergraduateDeThi.FirstOrDefaultAsync(q => q.Id == id);
+            if (dethi == null)
+            {
+                throw new RecordNotFoundException();
+            }
+            dethi.Status = (int)ExamQuestionStatus.Deleted;
             await _surveyContext.SaveChangesAsync();
         }
 
         public async Task DeleteQuestionFromStructure(string id)
         {
-            var question = await _surveyContext.AsEduSurveyCauTrucDe.FirstOrDefaultAsync(o => o.Id.ToString() == id);
+            var question = await _surveyContext.AsEduSurveyUndergraduateCauTrucDe.FirstOrDefaultAsync(o => o.Id.ToString() == id);
             if (question == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy câu hỏi");
             }
-            _surveyContext.AsEduSurveyCauTrucDe.Remove(question);
+            _surveyContext.AsEduSurveyUndergraduateCauTrucDe.Remove(question);
             await _surveyContext.SaveChangesAsync();
         }
 
         public async Task GenerateExam(GenerateExam generateExam)
         {
 
-            var examQuestion = await _surveyContext.AsEduSurveyDeThi.FindAsync(generateExam.ExamQuestionId.Value);
+            var examQuestion = await _surveyContext.AsEduSurveyUndergraduateDeThi.FindAsync(generateExam.ExamQuestionId.Value);
             if (examQuestion == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy phiếu khảo sát");
             }
 
-            var cautruc = _surveyContext.AsEduSurveyCauTrucDe.Where(o => o.DeThiId == examQuestion.Id);
+            var cautruc = _surveyContext.AsEduSurveyUndergraduateCauTrucDe.Where(o => o.DeThiId == examQuestion.Id);
 
             foreach (var s in generateExam.SortResult)
             {
@@ -97,15 +144,15 @@ namespace nuce.web.api.Services.Survey.Implements
             }
             _surveyContext.SaveChanges();
 
-            var questions = _surveyContext.AsEduSurveyCauTrucDe
-                .Join(_surveyContext.AsEduSurveyCauHoi, examStructure => examStructure.CauHoiId, question => question.Id,
+            var questions = _surveyContext.AsEduSurveyUndergraduateCauTrucDe
+                .Join(_surveyContext.AsEduSurveyUndergraduateCauHoi, examStructure => examStructure.CauHoiId, question => question.Id,
                 (examStructure, question) => new { examStructure, question })
                 .Where(result => result.examStructure.DeThiId == generateExam.ExamQuestionId.Value)
                 .OrderBy(result => result.examStructure.Order)
                 .Select(result => new { payload = result.question, result.examStructure.Order });
 
             var questionAnswerJoin = await questions
-                .GroupJoin(_surveyContext.AsEduSurveyDapAn, question => question.payload.Id, answer => answer.CauHoiId, (questionOrder, answer) => new { questionOrder, answer })
+                .GroupJoin(_surveyContext.AsEduSurveyUndergraduateDapAn, question => question.payload.Id, answer => answer.CauHoiId, (questionOrder, answer) => new { questionOrder, answer })
                 .SelectMany(o => o.answer.DefaultIfEmpty(), (r, answer) => new { r.questionOrder, answer })
                 .ToListAsync();
 
@@ -128,7 +175,7 @@ namespace nuce.web.api.Services.Survey.Implements
                     Type = itemGroup.Key.Type,
                 };
                 var answerOrder = itemGroup.OrderBy(o => o?.Order ?? 0);
-                AsEduSurveyCauHoi answerChildQuestion = null;
+                AsEduSurveyUndergraduateCauHoi answerChildQuestion = null;
                 QuestionJson answerChildQuestionJson = null;
                 
                 questionJson.Answers = new List<AnswerJson>();
@@ -140,7 +187,7 @@ namespace nuce.web.api.Services.Survey.Implements
                     }
                     if(answer.ChildQuestionId != null) //câu hỏi con của đáp án
                     {
-                        answerChildQuestion = await _surveyContext.AsEduSurveyCauHoi.FirstOrDefaultAsync(o => o.Id == answer.ChildQuestionId);
+                        answerChildQuestion = await _surveyContext.AsEduSurveyUndergraduateCauHoi.FirstOrDefaultAsync(o => o.Id == answer.ChildQuestionId);
                         if (answerChildQuestion == null)
                         {
                             throw new RecordNotFoundException("Không tìm thấy câu hỏi con của đáp án có mã: " + answer.Code);
@@ -190,7 +237,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
                 if(itemGroup.Key.Type == QuestionType.GQ) //nếu có nhiều câu hỏi con
                 {
-                    var childs = _surveyContext.AsEduSurveyCauHoi.Where(o => o.ParentCode == itemGroup.Key.Code).Select(o => new QuestionJson
+                    var childs = _surveyContext.AsEduSurveyUndergraduateCauHoi.Where(o => o.ParentCode == itemGroup.Key.Code).Select(o => new QuestionJson
                     {
                         Code = o.Code,
                         DifficultID = o.DoKhoId,
@@ -217,7 +264,7 @@ namespace nuce.web.api.Services.Survey.Implements
         public async Task<List<ExamQuestions>> GetAll()
         {
             _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            return await _surveyContext.AsEduSurveyDeThi
+            return await _surveyContext.AsEduSurveyUndergraduateDeThi
                 .Select(eq => new ExamQuestions
                 {
                     Id = eq.Id,
@@ -226,10 +273,11 @@ namespace nuce.web.api.Services.Survey.Implements
                 }).ToListAsync();
         }
 
+
         public async Task<string> GetExamDetailJsonString(string examQuestionId)
         {
             _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            var exam = await _surveyContext.AsEduSurveyDeThi.FirstOrDefaultAsync(exam => exam.Id.ToString() == examQuestionId);
+            var exam = await _surveyContext.AsEduSurveyUndergraduateDeThi.FirstOrDefaultAsync(exam => exam.Id.ToString() == examQuestionId);
             if(exam == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy đề khảo sát");
@@ -240,8 +288,8 @@ namespace nuce.web.api.Services.Survey.Implements
         public async Task<List<ExamStructure>> GetExamStructure(string id)
         {
             _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            return await _surveyContext.AsEduSurveyCauTrucDe
-                .Join(_surveyContext.AsEduSurveyCauHoi, eq => eq.CauHoiId, q => q.Id, (examquestion, question) => new { examquestion, question })
+            return await _surveyContext.AsEduSurveyUndergraduateCauTrucDe
+                .Join(_surveyContext.AsEduSurveyUndergraduateCauHoi, eq => eq.CauHoiId, q => q.Id, (examquestion, question) => new { examquestion, question })
                 .Where(r => r.examquestion.DeThiId.ToString() == id)
                 .OrderBy(r => r.examquestion.Order)
                 .Select(r => new ExamStructure

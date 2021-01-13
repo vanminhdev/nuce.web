@@ -24,11 +24,19 @@ namespace nuce.web.api.Models.Survey
         public virtual DbSet<AsEduSurveyDotKhaoSat> AsEduSurveyDotKhaoSat { get; set; }
         public virtual DbSet<AsEduSurveyGraduateBaiKhaoSat> AsEduSurveyGraduateBaiKhaoSat { get; set; }
         public virtual DbSet<AsEduSurveyGraduateBaiKhaoSatSinhVien> AsEduSurveyGraduateBaiKhaoSatSinhVien { get; set; }
+        public virtual DbSet<AsEduSurveyGraduateCauHoi> AsEduSurveyGraduateCauHoi { get; set; }
+        public virtual DbSet<AsEduSurveyGraduateCauTrucDe> AsEduSurveyGraduateCauTrucDe { get; set; }
+        public virtual DbSet<AsEduSurveyGraduateDapAn> AsEduSurveyGraduateDapAn { get; set; }
+        public virtual DbSet<AsEduSurveyGraduateDeThi> AsEduSurveyGraduateDeThi { get; set; }
         public virtual DbSet<AsEduSurveyGraduateStudent> AsEduSurveyGraduateStudent { get; set; }
         public virtual DbSet<AsEduSurveyGraduateSurveyRound> AsEduSurveyGraduateSurveyRound { get; set; }
         public virtual DbSet<AsEduSurveyReportTotal> AsEduSurveyReportTotal { get; set; }
         public virtual DbSet<AsEduSurveyUndergraduateBaiKhaoSat> AsEduSurveyUndergraduateBaiKhaoSat { get; set; }
         public virtual DbSet<AsEduSurveyUndergraduateBaiKhaoSatSinhVien> AsEduSurveyUndergraduateBaiKhaoSatSinhVien { get; set; }
+        public virtual DbSet<AsEduSurveyUndergraduateCauHoi> AsEduSurveyUndergraduateCauHoi { get; set; }
+        public virtual DbSet<AsEduSurveyUndergraduateCauTrucDe> AsEduSurveyUndergraduateCauTrucDe { get; set; }
+        public virtual DbSet<AsEduSurveyUndergraduateDapAn> AsEduSurveyUndergraduateDapAn { get; set; }
+        public virtual DbSet<AsEduSurveyUndergraduateDeThi> AsEduSurveyUndergraduateDeThi { get; set; }
         public virtual DbSet<AsEduSurveyUndergraduateReportTotal> AsEduSurveyUndergraduateReportTotal { get; set; }
         public virtual DbSet<AsEduSurveyUndergraduateStudent> AsEduSurveyUndergraduateStudent { get; set; }
         public virtual DbSet<AsEduSurveyUndergraduateSurveyRound> AsEduSurveyUndergraduateSurveyRound { get; set; }
@@ -60,8 +68,20 @@ namespace nuce.web.api.Models.Survey
             {
                 entity.ToTable("AS_Edu_Survey_BaiKhaoSat_SinhVien");
 
+                entity.HasIndex(e => new { e.BaiKhaoSatId, e.Status })
+                    .HasName("index_baikhaosatsinhvien_baiks_trangthai");
+
+                entity.HasIndex(e => new { e.BaiKhaoSatId, e.LecturerCode, e.ClassRoomCode })
+                    .HasName("index_baikhaosatsinhvien_baiks_giangvien_lop");
+
                 entity.HasIndex(e => new { e.StudentCode, e.ClassRoomCode, e.Status })
                     .HasName("index_As_Edu_survey_baikhaosatsinhvien");
+
+                entity.HasIndex(e => new { e.BaiKhaoSatId, e.SubjectCode, e.LecturerCode, e.Status })
+                    .HasName("IX_baikhaosatsinhvien_ThongKe_GiangVien");
+
+                entity.HasIndex(e => new { e.BaiKhaoSatId, e.SubjectCode, e.StudentCode, e.Status })
+                    .HasName("IX_baikhaosatsinhvien_ThongKe_SinhVien");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
@@ -215,6 +235,8 @@ namespace nuce.web.api.Models.Survey
                     .HasMaxLength(100);
 
                 entity.Property(e => e.NoiDungDeThi).IsRequired();
+
+                entity.Property(e => e.Status).HasDefaultValueSql("((1))");
             });
 
             modelBuilder.Entity<AsEduSurveyDotKhaoSat>(entity =>
@@ -298,6 +320,107 @@ namespace nuce.web.api.Models.Survey
                     .IsRequired()
                     .HasMaxLength(50)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<AsEduSurveyGraduateCauHoi>(entity =>
+            {
+                entity.ToTable("AS_Edu_Survey_Graduate_CauHoi");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.BoCauHoiId).HasColumnName("BoCauHoiID");
+
+                entity.Property(e => e.CheckImport).HasDefaultValueSql("('')");
+
+                entity.Property(e => e.Code)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.DoKhoId).HasColumnName("DoKhoID");
+
+                entity.Property(e => e.ExpiredDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Image).HasMaxLength(250);
+
+                entity.Property(e => e.InsertedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.MediaSetting)
+                    .HasColumnName("Media_Setting")
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.MediaUrl)
+                    .HasColumnName("Media_URL")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.ParentCode).HasMaxLength(50);
+
+                entity.Property(e => e.Type)
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<AsEduSurveyGraduateCauTrucDe>(entity =>
+            {
+                entity.ToTable("AS_Edu_Survey_Graduate_CauTrucDe");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.CauHoiId).HasColumnName("CauHoiID");
+
+                entity.Property(e => e.DeThiId).HasColumnName("DeThiID");
+            });
+
+            modelBuilder.Entity<AsEduSurveyGraduateDapAn>(entity =>
+            {
+                entity.ToTable("AS_Edu_Survey_Graduate_DapAn");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.CauHoiCode)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.CauHoiId).HasColumnName("CauHoiID");
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.HideQuestion).HasMaxLength(2000);
+
+                entity.Property(e => e.ShowQuestion).HasMaxLength(2000);
+            });
+
+            modelBuilder.Entity<AsEduSurveyGraduateDeThi>(entity =>
+            {
+                entity.ToTable("AS_Edu_Survey_Graduate_DeThi");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.DapAn).IsRequired();
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.NoiDungDeThi).IsRequired();
+
+                entity.Property(e => e.Status).HasDefaultValueSql("((1))");
             });
 
             modelBuilder.Entity<AsEduSurveyGraduateStudent>(entity =>
@@ -526,6 +649,12 @@ namespace nuce.web.api.Models.Survey
             {
                 entity.ToTable("AS_Edu_Survey_ReportTotal");
 
+                entity.HasIndex(e => new { e.TheSurveyId, e.QuestionCode, e.AnswerCode })
+                    .HasName("IX_ReportTotal_QuestionCode_AnswerCode");
+
+                entity.HasIndex(e => new { e.TheSurveyId, e.LecturerCode, e.ClassRoomCode, e.QuestionCode, e.AnswerCode })
+                    .HasName("IX_ReportTotal_thongke_tho");
+
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
                     .ValueGeneratedNever();
@@ -601,6 +730,107 @@ namespace nuce.web.api.Models.Survey
                     .IsRequired()
                     .HasMaxLength(50)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<AsEduSurveyUndergraduateCauHoi>(entity =>
+            {
+                entity.ToTable("AS_Edu_Survey_Undergraduate_CauHoi");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.BoCauHoiId).HasColumnName("BoCauHoiID");
+
+                entity.Property(e => e.CheckImport).HasDefaultValueSql("('')");
+
+                entity.Property(e => e.Code)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.DoKhoId).HasColumnName("DoKhoID");
+
+                entity.Property(e => e.ExpiredDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Image).HasMaxLength(250);
+
+                entity.Property(e => e.InsertedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.MediaSetting)
+                    .HasColumnName("Media_Setting")
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.MediaUrl)
+                    .HasColumnName("Media_URL")
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.ParentCode).HasMaxLength(50);
+
+                entity.Property(e => e.Type)
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<AsEduSurveyUndergraduateCauTrucDe>(entity =>
+            {
+                entity.ToTable("AS_Edu_Survey_Undergraduate_CauTrucDe");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.CauHoiId).HasColumnName("CauHoiID");
+
+                entity.Property(e => e.DeThiId).HasColumnName("DeThiID");
+            });
+
+            modelBuilder.Entity<AsEduSurveyUndergraduateDapAn>(entity =>
+            {
+                entity.ToTable("AS_Edu_Survey_Undergraduate_DapAn");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.CauHoiCode)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.CauHoiId).HasColumnName("CauHoiID");
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.HideQuestion).HasMaxLength(2000);
+
+                entity.Property(e => e.ShowQuestion).HasMaxLength(2000);
+            });
+
+            modelBuilder.Entity<AsEduSurveyUndergraduateDeThi>(entity =>
+            {
+                entity.ToTable("AS_Edu_Survey_Undergraduate_DeThi");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("ID")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.DapAn).IsRequired();
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.NoiDungDeThi).IsRequired();
+
+                entity.Property(e => e.Status).HasDefaultValueSql("((1))");
             });
 
             modelBuilder.Entity<AsEduSurveyUndergraduateReportTotal>(entity =>

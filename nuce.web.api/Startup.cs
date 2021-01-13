@@ -218,11 +218,17 @@ namespace nuce.web.api
             services.AddScoped<BaiKhaoSatSinhVienBackgroundTask>();
             services.AddScoped<IAsEduSurveyReportTotalService, AsEduSurveyReportTotalService>();
 
+            services.AddScoped<IAsEduSurveyGraduateCauHoiService, AsEduSurveyGraduateCauHoiService>();
+            services.AddScoped<IAsEduSurveyGraduateDapAnService, AsEduSurveyGraduateDapAnService>();
+            services.AddScoped<IAsEduSurveyGraduateDeThiService, AsEduSurveyGraduateDeThiService>();
             services.AddScoped<IAsEduSurveyGraduateStudentService, AsEduSurveyGraduateStudentService>();
             services.AddScoped<IAsEduSurveyGraduateDotKhaoSatService, AsEduSurveyGraduateDotKhaoSatService>();
             services.AddScoped<IAsEduSurveyGraduateBaiKhaoSatService, AsEduSurveyGraduateBaiKhaoSatService>();
             services.AddScoped<IAsEduSurveyGraduateBaiKhaoSatSinhVienService, AsEduSurveyGraduateBaiKhaoSatSinhVienService>();
 
+            services.AddScoped<IAsEduSurveyUndergraduateCauHoiService, AsEduSurveyUndergraduateCauHoiService>();
+            services.AddScoped<IAsEduSurveyUndergraduateDapAnService, AsEduSurveyUndergraduateDapAnService>();
+            services.AddScoped<IAsEduSurveyUndergraduateDeThiService, AsEduSurveyUndergraudateDeThiService>();
             services.AddScoped<IAsEduSurveyUndergraduateStudentService, AsEduSurveyUndergraduateStudentService>();
             services.AddScoped<IAsEduSurveyUndergraduateDotKhaoSatService, AsEduSurveyUndergraduateDotKhaoSatService>();
             services.AddScoped<IAsEduSurveyUndergraduateBaiKhaoSatService, AsEduSurveyUndergraduateBaiKhaoSatService>();

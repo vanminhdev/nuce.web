@@ -55,7 +55,7 @@ namespace nuce.web.api.Services.EduData.BackgroundTasks
             IDbContextTransaction transaction = null;
             var message = "";
             int page = 1;
-            int pageSize = 500;
+            int pageSize = 1000;
 
             int totalDone = 0;
             try

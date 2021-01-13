@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.ViewModel.Survey
 {
+    public class ExamQuestionsFilter
+    {
+        public string Name { get; set; }
+    }
+
     public class ExamQuestions
     {
         public Guid Id { get; set; }
@@ -16,11 +21,6 @@ namespace nuce.web.api.ViewModel.Survey
 
     public class ExamQuestionsCreate
     {
-        [Required(AllowEmptyStrings = false)]
-        [NotContainWhiteSpace]
-        [MaxLength(10)]
-        public string Code { get; set; }
-
         [Required(AllowEmptyStrings = false)]
         [MaxLength(100)]
         public string Name { get; set; }

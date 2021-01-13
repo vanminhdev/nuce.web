@@ -50,10 +50,30 @@
                         <th class="text-center">Nội dung</th>
                         <th class="text-center" style="min-width:120px">Loại</th>
                         <th class="text-center" width="1px">Thứ tự</th>
-                        <th class="text-center" style="min-width:150px"></th>
+                        <th class="text-center" style="min-width:160px"></th>
                     </tr>
                 </thead>
             </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-yes-no" tabindex="-1" role="dialog" aria-labelledby="modal-yes-no" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-yes-no-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-yes-no-content">
+                ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
+                <button id="choose-yes" type="button" class="btn btn-primary">Có</button>
+            </div>
         </div>
     </div>
 </div>
@@ -69,8 +89,8 @@
             serverSide: true,
             ordering: false,
             lengthChange: false,
-            stateSave: false,
-            pageLength: 15,
+            stateSave: true,
+            pageLength: 10,
             columnDefs: [
                 {
                     targets: [0,1,2,4,5],
@@ -124,11 +144,11 @@
                     data: null,
                     mRender: function (data, type, row) {
                         let str = ``;
-                        str += `<a class="btn btn-outline-success" href="/survey/detailquestion?questionId=${data.id}">Sửa</a> `;
-
+                        str += `<a class="btn btn-outline-success btn-sm" href="/survey/detailquestion?questionId=${data.id}">Sửa</a> `;
                         if (data.type != '@QuestionType.SA' && data.type != '@QuestionType.StarRating' && data.type != '@QuestionType.CityC' && data.type != '@QuestionType.T') {
-                            str += `<a class="btn btn-outline-info" href="/survey/answer?questionId=${data.id}">Đáp án</a>`;
+                            str += `<a class="btn btn-outline-info btn-sm" href="/survey/answer?questionId=${data.id}">Đáp án</a>`;
                         }
+                        str += ` <button class="btn btn-outline-danger btn-sm" onclick="deleteQuestion('${data.id}')">Xoá</button>`;
                         return str;
                     }
                 }
@@ -149,6 +169,40 @@
                 .draw();
         });
         document.getElementById("footer").scrollIntoView();
+
+        function deleteQuestion(id) {
+            $('#modal-yes-no-title').html('Xác nhận xoá');
+            $('#modal-yes-no-content').html('Xoá câu hỏi khảo sát ?');
+            $('#modal-yes-no').modal('show');
+            $('#choose-yes').off();
+            $('#choose-yes').click(function () {
+                $.ajax({
+                    data: { id },
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/survey/deleteQuestion',
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        toastSuccess('Xoá thành công');
+                        table.ajax.reload();
+                        $('#modal-yes-no').modal('hide');
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+        }
     </script>
 }
 
