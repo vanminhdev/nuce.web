@@ -12,6 +12,10 @@ namespace nuce.web.api.Common
         public static readonly string JwtAccessToken = "JWT-token";
         public static readonly string JwtRefreshToken = "JWT-refresh-token";
         public static readonly List<LoginUserType> LoginViaDaotao = new List<LoginUserType> { LoginUserType.Student, LoginUserType.Lecturer };
+        /// <summary>
+        /// Loại người dùng đăng nhập
+        /// </summary>
+        public static readonly string UserType = "UserType";
     }
     public static class ActivityLogParameters
     {

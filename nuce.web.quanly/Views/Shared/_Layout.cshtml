@@ -226,6 +226,25 @@
                                         </div>
                                     </li>
                                 }
+                                if (roles.FirstOrDefault(r => r == RoleNames.KhaoThi_Survey_Undergraduate) != null)
+                                {
+                                    <li class="nav-item dropdown m-nav-item-hover">
+                                        <a class="nav-link mt-1 mb-1 m-text-white-ace"
+                                           href="#" id="navbarDropdown-survey" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Khảo sát trước TN
+                                        </a>
+                                        <div class="dropdown-menu" aria-labelledby="navbarDropdown-survey" style="min-width: 320px;">
+                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/undergraduatequestion">Quản lý câu hỏi</a>
+                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/undergraduateexamquestions">Quản lý phiếu khảo sát</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/undergraduatestudent">Dữ liệu khảo sát</a>
+                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/undergraduatesurveyround">Đợt khảo sát</a>
+                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/undergraduatethesurvey">Bài khảo sát</a>
+                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/editsurveynotice?paracode=KTDB_NOTICE_2">Chú ý khảo sát</a>
+                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/managerrestore?type=2">Sao lưu dữ liệu khảo sát</a>
+                                        </div>
+                                    </li>
+                                }
                                 if (roles.FirstOrDefault(r => r == RoleNames.KhaoThi_Survey_Graduate) != null)
                                 {
                                     <li class="nav-item dropdown m-nav-item-hover">
@@ -239,22 +258,6 @@
                                             <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/graduatethesurvey">Bài khảo sát</a>
                                             <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/editsurveynotice?paracode=KTDB_NOTICE_3">Chú ý khảo sát</a>
                                             <a class="dropdown-item m-bg-hover-blue text-truncate" href="/managerrestore?type=3">Sao lưu dữ liệu khảo sát</a>
-                                        </div>
-                                    </li>
-                                }
-                                if (roles.FirstOrDefault(r => r == RoleNames.KhaoThi_Survey_Undergraduate) != null)
-                                {
-                                    <li class="nav-item dropdown m-nav-item-hover">
-                                        <a class="nav-link mt-1 mb-1 m-text-white-ace"
-                                           href="#" id="navbarDropdown-survey" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            Khảo sát trước TN
-                                        </a>
-                                        <div class="dropdown-menu" aria-labelledby="navbarDropdown-survey" style="min-width: 320px;">
-                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/undergraduatestudent">Dữ liệu khảo sát</a>
-                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/undergraduatesurveyround">Đợt khảo sát</a>
-                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/undergraduatethesurvey">Bài khảo sát</a>
-                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/survey/editsurveynotice?paracode=KTDB_NOTICE_2">Chú ý khảo sát</a>
-                                            <a class="dropdown-item m-bg-hover-blue text-truncate" href="/managerrestore?type=2">Sao lưu dữ liệu khảo sát</a>
                                         </div>
                                     </li>
                                 }
