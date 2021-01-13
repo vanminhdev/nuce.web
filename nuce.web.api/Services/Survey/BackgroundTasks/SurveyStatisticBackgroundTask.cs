@@ -430,7 +430,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             int rowCauHoi = 2;
             int rowDapAn = 3;
             int col = 1;
-            var facultys = eduContext.AsAcademyFaculty.Where(o => o.Code == "IT").ToList();
+            var facultys = eduContext.AsAcademyFaculty.ToList();
 
             var tongToanTruong = new Dictionary<int, float>();
             foreach (var f in facultys)
