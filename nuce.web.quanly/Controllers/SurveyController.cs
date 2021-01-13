@@ -1144,7 +1144,7 @@ namespace nuce.web.quanly.Controllers
             var resSurveyRound = await base.MakeRequestAuthorizedAsync("Get", $"/api/GraduateSurveyRound/GetSurveyRoundActive");
             ViewData["SurveyRoundActive"] = await resSurveyRound.Content.ReadAsStringAsync();
 
-            var resExam = await base.MakeRequestAuthorizedAsync("Get", $"/api/ExamQuestions/GetAll");
+            var resExam = await base.MakeRequestAuthorizedAsync("Get", $"/api/GraduateExamQuestions/GetAll");
             ViewData["ExamQuestions"] = await resExam.Content.ReadAsStringAsync();
 
             return View("~/Views/Survey/Graduate/GraduateTheSurvey.cshtml");
@@ -1736,7 +1736,7 @@ namespace nuce.web.quanly.Controllers
             var resTableStatus = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateTheSurveyStudent/GetGenerateTheSurveyStudentStatus");
             ViewData["TableTheSurveyStudentStatus"] = await resTableStatus.Content.ReadAsStringAsync();
 
-            var resExam = await base.MakeRequestAuthorizedAsync("Get", $"/api/ExamQuestions/GetAll");
+            var resExam = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateExamQuestions/GetAll");
             ViewData["ExamQuestions"] = await resExam.Content.ReadAsStringAsync();
 
             return View("~/Views/Survey/Undergraduate/UndergraduateTheSurvey.cshtml");

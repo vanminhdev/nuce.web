@@ -17,5 +17,6 @@ namespace nuce.web.api.Services.Survey.Interfaces
         public Task Create(ExamQuestionsCreate exam);
         public Task DeleteQuestionFromStructure(string id);
         public Task Delete(Guid value);
+        public Task<List<ExamQuestions>> GetAll();
     }
 }

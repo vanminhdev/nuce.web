@@ -261,19 +261,6 @@ namespace nuce.web.api.Services.Survey.Implements
             await _surveyContext.SaveChangesAsync();
         }
 
-        public async Task<List<ExamQuestions>> GetAll()
-        {
-            _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            return await _surveyContext.AsEduSurveyDeThi
-                .Select(eq => new ExamQuestions
-                {
-                    Id = eq.Id,
-                    Code = eq.Code,
-                    Name = eq.Name
-                }).ToListAsync();
-        }
-
-
         public async Task<string> GetExamDetailJsonString(string examQuestionId)
         {
             _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
@@ -302,6 +289,18 @@ namespace nuce.web.api.Services.Survey.Implements
                     QuestionId = r.question.Id
                 })
                 .ToListAsync();
+        }
+
+        public async Task<List<ExamQuestions>> GetAll()
+        {
+            _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            return await _surveyContext.AsEduSurveyDeThi
+                .Where(o => o.Status == (int)ExamQuestionStatus.Active)
+                .Select(o => new ExamQuestions { 
+                    Id = o.Id,
+                    Code = o.Code,
+                    Name = o.Name
+                }).ToListAsync();
         }
     }
 }

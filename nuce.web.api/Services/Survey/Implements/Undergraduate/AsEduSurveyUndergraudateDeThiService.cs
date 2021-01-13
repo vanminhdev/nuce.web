@@ -265,6 +265,7 @@ namespace nuce.web.api.Services.Survey.Implements
         {
             _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             return await _surveyContext.AsEduSurveyUndergraduateDeThi
+                .Where(o => o.Status == (int)ExamQuestionStatus.Active)
                 .Select(eq => new ExamQuestions
                 {
                     Id = eq.Id,

@@ -56,6 +56,13 @@ namespace nuce.web.api.Controllers.Survey.Normal
         }
 
         [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var lst = await _deThiService.GetAll();
+            return Ok(lst);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetExamStructure(
             [Required(AllowEmptyStrings = false)]
             [NotContainWhiteSpace]
