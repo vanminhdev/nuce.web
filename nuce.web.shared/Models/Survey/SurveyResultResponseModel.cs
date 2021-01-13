@@ -5,13 +5,18 @@ using System.Threading.Tasks;
 
 namespace nuce.web.shared.Models.Survey
 {
+    /// <summary>
+    /// Kết quả khoa ban
+    /// </summary>
     public class FacultyResultModel
     {
         public string FacultyCode { get; set; }
         public string FacultyName { get; set; }
         public List<SurveyResultResponseModel> Result { get; set; }
     }
-
+    /// <summary>
+    /// Kết quả bộ môn
+    /// </summary>
     public class DepartmentResultModel
     {
         public string FacultyCode { get; set; }
@@ -20,7 +25,9 @@ namespace nuce.web.shared.Models.Survey
         public string DepartmentName { get; set; }
         public List<SurveyResultResponseModel> Result { get; set; }
     }
-
+    /// <summary>
+    /// Kết quả chi tiết | Giảng viên
+    /// </summary>
     public class SurveyResultResponseModel
     {
         public string FacultyCode { get; set; }
@@ -36,5 +43,27 @@ namespace nuce.web.shared.Models.Survey
         public int SoGiangVienDaKhaoSat { get; set; }
         public int SoGiangVienCanLayYKien { get; set; }
         public bool IsTotal { get; set; }
+        public List<DeMuc> DeMuc { get; set; }
+    }
+
+    public class DeMuc
+    {
+        public string Title { get; set; }
+        public List<ChiTietCauHoi> CauHoi { get; set; }
+    }
+
+    public class ChiTietCauHoi
+    {
+        public string Content { get; set; }
+
+        public Dictionary<string, string> DanhSachDiem = new Dictionary<string, string>
+        {
+            { "1",  "31" },
+            { "2",  "9" },
+            { "3",  "81" },
+            { "4",  "250" },
+            { "5",  "576" },
+            { "ĐTB",  "4.41" },
+        };
     }
 }

@@ -13,6 +13,7 @@ using nuce.web.api.Repositories.Ctsv.Interfaces;
 using nuce.web.api.Repositories.EduData.Implements;
 using nuce.web.api.Repositories.EduData.Interfaces;
 using nuce.web.api.Services.Core.Interfaces;
+using nuce.web.api.Services.EduData.Interfaces;
 using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
@@ -38,6 +39,7 @@ namespace nuce.web.api.Services.Core.Implements
         private readonly ILecturerRepository _lecturerRepository;
         private readonly IDepartmentRepository   _departmentRepository;
         private readonly IFacultyRepository _facultyRepository;
+        private readonly IStudentEduDataService _studentEduDataService;
 
         public UserService(UserManager<ApplicationUser> _userManager,
                 IConfiguration configuration, 
@@ -46,7 +48,8 @@ namespace nuce.web.api.Services.Core.Implements
                 NuceCoreIdentityContext nuceCoreIdentityContext,
                 ILecturerRepository _lecturerRepository,
                 IDepartmentRepository _departmentRepository,
-                IFacultyRepository _facultyRepository
+                IFacultyRepository _facultyRepository,
+                IStudentEduDataService _studentEduDataService
         )
         {
             this._userManager = _userManager;
@@ -57,6 +60,7 @@ namespace nuce.web.api.Services.Core.Implements
             this._lecturerRepository = _lecturerRepository;
             this._departmentRepository = _departmentRepository;
             this._facultyRepository = _facultyRepository;
+            this._studentEduDataService = _studentEduDataService;
         }
         public async Task<List<Claim>> AddClaimsAsync(LoginModel model, ApplicationUser user)
         {
@@ -76,7 +80,12 @@ namespace nuce.web.api.Services.Core.Implements
                 // MÃ: SV
                 // Tên: SV
                 authClaims.Add(new Claim(ClaimTypes.Role, RoleNames.Student));
-                authClaims.Add(new Claim(ClaimTypes.GivenName, _studentRepository.FindByCode(username)?.FulName));
+                string name = _studentRepository.FindByCode(username)?.FulName;
+                if (name == null)
+                {
+                    name = _studentEduDataService.FindByCode(username)?.FullName;
+                }
+                authClaims.Add(new Claim(ClaimTypes.GivenName, name ?? ""));
             }
             else if (model.LoginUserType == LoginUserType.Lecturer)
             {
@@ -95,7 +104,7 @@ namespace nuce.web.api.Services.Core.Implements
             #region gán tên cho tài khoản của khoa & bộ môn
             if (model.LoginUserType == LoginUserType.Faculty)
             {
-                string givenName = (await _facultyRepository.FindByCode(username))?.Name;
+                string givenName = (await _departmentRepository.FindByCode(username))?.Name;
                 authClaims.Add(new Claim(ClaimTypes.GivenName, givenName));
             } else if (model.LoginUserType == LoginUserType.Department)
             {
@@ -373,7 +382,7 @@ namespace nuce.web.api.Services.Core.Implements
             user.Status = (int)UserStatus.Active;
 
             #region thêm quyền bố
-            var parentRoles = _identityContext.Roles.Where(r => model.Roles.Contains(r.Id))
+            var parentRoles = _identityContext.Roles.Where(r => model.Roles.Contains(r.Id) && r.Parent != null)
                                                 .Select(r => r.Parent)
                                                 .Distinct();
             model.Roles.AddRange(parentRoles);

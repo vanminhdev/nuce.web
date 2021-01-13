@@ -3,6 +3,7 @@
 @using System.Security.Claims;
 @using nuce.web.survey.student.Common
 @using nuce.web.survey.student.Helper
+@using nuce.web.shared
 
 @{
     var handler = new JwtSecurityTokenHandler();
@@ -72,7 +73,7 @@
         </div>
         <div class="container">
             <div class="hd-banner">
-                <img id="banner-header" src="~/content/img/banner.jpg" class="img-fluid" />
+                <img id="banner-header" src="" class="img-fluid" />
             </div>
         </div>
         <div class="container" id="container-menu">
@@ -232,7 +233,7 @@
     </script>
     <script>
         var initMenu = function() {
-            
+
             const cycleTime = 12 * 60 * 60 * 1000;
 
             const nextStep = cycleGenerateMenu(STORAGE_KEY.MENU_LOAD_DAY, cycleTime, apiGenerateMenu);
@@ -251,6 +252,21 @@
                 console.log(err);
                 apiGenerateMenu();
             }
+
+            @if (roles.Contains(RoleNames.KhaoThi_Survey_KhoaBan))
+            {
+                @:$(`#link-menu-child-23`).hide();
+                @:$(`#link-menu-child-24`).hide();
+            } else if (roles.Contains(RoleNames.KhaoThi_Survey_Department))
+            {
+                @:$(`#link-menu-child-22`).hide();
+                @:$(`#link-menu-child-24`).hide();
+            } else if (roles.Contains(RoleNames.KhaoThi_Survey_GiangVien))
+            {
+                @:$(`#link-menu-child-22`).hide();
+                @:$(`#link-menu-child-23`).hide();
+            }
+
         };
 
         var cycleGenerateMenu = function(key = '', timeDiff, cb) {
@@ -265,7 +281,7 @@
                 triggerFunction(cb);
                 return false;
             };
-            
+
             try {
                 const menuLoadDay = JSON.parse(localMenuLoadDay);
                 const oldMenuLoadTime = new Date(menuLoadDay);
@@ -274,7 +290,7 @@
                 if (now.getTime() - timeDiff > oldMenuLoadTime.getTime()) {
                     triggerFunction(cb);
                     return false;
-                }        
+                }
             }
             catch (err) {
                 console.log(err);
@@ -315,7 +331,9 @@
             const dropdownTemplate = `<div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         [dropdown-detail-template]
                                     </div>`;
-            const dropdownDetailTemplate = `<a class="dropdown-item m-bg-hover-blue text-truncate" href="[link]">[name]</a>`;
+            const dropdownDetailTemplate = `<a class="dropdown-item m-bg-hover-blue text-truncate"
+                                                href="[link]"
+                                                id=[id]>[name]</a>`;
 
             data.forEach(cat => {
                 if (cat.parent == -1) {
@@ -325,7 +343,8 @@
                         let dropdownDetailHtml = '';
                         children.forEach(child => {
                            dropdownDetailHtml += dropdownDetailTemplate.replace('[name]', child.description)
-                                                                    .replace('[link]', `${child.menuHref}`);
+                                                                    .replace('[link]', `${child.menuHref}`)
+                                                                    .replace('[id]', `link-menu-child-${child.id}`);
                             if (child.divideAfter) {
                                 dropdownDetailHtml += `<div class="dropdown-divider"></div>`;
                             }
@@ -365,6 +384,9 @@
                 $('#container-menu').removeClass('m-sticky-menu');
             });
         });
+    </script>
+    <script>
+        _autoLayoutImage.load();
     </script>
     <script>
         _autoLayoutImage.load();

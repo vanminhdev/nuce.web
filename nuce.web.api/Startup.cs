@@ -240,6 +240,7 @@ namespace nuce.web.api
             #endregion
             #region sync edu database service
             services.AddScoped<ISyncEduDatabaseService, SyncEduDatabaseService>();
+            services.AddScoped<IStudentEduDataService, StudentEduDataService>();
 
             services.AddScoped<SyncEduDataBackgroundTask>();
             #endregion
