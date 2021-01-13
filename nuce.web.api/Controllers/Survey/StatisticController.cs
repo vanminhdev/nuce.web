@@ -112,7 +112,9 @@ namespace nuce.web.api.Controllers.Survey
                 }
             );
         }
+        #endregion
 
+        #region thống kê tạm
         [HttpPut]
         [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<IActionResult> GetTempDataNormalSurvey([Required] Guid? surveyRoundId)
