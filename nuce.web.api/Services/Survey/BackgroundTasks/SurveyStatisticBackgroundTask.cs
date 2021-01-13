@@ -550,8 +550,8 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                     #endregion
 
                     #region tổng hợp dữ liệu thống kê thô
-                    var surveyRoundIdLyThuyets = baiKhaoSats.Where(o => o.Type == loaiMon).Select(o => o.Id).ToList();
-                    var reportTotalLyThuyet = surveyContext.AsEduSurveyReportTotal.Where(o => surveyRoundIdLyThuyets.Contains(o.SurveyRoundId));
+                    var theSurveyIdLyThuyets = baiKhaoSats.Where(o => o.Type == loaiMon).Select(o => o.Id).ToList();
+                    var reportTotalLyThuyet = surveyContext.AsEduSurveyReportTotal.Where(o => theSurveyIdLyThuyets.Contains(o.TheSurveyId));
                     var index = 0;
                     foreach (var cauhoi in deLyThuyet)
                     {
