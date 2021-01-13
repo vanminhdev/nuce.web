@@ -17,7 +17,7 @@
 }
 
 <form id="form-data" class="container mt-2 auto-validate">
-    <a class="update-btn text-light p-2" style="text-decoration: none;" href="/survey/question">← Quay lại danh sách</a>
+    <a class="update-btn text-light p-2" style="text-decoration: none;" href="/survey/undergraduatequestion">← Quay lại danh sách</a>
 
     <div class="fw-700 text-uppercase font-15-sm font-25 mb-2 mt-3 text-dark">
         Cập nhật câu hỏi
@@ -266,7 +266,7 @@
                 }
             ],
             ajax: {
-                url: '/Survey/GetAllQuestion',
+                url: '/Survey/GetAllUndergraduateQuestion',
                 dataType: 'json',
                 contentType: 'application/json',
                 type: "POST",
@@ -339,7 +339,7 @@
             if ($('#form-data').valid()) {
                 $.ajax({
                     type: 'POST',
-                    url: '/Survey/UpdateQuestion',
+                    url: '/Survey/UpdateUndergraduateQuestion',
                     data: $('#form-data').serializeArray(),
                     dataType: 'json'
                 }).done(res => {

@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div class="container mt-2">
-    <a class="update-btn text-light p-2" style="text-decoration: none;" href="/survey/question">← Quay lại danh sách</a>
+    <a class="update-btn text-light p-2" style="text-decoration: none;" href="/survey/graduatequestion">← Quay lại danh sách</a>
 
     <div class="fw-700 text-uppercase font-15-sm font-25 mb-2 mt-3 text-dark">
         Danh sách đáp án của câu hỏi
@@ -16,7 +16,7 @@
         <div class="col-md-10">
         </div>
         <div class="col-md-2 d-flex justify-content-end">
-            <a href="/survey/createanswer?questionId=@Model.QuestionId" class="btn btn-primary">Thêm đáp án</a>
+            <a href="/survey/creategraduateanswer?questionId=@Model.QuestionId" class="btn btn-primary">Thêm đáp án</a>
         </div>
     </div>
     <div class="row">
@@ -48,7 +48,7 @@
                                 @Model.Answers[i].order
                             </td>
                             <td class="text-center">
-                                <a class="btn btn-outline-success" href='/survey/detailanswer?id=@Model.Answers[i].id&questionId=@Model.Answers[i].cauHoiId'>Sửa</a>
+                                <a class="btn btn-outline-success" href='/survey/detailgraduateanswer?id=@Model.Answers[i].id&questionId=@Model.Answers[i].cauHoiId'>Sửa</a>
                                 <button class="btn btn-outline-danger" onclick="deleteAnswer('@Model.Answers[i].id')">Xoá</button>
                             </td>
                         </tr>
@@ -91,7 +91,7 @@
                     data: { id },
                     dataType: 'json',
                     method: 'Post',
-                    url: '/survey/deleteAnswer',
+                    url: '/survey/deleteGraduateAnswer',
                     complete: () => { }
                 }).done(function (res) {
                     if (res.statusCode === 200) {

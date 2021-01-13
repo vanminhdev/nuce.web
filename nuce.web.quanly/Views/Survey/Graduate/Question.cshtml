@@ -33,7 +33,7 @@
                     </div>
                 </div>
                 <div class="col-12 col-md mb-2">
-                    <a href="/survey/createquestion" class="btn btn-primary w-100">Thêm câu hỏi</a>
+                    <a href="/survey/creategraduatequestion" class="btn btn-primary w-100">Thêm câu hỏi</a>
                 </div>
             </div>
         </div>
@@ -99,7 +99,7 @@
             ],
             language: dataTableConfig.language,
             ajax: {
-                url: '/Survey/GetAllQuestion',
+                url: '/Survey/GetAllGraduateQuestion',
                 dataType: 'json',
                 contentType: 'application/json',
                 type: "POST",
@@ -144,9 +144,9 @@
                     data: null,
                     mRender: function (data, type, row) {
                         let str = ``;
-                        str += `<a class="btn btn-outline-success btn-sm" href="/survey/detailquestion?questionId=${data.id}">Sửa</a> `;
+                        str += `<a class="btn btn-outline-success btn-sm" href="/survey/graduatedetailquestion?questionId=${data.id}">Sửa</a> `;
                         if (data.type != '@QuestionType.SA' && data.type != '@QuestionType.StarRating' && data.type != '@QuestionType.CityC' && data.type != '@QuestionType.T') {
-                            str += `<a class="btn btn-outline-info btn-sm" href="/survey/answer?questionId=${data.id}">Đáp án</a>`;
+                            str += `<a class="btn btn-outline-info btn-sm" href="/survey/graduateanswer?questionId=${data.id}">Đáp án</a>`;
                         }
                         str += ` <button class="btn btn-outline-danger btn-sm" onclick="deleteQuestion('${data.id}')">Xoá</button>`;
                         return str;
@@ -180,7 +180,7 @@
                     data: { id },
                     dataType: 'json',
                     method: 'Post',
-                    url: '/survey/deleteQuestion',
+                    url: '/survey/deleteGraduateQuestion',
                     complete: () => { }
                 }).done(function (res) {
                     if (res.statusCode === 200) {

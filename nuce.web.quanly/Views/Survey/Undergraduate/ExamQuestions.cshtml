@@ -104,7 +104,7 @@
                 }
             ],
             ajax: {
-                url: '/Survey/GetExamQuestions',
+                url: '/Survey/GetUndergraduateExamQuestions',
                 dataType: 'json',
                 contentType: 'application/json',
                 type: "POST",
@@ -126,8 +126,8 @@
                 {
                     data: null,
                     mRender: function (data, type, row) {
-                        let html = `<a class="btn btn-outline-success" href="/survey/examstructure?examQuestionId=${data.id}">Cấu trúc phiếu</a>
-                                    <a class="btn btn-outline-info" href="/survey/examdetail?examQuestionId=${data.id}">Nội dung phiếu</a>
+                        let html = `<a class="btn btn-outline-success" href="/survey/undergraduateexamstructure?examQuestionId=${data.id}">Cấu trúc phiếu</a>
+                                    <a class="btn btn-outline-info" href="/survey/undergraduateexamdetail?examQuestionId=${data.id}">Nội dung phiếu</a>
                                     <button class="btn btn-outline-danger" onclick="deleteExam('${data.id}')">Xoá</button>`;
                         return html;
                     }
@@ -155,9 +155,9 @@
             if (form.valid()) {
                 let url;
                 if (saveChanges.attr('type-handle') === 'create') {
-                    url = '/Survey/CreateExamQuestions';
+                    url = '/Survey/CreateUndergraduateExamQuestions';
                 } else if (saveChanges.attr('type-handle') === 'update') {
-                    url = '/Survey/UpdateExamQuestions';
+                    url = '/Survey/UpdateUndergraduateExamQuestions';
                 }
                 $.ajax({
                     data: form.serializeArray(),
@@ -202,7 +202,7 @@
                     data: { id },
                     dataType: 'json',
                     method: 'Post',
-                    url: '/survey/deleteExam',
+                    url: '/survey/deleteUndergraduateExam',
                     complete: () => { }
                 }).done(function (res) {
                     if (res.statusCode === 200) {

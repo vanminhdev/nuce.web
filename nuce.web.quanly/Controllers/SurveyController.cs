@@ -188,7 +188,7 @@ namespace nuce.web.quanly.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("CreateAnswer", answer);
+                return View("~/Views/Survey/Normal/CreateAnswer.cshtml", answer);
             }
             var content = new StringContent(JsonConvert.SerializeObject(answer.AnswerBind), Encoding.UTF8, "application/json");
             var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/answer/create", content);
@@ -235,7 +235,7 @@ namespace nuce.web.quanly.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("DetailAnswer", detail);
+                return View("~/Views/Survey/Normal/DetailAnswer.cshtml", detail);
             }
             var content = new StringContent(JsonConvert.SerializeObject(detail.AnswerBind), Encoding.UTF8, "application/json");
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/answer/update?id={detail.AnswerBind.id}", content);
@@ -370,7 +370,7 @@ namespace nuce.web.quanly.Controllers
             var resTableStatus = await base.MakeRequestAuthorizedAsync("Get", $"/api/Statistic/GetStatusTempDataNormalSurveyTask");
             ViewData["TempDataNormalSurvey"] = await resTableStatus.Content.ReadAsStringAsync();
 
-            return View("~/Viewss/Survey/Normal/SurveyRound.cshtml");
+            return View("~/Views/Survey/Normal/SurveyRound.cshtml");
         }
 
         [HttpPost]
@@ -469,7 +469,7 @@ namespace nuce.web.quanly.Controllers
         //    var resExam = await base.MakeRequestAuthorizedAsync("Get", $"/api/ExamQuestions/GetAll");
         //    ViewData["ExamQuestions"] = await resExam.Content.ReadAsStringAsync();
 
-        //    return View("~/Viewss/Survey/Normal/TheSurvey.cshtml");
+        //    return View("~/Views/Survey/Normal/TheSurvey.cshtml");
         //}
 
         [HttpGet]
@@ -483,7 +483,7 @@ namespace nuce.web.quanly.Controllers
             ViewData["ExamQuestions"] = await resExam.Content.ReadAsStringAsync();
 
             ViewData["surveyRoundId"] = surveyRoundId;
-            return View("~/Viewss/Survey/Normal/TheSurvey.cshtml");
+            return View("~/Views/Survey/Normal/TheSurvey.cshtml");
         }
 
         [HttpPost]
@@ -585,7 +585,7 @@ namespace nuce.web.quanly.Controllers
             var resSurveyRound = await base.MakeRequestAuthorizedAsync("Get", $"/api/SurveyRound/GetSurveyRoundClosedOrEnd");
             ViewData["SurveyRoundClosedOrEnd"] = await resSurveyRound.Content.ReadAsStringAsync();
 
-            return View("~/Viewss/Survey/Normal/Statistic.cshtml");
+            return View("~/Views/Survey/Normal/Statistic.cshtml");
         }
 
         [HttpPost]
@@ -638,7 +638,7 @@ namespace nuce.web.quanly.Controllers
         [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public ActionResult GraduateQuestion()
         {
-            return View();
+            return View("~/Views/Survey/Graduate/Question.cshtml");
         }
 
         [HttpPost]
@@ -667,7 +667,7 @@ namespace nuce.web.quanly.Controllers
         [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public ActionResult CreateGraduateQuestion()
         {
-            return View(new QuestionCreate());
+            return View("~/Views/Survey/Graduate/CreateQuestion.cshtml", new QuestionCreate());
         }
 
         [HttpPost]
@@ -676,7 +676,7 @@ namespace nuce.web.quanly.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("CreateQuestion", question);
+                return View("~/Views/Survey/Graduate/CreateQuestion.cshtml", question);
             }
             var content = new StringContent(JsonConvert.SerializeObject(question), Encoding.UTF8, "application/json");
             var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/Graduatequestion/create", content);
@@ -684,7 +684,7 @@ namespace nuce.web.quanly.Controllers
                 action200: res =>
                 {
                     ViewData["UpdateSuccessMessage"] = "Thêm thành công";
-                    return View("CreateQuestion", question);
+                    return View("~/Views/Survey/Graduate/CreateQuestion.cshtml", question);
                 },
                 action500Async: async res =>
                 {
@@ -692,7 +692,7 @@ namespace nuce.web.quanly.Controllers
                     var jsonString = await response.Content.ReadAsStringAsync();
                     var resMess = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
                     ViewData["UpdateErrorMessageDetail"] = resMess.message;
-                    return View("CreateQuestion", question);
+                    return View("~/Views/Survey/Graduate/CreateQuestion.cshtml", question);
                 }
             );
         }
@@ -707,7 +707,7 @@ namespace nuce.web.quanly.Controllers
                 {
                     var jsonString = await response.Content.ReadAsStringAsync();
                     var data = JsonConvert.DeserializeObject<QuestionDetail>(jsonString);
-                    return View(data);
+                    return View("~/Views/Survey/Graduate/DetailQuestion.cshtml", data);
                 }
             );
         }
@@ -790,7 +790,7 @@ namespace nuce.web.quanly.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("CreateAnswer", answer);
+                return View("~/Views/Survey/Graduate/CreateAnswer.cshtml", answer);
             }
             var content = new StringContent(JsonConvert.SerializeObject(answer.AnswerBind), Encoding.UTF8, "application/json");
             var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/Graduateanswer/create", content);
@@ -837,7 +837,7 @@ namespace nuce.web.quanly.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("DetailAnswer", detail);
+                return View("~/Views/Survey/Graduate/DetailAnswer.cshtml", detail);
             }
             var content = new StringContent(JsonConvert.SerializeObject(detail.AnswerBind), Encoding.UTF8, "application/json");
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/Graduateanswer/update?id={detail.AnswerBind.id}", content);
@@ -976,7 +976,7 @@ namespace nuce.web.quanly.Controllers
         [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
         public ActionResult GraduateSurveyRound()
         {
-            return View("~/Viewss/Survey/Graduate/GraduateSurveyRound.cshtml");
+            return View("~/Views/Survey/Graduate/GraduateSurveyRound.cshtml");
         }
 
         [HttpPost]
@@ -1052,7 +1052,7 @@ namespace nuce.web.quanly.Controllers
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/GraduateSurveyRound/GetSurveyRoundActive");
             ViewData["SurveyRoundActive"] =  await response.Content.ReadAsStringAsync();
 
-            return View("~/Viewss/Survey/Graduate/GraduateStudent.cshtml");
+            return View("~/Views/Survey/Graduate/GraduateStudent.cshtml");
         }
 
         [HttpPost]
@@ -1147,7 +1147,7 @@ namespace nuce.web.quanly.Controllers
             var resExam = await base.MakeRequestAuthorizedAsync("Get", $"/api/ExamQuestions/GetAll");
             ViewData["ExamQuestions"] = await resExam.Content.ReadAsStringAsync();
 
-            return View("~/Viewss/Survey/Graduate/GraduateTheSurvey.cshtml");
+            return View("~/Views/Survey/Graduate/GraduateTheSurvey.cshtml");
         }
 
         [HttpPost]
@@ -1428,7 +1428,7 @@ namespace nuce.web.quanly.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("DetailAnswer", detail);
+                return View("~/Views/Survey/Undergraduate/DetailAnswer.cshtml", detail);
             }
             var content = new StringContent(JsonConvert.SerializeObject(detail.AnswerBind), Encoding.UTF8, "application/json");
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/Undergraduateanswer/update?id={detail.AnswerBind.id}", content);
@@ -1539,7 +1539,7 @@ namespace nuce.web.quanly.Controllers
                     var jsonString = await response.Content.ReadAsStringAsync();
                     var result = JsonConvert.DeserializeObject<List<QuestionJson>>(jsonString);
                     if (result == null)
-                        return View(new List<QuestionJson>());
+                        return View("~/Views/Survey/Undergraduate/ExamDetail.cshtml", new List<QuestionJson>());
                     return View("~/Views/Survey/Undergraduate/ExamDetail.cshtml", result);
                 }
             );
@@ -1560,7 +1560,7 @@ namespace nuce.web.quanly.Controllers
         [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public ActionResult UndergraduateSurveyRound()
         {
-            return View("~/Viewss/Survey/Undergraduate/UndergraduateSurveyRound.cshtml");
+            return View("~/Views/Survey/Undergraduate/UndergraduateSurveyRound.cshtml");
         }
 
         [HttpPost]
@@ -1647,7 +1647,7 @@ namespace nuce.web.quanly.Controllers
             response = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateSurveyRound/GetAllSurveyRound");
             ViewData["AllSurveyRound"] = await response.Content.ReadAsStringAsync();
 
-            return View("~/Viewss/Survey/Undergraduate/UndergraduateStudent.cshtml");
+            return View("~/Views/Survey/Undergraduate/UndergraduateStudent.cshtml");
         }
 
         [HttpPost]
@@ -1739,7 +1739,7 @@ namespace nuce.web.quanly.Controllers
             var resExam = await base.MakeRequestAuthorizedAsync("Get", $"/api/ExamQuestions/GetAll");
             ViewData["ExamQuestions"] = await resExam.Content.ReadAsStringAsync();
 
-            return View("~/Viewss/Survey/Undergraduate/UndergraduateTheSurvey.cshtml");
+            return View("~/Views/Survey/Undergraduate/UndergraduateTheSurvey.cshtml");
         }
 
         [HttpPost]
