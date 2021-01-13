@@ -1,4 +1,5 @@
-﻿using nuce.web.api.ViewModel.Base;
+﻿using nuce.web.api.Models.Survey;
+using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey;
 using System;
 using System.Collections.Generic;
@@ -17,5 +18,6 @@ namespace nuce.web.api.Services.Survey.Interfaces
         public Task Create(ExamQuestionsCreate exam);
         public Task DeleteQuestionFromStructure(string id);
         public Task Delete(Guid value);
+        public Task<List<ExamQuestions>> GetAll();
     }
 }

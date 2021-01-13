@@ -15,7 +15,7 @@
 <div class="container mt-2">
     <div class="row mb-4">
         <div class="col-12">
-            <a class="update-btn text-light p-2" style="text-decoration: none;" href="/survey/examquestions">← Quay lại danh sách phiếu khảo sát</a>
+            <a class="update-btn text-light p-2" style="text-decoration: none;" href="/survey/graduateexamquestions">← Quay lại danh sách phiếu khảo sát</a>
         </div>
     </div>
     <div class="row">
@@ -179,7 +179,7 @@
                 }
             ],
             ajax: {
-                url: '/Survey/GetAllQuestion',
+                url: '/Survey/GetAllGraduateQuestion',
                 dataType: 'json',
                 contentType: 'application/json',
                 type: "POST",
@@ -271,7 +271,7 @@
                     data: getFormData('#add-box-' + addBoxId),
                     dataType: 'json',
                     method: 'Post',
-                    url: '/Survey/AddQuestionExam',
+                    url: '/Survey/AddGraduateQuestionExam',
                     complete: () => { }
                 }).done(function (res) {
                     if (res.statusCode === 200) {
@@ -300,7 +300,7 @@
             $.ajax({
                 dataType: 'json',
                 method: 'Get',
-                url: '/Survey/GetStructure?examQuestionId=' + '@ViewData["ExamQuestionId"]'
+                url: '/Survey/GetGraduateStructure?examQuestionId=' + '@ViewData["ExamQuestionId"]'
             }).done(function (data) {
                 let htmlstr = "";
                 if (data.length === 0) {
@@ -373,7 +373,7 @@
                 data: { examQuestionId: '@ViewData["ExamQuestionId"]', sortResult},
                 dataType: 'json',
                 method: 'Post',
-                url: '/Survey/GenerateExam',
+                url: '/Survey/GenerateGraduateExam',
                 complete: () => {}
             }).done(function (res) {
                 $('#loading-screen').hide();
@@ -406,7 +406,7 @@
                 data: { id: $('#delete-id').val() },
                 dataType: 'json',
                 method: 'Post',
-                url: `/Survey/DeleteQuestionFromStructure`,
+                url: `/Survey/DeleteGraduateQuestionFromStructure`,
                 complete: () => { }
             }).done(function (res) {
                 if (res.statusCode === 200) {

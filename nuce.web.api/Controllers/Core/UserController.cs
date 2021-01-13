@@ -344,17 +344,17 @@ namespace nuce.web.api.Controllers.Core
                 return Unauthorized();
             var principle = new JwtSecurityTokenHandler().ValidateToken(refreshToken, tokenValidationParameters, out validatedToken);
 
-            JwtSecurityToken jwtValidatedToken = validatedToken as JwtSecurityToken;
-            if (validatedToken != null && jwtValidatedToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            JwtSecurityToken jwtValidatedRefreshToken = validatedToken as JwtSecurityToken;
+            if (validatedToken != null && jwtValidatedRefreshToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
             {
-                var claimName = jwtValidatedToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+                var claimName = jwtValidatedRefreshToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
                 if (claimName == null)
                 {
                     return Unauthorized();
                 }
                 string username = claimName.Value;
 
-                var roles = jwtValidatedToken.Claims.Where(o => o.Type == ClaimTypes.Role).ToList();
+                var roles = jwtValidatedRefreshToken.Claims.Where(o => o.Type == ClaimTypes.Role).ToList();
                 if (roles.FirstOrDefault(o => o.Value == RoleNames.FakeStudent) != null) //la fake student
                 {
                     var authClaims = new List<Claim>
@@ -373,9 +373,14 @@ namespace nuce.web.api.Controllers.Core
                 }
                 else
                 {
-                    var claimStudent = jwtValidatedToken.Claims.FirstOrDefault(c => c.Type == UserParameters.UserCode);
-                    bool isStudent = claimStudent != null;
-                    var model = new LoginModel { Username = username, LoginUserType = LoginUserType.Student };
+                    var loginUserType = 0;
+                    var userType = jwtValidatedRefreshToken.Claims.FirstOrDefault(c => c.Type == UserParameters.UserType);
+                    if(userType != null)
+                    {
+                        int.TryParse(userType.Value, out loginUserType);
+                    }
+
+                    var model = new LoginModel { Username = username, LoginUserType = (LoginUserType)loginUserType };
                     var user = await _userService.FindByName(username);
                     var claims = await _userService.AddClaimsAsync(model, user);
                     var accessToken = _userService.CreateJWTAccessToken(claims);

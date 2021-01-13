@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <form method="post" class="container mt-2 auto-validate">
-    <a class="update-btn text-light p-2" style="text-decoration: none;" href="/survey/Answer?questionId=@Model.QuestionId">← Quay lại danh sách đáp án</a>
+    <a class="update-btn text-light p-2" style="text-decoration: none;" href="/survey/graduateanswer?questionId=@Model.QuestionId">← Quay lại danh sách đáp án</a>
 
     <div class="fw-700 text-uppercase font-15-sm font-25 mb-2 mt-3 text-dark">
         Cập nhật đáp án của câu hỏi
@@ -75,7 +75,7 @@
         </div>
 
         <div class="col-12 form-group d-flex justify-content-center">
-            <button type="submit" formaction="/Survey/UpdateAnswer" class="btn btn-primary">
+            <button type="submit" formaction="/Survey/UpdateGraduateAnswer" class="btn btn-primary">
                 cập nhật
             </button>
         </div>

@@ -66,7 +66,8 @@ namespace nuce.web.api.Services.Core.Implements
                 {
                     new Claim(ClaimTypes.Name, username),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(UserParameters.UserCode, username)
+                    new Claim(UserParameters.UserCode, username),
+                    new Claim(UserParameters.UserType, model.LoginUserType.ToString())
             };
 
             if (model.LoginUserType == LoginUserType.Student)
