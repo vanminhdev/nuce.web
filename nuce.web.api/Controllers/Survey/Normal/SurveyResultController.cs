@@ -20,9 +20,9 @@ namespace nuce.web.api.Controllers.Survey.Normal
 
         [Route("faculty/{code}")]
         [HttpPost]
-        public IActionResult FacultyResult(string code)
+        public async Task<IActionResult> FacultyResultAsync(string code)
         {
-            return Ok(_surveyResultService.FacultyResult(code));
+            return Ok(await _surveyResultService.FacultyResultAsync(code));
         }
 
         [Route("department/{code}")]

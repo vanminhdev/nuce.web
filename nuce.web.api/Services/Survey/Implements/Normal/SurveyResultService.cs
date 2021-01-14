@@ -11,6 +11,7 @@ using nuce.web.api.Models.EduData;
 using nuce.web.api.Models.Survey.JsonData;
 using nuce.web.api.Common;
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 
 namespace nuce.web.api.Services.Survey.Implements
 {
@@ -36,37 +37,21 @@ namespace nuce.web.api.Services.Survey.Implements
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        public FacultyResultModel FacultyResult(string code)
+        public async Task<FacultyResultModel> FacultyResultAsync(string code)
         {
+            #region setup
             var lastDotKhaoSat = _surveyContext.AsEduSurveyDotKhaoSat.OrderByDescending(dks => dks.EndDate).FirstOrDefault();
             if (lastDotKhaoSat == null)
             {
                 return null;
             }
-            var dotKhaoSats = _surveyContext.AsEduSurveyDotKhaoSat.Where(o => o.EndDate == lastDotKhaoSat.EndDate).ToList();
             var baiKhaoSats = _surveyContext.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == lastDotKhaoSat.Id && o.Status != (int)TheSurveyStatus.Deleted).ToList();
-
-            var dotKhaoSatThuNhat = dotKhaoSats.FirstOrDefault(); // vì nếu các đợt là giống nhau về đề ks thì lấy thằng đầu tiên
-            var baiKhaoSatCuaDotThuNhats = _surveyContext.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == dotKhaoSatThuNhat.Id && o.Status != (int)TheSurveyStatus.Deleted).ToList();
-
-            var baiKsLyThuyet = baiKhaoSatCuaDotThuNhats.FirstOrDefault(o => o.Type == (int)TheSurveyType.TheoreticalSubjects);
-            var deLyThuyet = JsonSerializer.Deserialize<List<QuestionJson>>(baiKsLyThuyet.NoiDungDeThi);
-
-            var baiKsThucHanh = baiKhaoSatCuaDotThuNhats.FirstOrDefault(o => o.Type == (int)TheSurveyType.TheoreticalPracticalSubjects);
-            var deLyThuyetThucHanh = JsonSerializer.Deserialize<List<QuestionJson>>(baiKsThucHanh.NoiDungDeThi);
-
-            var baiKsThucHanhThiNghiem = baiKhaoSatCuaDotThuNhats.FirstOrDefault(o => o.Type == (int)TheSurveyType.PracticalSubjects);
-            var deThucHanhThiNghiem = JsonSerializer.Deserialize<List<QuestionJson>>(baiKsThucHanhThiNghiem.NoiDungDeThi);
-
-            var baiKsDeDoAn = baiKhaoSatCuaDotThuNhats.FirstOrDefault(o => o.Type == (int)TheSurveyType.AssignmentSubjects);
-            var deDoAn = JsonSerializer.Deserialize<List<QuestionJson>>(baiKsDeDoAn.NoiDungDeThi);
-
+            
             var baiKhaoSatIds = baiKhaoSats.Select(o => o.Id).ToList();
             var baiLamKhaoSatCacDotDangXet = _surveyContext.AsEduSurveyBaiKhaoSatSinhVien.Where(o => baiKhaoSatIds.Contains(o.BaiKhaoSatId)).ToList();
+            #endregion
 
-
-            ///////
-            var departments = _facultyRepository.GetDepartment(code);
+            var departments = await _facultyRepository.GetDepartment(code).ToListAsync();
             var faculty = departments.FirstOrDefault(d => d.Code == code);
 
             var result = new FacultyResultModel
@@ -83,7 +68,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             var actualDeparments = departments.Where(d => d.Code != faculty.Code).ToList();
 
-            foreach (var department in actualDeparments)
+            foreach (var department in departments)
             {
                 var tmp = new SurveyResultResponseModel
                 {
@@ -97,14 +82,14 @@ namespace nuce.web.api.Services.Survey.Implements
                     SoSvThamGiaKhaoSat = 0,
                 };
 
-                CaculateDeparatmentResult(tmp, baiLamKhaoSatCacDotDangXet, department, (int)TheSurveyType.TheoreticalSubjects);
-                CaculateDeparatmentResult(tmp, baiLamKhaoSatCacDotDangXet, department, (int)TheSurveyType.TheoreticalPracticalSubjects);
-                CaculateDeparatmentResult(tmp, baiLamKhaoSatCacDotDangXet, department, (int)TheSurveyType.PracticalSubjects);
-                CaculateDeparatmentResult(tmp, baiLamKhaoSatCacDotDangXet, department, (int)TheSurveyType.AssignmentSubjects);
-                
+                CalculateDeparatmentResult(tmp, baiLamKhaoSatCacDotDangXet, department, 1);
+                CalculateDeparatmentResult(tmp, baiLamKhaoSatCacDotDangXet, department, 2);
+                CalculateDeparatmentResult(tmp, baiLamKhaoSatCacDotDangXet, department, 3);
+                CalculateDeparatmentResult(tmp, baiLamKhaoSatCacDotDangXet, department, 4);
+
                 total.SoGiangVienCanLayYKien += tmp.SoGiangVienCanLayYKien;
                 total.SoGiangVienDaKhaoSat += tmp.SoGiangVienDaKhaoSat;
-                total.SoPhieuPhatRa += tmp.SoGiangVienCanLayYKien;
+                total.SoPhieuPhatRa += tmp.SoPhieuPhatRa;
                 total.SoPhieuThuVe += tmp.SoPhieuThuVe;
                 total.SoSvDuocKhaoSat += tmp.SoSvDuocKhaoSat;
                 total.SoSvThamGiaKhaoSat += tmp.SoSvThamGiaKhaoSat;
@@ -121,9 +106,21 @@ namespace nuce.web.api.Services.Survey.Implements
         /// <returns></returns>
         public async Task<DepartmentResultModel> DepartmentResultAsync(string code)
         {
+            #region setup
+            var lastDotKhaoSat = await _surveyContext.AsEduSurveyDotKhaoSat.OrderByDescending(dks => dks.EndDate).FirstOrDefaultAsync();
+            if (lastDotKhaoSat == null)
+            {
+                return null;
+            }
+            var baiKhaoSats = await _surveyContext.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == lastDotKhaoSat.Id && o.Status != (int)TheSurveyStatus.Deleted).ToListAsync();
+
+            var baiKhaoSatIds = baiKhaoSats.Select(o => o.Id).ToList();
+            var baiLamKhaoSatCacDotDangXet = await _surveyContext.AsEduSurveyBaiKhaoSatSinhVien.Where(o => baiKhaoSatIds.Contains(o.BaiKhaoSatId)).ToListAsync();
+            #endregion
+
             var department = await _departmentRepository.FindByCode(code);
             var faculty = await _facultyRepository.FindByCode(department.FacultyCode);
-            var lecturers = _departmentRepository.GetLecturer(code);
+            var lecturers = await _departmentRepository.GetLecturer(code).ToListAsync();
             var result = new DepartmentResultModel
             {
                 FacultyCode = faculty.Code,
@@ -138,7 +135,9 @@ namespace nuce.web.api.Services.Survey.Implements
                 IsTotal = true,
             };
 
-            foreach (var lecturer in lecturers.Where(d => d.Code != faculty.Code))
+            //var lecturers = lecturers.Where(d => d.Code != faculty.Code);
+
+            foreach (var lecturer in lecturers)
             {
                 var tmp = new SurveyResultResponseModel
                 {
@@ -146,13 +145,18 @@ namespace nuce.web.api.Services.Survey.Implements
                     DepartmentCode = department.Code,
                     LecturerCode = lecturer.Code,
                     LecturerName = lecturer.FullName,
-                    SoGiangVienCanLayYKien = 5,
-                    SoGiangVienDaKhaoSat = 23,
-                    SoPhieuPhatRa = 50,
-                    SoPhieuThuVe = 20,
-                    SoSvDuocKhaoSat = 100,
-                    SoSvThamGiaKhaoSat = 10,
+                    SoGiangVienCanLayYKien = 0,
+                    SoGiangVienDaKhaoSat = 0,
+                    SoPhieuPhatRa = 0,
+                    SoPhieuThuVe = 0,
+                    SoSvDuocKhaoSat = 0,
+                    SoSvThamGiaKhaoSat = 0,
                 };
+                await CalculateLecturerResult(tmp, lecturer, baiLamKhaoSatCacDotDangXet, 1);
+                await CalculateLecturerResult(tmp, lecturer, baiLamKhaoSatCacDotDangXet, 2);
+                await CalculateLecturerResult(tmp, lecturer, baiLamKhaoSatCacDotDangXet, 3);
+                await CalculateLecturerResult(tmp, lecturer, baiLamKhaoSatCacDotDangXet, 4);
+
                 total.SoGiangVienCanLayYKien += tmp.SoGiangVienCanLayYKien;
                 total.SoGiangVienDaKhaoSat += tmp.SoGiangVienDaKhaoSat;
                 total.SoPhieuPhatRa += tmp.SoGiangVienCanLayYKien;
@@ -167,12 +171,41 @@ namespace nuce.web.api.Services.Survey.Implements
 
             return result;
         }
+        /// <summary>
+        /// Kết quả giảng viên
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
         public async Task<SurveyResultResponseModel> LecturerResultAsync(string code)
         {
+            #region setup
+            var lastDotKhaoSat = _surveyContext.AsEduSurveyDotKhaoSat.OrderByDescending(dks => dks.EndDate).FirstOrDefault();
+            var dotKhaoSats = _surveyContext.AsEduSurveyDotKhaoSat.Where(o => o.EndDate == lastDotKhaoSat.EndDate);
+            if (lastDotKhaoSat == null)
+            {
+                return null;
+            }
+            var baiKhaoSats = _surveyContext.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == lastDotKhaoSat.Id && o.Status != (int)TheSurveyStatus.Deleted);
+
+            var dotKhaoSatThuNhat = dotKhaoSats.FirstOrDefault(); // vì nếu các đợt là giống nhau về đề ks thì lấy thằng đầu tiên
+            var baiKhaoSatCuaDotThuNhats = _surveyContext.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == dotKhaoSatThuNhat.Id && o.Status != (int)TheSurveyStatus.Deleted);
+
+            var baiKsLyThuyet = baiKhaoSatCuaDotThuNhats.FirstOrDefault(o => o.Type == (int)TheSurveyType.TheoreticalSubjects);
+            var deLyThuyet = JsonSerializer.Deserialize<List<QuestionJson>>(baiKsLyThuyet.NoiDungDeThi);
+
+            var baiKsThucHanh = baiKhaoSatCuaDotThuNhats.FirstOrDefault(o => o.Type == (int)TheSurveyType.TheoreticalPracticalSubjects);
+            var deLyThuyetThucHanh = JsonSerializer.Deserialize<List<QuestionJson>>(baiKsThucHanh.NoiDungDeThi);
+
+            var baiKsThucHanhThiNghiem = baiKhaoSatCuaDotThuNhats.FirstOrDefault(o => o.Type == (int)TheSurveyType.PracticalSubjects);
+            var deThucHanhThiNghiem = JsonSerializer.Deserialize<List<QuestionJson>>(baiKsThucHanhThiNghiem.NoiDungDeThi);
+
+            var baiKsDeDoAn = baiKhaoSatCuaDotThuNhats.FirstOrDefault(o => o.Type == (int)TheSurveyType.AssignmentSubjects);
+            var deDoAn = JsonSerializer.Deserialize<List<QuestionJson>>(baiKsDeDoAn.NoiDungDeThi);
+            #endregion
+
             var lecturer = await _lecturerRepository.FindByCode(code);
             var department = await _departmentRepository.FindByCode(lecturer.DepartmentCode);
             var faculty = await _facultyRepository.FindByCode(department.FacultyCode);
-
 
             var result = new SurveyResultResponseModel
             {
@@ -182,84 +215,30 @@ namespace nuce.web.api.Services.Survey.Implements
                 DeparmentName = department.Name,
                 LecturerCode = lecturer.Code,
                 LecturerName = lecturer.FullName,
-                SoGiangVienCanLayYKien = 5,
-                SoGiangVienDaKhaoSat = 23,
-                SoPhieuPhatRa = 50,
-                SoPhieuThuVe = 20,
-                SoSvDuocKhaoSat = 100,
-                SoSvThamGiaKhaoSat = 10,
-                DeMuc = new List<DeMuc>
-                {
-                    new DeMuc {
-                        Title = "NỘI DUNG VÀ LỊCH TRÌNH GIẢNG DẠY",
-                        CauHoi = new List<ChiTietCauHoi>
-                        {
-                            new ChiTietCauHoi
-                            {
-                                Content = "Câu 1: Nội dung giảng dạy, mục tiêu của học phần, vị trí học phần trong chương trình đào tạo, đề cương chi tiết của học phần được giảng viên giới thiệu đầy đủ rõ ràng khi bắt đầu học phần.",
-                            },
-                            new ChiTietCauHoi
-                            {
-                                Content = "Câu 2: Các quy định và kế hoạch kiểm tra, thực hiện đánh giá điểm quá trình được giảng viên phổ biến rõ ràng, đầy đủ khi bắt đầu học phần.",
-                            },
-                            new ChiTietCauHoi
-                            {
-                                Content = "Câu 3: Giáo trình chính thức và tài liệu tham khảo được giảng viên giời thiệu chi tiết, đầy đủ; giảng viên hỗ trợ sinh viên trong việc tìm tài liệu học tập một cách hiệu quả",
-                            },
-                            new ChiTietCauHoi
-                            {
-                                Content = "Câu 1: Nội dung giảng dạy, mục tiêu của học phần, vị trí học phần trong chương trình đào tạo, đề cương chi tiết của học phần được giảng viên giới thiệu đầy đủ rõ ràng khi bắt đầu học phần.",
-                            },
-                            new ChiTietCauHoi
-                            {
-                                Content = "Câu 1: Nội dung giảng dạy, mục tiêu của học phần, vị trí học phần trong chương trình đào tạo, đề cương chi tiết của học phần được giảng viên giới thiệu đầy đủ rõ ràng khi bắt đầu học phần.",
-                            },
-                            new ChiTietCauHoi
-                            {
-                                Content = "Câu 1: Nội dung giảng dạy, mục tiêu của học phần, vị trí học phần trong chương trình đào tạo, đề cương chi tiết của học phần được giảng viên giới thiệu đầy đủ rõ ràng khi bắt đầu học phần.",
-                            },
-                                }
-                            },
-                    new DeMuc {
-                        Title = "PHƯƠNG PHÁP GIẢNG DẠY CỦA GIẢNG VIÊN",
-                        CauHoi = new List<ChiTietCauHoi>
-                        {
-                            new ChiTietCauHoi
-                            {
-                                Content = "Câu 1: Nội dung giảng dạy, mục tiêu của học phần, vị trí học phần trong chương trình đào tạo, đề cương chi tiết của học phần được giảng viên giới thiệu đầy đủ rõ ràng khi bắt đầu học phần.",
-                            },
-                            new ChiTietCauHoi
-                            {
-                                Content = "Câu 2: Các quy định và kế hoạch kiểm tra, thực hiện đánh giá điểm quá trình được giảng viên phổ biến rõ ràng, đầy đủ khi bắt đầu học phần.",
-                            },
-                            new ChiTietCauHoi
-                            {
-                                Content = "Câu 3: Giáo trình chính thức và tài liệu tham khảo được giảng viên giời thiệu chi tiết, đầy đủ; giảng viên hỗ trợ sinh viên trong việc tìm tài liệu học tập một cách hiệu quả",
-                            },
-                            new ChiTietCauHoi
-                            {
-                                Content = "Câu 1: Nội dung giảng dạy, mục tiêu của học phần, vị trí học phần trong chương trình đào tạo, đề cương chi tiết của học phần được giảng viên giới thiệu đầy đủ rõ ràng khi bắt đầu học phần.",
-                            },
-                            new ChiTietCauHoi
-                            {
-                                Content = "Câu 1: Nội dung giảng dạy, mục tiêu của học phần, vị trí học phần trong chương trình đào tạo, đề cương chi tiết của học phần được giảng viên giới thiệu đầy đủ rõ ràng khi bắt đầu học phần.",
-                            },
-                            new ChiTietCauHoi
-                            {
-                                Content = "Câu 1: Nội dung giảng dạy, mục tiêu của học phần, vị trí học phần trong chương trình đào tạo, đề cương chi tiết của học phần được giảng viên giới thiệu đầy đủ rõ ràng khi bắt đầu học phần.",
-                            },
-                                }
-                            },
-
-                },
-                
+                LoaiMonHoc = new List<ChiTietLoaiMonHoc>(),
             };
+
+            CalculateDetailResult(result, lecturer, deLyThuyet, baiKhaoSats, (int)TheSurveyType.TheoreticalSubjects);
+            CalculateDetailResult(result, lecturer, deLyThuyetThucHanh, baiKhaoSats, (int)TheSurveyType.TheoreticalPracticalSubjects);
+            CalculateDetailResult(result, lecturer, deThucHanhThiNghiem, baiKhaoSats, (int)TheSurveyType.PracticalSubjects);
+            CalculateDetailResult(result, lecturer, deDoAn, baiKhaoSats, (int)TheSurveyType.AssignmentSubjects);
 
             return result;
         }
 
-        public void CaculateDeparatmentResult(SurveyResultResponseModel Result, List<AsEduSurveyBaiKhaoSatSinhVien> baiLamKhaoSatCacDotDangXet, AsAcademyDepartment department, int loaiMon)
+        #region private
+        /// <summary>
+        /// Tính kết quả các loại số phiếu của bộ môn vào Result
+        /// </summary>
+        /// <param name="Result"></param>
+        /// <param name="baiLamKhaoSatCacDotDangXet"></param>
+        /// <param name="department"></param>
+        /// <param name="loaiMon"></param>
+        private void CalculateDeparatmentResult(SurveyResultResponseModel Result, List<AsEduSurveyBaiKhaoSatSinhVien> baiLamKhaoSatCacDotDangXet, AsAcademyDepartment department, int loaiMon = 1)
         {
+            var tmpLoaiMon = Enum.GetValues(typeof(TheSurveyType)).Cast<int>().ToList();
+            var danhSachLoaiMonHoc = tmpLoaiMon.Cast<int?>().ToList();
+            List<int?> ss = new List<int?> { 1, 2, 3, 4 };
             Result.DeparmentName = department.Name;
             Result.DepartmentCode = department.Code;
             //lấy môn học của bộ môn
@@ -298,5 +277,316 @@ namespace nuce.web.api.Services.Survey.Implements
             Result.SoGiangVienDaKhaoSat += soGiangVienDaDuocKs;
             #endregion
         }
+        /// <summary>
+        /// Tính kết quả câu hỏi của giảng viên vào Result
+        /// </summary>
+        /// <param name="Result"></param>
+        /// <param name="lecturer"></param>
+        /// <param name="deLyThuyet"></param>
+        /// <param name="baiKhaoSats"></param>
+        /// <param name="loaiMon"></param>
+        private void CalculateDetailResult(SurveyResultResponseModel Result, AsAcademyLecturer lecturer, List<QuestionJson> deLyThuyet, IQueryable<AsEduSurveyBaiKhaoSat> baiKhaoSats, int loaiMon)
+        {
+            #region tổng hợp dữ liệu thống kê thô
+
+            string saCode = QuestionType.SA;
+
+            var theSurveyIdLyThuyets = baiKhaoSats.Where(o => o.Type == loaiMon).Select(o => o.Id).ToList();
+            var reportTotalLyThuyet = _surveyContext.AsEduSurveyReportTotal.Where(o => theSurveyIdLyThuyets.Contains(o.TheSurveyId));
+            var index = 0;
+
+            List<ChiTietCauHoi> chiTietCauHoiList = new List<ChiTietCauHoi>();
+            foreach (var cauhoi in deLyThuyet)
+            {
+                var chiTietCauHoi = new ChiTietCauHoi();
+                if (cauhoi.Type == QuestionType.SC)
+                { 
+                    chiTietCauHoi.Content = $"Câu {++index}: {cauhoi.Content}";
+                    Dictionary<string, string> diemList = new Dictionary<string, string>();
+
+                    var dTB = 0;
+                    var sumTotal = 0;
+                    var diem = 0;
+                    foreach (var dapan in cauhoi.Answers)
+                    {
+                        diem++;
+                        string diemKey = diem.ToString();
+                        diemList.Add(diemKey, "0");
+
+                        var ketqua = reportTotalLyThuyet.FirstOrDefault(o => o.LecturerCode == lecturer.Code && 
+                                                                                o.QuestionCode == cauhoi.Code && 
+                                                                                o.AnswerCode == dapan.Code);
+                        if (ketqua != null)
+                        {
+                            var total = ketqua.Total != null ? ketqua.Total.Value : 0;
+                            sumTotal += total;
+
+                            dTB += diem * total;
+                            diemList[diemKey] = total.ToString();
+                        }
+                        else
+                        {
+                            diemList[diemKey] = "0";
+                        }
+                    }
+                    string dtbKey = "đTB";
+                    diemList.Add(dtbKey, "0");
+
+                    if (sumTotal > 0)
+                    {
+                        string dtbValue = ((double)dTB / sumTotal).ToString();
+                        diemList[dtbKey] = dtbValue;
+                    }
+                    chiTietCauHoi.DanhSachDiem = diemList;
+                    chiTietCauHoiList.Add(chiTietCauHoi);
+                }
+                else if (cauhoi.Type == QuestionType.MC)
+                {
+                    chiTietCauHoi.Content = $"Câu {++index}: {cauhoi.Content}";
+                    Dictionary<string, string> diemList = new Dictionary<string, string>();
+
+                    foreach (var dapan in cauhoi.Answers)
+                    {
+                        //wsLyThuyet.Cells[rowDapAn, col].Value = dapan.Content;
+                        string dapAnKey = dapan.Content;
+                        string dapAnValue = "";
+                        var ketqua = reportTotalLyThuyet.FirstOrDefault(o => o.LecturerCode == lecturer.Code && 
+                                                                                o.QuestionCode == cauhoi.Code && 
+                                                                                o.AnswerCode == dapan.Code);
+                        if (ketqua != null)
+                        {
+                            var total = ketqua.Total != null ? ketqua.Total.Value : 0;
+                            dapAnValue = total.ToString();
+                        }
+                        else
+                        {
+                            dapAnValue = "0";
+                        }
+
+                        //câu hỏi con của đáp án
+                        if (dapan.AnswerChildQuestion != null)
+                        {
+                            var ketquaCon = reportTotalLyThuyet.FirstOrDefault(o => o.QuestionCode == $"{dapan.Code}_{dapan.AnswerChildQuestion.Code}" && o.AnswerCode == dapan.Code);
+                            dapAnValue = ketquaCon?.Content ?? "";
+                        }
+
+                        if (!string.IsNullOrEmpty(dapAnKey))
+                        {
+                            diemList.Add(dapAnKey, dapAnValue);
+                        }
+                    }
+                    chiTietCauHoi.DanhSachDiem = diemList;
+                    chiTietCauHoiList.Add(chiTietCauHoi);
+                }
+                else if (cauhoi.Type == QuestionType.SA)
+                {
+                    chiTietCauHoi.Content = $"Câu {++index}: {cauhoi.Content}";
+                    Dictionary<string, string> diemList = new Dictionary<string, string>();
+
+                    var ketqua = reportTotalLyThuyet.FirstOrDefault(o => o.LecturerCode == lecturer.Code && o.QuestionCode == cauhoi.Code);
+                    if (ketqua != null && ketqua.Content != null)
+                    {
+                        var str = "";
+                        var listStr = JsonSerializer.Deserialize<List<string>>(ketqua.Content);
+                        listStr.ForEach(s =>
+                        {
+                            str += $"{s};";
+                        });
+                        diemList.Add(saCode, str);
+                    }
+                    chiTietCauHoi.DanhSachDiem = diemList;
+                    chiTietCauHoiList.Add(chiTietCauHoi);
+                }
+                else if (cauhoi.Type == QuestionType.GQ)
+                {
+                    index++;
+                    var indexChild = 0;
+                    foreach (var cauhoicon in cauhoi.ChildQuestion)
+                    {
+                        if (cauhoicon.Type == QuestionType.SC)
+                        {
+                            chiTietCauHoi.Content = $"Câu {index}.{++indexChild}: {cauhoicon.Content}";
+                            Dictionary<string, string> diemList = new Dictionary<string, string>();
+
+                            var dTB = 0;
+                            var sumTotal = 0;
+                            var diem = 0;
+                            //var colTotal = col + cauhoicon.Answers.Count();
+                            foreach (var dapan in cauhoicon.Answers)
+                            {
+                                diem++;
+                                string diemKey = diem.ToString();
+                                diemList.Add(diemKey, "0");
+
+                                var ketqua = reportTotalLyThuyet.FirstOrDefault(o => o.LecturerCode == lecturer.Code && 
+                                                                                        o.QuestionCode == cauhoicon.Code && 
+                                                                                        o.AnswerCode == dapan.Code);
+                                if (ketqua != null)
+                                {
+                                    var total = ketqua.Total != null ? ketqua.Total.Value : 0;
+                                    diemList[diemKey] = total.ToString();
+
+                                    sumTotal += total;
+                                    dTB += diem * total;
+                                }
+                                else
+                                {
+                                    diemList[diemKey] = "0";
+                                }
+                            }
+                            string dtbKey = "đTB";
+                            diemList.Add(dtbKey, "0");
+
+                            if (sumTotal > 0)
+                            {
+                                string dtbValue = ((double)dTB / sumTotal).ToString();
+                                diemList[dtbKey] = dtbValue;
+                            }
+                            chiTietCauHoi.DanhSachDiem = diemList;
+                            chiTietCauHoiList.Add(chiTietCauHoi);
+                        }
+                        else if (cauhoicon.Type == QuestionType.MC)
+                        {
+                            chiTietCauHoi.Content = $"Câu {++index}: {cauhoicon.Content}";
+                            Dictionary<string, string> diemList = new Dictionary<string, string>();
+
+                            foreach (var dapan in cauhoicon.Answers)
+                            {
+                                string dapanKey = dapan.Content;
+                                string dapAnValue = "";
+                                var ketqua = reportTotalLyThuyet.FirstOrDefault(o => o.LecturerCode == lecturer.Code && o.QuestionCode == cauhoicon.Code && o.AnswerCode == dapan.Code);
+                                if (ketqua != null)
+                                {
+                                    var total = ketqua.Total != null ? ketqua.Total.Value : 0;
+                                    dapAnValue = total.ToString();
+                                }
+                                else
+                                {
+                                    dapAnValue = "0";
+                                }
+
+                                //câu hỏi con của đáp án
+                                if (dapan.AnswerChildQuestion != null)
+                                {
+                                    var ketquaCon = reportTotalLyThuyet.FirstOrDefault(o => o.QuestionCode == $"{dapan.Code}_{dapan.AnswerChildQuestion.Code}" && o.AnswerCode == dapan.Code);
+                                    dapAnValue = ketquaCon?.Content ?? "";
+                                }
+                            }
+                            chiTietCauHoi.DanhSachDiem = diemList;
+                            chiTietCauHoiList.Add(chiTietCauHoi);
+                        }
+                        if (cauhoicon.Type == QuestionType.SA)
+                        {
+                            chiTietCauHoi.Content = $"Câu {index}.{++indexChild}: {cauhoicon.Content}";
+                            Dictionary<string, string> diemList = new Dictionary<string, string>();
+
+                            var ketqua = reportTotalLyThuyet.FirstOrDefault(o => o.LecturerCode == lecturer.Code && o.QuestionCode == cauhoicon.Code);
+                            if (ketqua != null && ketqua.Content != null)
+                            {
+                                var str = "";
+                                var listStr = JsonSerializer.Deserialize<List<string>>(ketqua.Content);
+                                listStr.ForEach(s =>
+                                {
+                                    str += $"{s};";
+                                });
+                                diemList.Add(saCode, str);
+                            }
+
+                            chiTietCauHoi.DanhSachDiem = diemList;
+                            chiTietCauHoiList.Add(chiTietCauHoi);
+                        }
+                    }
+                    //chiTietCauHoi.Content = "group choice";
+                    //chiTietCauHoiList.Add(chiTietCauHoi);
+                }
+            }
+
+            string loaiMonHoc = "";
+            switch ((TheSurveyType)loaiMon)
+            {
+                case TheSurveyType.TheoreticalSubjects:
+                    loaiMonHoc = "Lý thuyết";
+                    break;
+                case TheSurveyType.TheoreticalPracticalSubjects:
+                    loaiMonHoc = "Lý thuyết thực hành";
+                    break;
+                case TheSurveyType.PracticalSubjects:
+                    loaiMonHoc = "Thực hành";
+                    break;
+                case TheSurveyType.AssignmentSubjects:
+                    loaiMonHoc = "Đồ án";
+                    break;
+                default:
+                    break;
+            }
+
+            Result.LoaiMonHoc.Add(new ChiTietLoaiMonHoc
+            {
+                Title = loaiMonHoc,
+                CauHoi = chiTietCauHoiList
+            });
+            #endregion
+        }
+        // subject <= classroom <= lecturer classroom <= lecturer
+        private async Task CalculateLecturerResult(SurveyResultResponseModel Result, AsAcademyLecturer lecturer, List<AsEduSurveyBaiKhaoSatSinhVien> baiLamKhaoSatCacDotDangXet, int loaiMon = 1)
+        {
+            Result.LecturerCode = lecturer.Code;
+            Result.LecturerName = lecturer.FullName;
+            var tmpLoaiMon = Enum.GetValues(typeof(TheSurveyType)).Cast<int>().ToList();
+            var danhSachLoaiMonHoc = tmpLoaiMon.Cast<int?>().ToList();
+
+            var monHocCuaGiangVien = await _eduContext.AsAcademyLecturerClassRoom
+                                                .Where(lcr => lcr.LecturerCode == lecturer.Code)
+                                                .Join(_eduContext.AsAcademyClassRoom,
+                                                        lcr => lcr.ClassRoomCode,
+                                                        cr => cr.Code,
+                                                        (lcr, cr) => cr)
+                                                .Distinct()
+                                                .Join(_eduContext.AsAcademySubject,
+                                                    cr => cr.SubjectCode,
+                                                    s => s.Code,
+                                                    (cr, s) => s)
+                                                .Join(_eduContext.AsAcademySubjectExtend,
+                                                    s => s.Code,
+                                                    se => se.Code,
+                                                    (s, se) => new
+                                                    {
+                                                        s,
+                                                        se.Type
+                                                    })
+                                                .Select(subject => new
+                                                {
+                                                    subject.s.Code,
+                                                    subject.s.DepartmentCode,
+                                                    subject.s.Name,
+                                                    subject.Type
+                                                }).ToListAsync();
+
+
+            var monLyThuyetCuaBoMonCodes = monHocCuaGiangVien.Where(o => loaiMon == o.Type)
+                                                        .Select(o => o.Code);
+
+            //các bài làm của môn lý thuyết của bộ môn đang xét
+            var baiLamKhaoSatLyThuyet = baiLamKhaoSatCacDotDangXet.Where(o => o.LecturerCode == lecturer.Code && monLyThuyetCuaBoMonCodes.Contains(o.SubjectCode));
+            var baiLamKhaoSatLyThuyetHoanThanh = baiLamKhaoSatLyThuyet.Where(o => o.Status == (int)SurveyStudentStatus.Done)
+                                                        .Select(o => new { o.StudentCode, o.LecturerCode });
+
+            var soPhieuPhatRa = baiLamKhaoSatLyThuyet.Count();
+            var soPhieuThuVe = baiLamKhaoSatLyThuyetHoanThanh.Count();
+
+            var soSVThamGiaKhaoSat = baiLamKhaoSatLyThuyet.GroupBy(o => o.StudentCode).Select(o => o.Key).Count();
+            var soSVDuocKhaoSat = baiLamKhaoSatLyThuyetHoanThanh.GroupBy(o => o.StudentCode).Select(o => o.Key).Count();
+
+            var soGiangVienCanKs = baiLamKhaoSatLyThuyet.GroupBy(o => o.LecturerCode).Select(o => o.Key).Count();
+            var soGiangVienDaDuocKs = baiLamKhaoSatLyThuyetHoanThanh.GroupBy(o => o.LecturerCode).Select(o => o.Key).Count();
+
+            Result.SoPhieuPhatRa += soPhieuPhatRa;
+            Result.SoPhieuThuVe += soPhieuThuVe;
+            Result.SoSvThamGiaKhaoSat += soSVThamGiaKhaoSat;
+            Result.SoSvDuocKhaoSat += soSVDuocKhaoSat;
+            Result.SoGiangVienCanLayYKien += soGiangVienCanKs;
+            Result.SoGiangVienDaKhaoSat += soGiangVienDaDuocKs;
+        }
+        #endregion
     }
 }

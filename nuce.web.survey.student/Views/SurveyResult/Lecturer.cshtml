@@ -24,8 +24,17 @@
         Giảng viên
     </li>
 }
+
+@section Style{
+    <style>
+        .table-list table:not(:first-child) tr:first-child td {
+            border-top: none;
+        }
+    </style>    
+}
+
 @* Tên bộ môn *@
-<h5 class="text-center mb-3 m-text-blue">
+<h5 class="text-center mb-1 m-text-blue">
     <span>
         @Model.Data.LecturerName
     </span>
@@ -33,50 +42,39 @@
 
 <div class="row">
     <div class="col-12">
-        <table id="lecturer-survey-result-datatable"
-               class="table th-border-none">
-            <!--data-page-length='25'-->
-            <thead>
-                <tr>
-                    <td>Số sv tham gia khảo sát</td>
-                    <td>Số sv được khảo sát</td>
-                    <td>Số phiếu thu về</td>
-                    <td>Số phiếu ks phát ra</td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>@Model.Data.SoSvThamGiaKhaoSat</td>
-                    <td>@Model.Data.SoSvDuocKhaoSat</td>
-                    <td>@Model.Data.SoPhieuThuVe</td>
-                    <td>@Model.Data.SoPhieuPhatRa</td>
-                </tr>
-            </tbody>
-        </table>
-        @foreach (var demuc in Model.Data.DeMuc)
+        @foreach (var demuc in Model.Data.LoaiMonHoc)
         {
-            <h5>@demuc.Title</h5>
-            <table class="table th-border-none">
-                <tbody>
-                    @foreach (var cauhoi in demuc.CauHoi)
+            <h5 class="my-3 m-text-blue">@demuc.Title</h5>
+            <div class="table-list">
+                @foreach (var cauhoi in demuc.CauHoi)
                     {
-                        <tr>
-                            <td colspan="@cauhoi.DanhSachDiem.Count">@cauhoi.Content</td>
-                        </tr>
-                        <tr>
-                            @foreach (var diem in cauhoi.DanhSachDiem)
-                            {
-                                <td>
-                                    @diem.Key
-                                    <br />
-                                    @diem.Value
+                    <table class="table th-border-none mb-0">
+                        <tbody>
+                            <tr>
+                                <td colspan="@cauhoi.DanhSachDiem.Count" class="font-weight-bold">
+                                    @cauhoi.Content
                                 </td>
-                            }
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
+                            </tr>
+                            <tr>
+                                @foreach (var dapan in cauhoi.DanhSachDiem.Keys)
+                                {
+                                    if (dapan != "SA")
+                                    {
+                                        <td class="text-center">@dapan</td>
+                                    }
+                                }
+                            </tr>
+                            <tr>
+                                @foreach (var ketQua in cauhoi.DanhSachDiem.Values)
+                                {
+                                    <td class="text-center">@ketQua</td>
+                                }
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+            </div>
+         }
     </div>
 </div>
 

@@ -11,9 +11,8 @@ namespace nuce.web.api.Services.Survey.Interfaces
 {
     public interface ISurveyResultService
     {
-        public FacultyResultModel FacultyResult(string code);
+        public Task<FacultyResultModel> FacultyResultAsync(string code);
         public Task<DepartmentResultModel> DepartmentResultAsync(string code);
         public Task<SurveyResultResponseModel> LecturerResultAsync(string code);
-        public void CaculateDeparatmentResult(SurveyResultResponseModel Result, List<AsEduSurveyBaiKhaoSatSinhVien> baiLamKhaoSatCacDotDangXet, AsAcademyDepartment d, int loaiMon);
     }
 }
