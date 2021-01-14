@@ -158,7 +158,17 @@ namespace nuce.web.api.Services.Survey.Implements
                 Status = (int)QuestionStatus.Active
             };
             _surveyContext.AsEduSurveyUndergraduateCauHoi.Add(questionCreate);
-
+            if (question.Type == QuestionType.GQ && question.QuestionChildCodes != null)
+            {
+                foreach (var code in question.QuestionChildCodes)
+                {
+                    var questionChild = await _surveyContext.AsEduSurveyCauHoi.FirstOrDefaultAsync(o => o.Code == code && o.Status != (int)QuestionStatus.Deleted);
+                    if (questionChild != null)
+                    {
+                        questionChild.ParentCode = questionCreate.Code;
+                    }
+                }
+            }
             await _surveyContext.SaveChangesAsync();
         }
 

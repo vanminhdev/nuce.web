@@ -46,7 +46,10 @@ namespace nuce.web.api.ViewModel.Survey
         public string Type { get; set; }
 
         [Required]
+        [Range(0, 300)]
         public int? Order { get; set; }
+
+        public List<string> QuestionChildCodes { get; set; }
     }
 
     public class QuestionUpdateModel
@@ -63,6 +66,7 @@ namespace nuce.web.api.ViewModel.Survey
         public string Type { get; set; }
 
         [Required]
+        [Range(0, 300)]
         public int? Order { get; set; }
 
         public List<string> QuestionChildCodes { get; set; }

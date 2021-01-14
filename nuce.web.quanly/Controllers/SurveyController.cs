@@ -178,6 +178,7 @@ namespace nuce.web.quanly.Controllers
                     cauHoiCode = question.code
                 },
                 QuestionContent = HttpUtility.UrlEncode(question.content),
+                QuestionType = question.type,
                 QuestionId = questionId
             });
         }
@@ -205,12 +206,14 @@ namespace nuce.web.quanly.Controllers
         public async Task<ActionResult> DetailAnswer(string id, string questionId)
         {
             string questionContent = "";
+            string questionType = "";
             var resQues = await base.MakeRequestAuthorizedAsync("Get", $"/api/question/GetById?id={questionId}");
             if (resQues.IsSuccessStatusCode)
             {
                 var jsonString = await resQues.Content.ReadAsStringAsync();
                 var question = (JsonConvert.DeserializeObject<Question>(jsonString));
                 questionContent = question.content;
+                questionType = question.type;
             }
 
             var response = await base.MakeRequestAuthorizedAsync("GET", $"/api/answer/GetById?id={id}");
@@ -219,10 +222,22 @@ namespace nuce.web.quanly.Controllers
                 {
                     var jsonString = await response.Content.ReadAsStringAsync();
                     var answer = JsonConvert.DeserializeObject<Answer>(jsonString);
+
+                    if (answer.childQuestionId != null)
+                    {
+                        var resChildQues = await base.MakeRequestAuthorizedAsync("Get", $"/api/question/GetById?id={answer.childQuestionId}");
+                        if (resChildQues.IsSuccessStatusCode)
+                        {
+                            var str = await resChildQues.Content.ReadAsStringAsync();
+                            ViewData["childQuestion"] = str;
+                        }
+                    }
+
                     return View("~/Views/Survey/Normal/DetailAnswer.cshtml", new UpdateAnswer
                     {
                         AnswerBind = answer,
                         QuestionContent = questionContent,
+                        QuestionType = questionType,
                         QuestionId = questionId
                     });
                 }
@@ -780,6 +795,7 @@ namespace nuce.web.quanly.Controllers
                     cauHoiCode = question.code
                 },
                 QuestionContent = HttpUtility.UrlEncode(question.content),
+                QuestionType = question.type,
                 QuestionId = questionId
             });
         }
@@ -807,11 +823,13 @@ namespace nuce.web.quanly.Controllers
         public async Task<ActionResult> DetailGraduateAnswer(string id, string questionId)
         {
             string questionContent = "";
+            string questionType = "";
             var resQues = await base.MakeRequestAuthorizedAsync("Get", $"/api/Graduatequestion/GetById?id={questionId}");
             if (resQues.IsSuccessStatusCode)
             {
                 var jsonString = await resQues.Content.ReadAsStringAsync();
                 var question = (JsonConvert.DeserializeObject<Question>(jsonString));
+                questionType = question.type;
                 questionContent = question.content;
             }
 
@@ -821,10 +839,20 @@ namespace nuce.web.quanly.Controllers
                 {
                     var jsonString = await response.Content.ReadAsStringAsync();
                     var answer = JsonConvert.DeserializeObject<Answer>(jsonString);
+                    if (answer.childQuestionId != null)
+                    {
+                        var resChildQues = await base.MakeRequestAuthorizedAsync("Get", $"/api/question/GetById?id={answer.childQuestionId}");
+                        if (resChildQues.IsSuccessStatusCode)
+                        {
+                            var str = await resQues.Content.ReadAsStringAsync();
+                            ViewData["childQuestion"] = (JsonConvert.DeserializeObject<Question>(str));
+                        }
+                    }
                     return View("~/Views/Survey/Graduate/DetailAnswer.cshtml", new UpdateAnswer
                     {
                         AnswerBind = answer,
                         QuestionContent = questionContent,
+                        QuestionType = questionType,
                         QuestionId = questionId
                     });
                 }
@@ -1371,6 +1399,7 @@ namespace nuce.web.quanly.Controllers
                     cauHoiCode = question.code
                 },
                 QuestionContent = HttpUtility.UrlEncode(question.content),
+                QuestionType = question.type,
                 QuestionId = questionId
             });
         }
@@ -1398,11 +1427,13 @@ namespace nuce.web.quanly.Controllers
         public async Task<ActionResult> DetailUndergraduateAnswer(string id, string questionId)
         {
             string questionContent = "";
+            string questionType = "";
             var resQues = await base.MakeRequestAuthorizedAsync("Get", $"/api/Undergraduatequestion/GetById?id={questionId}");
             if (resQues.IsSuccessStatusCode)
             {
                 var jsonString = await resQues.Content.ReadAsStringAsync();
                 var question = (JsonConvert.DeserializeObject<Question>(jsonString));
+                questionType = question.type;
                 questionContent = question.content;
             }
 
@@ -1412,10 +1443,20 @@ namespace nuce.web.quanly.Controllers
                 {
                     var jsonString = await response.Content.ReadAsStringAsync();
                     var answer = JsonConvert.DeserializeObject<Answer>(jsonString);
+                    if (answer.childQuestionId != null)
+                    {
+                        var resChildQues = await base.MakeRequestAuthorizedAsync("Get", $"/api/question/GetById?id={answer.childQuestionId}");
+                        if (resChildQues.IsSuccessStatusCode)
+                        {
+                            var str = await resQues.Content.ReadAsStringAsync();
+                            ViewData["childQuestion"] = (JsonConvert.DeserializeObject<Question>(str));
+                        }
+                    }
                     return View("~/Views/Survey/Undergraduate/DetailAnswer.cshtml", new UpdateAnswer
                     {
                         AnswerBind = answer,
                         QuestionContent = questionContent,
+                        QuestionType = questionType,
                         QuestionId = questionId
                     });
                 }

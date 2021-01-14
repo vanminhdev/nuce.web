@@ -20,6 +20,8 @@ namespace nuce.web.api.ViewModel.Survey
         public string CauHoiId { get; set; }
 
         public string CauHoiCode { get; set; }
+
+        public string ChildQuestionId { get; set; }
     }
 
     public class AnswerCreateModel
@@ -56,5 +58,7 @@ namespace nuce.web.api.ViewModel.Survey
 
         [Required]
         public int? Order { get; set; }
+
+        public Guid? childQuestionId { get; set; }
     }
 }

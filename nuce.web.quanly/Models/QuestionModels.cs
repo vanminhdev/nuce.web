@@ -29,7 +29,10 @@ namespace nuce.web.quanly.Models
         public string type { get; set; }
 
         [Required(ErrorMessage = "Số thứ tự không được để trống")]
+        [Range(0, 300, ErrorMessage = "Số thứ tự không hợp lệ")]
         public int? order { get; set; }
+        public List<QuestionDetail> questionChilds { get; set; }
+        public List<string> questionChildCodes { get; set; }
     }
 
     public class QuestionDetail
@@ -50,6 +53,7 @@ namespace nuce.web.quanly.Models
         public string type { get; set; }
 
         [Required(ErrorMessage = "Số thứ tự không được để trống")]
+        [Range(0, 300, ErrorMessage = "Số thứ tự không hợp lệ")]
         public int? order { get; set; }
 
         public string parentCode { get; set; }

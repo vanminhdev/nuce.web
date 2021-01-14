@@ -85,6 +85,7 @@ namespace nuce.web.api.Services.Survey.Implements
                     Content = HttpUtility.HtmlDecode(a.Content),
                     Order = a.Order,
                     CauHoiId = a.CauHoiId.ToString(),
+                    ChildQuestionId = a.ChildQuestionId?.ToString(),
                     CauHoiCode = a.CauHoiCode
                 }).ToList();
         }
@@ -104,7 +105,8 @@ namespace nuce.web.api.Services.Survey.Implements
                 Content = HttpUtility.HtmlDecode(answer.Content),
                 Order = answer.Order,
                 CauHoiId = answer.CauHoiId.ToString(),
-                CauHoiCode = answer.CauHoiCode
+                CauHoiCode = answer.CauHoiCode,
+                ChildQuestionId = answer.ChildQuestionId?.ToString()
             };
         }
 
@@ -118,6 +120,7 @@ namespace nuce.web.api.Services.Survey.Implements
             }
             answerUpdate.Content = answer.Content;
             answerUpdate.Order = answer.Order;
+            answerUpdate.ChildQuestionId = answer.childQuestionId;
             await _surveyContext.SaveChangesAsync();
         }
     }

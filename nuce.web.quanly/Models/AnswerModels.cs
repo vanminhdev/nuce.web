@@ -19,11 +19,14 @@ namespace nuce.web.quanly.Models
         public string content { get; set; }
 
         [Required(ErrorMessage = "Số thứ tự không được để trống")]
+        [Range(0, 20, ErrorMessage = "Số thứ tự không hợp lệ")]
         public int? order { get; set; }
 
         public string cauHoiId { get; set; }
         
         public string cauHoiCode { get; set; }
+
+        public string childQuestionId { get; set; }
     }
 
     public class AnswerOfQuestion
@@ -37,6 +40,7 @@ namespace nuce.web.quanly.Models
     {
         public Answer AnswerBind { get; set; }
         public string QuestionContent { get; set; }
+        public string QuestionType { get; set; }
         public string QuestionId { get; set; }
     }
 
@@ -49,6 +53,7 @@ namespace nuce.web.quanly.Models
         public string content { get; set; }
 
         [Required(ErrorMessage = "Số thứ tự không được để trống")]
+        [Range(0, 20, ErrorMessage = "Số thứ tự không hợp lệ")]
         public int? order { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessage = "Id câu hỏi không được để trống")]
@@ -62,6 +67,7 @@ namespace nuce.web.quanly.Models
     {
         public AnswerCreate AnswerBind { get; set; }
         public string QuestionContent { get; set; }
+        public string QuestionType { get; set; }
         public string QuestionId { get; set; }
     }
 }

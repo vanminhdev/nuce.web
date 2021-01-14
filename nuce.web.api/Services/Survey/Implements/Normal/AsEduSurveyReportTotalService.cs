@@ -27,7 +27,7 @@ namespace nuce.web.api.Services.Survey.Implements
 {
     class AsEduSurveyReportTotalService : IAsEduSurveyReportTotalService
     {
-        ILogger<AsEduSurveyReportTotalService> _logger;
+        private readonly ILogger<AsEduSurveyReportTotalService> _logger;
         private readonly SurveyContext _context;
         private readonly EduDataContext _eduContext;
         private readonly IStatusService _statusService;
@@ -126,7 +126,7 @@ namespace nuce.web.api.Services.Survey.Implements
             str += $"<tr>";
             str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;' colspan = '2'>Toàn trường</td>";
             str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{sumTotalDaLam}</td>";
-            str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;' >{sumTotalChuaLam}</td>";
+            str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{sumTotalChuaLam}</td>";
             str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{sumTotalSinhVien}</td>";
             str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{tempData.ChiemTiLe}%</td>";
             str += $"</tr style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>";

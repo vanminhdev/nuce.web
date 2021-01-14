@@ -327,7 +327,9 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 foreach (var f in facultys)
                 {
                     _logger.LogInformation($"Đang thong ke tam cho khoa co ma {f.Code}");
+                    //thống kê theo lớp quản lý
                     var classF = eduContext.AsAcademyClass.Where(o => o.FacultyCode == f.Code).Select(o => o.Code).ToList();
+
                     //tất cả sv có đk
                     var allStudents = eduContext.AsAcademyStudent
                         .Where(o => classF.Contains(o.ClassCode))

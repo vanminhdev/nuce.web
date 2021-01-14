@@ -51,8 +51,9 @@
                     Loại câu hỏi
                 </div>
                 <div class=" col-12 col-md-10">
+                    @Html.TextBoxFor(m => m.type, new { @type = "hidden", @required = true })
                     @Html.DropDownListFor(m => m.type, new SelectList(nuce.web.quanly.Common.Definitions.QuestionType, "Key", "Value", "type"),
-                        new { @class = "selectpicker form-control custom-boostrap-select", title = "Chọn loại câu hỏi" })
+                        new { @class = "selectpicker form-control custom-boostrap-select", title = "Chọn loại câu hỏi", disabled = "true" })
                     @Html.ValidationMessageFor(m => m.type, "", new { @class = "form-text text-danger" })
                 </div>
             </div>
@@ -69,7 +70,7 @@
             </div>
         </div>
 
-        @if (Model.parentCode == null)
+        @if (Model.parentCode == null && Model.type == QuestionType.GQ)
         {
             <div class="col-12 form-group">
                 <div class="row mr-0 ml-0">
@@ -120,7 +121,7 @@
                 </div>
             </div>
         }
-        else
+        else if(Model.parentCode != null)
         { 
             <div class="col-12 form-group">
                 <div class="row mr-0 ml-0">
@@ -128,7 +129,7 @@
                         Câu hỏi cha
                     </div>
                     <div class=" col-12 col-md-10">
-                        <input class="form-group" value="@Model.parentCode" disabled />
+                        <input class="form-control" value="@Model.parentCode" disabled />
                     </div>
                 </div>
             </div>
@@ -310,7 +311,7 @@
                 {
                     data: null,
                     mRender: function (data, type, row) {
-                        if (childQuestionCode.includes(data.code) || data.code === '@Model.code' || data.type === '@(QuestionType.T)' 
+                        if (childQuestionCode.includes(data.code) || data.code === '@Model.code' || data.type === '@(QuestionType.T)' || data.parentCode != null
                             || data.type === '@(QuestionType.GQ)' || data.type === '@(QuestionType.CityC)' || data.type === '@(QuestionType.StarRating)' ) {
                             return '';
                         }
@@ -355,11 +356,4 @@
             }
         });
     </script>
-    @*<script src="https://cdn.tiny.cloud/1/7kx0ud503sqh7se57iao9whndipt7k0wu0j9y2381lnywnis/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-        <script>
-            tinymce.init({
-                selector: '#content',
-                encoding: 'xml'
-            });
-        </script>*@
 }

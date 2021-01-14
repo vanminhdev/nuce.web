@@ -51,6 +51,7 @@
                     Loại câu hỏi
                 </div>
                 <div class=" col-12 col-md-10">
+                    @Html.TextBoxFor(m => m.type, new { @type = "hidden", @required = true })
                     @Html.DropDownListFor(m => m.type, new SelectList(nuce.web.quanly.Common.Definitions.QuestionType, "Key", "Value", "type"),
                         new { @class = "selectpicker form-control custom-boostrap-select", title = "Chọn loại câu hỏi" })
                     @Html.ValidationMessageFor(m => m.type, "", new { @class = "form-text text-danger" })
@@ -310,7 +311,7 @@
                 {
                     data: null,
                     mRender: function (data, type, row) {
-                        if (childQuestionCode.includes(data.code) || data.code === '@Model.code' || data.type === '@(QuestionType.T)' 
+                        if (childQuestionCode.includes(data.code) || data.code === '@Model.code' || data.type === '@(QuestionType.T)' || data.parentCode != null
                             || data.type === '@(QuestionType.GQ)' || data.type === '@(QuestionType.CityC)' || data.type === '@(QuestionType.StarRating)' ) {
                             return '';
                         }

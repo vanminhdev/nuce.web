@@ -60,3 +60,7 @@
 .popup-fullscreen > div {
     height: 100%;
 }
+
+.btn.dropdown-toggle.disabled.btn-light {
+    border: 1px solid #ced4da;
+}
