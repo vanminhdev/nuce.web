@@ -168,8 +168,10 @@
                             <tr>
                                 <th class="text-center" style="border-bottom-width: 1px; width: 1px;">Mã khoa</th>
                                 <th class="text-center" style="border-bottom-width: 1px;">Tên khoa</th>
-                                <th class="text-center" style="border-bottom-width: 1px; width: 120px;">Số lượng</th>
-                                <th class="text-center" style="border-bottom-width: 1px; width: 1px">%</th>
+                                <th class="text-center" style="border-bottom-width: 1px;">Số sv đã làm bài</th>
+                                <th class="text-center" style="border-bottom-width: 1px;">Số sv chưa làm bài</th>
+                                <th class="text-center" style="border-bottom-width: 1px;">Tổng số sv</th>
+                                <th class="text-center" style="border-bottom-width: 1px; min-width: 100px">Tỷ lệ tham gia ks</th>
                             </tr>
                         </thead>
                         <tbody id="tbody-thong-ke-tam">
@@ -211,33 +213,29 @@
         if (tempReportNomalStatus.status !== @((int)TableTaskStatus.Doing)) {
             let message = JSON.parse(tempReportNomalStatus.message);
             let str = "";
-            message.forEach(item => {
-                let percent = item.Num / item.Total * 100;
-                if (!isNaN(percent)) {
-                    if (percent < 30) {
-                        str += `<tr class="text-danger">`;
-                    } else if (percent < 50) {
-                        str += `<tr class="text-warning">`;
-                    } else {
-                        str += `<tr>`;
-                    }
-                }
-                else {
-                    str += `<tr class="text-danger">`;
-                }
-
+            let sumTotalDaLam = 0;
+            let sumTotalChuaLam = 0;
+            let sumTotalSinhVien = 0;
+            message.TongHopKhoa.forEach(item => {
+                str += `<tr class="text-dark">`;
                 str += `<td class="text-center">${item.FacultyCode}</td>`;
                 str += `<td>${item.FacultyName}</td>`;
-                str += `<td class="text-center">${item.Num}/${item.Total}</td>`;
-                
-                if (!isNaN(percent)) {
-                    str += `<td class="text-center">${Number(percent).toFixed(2)}</td>`;
-                }
-                else {
-                    str += `<td class="text-center">0</td>`;
-                }
+                str += `<td class="text-center">${item.TotalDaLam}</td>`;
+                sumTotalDaLam += +item.TotalDaLam;
+                str += `<td class="text-center">${item.TotalChuaLam}</td>`;
+                sumTotalChuaLam += +item.TotalChuaLam;
+                str += `<td class="text-center">${item.TotalSinhVien}</td>`;
+                sumTotalSinhVien += +item.TotalSinhVien;
+                str += `<td class="text-center">${item.Percent}%</td>`;
                 str += `</tr>`;
             });
+            str += `<tr class="text-dark">`;
+            str += `<td class="text-center" colspan="2">Toàn trường</td>`;
+            str += `<td class="text-center">${sumTotalDaLam}</td>`;
+            str += `<td class="text-center">${sumTotalChuaLam}</td>`;
+            str += `<td class="text-center">${sumTotalSinhVien}</td>`;
+            str += `<td class="text-center">${message.ChiemTiLe}%</td>`;
+            str += `</tr>`;
             $('#tbody-thong-ke-tam').html(str);
         }
         console.log('t.kê tạm ', tempReportNomalStatus);

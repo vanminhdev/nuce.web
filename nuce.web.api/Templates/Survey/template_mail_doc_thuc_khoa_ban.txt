@@ -1,0 +1,23 @@
+﻿Kính gửi các Khoa/Ban<br/>
+Theo như thông báo về kế hoạch đã gửi tới quý Khoa/Ban. Khảo sát Hoạt động giảng dạy sẽ kết thúc vào 
+[thoi_gian_ket_thuc]. Tuy nhiên đến nay (ngày [ngay_hien_tai]) mới chỉ có [so_sv_ks] sinh viên vào tham gia khảo sát (chiếm tỷ lệ [ty_le]% tổng số sv cần khảo sát).
+Tỷ lệ cụ thể ở các Khoa/Ban như sau:
+<br/>
+<br/>
+<table style='border-collapse: collapse; font-size: 14px;'>
+    <thead style='background-color: #102A7F; color: white;'>
+        <th style='border: 1px solid #ddd; text-align: center; padding: 10px;'>Mã khoa</th>
+        <th style='border: 1px solid #ddd; text-align: center; padding: 10px;'>Tên khoa</th>
+        <th style='border: 1px solid #ddd; text-align: center; padding: 10px;'>Số sinh viên đã làm bài</th>
+        <th style='border: 1px solid #ddd; text-align: center; padding: 10px;'>Số sinh viên chưa làm bài</th>
+        <th style='border: 1px solid #ddd; text-align: center; padding: 10px;'>Tổng số sinh viên</th>
+        <th style='border: 1px solid #ddd; text-align: center; padding: 10px;'>Tỷ lệ sv đã tham gia ks</th>
+    </thead>
+    <tbody>
+        [nd_bang_thong_ke]
+    </tbody>
+</table>
+<br/>
+Để đảm bảo sinh viên các khoá đã biết được thông tin về khảo sát HĐGD, kính đề nghị các Khoa/Ban chủ động liên lạc với Cán bộ các lớp,
+nhắc nhở Cán bộ lớp thông báo khảo sát tới các sinh viên trong lớp thông qua điện thoại, gmail, mạng xã hội, ... <br/>
+Trân trọng cảm ơn!

@@ -7,6 +7,7 @@ using nuce.web.api.Models.EduData;
 using nuce.web.api.Models.Status;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Models.Survey.JsonData;
+using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.Services.Status.Interfaces;
 using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Base;
@@ -14,6 +15,7 @@ using nuce.web.api.ViewModel.Survey.Normal.Statistic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Mime;
@@ -30,14 +32,16 @@ namespace nuce.web.api.Services.Survey.Implements
         private readonly EduDataContext _eduContext;
         private readonly IStatusService _statusService;
         private readonly IConfiguration _configuration;
+        private readonly IPathProvider _pathProvider;
 
-        public AsEduSurveyReportTotalService(ILogger<AsEduSurveyReportTotalService> logger, SurveyContext context, EduDataContext eduContext, IStatusService statusService, IConfiguration configuration)
+        public AsEduSurveyReportTotalService(ILogger<AsEduSurveyReportTotalService> logger, SurveyContext context, EduDataContext eduContext, IStatusService statusService, IConfiguration configuration, IPathProvider pathProvider)
         {
             _logger = logger;
             _context = context;
             _eduContext = eduContext;
             _statusService = statusService;
             _configuration = configuration;
+            _pathProvider = pathProvider;
         }
 
         public async Task<PaginationModel<ReportTotalNormal>> GetRawReportTotalNormalSurvey(ReportTotalNormalFilter filter, int skip = 0, int take = 20)
@@ -80,17 +84,6 @@ namespace nuce.web.api.Services.Survey.Implements
             };
         }
 
-        class DataUrgingEmail
-        {
-            public string percent { get; set; }
-        }
-
-        class UrgingEmail
-        {
-            public string email { get; set; }
-            public DataUrgingEmail data { get; set; }
-        }
-
         public async Task SendUrgingEmail()
         {
             var status = await _statusService.GetStatusTableTaskNotResetMessage(TableNameTask.TempDataNormalSurvey);
@@ -99,39 +92,85 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new TableBusyException("Đang thống kê tạm, thao tác bị huỷ");
             }
 
-            var lstKhoa = JsonSerializer.Deserialize<List<TempDataNormal>>(status.Message);
-            var lstEmailTarget = new List<UrgingEmail>();
-            foreach(var khoa in lstKhoa)
+            if (status.Status == (int)TableTaskStatus.Done && !status.IsSuccess)
             {
-                if(khoa.Total > 0 && khoa.Num/khoa.Total < 0.5)
-                {
-                    var thongTin = await _eduContext.AsAcademyFaculty.FirstOrDefaultAsync(o => o.Code == khoa.FacultyCode);
-                    lstEmailTarget.Add(new UrgingEmail
-                    {
-                        email = "vanminh.dev@gmail.com",
-                        data = new DataUrgingEmail
-                        {
-                            percent = $"{khoa.Num}/{khoa.Total}"
-                        }
-                    });
-                }
+                throw new TableBusyException("Không thông kê tạm thành công không gửi được email");
             }
-            HttpClient client = new HttpClient();
-            var strContent = JsonSerializer.Serialize(new
+
+            string filePath = "Templates/Survey/template_mail_doc_thuc_khoa_ban.txt";
+            var dir = _pathProvider.MapPath(filePath);
+            if (!File.Exists(dir))
             {
-                emails = lstEmailTarget,
-                template = 25,
-                subject = "V/v Thông báo số lượng bài khảo sát của sinh viên về hoạt động giáo dục",
-                email_identifier = "emails",
-                datetime = DateTime.Now.ToString("dd-MM-yyyy hh:mm"),
-                send_later_email = 0,
-                timezone = 7
+                throw new FileNotFoundException("Không tìm thấy mẫu gửi email");
+            }
+            string templateContent = await File.ReadAllTextAsync(dir);
+
+            var tempData = JsonSerializer.Deserialize<TempDataNormal>(status.Message);
+            var str = "";
+            var sumTotalDaLam = 0;
+            var sumTotalChuaLam = 0;
+            var sumTotalSinhVien = 0;
+            tempData.TongHopKhoa.ForEach(item => {
+                str += $"<tr>";
+                str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{item.FacultyCode}</td>";
+                str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{item.FacultyName}</td>";
+                str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{ item.TotalDaLam}</td>";
+                       sumTotalDaLam += +item.TotalDaLam;
+                str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{ item.TotalChuaLam}</td>";
+                       sumTotalChuaLam += +item.TotalChuaLam;
+                str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{ item.TotalSinhVien}</td>";
+                       sumTotalSinhVien += +item.TotalSinhVien;
+                str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{ item.Percent}%</td>";
+                str += $"</tr>";
             });
-            var content = new StringContent(strContent, Encoding.UTF8, MediaTypeNames.Application.Json);
-            var response = await client.PostAsync(_configuration.GetValue<string>("ApiSendEmail"), content);
-            if (!response.IsSuccessStatusCode)
+            str += $"<tr>";
+            str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;' colspan = '2'>Toàn trường</td>";
+            str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{sumTotalDaLam}</td>";
+            str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;' >{sumTotalChuaLam}</td>";
+            str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{sumTotalSinhVien}</td>";
+            str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{tempData.ChiemTiLe}%</td>";
+            str += $"</tr style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>";
+
+            string contentEmail = templateContent
+                .Replace("[thoi_gian_ket_thuc]", $"{tempData.ThoiGianKetThuc.ToString("HH:mm")} ngày {tempData.ThoiGianKetThuc.ToString("dd/MM/yyyy")}")
+                .Replace("[ngay_hien_tai]", tempData.NgayHienTai.ToString("dd/MM/yyyy"))
+                .Replace("[so_sv_ks]", tempData.SoSVKhaoSat.ToString())
+                .Replace("[ty_le]", tempData.ChiemTiLe.ToString())
+                .Replace("[nd_bang_thong_ke]", str)
+                .Replace("\n", "")
+                .Replace("\r", "");
+
+            foreach (var khoa in tempData.TongHopKhoa)
             {
-                throw new SendEmailException("Yêu cầu api gửi email không thành công");
+                var thongTin = await _eduContext.AsAcademyFaculty.FirstOrDefaultAsync(o => o.Code == khoa.FacultyCode);
+                if (thongTin != null)
+                {
+                    HttpClient client = new HttpClient();
+                    var strContent = JsonSerializer.Serialize(new
+                    {
+                        emails = new[] {
+                            new {
+                                email = "vanminh.dev@gmail.com",
+                                data = new
+                                {
+                                    contentEmail
+                                }
+                            }
+                        },
+                        template = 28,
+                        subject = "V/v Thông báo số lượng bài khảo sát của sinh viên về hoạt động giảng dạy",
+                        email_identifier = "emails",
+                        datetime = DateTime.Now.ToString("dd-MM-yyyy hh:mm"),
+                        send_later_email = 0,
+                        timezone = 7
+                    });
+                    var content = new StringContent(strContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+                    var response = await client.PostAsync(_configuration.GetValue<string>("ApiSendEmail"), content);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        throw new SendEmailException("Yêu cầu api gửi email không thành công");
+                    }
+                }
             }
         }
     }

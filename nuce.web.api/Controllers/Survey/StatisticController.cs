@@ -165,6 +165,10 @@ namespace nuce.web.api.Controllers.Survey
                 await _asEduSurveyReportTotalService.SendUrgingEmail();
                 return Ok();
             }
+            catch (FileNotFoundException e)
+            {
+                return NotFound(new { message = e.Message });
+            }
             catch (SendEmailException e)
             {
                 _logger.LogError(e, e.Message);

@@ -315,10 +315,15 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 }
 
                 var tatCaBaiKsCuaDotNay = surveyContext.AsEduSurveyBaiKhaoSatSinhVien.Where(o => idbaikscuadotnay.Contains(o.BaiKhaoSatId));
-                var result = new List<TempDataNormal>();
+                var result = new TempDataNormal();
+                result.TongHopKhoa = new List<TotalFaculty>();
+                result.ThoiGianKetThuc = surveyRound.EndDate;
+                result.NgayHienTai = DateTime.Now;
 
                 _logger.LogInformation($"Bat dau thong ke tam");
                 var facultys = eduContext.AsAcademyFaculty.ToList();
+                var tongSVDathamGiaKS = 0;
+                var tongSVToanTruong = 0;
                 foreach (var f in facultys)
                 {
                     _logger.LogInformation($"Đang thong ke tam cho khoa co ma {f.Code}");
@@ -333,21 +338,36 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                     //bài ks sinh viên của khoa này
                     var tatCaBaiKs = tatCaBaiKsCuaDotNay.Where(o => allStudents.Contains(o.StudentCode));
 
+                    var tongSoSinhVien = allStudents.Count();
+                    if(tongSoSinhVien == 0)
+                    {
+                        continue;
+                    }
+                    tongSVToanTruong += tongSoSinhVien;
+                    var soSvDaLamBai = tatCaBaiKs.Where(o => o.Status == (int)SurveyStudentStatus.Done).GroupBy(o => o.StudentCode).Select(o => o.Key).Count();
+                    tongSVDathamGiaKS += soSvDaLamBai;
+                    var soSvChuaLamBai = tongSoSinhVien - soSvDaLamBai;
+
                     //số bài ks được phát
-                    var total = tatCaBaiKs.Count();
+                    //var total = tatCaBaiKs.Count();
 
                     //số bài hoàn thành
-                    var num = tatCaBaiKs.Count(o => o.Status == (int)SurveyStudentStatus.Done);
+                    //var num = tatCaBaiKs.Count(o => o.Status == (int)SurveyStudentStatus.Done);
 
-                    result.Add(new TempDataNormal
+                    result.TongHopKhoa.Add(new TotalFaculty
                     {
                         FacultyCode = f.Code,
                         FacultyName = f.Name,
-                        Total = total,
-                        Num = num
+                        TotalDaLam = soSvDaLamBai,
+                        TotalChuaLam = soSvChuaLamBai,
+                        TotalSinhVien = tongSoSinhVien,
+                        Percent = $"{(double)soSvDaLamBai/(tongSoSinhVien > 0 ? tongSoSinhVien : 1) * 100:##,0}"
                     });
                 }
                 _logger.LogInformation($"Thong ke tam hoan thanh");
+
+                result.SoSVKhaoSat = tongSVDathamGiaKS;
+                result.ChiemTiLe = $"{(double)tongSVDathamGiaKS /(tongSVToanTruong > 0 ? tongSVToanTruong : 1) * 100:##,0}";
 
                 //hoàn thành
                 status.Status = (int)TableTaskStatus.Done;
