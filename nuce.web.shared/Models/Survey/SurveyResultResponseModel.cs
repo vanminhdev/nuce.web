@@ -43,10 +43,10 @@ namespace nuce.web.shared.Models.Survey
         public int SoGiangVienDaKhaoSat { get; set; }
         public int SoGiangVienCanLayYKien { get; set; }
         public bool IsTotal { get; set; }
-        public List<DeMuc> DeMuc { get; set; }
+        public List<ChiTietLoaiMonHoc> LoaiMonHoc { get; set; }
     }
 
-    public class DeMuc
+    public class ChiTietLoaiMonHoc
     {
         public string Title { get; set; }
         public List<ChiTietCauHoi> CauHoi { get; set; }
@@ -56,14 +56,6 @@ namespace nuce.web.shared.Models.Survey
     {
         public string Content { get; set; }
 
-        public Dictionary<string, string> DanhSachDiem = new Dictionary<string, string>
-        {
-            { "1",  "31" },
-            { "2",  "9" },
-            { "3",  "81" },
-            { "4",  "250" },
-            { "5",  "576" },
-            { "ĐTB",  "4.41" },
-        };
+        public Dictionary<string, string> DanhSachDiem = new Dictionary<string, string> {};
     }
 }

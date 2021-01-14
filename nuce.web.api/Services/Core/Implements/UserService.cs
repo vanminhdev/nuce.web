@@ -145,16 +145,16 @@ namespace nuce.web.api.Services.Core.Implements
             
             if (UserParameters.LoginViaDaotao.Contains(model.LoginUserType))
             {
-                return true;
-                //ServiceSoapClient srvc = new ServiceSoapClient(EndpointConfiguration.ServiceSoap12);
-                //try
-                //{
-                //    return await srvc.authenAsync(model.Username, model.Password) == 1;
-                //}
-                //catch (Exception)
-                //{
-                //    throw new CallEduWebServiceException("Hiện tại không thể kết nối đến Đào tạo");
-                //}
+                //return true;
+                ServiceSoapClient srvc = new ServiceSoapClient(EndpointConfiguration.ServiceSoap12);
+                try
+                {
+                    return await srvc.authenAsync(model.Username, model.Password) == 1;
+                }
+                catch (Exception)
+                {
+                    throw new CallEduWebServiceException("Hiện tại không thể kết nối đến Đào tạo");
+                }
             }
             else
             {

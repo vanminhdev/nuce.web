@@ -262,7 +262,7 @@ namespace Nuce.CTSV
 
                 using (HttpClient httpClient = new HttpClient())
                 {
-                    string body = JsonConvert.SerializeObject(new { username = strMaSV, password = strMatKhau, isStudent = true });
+                    string body = JsonConvert.SerializeObject(new { username = strMaSV, password = strMatKhau, loginUserType = 1 });
                     var content = new StringContent(body, Encoding.UTF8, "application/json");
 
                     var res = await httpClient.PostAsync($"{CustomizeHttp.API_URI}/api/User/login", content);

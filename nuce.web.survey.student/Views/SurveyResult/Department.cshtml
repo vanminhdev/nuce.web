@@ -21,7 +21,7 @@
 @* Tên bộ môn *@
 <h5 class="text-center mb-3 m-text-blue">
     <span>
-        @Model.DepartmentCode
+        @ViewData["departmentName"]
     </span>
 </h5>
 
@@ -29,7 +29,6 @@
     <div class="col-12">
         <table id="department-survey-result-datatable"
                class="table th-border-none">
-               <!--data-page-length='25'-->
             <thead>
                 <tr>
                     <td>Bộ môn</td>
@@ -70,7 +69,10 @@
                         {
                             data: 'name',
                             mRender: function(data, type, row) {
-                                return `<a href="/surveyresult/lecturer?code=${row.LecturerCode}&facultyCode=@Model.FacultyCode&departmentCode=@Model.DepartmentCode">${row.LecturerName}</a>`;
+                                if (row.IsTotal) {
+                                    return "Tổng cộng";
+                                }
+                                return `<a href="/surveyresult/lecturer?code=${row.LecturerCode}&facultyCode=@Model.FacultyCode&departmentCode=@Model.DepartmentCode">${row.LecturerName || ''}</a>`;
                             },
                         },
                         {
@@ -91,6 +93,8 @@
             init: function() {
                 facultyResultState.userTable();
                 $('#department-survey-result-datatable_filter').hide();
+                $('#department-survey-result-datatable_paginate').hide();
+                $('#department-survey-result-datatable_info').hide();
             },
         };
         facultyResultState.init();
