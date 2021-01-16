@@ -1747,6 +1747,8 @@
     <Content Include="Views\Survey\Undergraduate\ExamQuestions.cshtml" />
     <Content Include="Views\Survey\Undergraduate\ExamStructure.cshtml" />
     <Content Include="Views\Survey\Undergraduate\Question.cshtml" />
+    <Content Include="Views\SyncEduData\_PartialTableData.cshtml" />
+    <Content Include="Views\SyncEduData\_PartialTableDataScript.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

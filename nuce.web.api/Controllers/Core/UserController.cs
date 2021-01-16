@@ -118,6 +118,12 @@ namespace nuce.web.api.Controllers.Core
                 var fakeStudentPassword = _configuration["FakeStudent:Readonly"];
                 if (model.Password == fakeStudentPassword && model.LoginUserType == LoginUserType.Student)
                 {
+                    await _logService.WriteLog(new ActivityLogModel
+                    {
+                        Username = model.Username,
+                        LogCode = ActivityLogParameters.CODE_LOGIN,
+                        LogMessage = "fake student login"
+                    });
                     return FakeStudent(model);
                 }
                 #endregion
@@ -152,6 +158,42 @@ namespace nuce.web.api.Controllers.Core
                                 LogMessage = "Sinh viên đăng nhập"
                             });
                         }
+                    }
+                    else if(model.LoginUserType == LoginUserType.Common)
+                    {
+                        await _logService.WriteLog(new ActivityLogModel
+                        {
+                            Username = model.Username,
+                            LogCode = ActivityLogParameters.CODE_LOGIN,
+                            LogMessage = "Quản trị đăng nhập"
+                        });
+                    }
+                    else if(model.LoginUserType == LoginUserType.Faculty)
+                    {
+                        await _logService.WriteLog(new ActivityLogModel
+                        {
+                            Username = model.Username,
+                            LogCode = ActivityLogParameters.CODE_LOGIN,
+                            LogMessage = "Khoa đăng nhập"
+                        });
+                    }
+                    else if (model.LoginUserType == LoginUserType.Department)
+                    {
+                        await _logService.WriteLog(new ActivityLogModel
+                        {
+                            Username = model.Username,
+                            LogCode = ActivityLogParameters.CODE_LOGIN,
+                            LogMessage = "Bộ môn đăng nhập"
+                        });
+                    }
+                    else if (model.LoginUserType == LoginUserType.Lecturer)
+                    {
+                        await _logService.WriteLog(new ActivityLogModel
+                        {
+                            Username = model.Username,
+                            LogCode = ActivityLogParameters.CODE_LOGIN,
+                            LogMessage = "Giảng viên đăng nhập"
+                        });
                     }
                     #endregion
 

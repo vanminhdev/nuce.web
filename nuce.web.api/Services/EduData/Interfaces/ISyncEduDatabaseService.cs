@@ -55,6 +55,8 @@ namespace nuce.web.api.Services.EduData.Interfaces
         /// <returns></returns>
         public Task<string> SyncUpdateFromDateEndDateCurrentClassRoom();
 
+        public Task<CountData> GetCountEduData();
+
         /// <summary>
         /// Đồng bộ cập nhật lớp môn học hiện tại, cập nhật trường FromDate và EndDate
         /// Tác động trên bảng Edu QA Week

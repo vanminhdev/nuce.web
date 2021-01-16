@@ -137,10 +137,6 @@
                                 <div class="col-6 col-md mb-2">
                                     <input class="form-control form-control" id="noidung" type="text" placeholder="Tìm theo nội dung" />
                                 </div>
-                                <div class="col-6 col-md mb-2">
-                                    @Html.DropDownList("type", new SelectList(Definitions.QuestionType, "Key", "Value"),
-                                        new { @id = "loai", @class = "selectpicker form-control custom-boostrap-select", title = "Tìm theo loại câu hỏi" })
-                                </div>
                                 <div class="col-12 col-md mb-2 d-flex flex-row">
                                     <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
                                         <i class="fas fa-redo"></i>
@@ -320,6 +316,7 @@
             table
                 .column(1).search($("#ma-cauhoi").val())
                 .column(3).search($("#noidung").val())
+                .column(4).search('@(QuestionType.SA)')
                 .draw();
         });
         table.column(4).search('@(QuestionType.SA)').draw();

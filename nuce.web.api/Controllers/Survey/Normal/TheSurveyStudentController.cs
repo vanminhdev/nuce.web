@@ -82,7 +82,7 @@ namespace nuce.web.api.Controllers.Survey.Normal
             }
             catch (RecordNotFoundException e)
             {
-                return NotFound(new { message = "Không lấy được nội dung bài khảo sát", detailMessage = e.Message });
+                return NotFound(new { message = e.Message });
             }
         }
 

@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using nuce.web.survey.student.Models.Survey.Normal;
 
 namespace nuce.web.survey.student.Controllers
 {
@@ -24,24 +25,6 @@ namespace nuce.web.survey.student.Controllers
         [AuthorizeActionFilter(RoleNames.Student)]
         public async Task<ActionResult> Index()
         {
-            #region lấy cả bài trước tốt nghiệp
-            //var accessToken = Request.Cookies[UserParameters.JwtAccessToken].Value;
-            //var handler = new JwtSecurityTokenHandler();
-            //var jwtSecurityToken = handler.ReadJwtToken(accessToken);
-            //if(jwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(r => r.Value).FirstOrDefault(o => o == "UndergraduateStudent") != null)
-            //{
-            //    var resUndergraduate = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateTheSurveyStudent/GetTheSurvey");
-            //    await base.HandleResponseAsync(resUndergraduate,
-            //        action200Async: async res =>
-            //        {
-            //            var jsonString = await res.Content.ReadAsStringAsync();
-            //            ViewData["UndergraduateTheSurvey"] = jsonString;
-            //            return null;
-            //        }
-            //    );
-            //}
-            #endregion
-
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurveyStudent/GetTheSurvey");
             return await base.HandleResponseAsync(response,
                 action200Async: async res =>
@@ -96,8 +79,13 @@ namespace nuce.web.survey.student.Controllers
                 action200Async: async res =>
                 {
                     var jsonString = await res.Content.ReadAsStringAsync();
-                    var questions = JsonConvert.DeserializeObject<List<QuestionJson>>(jsonString);
+                    var theSurveyContent = JsonConvert.DeserializeObject<TheSurveyContent>(jsonString);
+                    var questions = JsonConvert.DeserializeObject<List<QuestionJson>>(theSurveyContent.NoiDungDeKhaoSat);
                     ViewData["classRoomCode"] = classRoomCode;
+
+                    ViewData["ClassroomName"] = theSurveyContent.ClassroomName;
+                    ViewData["LeturerName"] = theSurveyContent.LeturerName;
+                    ViewData["SurveyRoundName"] = theSurveyContent.SurveyRoundName;
                     return View(questions);
                 }
             );

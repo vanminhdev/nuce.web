@@ -234,8 +234,6 @@ namespace nuce.web.api.Models.EduData
                 entity.Property(e => e.Name).HasMaxLength(100);
 
                 entity.Property(e => e.SemesterId).HasColumnName("SemesterID");
-
-                entity.Property(e => e.Name).HasMaxLength(100);
             });
 
             modelBuilder.Entity<AsAcademyLecturer>(entity =>
@@ -281,15 +279,14 @@ namespace nuce.web.api.Models.EduData
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
-                entity.Property(e => e.ClassRoomId).HasColumnName("ClassRoomID");
-
                 entity.Property(e => e.LecturerCode)
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LecturerId).HasColumnName("LecturerID");
-
-                entity.Property(e => e.SemesterId).HasColumnName("SemesterID");
+                entity.Property(e => e.Nhhk)
+                    .HasColumnName("NHHK")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<AsAcademySemester>(entity =>
@@ -347,6 +344,9 @@ namespace nuce.web.api.Models.EduData
                 entity.HasIndex(e => e.StudentCode)
                     .HasName("IX_Student_ClassRoom_StudentCode");
 
+                entity.HasIndex(e => new { e.StudentCode, e.ClassRoomCode })
+                    .HasName("IX_ClassRoomCode_StudentCode");
+
                 entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.ClassRoomCode)
@@ -388,8 +388,6 @@ namespace nuce.web.api.Models.EduData
             modelBuilder.Entity<AsAcademySubjectExtend>(entity =>
             {
                 entity.ToTable("AS_Academy_Subject_Extend");
-
-                entity.Property(e => e.Id).HasColumnName("Id");
 
                 entity.Property(e => e.Code)
                     .HasMaxLength(50)

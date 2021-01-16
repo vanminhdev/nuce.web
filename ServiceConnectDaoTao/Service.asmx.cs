@@ -863,6 +863,37 @@ on a.MaDK=b.MaDK");
             string strSql = string.Format(@"select count(1) from [dbo].[tkb1]");
             return (int)Microsoft.ApplicationBlocks.Data.SqlHelper.ExecuteScalar(strConnectionString, CommandType.Text, strSql);
         }
+
+        [WebMethod]
+        public DataTable getMaDKCanBoTkb1()
+        {
+            DataTable dataTable = new DataTable();
+            dataTable.TableName = "data";
+            string strSql = $"select distinct MaDK, MaCB, NHHK, Thu, TietBD, TuanHoc, MaPH from tkb1";
+            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["eduwebConnectionString"].ConnectionString);
+            SqlCommand cmd = new SqlCommand(strSql, conn);
+            cmd.CommandTimeout = 0;
+            conn.Open();
+
+            // create data adapter
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+
+            // this will query your database and return the result to your datatable
+            da.Fill(dataTable);
+            da.Dispose();
+            conn.Close();
+            return dataTable;
+        }
+
+        [WebMethod]
+        public int countMaDKTkb1()
+        {
+            string strConnectionString = ConfigurationManager.ConnectionStrings["eduwebConnectionString"].ConnectionString;
+            //Execute select command
+            string strSql = string.Format(@"select count(*) from (select distinct MaDK, NHHK from tkb1) as a");
+            return (int)Microsoft.ApplicationBlocks.Data.SqlHelper.ExecuteScalar(strConnectionString, CommandType.Text, strSql);
+        }
+
         [WebMethod]
         public int authen(string masv, string pass)
         {

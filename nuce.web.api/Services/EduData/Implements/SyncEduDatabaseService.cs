@@ -647,43 +647,215 @@ namespace nuce.web.api.Services.EduData.Implements
             }
         }
 
+        //public async Task SyncLastLecturerClassRoom()
+        //{
+        //    var transaction = _eduDataContext.Database.BeginTransaction();
+        //    try
+        //    {
+        //        var result = await srvc.getAllTKB1JoinToDk1Async();
+        //        XmlNodeList listNode = result.Any1.GetElementsByTagName("dataTKB");
+        //        XmlNodeList nodeFoundByTagName = null;
+
+        //        #region Xử lý chuẩn hoá dữ liệu
+        //        var list_ThoiKhoaBieu_Join_DangKy1_V1 = new List<ThoiKhoaBieuJoinToDangKy>();
+        //        foreach (XmlElement item in listNode)
+        //        {
+        //            var tkbJoinDangKy = new ThoiKhoaBieuJoinToDangKy();
+        //            nodeFoundByTagName = item.GetElementsByTagName("MaDK");
+        //            tkbJoinDangKy.MaDK = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+
+        //            nodeFoundByTagName = item.GetElementsByTagName("MaCB");
+        //            tkbJoinDangKy.MaCB = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+
+        //            nodeFoundByTagName = item.GetElementsByTagName("Thu");
+        //            tkbJoinDangKy.Thu = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+
+        //            nodeFoundByTagName = item.GetElementsByTagName("TietDB");
+        //            tkbJoinDangKy.TietDB = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+
+        //            nodeFoundByTagName = item.GetElementsByTagName("SoTiet");
+        //            tkbJoinDangKy.SoTiet = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+
+        //            nodeFoundByTagName = item.GetElementsByTagName("MaMH");
+        //            tkbJoinDangKy.MaMH = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+
+        //            nodeFoundByTagName = item.GetElementsByTagName("TuanHoc");
+        //            tkbJoinDangKy.TuanHoc = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+
+        //            nodeFoundByTagName = item.GetElementsByTagName("MaPH");
+        //            string MaPH = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+        //            if (!string.IsNullOrWhiteSpace(MaPH))
+        //            {
+        //                if (!MaPH.Equals("XMH"))
+        //                {
+        //                    string[] roomArr = new string[2];
+
+        //                    if (MaPH.Contains(" "))
+        //                        roomArr = MaPH.Split(' ').ToArray();
+        //                    else if (MaPH.Contains("."))
+        //                        roomArr = MaPH.Split('.').ToArray();
+        //                    else if (MaPH.Contains("-"))
+        //                        roomArr = MaPH.Split('-').ToArray();
+        //                    else if (MaPH.Contains("_"))
+        //                        roomArr = MaPH.Split('_').ToArray();
+        //                    else
+        //                    {
+        //                        roomArr[0] = MaPH;
+        //                        roomArr[1] = "";
+        //                    }
+        //                    //throw new ArgumentException("TKB chứa ký tự không hợp lệ : " + JsonConvert.SerializeObject(sched));
+
+        //                    if (!roomArr[0].All(Char.IsDigit)) // VD H1.101
+        //                    {
+        //                        MaPH = string.Concat(roomArr[1], ".", roomArr[0]); // => 101.H1
+        //                    }
+        //                }
+        //            }
+        //            tkbJoinDangKy.MaPH = MaPH;
+        //            list_ThoiKhoaBieu_Join_DangKy1_V1.Add(tkbJoinDangKy);
+        //        }
+        //        #endregion
+
+        //        #region Xử lý chuẩn hoá dữ liệu điền thông tin thêm vào giảng viên
+        //        var list_ThoiKhoaBieu_Join_DangKy1_V2 = new List<ThoiKhoaBieuJoinToDangKy>();
+        //        foreach (var item in list_ThoiKhoaBieu_Join_DangKy1_V1)
+        //        {
+        //            var tkbJoinDK = new ThoiKhoaBieuJoinToDangKy();
+        //            tkbJoinDK.MaDK = item.MaDK;
+        //            tkbJoinDK.Thu = item.Thu;
+        //            tkbJoinDK.TietDB = item.TietDB;
+        //            tkbJoinDK.SoTiet = item.SoTiet;
+        //            tkbJoinDK.MaPH = item.MaPH;
+        //            tkbJoinDK.TuanHoc = item.TuanHoc;
+        //            tkbJoinDK.MaMH = item.MaMH;
+        //            string strMaCB = item.MaCB;
+        //            if (string.IsNullOrWhiteSpace(strMaCB))
+        //            {
+        //                //Xử lý tìm cán bộ tương ứng và có mã cán bộ khác trắng
+        //                tkbJoinDK.MaCB = getCanBoTrongLopGhepTuongUng(list_ThoiKhoaBieu_Join_DangKy1_V1,
+        //                    item.MaMH, item.Thu, item.TietDB, item.MaPH, item.TuanHoc);
+        //            }
+        //            else
+        //                tkbJoinDK.MaCB = strMaCB;
+        //            list_ThoiKhoaBieu_Join_DangKy1_V2.Add(tkbJoinDK);
+        //        }
+        //        #endregion
+
+        //        #region xử lý chèn vào csdl
+        //        long lopId = -1;
+        //        long canBoId = -1;
+        //        list_ThoiKhoaBieu_Join_DangKy1_V2 = list_ThoiKhoaBieu_Join_DangKy1_V2.Distinct((x, y) => {
+        //            if (x.MaDK == y.MaDK && x.MaCB == y.MaCB)
+        //                return true;
+        //            return false;
+        //        }).ToList();
+        //        foreach (var item in list_ThoiKhoaBieu_Join_DangKy1_V2)
+        //        {
+        //            var strMaDK = item.MaDK.Replace(" ", "");
+        //            var strMaCB = item.MaCB;
+        //            if (!string.IsNullOrWhiteSpace(strMaDK) && !string.IsNullOrWhiteSpace(strMaCB))
+        //            {
+        //                var lop = await _eduDataContext.AsAcademyClassRoom.FirstOrDefaultAsync(c => c.Code == strMaDK);
+        //                var canBo = await _eduDataContext.AsAcademyLecturer.FirstOrDefaultAsync(c => c.Code == strMaCB);
+
+        //                if (lop != null && canBo != null)
+        //                {
+        //                    lopId = lop.Id;
+        //                    canBoId = canBo.Id;
+
+        //                    //xoá lớp học phần có mã đăng ký cụ thể vd 010211LOP21
+        //                    var listLecturerClassRoom = await _eduDataContext.AsAcademyLecturerClassRoom.Where(lc => lc.ClassRoomCode == strMaDK).ToListAsync();
+        //                    _eduDataContext.AsAcademyLecturerClassRoom.RemoveRange(listLecturerClassRoom);
+
+        //                    var lecturerClassRoom = await _eduDataContext.AsAcademyCLecturerClassRoom
+        //                        .FirstOrDefaultAsync(o => o.LecturerCode == strMaCB && o.ClassRoomCode == strMaDK);
+
+        //                    if (lecturerClassRoom == null)
+        //                    {
+        //                        _eduDataContext.AsAcademyLecturerClassRoom.Add(new AsAcademyLecturerClassRoom
+        //                        {
+        //                            SemesterId = await GetLastSemesterId(),
+        //                            ClassRoomId = lopId,
+        //                            ClassRoomCode = strMaDK,
+        //                            LecturerId = canBoId,
+        //                            LecturerCode = strMaCB
+        //                        });
+        //                    }
+        //                    else
+        //                    {
+        //                        lecturerClassRoom.SemesterId = await GetLastSemesterId();
+        //                        lecturerClassRoom.ClassRoomId = lopId;
+        //                        lecturerClassRoom.ClassRoomCode = strMaDK;
+        //                        lecturerClassRoom.LecturerId = canBoId;
+        //                        lecturerClassRoom.LecturerCode = strMaCB;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        #endregion
+
+        //        await _eduDataContext.SaveChangesAsync();
+        //        transaction.Commit();
+        //    }
+        //    catch (DbUpdateException e)
+        //    {
+        //        await transaction.RollbackAsync();
+        //        throw e;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        await transaction.RollbackAsync();
+        //        var message = UtilsException.GetMainMessage(e);
+        //        throw new CallEduWebServiceException(message);
+        //    }
+        //}
+
+        class GiangVienLopMonHoc
+        {
+            public string MaMon { get; set; }
+            public string MaDK { get; set; }
+            public string MaCB { get; set; }
+            public string NHHK { get; set; }
+            public string Thu { get; set; }
+            public string TietBD { get; set; }
+            public string TuanHoc { get; set; }
+            public string MaPH { get; set; }
+        }
+
         public async Task SyncLastLecturerClassRoom()
         {
             var transaction = _eduDataContext.Database.BeginTransaction();
             try
             {
-                var result = await srvc.getAllTKB1JoinToDk1Async();
-                XmlNodeList listNode = result.Any1.GetElementsByTagName("dataTKB");
+                var result = await srvc.getMaDKCanBoTkb1Async();
+                XmlNodeList listNode = result.Any1.GetElementsByTagName("data");
                 XmlNodeList nodeFoundByTagName = null;
 
-                #region Xử lý chuẩn hoá dữ liệu
-                var list_ThoiKhoaBieu_Join_DangKy1_V1 = new List<ThoiKhoaBieuJoinToDangKy>();
+                var lstMaDKMaCB = new List<GiangVienLopMonHoc>();
+                #region
                 foreach (XmlElement item in listNode)
                 {
-                    var tkbJoinDangKy = new ThoiKhoaBieuJoinToDangKy();
                     nodeFoundByTagName = item.GetElementsByTagName("MaDK");
-                    tkbJoinDangKy.MaDK = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+                    var MaDK = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
 
                     nodeFoundByTagName = item.GetElementsByTagName("MaCB");
-                    tkbJoinDangKy.MaCB = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+                    var MaCB = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+
+                    nodeFoundByTagName = item.GetElementsByTagName("NHHK");
+                    var NHHK = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
 
                     nodeFoundByTagName = item.GetElementsByTagName("Thu");
-                    tkbJoinDangKy.Thu = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+                    var Thu = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
 
-                    nodeFoundByTagName = item.GetElementsByTagName("TietDB");
-                    tkbJoinDangKy.TietDB = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
-
-                    nodeFoundByTagName = item.GetElementsByTagName("SoTiet");
-                    tkbJoinDangKy.SoTiet = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
-
-                    nodeFoundByTagName = item.GetElementsByTagName("MaMH");
-                    tkbJoinDangKy.MaMH = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+                    nodeFoundByTagName = item.GetElementsByTagName("TietBD");
+                    var TietBD = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
 
                     nodeFoundByTagName = item.GetElementsByTagName("TuanHoc");
-                    tkbJoinDangKy.TuanHoc = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+                    var TuanHoc = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
 
                     nodeFoundByTagName = item.GetElementsByTagName("MaPH");
-                    string MaPH = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+                    var MaPH = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
+                    
                     if (!string.IsNullOrWhiteSpace(MaPH))
                     {
                         if (!MaPH.Equals("XMH"))
@@ -703,7 +875,6 @@ namespace nuce.web.api.Services.EduData.Implements
                                 roomArr[0] = MaPH;
                                 roomArr[1] = "";
                             }
-                            //throw new ArgumentException("TKB chứa ký tự không hợp lệ : " + JsonConvert.SerializeObject(sched));
 
                             if (!roomArr[0].All(Char.IsDigit)) // VD H1.101
                             {
@@ -711,90 +882,96 @@ namespace nuce.web.api.Services.EduData.Implements
                             }
                         }
                     }
-                    tkbJoinDangKy.MaPH = MaPH;
-                    list_ThoiKhoaBieu_Join_DangKy1_V1.Add(tkbJoinDangKy);
+
+                    lstMaDKMaCB.Add(new GiangVienLopMonHoc { 
+                        MaMon = MaDK?.Split(" ")[0],
+                        MaDK = MaDK?.Replace(" ", ""),
+                        MaCB = MaCB, 
+                        NHHK = NHHK,
+                        Thu = Thu,
+                        TietBD = TietBD,
+                        TuanHoc = TuanHoc,
+                        MaPH = MaPH
+                    });
                 }
                 #endregion
 
-                #region Xử lý chuẩn hoá dữ liệu điền thông tin thêm vào giảng viên
-                var list_ThoiKhoaBieu_Join_DangKy1_V2 = new List<ThoiKhoaBieuJoinToDangKy>();
-                foreach (var item in list_ThoiKhoaBieu_Join_DangKy1_V1)
+                #region xử lý
+                var lstResultMaDKMaCB = new List<GiangVienLopMonHoc>();
+                foreach(var current in lstMaDKMaCB)
                 {
-                    var tkbJoinDK = new ThoiKhoaBieuJoinToDangKy();
-                    tkbJoinDK.MaDK = item.MaDK;
-                    tkbJoinDK.Thu = item.Thu;
-                    tkbJoinDK.TietDB = item.TietDB;
-                    tkbJoinDK.SoTiet = item.SoTiet;
-                    tkbJoinDK.MaPH = item.MaPH;
-                    tkbJoinDK.TuanHoc = item.TuanHoc;
-                    tkbJoinDK.MaMH = item.MaMH;
-                    string strMaCB = item.MaCB;
-                    if (string.IsNullOrWhiteSpace(strMaCB))
+                    //tìm theo mã đk và năm học học kỳ
+                    var ins = lstResultMaDKMaCB.FirstOrDefault(o => o.MaDK == current.MaDK && o.NHHK == current.NHHK && o.MaPH == current.MaPH);
+                    if(ins == null) //chưa có thì thêm
                     {
-                        //Xử lý tìm cán bộ tương ứng và có mã cán bộ khác trắng
-                        tkbJoinDK.MaCB = getCanBoTrongLopGhepTuongUng(list_ThoiKhoaBieu_Join_DangKy1_V1,
-                            item.MaMH, item.Thu, item.TietDB, item.MaPH, item.TuanHoc);
+                        //tìm mã cán bộ
+                        var timCanBo = lstMaDKMaCB.FirstOrDefault(o => o.MaDK == current.MaDK && o.NHHK == current.NHHK && !string.IsNullOrEmpty(o.MaCB));
+                        if(timCanBo != null)
+                        {
+                            lstResultMaDKMaCB.Add(new GiangVienLopMonHoc
+                            {
+                                MaMon = current.MaMon,
+                                MaDK = current.MaDK,
+                                MaCB = timCanBo.MaCB,
+                                NHHK = current.NHHK,
+                                Thu = current.Thu,
+                                TietBD = current.TietBD,
+                                TuanHoc = current.TuanHoc,
+                                MaPH = current.MaPH
+                            });
+                        }
+                        else
+                        {
+                            lstResultMaDKMaCB.Add(new GiangVienLopMonHoc {
+                                MaMon = current.MaMon,
+                                MaDK = current.MaDK, 
+                                MaCB = "", 
+                                NHHK = current.NHHK ,
+                                Thu = current.Thu,
+                                TietBD = current.TietBD,
+                                TuanHoc = current.TuanHoc,
+                                MaPH = current.MaPH
+                            });
+                        }
+                    }
+                }
+
+                //lớp ghép
+                foreach(var current in lstResultMaDKMaCB)
+                {
+                    if (current.MaCB == "") //chưa có thì tìm
+                    {
+                        var test = current;
+                        //tìm mã cán bộ cùng lớp ghép khác lớp đk
+                        var timCanBo = lstMaDKMaCB.FirstOrDefault(o => o.MaMon == current.MaMon && o.NHHK == current.NHHK && o.Thu == current.Thu 
+                        && o.TietBD == current.TietBD && o.MaPH == current.MaPH && o.TuanHoc == current.TuanHoc && !string.IsNullOrEmpty(o.MaCB));
+
+                        if (timCanBo != null)
+                        {
+                            current.MaCB = timCanBo.MaCB;
+                        }
+                    }
+                }
+                #endregion
+
+                #region chèn vào csdl
+                foreach (var item in lstResultMaDKMaCB)
+                {
+                    var lecturerClassRoom = await _eduDataContext.AsAcademyLecturerClassRoom
+                                .FirstOrDefaultAsync(o => o.ClassRoomCode == item.MaDK && o.Nhhk == item.NHHK);
+
+                    if (lecturerClassRoom == null)
+                    {
+                        _eduDataContext.AsAcademyLecturerClassRoom.Add(new AsAcademyLecturerClassRoom
+                        {
+                            ClassRoomCode = item.MaDK,
+                            LecturerCode = item.MaCB,
+                            Nhhk = item.NHHK
+                        });
                     }
                     else
-                        tkbJoinDK.MaCB = strMaCB;
-                    list_ThoiKhoaBieu_Join_DangKy1_V2.Add(tkbJoinDK);
-                }
-                var test = list_ThoiKhoaBieu_Join_DangKy1_V1.Where(o => o.MaDK.Replace(" ", "") == "05035362XD8").ToList();
-                #endregion
-
-                #region xử lý chèn vào csdl
-                long lopId = -1;
-                long canBoId = -1;
-                list_ThoiKhoaBieu_Join_DangKy1_V2 = list_ThoiKhoaBieu_Join_DangKy1_V2.Distinct((x, y) => {
-                    if (x.MaDK == y.MaDK && x.MaCB == y.MaCB)
-                        return true;
-                    return false;
-                }).ToList();
-                foreach (var item in list_ThoiKhoaBieu_Join_DangKy1_V2)
-                {
-                    var strMaDK = item.MaDK.Replace(" ", "");
-                    if(strMaDK == "02030663XD1")
                     {
-
-                    }
-                    var strMaCB = item.MaCB;
-                    if (!string.IsNullOrWhiteSpace(strMaDK) && !string.IsNullOrWhiteSpace(strMaCB))
-                    {
-                        var lop = await _eduDataContext.AsAcademyClassRoom.FirstOrDefaultAsync(c => c.Code == strMaDK);
-                        var canBo = await _eduDataContext.AsAcademyLecturer.FirstOrDefaultAsync(c => c.Code == strMaCB);
-
-                        if (lop != null && canBo != null)
-                        {
-                            lopId = lop.Id;
-                            canBoId = canBo.Id;
-
-                            //xoá lớp học phần có mã đăng ký cụ thể vd 010211LOP21
-                            var listLecturerClassRoom = await _eduDataContext.AsAcademyLecturerClassRoom.Where(lc => lc.ClassRoomCode == strMaDK).ToListAsync();
-                            _eduDataContext.AsAcademyLecturerClassRoom.RemoveRange(listLecturerClassRoom);
-
-                            var lecturerClassRoom = await _eduDataContext.AsAcademyCLecturerClassRoom
-                                .FirstOrDefaultAsync(o => o.LecturerCode == strMaCB && o.ClassRoomCode == strMaDK);
-
-                            if (lecturerClassRoom == null)
-                            {
-                                _eduDataContext.AsAcademyLecturerClassRoom.Add(new AsAcademyLecturerClassRoom
-                                {
-                                    SemesterId = await GetLastSemesterId(),
-                                    ClassRoomId = lopId,
-                                    ClassRoomCode = strMaDK,
-                                    LecturerId = canBoId,
-                                    LecturerCode = strMaCB
-                                });
-                            }
-                            else
-                            {
-                                lecturerClassRoom.SemesterId = await GetLastSemesterId();
-                                lecturerClassRoom.ClassRoomId = lopId;
-                                lecturerClassRoom.ClassRoomCode = strMaDK;
-                                lecturerClassRoom.LecturerId = canBoId;
-                                lecturerClassRoom.LecturerCode = strMaCB;
-                            }
-                        }
+                        lecturerClassRoom.LecturerCode = item.MaCB;
                     }
                 }
                 #endregion
@@ -1407,13 +1584,11 @@ namespace nuce.web.api.Services.EduData.Implements
                 .Skip(skip).Take(take);
 
             var data = await querySkip
-                .Select(o => new AsAcademyLecturerClassRoom { 
-                    SemesterId = o.lecturerClassroom != null ? o.lecturerClassroom.SemesterId : -1,
+                .Select(o => new AsAcademyLecturerClassRoom {
                     Id = o.lecturerClassroom != null ? o.lecturerClassroom.Id : -1,
-                    ClassRoomId = o.classroom.Id,
                     ClassRoomCode = o.classroom.Code,
-                    LecturerId = o.lecturerClassroom != null ? o.lecturerClassroom.LecturerId : null,
-                    LecturerCode = o.lecturerClassroom != null ? o.lecturerClassroom.LecturerCode : ""
+                    LecturerCode = o.lecturerClassroom != null ? o.lecturerClassroom.LecturerCode : "",
+                    Nhhk = o.lecturerClassroom.Nhhk
                 })
                 .ToListAsync();
 
@@ -1652,6 +1827,32 @@ namespace nuce.web.api.Services.EduData.Implements
             catch (Exception e)
             {
                 await transaction.RollbackAsync();
+                var message = UtilsException.GetMainMessage(e);
+                throw new CallEduWebServiceException(message);
+            }
+        }
+
+        public async Task<CountData> GetCountEduData()
+        {
+            try
+            {
+                var countData = new CountData();
+                countData.CountKhoa = await srvc.countKhoaAsync();
+                countData.CountBoMon = await srvc.countBoMonAsync();
+                countData.CountNganhHoc = await srvc.countNganhAsync();
+                countData.CountMonHoc = await srvc.countMonHocAsync();
+
+                countData.CountLopQuanLy = await srvc.countLopAsync();
+                countData.CountGiangVien = await srvc.countCanBoAsync();
+                countData.CountSinhVien = await srvc.countSinhVienAsync();
+
+                countData.CountLopMonHoc = await srvc.countToDK1Async();
+                countData.CountLopMonHocGiangVien = 0;
+                countData.CountLopMonHocSinhVien = await srvc.countKqdk1Async();
+                return countData;
+            }
+            catch (Exception e)
+            {
                 var message = UtilsException.GetMainMessage(e);
                 throw new CallEduWebServiceException(message);
             }

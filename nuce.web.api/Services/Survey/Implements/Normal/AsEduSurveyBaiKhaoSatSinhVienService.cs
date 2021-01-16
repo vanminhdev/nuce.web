@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
+using nuce.web.api.Models.EduData;
 using nuce.web.api.Models.Status;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Models.Survey.JsonData;
@@ -12,6 +13,7 @@ using nuce.web.api.Services.Shared;
 using nuce.web.api.Services.Survey.Base;
 using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Survey;
+using nuce.web.api.ViewModel.Survey.Normal.TheSurvey;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,17 +27,19 @@ namespace nuce.web.api.Services.Survey.Implements
     {
         private readonly ILogger<AsEduSurveyBaiKhaoSatSinhVienService> _logger;
         private readonly SurveyContext _context;
+        private readonly EduDataContext _eduContext;
         private readonly StatusContext _statusContext;
         private readonly IBackgroundTaskQueue _taskQueue;
         private readonly CancellationToken _cancellationToken;
         private readonly FakerService _fakerService;
 
-        public AsEduSurveyBaiKhaoSatSinhVienService(ILogger<AsEduSurveyBaiKhaoSatSinhVienService> logger, SurveyContext context, StatusContext statusContext, 
+        public AsEduSurveyBaiKhaoSatSinhVienService(ILogger<AsEduSurveyBaiKhaoSatSinhVienService> logger, SurveyContext context, StatusContext statusContext, EduDataContext eduDataContext,
             IBackgroundTaskQueue taskQueue, IHostApplicationLifetime applicationLifetime, FakerService fakerService)
         {
             _logger = logger;
             _context = context;
             _statusContext = statusContext;
+            _eduContext = eduDataContext;
 
             _taskQueue = taskQueue;
             _cancellationToken = applicationLifetime.ApplicationStopping;
@@ -59,7 +63,7 @@ namespace nuce.web.api.Services.Survey.Implements
             return false;
         }
 
-        public async Task<string> GetTheSurveyContent(string studentCode, string classroomCode, Guid theSurveyId)
+        public async Task<TheSurveyContent> GetTheSurveyContent(string studentCode, string classroomCode, Guid theSurveyId)
         {
             if (!await IsOpenSurveyRound())
             {
@@ -87,7 +91,18 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException("Không tìm thấy bài khảo sát");
             }
 
-            return theSurvey.NoiDungDeThi;
+            var surveyRound = await _context.AsEduSurveyDotKhaoSat.FirstOrDefaultAsync(o => o.Id == theSurvey.DotKhaoSatId);
+            var classroom = await _eduContext.AsAcademyClassRoom.FirstOrDefaultAsync(o => o.Code == baiKSsv.ClassRoomCode);
+
+            var result = new TheSurveyContent
+            {
+                ClassroomName = classroom?.ClassCode,
+                LeturerName = baiKSsv.LecturerName,
+                SurveyRoundName = surveyRound?.Name,
+                NoiDungDeKhaoSat = theSurvey.NoiDungDeThi
+            };
+
+            return result;
         }
 
         public async Task<List<TheSurveyStudent>> GetTheSurvey(string studentCode)

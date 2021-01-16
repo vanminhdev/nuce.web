@@ -162,6 +162,7 @@
     <Compile Include="Models\NewsModel.cs" />
     <Compile Include="Models\ResponseMessage.cs" />
     <Compile Include="Models\SurveyResultModel.cs" />
+    <Compile Include="Models\Survey\Normal\TheSurveyContent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

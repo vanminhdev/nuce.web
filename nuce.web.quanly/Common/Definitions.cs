@@ -41,7 +41,7 @@ namespace nuce.web.quanly.Common
             //{"SP", "Nghe nói" },
             //{"EQ", "Câu hỏi cảm xúc" },
             //{"TL", "Hai cấp" },
-            {"T",  "Chỉ là tiêu đề"},
+            {"T",  "Tiêu đề"},
             {"CityC", "Lựa chọn tỉnh thành" },
             {"StarRating", "Vote Sao" },
         };

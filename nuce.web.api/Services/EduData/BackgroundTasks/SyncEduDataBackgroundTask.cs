@@ -64,8 +64,9 @@ namespace nuce.web.api.Services.EduData.BackgroundTasks
                 XmlNodeList temp = null;
 
                 _logger.LogInformation("sync last student classroom is start.");
-
+                //eduDataContext.Database.ExecuteSqlRaw($"TRUNCATE TABLE As_Academy_Student_ClassRoom");
                 var semester = await eduDataContext.AsAcademySemester.FirstOrDefaultAsync(o => o.Status == (int)SemesterStatus.IsLast);
+                var countTrungLap = 0;
                 while (true)
                 {
                     transaction = eduDataContext.Database.BeginTransaction();
@@ -88,7 +89,7 @@ namespace nuce.web.api.Services.EduData.BackgroundTasks
                             var studentId = student != null ? student.Id : -1;
 
                             var studentClassRoom = await eduDataContext.AsAcademyStudentClassRoom
-                                .FirstOrDefaultAsync(sc => sc.StudentCode == strMaSV && sc.ClassRoomId == classRoomId);
+                                .FirstOrDefaultAsync(sc => sc.StudentCode == strMaSV && sc.ClassRoomCode == classRoom.Code);
 
                             if (studentClassRoom == null)
                             {
@@ -100,6 +101,11 @@ namespace nuce.web.api.Services.EduData.BackgroundTasks
                                     StudentCode = strMaSV,
                                     SemesterId = semester.Id
                                 });
+                            } 
+                            else
+                            {
+                                countTrungLap++;
+                                _logger.LogInformation($"dong bo sinh vien lop mon hoc bị trung ma sv: {strMaSV}, ma lop: {classRoom.Code}");
                             }
                         }
                         page++;
@@ -112,6 +118,7 @@ namespace nuce.web.api.Services.EduData.BackgroundTasks
                     _logger.LogInformation($"sync last student classroom {totalDone} record");
                 }
                 _logger.LogInformation("sync last student classroom is done");
+                _logger.LogInformation($"co tat ca {countTrungLap} ban ghi bi trung lap");
 
                 status.Status = (int)TableTaskStatus.Done;
                 status.IsSuccess = true;

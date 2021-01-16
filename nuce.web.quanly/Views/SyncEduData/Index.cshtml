@@ -15,678 +15,194 @@
     </style>
 }
 
-<div class="mx-md-5 mx-2">
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-        <li class="nav-item">
-            <a class="nav-link active" id="basic-tab" data-toggle="tab" href="#basic" role="tab" aria-controls="basic" aria-selected="true">Đồng bộ cơ bản</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="student-lecturer-tab" data-toggle="tab" href="#student-lecturer" role="tab" aria-controls="student-lecturer" aria-selected="true">Đồng bộ sinh viên, giảng viên</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="last-semester-tab" data-toggle="tab" href="#last-semester" role="tab" aria-controls="last-semester" aria-selected="false">Đồng bộ kỳ trước</a>
-        </li>
-        @*<li class="nav-item">
-            <a class="nav-link" id="current-semester-tab" data-toggle="tab" href="#current-semester" role="tab" aria-controls="current-semester" aria-selected="false">Đồng bộ kỳ hiện tại</a>
-        </li>*@
-    </ul>
-    <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active" id="basic" role="tabpanel" aria-labelledby="basic-tab">
-            <div class="row mt-3">
-                <div class="col-12 col-md-6">
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <h3 id="datatable-faculty-header" class="text-center text-dark">Khoa</h3>
-                        </div>
-                        <div id="message-faculty" class="col-12">
-                        </div>
-                        <div class="col-12">
-                            <div class="form-row">
-                                <div id="s-khoa" class="col-8 col-md mb-2">
-                                    <div class="row">
-                                    </div>
-                                </div>
-                                <div class="col-4 col-md-2 mb-2 d-flex align-items-start justify-content-center">
-                                </div>
-                                <div class="col-12 col-md mb-2 d-flex align-items-start justify-content-md-end justify-content-center">
-                                    <button id="btn-sync-faculty" title="Đồng bộ dữ liệu từ Đào tạo" class="btn btn-primary btn-sm mr-md-2">Đồng bộ</button>
-                                    <buttom id="btn-delete-faculty" title="Xoá toàn bộ bản ghi" class="btn btn-danger btn-sm">Xoá</buttom>
-                                </div>
+<div class="mx-md-5 mx-2 mt-md-0" style="margin-top: 100px;">
+    <div class="">
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="dong-bo-tab" data-toggle="tab" href="#dong-bo" role="tab" aria-selected="true">Đồng bộ dữ liệu</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="ra-soat-tab" data-toggle="tab" href="#ra-soat" role="tab" aria-selected="true">Rà soát dữ liệu</a>
+            </li>
+        </ul>
+    </div>
+    <div>
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="dong-bo" role="tabpanel" aria-labelledby="dong-bo">
+                <div class="row">
+                    <div class="col-12 mt-2">
+                        <div class="d-flex">
+                            <div style="min-width:160px;">
+                                <button class="btn btn-primary" id="btn-dong-bo-so-luong">Đồng bộ số lượng</button>
                             </div>
-                        </div>
-                        <div class="col-12">
-                            <table id="datatable-faculty" class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Id</th>
-                                        <th class="text-center" width="15%">Mã kỳ học</th>
-                                        <th class="text-center">Mã</th>
-                                        <th class="text-center" width="55%">Tên</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <h3 id="datatable-department-header" class="text-center text-dark">Bộ môn</h3>
-                        </div>
-                        <div id="message-department" class="col-12">
-                        </div>
-                        <div class="col-12">
-                            <div class="form-row">
-                                <div id="s-bomon" class="col-8 col-md mb-2">
-                                    <div class="row">
-                                    </div>
+                            <div class="flex-grow-1 d-md-flex">
+                                <div class="ml-1 ml-md-5" style="min-width: 355px; width: 355px;">
+                                    <ul class="list-group">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Khoa
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;" id="countKhoa">0</span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Ngành học
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;" id="countNganhHoc">0</span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Bộ môn
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;" id="countBoMon">0</span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Môn học
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;" id="countMonHoc">0</span>
+                                            </div>
+                                        </li>
+                                    </ul>
                                 </div>
-                                <div class="col-4 col-md-2 mb-2 d-flex align-items-start justify-content-center">
-                                </div>
-                                <div class="col-12 col-md mb-2 d-flex align-items-start justify-content-md-end justify-content-center">
-                                    <button id="btn-sync-department" title="Đồng bộ dữ liệu từ Đào tạo" class="btn btn-primary btn-sm mr-md-2">Đồng bộ</button>
-                                    <buttom id="btn-delete-department" title="Xoá toàn bộ bản ghi" class="btn btn-danger btn-sm">Xoá</buttom>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <table id="datatable-department" class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Id</th>
-                                        <th class="text-center" width="15%">Mã kỳ học</th>
-                                        <th class="text-center">Mã</th>
-                                        <th class="text-center" width="35%">Tên</th>
-                                        <th class="text-center">Id Khoa</th>
-                                        <th class="text-center">Mã khoa</th>
-                                        <th class="text-center">Trưởng bộ môn</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="col-12 col-md-6">
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <h3 id="datatable-academics-header" class="text-center text-dark">Ngành học</h3>
-                        </div>
-                        <div id="message-academics" class="col-12">
-                        </div>
-                        <div class="col-12">
-                            <div class="form-row">
-                                <div id="s-nganh" class="col-8 col-md-8 mb-2">
-                                    <div class="row">
-                                        <div class="col-12 col-md-4">
-                                            <input id="code-academics" class="form-control form-control-sm" type="text" placeholder="Mã" />
-                                        </div>
-                                        <div class="col-12 col-md-4">
-                                            <input id="name-academics" class="form-control form-control-sm" type="text" placeholder="Tên" />
-                                        </div>
-                                    </div>
+                                <div class="ml-1 ml-md-5" style="min-width: 355px; width: 355px;">
+                                    <ul class="list-group">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Giảng viên
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;" id="countGiangVien">0</span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Lớp quản lý
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;" id="countLopQuanLy">0</span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Sinh viên
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;" id="countSinhVien">0</span>
+                                            </div>
+                                        </li>
+                                    </ul>
                                 </div>
-                                <div class="col-4 col-md-2 mb-2 d-flex align-items-start justify-content-center">
-                                    <div class="d-flex">
-                                        <div class="clear-input d-flex align-items-center ml-2 mr-3" clear-input="#s-nganh" title="Nhập lại">
-                                            <i class="fas fa-redo"></i>
-                                        </div>
-                                        <button id="btn-search-academics" class="btn btn-secondary btn-sm">Tìm kiếm</button>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md mb-2 d-flex align-items-start justify-content-md-end justify-content-center">
-                                    <button id="btn-sync-academics" title="Đồng bộ dữ liệu từ Đào tạo" class="btn btn-primary btn-sm mr-md-2">Đồng bộ</button>
-                                    <buttom id="btn-delete-academics" title="Xoá toàn bộ bản ghi" class="btn btn-danger btn-sm">Xoá</buttom>
+
+                                <div class="ml-1 ml-md-5" style="min-width: 355px; width: 355px;">
+                                    <ul class="list-group">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Lớp môn học
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;" id="countLopMonHoc">0</span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Lớp môn học giảng viên
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;" id="countLopMonHocGiangVien">0</span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Lớp môn học sinh viên
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;" id="countLopMonHocSinhVien">0</span>
+                                            </div>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-12">
-                            <table id="datatable-academics" class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Id</th>
-                                        <th class="text-center" width="15%">Mã kỳ học</th>
-                                        <th class="text-center">Mã</th>
-                                        <th class="text-center" width="55%">Tên</th>
-                                    </tr>
-                                </thead>
-                            </table>
                         </div>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <h3 id="datatable-subject-header" class="text-center text-dark">Môn học</h3>
-                        </div>
-                        <div id="message-subject" class="col-12">
-                        </div>
-                        <div class="col-12">
-                            <div class="form-row">
-                                <div id="s-monhoc" class="col-8 col-md-8 mb-2">
-                                    <div class="row">
-                                        <div class="col-12 col-md-4">
-                                            <input class="form-control form-control-sm" id="code-subject" type="text" placeholder="Mã" />
-                                        </div>
-                                        <div class="col-12 col-md-4">
-                                            <input class="form-control form-control-sm" id="name-subject" type="text" placeholder="Tên" />
-                                        </div>
-                                        <div class="col-12 col-md-4">
-                                            <input class="form-control form-control-sm" id="department-code-subject" type="text" placeholder="Mã bộ môn" />
-                                        </div>
-                                    </div>
+                    <div class="col-12 mt-2">
+                        <div class="d-flex">
+                            <div style="min-width:160px;">
+                                <button class="btn btn-primary" id="btn-sync-all-table">Đồng bộ dữ liệu</button>
+                            </div>
+                            <div class="flex-grow-1 d-md-flex">
+                                <div class="ml-1 ml-md-5" style="min-width: 355px; width: 355px;">
+                                    <ul class="list-group">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Khoa
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;"><span id="sync-countKhoa">0</span>/<span id="per-countKhoa">0</span></span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Ngành học
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;"><span id="sync-countNganhHoc">0</span>/<span id="per-countNganhHoc">0</span></span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Bộ môn
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;"><span id="sync-countBoMon">0</span>/<span id="per-countBoMon">0</span></span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Môn học
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;"><span id="sync-countMonHoc">0</span>/<span id="per-countMonHoc">0</span></span>
+                                            </div>
+                                        </li>
+                                    </ul>
                                 </div>
-                                <div class="col-4 col-md-2 mb-2 d-flex align-items-start justify-content-center">
-                                    <div class="d-flex">
-                                        <div class="clear-input d-flex align-items-center ml-2 mr-3" clear-input="#s-monhoc" title="Nhập lại">
-                                            <i class="fas fa-redo"></i>
-                                        </div>
-                                        <button id="btn-search-subject" class="btn btn-secondary btn-sm">Tìm kiếm</button>
-                                    </div>
+
+                                <div class="ml-1 ml-md-5" style="min-width: 355px; width: 355px;">
+                                    <ul class="list-group">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Giảng viên
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;"><span id="sync-countGiangVien">0</span>/<span id="per-countGiangVien">0</span></span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Lớp quản lý
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;"><span id="sync-countLopQuanLy">0</span>/<span id="per-countLopQuanLy">0</span></span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Sinh viên
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;"><span id="sync-countSinhVien">0</span>/<span id="per-countSinhVien">0</span></span>
+                                            </div>
+                                        </li>
+                                    </ul>
                                 </div>
-                                <div class="col-12 col-md mb-2 d-flex align-items-start justify-content-md-end justify-content-center">
-                                    <button id="btn-sync-subject" title="Đồng bộ dữ liệu từ Đào tạo" class="btn btn-primary btn-sm mr-md-2">Đồng bộ</button>
-                                    <buttom id="btn-delete-subject" title="Xoá toàn bộ bản ghi" class="btn btn-danger btn-sm">Xoá</buttom>
+
+                                <div class="ml-1 ml-md-5" style="min-width: 355px; width: 355px;">
+                                    <ul class="list-group">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Lớp môn học
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;"><span id="sync-countLopMonHoc">0</span>/<span id="per-countLopMonHoc">0</span></span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Lớp môn học giảng viên
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;"><span id="sync-countLopMonHocGiangVien">0</span>/<span id="per-countLopMonHocGiangVien">0</span></span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Lớp môn học sinh viên
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;"><span id="sync-countLopMonHocSinhVien">0</span>/<span id="per-countLopMonHocSinhVien">0</span></span>
+                                            </div>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-12">
-                            <table id="datatable-subject" class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Id</th>
-                                        <th class="text-center">Id kỳ học</th>
-                                        <th class="text-center">Mã</th>
-                                        <th class="text-center" width="40%">Tên</th>
-                                        <th class="text-center">Id bộ môn</th>
-                                        <th class="text-center">Mã bộ môn</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="tab-pane fade" id="student-lecturer" role="tabpanel" aria-labelledby="student-lecturer-tab">
-            <div class="row mt-3">
-                <div class="col-12 col-md-6">
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <h3 id="datatable-lecturer-header" class="text-center text-dark">Giảng viên</h3>
-                        </div>
-                        <div id="message-lecturer" class="col-12">
-                        </div>
-                        <div class="col-12">
-                            <div class="form-row">
-                                <div id="s-giangvien" class="col-8 col-md-8 mb-2">
-                                    <div class="row">
-                                        <div class="col-12 col-md-4">
-                                            <input id="code-lecturer" class="form-control form-control-sm" type="text" placeholder="Mã" />
-                                        </div>
-                                        <div class="col-12 col-md-4">
-                                            <input id="name-lecturer" class="form-control form-control-sm" type="text" placeholder="Tên" />
-                                        </div>
-                                        <div class="col-12 col-md-4">
-                                            <input id="department-code-lecturer" class="form-control form-control-sm" type="text" placeholder="Mã bộ môn" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-4 col-md-2 mb-2 d-flex align-items-start justify-content-center">
-                                    <div class="d-flex">
-                                        <div class="clear-input d-flex align-items-center ml-2 mr-3" clear-input="#s-giangvien" title="Nhập lại">
-                                            <i class="fas fa-redo"></i>
-                                        </div>
-                                        <button id="btn-search-lecturer" class="btn btn-secondary btn-sm">Tìm kiếm</button>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md mb-2 d-flex align-items-start justify-content-md-end justify-content-center">
-                                    <button id="btn-sync-lecturer" title="Đồng bộ dữ liệu từ Đào tạo" class="btn btn-primary btn-sm mr-md-2">Đồng bộ</button>
-                                    <buttom id="btn-delete-lecturer" title="Xoá toàn bộ bản ghi" class="btn btn-danger btn-sm">Xoá</buttom>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <table id="datatable-lecturer" class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Id</th>
-                                        <th class="text-center">Mã</th>
-                                        <th class="text-center" width="25%">Tên</th>
-                                        <th class="text-center">Id bộ môn</th>
-                                        <th class="text-center">Mã bộ môn</th>
-                                        <th class="text-center">Ngày sinh</th>
-                                        <th class="text-center">Name Order</th>
-                                        <th class="text-center">Email</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <h3 id="datatable-student-header" class="text-center text-dark">Sinh viên</h3>
-                        </div>
-                        <div id="message-student" class="col-12">
-                        </div>
-                        <div class="col-12">
-                            <div class="form-row">
-                                <div id="s-sinhvien" class="col-8 col-md-8 mb-2">
-                                    <div class="row">
-                                        <div class="col-12 col-md-4">
-                                            <input id="code-student" class="form-control form-control-sm" type="text" placeholder="Mã" />
-                                        </div>
-                                        <div class="col-12 col-md-4">
-                                            <input id="name-student" class="form-control form-control-sm" type="text" placeholder="Tên" />
-                                        </div>
-                                        <div class="col-12 col-md-4">
-                                            <input id="class-code-student" class="form-control form-control-sm" type="text" placeholder="Mã lớp" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-4 col-md-2 mb-2 d-flex align-items-start justify-content-center">
-                                    <div class="d-flex">
-                                        <div class="clear-input d-flex align-items-center ml-2 mr-3" clear-input="#s-sinhvien" title="Nhập lại">
-                                            <i class="fas fa-redo"></i>
-                                        </div>
-                                        <button id="btn-search-student" class="btn btn-secondary btn-sm">Tìm kiếm</button>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md mb-2 d-flex align-items-start justify-content-md-end justify-content-center">
-                                    <button id="btn-sync-student" title="Đồng bộ dữ liệu từ Đào tạo" class="btn btn-primary btn-sm mr-md-2">Đồng bộ</button>
-                                    <buttom id="btn-delete-student" title="Xoá toàn bộ bản ghi" class="btn btn-danger btn-sm">Xoá</buttom>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 w-100">
-                            <table id="datatable-student" class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Id</th>
-                                        <th class="text-center">Mã</th>
-                                        <th class="text-center" width="35%">Tên</th>
-                                        <th class="text-center">Id lớp</th>
-                                        <th class="text-center">Mã lớp</th>
-                                        @*<th class="text-center">Ngày sinh</th>*@
-                                        @*<th class="text-center">Nơi sinh</th>*@
-                                        <th class="text-center">Email</th>
-                                        <th class="text-center">Điện thoại</th>
-                                        @*<th class="text-center">Key</th>*@
-                                        <th class="text-center">Trạng thái</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6">
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <h3 id="datatable-class-header" class="text-center text-dark">Lớp quản lý</h3>
-                        </div>
-                        <div id="message-class" class="col-12">
-                        </div>
-                        <div class="col-12">
-                            <div class="form-row">
-                                <div id="s-class" class="col-8 col-md-8 mb-2">
-                                    <div class="row">
-                                        <div class="col-12 col-md-4">
-                                            <input id="code-class" class="form-control form-control-sm" type="text" placeholder="Mã" />
-                                        </div>
-                                        <div class="col-12 col-md-4">
-                                            <input id="name-class" class="form-control form-control-sm" type="text" placeholder="Tên" />
-                                        </div>
-                                        <div class="col-12 col-md-4">
-                                            <input id="faculty-code-class" class="form-control form-control-sm" type="text" placeholder="Mã khoa" />
-                                        </div>
-                                        <div class="col-12 col-md-4 mt-md-2 mt-0">
-                                            <input id="academics-code-class" class="form-control form-control-sm" type="text" placeholder="Mã ngành" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-4 col-md-2 mb-2 d-flex align-items-start justify-content-center">
-                                    <div class="d-flex">
-                                        <div class="clear-input d-flex align-items-center ml-2 mr-3" clear-input="#s-class" title="Nhập lại">
-                                            <i class="fas fa-redo"></i>
-                                        </div>
-                                        <button id="btn-search-class" class="btn btn-secondary btn-sm">Tìm kiếm</button>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md mb-2 d-flex align-items-start justify-content-md-end justify-content-center">
-                                    <button id="btn-sync-class" title="Đồng bộ dữ liệu từ Đào tạo" class="btn btn-primary btn-sm mr-md-2">Đồng bộ</button>
-                                    <buttom id="btn-delete-class" title="Xoá toàn bộ bản ghi" class="btn btn-danger btn-sm">Xoá</buttom>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <table id="datatable-class" class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Id</th>
-                                        <th class="text-center">Mã</th>
-                                        <th class="text-center" width="38%">Tên</th>
-                                        <th class="text-center">Id bộ môn</th>
-                                        <th class="text-center">Mã bộ môn</th>
-                                        <th class="text-center">Id ngành</th>
-                                        <th class="text-center">Mã ngành</th>
-                                        <th class="text-center">Niên khoá</th>
-                                    </tr>
-                                </thead>
-                            </table>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="tab-pane fade" id="last-semester" role="tabpanel" aria-labelledby="last-semester-tab">
-            <div class="row mt-3">
-                <div class="col-12 col-md-6">
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <h3 id="datatable-last-classroom-header" class="text-center text-dark">Lớp môn học kỳ trước</h3>
-                        </div>
-                        <div id="message-last-classroom" class="col-12">
-                        </div>
-                        <div class="col-12">
-                            <div class="form-row">
-                                <div id="s-last-classroom" class="col-8 col-md-8 mb-2">
-                                    <div class="row">
-                                        <div class="col-12 col-md-4">
-                                            <input id="code-last-classroom" class="form-control form-control-sm" type="text" placeholder="Mã" />
-                                        </div>
-                                        <div class="col-12 col-md-4">
-                                            <input id="group-code-last-classroom" class="form-control form-control-sm" type="text" placeholder="Mã nhóm" />
-                                        </div>
-                                        <div class="col-12 col-md-4">
-                                            <input id="class-code-last-classroom" class="form-control form-control-sm" type="text" placeholder="Mã lớp" />
-                                        </div>
-                                        <div class="col-12 col-md-4 mt-md-2 mt-0">
-                                            <input id="subject-code-last-classroom" class="form-control form-control-sm" type="text" placeholder="Mã môn" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-4 col-md-2 mb-2 d-flex align-items-start justify-content-center">
-                                    <div class="d-flex">
-                                        <div class="clear-input d-flex align-items-center ml-2 mr-3" clear-input="#s-last-classroom" title="Nhập lại">
-                                            <i class="fas fa-redo"></i>
-                                        </div>
-                                        <button id="btn-search-last-classroom" class="btn btn-secondary btn-sm">Tìm kiếm</button>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md mb-2 d-flex align-items-start justify-content-md-end justify-content-center">
-                                    <button id="btn-sync-last-classroom" title="Đồng bộ dữ liệu từ Đào tạo" class="btn btn-primary btn-sm mr-md-2">Đồng bộ</button>
-                                    <buttom id="btn-delete-last-classroom" title="Xoá toàn bộ bản ghi" class="btn btn-danger btn-sm">Xoá</buttom>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <table id="datatable-last-classroom" class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Id</th>
-                                        <th class="text-center">Id kỳ</th>
-                                        <th class="text-center">Mã</th>
-                                        <th class="text-center">Mã nhóm</th>
-                                        <th class="text-center">Mã lớp</th>
-                                        <th class="text-center">Id môn</th>
-                                        <th class="text-center">Mã môn</th>
-                                        @*<th class="text-center">Ngày thi</th>*@
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <h3 id="datatable-last-lecturer-classroom-header" class="text-center text-dark">Lớp môn học giảng viên kỳ trước</h3>
-                        </div>
-                        <div id="message-last-lecturer-classroom" class="col-12">
-                        </div>
-                        <div class="col-12">
-                            <div class="form-row">
-                                <div id="s-last-lecturer-classroom" class="col-8 col-md-8 mb-2">
-                                    <div class="row">
-                                        <div class="col-12 col-md-4">
-                                        </div>
-                                        <div class="col-12 col-md-4">
-                                            <input id="classroom-code-last-lecturer-classroom" class="form-control form-control-sm" type="text" placeholder="Mã lớp môn học" />
-                                        </div>
-                                        <div class="col-12 col-md-4">
-                                            <input id="lecturer-code-last-lecturer-classroom" class="form-control form-control-sm" type="text" placeholder="Mã giảng viên" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-4 col-md-2 mb-2 d-flex align-items-start justify-content-center">
-                                    <div class="d-flex">
-                                        <div class="clear-input d-flex align-items-center ml-2 mr-3" clear-input="#s-last-lecturer-classroom" title="Nhập lại">
-                                            <i class="fas fa-redo"></i>
-                                        </div>
-                                        <button id="btn-search-last-lecturer-classroom" class="btn btn-secondary btn-sm">Tìm kiếm</button>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md mb-2 d-flex align-items-start justify-content-md-end justify-content-center">
-                                    <button id="btn-sync-last-lecturer-classroom" title="Đồng bộ dữ liệu từ Đào tạo" class="btn btn-primary btn-sm mr-md-2">Đồng bộ</button>
-                                    <buttom id="btn-delete-last-lecturer-classroom" title="Xoá toàn bộ bản ghi" class="btn btn-danger btn-sm">Xoá</buttom>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <table id="datatable-last-lecturer-classroom" class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Id</th>
-                                        <th class="text-center">Id kỳ</th>
-                                        <th class="text-center">Id lớp MH</th>
-                                        <th class="text-center">Mã lớp MH</th>
-                                        <th class="text-center">Id giảng viên</th>
-                                        <th class="text-center">Mã giảng viên</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6">
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <h3 id="datatable-last-student-classroom-header" class="text-center text-dark">Lớp môn học sinh viên kỳ trước</h3>
-                        </div>
-                        <div id="message-last-student-classroom" class="col-12">
-                        </div>
-                        <div class="col-12">
-                            <div class="form-row">
-                                <div id="s-last-student-classroom" class="col-7 col-md-7 mb-2">
-                                    <div class="row justify-content-end">
-                                        <div class="col-12 col-md-4">
-                                            <input id="code-last-student-classroom" class="form-control form-control-sm" type="text" placeholder="Mã sinh viên" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-4 col-md-2 mb-2 d-flex align-items-start justify-content-center">
-                                    <div class="d-flex">
-                                        <div class="clear-input d-flex align-items-center ml-2 mr-3" clear-input="#s-last-student-classroom" title="Nhập lại">
-                                            <i class="fas fa-redo"></i>
-                                        </div>
-                                        <button id="btn-search-last-student-classroom" class="btn btn-secondary btn-sm">Tìm kiếm</button>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md mb-2 d-flex align-items-start justify-content-md-end justify-content-center">
-                                    <button id="btn-sync-last-student-classroom" title="Đồng bộ dữ liệu từ Đào tạo" class="btn btn-primary btn-sm mr-md-2">Đồng bộ</button>
-                                    <buttom id="btn-delete-last-student-classroom" title="Xoá toàn bộ bản ghi" class="btn btn-danger btn-sm">Xoá</buttom>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <table id="datatable-last-student-classroom" class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Id</th>
-                                        <th class="text-center">Id kỳ</th>
-                                        <th class="text-center">Mã lớp</th>
-                                        <th class="text-center">Mã SV</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="tab-pane fade" id="current-semester" role="tabpanel" aria-labelledby="current-semester-tab">
-            <div class="row mt-3">
-                <div class="col-12 col-md-6">
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <h3 id="datatable-current-classroom-header" class="text-center text-dark">Lớp môn học kỳ hiện tại</h3>
-                        </div>
-                        <div id="message-current-classroom" class="col-12">
-                        </div>
-                        <div class="col-12">
-                            <div class="form-row">
-                                <div id="s-current-classroom" class="col-8 col-md-8 mb-2">
-                                    <div class="row">
-                                        <div class="col-12 col-md-4">
-                                            <input id="code-current-classroom" class="form-control form-control-sm" type="text" placeholder="Mã" />
-                                        </div>
-                                        <div class="col-12 col-md-4">
-                                            <input id="group-code-current-classroom" class="form-control form-control-sm" type="text" placeholder="Mã nhóm" />
-                                        </div>
-                                        <div class="col-12 col-md-4">
-                                            <input id="class-code-current-classroom" class="form-control form-control-sm" type="text" placeholder="Mã lớp" />
-                                        </div>
-                                        <div class="col-12 col-md-4 mt-md-2 mt-0">
-                                            <input id="subject-code-current-classroom" class="form-control form-control-sm" type="text" placeholder="Mã môn" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-4 col-md-2 mb-2 d-flex align-items-start justify-content-center">
-                                    <div class="d-flex">
-                                        <div class="clear-input d-flex align-items-center ml-2 mr-3" clear-input="#s-current-classroom" title="Nhập lại">
-                                            <i class="fas fa-redo"></i>
-                                        </div>
-                                        <button id="btn-search-current-classroom" class="btn btn-secondary btn-sm">Tìm kiếm</button>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-2 mb-2 d-flex align-items-start justify-content-md-end justify-content-center">
-                                    <button id="btn-sync-current-classroom" title="Đồng bộ dữ liệu từ Đào tạo" class="btn btn-primary btn-sm mr-md-2">Đồng bộ</button>
-                                    @*<button id="btn-update-from-end-current-classroom" title="Đồng bộ dữ liệu từ Đào tạo" class="btn btn-primary btn-sm mr-md-2">Cập nhật tuần</button>*@
-                                    <buttom id="btn-delete-current-classroom" title="Xoá toàn bộ bản ghi" class="btn btn-danger btn-sm">Xoá</buttom>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <table id="datatable-current-classroom" class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Id</th>
-                                        <th class="text-center">Id kỳ</th>
-                                        <th class="text-center">Mã</th>
-                                        <th class="text-center">Mã nhóm</th>
-                                        <th class="text-center">Mã lớp</th>
-                                        <th class="text-center">Id môn</th>
-                                        <th class="text-center">Mã môn</th>
-                                        @*<th class="text-center">Ngày thi</th>*@
-                                        <th class="text-center">Từ ngày</th>
-                                        <th class="text-center">Đến ngày</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <h3 id="datatable-current-lecturer-classroom-header" class="text-center text-dark">Lớp môn học giảng viên kỳ hiện tại</h3>
-                        </div>
-                        <div id="message-current-lecturer-classroom" class="col-12">
-                        </div>
-                        <div class="col-12">
-                            <div class="form-row">
-                                <div id="s-current-lecturer-classroom" class="col-8 col-md-8 mb-2">
-                                    <div class="row">
-                                        <div class="col-12 col-md-4">
-                                            <input id="code-current-lecturer-classroom" class="form-control form-control-sm" type="text" placeholder="Mã" />
-                                        </div>
-                                        <div class="col-12 col-md-4">
-                                            <input id="classroom-code-current-lecturer-classroom" class="form-control form-control-sm" type="text" placeholder="Mã lớp môn học" />
-                                        </div>
-                                        <div class="col-12 col-md-4">
-                                            <input id="lecturer-code-current-lecturer-classroom" class="form-control form-control-sm" type="text" placeholder="Mã giảng viên" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-4 col-md-2 mb-2 d-flex align-items-start justify-content-center">
-                                    <div class="d-flex">
-                                        <div class="clear-input d-flex align-items-center ml-2 mr-3" clear-input="#s-current-lecturer-classroom" title="Nhập lại">
-                                            <i class="fas fa-redo"></i>
-                                        </div>
-                                        <button id="btn-search-current-lecturer-classroom" class="btn btn-secondary btn-sm">Tìm kiếm</button>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md mb-2 d-flex align-items-start justify-content-md-end justify-content-center">
-                                    <button id="btn-sync-current-lecturer-classroom" title="Đồng bộ dữ liệu từ Đào tạo" class="btn btn-primary btn-sm mr-md-2">Đồng bộ</button>
-                                    <buttom id="btn-delete-current-lecturer-classroom" title="Xoá toàn bộ bản ghi" class="btn btn-danger btn-sm">Xoá</buttom>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <table id="datatable-current-lecturer-classroom" class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Id</th>
-                                        <th class="text-center">Id kỳ</th>
-                                        <th class="text-center">Id lớp MH</th>
-                                        <th class="text-center">Mã lớp MH</th>
-                                        <th class="text-center">Id giảng viên</th>
-                                        <th class="text-center">Mã giảng viên</th>
-                                        <th class="text-center">Mẫu</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6">
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <h3 id="datatable-current-student-classroom-header" class="text-center text-dark">Lớp môn học sinh viên kỳ hiện tại</h3>
-                        </div>
-                        <div id="message-current-student-classroom" class="col-12">
-                        </div>
-                        <div class="col-12">
-                            <div class="form-row">
-                                <div id="s-current-student-classroom" class="col-8 col-md-8 mb-2">
-                                    <div class="row">
-                                        <div class="col-12 col-md-4">
-                                            <input id="code-current-student-classroom" class="form-control form-control-sm" type="text" placeholder="Mã sinh viên" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-4 col-md-2 mb-2 d-flex align-items-start justify-content-center">
-                                    <div class="d-flex">
-                                        <div class="clear-input d-flex align-items-center ml-2 mr-3" clear-input="#s-current-student-classroom" title="Nhập lại">
-                                            <i class="fas fa-redo"></i>
-                                        </div>
-                                        <button id="btn-search-subject" class="btn btn-secondary btn-sm">Tìm kiếm</button>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md mb-2 d-flex align-items-start justify-content-md-end justify-content-center">
-                                    <button id="btn-sync-current-student-classroom" title="Đồng bộ dữ liệu từ Đào tạo" class="btn btn-primary btn-sm mr-md-2">Đồng bộ</button>
-                                    <buttom id="btn-delete-current-student-classroom" title="Xoá toàn bộ bản ghi" class="btn btn-danger btn-sm">Xoá</buttom>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <table id="datatable-current-student-classroom" class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Id</th>
-                                        <th class="text-center">Id kỳ</th>
-                                        <th class="text-center">Id lớp</th>
-                                        <th class="text-center">Id SV</th>
-                                        <th class="text-center">Mã SV</th>
-                                        <th class="text-center">Loại</th>
-                                        <th class="text-center">Trạng thái</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                    </div>
+            <div class="tab-pane fade" id="ra-soat" role="tabpanel" aria-labelledby="ra-soat">
+                <div class="mt-2">
+                    @{
+                        Html.RenderPartial("~/Views/SyncEduData/_PartialTableData.cshtml");
+                    }
                 </div>
             </div>
         </div>
@@ -712,669 +228,143 @@
     </div>
 </div>
 
-
-
 @section Scripts {
     <script src="~/content/js/jquery.dataTables.min.js"></script>
     <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/content/js/dataTables.config.js"></script>
+    @{ 
+        Html.RenderPartial("~/Views/SyncEduData/_PartialTableDataScript.cshtml");
+    }
     <script>
-        @*Trạng thái đồng bộ background*@
-        let btnLStuCla = $('#btn-sync-last-student-classroom');
-        let lastStudentClassroomStatus = @Html.Raw(ViewData["LastStudentClassroomStatus"]);
-        if (lastStudentClassroomStatus.status === @((int)TableTaskStatus.Done)) {
-            if (!lastStudentClassroomStatus.isSuccess) {
-                toastWarning('Có lỗi xảy ra khi đồng bộ sinh viên');
-            } else {
-                toastSuccess('Đồng bộ sinh viên lớp môn học thành công');
-            }
-        }
-        else if (lastStudentClassroomStatus.status === @((int)TableTaskStatus.Doing)) {
-            btnLStuCla.prop('disabled', true);
-            let loading = lastStudentClassroomStatus.message != null ? lastStudentClassroomStatus.message : "";
-            btnLStuCla.prop('title', loading);
-            btnLStuCla.html(`<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang đồng bộ`);
-        }
-        console.log('last student classroom status ', lastStudentClassroomStatus);
-
-
-    </script>
-    <script>
-        let tableFacuty = $('#datatable-faculty').DataTable({
-            processing: true,
-            serverSide: false,
-            ordering: false,
-            lengthChange: false,
-            stateSave: false,
-            pageLength: 15,
-            language: dataTableConfig.language,
-            ajax: {
-                url: '/SyncEduData/GetAllFaculties',
+        $('#btn-dong-bo-so-luong').click(() => {
+            $('#loading-screen').show();
+            $.ajax({
                 dataType: 'json',
-                contentType: 'application/json',
-                type: "Post",
+                method: 'Get',
+                url: '/SyncEduData/GetCountEduData',
+                timeout: 0,
                 complete: () => { }
-            },
-            columns: [
-                {
-                    data: "id"
-                },
-                {
-                    data: "semesterId"
-                },
-                {
-                    data: "code"
-                },
-                {
-                    data: "name"
-                },
-            ]
-        });
-        $(`#datatable-faculty_filter`).hide();
-        $(`#btn-sync-faculty`).click(() => {
-            syncData("SyncFaculty", "datatable-faculty", "message-faculty");
-        });
-        $(`#btn-delete-faculty`).click(() => {
-            truncateTable("SyncFaculty", "datatable-faculty", "message-faculty");
-        });
+            }).done(function (res) {
+                $('#loading-screen').hide();
+                if (res.statusCode === 200) {
+                    let countData = JSON.parse(res.content);
+                    $('#countKhoa').html(formatDisplayNumber(countData.countKhoa));
+                    $('#per-countKhoa').html(formatDisplayNumber(countData.countKhoa));
 
-        let tableDepartment = $('#datatable-department').DataTable({
-            processing: true,
-            serverSide: false,
-            ordering: false,
-            lengthChange: false,
-            stateSave: false,
-            pageLength: 15,
-            language: dataTableConfig.language,
-            ajax: {
-                url: '/SyncEduData/GetAllDepartments',
-                dataType: 'json',
-                contentType: 'application/json',
-                type: "Post",
-                complete: () => { }
-            },
-            columns: [
-                {
-                    data: "id"
-                },
-                {
-                    data: "semesterId"
-                },
-                {
-                    data: "code"
-                },
-                {
-                    data: "name"
-                },
-                {
-                    data: "facultyId"
-                },
-                {
-                    data: "facultyCode"
-                },
-                {
-                    data: "chefsDepartmentCode"
-                },
-            ]
-        });
-        $(`#datatable-department_filter`).hide();
-        $(`#btn-sync-department`).click(() => {
-            syncData("SyncDepartment", "datatable-department", "message-department");
-        });
-        $(`#btn-delete-department`).click(() => {
-            truncateTable("SyncDepartment", "datatable-department", "message-department");
-        });
+                    $('#countBoMon').html(formatDisplayNumber(countData.countBoMon));
+                    $('#per-countBoMon').html(formatDisplayNumber(countData.countBoMon));
 
-        function syncData(action, idDataTable, idMessage) {
-            $('#modal-yes-no-title').html('Đồng bộ dữ liệu');
-            $('#modal-yes-no-content').html('Xác nhận đồng bộ dữ liệu? <br/>Thao tác này có thể <b>mất nhiều thời gian</b>');
-            $('#modal-yes-no').modal('show');
-            $("#choose-yes").off("click");
-            $('#choose-yes').click(() => {
-                $('#modal-yes-no').modal('hide');
-                let message = $('#' + idMessage);
-                $('#loading-screen').show();
-                $.ajax({
-                    data: { action: action },
-                    dataType: 'json',
-                    method: 'Post',
-                    url: '/syncedudata/syncfromedudata',
-                    timeout: 0,
-                    complete: () => { }
-                }).done(function (data) {
-                    $('#loading-screen').hide();
-                    if (data.type == "success") {
-                        $('#' + idDataTable).DataTable().ajax.reload();
-                        toastSuccess(data.message);
-                    }
-                    else if (data.type == "error") {
-                        toastError(data.message);
-                        console.log(data.detailMessage);
-                    }
-                }).fail(function (jqXHR, textStatus, errorThrown) {
-                    $('#loading-screen').hide();
-                    console.log(textStatus + ': ' + errorThrown);
-                    console.log(jqXHR);
-                });
-            });
-        }
-        function truncateTable(action, idDataTable, idMessage) {
-            $('#modal-yes-no-title').html('Xoá dữ liệu');
-            $('#modal-yes-no-content').html('Xác nhận xoá dữ liệu? <br/>Dữ liệu đã xoá <b>không thể</b> khôi phục');
-            $('#modal-yes-no').modal('show');
-            $("#choose-yes").off("click"); //xoá event cũ
-            $('#choose-yes').click(() => {
-                $('#modal-yes-no').modal('hide');
-                let message = $('#' + idMessage);
-                $('#loading-screen').show();
-                $.ajax({
-                    data: { action: action },
-                    dataType: 'json',
-                    method: 'Post',
-                    url: '/syncedudata/TruncateTable',
-                    timeout: 0,
-                    complete: () => { }
-                }).done(function (data) {
-                    $('#loading-screen').hide();
-                    if (data.type == "success") {
-                        $('#' + idDataTable).DataTable().ajax.reload();
-                        toastSuccess(data.message);
-                    }
-                    else if (data.type == "error") {
-                        toastError(data.message);
-                        console.log(data.detailMessage);
-                    }
-                }).fail(function (jqXHR, textStatus, errorThrown) {
-                    $('#loading-screen').hide();
-                    console.log(textStatus + ': ' + errorThrown);
-                    console.log(jqXHR);
-                });
-            });
-        }
-        function initDataTable(idTable, columns, actionUrl, idBtnSync, idBtnDelete, actionSync, idMessage) {
-            let table = $('#' + idTable).DataTable({
-                processing: true,
-                serverSide: true,
-                ordering: false,
-                lengthChange: false,
-                stateSave: false,
-                pageLength: 15,
-                language: dataTableConfig.language,
-                ajax: {
-                    url: actionUrl,
-                    dataType: 'json',
-                    async: false,
-                    timeout: 0,
-                    contentType: 'application/json',
-                    type: "POST",
-                    data: function (d) {
-                        return JSON.stringify(d);
-                    },
-                    complete: () => {
-                        //document.getElementById(idTable + '-header').scrollIntoView();
-                    }
-                },
-                columns: columns
-            });
-            $(`#${idTable}_filter`).hide();
-            $(`#${idBtnSync}`).click(() => {
-                syncData(actionSync, idTable, idMessage);
-            });
-            $(`#${idBtnDelete}`).click(() => {
-                truncateTable(actionSync, idTable, idMessage);
-            });
-        }
+                    $('#countNganhHoc').html(formatDisplayNumber(countData.countNganhHoc));
+                    $('#per-countNganhHoc').html(formatDisplayNumber(countData.countNganhHoc));
 
-        let academicsColumns = [
-            {
-                data: "id"
-            },
-            {
-                data: "semesterId"
-            },
-            {
-                data: "code"
-            },
-            {
-                data: "name"
-            },
-        ];
-        initDataTable("datatable-academics", academicsColumns, "/SyncEduData/GetAcademics", "btn-sync-academics", "btn-delete-academics", "SyncAcademics", "message-academics");
-        $("#btn-search-academics").click(() => {
-            $('#datatable-academics').DataTable()
-                .column(2).search($("#code-academics").val())
-                .column(3).search($("#name-academics").val())
-                .draw();
-        });
+                    $('#countMonHoc').html(formatDisplayNumber(countData.countMonHoc));
+                    $('#per-countMonHoc').html(formatDisplayNumber(countData.countMonHoc));
 
-        let subjectColumns = [
-            {
-                data: "id"
-            },
-            {
-                data: "semesterId"
-            },
-            {
-                data: "code"
-            },
-            {
-                data: "name"
-            },
-            {
-                data: "departmentId"
-            },
-            {
-                data: "departmentCode"
-            },
-        ];
-        initDataTable("datatable-subject", subjectColumns, "/SyncEduData/GetSubject", "btn-sync-subject", "btn-delete-subject", "SyncSubject", "message-subject");
-        $("#btn-search-subject").click(() => {
-            $('#datatable-subject').DataTable()
-                .column(2).search($("#code-subject").val())
-                .column(3).search($("#name-subject").val())
-                .column(5).search($("#department-code-subject").val())
-                .draw();
-        });
+                    $('#countLopQuanLy').html(formatDisplayNumber(countData.countLopQuanLy));
+                    $('#per-countLopQuanLy').html(formatDisplayNumber(countData.countLopQuanLy));
 
-        let classColumns = [
-            {
-                data: "id"
-            },
-            {
-                data: "code"
-            },
-            {
-                data: "name"
-            },
-            {
-                data: "facultyId"
-            },
-            {
-                data: "facultyCode"
-            },
-            {
-                data: "academicsId"
-            },
-            {
-                data: "academicsCode"
-            },
-            {
-                data: "schoolYear"
-            },
-        ];
-        initDataTable("datatable-class", classColumns, "/SyncEduData/GetClass", "btn-sync-class", "btn-delete-class", "SyncClass", "message-class");
-        $("#btn-search-class").click(() => {
-            $('#datatable-class').DataTable()
-                .column(1).search($("#code-class").val())
-                .column(2).search($("#name-class").val())
-                .column(4).search($("#faculty-code-class").val())
-                .column(6).search($("#academics-code-class").val())
-                .draw();
-        });
+                    $('#countGiangVien').html(formatDisplayNumber(countData.countGiangVien));
+                    $('#per-countGiangVien').html(formatDisplayNumber(countData.countGiangVien));
 
-        let lecturerColumns = [
-            {
-                data: "id"
-            },
-            {
-                data: "code"
-            },
-            {
-                data: "fullName"
-            },
-            {
-                data: "departmentId"
-            },
-            {
-                data: "departmentCode"
-            },
-            {
-                data: "dateOfBirth"
-            },
-            {
-                data: "nameOrder"
-            },
-            {
-                data: "email"
-            },
-        ];
-        initDataTable("datatable-lecturer", lecturerColumns, "/SyncEduData/GetLecturer", "btn-sync-lecturer", "btn-delete-lecturer", "SyncLecturer", "message-lecturer");
-        $("#btn-search-lecturer").click(() => {
-            $('#datatable-lecturer').DataTable()
-                .column(1).search($("#code-lecturer").val())
-                .column(2).search($("#name-lecturer").val())
-                .column(4).search($("#department-code-lecturer").val())
-                .draw();
-        });
+                    $('#countSinhVien').html(formatDisplayNumber(countData.countSinhVien));
+                    $('#per-countSinhVien').html(formatDisplayNumber(countData.countSinhVien));
 
-        let studentColumns = [
-            {
-                data: "id"
-            },
-            {
-                data: "code"
-            },
-            {
-                data: "fullName"
-            },
-            {
-                data: "classId"
-            },
-            {
-                data: "classCode"
-            },
-            //{
-            //    data: "dateOfBirth"
-            //},
-            //{
-            //    data: "birthPlace",
-            //},
-            {
-                data: "email"
-            },
-            {
-                data: "mobile"
-            },
-            //{
-            //    data: "keyAuthorize"
-            //},
-            {
-                data: "status"
-            },
-        ];
-        initDataTable("datatable-student", studentColumns, "/SyncEduData/GetStudent", "btn-sync-student", "btn-delete-student", "SyncStudent", "message-student");
-        $("#btn-search-student").click(() => {
-            $('#datatable-student').DataTable()
-                .column(1).search($("#code-student").val())
-                .column(2).search($("#name-student").val())
-                .column(4).search($("#class-code-student").val())
-                .draw();
-        });
+                    $('#countLopMonHoc').html(formatDisplayNumber(countData.countLopMonHoc));
+                    $('#per-countLopMonHoc').html(formatDisplayNumber(countData.countLopMonHoc));
 
-        let currentClassroomColumns = [
-            {
-                data: "id"
-            },
-            {
-                data: "semesterId"
-            },
-            {
-                data: "code"
-            },
-            {
-                data: "groupCode"
-            },
-            {
-                data: "classCode"
-            },
-            {
-                data: "subjectId"
-            },
-            {
-                data: "subjectCode",
-            },
-            //{
-            //    data: "examAttemptDate"
-            //},
-            {
-                data: null,
-                render: function (data) {
-                    if (data.fromDate == null || data.fromDate === "") {
-                        return '';
-                    }
+                    $('#countLopMonHocGiangVien').html(formatDisplayNumber(countData.countLopMonHocGiangVien));
+                    $('#per-countLopMonHocGiangVien').html(formatDisplayNumber(countData.countLopMonHocGiangVien));
 
-                    let regex = /(\d+)/g;
-                    return dateString(new Date(+data.fromDate.match(regex)[0]));
+                    $('#countLopMonHocSinhVien').html(formatDisplayNumber(countData.countLopMonHocSinhVien));
+                    $('#per-countLopMonHocSinhVien').html(formatDisplayNumber(countData.countLopMonHocSinhVien));
                 }
-            },
-            {
-                data: null,
-                render: function (data) {
-                    if (data.endDate == null || data.endDate === "") {
-                        return '';
+                else {
+                    try {
+                        let content = JSON.parse(res.content);
+                        toastError(content.message);
                     }
-
-                    let regex = /(\d+)/g;
-                    return dateString(new Date(+data.endDate.match(regex)[0]));
-                }
-            },
-        ];
-        initDataTable("datatable-current-classroom", currentClassroomColumns, "/SyncEduData/GetCurrentClassRoom", "btn-sync-current-classroom", "btn-delete-current-classroom", "SyncCurrentClassRoom", "message-current-classroom");
-        $("#btn-search-current-classroom").click(() => {
-            $('#datatable-current-classroom').DataTable()
-                .column(2).search($("#code-current-classroom").val())
-                .column(3).search($("#group-code-current-classroom").val())
-                .column(4).search($("#class-code-current-classroom").val())
-                .column(6).search($("#subject-code-current-classroom").val())
-                .draw();
-        });
-        $('#btn-update-from-end-current-classroom').click(() => {
-            syncData("SyncUpdateFromDateEndDateCurrentClassRoom", "datatable-current-classroom", "message-current-classroom");
-        });
-
-        let currentLecturerClassroomColumns = [
-            {
-                data: "id"
-            },
-            {
-                data: "semesterId"
-            },
-            {
-                data: "classRoomId"
-            },
-            {
-                data: "classRoomCode"
-            },
-            {
-                data: "lecturerId"
-            },
-            {
-                data: "lecturerCode"
-            },
-            {
-                data: "template",
-            }
-        ];
-        initDataTable("datatable-current-lecturer-classroom", currentLecturerClassroomColumns, "/SyncEduData/GetCurrentLecturerClassRoom", "btn-sync-current-lecturer-classroom", "btn-delete-current-lecturer-classroom", "SyncCurrentLecturerClassRoom", "message-current-lecturer-classroom");
-        $("#btn-search-current-lecturer-classroom").click(() => {
-            $('#datatable-current-lecturer-classroom').DataTable()
-                .column(3).search($("#classroom-code-current-lecturer-classroom").val())
-                .column(5).search($("#lecturer-code-current-lecturer-classroom").val())
-                .draw();
-        });
-
-        let currentStudentClassroomColumns = [
-            {
-                data: "id"
-            },
-            {
-                data: "semesterId"
-            },
-            {
-                data: "classRoomId"
-            },
-            {
-                data: "studentId"
-            },
-            {
-                data: "studentCode"
-            },
-            {
-                data: "type"
-            },
-            {
-                data: "status",
-            }
-        ];
-        initDataTable("datatable-current-student-classroom", currentStudentClassroomColumns, "/SyncEduData/GetCurrentStudentClassRoom", "btn-sync-current-student-classroom", "btn-delete-current-student-classroom", "SyncCurrentStudentClassRoom", "message-current-student-classroom");
-        $("#btn-search-current-student-classroom").click(() => {
-            $('#datatable-current-student-classroom').DataTable()
-                .column(4).search($("#code-current-student-classroom").val())
-                .draw();
-        });
-
-
-        let lastClassroomColumns = [
-            {
-                data: "id"
-            },
-            {
-                data: "semesterId"
-            },
-            {
-                data: "code"
-            },
-            {
-                data: "groupCode"
-            },
-            {
-                data: "classCode"
-            },
-            {
-                data: "subjectId"
-            },
-            {
-                data: "subjectCode",
-            }
-        ];
-        initDataTable("datatable-last-classroom", lastClassroomColumns, "/SyncEduData/GetLastClassRoom", "btn-sync-last-classroom", "btn-delete-last-classroom", "SyncLastClassRoom", "message-last-classroom");
-        $("#btn-search-last-classroom").click(() => {
-            $('#datatable-last-classroom').DataTable()
-                .column(2).search($("#code-last-classroom").val())
-                .column(3).search($("#group-code-last-classroom").val())
-                .column(4).search($("#class-code-last-classroom").val())
-                .column(6).search($("#subject-code-last-classroom").val())
-                .draw();
-        });
-
-        let lastLecturerClassroomColumns = [
-            {
-                data: "id"
-            },
-            {
-                data: "semesterId"
-            },
-            {
-                data: "classRoomId"
-            },
-            {
-                data: "classRoomCode"
-            },
-            {
-                data: "lecturerId"
-            },
-            {
-                data: "lecturerCode"
-            }
-        ];
-        initDataTable("datatable-last-lecturer-classroom", lastLecturerClassroomColumns, "/SyncEduData/GetLastLecturerClassRoom", "btn-sync-last-lecturer-classroom", "btn-delete-last-lecturer-classroom", "SyncLastLecturerClassRoom", "message-last-lecturer-classroom");
-        $("#btn-search-last-lecturer-classroom").click(() => {
-            $('#datatable-last-lecturer-classroom').DataTable()
-                .column(3).search($("#classroom-code-last-lecturer-classroom").val())
-                .column(5).search($("#lecturer-code-last-lecturer-classroom").val())
-                .draw();
-        });
-
-        $('#datatable-last-student-classroom').DataTable({
-            processing: true,
-            serverSide: true,
-            ordering: false,
-            lengthChange: false,
-            stateSave: false,
-            pageLength: 15,
-            language: dataTableConfig.language,
-            ajax: {
-                url: '/SyncEduData/GetLastStudentClassRoom',
-                dataType: 'json',
-                contentType: 'application/json',
-                type: 'POST',
-                data: function (d) {
-                    return JSON.stringify(d);
-                },
-            },
-            columns: [
-                {
-                    data: "id"
-                },
-                {
-                    data: "semesterId"
-                },
-                {
-                    data: "classRoomCode"
-                },
-                {
-                    data: "studentCode"
-                }
-            ]
-        });
-
-        let btnSyncLastStudentClassroom = $('#btn-sync-last-student-classroom');
-        btnSyncLastStudentClassroom.click(() => {
-            $('#modal-yes-no-title').html('Đồng bộ dữ liệu');
-            $('#modal-yes-no-content').html('Xác nhận đồng bộ dữ liệu? <br/>Thao tác này có thể <b>mất nhiều thời gian</b>');
-            $('#modal-yes-no').modal('show');
-            $("#choose-yes").off("click");
-            $('#choose-yes').click(() => {
-                $('#modal-yes-no').modal('hide');
-                $('#loading-screen').show();
-                $.ajax({
-                    dataType: 'json',
-                    method: 'Post',
-                    url: "/SyncEduData/SyncLastStudentClassRoom",
-                    complete: () => { }
-                }).done(function (res) {
-                    $('#loading-screen').hide();
-                    if (res.statusCode === 200) {
-                        btnSyncLastStudentClassroom.html('<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang đồng bộ');
-                        btnSyncLastStudentClassroom.prop('disabled', true);
-                        toastSuccess('Đang đồng bộ sinh viên lớp môn học');
-                    } else {
-                        try {
-                            let content = JSON.parse(res.content);
-                            toastError(content.message);
-                        } catch {
-                            toastError('Có lỗi xảy ra');
-                        }
+                    catch {
                         console.log(res);
                     }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                $('#loading-screen').hide();
+                console.log(textStatus + ': ' + errorThrown);
+                console.log(jqXHR);
+            });
+        });
+        $('#btn-dong-bo-so-luong').click();
+    </script>
+    <script>
+        function reloadNormalDataTable() {
+            $('#datatable-faculty').DataTable().ajax.reload();
+            $('#datatable-academics').DataTable().ajax.reload();
+            $('#datatable-department').DataTable().ajax.reload();
+            $('#datatable-lecturer').DataTable().ajax.reload();
+            $('#datatable-student').DataTable().ajax.reload();
+            $('#datatable-class').DataTable().ajax.reload();
+            $('#datatable-last-classroom').DataTable().ajax.reload();
+            $('#datatable-last-lecturer-classroom').DataTable().ajax.reload();
+        }
+
+        let tableNormalSync = [{ action: "SyncFaculty", name: "Khoa" }, { action: "SyncDepartment", name: "Bộ môn" }, { action: "SyncAcademics", name: "Ngành học" },
+            { action: "SyncSubject", name: "Môn học" }, { action: "SyncClass", name: "Lớp quản lý" }, { action: "SyncLecturer", name: "Giảng viên" }, { action: "SyncStudent", name: "Sinh viên" },
+            { action: "SyncLastClassRoom", name: "Lớp môn học" }, { action: "SyncLastLecturerClassRoom", name: "Lớp môn học giảng viên" }];
+        $('#btn-sync-all-table').click(() => {
+            toastSuccess("Bắt đầu đồng bộ");
+            tableNormalSync.forEach(item => {
+                $.ajax({
+                    dataType: 'json',
+                    method: 'Post',
+                    data: { action: item.action },
+                    url: '/SyncEduData/SyncFromEduData',
+                    timeout: 0,
+                    complete: () => {}
+                }).done(function (res) {
+                    if (res.type === "success") {
+                        toastSuccess(`Đồng bộ thành công ${item.name}`);
+                        reloadNormalDataTable();
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res);
+                            toastError(content.message);
+                        }
+                        catch {
+                            console.log(res);
+                        }
+                    }
                 }).fail(function (jqXHR, textStatus, errorThrown) {
-                    $('#loading-screen').hide();
                     console.log(textStatus + ': ' + errorThrown);
                     console.log(jqXHR);
                 });
             });
-        });
 
-        $('#btn-delete-last-student-classroom').click(() => {
-            truncateTable("SyncLastStudentClassRoom", "datatable-last-student-classroom");
-        });
-
-        $('#datatable-last-student-classroom_filter').hide();
-        $('#btn-search-last-student-classroom').click(() => {
-            $('#datatable-last-student-classroom').DataTable()
-                .column(3).search($("#code-last-student-classroom").val())
-                .draw();
-        });
-
-    </script>
-    <script>
-        $('#student-lecturer-tab').on('shown.bs.tab', function (e) {
-            //$('#datatable-lecturer').DataTable().columns.adjust().draw();
-            $('#datatable-lecturer').width('100%');
-            $('#datatable-student').width('100%');
-            $('#datatable-class').width('100%');
-        });
-
-        $('#last-semester-tab').on('shown.bs.tab', function (e) {
-            $('#datatable-last-classroom').width('100%');
-            $('#datatable-last-lecturer-classroom').width('100%');
-            $('#datatable-last-student-classroom').width('100%');
-        });
-
-        $('#current-semester-tab').on('shown.bs.tab', function (e) {
-            $('#datatable-current-classroom').width('100%');
-            $('#datatable-current-lecturer-classroom').width('100%');
-            $('#datatable-current-student-classroom').width('100%');
+            $.ajax({
+                dataType: 'json',
+                method: 'Post',
+                url: "/SyncEduData/SyncLastStudentClassRoom",
+                complete: () => { }
+            }).done(function (res) {
+                $('#loading-screen').hide();
+                if (res.statusCode === 200) {
+                    btnSyncLastStudentClassroom.html('<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang đồng bộ');
+                    btnSyncLastStudentClassroom.prop('disabled', true);
+                    toastSuccess('Đang đồng bộ sinh viên lớp môn học');
+                } else {
+                    try {
+                        let content = JSON.parse(res.content);
+                        toastError("Lỗi đồng bộ sinh viên lớp môn học: " + content.message);
+                    } catch {
+                        toastError('Có lỗi xảy ra');
+                    }
+                    console.log(res);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                $('#loading-screen').hide();
+                console.log(textStatus + ': ' + errorThrown);
+                console.log(jqXHR);
+            });
         });
     </script>
 }

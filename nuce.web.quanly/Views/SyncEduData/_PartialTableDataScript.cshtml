@@ -1,0 +1,691 @@
+﻿@using nuce.web.quanly.Common
+<script>
+        @*Trạng thái đồng bộ background*@
+        let btnLStuCla = $('#btn-sync-last-student-classroom');
+        let lastStudentClassroomStatus = @Html.Raw(ViewData["LastStudentClassroomStatus"]);
+        if (lastStudentClassroomStatus.status === @((int)TableTaskStatus.Done)) {
+            if (!lastStudentClassroomStatus.isSuccess) {
+                toastWarning('Có lỗi xảy ra khi đồng bộ sinh viên');
+            } else {
+                toastSuccess('Đồng bộ sinh viên lớp môn học thành công');
+            }
+        }
+        else if (lastStudentClassroomStatus.status === @((int)TableTaskStatus.Doing)) {
+            btnLStuCla.prop('disabled', true);
+            let loading = lastStudentClassroomStatus.message != null ? lastStudentClassroomStatus.message : "";
+            btnLStuCla.prop('title', loading);
+            btnLStuCla.html(`<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang đồng bộ`);
+        }
+        console.log('last student classroom status ', lastStudentClassroomStatus);
+</script>
+<script>
+    let tableFacuty = $('#datatable-faculty').DataTable({
+        processing: true,
+        serverSide: false,
+        ordering: false,
+        lengthChange: false,
+        stateSave: false,
+        pageLength: 15,
+        language: dataTableConfig.language,
+        ajax: {
+            url: '/SyncEduData/GetAllFaculties',
+            dataType: 'json',
+            contentType: 'application/json',
+            type: "Post",
+            complete: () => {
+                $('#sync-countKhoa').html(formatDisplayNumber($('#datatable-faculty').DataTable().rows().count()));
+            }
+        },
+        columns: [
+            {
+                data: "id"
+            },
+            {
+                data: "semesterId"
+            },
+            {
+                data: "code"
+            },
+            {
+                data: "name"
+            },
+        ]
+    });
+    $(`#datatable-faculty_filter`).hide();
+    $(`#btn-sync-faculty`).click(() => {
+        syncData("SyncFaculty", "datatable-faculty", "message-faculty");
+    });
+    $(`#btn-delete-faculty`).click(() => {
+        truncateTable("SyncFaculty", "datatable-faculty", "message-faculty");
+    });
+
+    let tableDepartment = $('#datatable-department').DataTable({
+        processing: true,
+        serverSide: false,
+        ordering: false,
+        lengthChange: false,
+        stateSave: false,
+        pageLength: 15,
+        language: dataTableConfig.language,
+        ajax: {
+            url: '/SyncEduData/GetAllDepartments',
+            dataType: 'json',
+            contentType: 'application/json',
+            type: "Post",
+            complete: () => {
+                $('#sync-countBoMon').html(formatDisplayNumber($('#datatable-department').DataTable().page.info().recordsTotal));
+            }
+        },
+        columns: [
+            {
+                data: "id"
+            },
+            {
+                data: "semesterId"
+            },
+            {
+                data: "code"
+            },
+            {
+                data: "name"
+            },
+            {
+                data: "facultyId"
+            },
+            {
+                data: "facultyCode"
+            },
+            {
+                data: "chefsDepartmentCode"
+            },
+        ]
+    });
+    $(`#datatable-department_filter`).hide();
+    $(`#btn-sync-department`).click(() => {
+        syncData("SyncDepartment", "datatable-department", "message-department");
+    });
+    $(`#btn-delete-department`).click(() => {
+        truncateTable("SyncDepartment", "datatable-department", "message-department");
+    });
+
+    function syncData(action, idDataTable, idMessage) {
+        $('#modal-yes-no-title').html('Đồng bộ dữ liệu');
+        $('#modal-yes-no-content').html('Xác nhận đồng bộ dữ liệu? <br/>Thao tác này có thể <b>mất nhiều thời gian</b>');
+        $('#modal-yes-no').modal('show');
+        $("#choose-yes").off("click");
+        $('#choose-yes').click(() => {
+            $('#modal-yes-no').modal('hide');
+            let message = $('#' + idMessage);
+            $('#loading-screen').show();
+            $.ajax({
+                data: { action: action },
+                dataType: 'json',
+                method: 'Post',
+                url: '/syncedudata/syncfromedudata',
+                timeout: 0,
+                complete: () => {
+                    $('#sync-countNganhHoc').html(formatDisplayNumber($('#datatable-academics').DataTable().page.info().recordsTotal));
+                    $('#sync-countMonHoc').html(formatDisplayNumber($('#datatable-subject').DataTable().page.info().recordsTotal));
+
+                    $('#sync-countGiangVien').html(formatDisplayNumber($('#datatable-lecturer').DataTable().page.info().recordsTotal));
+                    $('#sync-countSinhVien').html(formatDisplayNumber($('#datatable-student').DataTable().page.info().recordsTotal));
+                    $('#sync-countLopQuanLy').html(formatDisplayNumber($('#datatable-class').DataTable().page.info().recordsTotal));
+
+                    $('#sync-countLopMonHoc').html(formatDisplayNumber($('#datatable-last-classroom').DataTable().page.info().recordsTotal));
+                    $('#sync-countLopMonHocGiangVien').html(formatDisplayNumber($('#datatable-last-lecturer-classroom').DataTable().page.info().recordsTotal));
+                    $('#sync-countLopMonHocSinhVien').html(formatDisplayNumber($('#datatable-last-student-classroom').DataTable().page.info().recordsTotal));
+                }
+            }).done(function (data) {
+                $('#loading-screen').hide();
+                if (data.type == "success") {
+                    $('#' + idDataTable).DataTable().ajax.reload();
+                    toastSuccess(data.message);
+                }
+                else if (data.type == "error") {
+                    toastError(data.message);
+                    console.log(data.detailMessage);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                $('#loading-screen').hide();
+                console.log(textStatus + ': ' + errorThrown);
+                console.log(jqXHR);
+            });
+        });
+    }
+    function truncateTable(action, idDataTable, idMessage) {
+        $('#modal-yes-no-title').html('Xoá dữ liệu');
+        $('#modal-yes-no-content').html('Xác nhận xoá dữ liệu? <br/>Dữ liệu đã xoá <b>không thể</b> khôi phục');
+        $('#modal-yes-no').modal('show');
+        $("#choose-yes").off("click"); //xoá event cũ
+        $('#choose-yes').click(() => {
+            $('#modal-yes-no').modal('hide');
+            let message = $('#' + idMessage);
+            $('#loading-screen').show();
+            $.ajax({
+                data: { action: action },
+                dataType: 'json',
+                method: 'Post',
+                url: '/syncedudata/TruncateTable',
+                timeout: 0,
+                complete: () => { }
+            }).done(function (data) {
+                $('#loading-screen').hide();
+                if (data.type == "success") {
+                    $('#' + idDataTable).DataTable().ajax.reload();
+                    toastSuccess(data.message);
+                }
+                else if (data.type == "error") {
+                    toastError(data.message);
+                    console.log(data.detailMessage);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                $('#loading-screen').hide();
+                console.log(textStatus + ': ' + errorThrown);
+                console.log(jqXHR);
+            });
+        });
+    }
+    function initDataTable(idTable, columns, actionUrl, idBtnSync, idBtnDelete, actionSync, idMessage, idCount) {
+        let table = $('#' + idTable).DataTable({
+            processing: true,
+            serverSide: true,
+            ordering: false,
+            lengthChange: false,
+            stateSave: false,
+            pageLength: 15,
+            language: dataTableConfig.language,
+            ajax: {
+                url: actionUrl,
+                dataType: 'json',
+                async: false,
+                timeout: 0,
+                contentType: 'application/json',
+                type: "POST",
+                data: function (d) {
+                    return JSON.stringify(d);
+                },
+                complete: () => {
+                    //document.getElementById(idTable + '-header').scrollIntoView();
+                    $('#' + idCount).html(formatDisplayNumber($('#' + idTable).DataTable().page.info().recordsTotal));
+                }
+            },
+            columns: columns
+        });
+        $(`#${idTable}_filter`).hide();
+        $(`#${idBtnSync}`).click(() => {
+            syncData(actionSync, idTable, idMessage);
+        });
+        $(`#${idBtnDelete}`).click(() => {
+            truncateTable(actionSync, idTable, idMessage);
+        });
+    }
+
+    let academicsColumns = [
+        {
+            data: "id"
+        },
+        {
+            data: "semesterId"
+        },
+        {
+            data: "code"
+        },
+        {
+            data: "name"
+        },
+    ];
+    initDataTable("datatable-academics", academicsColumns, "/SyncEduData/GetAcademics", "btn-sync-academics", "btn-delete-academics", "SyncAcademics", "message-academics", "sync-countNganhHoc");
+    $("#btn-search-academics").click(() => {
+        $('#datatable-academics').DataTable()
+            .column(2).search($("#code-academics").val())
+            .column(3).search($("#name-academics").val())
+            .draw();
+    });
+
+    let subjectColumns = [
+        {
+            data: "id"
+        },
+        {
+            data: "semesterId"
+        },
+        {
+            data: "code"
+        },
+        {
+            data: "name"
+        },
+        {
+            data: "departmentId"
+        },
+        {
+            data: "departmentCode"
+        },
+    ];
+    initDataTable("datatable-subject", subjectColumns, "/SyncEduData/GetSubject", "btn-sync-subject", "btn-delete-subject", "SyncSubject", "message-subject", "sync-countMonHoc");
+    $("#btn-search-subject").click(() => {
+        $('#datatable-subject').DataTable()
+            .column(2).search($("#code-subject").val())
+            .column(3).search($("#name-subject").val())
+            .column(5).search($("#department-code-subject").val())
+            .draw();
+    });
+
+    let classColumns = [
+        {
+            data: "id"
+        },
+        {
+            data: "code"
+        },
+        {
+            data: "name"
+        },
+        {
+            data: "facultyId"
+        },
+        {
+            data: "facultyCode"
+        },
+        {
+            data: "academicsId"
+        },
+        {
+            data: "academicsCode"
+        },
+        {
+            data: "schoolYear"
+        },
+    ];
+    initDataTable("datatable-class", classColumns, "/SyncEduData/GetClass", "btn-sync-class", "btn-delete-class", "SyncClass", "message-class", "sync-countLopQuanLy");
+    $("#btn-search-class").click(() => {
+        $('#datatable-class').DataTable()
+            .column(1).search($("#code-class").val())
+            .column(2).search($("#name-class").val())
+            .column(4).search($("#faculty-code-class").val())
+            .column(6).search($("#academics-code-class").val())
+            .draw();
+    });
+
+    let lecturerColumns = [
+        {
+            data: "id"
+        },
+        {
+            data: "code"
+        },
+        {
+            data: "fullName"
+        },
+        {
+            data: "departmentId"
+        },
+        {
+            data: "departmentCode"
+        },
+        {
+            data: "dateOfBirth"
+        },
+        {
+            data: "nameOrder"
+        },
+        {
+            data: "email"
+        },
+    ];
+    initDataTable("datatable-lecturer", lecturerColumns, "/SyncEduData/GetLecturer", "btn-sync-lecturer", "btn-delete-lecturer", "SyncLecturer", "message-lecturer", "sync-countGiangVien");
+    $("#btn-search-lecturer").click(() => {
+        $('#datatable-lecturer').DataTable()
+            .column(1).search($("#code-lecturer").val())
+            .column(2).search($("#name-lecturer").val())
+            .column(4).search($("#department-code-lecturer").val())
+            .draw();
+    });
+
+    let studentColumns = [
+        {
+            data: "id"
+        },
+        {
+            data: "code"
+        },
+        {
+            data: "fullName"
+        },
+        {
+            data: "classId"
+        },
+        {
+            data: "classCode"
+        },
+        //{
+        //    data: "dateOfBirth"
+        //},
+        //{
+        //    data: "birthPlace",
+        //},
+        {
+            data: "email"
+        },
+        {
+            data: "mobile"
+        },
+        //{
+        //    data: "keyAuthorize"
+        //},
+        {
+            data: "status"
+        },
+    ];
+    initDataTable("datatable-student", studentColumns, "/SyncEduData/GetStudent", "btn-sync-student", "btn-delete-student", "SyncStudent", "message-student", "sync-countSinhVien");
+    $("#btn-search-student").click(() => {
+        $('#datatable-student').DataTable()
+            .column(1).search($("#code-student").val())
+            .column(2).search($("#name-student").val())
+            .column(4).search($("#class-code-student").val())
+            .draw();
+    });
+
+    let currentClassroomColumns = [
+        {
+            data: "id"
+        },
+        {
+            data: "semesterId"
+        },
+        {
+            data: "code"
+        },
+        {
+            data: "groupCode"
+        },
+        {
+            data: "classCode"
+        },
+        {
+            data: "subjectId"
+        },
+        {
+            data: "subjectCode",
+        },
+        //{
+        //    data: "examAttemptDate"
+        //},
+        {
+            data: null,
+            render: function (data) {
+                if (data.fromDate == null || data.fromDate === "") {
+                    return '';
+                }
+
+                let regex = /(\d+)/g;
+                return dateString(new Date(+data.fromDate.match(regex)[0]));
+            }
+        },
+        {
+            data: null,
+            render: function (data) {
+                if (data.endDate == null || data.endDate === "") {
+                    return '';
+                }
+
+                let regex = /(\d+)/g;
+                return dateString(new Date(+data.endDate.match(regex)[0]));
+            }
+        },
+    ];
+    initDataTable("datatable-current-classroom", currentClassroomColumns, "/SyncEduData/GetCurrentClassRoom", "btn-sync-current-classroom", "btn-delete-current-classroom", "SyncCurrentClassRoom", "message-current-classroom");
+    $("#btn-search-current-classroom").click(() => {
+        $('#datatable-current-classroom').DataTable()
+            .column(2).search($("#code-current-classroom").val())
+            .column(3).search($("#group-code-current-classroom").val())
+            .column(4).search($("#class-code-current-classroom").val())
+            .column(6).search($("#subject-code-current-classroom").val())
+            .draw();
+    });
+    $('#btn-update-from-end-current-classroom').click(() => {
+        syncData("SyncUpdateFromDateEndDateCurrentClassRoom", "datatable-current-classroom", "message-current-classroom");
+    });
+
+    let currentLecturerClassroomColumns = [
+        {
+            data: "id"
+        },
+        {
+            data: "semesterId"
+        },
+        {
+            data: "classRoomId"
+        },
+        {
+            data: "classRoomCode"
+        },
+        {
+            data: "lecturerId"
+        },
+        {
+            data: "lecturerCode"
+        },
+        {
+            data: "template",
+        }
+    ];
+    initDataTable("datatable-current-lecturer-classroom", currentLecturerClassroomColumns, "/SyncEduData/GetCurrentLecturerClassRoom", "btn-sync-current-lecturer-classroom", "btn-delete-current-lecturer-classroom", "SyncCurrentLecturerClassRoom", "message-current-lecturer-classroom");
+    $("#btn-search-current-lecturer-classroom").click(() => {
+        $('#datatable-current-lecturer-classroom').DataTable()
+            .column(3).search($("#classroom-code-current-lecturer-classroom").val())
+            .column(5).search($("#lecturer-code-current-lecturer-classroom").val())
+            .draw();
+    });
+
+    let currentStudentClassroomColumns = [
+        {
+            data: "id"
+        },
+        {
+            data: "semesterId"
+        },
+        {
+            data: "classRoomId"
+        },
+        {
+            data: "studentId"
+        },
+        {
+            data: "studentCode"
+        },
+        {
+            data: "type"
+        },
+        {
+            data: "status",
+        }
+    ];
+    initDataTable("datatable-current-student-classroom", currentStudentClassroomColumns, "/SyncEduData/GetCurrentStudentClassRoom", "btn-sync-current-student-classroom", "btn-delete-current-student-classroom", "SyncCurrentStudentClassRoom", "message-current-student-classroom");
+    $("#btn-search-current-student-classroom").click(() => {
+        $('#datatable-current-student-classroom').DataTable()
+            .column(4).search($("#code-current-student-classroom").val())
+            .draw();
+    });
+
+
+    let lastClassroomColumns = [
+        {
+            data: "id"
+        },
+        {
+            data: "semesterId"
+        },
+        {
+            data: "code"
+        },
+        {
+            data: "groupCode"
+        },
+        {
+            data: "classCode"
+        },
+        {
+            data: "subjectId"
+        },
+        {
+            data: "subjectCode",
+        }
+    ];
+    initDataTable("datatable-last-classroom", lastClassroomColumns, "/SyncEduData/GetLastClassRoom", "btn-sync-last-classroom", "btn-delete-last-classroom", "SyncLastClassRoom", "message-last-classroom", "sync-countLopMonHoc");
+    $("#btn-search-last-classroom").click(() => {
+        $('#datatable-last-classroom').DataTable()
+            .column(2).search($("#code-last-classroom").val())
+            .column(3).search($("#group-code-last-classroom").val())
+            .column(4).search($("#class-code-last-classroom").val())
+            .column(6).search($("#subject-code-last-classroom").val())
+            .draw();
+    });
+
+    let lastLecturerClassroomColumns = [
+        {
+            data: "id"
+        },
+        {
+            data: "semesterId"
+        },
+        {
+            data: "classRoomId"
+        },
+        {
+            data: "classRoomCode"
+        },
+        {
+            data: "lecturerId"
+        },
+        {
+            data: "lecturerCode"
+        }
+    ];
+    initDataTable("datatable-last-lecturer-classroom", lastLecturerClassroomColumns, "/SyncEduData/GetLastLecturerClassRoom", "btn-sync-last-lecturer-classroom", "btn-delete-last-lecturer-classroom", "SyncLastLecturerClassRoom", "message-last-lecturer-classroom", "sync-countLopMonHocGiangVien");
+    $("#btn-search-last-lecturer-classroom").click(() => {
+        $('#datatable-last-lecturer-classroom').DataTable()
+            .column(3).search($("#classroom-code-last-lecturer-classroom").val())
+            .column(5).search($("#lecturer-code-last-lecturer-classroom").val())
+            .draw();
+    });
+
+    $('#datatable-last-student-classroom').DataTable({
+        processing: true,
+        serverSide: true,
+        ordering: false,
+        lengthChange: false,
+        stateSave: false,
+        pageLength: 15,
+        language: dataTableConfig.language,
+        ajax: {
+            url: '/SyncEduData/GetLastStudentClassRoom',
+            dataType: 'json',
+            contentType: 'application/json',
+            type: 'POST',
+            complete: () => {
+                $('#sync-countLopMonHocSinhVien').html(formatDisplayNumber($('#datatable-last-student-classroom').DataTable().page.info().recordsTotal));
+            },
+            data: function (d) {
+                return JSON.stringify(d);
+            },
+        },
+        columns: [
+            {
+                data: "id"
+            },
+            {
+                data: "semesterId"
+            },
+            {
+                data: "classRoomCode"
+            },
+            {
+                data: "studentCode"
+            }
+        ]
+    });
+
+    let btnSyncLastStudentClassroom = $('#btn-sync-last-student-classroom');
+    btnSyncLastStudentClassroom.click(() => {
+        $('#modal-yes-no-title').html('Đồng bộ dữ liệu');
+        $('#modal-yes-no-content').html('Xác nhận đồng bộ dữ liệu? <br/>Thao tác này có thể <b>mất nhiều thời gian</b>');
+        $('#modal-yes-no').modal('show');
+        $("#choose-yes").off("click");
+        $('#choose-yes').click(() => {
+            $('#modal-yes-no').modal('hide');
+            $('#loading-screen').show();
+            $.ajax({
+                dataType: 'json',
+                method: 'Post',
+                url: "/SyncEduData/SyncLastStudentClassRoom",
+                complete: () => { }
+            }).done(function (res) {
+                $('#loading-screen').hide();
+                if (res.statusCode === 200) {
+                    btnSyncLastStudentClassroom.html('<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang đồng bộ');
+                    btnSyncLastStudentClassroom.prop('disabled', true);
+                    toastSuccess('Đang đồng bộ sinh viên lớp môn học');
+                } else {
+                    try {
+                        let content = JSON.parse(res.content);
+                        toastError(content.message);
+                    } catch {
+                        toastError('Có lỗi xảy ra');
+                    }
+                    console.log(res);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                $('#loading-screen').hide();
+                console.log(textStatus + ': ' + errorThrown);
+                console.log(jqXHR);
+            });
+        });
+    });
+
+    $('#btn-delete-last-student-classroom').click(() => {
+        truncateTable("SyncLastStudentClassRoom", "datatable-last-student-classroom");
+    });
+
+    $('#datatable-last-student-classroom_filter').hide();
+    $('#btn-search-last-student-classroom').click(() => {
+        $('#datatable-last-student-classroom').DataTable()
+            .column(3).search($("#code-last-student-classroom").val())
+            .draw();
+    });
+
+</script>
+<script>
+    $('#ra-soat-tab').on('shown.bs.tab', function (e) {
+        $('#datatable-faculty').width('100%');
+        $('#datatable-department').width('100%');
+        $('#datatable-academics').width('100%');
+        $('#datatable-subject').width('100%');
+    });
+
+    $('#basic-tab').on('shown.bs.tab', function (e) {
+        $('#datatable-faculty').width('100%');
+        $('#datatable-department').width('100%');
+        $('#datatable-academics').width('100%');
+        $('#datatable-subject').width('100%');
+    });
+
+    $('#student-lecturer-tab').on('shown.bs.tab', function (e) {
+        //$('#datatable-lecturer').DataTable().columns.adjust().draw();
+        $('#datatable-lecturer').width('100%');
+        $('#datatable-student').width('100%');
+        $('#datatable-class').width('100%');
+    });
+
+    $('#last-semester-tab').on('shown.bs.tab', function (e) {
+        $('#datatable-last-classroom').width('100%');
+        $('#datatable-last-lecturer-classroom').width('100%');
+        $('#datatable-last-student-classroom').width('100%');
+    });
+
+    $('#current-semester-tab').on('shown.bs.tab', function (e) {
+        $('#datatable-current-classroom').width('100%');
+        $('#datatable-current-lecturer-classroom').width('100%');
+        $('#datatable-current-student-classroom').width('100%');
+    });
+</script>

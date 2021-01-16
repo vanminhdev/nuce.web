@@ -39,6 +39,28 @@ namespace nuce.web.api.Controllers.EduData
             _statusService = statusService;
         }
 
+        #region đồng bộ số lượng
+        [HttpGet]
+        public async Task<IActionResult> GetCountEduData()
+        {
+            try
+            {
+                var result = await _syncEduDatabaseService.GetCountEduData();
+                return Ok(result);
+            }
+            catch (CallEduWebServiceException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo", detailMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+        }
+        #endregion
+
         #region đồng bộ cơ bản
         [HttpPut]
         public async Task<IActionResult> SyncFaculty()
