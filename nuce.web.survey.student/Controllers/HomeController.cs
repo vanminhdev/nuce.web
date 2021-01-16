@@ -49,6 +49,11 @@ namespace nuce.web.survey.student.Controllers
                     var jsonString = await res.Content.ReadAsStringAsync();
                     ViewData["TheSurvey"] = jsonString;
                     return View();
+                },
+                action404: res =>
+                {
+                    ViewData["Message"] = "Không có đợt khảo sát được mở";
+                    return View();
                 }
             );
         }
