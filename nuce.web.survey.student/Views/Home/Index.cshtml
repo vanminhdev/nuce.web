@@ -48,9 +48,9 @@
                         <td>${element.lecturerName}</td>`;
                 htmlStr += `<td class="text-center">`;
                 if (element.status === @((int)SurveyStudentStatus.DoNot)) {
-                    htmlStr += `<a href="/home/thesurvey?theSurveyId=${element.baiKhaoSatId}&classRoomCode=${element.classRoomCode}&type=1">Thực hiện</a>`;
+                    htmlStr += `<a href="/home/thesurvey?theSurveyId=${element.baiKhaoSatId}&classRoomCode=${element.classRoomCode}&nhhk=${element.nhhk}">Thực hiện</a>`;
                 } else if (element.status === @((int)SurveyStudentStatus.Doing)) {
-                    htmlStr += `<a href="/home/thesurvey?theSurveyId=${element.baiKhaoSatId}&classRoomCode=${element.classRoomCode}&type=2">Tiếp tục</a>`;
+                    htmlStr += `<a href="/home/thesurvey?theSurveyId=${element.baiKhaoSatId}&classRoomCode=${element.classRoomCode}&nhhk=${element.nhhk}">Tiếp tục</a>`;
                 } else if (element.status === @((int)SurveyStudentStatus.Done)) {
                     htmlStr += `Đã hoàn thành`;
                 }

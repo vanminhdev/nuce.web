@@ -176,6 +176,10 @@ namespace EduWebService
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         System.Threading.Tasks.Task<EduWebService.getMaDKCanBoTkb1ResponseGetMaDKCanBoTkb1Result> getMaDKCanBoTkb1Async();
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/getMaDKTkb1", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        System.Threading.Tasks.Task<EduWebService.getMaDKTkb1ResponseGetMaDKTkb1Result> getMaDKTkb1Async();
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/countMaDKTkb1", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         System.Threading.Tasks.Task<int> countMaDKTkb1Async();
@@ -1313,6 +1317,46 @@ namespace EduWebService
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/")]
+    public partial class getMaDKTkb1ResponseGetMaDKTkb1Result
+    {
+        
+        private System.Xml.XmlElement[] anyField;
+        
+        private System.Xml.XmlElement any1Field;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAnyElementAttribute(Namespace="http://www.w3.org/2001/XMLSchema", Order=0)]
+        public System.Xml.XmlElement[] Any
+        {
+            get
+            {
+                return this.anyField;
+            }
+            set
+            {
+                this.anyField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAnyElementAttribute(Namespace="urn:schemas-microsoft-com:xml-diffgram-v1", Order=1)]
+        public System.Xml.XmlElement Any1
+        {
+            get
+            {
+                return this.any1Field;
+            }
+            set
+            {
+                this.any1Field = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.0.2")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://tempuri.org/")]
     public partial class getMatKhauNguoiDungResponseGetMatKhauNguoiDungResult
     {
         
@@ -1590,6 +1634,11 @@ namespace EduWebService
         public System.Threading.Tasks.Task<EduWebService.getMaDKCanBoTkb1ResponseGetMaDKCanBoTkb1Result> getMaDKCanBoTkb1Async()
         {
             return base.Channel.getMaDKCanBoTkb1Async();
+        }
+        
+        public System.Threading.Tasks.Task<EduWebService.getMaDKTkb1ResponseGetMaDKTkb1Result> getMaDKTkb1Async()
+        {
+            return base.Channel.getMaDKTkb1Async();
         }
         
         public System.Threading.Tasks.Task<int> countMaDKTkb1Async()

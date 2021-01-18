@@ -126,12 +126,7 @@ namespace nuce.web.api.Common
         /// <summary>
         /// Đề cho môn đồ án
         /// </summary>
-        AssignmentSubjects = 4,
-
-        /// <summary>
-        /// Đề cho môn không được phần loại
-        /// </summary>
-        DefaultSubjects = 5,
+        AssignmentSubjects = 4
     }
 
     /// <summary>

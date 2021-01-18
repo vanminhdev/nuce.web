@@ -59,9 +59,9 @@ namespace nuce.web.survey.student.Controllers
 
         [HttpGet]
         [AuthorizeActionFilter(RoleNames.Student)]
-        public async Task<ActionResult> TheSurvey(string theSurveyId, string classRoomCode)
+        public async Task<ActionResult> TheSurvey(string theSurveyId, string classRoomCode, string nhhk)
         {
-            var resSelectedAnswer = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurveyStudent/GetSelectedAnswerAutoSave?classRoomCode={classRoomCode}");
+            var resSelectedAnswer = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurveyStudent/GetSelectedAnswerAutoSave?classRoomCode={classRoomCode}&nhhk={nhhk}");
             await base.HandleResponseAsync(resSelectedAnswer,
                 action200Async: async res =>
                 {
@@ -74,7 +74,7 @@ namespace nuce.web.survey.student.Controllers
                 }
             );
 
-            var resTheSurvey = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurveyStudent/GetTheSurveyContent?id={theSurveyId}&classroomCode={classRoomCode}");
+            var resTheSurvey = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurveyStudent/GetTheSurveyContent?id={theSurveyId}&classroomCode={classRoomCode}&nhhk={nhhk}");
             return await base.HandleResponseAsync(resTheSurvey,
                 action200Async: async res =>
                 {
@@ -82,6 +82,7 @@ namespace nuce.web.survey.student.Controllers
                     var theSurveyContent = JsonConvert.DeserializeObject<TheSurveyContent>(jsonString);
                     var questions = JsonConvert.DeserializeObject<List<QuestionJson>>(theSurveyContent.NoiDungDeKhaoSat);
                     ViewData["classRoomCode"] = classRoomCode;
+                    ViewData["nhhk"] = nhhk;
 
                     ViewData["ClassroomName"] = theSurveyContent.ClassroomName;
                     ViewData["LeturerName"] = theSurveyContent.LeturerName;
@@ -93,9 +94,9 @@ namespace nuce.web.survey.student.Controllers
 
         [HttpPost]
         [AuthorizeActionFilter(RoleNames.Student)]
-        public async Task<ActionResult> AutoSave(string classRoomCode, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, bool isAnswerCodesAdd = true)
+        public async Task<ActionResult> AutoSave(string classRoomCode, string nhhk, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, bool isAnswerCodesAdd = true)
         {
-            var jsonStr = JsonConvert.SerializeObject(new { classRoomCode, questionCode, answerCode, answerCodeInMulSelect, isAnswerCodesAdd, answerContent });
+            var jsonStr = JsonConvert.SerializeObject(new { classRoomCode, nhhk, questionCode, answerCode, answerCodeInMulSelect, isAnswerCodesAdd, answerContent });
             var stringContent = new StringContent(jsonStr, Encoding.UTF8, "application/json");
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/TheSurveyStudent/AutoSave", stringContent);
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
@@ -103,10 +104,9 @@ namespace nuce.web.survey.student.Controllers
 
         [HttpPost]
         [AuthorizeActionFilter(RoleNames.Student)]
-        public async Task<ActionResult> TheSurveySubmit(string classRoomCode)
+        public async Task<ActionResult> TheSurveySubmit(string classRoomCode, string nhhk)
         {
-            var stringContent = new StringContent($"'{classRoomCode}'", Encoding.UTF8, "application/json");
-            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/TheSurveyStudent/SaveSelectedAnswer", stringContent);
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/TheSurveyStudent/SaveSelectedAnswer?classRoomCode={classRoomCode}&nhhk={nhhk}");
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
         #endregion

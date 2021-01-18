@@ -407,12 +407,12 @@
     }
     @if (Model.Count > 0)
     {
-        <script>
+<script>
             $('input[type=radio]').each(function () {
                 let seft = $(this);
                 let proSeft = this;
                 function handle() {
-                    let data = { classRoomCode: '@ViewData["classRoomCode"]', questionCode: seft.attr('questionCode'), answerCode: seft.attr('answerCode'), numStar: seft.attr('numstar') };
+                    let data = { classRoomCode: '@ViewData["classRoomCode"]', nhhk: '@ViewData["nhhk"]', questionCode: seft.attr('questionCode'), answerCode: seft.attr('answerCode'), numStar: seft.attr('numstar') };
                     let isAnswerCodesAdd = proSeft.checked;
                     if (proSeft.checked == true && seft.attr('answerchildquestioncode') != undefined) {
                         $(`#answerQuestion-${seft.attr('answerchildquestioncode')}`).show();
@@ -451,7 +451,7 @@
                         $(`#answerQuestion-${seft.attr('answerchildquestioncode')}`).hide();
                     }
                     $.ajax({
-                        data: { classRoomCode: '@ViewData["classRoomCode"]', questionCode: seft.attr('questionCode'), answerCodeInMulSelect: seft.attr('answerCode'), isAnswerCodesAdd },
+                        data: { classRoomCode: '@ViewData["classRoomCode"]', nhhk: '@ViewData["nhhk"]', questionCode: seft.attr('questionCode'), answerCodeInMulSelect: seft.attr('answerCode'), isAnswerCodesAdd },
                         dataType: 'json',
                         method: 'Post',
                         url: '/home/AutoSave',
@@ -473,7 +473,7 @@
                 seft.keyup(
                     debounce(function () {
                         $.ajax({
-                            data: { classRoomCode: '@ViewData["classRoomCode"]', questionCode: seft.attr('questionCode'), answerContent: seft.val() },
+                            data: { classRoomCode: '@ViewData["classRoomCode"]',  nhhk: '@ViewData["nhhk"]', questionCode: seft.attr('questionCode'), answerContent: seft.val() },
                             dataType: 'json',
                             method: 'Post',
                             url: '/home/AutoSave',
@@ -493,7 +493,7 @@
                 $('#modal-yes-no').modal('hide');
                 $('#loading-screen').show();
                 $.ajax({
-                    data: { classRoomCode: '@ViewData["classRoomCode"]' },
+                    data: { classRoomCode: '@ViewData["classRoomCode"]', nhhk: '@ViewData["nhhk"]' },
                     dataType: 'json',
                     method: 'Post',
                     url: '/home/TheSurveySubmit',
@@ -579,7 +579,7 @@
                     });
                 });
             });
-        </script>
+</script>
     }
 }
 

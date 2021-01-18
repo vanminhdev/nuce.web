@@ -15,6 +15,7 @@ namespace nuce.web.api.ViewModel.Survey
         public string LecturerCode { get; set; }
         public string LecturerName { get; set; }
         public string ClassRoomCode { get; set; }
+        public string NHHK { get; set; }
         public string SubjectCode { get; set; }
         public string SubjectName { get; set; }
         public int SubjectType { get; set; }
@@ -56,5 +57,9 @@ namespace nuce.web.api.ViewModel.Survey
         [Required(AllowEmptyStrings = false)]
         [NotContainWhiteSpace]
         public string ClassRoomCode { get; set; }
+
+        [Required(AllowEmptyStrings = false)]
+        [NotContainWhiteSpace]
+        public string NHHK { get; set; }
     }
 }

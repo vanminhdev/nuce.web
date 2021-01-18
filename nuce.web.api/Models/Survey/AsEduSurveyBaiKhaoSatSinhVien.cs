@@ -16,6 +16,7 @@ namespace nuce.web.api.Models.Survey
         public string SubjectName { get; set; }
         public int SubjectType { get; set; }
         public string DepartmentCode { get; set; }
+        public string Nhhk { get; set; }
         public string DeThi { get; set; }
         public string BaiLam { get; set; }
         public DateTime NgayGioBatDau { get; set; }

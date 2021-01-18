@@ -141,6 +141,7 @@ namespace nuce.web.api.Controllers.EduData
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
         }
+
         /// <summary>
         /// Đồng bộ môn học
         /// </summary>
@@ -482,7 +483,6 @@ namespace nuce.web.api.Controllers.EduData
             if (request.Columns != null)
             {
                 filter.Code = request.Columns.FirstOrDefault(c => c.Data == "code")?.Search.Value ?? null;
-                filter.GroupCode = request.Columns.FirstOrDefault(c => c.Data == "groupCode")?.Search.Value ?? null;
                 filter.ClassCode = request.Columns.FirstOrDefault(c => c.Data == "classCode")?.Search.Value ?? null;
                 filter.SubjectCode = request.Columns.FirstOrDefault(c => c.Data == "subjectCode")?.Search.Value ?? null;
             }
@@ -656,7 +656,6 @@ namespace nuce.web.api.Controllers.EduData
             if(request.Columns != null)
             {
                 filter.Code = request.Columns.FirstOrDefault(c => c.Data == "code")?.Search.Value ?? null;
-                filter.GroupCode = request.Columns.FirstOrDefault(c => c.Data == "groupCode")?.Search.Value ?? null;
                 filter.ClassCode = request.Columns.FirstOrDefault(c => c.Data == "classCode")?.Search.Value ?? null;
                 filter.SubjectCode = request.Columns.FirstOrDefault(c => c.Data == "subjectCode")?.Search.Value ?? null;
             }

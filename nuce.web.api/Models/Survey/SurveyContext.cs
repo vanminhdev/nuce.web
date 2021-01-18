@@ -121,6 +121,12 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.NgayGioNopBai).HasColumnType("datetime");
 
+                entity.Property(e => e.Nhhk)
+                    .IsRequired()
+                    .HasColumnName("NHHK")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.StudentCode)
                     .IsRequired()
                     .HasMaxLength(50)

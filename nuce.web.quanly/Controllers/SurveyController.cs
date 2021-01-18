@@ -497,6 +497,9 @@ namespace nuce.web.quanly.Controllers
             var resExam = await base.MakeRequestAuthorizedAsync("Get", $"/api/ExamQuestions/GetAll");
             ViewData["ExamQuestions"] = await resExam.Content.ReadAsStringAsync();
 
+            var resCount = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurveyStudent/CountGenerateTheSurveyStudent?surveyRoundId={surveyRoundId}");
+            ViewData["CountGenerateTheSurveyStudent"] = await resCount.Content.ReadAsStringAsync();
+
             ViewData["surveyRoundId"] = surveyRoundId;
             return View("~/Views/Survey/Normal/TheSurvey.cshtml");
         }

@@ -63,7 +63,7 @@ namespace nuce.web.api.Services.Survey.Implements
             return false;
         }
 
-        public async Task<TheSurveyContent> GetTheSurveyContent(string studentCode, string classroomCode, Guid theSurveyId)
+        public async Task<TheSurveyContent> GetTheSurveyContent(string studentCode, string classroomCode, string nhhk, Guid theSurveyId)
         {
             if (!await IsOpenSurveyRound())
             {
@@ -71,7 +71,7 @@ namespace nuce.web.api.Services.Survey.Implements
             }
 
             var baiKSSinhViens = await _context.AsEduSurveyBaiKhaoSatSinhVien
-                .Where(o => o.StudentCode == studentCode && o.ClassRoomCode == classroomCode && (o.Status != (int)SurveyStudentStatus.Close || o.Status != (int)SurveyStudentStatus.Done)).ToListAsync();
+                .Where(o => o.StudentCode == studentCode && o.ClassRoomCode == classroomCode && o.Nhhk == nhhk && (o.Status != (int)SurveyStudentStatus.Close || o.Status != (int)SurveyStudentStatus.Done)).ToListAsync();
             var baiKSsv = baiKSSinhViens.FirstOrDefault(o => o.BaiKhaoSatId == theSurveyId);
             if (baiKSsv == null)
             {
@@ -121,6 +121,7 @@ namespace nuce.web.api.Services.Survey.Implements
                     LecturerCode = o.LecturerCode,
                     LecturerName = o.LecturerName,
                     ClassRoomCode = o.ClassRoomCode,
+                    NHHK = o.Nhhk,
                     SubjectCode = o.SubjectCode,
                     SubjectName = o.SubjectName,
                     SubjectType = o.SubjectType,
@@ -141,7 +142,7 @@ namespace nuce.web.api.Services.Survey.Implements
             return status.Status;
         }
 
-        public async Task<string> GetSelectedAnswerAutoSave(string studentCode, string classroomCode)
+        public async Task<string> GetSelectedAnswerAutoSave(string studentCode, string classroomCode, string nhhk)
         {
             if (!await IsOpenSurveyRound())
             {
@@ -149,7 +150,7 @@ namespace nuce.web.api.Services.Survey.Implements
             }
 
             var studentSurvey = await _context.AsEduSurveyBaiKhaoSatSinhVien
-                .FirstOrDefaultAsync(o => o.StudentCode == studentCode && o.ClassRoomCode == classroomCode && (o.Status != (int)SurveyStudentStatus.Close || o.Status != (int)SurveyStudentStatus.Done));
+                .FirstOrDefaultAsync(o => o.StudentCode == studentCode && o.ClassRoomCode == classroomCode && o.Nhhk == nhhk && (o.Status != (int)SurveyStudentStatus.Close || o.Status != (int)SurveyStudentStatus.Done));
             if (studentSurvey == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy bài khảo sát sinh viên");
@@ -167,7 +168,7 @@ namespace nuce.web.api.Services.Survey.Implements
         /// <param name="isAnswerCodesAdd">là thêm đáp án lựa chọn nhiều hay bỏ đi</param>
         /// <param name="answerContent"></param>
         /// <returns></returns>
-        public async Task AutoSave(string studentCode, string classroomCode, string questionCode, string answerCode, 
+        public async Task AutoSave(string studentCode, string classroomCode, string nhhk, string questionCode, string answerCode, 
             string answerCodeInMulSelect, string answerContent, int? numStar, string city,
             bool isAnswerCodesAdd = true)
         {
@@ -177,7 +178,7 @@ namespace nuce.web.api.Services.Survey.Implements
             }
 
             var surveyStudent = await _context.AsEduSurveyBaiKhaoSatSinhVien
-                .FirstOrDefaultAsync(o => o.StudentCode == studentCode && o.ClassRoomCode == classroomCode && o.Status != (int)SurveyStudentStatus.Done && o.Status != (int)SurveyStudentStatus.Close);
+                .FirstOrDefaultAsync(o => o.StudentCode == studentCode && o.ClassRoomCode == classroomCode && o.Nhhk == nhhk && o.Status != (int)SurveyStudentStatus.Done && o.Status != (int)SurveyStudentStatus.Close);
             if (surveyStudent == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy bài làm");
@@ -203,7 +204,7 @@ namespace nuce.web.api.Services.Survey.Implements
         /// </summary>
         /// <param name="task"></param>
         /// <returns></returns>
-        public async Task SaveSelectedAnswer(string studentCode, string classroomCode, string ipAddress)
+        public async Task SaveSelectedAnswer(string studentCode, string classroomCode, string nhhk, string ipAddress)
         {
             if (!await IsOpenSurveyRound())
             {
@@ -211,7 +212,7 @@ namespace nuce.web.api.Services.Survey.Implements
             }
 
             var surveyStudent = await _context.AsEduSurveyBaiKhaoSatSinhVien
-                .FirstOrDefaultAsync(o => o.StudentCode == studentCode && o.ClassRoomCode == classroomCode && o.Status != (int)SurveyStudentStatus.Done && o.Status != (int)SurveyStudentStatus.Close);
+                .FirstOrDefaultAsync(o => o.StudentCode == studentCode && o.ClassRoomCode == classroomCode && o.Nhhk == nhhk && o.Status != (int)SurveyStudentStatus.Done && o.Status != (int)SurveyStudentStatus.Close);
             if (surveyStudent == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy bài làm");
@@ -222,12 +223,6 @@ namespace nuce.web.api.Services.Survey.Implements
             if (theSurvey == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy bài khảo sát");
-            }
-
-            var examQuestions = await _context.AsEduSurveyDeThi.FirstOrDefaultAsync(o => o.Id == theSurvey.DeThiId);
-            if (examQuestions == null)
-            {
-                throw new RecordNotFoundException("Không tìm thấy nội dung bài khảo sát");
             }
 
             //var questions = JsonSerializer.Deserialize<List<QuestionJson>>(examQuestions.NoiDungDeThi);
@@ -251,6 +246,46 @@ namespace nuce.web.api.Services.Survey.Implements
             surveyStudent.Status = (int)SurveyStudentStatus.Done;
             surveyStudent.LogIp = ipAddress;
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<Tuple<int, int>> CountGenerateTheSurveyStudent(Guid surveyRoundId)
+        {
+            var surveyRound = await _context.AsEduSurveyDotKhaoSat.FirstOrDefaultAsync(o => o.Id == surveyRoundId);
+            if (surveyRound == null)
+            {
+                throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
+            }
+            IQueryable<AsEduSurveyBaiKhaoSatSinhVien> baiKsSv = _context.AsEduSurveyBaiKhaoSatSinhVien; 
+
+            var queryTheSurvey = _context.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == surveyRound.Id);
+
+            List<Guid> baiKsIds = new List<Guid>();
+            var baiLyThuyet = queryTheSurvey.FirstOrDefault(o => o.Type == (int)TheSurveyType.TheoreticalSubjects);
+            if(baiLyThuyet != null)
+            {
+                baiKsIds.Add(baiLyThuyet.Id);
+            }
+            var baiThucHanh = queryTheSurvey.FirstOrDefault(o => o.Type == (int)TheSurveyType.PracticalSubjects);
+            if (baiThucHanh != null)
+            {
+                baiKsIds.Add(baiThucHanh.Id);
+            }
+            var baiLyThuyetThucHanh = queryTheSurvey.FirstOrDefault(o => o.Type == (int)TheSurveyType.TheoreticalPracticalSubjects);
+            if (baiLyThuyetThucHanh != null)
+            {
+                baiKsIds.Add(baiLyThuyetThucHanh.Id);
+            }
+            var baiDoAn = queryTheSurvey.FirstOrDefault(o => o.Type == (int)TheSurveyType.AssignmentSubjects);
+            if (baiDoAn != null)
+            {
+                baiKsIds.Add(baiDoAn.Id);
+            }
+
+            baiKsSv = baiKsSv.Where(o => baiKsIds.Contains(o.BaiKhaoSatId));
+
+            var countStuClassroom = await _eduContext.AsAcademyStudentClassRoom.CountAsync();
+            var countBaikssv = await baiKsSv.CountAsync();
+            return new Tuple<int, int>(countBaikssv, countStuClassroom);
         }
     }
 }

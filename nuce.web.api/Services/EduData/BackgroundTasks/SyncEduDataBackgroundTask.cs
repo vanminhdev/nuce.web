@@ -81,31 +81,25 @@ namespace nuce.web.api.Services.EduData.BackgroundTasks
                             string strMaSV = temp.Count > 0 ? temp[0].InnerText.Trim() : null;
                             temp = item.GetElementsByTagName("MaDK");
                             string strMaDK = temp.Count > 0 ? temp[0].InnerText.Trim().Replace(" ", "") : null;
-
-                            var classRoom = await eduDataContext.AsAcademyClassRoom.FirstOrDefaultAsync(c => c.Code == strMaDK);
-                            var classRoomId = classRoom != null ? classRoom.Id : -1;
-
-                            var student = await eduDataContext.AsAcademyStudent.FirstOrDefaultAsync(c => c.Code == strMaSV);
-                            var studentId = student != null ? student.Id : -1;
+                            temp = item.GetElementsByTagName("NHHK");
+                            var NHHK = temp.Count > 0 ? temp[0].InnerText.Trim() : null;
 
                             var studentClassRoom = await eduDataContext.AsAcademyStudentClassRoom
-                                .FirstOrDefaultAsync(sc => sc.StudentCode == strMaSV && sc.ClassRoomCode == classRoom.Code);
+                                .FirstOrDefaultAsync(sc => sc.StudentCode == strMaSV && sc.ClassRoomCode == strMaDK && sc.Nhhk == NHHK);
 
-                            if (studentClassRoom == null)
+                            if (studentClassRoom == null) //chưa có thì thêm
                             {
                                 eduDataContext.AsAcademyStudentClassRoom.Add(new AsAcademyStudentClassRoom
                                 {
-                                    ClassRoomId = classRoomId,
                                     ClassRoomCode = strMaDK,
-                                    StudentId = studentId,
                                     StudentCode = strMaSV,
-                                    SemesterId = semester.Id
+                                    Nhhk = NHHK
                                 });
                             } 
                             else
                             {
                                 countTrungLap++;
-                                _logger.LogInformation($"dong bo sinh vien lop mon hoc bị trung ma sv: {strMaSV}, ma lop: {classRoom.Code}");
+                                //_logger.LogInformation($"dong bo sinh vien lop mon hoc bi trung ma sv: {strMaSV}, ma lop: {strMaDK}, nhhk: {NHHK}");
                             }
                         }
                         page++;
