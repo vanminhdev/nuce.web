@@ -185,6 +185,31 @@ namespace nuce.web.api.Controllers.Survey
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không gửi được email", detailMessage = mainMessage });
             }
         }
+
+        [HttpGet]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
+        public async Task<IActionResult> PreviewUrgingEmail()
+        {
+            try
+            {
+                var content = await _asEduSurveyReportTotalService.PreviewUrgingEmail();
+                return Ok(content);
+            }
+            catch (FileNotFoundException e)
+            {
+                return NotFound(new { message = e.Message });
+            }
+            catch (RecordNotFoundException e)
+            {
+                return NotFound(new { message = e.Message });
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Có lỗi xảy ra", detailMessage = mainMessage });
+            }
+        }
         #endregion
 
         #region kết xuất báo cáo ks sv thường

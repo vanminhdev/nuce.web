@@ -115,20 +115,20 @@ namespace nuce.web.api.Services.Survey.Implements
                 str += $"<tr>";
                 str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{item.FacultyCode}</td>";
                 str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{item.FacultyName}</td>";
+                str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{ item.TotalSinhVien}</td>";
+                sumTotalSinhVien += +item.TotalSinhVien;
                 str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{ item.TotalDaLam}</td>";
                        sumTotalDaLam += +item.TotalDaLam;
                 str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{ item.TotalChuaLam}</td>";
                        sumTotalChuaLam += +item.TotalChuaLam;
-                str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{ item.TotalSinhVien}</td>";
-                       sumTotalSinhVien += +item.TotalSinhVien;
                 str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{ item.Percent}%</td>";
                 str += $"</tr>";
             });
             str += $"<tr>";
             str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;' colspan = '2'>Toàn trường</td>";
+            str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{sumTotalSinhVien}</td>";
             str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{sumTotalDaLam}</td>";
             str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{sumTotalChuaLam}</td>";
-            str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{sumTotalSinhVien}</td>";
             str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{tempData.ChiemTiLe}%</td>";
             str += $"</tr style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>";
 
@@ -173,6 +173,65 @@ namespace nuce.web.api.Services.Survey.Implements
                     }
                 }
             }
+        }
+
+        public async Task<string> PreviewUrgingEmail()
+        {
+            var status = await _statusService.GetStatusTableTaskNotResetMessage(TableNameTask.TempDataNormalSurvey);
+            if (status.Status == (int)TableTaskStatus.Doing)
+            {
+                throw new TableBusyException("Đang thống kê tạm, thao tác bị huỷ");
+            }
+
+            if (status.Status == (int)TableTaskStatus.Done && !status.IsSuccess)
+            {
+                throw new TableBusyException("Không thông kê tạm thành công không gửi được email");
+            }
+
+            string filePath = "Templates/Survey/template_mail_doc_thuc_khoa_ban.txt";
+            var dir = _pathProvider.MapPath(filePath);
+            if (!File.Exists(dir))
+            {
+                throw new FileNotFoundException("Không tìm thấy mẫu gửi email");
+            }
+            string templateContent = await File.ReadAllTextAsync(dir);
+
+            var tempData = JsonSerializer.Deserialize<TempDataNormal>(status.Message);
+            var str = "";
+            var sumTotalDaLam = 0;
+            var sumTotalChuaLam = 0;
+            var sumTotalSinhVien = 0;
+            tempData.TongHopKhoa.ForEach(item => {
+                str += $"<tr>";
+                str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{item.FacultyCode}</td>";
+                str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{item.FacultyName}</td>";
+                str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{ item.TotalSinhVien}</td>";
+                sumTotalSinhVien += +item.TotalSinhVien;
+                str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{ item.TotalDaLam}</td>";
+                sumTotalDaLam += +item.TotalDaLam;
+                str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{ item.TotalChuaLam}</td>";
+                sumTotalChuaLam += +item.TotalChuaLam;
+                str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{ item.Percent}%</td>";
+                str += $"</tr>";
+            });
+            str += $"<tr>";
+            str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;' colspan = '2'>Toàn trường</td>";
+            str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{sumTotalSinhVien}</td>";
+            str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{sumTotalDaLam}</td>";
+            str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{sumTotalChuaLam}</td>";
+            str += $"<td style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>{tempData.ChiemTiLe}%</td>";
+            str += $"</tr style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>";
+
+            string contentEmail = templateContent
+                .Replace("[thoi_gian_ket_thuc]", $"{tempData.ThoiGianKetThuc:HH:mm} ngày {tempData.ThoiGianKetThuc:dd/MM/yyyy}")
+                .Replace("[ngay_hien_tai]", tempData.NgayHienTai.ToString("dd/MM/yyyy"))
+                .Replace("[so_sv_ks]", tempData.SoSVKhaoSat.ToString())
+                .Replace("[ty_le]", tempData.ChiemTiLe.ToString())
+                .Replace("[nd_bang_thong_ke]", str)
+                .Replace("\n", "")
+                .Replace("\r", "");
+
+            return contentEmail;
         }
     }
 }

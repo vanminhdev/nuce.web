@@ -8,9 +8,9 @@ Tỷ lệ cụ thể ở các Khoa/Ban như sau:
     <thead style='background-color: #102A7F; color: white;'>
         <th style='border: 1px solid #ddd; text-align: center; padding: 10px;'>Mã khoa</th>
         <th style='border: 1px solid #ddd; text-align: center; padding: 10px;'>Tên khoa</th>
+        <th style='border: 1px solid #ddd; text-align: center; padding: 10px;'>Tổng số sinh viên</th>
         <th style='border: 1px solid #ddd; text-align: center; padding: 10px;'>Số sinh viên đã làm bài</th>
         <th style='border: 1px solid #ddd; text-align: center; padding: 10px;'>Số sinh viên chưa làm bài</th>
-        <th style='border: 1px solid #ddd; text-align: center; padding: 10px;'>Tổng số sinh viên</th>
         <th style='border: 1px solid #ddd; text-align: center; padding: 10px;'>Tỷ lệ sv đã tham gia ks</th>
     </thead>
     <tbody>

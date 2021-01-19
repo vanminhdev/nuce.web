@@ -469,6 +469,14 @@ namespace nuce.web.quanly.Controllers
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/Statistic/SendUrgingEmail");
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
+
+        [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
+        public async Task<ActionResult> PreviewUrgingEmail()
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/Statistic/PreviewUrgingEmail");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
         #endregion
 
         #region bài khảo sát sv thường
