@@ -50,9 +50,9 @@
             counter-increment: title-question-counter;
         }
 
-            .question-title:before {
-                content: counter(title-question-counter, upper-roman)". ";
-            }
+        .question-title:before {
+            content: counter(title-question-counter, upper-roman)". ";
+        }
 
         .tag-child-inline > * {
             display: inline;
@@ -221,7 +221,7 @@
                     @if(ViewData["NHHK"] != null)
                     {
                         var str = ViewData["NHHK"].ToString();
-                        <span class="font-italic">@str.Substring(str.Length - 1, 1) - @str.Substring(0, 4)</span>
+                        <span class="font-italic">@(str.Length > 1 ? str.Substring(str.Length - 1, 1) : "") - @(str.Length > 4 ? str.Substring(0, 4) : "")</span>
                     }
                 </div>
                 <div class="col-6 col-md-4">
@@ -258,15 +258,15 @@
                         <b>2. KHÔNG</b> đồng ý/<b>KHÔNG</b> hài lòng
                     </div>
                     <div class="col-sm-3 col-xs-12 item">
-                        <b>3.	TẠM</b> chấp nhận/<b>TẠM</b> hài lòng
+                        <b>3. TẠM</b> chấp nhận/<b>TẠM</b> hài lòng
                     </div>
                 </div>
                 <div class="row" style="padding-left: 5px;">
                     <div class="col-sm-5 col-xs-12 item">
-                        <b>4.	ĐỒNG Ý/HÀI LÒNG</b>
+                        <b>4. ĐỒNG Ý/HÀI LÒNG</b>
                     </div>
                     <div class="col-sm-4 col-xs-12 item">
-                        <b>5.	HOÀN TOÀN ĐỒNG Ý/RẤT HÀI LÒNG</b>
+                        <b>5. HOÀN TOÀN ĐỒNG Ý/RẤT HÀI LÒNG</b>
                     </div>
                 </div>
             </div>

@@ -26,6 +26,8 @@ namespace nuce.web.api.Common
         public static readonly string CODE_LOGOUT = "LOG_OUT";
         public static readonly string CODE_BACKUP_DATABASE = "CODE_BACKUP_DATABASE";
         public static readonly string CODE_RESTORE_DATABASE = "CODE_RESTORE_DATABASE";
+        public static readonly string CODE_DOWNLOAD_FILE_BACKUP = "CODE_DOWNLOAD_FILE_BACKUP";
+        public static readonly string CODE_DELETE_FILE_BACKUP = "CODE_DELETE_FILE_BACKUP";
     }
 
     public enum LoginUserType

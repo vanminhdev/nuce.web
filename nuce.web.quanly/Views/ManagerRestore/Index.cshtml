@@ -42,7 +42,7 @@
                     <tr>
                         <th class="text-center">Tên database</th>
                         <th class="text-center">Ngày thực hiện</th>
-                        <th class="text-center"></th>
+                        <th class="text-center" style="min-width: 200px;"></th>
                     </tr>
                 </thead>
             </table>
@@ -114,7 +114,10 @@
                 {
                     data: null,
                     render: function (data) {
-                        return `<button class="btn btn-outline-primary" title='Khôi phục lại sao lưu này' onclick="restoreDatabase('${data.id}')">Khôi phục</button>`;
+                        let html = '';
+                        html += `<button class="btn btn-outline-primary" title='Tải xuống' onclick="downloadDatabase('${data.id}')">Tải xuống</button> `;
+                        html += `<button class="btn btn-outline-danger" title='xoá' onclick="deleteHistory('${data.id}')">Xoá</button>`;
+                        return html;
                     }
                 }
             ]
@@ -162,24 +165,34 @@
             });
         });
 
-        function restoreDatabase(id) {
+        function downloadDatabase(id) {
             $('#modal-yes-no-title').html('Xác nhận');
-            $('#modal-yes-no-content').html('Xác nhận khôi phục cơ sở dữ liệu ? <br/> Mọi dữ liệu sẽ quay về trạng thái như phiên bản sao lưu này.');
+            $('#modal-yes-no-content').html('Xác nhận tải xuống cơ sở dữ liệu');
             $('#modal-yes-no').modal('show');
             $('#choose-yes').off("click");
             $('#choose-yes').click(() => {
-                $('#loading-screen').show();
+                $('#modal-yes-no').modal('hide');
+                window.open(`/ManagerRestore/DownloadFileBackupDatabaseSurvey?id=${id}`, '_blank');
+            });
+        }
+
+        function deleteHistory(id) {
+            $('#modal-yes-no-title').html('Xác nhận');
+            $('#modal-yes-no-content').html('Xác nhận xoá file sao lưu ?');
+            $('#modal-yes-no').modal('show');
+            $('#choose-yes').off("click");
+            $('#choose-yes').click(() => {
                 $.ajax({
-                    data: { id },
                     dataType: 'json',
                     method: 'Post',
-                    url: '/ManagerRestore/RestoreDatabaseSurvey?type=@ViewData["type"]',
+                    url: `/ManagerRestore/DeleteHistoryBackupDatabaseSurvey?id=${id}`,
                     complete: () => { }
                 }).done(function (res) {
                     $('#modal-yes-no').modal('hide');
-                    $('#loading-screen').hide();
                     if (res.statusCode === 200) {
-                        toastSuccess('Khôi phục thành công');
+                        $('#loading-screen').hide();
+                        toastSuccess('Xoá thành công');
+                        tableBackup.ajax.reload();
                     }
                     else {
                         try {

@@ -121,5 +121,41 @@ namespace nuce.web.api.Services.Core.Implements
                     return false;
             }
         }
+
+        public async Task<byte[]> DownloadFileBackupSurveyDataBase(Guid idBackup)
+        {
+            var historyBackup = await _coreContext.ManagerBackup.FirstOrDefaultAsync(o => o.Id == idBackup);
+            if (historyBackup == null)
+            {
+                throw new RecordNotFoundException("Không tìm thấy lịch sử sao lưu");
+            }
+
+            var path = historyBackup.Path;
+
+            if (!File.Exists(path))
+            {
+                throw new FileNotFoundException("File sao lưu không còn tồn tại");
+            }
+
+            return await File.ReadAllBytesAsync(path);
+        }
+
+        public async Task DeleteHistoryBackupDatabaseSurvey(Guid idBackup)
+        {
+            var historyBackup = await _coreContext.ManagerBackup.FirstOrDefaultAsync(o => o.Id == idBackup);
+            if (historyBackup == null)
+            {
+                throw new RecordNotFoundException("Không tìm thấy lịch sử sao lưu");
+            }
+
+            _coreContext.ManagerBackup.Remove(historyBackup);
+
+            var path = historyBackup.Path;
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+            await _coreContext.SaveChangesAsync();
+        }
     }
 }

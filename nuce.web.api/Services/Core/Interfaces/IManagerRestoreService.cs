@@ -25,6 +25,11 @@ namespace nuce.web.api.Services.Core.Interfaces
         public Task BackupSurveyDataBase(BackupTypes.Survey type);
 
         public Task RestoreSurveyDataBase(Guid idBackup);
+
+        public Task<byte[]> DownloadFileBackupSurveyDataBase(Guid idBackup);
+
+        public Task DeleteHistoryBackupDatabaseSurvey(Guid idBackup);
+
         /// <summary>
         /// Check role của user có tương ứng loại backup không
         /// </summary>
