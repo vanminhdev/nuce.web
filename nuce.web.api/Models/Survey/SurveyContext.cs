@@ -74,14 +74,14 @@ namespace nuce.web.api.Models.Survey
                 entity.HasIndex(e => new { e.BaiKhaoSatId, e.LecturerCode, e.ClassRoomCode })
                     .HasName("index_baikhaosatsinhvien_baiks_giangvien_lop");
 
-                entity.HasIndex(e => new { e.StudentCode, e.ClassRoomCode, e.Status })
-                    .HasName("index_As_Edu_survey_baikhaosatsinhvien");
-
                 entity.HasIndex(e => new { e.BaiKhaoSatId, e.SubjectCode, e.LecturerCode, e.Status })
                     .HasName("IX_baikhaosatsinhvien_ThongKe_GiangVien");
 
                 entity.HasIndex(e => new { e.BaiKhaoSatId, e.SubjectCode, e.StudentCode, e.Status })
                     .HasName("IX_baikhaosatsinhvien_ThongKe_SinhVien");
+
+                entity.HasIndex(e => new { e.StudentCode, e.ClassRoomCode, e.Nhhk, e.Status })
+                    .HasName("index_As_Edu_survey_baikhaosatsinhvien");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
@@ -658,7 +658,7 @@ namespace nuce.web.api.Models.Survey
                 entity.HasIndex(e => new { e.TheSurveyId, e.QuestionCode, e.AnswerCode })
                     .HasName("IX_ReportTotal_QuestionCode_AnswerCode");
 
-                entity.HasIndex(e => new { e.TheSurveyId, e.LecturerCode, e.ClassRoomCode, e.QuestionCode, e.AnswerCode })
+                entity.HasIndex(e => new { e.TheSurveyId, e.LecturerCode, e.ClassRoomCode, e.Nhhk, e.QuestionCode, e.AnswerCode })
                     .HasName("IX_ReportTotal_thongke_tho");
 
                 entity.Property(e => e.Id)
@@ -675,6 +675,12 @@ namespace nuce.web.api.Models.Survey
                 entity.Property(e => e.LecturerCode)
                     .IsRequired()
                     .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Nhhk)
+                    .IsRequired()
+                    .HasColumnName("NHHK")
+                    .HasMaxLength(10)
                     .IsUnicode(false);
 
                 entity.Property(e => e.QuestionCode)

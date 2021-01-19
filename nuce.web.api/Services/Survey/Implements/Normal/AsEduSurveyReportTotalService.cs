@@ -70,6 +70,7 @@ namespace nuce.web.api.Services.Survey.Implements
                     Id = o.reportSurveyRound.report.Id,
                     LecturerCode = o.reportSurveyRound.report.LecturerCode,
                     ClassRoomCode = o.reportSurveyRound.report.ClassRoomCode,
+                    NHHK = o.reportSurveyRound.report.Nhhk,
                     QuestionCode = o.reportSurveyRound.report.QuestionCode,
                     AnswerCode = o.reportSurveyRound.report.AnswerCode,
                     Total = o.reportSurveyRound.report.Total,
@@ -132,7 +133,7 @@ namespace nuce.web.api.Services.Survey.Implements
             str += $"</tr style='border: 1px solid #ddd; text-align: center; padding-top: 10px; padding-bottom: 10px;'>";
 
             string contentEmail = templateContent
-                .Replace("[thoi_gian_ket_thuc]", $"{tempData.ThoiGianKetThuc.ToString("HH:mm")} ngày {tempData.ThoiGianKetThuc.ToString("dd/MM/yyyy")}")
+                .Replace("[thoi_gian_ket_thuc]", $"{tempData.ThoiGianKetThuc:HH:mm} ngày {tempData.ThoiGianKetThuc:dd/MM/yyyy}")
                 .Replace("[ngay_hien_tai]", tempData.NgayHienTai.ToString("dd/MM/yyyy"))
                 .Replace("[so_sv_ks]", tempData.SoSVKhaoSat.ToString())
                 .Replace("[ty_le]", tempData.ChiemTiLe.ToString())

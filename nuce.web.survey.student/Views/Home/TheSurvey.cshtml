@@ -217,6 +217,14 @@
         <div class="col-12 ml-2">
             <div class="row">
                 <div class="col-6 col-md-4">
+                    <span class="font-weight-bold">Học kỳ: </span>
+                    @if(ViewData["NHHK"] != null)
+                    {
+                        var str = ViewData["NHHK"].ToString();
+                        <span class="font-italic">@str.Substring(str.Length - 1, 1) - @str.Substring(0, 4)</span>
+                    }
+                </div>
+                <div class="col-6 col-md-4">
                     <span class="font-weight-bold">Đợt khảo sát: </span>
                     <span class="font-italic">@ViewData["SurveyRoundName"]</span>
                 </div>

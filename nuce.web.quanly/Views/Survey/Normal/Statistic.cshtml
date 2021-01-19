@@ -43,6 +43,7 @@
                         <th class="text-center">Đợt khảo sát</th>
                         <th class="text-center">Bài khảo sát</th>
                         <th class="text-center">Mã lớp</th>
+                        <th class="text-center">NHHK</th>
                         <th class="text-center">Mã giảng viên</th>
                         <th class="text-center">Mã câu hỏi</th>
                         <th class="text-center">Mã đáp án</th>
@@ -197,11 +198,11 @@
             language: dataTableConfig.language,
             columnDefs: [
                 {
-                    targets: [ 6 ],
+                    targets: [ 7 ],
                     className: 'text-center'
                 },
                 {
-                    targets: [7],
+                    targets: [8],
                     className: 'm-mw-100'
                 },
             ],
@@ -223,6 +224,9 @@
                 },
                 {
                     data: "classRoomCode"
+                },
+                {
+                    data: "nhhk"
                 },
                 {
                     data: "lecturerCode"

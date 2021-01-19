@@ -97,6 +97,7 @@ namespace nuce.web.api.Services.Survey.Implements
             var result = new TheSurveyContent
             {
                 ClassroomName = classroom?.ClassCode,
+                NHHK = baiKSsv.Nhhk,
                 LeturerName = baiKSsv.LecturerName,
                 SurveyRoundName = surveyRound?.Name,
                 NoiDungDeKhaoSat = theSurvey.NoiDungDeThi

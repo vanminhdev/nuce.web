@@ -159,22 +159,22 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 }
 
                 //do chỉ có một bài ks nên lấy id của bài ks đó
-                var idbaikscuadotnay = surveyContext.AsEduSurveyBaiKhaoSat.AsNoTracking().Where(o => o.DotKhaoSatId == surveyRound.Id).Select(o => o.Id).ToList();
-                if (idbaikscuadotnay.Count == 0)
+                var idbaikscuadotnays = surveyContext.AsEduSurveyBaiKhaoSat.AsNoTracking().Where(o => o.DotKhaoSatId == surveyRound.Id).Select(o => o.Id).ToList();
+                if (idbaikscuadotnays.Count == 0)
                 {
                     throw new RecordNotFoundException("Không tìm thấy bài khảo sát của đợt khảo sát này");
                 }
 
                 _logger.LogInformation("report total normal is start.");
                 //surveyContext.Database.ExecuteSqlRaw($"TRUNCATE TABLE {TableNameTask.AsEduSurveyReportTotal}");
-                var baikshoanthanh = surveyContext.AsEduSurveyBaiKhaoSatSinhVien.AsNoTracking().Where(o => idbaikscuadotnay.Contains(o.BaiKhaoSatId)).Where(o => o.Status == (int)SurveyStudentStatus.Done);
+                var baikshoanthanh = surveyContext.AsEduSurveyBaiKhaoSatSinhVien.AsNoTracking().Where(o => idbaikscuadotnays.Contains(o.BaiKhaoSatId)).Where(o => o.Status == (int)SurveyStudentStatus.Done);
 
                 var tongBaiKsHoanThanh = baikshoanthanh.Count();
                 List<SelectedAnswerExtend> selectedAnswers;
 
                 var groupLopGiangVien = baikshoanthanh
-                .GroupBy(o => new { o.LecturerCode, o.ClassRoomCode, o.BaiKhaoSatId })
-                .Select(r => new { r.Key.LecturerCode, r.Key.ClassRoomCode, r.Key.BaiKhaoSatId })
+                .GroupBy(o => new { o.LecturerCode, o.ClassRoomCode, o.BaiKhaoSatId, o.Nhhk })
+                .Select(r => new { r.Key.LecturerCode, r.Key.ClassRoomCode, r.Key.BaiKhaoSatId, r.Key.Nhhk })
                 .ToList();
 
                 var totalLectureClassroom = groupLopGiangVien.Count();
@@ -183,9 +183,10 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 {
                     var lectureCode = lectureClassroom.LecturerCode;
                     var classroomCode = lectureClassroom.ClassRoomCode;
+                    var nhhk = lectureClassroom.Nhhk;
 
-                    //từng giảng viên lớp môn học
-                    var cacBaiLam = baikshoanthanh.Where(o => o.ClassRoomCode == classroomCode && o.LecturerCode == lectureCode).ToList();
+                    //từng giảng viên lớp môn học của từng nhhk
+                    var cacBaiLam = baikshoanthanh.Where(o => o.ClassRoomCode == classroomCode && o.LecturerCode == lectureCode && o.Nhhk == nhhk).ToList();
                     selectedAnswers = new List<SelectedAnswerExtend>();
 
                     foreach (var bailam in cacBaiLam)
@@ -203,7 +204,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                     foreach (var item in total)
                     {
                         var thongkecuthe = surveyContext.AsEduSurveyReportTotal
-                            .FirstOrDefault(o => o.ClassRoomCode == classroomCode && o.LecturerCode == lectureCode && o.TheSurveyId == item.TheSurveyId &&
+                            .FirstOrDefault(o => o.ClassRoomCode == classroomCode && o.Nhhk == nhhk && o.LecturerCode == lectureCode && o.TheSurveyId == item.TheSurveyId &&
                             o.QuestionCode == item.QuestionCode && o.AnswerCode == o.AnswerCode);
                         if (thongkecuthe == null)
                         {
@@ -213,6 +214,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                 SurveyRoundId = surveyRound.Id,
                                 TheSurveyId = item.TheSurveyId,
                                 ClassRoomCode = classroomCode,
+                                Nhhk = nhhk,
                                 LecturerCode = lectureCode,
                                 QuestionCode = item.QuestionCode,
                                 AnswerCode = item.AnswerCode,

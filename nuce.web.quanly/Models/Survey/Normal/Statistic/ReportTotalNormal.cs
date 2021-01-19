@@ -13,6 +13,7 @@ namespace nuce.web.quanly.Models.Survey.Normal.Statistic
         public string theSurveyId { get; set; }
         public string theSurveyName { get; set; }
         public string classRoomCode { get; set; }
+        public string nhhk { get; set; }
         public string lecturerCode { get; set; }
         public string questionCode { get; set; }
         public string answerCode { get; set; }
