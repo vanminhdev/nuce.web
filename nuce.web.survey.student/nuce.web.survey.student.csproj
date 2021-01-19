@@ -2698,6 +2698,7 @@
     <Content Include="Views\SurveyResult\Faculty.cshtml" />
     <Content Include="Views\SurveyResult\Department.cshtml" />
     <Content Include="Views\SurveyResult\Lecturer.cshtml" />
+    <Content Include="Views\Shared\_PartialShowHideItems.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

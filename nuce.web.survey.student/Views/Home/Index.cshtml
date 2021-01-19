@@ -41,6 +41,9 @@
         } else {
             let stt = 0;
             for (let element of content) {
+                if (element.subjectName === "") {
+                    continue;
+                }
                 htmlStr += `
                     <tr>
                         <td class="text-center">${stt+=1}</td>

@@ -348,9 +348,16 @@
                             if (child.divideAfter) {
                                 dropdownDetailHtml += `<div class="dropdown-divider"></div>`;
                             }
+
+                            const children2nd = data.filter(c => c.parent == child.id);
+                            if (children2nd.length > 0) {
+
+                                console.log(children2nd);
+                            }
                         });
                         dropdownHtml += dropdownTemplate.replace('[dropdown-detail-template]', dropdownDetailHtml);
                     }
+                    
                     let tempHtml = '';
                     if (cat.menuHref) {
                         tempHtml = `<li class="nav-item m-nav-item-hover">
@@ -410,5 +417,8 @@
             });
         </script>*@
     @RenderSection("Scripts", required: false)
+    @{ 
+        Html.RenderPartial("~/Views/Shared/_PartialShowHideItems.cshtml");
+    }
 </body>
 </html>

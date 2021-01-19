@@ -79,7 +79,7 @@
 }
 
 .m-section-title {
-    transition: 0.3s;
+    /*transition: 0.3s;*/
     border-top: 1px solid #112B7F;
     border-left: 1px solid #112B7F;
     border-right: 1px solid #112B7F;

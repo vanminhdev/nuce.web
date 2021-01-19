@@ -155,7 +155,7 @@ namespace nuce.web.api.Controllers.Core
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [Authorize(RoleNames.KhaoThi_Add_Cat)]
+        [AppAuthorize(RoleNames.KhaoThi_Add_Cat)]
         [HttpPost]
         [Route("admin/news-category/create")]
         public async Task<IActionResult> CreateNewsCategoryAdmin([FromBody] CreateNewsCategoryModel model)
