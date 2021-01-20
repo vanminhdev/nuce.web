@@ -101,7 +101,7 @@ namespace nuce.web.quanly.Controllers
             var content = base.MakeContent(model);
 
             var response = await base.MakeRequestAuthorizedAsync("post", api, content);
-            var test = await response.Content.ReadAsStringAsync();
+
             return Json(new ResponseBody
             {
                 Data = await response.Content.ReadAsStringAsync(),

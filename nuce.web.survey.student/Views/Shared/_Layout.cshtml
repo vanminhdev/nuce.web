@@ -231,8 +231,8 @@
     <script>
         var initMenu = function() {
 
-            const cycleTime = 12 * 60 * 60 * 1000;
-
+            //const cycleTime = 12 * 60 * 60 * 1000;
+            const cycleTime = 0;
             const nextStep = cycleGenerateMenu(STORAGE_KEY.MENU_LOAD_DAY, cycleTime, apiGenerateMenu);
 
             if (!nextStep) return;
@@ -325,12 +325,23 @@
                                         </a>
                                         [dropdown-template]
                                     </li>`;
-            const dropdownTemplate = `<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            const dropdownTemplate = `<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         [dropdown-detail-template]
-                                    </div>`;
-            const dropdownDetailTemplate = `<a class="dropdown-item m-bg-hover-blue text-truncate"
+                                    </ul>`;
+            const dropdownDetailTemplate = `<li><a class="dropdown-item m-bg-hover-blue text-truncate"
                                                 href="[link]"
-                                                id=[id]>[name]</a>`;
+                                                id=[id]>[name]</a></li>`;
+
+            const dropdownDetailTemplateHasChild2nd = `<li><a class="dropdown-item m-bg-hover-blue text-truncate"
+                                                href="[link]"
+                                                id=[id]>[name]</a>
+                                                [dropdown-detail-template]</li>`;
+
+            const dropdownTemplateChild2nd = `<ul class="submenu dropdown-menu">
+                                           [dropdown-detail-template-child]
+                                           </ul>`;
+
+            const dropdownDetailTemplateChild2nd = `<li><a class="dropdown-item m-bg-hover-blue text-truncate" href="[link]" id=[id]>[name]</a></li>`;
 
             data.forEach(cat => {
                 if (cat.parent == -1) {
@@ -339,17 +350,29 @@
                     if (children.length > 0) {
                         let dropdownDetailHtml = '';
                         children.forEach(child => {
-                           dropdownDetailHtml += dropdownDetailTemplate.replace('[name]', child.description)
-                                                                    .replace('[link]', `${child.menuHref}`)
-                                                                    .replace('[id]', `link-menu-child-${child.id}`);
-                            if (child.divideAfter) {
-                                dropdownDetailHtml += `<div class="dropdown-divider"></div>`;
+                            const children2nd = data.filter(c => c.parent == child.id);
+                            if (children2nd.length === 0) {
+                                dropdownDetailHtml += dropdownDetailTemplate.replace('[name]', child.description)
+                                    .replace('[link]', `${child.menuHref}`)
+                                    .replace('[id]', `link-menu-child-${child.id}`);
+                            } else {
+                                console.log(children2nd);
+                                let dropDownDetailHtml2nd = '';
+                                children2nd.forEach(child2nd => {
+                                    dropDownDetailHtml2nd += dropdownDetailTemplateChild2nd
+                                        .replace('[name]', child2nd.description)
+                                        .replace('[link]', `${child2nd.menuHref}`)
+                                        .replace('[id]', `link-menu-child2nd-${child2nd.id}`);
+                                });
+                                dropdownDetailHtml += dropdownDetailTemplateHasChild2nd
+                                    .replace('[name]', child.description)
+                                    .replace('[link]', `${child.menuHref}`)
+                                    .replace('[id]', `link-menu-child-${child.id}`)
+                                    .replace('[dropdown-detail-template]', dropdownTemplateChild2nd.replace('[dropdown-detail-template-child]', dropDownDetailHtml2nd));
                             }
 
-                            const children2nd = data.filter(c => c.parent == child.id);
-                            if (children2nd.length > 0) {
-
-                                console.log(children2nd);
+                            if (child.divideAfter) {
+                                dropdownDetailHtml += `<div class="dropdown-divider"></div>`;
                             }
                         });
                         dropdownHtml += dropdownTemplate.replace('[dropdown-detail-template]', dropdownDetailHtml);
@@ -370,6 +393,22 @@
                 }
             });
             $('#nav-item-container').html(stringHtml);
+
+            //click menu đa cấp mobile
+            $(document).on('click', '.dropdown-menu', function (e) {
+                e.stopPropagation();
+            });
+            if ($(window).width() < 992) {
+                $('.dropdown-menu a').click(function (e) {
+                    e.preventDefault();
+                    if ($(this).next('.submenu').length) {
+                        $(this).next('.submenu').toggle();
+                    }
+                    $('.dropdown').on('hide.bs.dropdown', function () {
+                        $(this).find('.submenu').hide();
+                    })
+                });
+            }
         };
 
         initMenu();
@@ -388,9 +427,6 @@
                 $('#container-menu').removeClass('m-sticky-menu');
             });
         });
-    </script>
-    <script>
-        _autoLayoutImage.load();
     </script>
     <script>
         _autoLayoutImage.load();

@@ -52,7 +52,7 @@
                 </div>
                 <div class=" col-12 col-md-10">
                     @Html.TextBoxFor(m => m.type, new { @type = "hidden", @required = true })
-                    @Html.DropDownListFor(m => m.type, new SelectList(nuce.web.quanly.Common.Definitions.QuestionType, "Key", "Value", "type"),
+                    @Html.DropDownListFor(m => m.type, new SelectList(nuce.web.quanly.Common.Definitions.GraduateQuestionType, "Key", "Value", "type"),
                         new { @class = "form-control", title = "Chọn loại câu hỏi", disabled = "true" })
                     @Html.ValidationMessageFor(m => m.type, "", new { @class = "form-text text-danger" })
                 </div>
@@ -86,7 +86,7 @@
                                     <div class="d-flex align-items-center border rounded">
                                         <p class="m-0 ml-1">@item.code</p>
                                         <p class="m-0 ml-1 p-1 pl-2 pr-2">@Html.Raw(item.content)</p>
-                                        <button class="ml-auto close pl-1 pr-1" onclick="removeChildQuestion(this, @item.code)" type="button">
+                                        <button class="ml-auto close pl-1 pr-1" onclick="removeChildQuestion(this, '@item.code')" type="button">
                                             <span>&times;</span>
                                         </button>
                                     </div>
@@ -143,7 +143,7 @@
     </div>
 </form>
 
-<div class="modal fade bd-example-modal-lg" id="modal-input" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade bd-example-modal-lg auto-clear-form-on-open" id="modal-input" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document" style="min-width:1000px">
         <div class="modal-content">
             <div class="modal-header">
@@ -164,7 +164,7 @@
                                     <input class="form-control form-control" id="noidung" type="text" placeholder="Tìm theo nội dung" />
                                 </div>
                                 <div class="col-6 col-md mb-2">
-                                    @Html.DropDownList("type", new SelectList(Definitions.QuestionType, "Key", "Value"),
+                                    @Html.DropDownList("type", new SelectList(Definitions.GraduateQuestionType, "Key", "Value"),
                                         new { @id = "loai", @class = "selectpicker form-control custom-boostrap-select", title = "Tìm theo loại câu hỏi" })
                                 </div>
                                 <div class="col-12 col-md mb-2 d-flex flex-row">
@@ -233,7 +233,7 @@
                         <div class="d-flex align-items-center border rounded">
                             <p class="m-0 ml-1">${code}</p>
                             <p class="m-0 ml-1 p-1 pl-2 pr-2">${content}</p>
-                            <button class="ml-auto close pl-1 pr-1" onclick="removeChildQuestion(this, ${code}" type="button">
+                            <button class="ml-auto close pl-1 pr-1" onclick="removeChildQuestion(this, '${code}'" type="button">
                                 <span>&times;</span>
                             </button>
                         </div>
@@ -303,7 +303,7 @@
                     data: null,
                     name: "type",
                     mRender: function (data, type, row) {
-                        let questionType = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(Definitions.QuestionType.ToList()))');
+                        let questionType = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(Definitions.GraduateQuestionType.ToList()))');
                         let result = questionType.find(element => element.Key == data.type);
                         return result.Value;
                     }

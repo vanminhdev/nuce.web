@@ -32,6 +32,7 @@ namespace nuce.web.api.Services.Survey.Implements
             if (!string.IsNullOrWhiteSpace(filter.Code))
             {
                 query = query.Where(u => u.Code == filter.Code);
+                var test = query.ToList();
             }
             if (!string.IsNullOrWhiteSpace(filter.Content))
             {
@@ -114,32 +115,6 @@ namespace nuce.web.api.Services.Survey.Implements
                 }).ToList()
             };
         }
-
-        //private void task()
-        //{
-        //    var questions = _surveyContext.AsEduSurveyCauHoi.OrderBy(o => o.Id).ToList();
-
-        //    for(int i = 0; i < questions.Count; i++)
-        //    {
-        //        questions[i].Code = $"{i + 1:00000}";
-        //    }
-
-        //    _surveyContext.SaveChanges();
-
-        //    var answers = _surveyContext.AsEduSurveyDapAn.OrderBy(o => o.Id).ToList();
-
-        //    for (int i = 0; i < answers.Count; i++)
-        //    {
-        //        answers[i].Code = $"{i + 1:00000}";
-
-        //        var q = _surveyContext.AsEduSurveyCauHoi.Find(answers[i].CauHoiId);
-
-        //        if(q != null)
-        //        {
-        //            answers[i].CauHoiCode = q.Code;
-        //        }
-        //    }
-        //}
 
         public async Task Create(QuestionCreateModel question)
         {

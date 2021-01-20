@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
@@ -22,8 +23,11 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Mime;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using static EduWebService.ServiceSoapClient;
 
@@ -40,8 +44,11 @@ namespace nuce.web.api.Services.Core.Implements
         private readonly IDepartmentRepository   _departmentRepository;
         private readonly IFacultyRepository _facultyRepository;
         private readonly IStudentEduDataService _studentEduDataService;
+        private readonly ILogger<UserService> _logger;
 
-        public UserService(UserManager<ApplicationUser> _userManager,
+        public UserService(
+                ILogger<UserService> logger,
+                UserManager<ApplicationUser> _userManager,
                 IConfiguration configuration, 
                 IHttpContextAccessor httpContextAccessor,
                 IStudentRepository _studentRepository,
@@ -52,6 +59,7 @@ namespace nuce.web.api.Services.Core.Implements
                 IStudentEduDataService _studentEduDataService
         )
         {
+            _logger = logger;
             this._userManager = _userManager;
             this._studentRepository = _studentRepository;
             _httpContext = httpContextAccessor.HttpContext;
@@ -146,13 +154,33 @@ namespace nuce.web.api.Services.Core.Implements
             if (UserParameters.LoginViaDaotao.Contains(model.LoginUserType))
             {
                 //return true;
-                ServiceSoapClient srvc = new ServiceSoapClient(EndpointConfiguration.ServiceSoap12);
+                //ServiceSoapClient srvc = new ServiceSoapClient(EndpointConfiguration.ServiceSoap12);
+                //try
+                //{
+                //    return await srvc.authenAsync(model.Username, model.Password) == 1;
+                //}
+                //catch (Exception)
+                //{
+                //    throw new CallEduWebServiceException("Hiện tại không thể kết nối đến Đào tạo");
+                //}
                 try
                 {
-                    return await srvc.authenAsync(model.Username, model.Password) == 1;
+                    HttpClient clientAuth = new HttpClient()
+                    {
+                        BaseAddress = new Uri(_configuration["ApiAuth"]),
+                        Timeout = TimeSpan.FromSeconds(60)
+                    };
+                    var json = JsonSerializer.Serialize(new {
+                        MaND = model.Username,
+                        Pass = model.Password
+                    });
+                    var content = new StringContent(json, Encoding.UTF8, MediaTypeNames.Application.Json);
+                    var res = await clientAuth.PostAsync("/api/Auth", content);
+                    return res.IsSuccessStatusCode;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    _logger.LogError(ex, UtilsException.GetMainMessage(ex));
                     throw new CallEduWebServiceException("Hiện tại không thể kết nối đến Đào tạo");
                 }
             }

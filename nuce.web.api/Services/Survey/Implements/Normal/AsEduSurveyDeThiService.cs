@@ -237,7 +237,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
                 if(itemGroup.Key.Type == QuestionType.GQ) //nếu có nhiều câu hỏi con
                 {
-                    var childs = _surveyContext.AsEduSurveyCauHoi.Where(o => o.ParentCode == itemGroup.Key.Code).Select(o => new QuestionJson
+                    var childs = _surveyContext.AsEduSurveyCauHoi.Where(o => o.ParentCode == itemGroup.Key.Code).OrderBy(o => o.Order).Select(o => new QuestionJson
                     {
                         Code = o.Code,
                         DifficultID = o.DoKhoId,

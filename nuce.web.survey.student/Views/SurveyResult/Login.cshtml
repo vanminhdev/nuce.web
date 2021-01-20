@@ -2,7 +2,7 @@
 @using nuce.web.survey.student.Common
 
 @{
-    ViewBag.Title = "Login";
+    ViewData["Title"] = "Login";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -42,6 +42,10 @@
             <div class="card-body">
                 <form method="post" action="/surveyresult/postlogin" class="pb-2">
                     @Html.AntiForgeryToken()
+                    @if (ViewData["target"] != null)
+                    {
+                        <input name="target" value="@ViewData["target"]" hidden />
+                    }
                     <div class="form-group mb-1">
                         <label for="username" class="w-100">Tên đăng nhập</label>
                         @Html.TextBoxFor(m => m.Username, new { @placeholder = "Mã số sinh viên", @class = "form-control custom-input" })

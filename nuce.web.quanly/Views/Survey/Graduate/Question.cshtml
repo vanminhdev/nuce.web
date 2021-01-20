@@ -21,7 +21,7 @@
                     <input class="form-control form-control" id="noidung" type="text" placeholder="Tìm theo nội dung" />
                 </div>
                 <div class="col-6 col-md mb-2">
-                    @Html.DropDownList("type", new SelectList(Definitions.QuestionType, "Key", "Value"),
+                    @Html.DropDownList("type", new SelectList(Definitions.GraduateQuestionType, "Key", "Value"),
                         new { @id="loai", @class = "selectpicker form-control custom-boostrap-select", title = "Tìm theo loại câu hỏi" })
                 </div>
                 <div class="col-12 col-md mb-2 d-flex flex-row">
@@ -132,7 +132,7 @@
                     data: null,
                     name: "type",
                     mRender: function (data, type, row) {
-                        let questionType = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(Definitions.QuestionType.ToList()))');
+                        let questionType = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(Definitions.GraduateQuestionType.ToList()))');
                         let result = questionType.find(element => element.Key == data.type);
                         return result.Value;
                     }

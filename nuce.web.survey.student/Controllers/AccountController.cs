@@ -18,13 +18,9 @@ namespace nuce.web.survey.student.Controllers
     public class AccountController : BaseController
     {
         [HttpGet]
-        public ActionResult Login()
+        public ActionResult Login(string target)
         {
-            //Khi access token hết hạn thì vào trang home sẽ được cấp mới
-            //if (Request.Cookies[UserParameters.JwtRefreshToken] != null)
-            //{
-            //    return Redirect("/home");
-            //}
+            ViewData["target"] = target;
             return View(new LoginModel());
         }
 
@@ -33,6 +29,7 @@ namespace nuce.web.survey.student.Controllers
         {
             if (!ModelState.IsValid)
             {
+                ViewData["target"] = target;
                 return View("login", new LoginModel());
             }
 
@@ -68,9 +65,6 @@ namespace nuce.web.survey.student.Controllers
             switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:
-                    var handler = new JwtSecurityTokenHandler();
-                    var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
-                    var roles = jwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(r => r.Value).ToList();
                     if(target == null)
                     {
                         return Redirect("/default");
@@ -103,26 +97,30 @@ namespace nuce.web.survey.student.Controllers
                     ViewData["LoginFailed"] = jsonString;
                     break;
             }
+            ViewData["target"] = target;
             return View("login", new LoginModel());
         }
 
         [HttpGet]
-        public ActionResult LoginUndergraduate()
+        public ActionResult LoginUndergraduate(string target)
         {
+            ViewData["target"] = target;
             return View(new LoginModel());
         }
 
         [HttpGet]
-        public ActionResult LoginGraduate()
+        public ActionResult LoginGraduate(string target)
         {
+            ViewData["target"] = target;
             return View(new LoginModel());
         }
 
         [HttpPost]
-        public async Task<ActionResult> LoginGraduate(LoginModel login)
+        public async Task<ActionResult> LoginGraduate(LoginModel login, string target)
         {
             if (!ModelState.IsValid)
             {
+                ViewData["target"] = target;
                 return View("logingraduate", new LoginModel());
             }
 
@@ -158,7 +156,14 @@ namespace nuce.web.survey.student.Controllers
             switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:
-                    return Redirect("/graduatehome/index");
+                    if (target == null)
+                    {
+                        return Redirect("/default");
+                    }
+                    else
+                    {
+                        return Redirect(target);
+                    }
                 case HttpStatusCode.NotFound:
                     ViewData["LoginMessage"] = "Tài khoản không tồn tại";
                     break;
@@ -183,6 +188,7 @@ namespace nuce.web.survey.student.Controllers
                     ViewData["LoginFailed"] = jsonString;
                     break;
             }
+            ViewData["target"] = target;
             return View("logingraduate", new LoginModel());
         }
 
