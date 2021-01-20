@@ -3,10 +3,8 @@ using nuce.web.shared;
 using nuce.web.shared.Models.Survey;
 using nuce.web.survey.student.Attributes.ActionFilter;
 using nuce.web.survey.student.Common;
-using nuce.web.survey.student.Helper;
 using nuce.web.survey.student.Models;
 using nuce.web.survey.student.Models.Base;
-using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -15,7 +13,6 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 
 namespace nuce.web.survey.student.Controllers
@@ -48,7 +45,7 @@ namespace nuce.web.survey.student.Controllers
         {
             var model = new SurveyResultModel
             {
-                FacultyCode = code ?? UserHelper.username,
+                FacultyCode = code ?? base.GetCurrentUsername(),
             };
             return View("Faculty", model);
         }
@@ -65,7 +62,7 @@ namespace nuce.web.survey.student.Controllers
         {
             var model = new SurveyResultModel
             {
-                DepartmentCode = code ?? UserHelper.username,
+                DepartmentCode = code ?? base.GetCurrentUsername(),
                 FacultyCode = facultyCode,
             };
 
@@ -83,14 +80,14 @@ namespace nuce.web.survey.student.Controllers
         [HttpGet]
         public async Task<ActionResult> Lecturer(string code, string facultyCode, string departmentCode)
         {
-            code = code ?? UserHelper.username;
+            code = code ?? base.GetCurrentUsername();
             var stringContent = new StringContent("", Encoding.UTF8, "application/json");
             var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/SurveyResult/lecturer/{code}", stringContent);
             var data = await base.DeserializeResponseAsync<SurveyResultResponseModel>(response.Content);
 
             var model = new SurveyResultModel
             {
-                LecturerCode = code ?? UserHelper.username,
+                LecturerCode = code ?? base.GetCurrentUsername(),
                 FacultyCode = facultyCode,
                 DepartmentCode = departmentCode,
                 Data = data

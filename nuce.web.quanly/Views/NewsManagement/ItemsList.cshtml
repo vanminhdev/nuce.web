@@ -1,4 +1,34 @@
-﻿
+﻿@using nuce.web.shared
+
+
+@{
+    var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+    var accessToken = Request.Cookies[nuce.web.quanly.Common.UserParameters.JwtAccessToken];
+    var username = "";
+    var roles = new List<string>();
+    if (accessToken != null)
+    {
+
+        var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
+
+        //username
+        var usernameClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Name);
+        if (usernameClaim != null)
+        {
+            username = usernameClaim.Value;
+        }
+
+        //role
+        roles = jwtSecurityToken.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Role).Select(r => r.Value).ToList();
+    }
+}
+
+@{
+    var allowEdit = roles.Contains(RoleNames.KhaoThi_Edit_NewsItem);
+    var allowApprove = roles.Contains(RoleNames.KhaoThi_Approve_NewsItem);
+    var allowCreate = roles.Contains(RoleNames.KhaoThi_Add_NewsItem);
+}
+
 @{
     ViewBag.Title = "Danh sách bài tin";
     Layout = "";
@@ -32,6 +62,32 @@
 <script>
         var state = {
             catId: null,
+            allowEdit: '@allowEdit' == 'True',
+            allowApprove: '@allowApprove' == 'True',
+            allowCreate: '@allowCreate' == 'True',
+            updateStatus: function(id, status = 2) {
+                state.callApiUpdate(id, status);
+                return false;
+            },
+            callApiUpdate: function(id, status) {
+                $('#loading-screen').show();
+                const data = JSON.stringify(body);
+
+                $.ajax({
+                    type: 'post',
+                    url: `NewsManagement/UpdateNewsItemStatus?id=${id}&status=${status}`,
+                    dataType: 'json',
+                    contentType: 'application/json',
+                }).done(res => {
+                    if (res.StatusCode == 200) {
+                        toastSuccess('Thay đổi thành công');
+                    }
+                }).fail(err => {
+                    toastError(err.Message || 'Lỗi hệ thống trong lúc xử lý');
+                }).always(() => {
+                    $('#loading-screen').hide();
+                });
+            },
         };
 
         var userTable = $('#news-items-list-datatable').DataTable({
@@ -63,17 +119,27 @@
                 {
                     data: null,
                     mRender: function(data, type, row, meta) {
+
+                        const editBlock = state.allowEdit ? `<a href="/newsmanagement/itemsupdate?id=${data.id}"
+                                        role="button" class="btn btn-outline-success"
+                                        onclick="return feManagerState.changeComponent('/newsmanagement/itemsupdate?id=${data.id}');">
+                                        Cập nhật
+                                    </a>` : '';
+                        const approveText = data.status !== 2 ? 'Duyệt' : 'Bỏ duyệt';
+                        const willUpdateStatus = data.status === 2 ? 1 : 2;
+                        const approveBlock = state.allowApprove ? `<button
+                                        class="btn btn-outline-primary ml-3"
+                                        onclick="return state.updateStatus(${data.id}, ${willUpdateStatus});">
+                                        ${approveText}
+                                    </button>` : '';
+
                         return `<a href="/newsmanagement/itemsdetail?id=${data.id}"
                                     onclick="return feManagerState.changeComponent('/newsmanagement/itemsdetail?id=${data.id}');"
                                     style="display: block"
                                     class="m-text-decoration-none">
                                     <h4 class="m-text-blue">${data.title || ''}</h4>
                                     <p class="m-text-black">${data.description || ''}</p>
-                                    <a href="/newsmanagement/itemsupdate?id=${data.id}"
-                                        role="button" class="btn btn-outline-success"
-                                        onclick="return feManagerState.changeComponent('/newsmanagement/itemsupdate?id=${data.id}');">
-                                        Cập nhật
-                                    </a>
+                                    ${editBlock}${approveBlock}
                                 </a>`;
                     }
                 },
@@ -87,7 +153,6 @@
         var init = function() {
             $('#news-items-list-datatable_filter').hide();
             state.catId = @TempData.Peek("catId");
-//            $('#create-news-item').prop({href: `/newsmanagement/create?catId=${state.catId}`});
             searchData();
             $('#create-news-item').click(function() {
                 return feManagerState.changeComponent(`/newsmanagement/create?catId=${state.catId}`);

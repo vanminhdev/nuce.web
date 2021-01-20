@@ -5,9 +5,11 @@ using nuce.web.survey.student.Models.Base;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -244,5 +246,25 @@ namespace nuce.web.survey.student.Controllers
             return JsonConvert.DeserializeObject<T>(content);
         }
 
+        protected string GetCurrentUsername()
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var accessToken = Request.Cookies[UserParameters.JwtAccessToken];
+            var username = "";
+            var roles = new List<string>();
+            if (accessToken != null)
+            {
+
+                var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
+
+                //username
+                var usernameClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+                if (usernameClaim != null)
+                {
+                    username = usernameClaim.Value;
+                }
+            }
+            return username;
+        }
     }
 }

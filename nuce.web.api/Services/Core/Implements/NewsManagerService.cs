@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Helper;
 using nuce.web.api.Models.Core;
@@ -126,21 +127,16 @@ namespace nuce.web.api.Services.Core.Implements
 
         public async Task UpdateNewsItems(NewsItems model)
         {
-            var newsItems = await FindNewsItemById(model.Id, null);
-
-            if (string.IsNullOrEmpty(model.Title?.Trim()))
+            var newsItems = await FindNewsItemById(model.Id, (int)NewsItemStatus.IgnoreStatus);
+            try
             {
-                throw new Exception("Tiêu đề không được để trống");
+                UpdateNewsItemModel(model, newsItems);
+                await _context.SaveChangesAsync();
             }
-
-            newsItems.NewContent = model.NewContent;
-            newsItems.CatId = model.CatId;
-            newsItems.Title = model.Title;
-            newsItems.Description = model.Description;
-            newsItems.UpdateDatetime = DateTime.Now;
-            newsItems.UpdateUsername = _userService.GetUserName();
-
-            await _context.SaveChangesAsync();
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public IQueryable<NewsCats> GetAllCategoryByRoleAdmin(string role)
@@ -149,6 +145,7 @@ namespace nuce.web.api.Services.Core.Implements
                                 .Where(c => c.Role == role)
                                 .OrderBy(c => c.Count);
         }
+
         /// <summary>
         /// Tạo mới danh mục
         /// </summary>
@@ -212,6 +209,7 @@ namespace nuce.web.api.Services.Core.Implements
                 throw ex;
             }
         }
+
         /// <summary>
         /// Sửa danh mục
         /// </summary>
@@ -243,12 +241,37 @@ namespace nuce.web.api.Services.Core.Implements
                 throw ex;
             }
         }
+
+        /// <summary>
+        /// Cập nhật trạng thái bài tin
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="newsStatus"></param>
+        /// <returns></returns>
+        public async Task UpdateNewsItemStatus(int id, NewsItemStatus newsStatus)
+        {
+            var newsItem = await _context.NewsItems.FindAsync(id);
+            if (newsItem == null)
+            {
+                throw new RecordNotFoundException("Không tồn tại bài tin");
+            }
+
+            newsItem.Status = (int)newsStatus;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         #endregion
 
         #region client
         public async Task<ItemAvatarModel> GetNewsItemAvatar(int id, int? width, int? height)
         {
-            var newsItemData = await FindNewsItemById(id, null);
+            var newsItemData = await FindNewsItemById(id, (int)NewsItemStatus.IgnoreStatus);
 
             if (newsItemData == null)
             {
@@ -296,11 +319,13 @@ namespace nuce.web.api.Services.Core.Implements
         /// <param name="catId"></param>
         /// <param name="seen"></param>
         /// <param name="size"></param>
-        /// <param name="status"></param>
+        /// <param name="catStatus"></param>
         /// <returns></returns>
-        public async Task<DataTableResponse<NewsItems>> FindItemsByCatId(int catId, int seen, int size, int? status)
+        public async Task<DataTableResponse<NewsItems>> FindItemsByCatId(int catId, int seen, int size, int? catStatus, int? itemStatus)
         {
-            var catChildren = _context.NewsCats.Where(cat => (cat.Parent == catId || cat.Id == catId) && (status == null || cat.Status == status));
+            bool ignoreStatus = itemStatus == (int)NewsItemStatus.IgnoreStatus;
+
+            var catChildren = _context.NewsCats.Where(cat => (cat.Parent == catId || cat.Id == catId) && (catStatus == 0 || cat.Status == catStatus));
             IQueryable<NewsItems> data = null;
 
             data = catChildren.AsNoTracking().GroupJoin(
@@ -311,7 +336,7 @@ namespace nuce.web.api.Services.Core.Implements
                     ).SelectMany(
                         left => left.newsItem.DefaultIfEmpty(),
                         (left, newsitem) => newsitem
-                    ).Where(ni => ni != null)
+                    ).Where(ni => ni != null && (ni.Status == itemStatus || ignoreStatus))
                     .OrderByDescending(ni => ni.EntryDatetime);
 
             var takedData = await data.Skip(seen).Take(size).ToListAsync();
@@ -323,17 +348,24 @@ namespace nuce.web.api.Services.Core.Implements
             };
         }
 
-        public async Task<IQueryable<NewsItems>> GetCousinNewsItemsById(int id)
+        public async Task<IQueryable<NewsItems>> GetCousinNewsItemsById(int id, NewsItemStatus status)
         {
+            int queryStatus = (int)status;
+            bool ignoreStatus = status == NewsItemStatus.IgnoreStatus;
+
             var newsItem = await _context.NewsItems.FindAsync(id);
             if (newsItem == null)
             {
                 throw new RecordNotFoundException("Bài tin không tồn tại");
             }
-            var lesserList = _context.NewsItems.Where(ni => ni.EntryDatetime < newsItem.EntryDatetime && ni.CatId == newsItem.CatId)
+            var lesserList = _context.NewsItems.Where(ni => ni.EntryDatetime < newsItem.EntryDatetime && 
+                                                            ni.CatId == newsItem.CatId &&
+                                                            (ignoreStatus || ni.Status == queryStatus))
                                                 .OrderByDescending(ni => ni.EntryDatetime)
                                                 .Take(2);
-            var greaterList = _context.NewsItems.Where(ni => ni.EntryDatetime > newsItem.EntryDatetime && ni.CatId == newsItem.CatId)
+            var greaterList = _context.NewsItems.Where(ni => ni.EntryDatetime > newsItem.EntryDatetime && 
+                                                             ni.CatId == newsItem.CatId &&
+                                                             (ignoreStatus || ni.Status == queryStatus))
                                                 .OrderBy(ni => ni.EntryDatetime)
                                                 .Take(2);
             return (lesserList.Concat(greaterList)).OrderByDescending(ni => ni.EntryDatetime);
@@ -341,8 +373,26 @@ namespace nuce.web.api.Services.Core.Implements
 
         public async Task<NewsItems> FindNewsItemById(int id, int? status)
         {
+            bool isIgnoreStatus = status == (int)NewsItemStatus.IgnoreStatus;
             return await _context.NewsItems
-                            .FirstOrDefaultAsync(ni => ni.Id == id && (status == null || ni.Status == status));
+                            .FirstOrDefaultAsync(ni => ni.Id == id && (isIgnoreStatus || ni.Status == status));
+        }
+        #endregion
+
+        #region private
+        private void UpdateNewsItemModel(NewsItems model, NewsItems newsItems)
+        {
+            if (string.IsNullOrEmpty(model.Title?.Trim()))
+            {
+                throw new Exception("Tiêu đề không được để trống");
+            }
+
+            newsItems.NewContent = model.NewContent;
+            newsItems.CatId = model.CatId;
+            newsItems.Title = model.Title;
+            newsItems.Description = model.Description;
+            newsItems.UpdateDatetime = DateTime.Now;
+            newsItems.UpdateUsername = _userService.GetUserName();
         }
         #endregion
     }

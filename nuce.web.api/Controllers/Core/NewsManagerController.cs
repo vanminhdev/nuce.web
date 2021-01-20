@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using nuce.web.api.Attributes.ValidationAttributes;
+using nuce.web.api.Common;
 using nuce.web.api.Models.Core;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.ViewModel;
@@ -90,7 +91,7 @@ namespace nuce.web.api.Controllers.Core
         [Route("news-items/{id}")]
         public async Task<IActionResult> GetNewsItemById(int id)
         {
-            return Ok(await _newsManagerService.FindNewsItemById(id, 1));
+            return Ok(await _newsManagerService.FindNewsItemById(id, (int)NewsItemStatus.Approved));
         }
 
         /// <summary>
@@ -106,7 +107,7 @@ namespace nuce.web.api.Controllers.Core
         {
             try
             {
-                var data = await _newsManagerService.FindItemsByCatId(catId, request.Start, request.Length, 1);
+                var data = await _newsManagerService.FindItemsByCatId(catId, request.Start, request.Length, 1, (int)NewsItemStatus.Approved);
                 data.Draw = request.Draw++;
                 return Ok(data);
             }
@@ -117,7 +118,7 @@ namespace nuce.web.api.Controllers.Core
         }
 
         /// <summary>
-        /// Danh sách bài tin xung quanh 1 bài tin
+        /// Danh sách bài tin xung quanh 1 bài tin (Theo dòng sự kiện)
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -126,7 +127,7 @@ namespace nuce.web.api.Controllers.Core
         [Route("news-items/{id}/surround")]
         public async Task<IActionResult> GetNewsItemByCategory(int id)
         {
-            return Ok(await _newsManagerService.GetCousinNewsItemsById(id));
+            return Ok(await _newsManagerService.GetCousinNewsItemsById(id, NewsItemStatus.Approved));
         }
         #endregion
 
@@ -261,12 +262,38 @@ namespace nuce.web.api.Controllers.Core
                 return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
             }
         }
-
-        [HttpPut]
-        [Route("admin/news-items/lock")]
-        public IActionResult LockNewsItem()
+        /// <summary>
+        /// Xoá bài tin
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [AppAuthorize(RoleNames.KhaoThi_Edit_NewsItem)]
+        [HttpDelete]
+        [Route("admin/news-items/delete/{id}")]
+        public IActionResult LockNewsItem(int id)
         {
             return Ok();
+        }
+
+        /// <summary>
+        /// Duyệt bài
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [AppAuthorize(RoleNames.KhaoThi_Approve_NewsItem)]
+        [HttpPut]
+        [Route("admin/news-items/{id}/status/{status}")]
+        public async Task<IActionResult> ApproveNewsItemAsync(int id, int status)
+        {
+            try
+            {
+                await _newsManagerService.UpdateNewsItemStatus(id, (NewsItemStatus)status);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
+            }
         }
         #endregion
 
@@ -281,7 +308,7 @@ namespace nuce.web.api.Controllers.Core
         [Route("admin/news-items/{id}")]
         public async Task<IActionResult> GetNewsItemByIdAdmin(int id)
         {
-            return Ok(await _newsManagerService.FindNewsItemById(id, 1));
+            return Ok(await _newsManagerService.FindNewsItemById(id, (int)NewsItemStatus.IgnoreStatus));
         }
 
         /// <summary>
@@ -297,7 +324,7 @@ namespace nuce.web.api.Controllers.Core
         {
             try
             {
-                var data = await _newsManagerService.FindItemsByCatId(catId, request.Start, request.Length, 1);
+                var data = await _newsManagerService.FindItemsByCatId(catId, request.Start, request.Length, 1, (int)NewsItemStatus.IgnoreStatus);
                 data.Draw = request.Draw++;
                 return Ok(data);
             }

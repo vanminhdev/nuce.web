@@ -122,4 +122,11 @@ namespace nuce.web.api.Common
         /// </summary>
         Done = 5
     }
+
+    public enum NewsItemStatus
+    {
+        IgnoreStatus = 0,
+        Created = 1,
+        Approved = 2,
+    }
 }

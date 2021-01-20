@@ -154,6 +154,18 @@ namespace nuce.web.quanly.Controllers
             return await HandleApiResponseUpdate(response);
         }
 
+        [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Approve_NewsItem)]
+        public async Task<ActionResult> UpdateNewsItemStatus(int id, int status)
+        {
+            string api = $"api/NewsManager/admin/news-items/{id}/status/{status}";
+
+            var stringContent = base.MakeContent("");
+            var response = await base.MakeRequestAuthorizedAsync("put", api, stringContent);
+
+            return await HandleApiResponseUpdate(response);
+        }
+
         private async Task<ActionResult> GetNewsItem(int id, string viewName)
         {
             string api = $"api/NewsManager/admin/news-items/{id}";
