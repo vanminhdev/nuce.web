@@ -112,11 +112,7 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
 
         [HttpPost]
         [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
-        public async Task<IActionResult> UploadFile(
-            [Required]
-            IFormFile fileUpload, 
-            [Required]
-            Guid? surveyRoundId)
+        public async Task<IActionResult> UploadFile( [Required] IFormFile fileUpload, [Required] Guid? surveyRoundId)
         {
             if(fileUpload.ContentType != ContentTypes.Xlsx)
             {
@@ -177,13 +173,21 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
                 var hoten = worksheet.Cells[i, 3].Value?.ToString();
                 var lop = worksheet.Cells[i, 4].Value?.ToString();
 
-                string ngaySinh = null;
+                DateTime? ngaySinh = null;
                 try
                 {
-                    ngaySinh = ((DateTime)worksheet.Cells[i, 5].Value).ToString("dd/MM/yyyy");
+                    ngaySinh = (DateTime)worksheet.Cells[i, 5].Value;
                 }
                 catch
                 {
+                    try
+                    {
+                        ngaySinh = DateTime.ParseExact((string)worksheet.Cells[i, 5].Value, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                    }
+                    catch
+                    {
+
+                    }
                 }
 
                 var gioi = worksheet.Cells[i, 6].Value?.ToString();
@@ -196,14 +200,21 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
                 var maKhoa = worksheet.Cells[i, 12].Value?.ToString();
                 var soQuyetDinhVaNgayRaQuyetDinh = worksheet.Cells[i, 13].Value?.ToString();
 
-                DateTime? ngayRaQd;
+                DateTime? ngayRaQd = null;
                 try
                 {
                     ngayRaQd = (DateTime)worksheet.Cells[i, 14].Value;
                 }
                 catch
                 {
-                    ngayRaQd = null;
+                    try
+                    {
+                        ngayRaQd = DateTime.ParseExact((string)worksheet.Cells[i, 14].Value, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                    }
+                    catch
+                    {
+
+                    }
                 }
 
                 string masvFormated = null;

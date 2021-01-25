@@ -553,7 +553,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
 
                             if (sumTotal > 0)
                             {
-                                wsLyThuyet.Cells[row, col].Value = (double)dTB / sumTotal;
+                                wsLyThuyet.Cells[row, col].Value = $"{(double)dTB / sumTotal:0.0}";
                             }
                             else
                             {
@@ -587,7 +587,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                             //tổng hợp tb khoa
                             if (sumdTBTotal > 0)
                             {
-                                wsLyThuyet.Cells[rowTotal, colTotal].Value = (float)dTBTotal / sumdTBTotal;
+                                wsLyThuyet.Cells[rowTotal, colTotal].Value = $"{(float)dTBTotal / sumdTBTotal:0.0}";
                             }
                             else
                             {
@@ -745,7 +745,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
 
                                     if (sumTotal > 0)
                                     {
-                                        wsLyThuyet.Cells[row, col].Value = (double)dTB / sumTotal;
+                                        wsLyThuyet.Cells[row, col].Value = $"{(double)dTB / sumTotal:0.0}";
                                     }
                                     else
                                     {
@@ -779,7 +779,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                     //tổng hợp tb khoa
                                     if (sumdTBTotal > 0)
                                     {
-                                        wsLyThuyet.Cells[rowTotal, colTotal].Value = (float)dTBTotal / sumdTBTotal;
+                                        wsLyThuyet.Cells[rowTotal, colTotal].Value = $"{(float)dTBTotal / sumdTBTotal:0.0}";
                                     }
                                     else
                                     {
@@ -914,7 +914,15 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             wsLyThuyet.Cells[row, col].Value = "Toàn trường";
             foreach (var item in tongToanTruong)
             {
-                wsLyThuyet.Cells[row, item.Key].Value = item.Value;
+                var value = item.Value.ToString().Split(".");
+                if (value[^1] == "0" || value.Length == 1)
+                {
+                    wsLyThuyet.Cells[row, item.Key].Value = $"{item.Value:0}";
+                }
+                else
+                {
+                    wsLyThuyet.Cells[row, item.Key].Value = $"{item.Value:0.0}";
+                }
             }
 
             wsLyThuyet.Cells[1, 1, row, wsLyThuyet.Dimension.Columns - 1].Style.Border.Top.Style = ExcelBorderStyle.Thin;

@@ -36,6 +36,7 @@
                     <tr>
                         <th class="text-center">Đợt khảo sát</th>
                         <th class="text-center">Bài khảo sát</th>
+                        <th class="text-center">Chuyên ngành</th>
                         <th class="text-center">Mã câu hỏi</th>
                         <th class="text-center">Mã đáp án</th>
                         <th class="text-center">Số lượng</th>
@@ -251,7 +252,7 @@
                     name: "content",
                     mRender: function (data, type, row) {
                         if (data.content != null) {
-                            return `<span title="${data.content}">${data.content}</span>`;
+                            console.log(data.content);
                         }
                         return '';
                     }
@@ -287,8 +288,8 @@
                 }).done(function (res) {
                     $('#loading-screen').hide();
                     if (res.statusCode === 200) {
-                        toastSuccess('Kết xuất thành công');
                         $('#modal-export-report').modal('hide');
+                        window.open(res.content.url, "_blank");
                     }
                     else {
                         try {

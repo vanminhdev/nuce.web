@@ -20,7 +20,7 @@ namespace nuce.web.api.ViewModel.Survey.Undergraduate
         public string tinh { get; set; }
         public string truong { get; set; }
         public string gioitinh { get; set; }
-        public string ngaysinh { get; set; }
+        public DateTime? ngaysinh { get; set; }
         public string tkhau { get; set; }
         public string lop12 { get; set; }
         public string namtn { get; set; }

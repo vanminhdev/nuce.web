@@ -159,8 +159,14 @@ namespace nuce.web.survey.student.Controllers
 
         [HttpPost]
         [AuthorizeActionFilter(RoleNames.UndergraduateStudent)]
-        public async Task<ActionResult> UndergraduateTheSurveySubmit(string theSurveyId)
+        public async Task<ActionResult> UndergraduateTheSurveySubmit(string theSurveyId, string email, string phone, string cmnd)
         {
+            var content = new StringContent(JsonConvert.SerializeObject(new { email, phone, cmnd }), Encoding.UTF8, "application/json");
+            var resVeri = await base.MakeRequestAuthorizedAsync("Post", $"/api/UndergraduateTheSurveyStudent/Verification", content);
+            if(!resVeri.IsSuccessStatusCode)
+            {
+                return Json(new { statusCode = resVeri.StatusCode, content = await resVeri.Content.ReadAsStringAsync() });
+            }
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/UndergraduateTheSurveyStudent/SaveSelectedAnswer?theSurveyId={theSurveyId}");
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
@@ -174,9 +180,9 @@ namespace nuce.web.survey.student.Controllers
 
         [HttpPost]
         [AuthorizeActionFilter(RoleNames.UndergraduateStudent)]
-        public async Task<ActionResult> Verification(string email, string phone)
+        public async Task<ActionResult> Verification(string email, string phone, string cmnd)
         {
-            var content = new StringContent(JsonConvert.SerializeObject(new { email, phone }), Encoding.UTF8, "application/json");
+            var content = new StringContent(JsonConvert.SerializeObject(new { email, phone, cmnd }), Encoding.UTF8, "application/json");
             var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/UndergraduateTheSurveyStudent/Verification", content);
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() });
         }

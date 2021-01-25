@@ -210,17 +210,21 @@ namespace nuce.web.api.Services.Survey.Implements
             worksheet.DefaultColWidth = 15;
 
             worksheet.Cells.Style.WrapText = true;
+            worksheet.Cells.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
 
-            //worksheet.Cells.Style.Font.Name = "Arial";
-            worksheet.Cells.Style.Font.Size = 11;
+            worksheet.Cells.Style.Font.Name = "Times New Roman";
+            worksheet.Cells.Style.Font.Size = 12;
 
             worksheet.Row(1).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
             worksheet.Row(1).Style.VerticalAlignment = ExcelVerticalAlignment.Center;
 
-            worksheet.Row(1).Style.Border.Top.Style = ExcelBorderStyle.Thin;
-            worksheet.Row(1).Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-            worksheet.Row(1).Style.Border.Left.Style = ExcelBorderStyle.Thin;
-            worksheet.Row(1).Style.Border.Right.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[1, 1, 1, 14].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[1, 1, 1, 14].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[1, 1, 1, 14].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[1, 1, 1, 14].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+
+            worksheet.Row(1).Height = 53.25;
+            worksheet.Row(1).Style.Font.Bold = true;
 
             worksheet.Column(1).Width = 9.75;
             worksheet.Column(2).Width = 21.83;
@@ -230,11 +234,11 @@ namespace nuce.web.api.Services.Survey.Implements
             worksheet.Column(6).Width = 11.75;
             worksheet.Column(7).Width = 9.75;
             worksheet.Column(8).Width = 16.25;
-            worksheet.Column(9).Width = 26;
-            worksheet.Column(10).Width = 26;
+            worksheet.Column(9).Width = 33.57;
+            worksheet.Column(10).Width = 41.86;
             worksheet.Column(11).Width = 22.5;
             worksheet.Column(12).Width = 15.38;
-            worksheet.Column(13).Width = 47.38;
+            worksheet.Column(13).Width = 68.86;
             worksheet.Column(14).Width = 19.75;
 
             worksheet.Cells["A1"].Value = "STT";
@@ -252,6 +256,10 @@ namespace nuce.web.api.Services.Survey.Implements
             worksheet.Cells["M1"].Value = "Số quyết định và ngày ra quyết định tốt nghiệp";
             worksheet.Cells["N1"].Value = "Ngày ra quyết định";
 
+            worksheet.Column(2).Style.Numberformat.Format = "@";
+            worksheet.Column(5).Style.Numberformat.Format = "dd-MM-yy";
+            worksheet.Column(7).Style.Numberformat.Format = "0.0";
+            worksheet.Column(14).Style.Numberformat.Format = "dd-MM-yy";
 
             var students = await _context.AsEduSurveyUndergraduateStudent
                 .Where(o => o.DotKhaoSatId == surveyRoundId)
@@ -265,7 +273,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 worksheet.Cells[$"B{row}"].Value = student.ExMasv;
                 worksheet.Cells[$"C{row}"].Value = student.Tensinhvien;
                 worksheet.Cells[$"D{row}"].Value = student.Lopqd;
-                worksheet.Cells[$"E{row}"].Value = student.Ngaysinh;
+                worksheet.Cells[$"E{row}"].Value = student.Ngaysinh?.ToString("dd-MM-yyyy");
                 worksheet.Cells[$"F{row}"].Value = student.Gioitinh;
                 worksheet.Cells[$"G{row}"].Value = student.Tbcht;
                 worksheet.Cells[$"H{row}"].Value = student.Xeploai;
@@ -274,7 +282,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 worksheet.Cells[$"K{row}"].Value = student.Hedaotao;
                 worksheet.Cells[$"L{row}"].Value = student.Makhoa;
                 worksheet.Cells[$"M{row}"].Value = student.Soqdtn;
-                worksheet.Cells[$"N{row}"].Value = student.Ngayraqd;
+                worksheet.Cells[$"N{row}"].Value = student.Ngayraqd?.ToString("dd-MM-yyyy");
                 row++;
             }
 

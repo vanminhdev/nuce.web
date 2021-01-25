@@ -350,6 +350,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             student.Email = verification.Email;
             student.Mobile = verification.Phone;
+            student.Cmnd = verification.CMND;
 
             student.KeyAuthorize = Guid.NewGuid().ToString();
             await _context.SaveChangesAsync();

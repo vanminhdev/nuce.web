@@ -43,7 +43,7 @@
         </div>
     </div>
 
-    <div class="row m-fs-12">
+    <div class="row m-fs-10">
         <div class="col-md-12">
             <table id="id-datatable" class="table table-bordered">
                 <thead>
@@ -240,7 +240,10 @@
                     data: "lopqd"
                 },
                 {
-                    data: "ngaysinh"
+                    data: null,
+                    mRender: function (data, type, row) {
+                        return getDateStringFromServerType(data.ngaysinh);
+                    }
                 },
                 {
                     data: "gioitinh"

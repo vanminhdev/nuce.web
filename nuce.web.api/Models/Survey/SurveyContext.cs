@@ -41,15 +41,6 @@ namespace nuce.web.api.Models.Survey
         public virtual DbSet<AsEduSurveyUndergraduateStudent> AsEduSurveyUndergraduateStudent { get; set; }
         public virtual DbSet<AsEduSurveyUndergraduateSurveyRound> AsEduSurveyUndergraduateSurveyRound { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Data Source=.\\sqlexpress;Initial Catalog=NUCE_SURVEY;Integrated Security=True");
-            }
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AsEduSurveyBaiKhaoSat>(entity =>
@@ -455,6 +446,11 @@ namespace nuce.web.api.Models.Survey
                     .HasMaxLength(200)
                     .IsUnicode(false);
 
+                entity.Property(e => e.Cmnd)
+                    .HasColumnName("cmnd")
+                    .HasMaxLength(12)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.Dottotnghiep)
                     .HasColumnName("dottotnghiep")
                     .HasMaxLength(100);
@@ -547,10 +543,13 @@ namespace nuce.web.api.Models.Survey
                     .HasMaxLength(20)
                     .IsUnicode(false);
 
+                entity.Property(e => e.Ngayraqd)
+                    .HasColumnName("ngayraqd")
+                    .HasColumnType("date");
+
                 entity.Property(e => e.Ngaysinh)
                     .HasColumnName("ngaysinh")
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                    .HasColumnType("date");
 
                 entity.Property(e => e.Noisiti)
                     .HasColumnName("noisiti")
@@ -898,6 +897,11 @@ namespace nuce.web.api.Models.Survey
                     .HasMaxLength(200)
                     .IsUnicode(false);
 
+                entity.Property(e => e.Cmnd)
+                    .HasColumnName("cmnd")
+                    .HasMaxLength(12)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.CnOrder)
                     .HasColumnName("cn_order")
                     .HasDefaultValueSql("((-1))");
@@ -1015,12 +1019,11 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.Ngayraqd)
                     .HasColumnName("ngayraqd")
-                    .HasColumnType("datetime");
+                    .HasColumnType("date");
 
                 entity.Property(e => e.Ngaysinh)
                     .HasColumnName("ngaysinh")
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                    .HasColumnType("date");
 
                 entity.Property(e => e.Nguoiphatbang).HasColumnName("nguoiphatbang");
 

@@ -1793,7 +1793,7 @@ namespace nuce.web.quanly.Controllers
                             ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                             Data = memoryStream.ToArray()
                         };
-                        return Json(new { statusCode = response.StatusCode, content = new { url = $"/survey/downloadexportstudents?fileGuid={guid}" } }, JsonRequestBehavior.AllowGet);
+                        return Json(new { statusCode = response.StatusCode, content = new { url = $"/survey/downloadundergraduateexport?fileGuid={guid}" } }, JsonRequestBehavior.AllowGet);
                     }
                 }
             }
@@ -1802,7 +1802,7 @@ namespace nuce.web.quanly.Controllers
 
         [HttpGet]
         [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
-        public ActionResult Downloadexportstudents(Guid fileGuid)
+        public ActionResult DownloadUndergraduateExport(Guid fileGuid)
         {
             return base.DownloadFileFromTempData(fileGuid);
         }
@@ -1937,6 +1937,25 @@ namespace nuce.web.quanly.Controllers
         public async Task<ActionResult> ExportReportTotalUndergraduateSurvey(string surveyRoundId, string theSurveyId)
         {
             var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/StatisticUndergraduate/ExportReportTotalUndergraduateSurvey?surveyRoundId={surveyRoundId}&theSurveyId={theSurveyId}");
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                using (Stream streamToReadFrom = await response.Content.ReadAsStreamAsync())
+                {
+                    using (MemoryStream memoryStream = new MemoryStream())
+                    {
+                        await streamToReadFrom.CopyToAsync(memoryStream);
+                        memoryStream.ToArray();
+                        var guid = Guid.NewGuid();
+                        TempData[guid.ToString()] = new FileDownload()
+                        {
+                            FileName = "bao_cao.xlsx",
+                            ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                            Data = memoryStream.ToArray()
+                        };
+                        return Json(new { statusCode = response.StatusCode, content = new { url = $"/survey/downloadundergraduateexport?fileGuid={guid}" } }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+            }
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
         #endregion

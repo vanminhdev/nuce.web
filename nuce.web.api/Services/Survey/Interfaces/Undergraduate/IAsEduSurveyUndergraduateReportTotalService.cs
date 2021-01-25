@@ -13,6 +13,6 @@ namespace nuce.web.api.Services.Survey.Interfaces
 
         public Task ReportTotalUndergraduateSurvey(Guid surveyRoundId, Guid theSurveyId);
 
-        public Task ExportReportTotalUndergraduateSurvey(Guid surveyRoundId, Guid theSurveyId);
+        public Task<byte[]> ExportReportTotalUndergraduateSurvey(Guid surveyRoundId, Guid theSurveyId);
     }
 }

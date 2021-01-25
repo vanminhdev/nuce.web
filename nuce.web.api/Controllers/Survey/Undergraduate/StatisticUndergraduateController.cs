@@ -101,7 +101,8 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
         {
             try
             {
-                await _reportTotalService.ExportReportTotalUndergraduateSurvey(surveyRoundId.Value, theSurveyId.Value);
+                var data = await _reportTotalService.ExportReportTotalUndergraduateSurvey(surveyRoundId.Value, theSurveyId.Value);
+                return File(data, ContentTypes.Xlsx);
             }
             catch (RecordNotFoundException e)
             {
@@ -126,7 +127,6 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
                 _logger.LogError(e, mainMessage);
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không kết xuất được báo cáo", detailMessage = mainMessage });
             }
-            return Ok();
         }
         #endregion
     }
