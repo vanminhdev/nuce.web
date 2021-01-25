@@ -154,35 +154,35 @@ namespace nuce.web.api.Services.Core.Implements
             if (UserParameters.LoginViaDaotao.Contains(model.LoginUserType))
             {
                 //return true;
-                //ServiceSoapClient srvc = new ServiceSoapClient(EndpointConfiguration.ServiceSoap12);
-                //try
-                //{
-                //    return await srvc.authenAsync(model.Username, model.Password) == 1;
-                //}
-                //catch (Exception)
-                //{
-                //    throw new CallEduWebServiceException("Hiện tại không thể kết nối đến Đào tạo");
-                //}
+                ServiceSoapClient srvc = new ServiceSoapClient(EndpointConfiguration.ServiceSoap12);
                 try
                 {
-                    HttpClient clientAuth = new HttpClient()
-                    {
-                        BaseAddress = new Uri(_configuration["ApiAuth"]),
-                        Timeout = TimeSpan.FromSeconds(60)
-                    };
-                    var json = JsonSerializer.Serialize(new {
-                        MaND = model.Username,
-                        Pass = model.Password
-                    });
-                    var content = new StringContent(json, Encoding.UTF8, MediaTypeNames.Application.Json);
-                    var res = await clientAuth.PostAsync("/api/Auth", content);
-                    return res.IsSuccessStatusCode;
+                    return await srvc.authenAsync(model.Username, model.Password) == 1;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    _logger.LogError(ex, UtilsException.GetMainMessage(ex));
                     throw new CallEduWebServiceException("Hiện tại không thể kết nối đến Đào tạo");
                 }
+                //try
+                //{
+                //    HttpClient clientAuth = new HttpClient()
+                //    {
+                //        BaseAddress = new Uri(_configuration["ApiAuth"]),
+                //        Timeout = TimeSpan.FromSeconds(60)
+                //    };
+                //    var json = JsonSerializer.Serialize(new {
+                //        MaND = model.Username,
+                //        Pass = model.Password
+                //    });
+                //    var content = new StringContent(json, Encoding.UTF8, MediaTypeNames.Application.Json);
+                //    var res = await clientAuth.PostAsync("/api/Auth", content);
+                //    return res.IsSuccessStatusCode;
+                //}
+                //catch (Exception ex)
+                //{
+                //    _logger.LogError(ex, UtilsException.GetMainMessage(ex));
+                //    throw new CallEduWebServiceException("Hiện tại không thể kết nối đến Đào tạo");
+                //}
             }
             else
             {

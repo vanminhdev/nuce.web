@@ -2,6 +2,7 @@
 using nuce.web.quanly.Attributes.ActionFilter;
 using nuce.web.quanly.Attributes.ValidationAttributes;
 using nuce.web.quanly.Models;
+using nuce.web.quanly.Models.Base;
 using nuce.web.quanly.Models.JsonData;
 using nuce.web.quanly.Models.Survey.Graduate;
 using nuce.web.quanly.Models.Survey.Normal;
@@ -1263,6 +1264,7 @@ namespace nuce.web.quanly.Controllers
         #endregion
 
 
+
         #region question sv trước tốt nghiệp
         [HttpGet]
         [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
@@ -1771,6 +1773,48 @@ namespace nuce.web.quanly.Controllers
             }
         }
 
+        [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
+        public async Task<ActionResult> DownloadListStudent(string surveyRoundId)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateStudent/DownloadListStudent?surveyRoundId={surveyRoundId}");
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                using (Stream streamToReadFrom = await response.Content.ReadAsStreamAsync())
+                {
+                    using (MemoryStream memoryStream = new MemoryStream())
+                    {
+                        await streamToReadFrom.CopyToAsync(memoryStream);
+                        memoryStream.ToArray();
+                        var guid = Guid.NewGuid();
+                        TempData[guid.ToString()] = new FileDownload()
+                        {
+                            FileName = "danh_sach_sinh_vien.xlsx",
+                            ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                            Data = memoryStream.ToArray()
+                        };
+                        return Json(new { statusCode = response.StatusCode, content = new { url = $"/survey/downloadexportstudents?fileGuid={guid}" } }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+            }
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
+        public ActionResult Downloadexportstudents(Guid fileGuid)
+        {
+            return base.DownloadFileFromTempData(fileGuid);
+        }
+
+        [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
+        public async Task<ActionResult> DeleteUndergraduateStudent(string mssv)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/UndergraduateStudent/Delete?studentCode={mssv}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
         [HttpPost]
         [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<ActionResult> DeleteAllUndergraduateStudent()
@@ -1859,6 +1903,43 @@ namespace nuce.web.quanly.Controllers
         }
         #endregion
 
+        #region thống kê sv trước tốt nghiệp
+        [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
+        public async Task<ActionResult> StatisticUndergraduateSurvey()
+        {
+            var resSurveyRound = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateSurveyRound/GetSurveyRoundClosedOrEnd");
+            ViewData["SurveyRoundClosedOrEnd"] = await resSurveyRound.Content.ReadAsStringAsync();
+
+            var resTheSurvey = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateTheSurvey/GetTheSurveyDoing");
+            ViewData["TheSurveys"] = await resTheSurvey.Content.ReadAsStringAsync();
+
+            return View("~/Views/Survey/Undergraduate/Statistic.cshtml");
+        }
+
+        [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
+        public async Task<ActionResult> GetRawReportTotalUndergraduateSurvey(DataTableRequest request)
+        {
+            return await GetDataTabeFromApi<ReportTotalUndergraduate>(request, "/api/StatisticUndergraduate/GetRawReportTotalUndergraduateSurvey");
+        }
+
+        [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
+        public async Task<ActionResult> ReportTotalUndergraduateSurvey(string surveyRoundId, string theSurveyId)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/StatisticUndergraduate/ReportTotalUndergraduateSurvey?surveyRoundId={surveyRoundId}&theSurveyId={theSurveyId}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
+        public async Task<ActionResult> ExportReportTotalUndergraduateSurvey(string surveyRoundId, string theSurveyId)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/StatisticUndergraduate/ExportReportTotalUndergraduateSurvey?surveyRoundId={surveyRoundId}&theSurveyId={theSurveyId}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
 
         #region Cập nhật chú ý khảo sát
         [HttpGet]

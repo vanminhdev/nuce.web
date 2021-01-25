@@ -177,5 +177,12 @@ namespace nuce.web.api.Services.Survey.Implements
             var surveyRounds = await _context.AsEduSurveyUndergraduateSurveyRound.Where(o => o.Status != (int)SurveyRoundStatus.Deleted).ToListAsync();
             return surveyRounds;
         }
+
+        public async Task<List<AsEduSurveyUndergraduateSurveyRound>> GetSurveyRoundClosedOrEnd()
+        {
+            var surveyRounds = await _context.AsEduSurveyUndergraduateSurveyRound.Where(o => o.Status == (int)SurveyRoundStatus.Closed || o.Status == (int)SurveyRoundStatus.End)
+               .OrderByDescending(o => o.FromDate).ToListAsync();
+            return surveyRounds;
+        }
     }
 }

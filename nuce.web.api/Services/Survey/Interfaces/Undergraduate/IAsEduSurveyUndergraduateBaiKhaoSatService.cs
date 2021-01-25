@@ -17,5 +17,6 @@ namespace nuce.web.api.Services.Survey.Interfaces
         public Task Delete(Guid id);
         public Task<AsEduSurveyUndergraduateBaiKhaoSat> GetTheSurveyById(Guid id);
         public Task Deactive(Guid value);
+        public Task<List<AsEduSurveyUndergraduateBaiKhaoSat>> GetTheSurveyDoing();
     }
 }

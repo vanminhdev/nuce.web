@@ -11,7 +11,7 @@
 
         var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
 
-        var masvClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == UserParameters.MSSV);
+        var masvClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == UserParameters.UserCode);
         if (masvClaim != null)
         {
             masv = masvClaim.Value;

@@ -32,7 +32,7 @@ namespace nuce.web.api.Services.Survey.Implements
             var recordsFiltered = query.Count();
 
             var querySkip = query
-                .OrderByDescending(u => u.Id)
+                .OrderByDescending(u => u.Status)
                 .Skip(skip).Take(take)
                 .Select(o => new UndergraduateTheSurvey
                 {
@@ -41,7 +41,7 @@ namespace nuce.web.api.Services.Survey.Implements
                     Name = o.Name,
                     Description = o.Description,
                     Note = o.Note,
-                    Status = o.Status.Value
+                    Status = o.Status
                 });
 
             var data = await querySkip.ToListAsync();
@@ -56,7 +56,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
         public async Task Create(UndergraduateTheSurveyCreate theSurvey)
         {
-            var examQuestion = await _context.AsEduSurveyDeThi.FirstOrDefaultAsync(o => o.Id == theSurvey.DeThiId);
+            var examQuestion = await _context.AsEduSurveyUndergraduateDeThi.FirstOrDefaultAsync(o => o.Id == theSurvey.DeThiId);
             if(examQuestion == null)
             {
                 throw new RecordNotFoundException("Id phiếu khảo sát không tồn tại");
@@ -113,9 +113,9 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException();
             }
 
-            if (theSurvey.Status == (int)TheSurveyStatus.New)
+            if (theSurvey.Status == (int)TheSurveyStatus.Published)
             {
-                throw new InvalidInputDataException("Bài khảo sát còn hoạt động không thể xoá");
+                throw new InvalidInputDataException("Bài khảo sát đã phát không thể xoá");
             }
 
             theSurvey.Status = (int)TheSurveyStatus.Deleted;
@@ -143,6 +143,23 @@ namespace nuce.web.api.Services.Survey.Implements
             theSurvey.Status = (int)TheSurveyStatus.Deactive;
             await _context.Database.ExecuteSqlRawAsync($"update AS_Edu_Survey_Graduate_BaiKhaoSat_SinhVien set Status = {(int)SurveyStudentStatus.Close} where BaiKhaoSatID = '{theSurvey.Id}'");
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<AsEduSurveyUndergraduateBaiKhaoSat>> GetTheSurveyDoing()
+        {
+            var theSurveys = await _context.AsEduSurveyUndergraduateBaiKhaoSat
+                .Where(o => o.Status == (int)TheSurveyStatus.Deactive || o.Status == (int)TheSurveyStatus.Published)
+                .OrderByDescending(o => o.Status)
+                .Select(o => new AsEduSurveyUndergraduateBaiKhaoSat
+                {
+                    Id = o.Id,
+                    Name = o.Name,
+                    Description = o.Description,
+                    Note = o.Note,
+                    Status = o.Status
+                })
+                .ToListAsync();
+            return theSurveys;
         }
     }
 }

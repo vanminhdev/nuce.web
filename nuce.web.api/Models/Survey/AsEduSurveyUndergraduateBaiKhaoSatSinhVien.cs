@@ -8,7 +8,8 @@ namespace nuce.web.api.Models.Survey
         public Guid Id { get; set; }
         public Guid BaiKhaoSatId { get; set; }
         public string StudentCode { get; set; }
-        public string DepartmentCode { get; set; }
+        public string Nganh { get; set; }
+        public string ChuyenNganh { get; set; }
         public string DeThi { get; set; }
         public string BaiLam { get; set; }
         public DateTime NgayGioBatDau { get; set; }

@@ -41,6 +41,15 @@ namespace nuce.web.api.Models.Survey
         public virtual DbSet<AsEduSurveyUndergraduateStudent> AsEduSurveyUndergraduateStudent { get; set; }
         public virtual DbSet<AsEduSurveyUndergraduateSurveyRound> AsEduSurveyUndergraduateSurveyRound { get; set; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseSqlServer("Data Source=.\\sqlexpress;Initial Catalog=NUCE_SURVEY;Integrated Security=True");
+            }
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AsEduSurveyBaiKhaoSat>(entity =>
@@ -481,8 +490,7 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.Gioitinh)
                     .HasColumnName("gioitinh")
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
+                    .HasMaxLength(20);
 
                 entity.Property(e => e.Hedaotao)
                     .HasColumnName("hedaotao")
@@ -570,8 +578,7 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.Soqdtn)
                     .HasColumnName("soqdtn")
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
+                    .HasMaxLength(100);
 
                 entity.Property(e => e.Sovaoso)
                     .HasColumnName("sovaoso")
@@ -658,6 +665,9 @@ namespace nuce.web.api.Models.Survey
                 entity.HasIndex(e => new { e.TheSurveyId, e.QuestionCode, e.AnswerCode })
                     .HasName("IX_ReportTotal_QuestionCode_AnswerCode");
 
+                entity.HasIndex(e => new { e.TheSurveyId, e.LecturerCode, e.ClassRoomCode, e.QuestionCode, e.AnswerCode })
+                    .HasName("IX_ReportTotal_ketxuat_tho");
+
                 entity.HasIndex(e => new { e.TheSurveyId, e.LecturerCode, e.ClassRoomCode, e.Nhhk, e.QuestionCode, e.AnswerCode })
                     .HasName("IX_ReportTotal_thongke_tho");
 
@@ -681,7 +691,8 @@ namespace nuce.web.api.Models.Survey
                     .IsRequired()
                     .HasColumnName("NHHK")
                     .HasMaxLength(10)
-                    .IsUnicode(false);
+                    .IsUnicode(false)
+                    .HasDefaultValueSql("((20001))");
 
                 entity.Property(e => e.QuestionCode)
                     .IsRequired()
@@ -711,8 +722,11 @@ namespace nuce.web.api.Models.Survey
             {
                 entity.ToTable("AS_Edu_Survey_Undergraduate_BaiKhaoSat_SinhVien");
 
-                entity.HasIndex(e => new { e.StudentCode, e.BaiKhaoSatId, e.Status })
+                entity.HasIndex(e => new { e.StudentCode, e.BaiKhaoSatId })
                     .HasName("index_Undergraduate_BaiKhaoSat_SinhVien");
+
+                entity.HasIndex(e => new { e.StudentCode, e.BaiKhaoSatId, e.Status })
+                    .HasName("index_Undergraduate_BaiKhaoSat_SinhVien_TrangThai");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
@@ -722,17 +736,20 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.BaiLam).IsRequired();
 
-                entity.Property(e => e.DeThi).IsRequired();
-
-                entity.Property(e => e.DepartmentCode)
+                entity.Property(e => e.ChuyenNganh)
                     .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.DeThi).IsRequired();
 
                 entity.Property(e => e.LogIp)
                     .HasColumnName("LogIP")
                     .HasMaxLength(50)
                     .IsUnicode(false);
+
+                entity.Property(e => e.Nganh)
+                    .IsRequired()
+                    .HasMaxLength(100);
 
                 entity.Property(e => e.NgayGioBatDau).HasColumnType("datetime");
 
@@ -855,6 +872,10 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.AnswerCode).HasMaxLength(50);
 
+                entity.Property(e => e.ChuyenNganh)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
                 entity.Property(e => e.QuestionCode)
                     .IsRequired()
                     .HasMaxLength(50);
@@ -920,8 +941,7 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.Gioitinh)
                     .HasColumnName("gioitinh")
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
+                    .HasMaxLength(20);
 
                 entity.Property(e => e.Hedaotao)
                     .HasColumnName("hedaotao")
@@ -993,6 +1013,10 @@ namespace nuce.web.api.Models.Survey
                     .HasMaxLength(20)
                     .IsUnicode(false);
 
+                entity.Property(e => e.Ngayraqd)
+                    .HasColumnName("ngayraqd")
+                    .HasColumnType("datetime");
+
                 entity.Property(e => e.Ngaysinh)
                     .HasColumnName("ngaysinh")
                     .HasMaxLength(50)
@@ -1020,8 +1044,7 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.Soqdtn)
                     .HasColumnName("soqdtn")
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
+                    .HasMaxLength(100);
 
                 entity.Property(e => e.Sovaoso)
                     .HasColumnName("sovaoso")

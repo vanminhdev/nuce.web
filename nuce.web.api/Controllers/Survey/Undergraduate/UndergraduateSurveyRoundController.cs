@@ -71,6 +71,21 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             }
         }
 
+        public async Task<IActionResult> GetSurveyRoundClosedOrEnd()
+        {
+            try
+            {
+                var result = await _asEduSurveyUndergraduateDotKhaoSatService.GetSurveyRoundClosedOrEnd();
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không lấy được đợt khảo sát", detailMessage = mainMessage });
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllSurveyRound()
         {

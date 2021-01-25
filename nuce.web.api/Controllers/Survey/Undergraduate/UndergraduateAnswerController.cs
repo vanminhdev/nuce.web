@@ -16,7 +16,7 @@ using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Survey;
 using nuce.web.shared;
 
-namespace nuce.web.api.Controllers.Survey.Normal
+namespace nuce.web.api.Controllers.Survey.Undergraduate
 {
     [Route("api/[controller]/[action]")]
     [ApiController]

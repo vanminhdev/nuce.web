@@ -106,36 +106,30 @@ namespace nuce.web.api.Services.Survey.Implements
             {
                 IQueryable<AsEduSurveyGraduateStudent> query = _context.AsEduSurveyGraduateStudent.OrderBy(o => o.Id);
                 var numStudent = query.Count();
-                var skip = 0;
-                var take = 500;
 
                 List<AsEduSurveyGraduateStudent> students;
-                while (skip <= numStudent)
+                students = await query.ToListAsync();
+                foreach (var student in students)
                 {
-                    students = await query.Skip(skip).Take(take).ToListAsync();
-                    foreach (var student in students)
+                    //nếu chưa có thì thêm
+                    if (await _context.AsEduSurveyGraduateBaiKhaoSatSinhVien.FirstOrDefaultAsync(o => o.BaiKhaoSatId == theSurvey.Id && o.StudentCode == student.ExMasv) == null)
                     {
-                        //nếu chưa có thì thêm
-                        if( await _context.AsEduSurveyGraduateBaiKhaoSatSinhVien.FirstOrDefaultAsync(o => o.BaiKhaoSatId == theSurvey.Id && o.StudentCode == student.ExMasv) == null )
+                        _context.AsEduSurveyGraduateBaiKhaoSatSinhVien.Add(new AsEduSurveyGraduateBaiKhaoSatSinhVien
                         {
-                            _context.AsEduSurveyGraduateBaiKhaoSatSinhVien.Add(new AsEduSurveyGraduateBaiKhaoSatSinhVien
-                            {
-                                Id = Guid.NewGuid(),
-                                BaiKhaoSatId = theSurvey.Id,
-                                DepartmentCode = student.Manganh ?? "",
-                                StudentCode = student.ExMasv ?? "",
-                                DeThi = "",
-                                BaiLam = "",
-                                NgayGioBatDau = DateTime.Now,
-                                NgayGioNopBai = DateTime.Now,
-                                Status = (int)SurveyStudentStatus.DoNot,
-                                Type = 1,
-                            });
-                        }
+                            Id = Guid.NewGuid(),
+                            BaiKhaoSatId = theSurvey.Id,
+                            DepartmentCode = student.Manganh ?? "",
+                            StudentCode = student.ExMasv ?? "",
+                            DeThi = "",
+                            BaiLam = "",
+                            NgayGioBatDau = DateTime.Now,
+                            NgayGioNopBai = DateTime.Now,
+                            Status = (int)SurveyStudentStatus.DoNot,
+                            Type = 1,
+                        });
                     }
-                    await _context.SaveChangesAsync();
-                    skip += take;
                 }
+                await _context.SaveChangesAsync();
             }
             catch (Exception e)
             {

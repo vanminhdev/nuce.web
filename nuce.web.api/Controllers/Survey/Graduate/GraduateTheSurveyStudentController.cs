@@ -172,11 +172,11 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             }
             catch (TableBusyException e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không tạo được bài khảo sát cho từng sinh viên", detailMessage = e.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không phát được bài khảo sát cho từng sinh viên", detailMessage = e.Message });
             }
             catch (RecordNotFoundException e)
             {
-                return NotFound(new { message = "Không tạo được bài khảo sát cho từng sinh viên", detailMessage = e.Message });
+                return NotFound(new { message = "Không phát được bài khảo sát cho từng sinh viên", detailMessage = e.Message });
             }
             catch (Exception e)
             {

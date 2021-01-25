@@ -1,8 +1,10 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
+using nuce.web.api.Models.EduData;
 using nuce.web.api.Models.Status;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Models.Survey.JsonData;
@@ -24,14 +26,18 @@ namespace nuce.web.api.Services.Survey.Implements
 {
     class AsEduSurveyUndergraduateBaiKhaoSatSinhVienService : BaiKhaoSatSinhVienServiceBase, IAsEduSurveyUndergraduateBaiKhaoSatSinhVienService
     {
+        private readonly ILogger<AsEduSurveyUndergraduateBaiKhaoSatSinhVienService> _logger;
         private readonly SurveyContext _context;
+        private readonly EduDataContext _eduContext;
         private readonly StatusContext _statusContext;
         private readonly IConfiguration _configuration;
         private readonly FakerService _fakerService;
 
-        public AsEduSurveyUndergraduateBaiKhaoSatSinhVienService(SurveyContext context, StatusContext statusContext, IConfiguration configuration, FakerService fakerService)
+        public AsEduSurveyUndergraduateBaiKhaoSatSinhVienService(ILogger<AsEduSurveyUndergraduateBaiKhaoSatSinhVienService> logger, SurveyContext context, EduDataContext eduContext, StatusContext statusContext, IConfiguration configuration, FakerService fakerService)
         {
+            _logger = logger;
             _context = context;
+            _eduContext = eduContext;
             _statusContext = statusContext;
             _configuration = configuration;
             _fakerService = fakerService;
@@ -104,7 +110,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 {
                     Id = o.baikssv.Id,
                     BaiKhaoSatId = o.baikssv.BaiKhaoSatId,
-                    DepartmentCode = o.baikssv.DepartmentCode,
+                    
                     Name = o.baiks.Name,
                     Type = o.baikssv.Type,
                     Status = o.baikssv.Status,
@@ -157,36 +163,47 @@ namespace nuce.web.api.Services.Survey.Implements
             {
                 IQueryable<AsEduSurveyUndergraduateStudent> query = _context.AsEduSurveyUndergraduateStudent.OrderBy(o => o.Id);
                 var numStudent = query.Count();
-                var skip = 0;
-                var take = 500;
 
                 List<AsEduSurveyUndergraduateStudent> students;
-                while (skip <= numStudent)
+                students = await query.ToListAsync();
+                foreach (var student in students)
                 {
-                    students = await query.Skip(skip).Take(take).ToListAsync();
-                    foreach (var student in students)
+                    if(string.IsNullOrWhiteSpace(student.ExMasv))
                     {
-                        //nếu sinh viên đấy chưa có
-                        if( await _context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien.FirstOrDefaultAsync(o => o.StudentCode == student.ExMasv) == null )
+                        _logger.LogWarning($"du lieu dau vao sai ma sv de trong");
+                        continue;
+                    }
+                    var baikssv = await _context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien.FirstOrDefaultAsync(o => o.StudentCode == student.ExMasv);
+                    //nếu sinh viên đấy chưa có
+                    if (baikssv == null)
+                    {
+                        _context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien.Add(new AsEduSurveyUndergraduateBaiKhaoSatSinhVien
                         {
-                            _context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien.Add(new AsEduSurveyUndergraduateBaiKhaoSatSinhVien
-                            {
-                                Id = Guid.NewGuid(),
-                                BaiKhaoSatId = theSurvey.Id,
-                                DepartmentCode = student.Manganh ?? "",
-                                StudentCode = student.ExMasv ?? "",
-                                DeThi = "",
-                                BaiLam = "",
-                                NgayGioBatDau = DateTime.Now,
-                                NgayGioNopBai = DateTime.Now,
-                                Status = (int)SurveyStudentStatus.DoNot,
-                                Type = 1,
-                            });
+                            Id = Guid.NewGuid(),
+                            BaiKhaoSatId = theSurvey.Id,
+                            Nganh = student.Tennganh,
+                            ChuyenNganh = student.Tenchnga,
+                            StudentCode = student.ExMasv,
+                            DeThi = "",
+                            BaiLam = "",
+                            NgayGioBatDau = DateTime.Now,
+                            NgayGioNopBai = DateTime.Now,
+                            Status = (int)SurveyStudentStatus.DoNot,
+                            Type = 1,
+                        });
+                    }
+                    else //nếu có rồi và chưa làm bài thì cập nhật theo mẫu mới
+                    {
+                        //có rồi và chưa làm thì cập nhật bài ks mới
+                        if(baikssv.Status != (int)SurveyStudentStatus.RequestAuthorize && baikssv.Status != (int)SurveyStudentStatus.Done)
+                        {
+                            baikssv.BaiKhaoSatId = theSurvey.Id;
+                            baikssv.NgayGioBatDau = DateTime.Now;
+                            baikssv.NgayGioNopBai = DateTime.Now;
                         }
                     }
-                    await _context.SaveChangesAsync();
-                    skip += take;
                 }
+                await _context.SaveChangesAsync();
             }
             catch (Exception e)
             {

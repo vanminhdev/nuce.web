@@ -15,6 +15,7 @@ namespace nuce.web.api.ViewModel.Survey.Undergraduate
         public string tbcht { get; set; }
         public string xeploai { get; set; }
         public string soqdtn { get; set; }
+        public DateTime? ngayraqd { get; set; }
         public string sohieuba { get; set; }
         public string tinh { get; set; }
         public string truong { get; set; }

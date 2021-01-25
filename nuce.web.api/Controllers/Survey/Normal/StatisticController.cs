@@ -18,7 +18,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace nuce.web.api.Controllers.Survey
+namespace nuce.web.api.Controllers.Survey.Normal
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
@@ -304,59 +304,6 @@ namespace nuce.web.api.Controllers.Survey
                 _logger.LogError(e, e.Message);
                 return NotFound(new { message = "Không lấy được trạng thái", detailMessage = e.Message });
             }
-        }
-        #endregion
-
-        #region thống kê sinh viên trước tốt nghiệp
-        [HttpGet]
-        [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
-        public async Task<IActionResult> GetStatusReportTotalUndergraduateSurveyTask()
-        {
-            try
-            {
-                var status = await _statusService.GetStatusTableTask(TableNameTask.AsEduSurveyUndergraduateReportTotal);
-                return Ok(new { status.Status, status.IsSuccess, status.Message });
-            }
-            catch (RecordNotFoundException e)
-            {
-                _logger.LogError(e, e.Message);
-                return NotFound(new { message = "Không lấy được trạng thái", detailMessage = e.Message });
-            }
-        }
-
-        [HttpPost]
-        [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
-        public async Task<IActionResult> ReportTotalUndergraduateSurvey([Required] Guid? surveyRoundId)
-        {
-            try
-            {
-                await _surveyStatisticBackgroundTask.ReportTotalUndergraduateSurvey(surveyRoundId.Value);
-            }
-            catch (RecordNotFoundException e)
-            {
-                _logger.LogError(e, e.Message);
-                return NotFound(new { message = e.Message });
-            }
-            catch (InvalidInputDataException e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
-            }
-            catch (TableBusyException e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
-            }
-            catch (DbUpdateException e)
-            {
-                _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thống kê được đợt khảo sát", detailMessage = e.Message });
-            }
-            catch (Exception e)
-            {
-                var mainMessage = UtilsException.GetMainMessage(e);
-                _logger.LogError(e, mainMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thống kê được đợt khảo sát", detailMessage = mainMessage });
-            }
-            return Ok();
         }
         #endregion
     }

@@ -42,6 +42,7 @@ using nuce.web.api.Services.Shared;
 using nuce.web.api.Services.EduData.BackgroundTasks;
 using nuce.web.api.Repositories.EduData.Interfaces;
 using nuce.web.api.Repositories.EduData.Implements;
+using nuce.web.api.Services.Survey.Implements.Undergraduate;
 
 namespace nuce.web.api
 {
@@ -207,7 +208,7 @@ namespace nuce.web.api
             services.AddScoped<IUserFileService, UserFileService>();
             services.AddScoped<IInitializeService, InitializeService>();
             #endregion
-            #region config service
+            #region config survey service
             services.AddScoped<IStatusService, StatusService>();
             services.AddScoped<IAsEduSurveyCauHoiService, AsEduSurveyCauHoiService>();
             services.AddScoped<IAsEduSurveyDapAnService, AsEduSurveyDapAnService>();
@@ -233,6 +234,7 @@ namespace nuce.web.api
             services.AddScoped<IAsEduSurveyUndergraduateDotKhaoSatService, AsEduSurveyUndergraduateDotKhaoSatService>();
             services.AddScoped<IAsEduSurveyUndergraduateBaiKhaoSatService, AsEduSurveyUndergraduateBaiKhaoSatService>();
             services.AddScoped<IAsEduSurveyUndergraduateBaiKhaoSatSinhVienService, AsEduSurveyUndergraduateBaiKhaoSatSinhVienService>();
+            services.AddScoped<IAsEduSurveyUndergraduateReportTotalService, AsEduSurveyUndergraduateReportTotalService>();
 
             services.AddScoped<ISurveyResultService, SurveyResultService>();
 

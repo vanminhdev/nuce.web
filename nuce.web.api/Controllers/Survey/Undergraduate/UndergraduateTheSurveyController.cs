@@ -16,7 +16,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace nuce.web.api.Controllers.Survey.Graduate
+namespace nuce.web.api.Controllers.Survey.Undergraduate
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
@@ -52,6 +52,14 @@ namespace nuce.web.api.Controllers.Survey.Graduate
                     Data = result.Data
                 }
             );
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetTheSurveyDoing()
+        {
+            //bài ks đã bỏ hoặc đã phát
+            var result = await _asEduSurveyUndergraduateBaiKhaoSatService.GetTheSurveyDoing();
+            return Ok(result);
         }
 
         [HttpGet]

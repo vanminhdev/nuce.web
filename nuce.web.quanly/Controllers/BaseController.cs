@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using nuce.web.quanly.Common;
 using nuce.web.quanly.Models;
+using nuce.web.quanly.Models.Base;
 using nuce.web.quanly.ViewModel.Base;
 using System;
 using System.Collections.Generic;
@@ -248,6 +249,20 @@ namespace nuce.web.quanly.Controllers
                     });
                 }
             );
+        }
+
+        protected ActionResult DownloadFileFromTempData(Guid fileGuid)
+        {
+            if (TempData[fileGuid.ToString()] != null)
+            {
+                var fileDownload = TempData[fileGuid.ToString()] as FileDownload;
+
+                return File(fileDownload.Data, fileDownload.ContentType, fileDownload.FileName);
+            }
+            else
+            {
+                return new EmptyResult();
+            }
         }
     }
 }
