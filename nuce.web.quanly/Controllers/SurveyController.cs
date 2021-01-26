@@ -744,7 +744,7 @@ namespace nuce.web.quanly.Controllers
         public async Task<ActionResult> UpdateGraduateQuestion(QuestionDetail question)
         {
             var content = new StringContent(JsonConvert.SerializeObject(question), Encoding.UTF8, "application/json");
-            var response = await base.MakeRequestAuthorizedAsync("PUT", $"/api/question/update?id={question.id}", content);
+            var response = await base.MakeRequestAuthorizedAsync("PUT", $"/api/Graduatequestion/update?id={question.id}", content);
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() });
         }
 
@@ -1339,7 +1339,7 @@ namespace nuce.web.quanly.Controllers
                 {
                     var jsonString = await response.Content.ReadAsStringAsync();
                     var data = JsonConvert.DeserializeObject<QuestionDetail>(jsonString);
-                    return View("~/Views/Survey/Undergraduate/CreateQuestion.cshtml", data);
+                    return View("~/Views/Survey/Undergraduate/DetailQuestion.cshtml", data);
                 }
             );
         }
@@ -1349,7 +1349,7 @@ namespace nuce.web.quanly.Controllers
         public async Task<ActionResult> UpdateUndergraduateQuestion(QuestionDetail question)
         {
             var content = new StringContent(JsonConvert.SerializeObject(question), Encoding.UTF8, "application/json");
-            var response = await base.MakeRequestAuthorizedAsync("PUT", $"/api/question/update?id={question.id}", content);
+            var response = await base.MakeRequestAuthorizedAsync("PUT", $"/api/Undergraduatequestion/update?id={question.id}", content);
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() });
         }
 
