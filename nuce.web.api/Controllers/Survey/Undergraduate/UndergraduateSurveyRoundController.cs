@@ -16,17 +16,17 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace nuce.web.api.Controllers.Survey.Graduate
+namespace nuce.web.api.Controllers.Survey.Undergraduate
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
     [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
     public class UndergraduateSurveyRoundController : ControllerBase
     {
-        private readonly ILogger<GraduateSurveyRoundController> _logger;
+        private readonly ILogger<UndergraduateSurveyRoundController> _logger;
         private readonly IAsEduSurveyUndergraduateDotKhaoSatService _asEduSurveyUndergraduateDotKhaoSatService;
 
-        public UndergraduateSurveyRoundController(ILogger<GraduateSurveyRoundController> logger, IAsEduSurveyUndergraduateDotKhaoSatService asEduSurveyUndergraduateDotKhaoSatService)
+        public UndergraduateSurveyRoundController(ILogger<UndergraduateSurveyRoundController> logger, IAsEduSurveyUndergraduateDotKhaoSatService asEduSurveyUndergraduateDotKhaoSatService)
         {
             _logger = logger;
             _asEduSurveyUndergraduateDotKhaoSatService = asEduSurveyUndergraduateDotKhaoSatService;
@@ -71,6 +71,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetSurveyRoundClosedOrEnd()
         {
             try

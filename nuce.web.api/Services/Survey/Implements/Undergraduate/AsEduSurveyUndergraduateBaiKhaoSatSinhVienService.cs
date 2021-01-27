@@ -145,7 +145,7 @@ namespace nuce.web.api.Services.Survey.Implements
             status.Status = (int)TableTaskStatus.Doing;
             await _statusContext.SaveChangesAsync();
 
-            var theSurvey = await _context.AsEduSurveyUndergraduateBaiKhaoSat.FirstOrDefaultAsync(o => o.Id == theSurveyId && o.Status == (int)TheSurveyStatus.New || o.Status == (int)TheSurveyStatus.Published);
+            var theSurvey = await _context.AsEduSurveyUndergraduateBaiKhaoSat.FirstOrDefaultAsync(o => o.Id == theSurveyId && (o.Status == (int)TheSurveyStatus.New || o.Status == (int)TheSurveyStatus.Published));
             if (theSurvey == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy bài khảo sát");
@@ -153,7 +153,7 @@ namespace nuce.web.api.Services.Survey.Implements
             theSurvey.Status = (int)TheSurveyStatus.Published;
 
             //đóng tất cả bài khảo sát trước đó
-            var oldTheSurvey = await _context.AsEduSurveyUndergraduateBaiKhaoSat.Where(o => o.Id != theSurvey.Id && o.Status != (int)TheSurveyStatus.Deleted).ToListAsync();
+            var oldTheSurvey = await _context.AsEduSurveyUndergraduateBaiKhaoSat.Where(o => o.Id != theSurveyId && o.Status != (int)TheSurveyStatus.Deleted).ToListAsync();
             foreach(var item in oldTheSurvey)
             {
                 item.Status = (int)TheSurveyStatus.Deactive;

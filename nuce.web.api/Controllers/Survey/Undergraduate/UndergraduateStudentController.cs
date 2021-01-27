@@ -176,7 +176,7 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
                 DateTime? ngaySinh = null;
                 try
                 {
-                    ngaySinh = (DateTime)worksheet.Cells[i, 5].Value;
+                    ngaySinh = (DateTime)(worksheet.Cells[i, 5].Value);
                 }
                 catch
                 {
@@ -201,44 +201,47 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
                 var soQuyetDinhVaNgayRaQuyetDinh = worksheet.Cells[i, 13].Value?.ToString();
 
                 DateTime? ngayRaQd = null;
-                try
-                {
-                    ngayRaQd = (DateTime)worksheet.Cells[i, 14].Value;
-                }
-                catch
+                if (worksheet.Cells[i, 14].Value != null)
                 {
                     try
                     {
-                        ngayRaQd = DateTime.ParseExact((string)worksheet.Cells[i, 14].Value, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                        ngayRaQd = (DateTime)(worksheet.Cells[i, 14].Value);
                     }
                     catch
                     {
+                        try
+                        {
+                            ngayRaQd = DateTime.ParseExact((string)worksheet.Cells[i, 14].Value, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                        }
+                        catch
+                        {
 
+                        }
                     }
                 }
 
                 string masvFormated = null;
                 if (masv != null)
                 {
-                    masvFormated = $"{masv:0000000}";
-
+                    masvFormated = $"{masv.Trim():0000000}";
+                    
                     var student = new AsEduSurveyUndergraduateStudent
                     {
                         Id = Guid.NewGuid(),
                         Masv = masvFormated,
-                        Tensinhvien = hoten,
-                        Lopqd = lop,
+                        Tensinhvien = hoten?.Trim() == "" ? null : hoten?.Trim(),
+                        Lopqd = lop?.Trim() == "" ? null : lop?.Trim(),
                         Ngaysinh = ngaySinh,
-                        Gioitinh = gioi,
-                        Tbcht = tichluy,
-                        Xeploai = xepLoai,
-                        Tennganh = tenNganh,
-                        Tenchnga = tenChuyenNganh,
-                        Makhoa = maKhoa,
-                        Hedaotao = heTotNghiep,
-                        ExMasv = masv,
+                        Gioitinh = gioi?.Trim() == "" ? null : gioi?.Trim(),
+                        Tbcht = tichluy?.Trim() == "" ? null : tichluy?.Trim(),
+                        Xeploai = xepLoai?.Trim() == "" ? null : xepLoai?.Trim(),
+                        Tennganh = tenNganh?.Trim() == "" ? null : tenNganh?.Trim(),
+                        Tenchnga = tenChuyenNganh?.Trim() == "" ? null : tenChuyenNganh?.Trim(),
+                        Makhoa = maKhoa?.Trim() == "" ? null : maKhoa?.Trim(),
+                        Hedaotao = heTotNghiep?.Trim() == "" ? null : heTotNghiep?.Trim(),
+                        ExMasv = masv.Trim(),
                         DotKhaoSatId = surveyRoundId,
-                        Soqdtn = soQuyetDinhVaNgayRaQuyetDinh,
+                        Soqdtn = soQuyetDinhVaNgayRaQuyetDinh?.Trim() == "" ? null : soQuyetDinhVaNgayRaQuyetDinh?.Trim(),
                         Ngayraqd = ngayRaQd,
                         Type = 1,
                         Status = 1

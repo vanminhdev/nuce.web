@@ -46,7 +46,7 @@ namespace nuce.web.api.Services.Survey.Implements
             var recordsFiltered = query.Count();
 
             var querySkip = query
-                .OrderBy(u => u.Order)
+                .OrderByDescending(u => u.Code)
                 .Skip(skip).Take(take);
 
             var data = await querySkip

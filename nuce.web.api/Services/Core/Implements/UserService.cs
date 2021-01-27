@@ -70,12 +70,13 @@ namespace nuce.web.api.Services.Core.Implements
             this._facultyRepository = _facultyRepository;
             this._studentEduDataService = _studentEduDataService;
         }
+
         public async Task<List<Claim>> AddClaimsAsync(LoginModel model, ApplicationUser user)
         {
             string username = UserParameters.LoginViaDaotao.Contains(model.LoginUserType) ? model.Username : user.UserName;
 
             var authClaims = new List<Claim>
-                {
+            {
                     new Claim(ClaimTypes.Name, username),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(UserParameters.UserCode, username),

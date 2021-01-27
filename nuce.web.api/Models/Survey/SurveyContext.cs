@@ -484,6 +484,10 @@ namespace nuce.web.api.Models.Survey
                     .HasColumnName("ghichu_thi")
                     .HasMaxLength(200);
 
+                entity.Property(e => e.Ghichuphatbang)
+                    .HasColumnName("ghichuphatbang")
+                    .HasMaxLength(500);
+
                 entity.Property(e => e.Gioitinh)
                     .HasColumnName("gioitinh")
                     .HasMaxLength(20);
@@ -510,6 +514,16 @@ namespace nuce.web.api.Models.Survey
                 entity.Property(e => e.Lopqd)
                     .HasColumnName("lopqd")
                     .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Makhoa)
+                    .HasColumnName("makhoa")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Malop)
+                    .HasColumnName("malop")
+                    .HasMaxLength(50)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Manganh)
@@ -550,6 +564,8 @@ namespace nuce.web.api.Models.Survey
                 entity.Property(e => e.Ngaysinh)
                     .HasColumnName("ngaysinh")
                     .HasColumnType("date");
+
+                entity.Property(e => e.Nguoiphatbang).HasColumnName("nguoiphatbang");
 
                 entity.Property(e => e.Noisiti)
                     .HasColumnName("noisiti")
@@ -735,9 +751,7 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.BaiLam).IsRequired();
 
-                entity.Property(e => e.ChuyenNganh)
-                    .IsRequired()
-                    .HasMaxLength(100);
+                entity.Property(e => e.ChuyenNganh).HasMaxLength(100);
 
                 entity.Property(e => e.DeThi).IsRequired();
 
@@ -746,9 +760,7 @@ namespace nuce.web.api.Models.Survey
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Nganh)
-                    .IsRequired()
-                    .HasMaxLength(100);
+                entity.Property(e => e.Nganh).HasMaxLength(100);
 
                 entity.Property(e => e.NgayGioBatDau).HasColumnType("datetime");
 
@@ -871,9 +883,7 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.AnswerCode).HasMaxLength(50);
 
-                entity.Property(e => e.ChuyenNganh)
-                    .IsRequired()
-                    .HasMaxLength(100);
+                entity.Property(e => e.ChuyenNganh).HasMaxLength(100);
 
                 entity.Property(e => e.QuestionCode)
                     .IsRequired()

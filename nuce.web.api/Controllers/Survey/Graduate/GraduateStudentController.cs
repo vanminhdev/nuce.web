@@ -13,10 +13,12 @@ using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey.Graduate;
 using nuce.web.shared;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -88,6 +90,22 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             }
         }
 
+        [HttpPut]
+        public async Task<IActionResult> TransferDataFromUndergraduate([Required] Guid? surveyRoundId, [Required] [FromBody] TransferDataUndergraduateModel filter)
+        {
+            try
+            {
+                await _asEduSurveyGraduateStudentService.TransferDataFromUndergraduate(surveyRoundId.Value, filter);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không chuyển được dữ liệu", detailMessage = mainMessage });
+            }
+        }
+
         [HttpGet]
         public async Task<IActionResult> DownloadTemplateUploadFile()
         {
@@ -140,64 +158,118 @@ namespace nuce.web.api.Controllers.Survey.Graduate
 
         private async Task ReadFileUpload(string filepath, Guid surveyRoundId)
         {
-            //SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
-            //var workbook = ExcelFile.Load(filepath);
-            //var worksheet = workbook.Worksheets[0];
+            FileInfo fileInfo = new FileInfo(filepath);
 
-            ///// Create DataTable from an Excel worksheet.
-            //var dataTable = worksheet.CreateDataTable(new CreateDataTableOptions()
-            //{
-            //    ColumnHeaders = true,
-            //    StartRow = 0,
-            //    NumberOfColumns = worksheet.Columns.Count,
-            //    NumberOfRows = worksheet.Rows.Count,
-            //    Resolution = ColumnTypeResolution.AutoPreferStringCurrentCulture
-            //});
+            ExcelPackage package = new ExcelPackage(fileInfo);
+            ExcelWorksheet worksheet = package.Workbook.Worksheets.FirstOrDefault();
 
-            //List<AsEduSurveyGraduateStudent> students = new List<AsEduSurveyGraduateStudent>();
-            //AsEduSurveyGraduateStudent student;
+            // get number of rows and columns in the sheet
+            int rows = worksheet.Dimension.Rows;
+
+            for (int i = 2; i <= rows; i++)
+            {
+                if (worksheet.Cells[i, 2].Value == null)
+                {
+                    rows = i - 1; // dòng cuối cùng
+                    break;
+                }
+            }
+
+            List<AsEduSurveyGraduateStudent> students = new List<AsEduSurveyGraduateStudent>();
             //int maxSize = 100;
-            //int numRowCount = 0;
-            //foreach (DataRow row in dataTable.Rows)
-            //{
-            //    var dottonghiep = row[0].ToString();
-            //    var sovaoso = row[1].ToString();
-            //    var masv = row[2].ToString();
 
-            //    string addStr = "";
-            //    for(int i = 0; i < 7 - masv.Length; i++)
-            //    {
-            //        addStr += "0";
-            //    }
-            //    string masvFormated = addStr + masv;
+            for (int i = 2; i <= rows; i++)
+            {
+                var masv = worksheet.Cells[i, 2].Value?.ToString();
+                var hoten = worksheet.Cells[i, 3].Value?.ToString();
+                var lop = worksheet.Cells[i, 4].Value?.ToString();
 
-            //    var hovaten = row[3].ToString();
-            //    var xeploai = row[4].ToString();
-            //    var ngaysinh = row[5].ToString();
+                DateTime? ngaySinh = null;
+                try
+                {
+                    ngaySinh = (DateTime)(worksheet.Cells[i, 5].Value);
+                }
+                catch
+                {
+                    try
+                    {
+                        ngaySinh = DateTime.ParseExact((string)worksheet.Cells[i, 5].Value, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                    }
+                    catch
+                    {
 
-            //    student = new AsEduSurveyGraduateStudent
-            //    {
-            //        Id = Guid.NewGuid(),
-            //        Dottotnghiep = dottonghiep,
-            //        Sovaoso = sovaoso,
-            //        Masv = masvFormated,
-            //        Tensinhvien = hovaten,
-            //        Xeploai = xeploai,
-            //        Ngaysinh = ngaysinh,
-            //        ExMasv = masv,
-            //        Psw = StringHelper.ConvertToLatin(hovaten).Replace(" ", "").ToLower(),
-            //        DotKhaoSatId = surveyRoundId,
-            //        Type = 1,
-            //        Status = 1
-            //    };
-            //    students.Add(student);
-            //    numRowCount++;
-            //    if (students.Count == maxSize || numRowCount == dataTable.Rows.Count) // đủ 100 hoặc là phần tử cuối cùng
-            //    {
-            //        await _asEduSurveyGraduateStudentService.CreateAll(students);
-            //        students.Clear();
-            //    }
-            //}
+                    }
+                }
+
+                var gioi = worksheet.Cells[i, 6].Value?.ToString();
+                var tichluy = worksheet.Cells[i, 7].Value?.ToString();
+                var xepLoai = worksheet.Cells[i, 8].Value?.ToString();
+                var tenNganh = worksheet.Cells[i, 9].Value?.ToString();
+                var tenChuyenNganh = worksheet.Cells[i, 10].Value?.ToString();
+
+                var heTotNghiep = worksheet.Cells[i, 11].Value?.ToString();
+                var maKhoa = worksheet.Cells[i, 12].Value?.ToString();
+                var soQuyetDinhVaNgayRaQuyetDinh = worksheet.Cells[i, 13].Value?.ToString();
+
+                DateTime? ngayRaQd = null;
+                if (worksheet.Cells[i, 14].Value != null)
+                {
+                    try
+                    {
+                        ngayRaQd = (DateTime)(worksheet.Cells[i, 14].Value);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            ngayRaQd = DateTime.ParseExact((string)worksheet.Cells[i, 14].Value, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                }
+
+                string masvFormated = null;
+                if (masv != null)
+                {
+                    masvFormated = $"{masv.Trim():0000000}";
+
+                    var student = new AsEduSurveyGraduateStudent
+                    {
+                        Id = Guid.NewGuid(),
+                        Masv = masvFormated,
+                        Tensinhvien = hoten?.Trim() == "" ? null : hoten?.Trim(),
+                        Lopqd = lop?.Trim() == "" ? null : lop?.Trim(),
+                        Ngaysinh = ngaySinh,
+                        Gioitinh = gioi?.Trim() == "" ? null : gioi?.Trim(),
+                        Tbcht = tichluy?.Trim() == "" ? null : tichluy?.Trim(),
+                        Xeploai = xepLoai?.Trim() == "" ? null : xepLoai?.Trim(),
+                        Tennganh = tenNganh?.Trim() == "" ? null : tenNganh?.Trim(),
+                        Tenchnga = tenChuyenNganh?.Trim() == "" ? null : tenChuyenNganh?.Trim(),
+                        Makhoa = maKhoa?.Trim() == "" ? null : maKhoa?.Trim(),
+                        Hedaotao = heTotNghiep?.Trim() == "" ? null : heTotNghiep?.Trim(),
+                        ExMasv = masv.Trim(),
+                        DotKhaoSatId = surveyRoundId,
+                        Soqdtn = soQuyetDinhVaNgayRaQuyetDinh?.Trim() == "" ? null : soQuyetDinhVaNgayRaQuyetDinh?.Trim(),
+                        Ngayraqd = ngayRaQd,
+                        Psw = !string.IsNullOrWhiteSpace(hoten) ? StringHelper.ConvertToLatin(hoten.Trim()).Replace(" ", "").ToLower() : "",
+                        Type = 1,
+                        Status = 1
+                    };
+                    students.Add(student);
+                }
+            }
+            await _asEduSurveyGraduateStudentService.CreateAll(students);
+        }
+
+        [HttpGet]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Graduate)]
+        public async Task<IActionResult> DownloadListStudent([Required] Guid? surveyRoundId)
+        {
+            var data = await _asEduSurveyGraduateStudentService.DownloadListStudent(surveyRoundId.Value);
+            return File(data, ContentTypes.Xlsx, "list_student.xlsx");
         }
 
         [HttpDelete]

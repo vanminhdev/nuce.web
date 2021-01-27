@@ -146,7 +146,7 @@ namespace nuce.web.api.Services.Survey.Implements
             {
                 throw new InvalidInputDataException("Đợt khảo sát không ở trạng thái đóng cửa hoặc mới tạo");
             }
-
+            surveyRound.FromDate = DateTime.Now;
             surveyRound.Status = (int)SurveyRoundStatus.Opened;
             await _context.SaveChangesAsync();
         }
@@ -158,6 +158,7 @@ namespace nuce.web.api.Services.Survey.Implements
             {
                 throw new RecordNotFoundException();
             }
+            surveyRound.EndDate = DateTime.Now;
             surveyRound.Status = (int)SurveyRoundStatus.Closed;
             await _context.SaveChangesAsync();
         }

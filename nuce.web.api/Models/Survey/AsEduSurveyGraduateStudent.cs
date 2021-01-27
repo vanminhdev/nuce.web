@@ -51,5 +51,9 @@ namespace nuce.web.api.Models.Survey
         public string ExMasv { get; set; }
         public int Type { get; set; }
         public int Status { get; set; }
+        public string Makhoa { get; set; }
+        public string Malop { get; set; }
+        public int? Nguoiphatbang { get; set; }
+        public string Ghichuphatbang { get; set; }
     }
 }

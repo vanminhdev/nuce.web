@@ -96,7 +96,7 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
             var tongToanTruong = new Dictionary<int, float>();
             //sinh viên trong đợt
             var students = _context.AsEduSurveyUndergraduateStudent.Where(o => o.DotKhaoSatId == surveyRoundId);
-            var groupChuyenNganh = students.GroupBy(o => new { o.Tenchnga }).Select(o => new { o.Key.Tenchnga }).ToList();
+            var groupChuyenNganh = students.Select(o => o.Tenchnga ?? o.Tennganh).Distinct().ToList();
 
             //join bài làm được xét, => loại sinh viên không có bài được xét
             var sinhVienBaiLam = students.Join(_context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien.Where(o => o.BaiKhaoSatId == theSurveyId), o => o.ExMasv, o => o.StudentCode, (sv, bailam) => new { sv, bailam });
@@ -105,9 +105,9 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
             var reportTotal = _context.AsEduSurveyUndergraduateReportTotal.Where(o => o.TheSurveyId == theSurvey.Id && o.SurveyRoundId == surveyRoundId);
             foreach (var chuyenNganh in groupChuyenNganh)
             {
-                _logger.LogInformation($"export nganh: {chuyenNganh.Tenchnga}");
+                _logger.LogInformation($"export nganh: {chuyenNganh}");
                 col = 1;
-                var bailamsv = sinhVienBaiLam.Where(o => o.sv.Tenchnga == chuyenNganh.Tenchnga);
+                var bailamsv = sinhVienBaiLam.Where(o => o.sv.Tenchnga == chuyenNganh || (o.sv.Tenchnga == null && o.sv.Tennganh == chuyenNganh));
                 var soPhieuPhatRa = bailamsv.Count();
                 var soPhieuThuVe = bailamsv.Where(o => o.bailam.Status == (int)SurveyStudentStatus.Done).Count();
 
@@ -120,12 +120,16 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
 
                 var tyLeKyVong = "80%";
 
-                worksheet.Cells[row, col++].Value = chuyenNganh.Tenchnga;
+                worksheet.Cells[row, col++].Value = chuyenNganh;
                 
                 worksheet.Cells[row, col].Value = soPhieuPhatRa;
                 if (!tongToanTruong.ContainsKey(col))
                 {
                     tongToanTruong.Add(col, soPhieuPhatRa);
+                }
+                else
+                {
+                    tongToanTruong[col] += soPhieuPhatRa;
                 }
                 col++;
 
@@ -133,6 +137,10 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
                 if (!tongToanTruong.ContainsKey(col))
                 {
                     tongToanTruong.Add(col, soPhieuThuVe);
+                }
+                else
+                {
+                    tongToanTruong[col] += soPhieuThuVe;
                 }
                 col++;
 
@@ -162,7 +170,7 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
                             }
 
                             worksheet.Cells[rowDapAn, col].Value = dapan.Content;
-                            var ketqua = reportTotal.FirstOrDefault(o => o.QuestionCode == cauhoi.Code && o.AnswerCode == dapan.Code);
+                            var ketqua = reportTotal.FirstOrDefault(o => o.ChuyenNganh == chuyenNganh && o.QuestionCode == cauhoi.Code && o.AnswerCode == dapan.Code);
                             if (ketqua != null)
                             {
                                 var total = ketqua.Total != null ? ketqua.Total.Value : 0;
@@ -244,7 +252,7 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
                             }
 
                             worksheet.Cells[rowDapAn, col].Value = dapan.Content;
-                            var ketqua = reportTotal.FirstOrDefault(o => o.QuestionCode == cauhoi.Code && o.AnswerCode == dapan.Code);
+                            var ketqua = reportTotal.FirstOrDefault(o => o.ChuyenNganh == chuyenNganh && o.QuestionCode == cauhoi.Code && o.AnswerCode == dapan.Code);
                             if (ketqua != null)
                             {
                                 var total = ketqua.Total != null ? ketqua.Total.Value : 0;
@@ -263,7 +271,7 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
                             {
                                 col++;
                                 worksheet.Cells[rowDapAn, col].Value = dapan.AnswerChildQuestion.Content;
-                                var ketquaCon = reportTotal.FirstOrDefault(o => o.QuestionCode == $"{dapan.Code}_{dapan.AnswerChildQuestion.Code}" && o.AnswerCode == dapan.Code);
+                                var ketquaCon = reportTotal.FirstOrDefault(o => o.ChuyenNganh == chuyenNganh && o.QuestionCode == $"{dapan.Code}_{dapan.AnswerChildQuestion.Code}" && o.AnswerCode == dapan.Code);
                                 worksheet.Cells[row, col].Value = ketquaCon?.Content ?? "";
                             }
                             col++;
@@ -275,7 +283,7 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
                     {
                         worksheet.Cells[rowCauHoi, col].Value = $"Câu {++index}: {cauhoi.Content}";
                         worksheet.Column(col).Width = 48;
-                        var ketqua = reportTotal.FirstOrDefault(o => o.QuestionCode == cauhoi.Code);
+                        var ketqua = reportTotal.FirstOrDefault(o => o.ChuyenNganh == chuyenNganh && o.QuestionCode == cauhoi.Code);
                         if (ketqua != null && ketqua.Content != null)
                         {
                             var str = "";
@@ -314,7 +322,7 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
                                     }
 
                                     worksheet.Cells[rowDapAn, col].Value = dapan.Content;
-                                    var ketqua = reportTotal.FirstOrDefault(o => o.QuestionCode == childQuestion.Code && o.AnswerCode == dapan.Code);
+                                    var ketqua = reportTotal.FirstOrDefault(o => o.ChuyenNganh == chuyenNganh && o.QuestionCode == childQuestion.Code && o.AnswerCode == dapan.Code);
                                     if (ketqua != null)
                                     {
                                         var total = ketqua.Total != null ? ketqua.Total.Value : 0;
@@ -396,7 +404,7 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
                                     }
 
                                     worksheet.Cells[rowDapAn, col].Value = dapan.Content;
-                                    var ketqua = reportTotal.FirstOrDefault(o => o.QuestionCode == childQuestion.Code && o.AnswerCode == dapan.Code);
+                                    var ketqua = reportTotal.FirstOrDefault(o => o.ChuyenNganh == chuyenNganh && o.QuestionCode == childQuestion.Code && o.AnswerCode == dapan.Code);
                                     if (ketqua != null)
                                     {
                                         var total = ketqua.Total != null ? ketqua.Total.Value : 0;
@@ -415,7 +423,7 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
                                     {
                                         col++;
                                         worksheet.Cells[rowDapAn, col].Value = dapan.AnswerChildQuestion.Content;
-                                        var ketquaCon = reportTotal.FirstOrDefault(o => o.QuestionCode == $"{dapan.Code}_{dapan.AnswerChildQuestion.Code}" && o.AnswerCode == dapan.Code);
+                                        var ketquaCon = reportTotal.FirstOrDefault(o => o.ChuyenNganh == chuyenNganh && o.QuestionCode == $"{dapan.Code}_{dapan.AnswerChildQuestion.Code}" && o.AnswerCode == dapan.Code);
                                         worksheet.Cells[row, col].Value = ketquaCon?.Content ?? "";
                                     }
                                     col++;
@@ -427,7 +435,7 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
                             {
                                 worksheet.Cells[rowCauHoi, col].Value = $"Câu {index}.{indexChildQuestion}: {childQuestion.Content}";
                                 worksheet.Column(col).Width = 48;
-                                var ketqua = reportTotal.FirstOrDefault(o => o.QuestionCode == childQuestion.Code);
+                                var ketqua = reportTotal.FirstOrDefault(o => o.ChuyenNganh == chuyenNganh && o.QuestionCode == childQuestion.Code);
                                 if (ketqua != null && ketqua.Content != null)
                                 {
                                     var str = "";
@@ -547,7 +555,22 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
                 .Select(o => o.baikssv)
                 .ToList();
 
-            var groupSvBaiLamTheoChNganh = svBaiLam.GroupBy(o => new { o.ChuyenNganh }).ToList();
+            var groupSvBaiLamTheoChNganh = svBaiLam
+                .Select(o => new { 
+                    o.Id,
+                    o.BaiKhaoSatId,
+                    o.StudentCode,
+                    o.DeThi,
+                    o.BaiLam,
+                    o.Nganh,
+                    ChuyenNganh = o.ChuyenNganh ?? o.Nganh,
+                    o.NgayGioBatDau,
+                    o.NgayGioNopBai,
+                    o.LogIp,
+                    o.Type,
+                    o.Status
+                })
+                .GroupBy(o => new { o.ChuyenNganh }).ToList();
 
             foreach (var itemSvBaiLam in groupSvBaiLamTheoChNganh)
             {
