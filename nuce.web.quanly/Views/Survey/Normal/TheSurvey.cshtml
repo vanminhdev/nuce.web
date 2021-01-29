@@ -223,14 +223,11 @@
                         } else if (data.status === @((int)TheSurveyStatus.Published)) {
                             try {
                                 var countBaiKSSv = JSON.parse('@Html.Raw(ViewData["CountGenerateTheSurveyStudent"])');
-                                console.log(countBaiKSSv);
                                 $('#trang-thai').html(`Đã phát: ${countBaiKSSv.countTheSurveyStudent}/${countBaiKSSv.countStudentClassroom}`);
                                 $('#trang-thai').css("min-width", 170);
                             } catch {
                                 console.log('@Html.Raw(ViewData["CountGenerateTheSurveyStudent"])');
                             }
-
-
                             return '<span class="badge badge-pill badge-primary">Đã Phát</span>';
                         } else {
                             return data.status;

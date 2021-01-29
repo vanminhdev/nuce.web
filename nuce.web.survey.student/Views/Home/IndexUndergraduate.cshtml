@@ -30,9 +30,9 @@
             <table class="table m-table-bordered">
                 <thead>
                     <tr>
-                        <th class="text-center">STT</th>
-                        <th class="text-center" width="75%">Bài khảo sát</th>
-                        <th class="text-center"></th>
+                        <th class="text-center" width="1px">STT</th>
+                        <th class="text-center" width="70%">Bài khảo sát</th>
+                        <th class="text-center" style="width:100px"></th>
                     </tr>
                 </thead>
                 <tbody id="table-undergraduate-thesurvey">
@@ -64,7 +64,7 @@
                 } else if (element.status === @((int)SurveyStudentStatus.Done)) {
                     htmlUndergraduate += `Đã hoàn thành`;
                 } else if (element.status === @((int)SurveyStudentStatus.RequestAuthorize)) {
-                    htmlUndergraduate += `<a href="/home/verification">Xác thực</a>`;
+                    htmlUndergraduate += `<a href="/home/verification">Xác thực</a><br/><small>(Xác thực lại nếu bạn không nhận được email xác thực trong khoảng 3 - 5 phút)<small/>`;
                 }
                 htmlUndergraduate += `</td>`;
                 htmlUndergraduate += `</tr>`;

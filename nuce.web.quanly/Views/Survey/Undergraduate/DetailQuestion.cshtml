@@ -24,14 +24,14 @@
     </div>
 
     <div class="row font-13-sm font-16">
-        @Html.TextBoxFor(m => m.id, new { @type = "hidden", @required=true })
+        @Html.TextBoxFor(m => m.id, new { @type = "hidden", @required = true })
         <div class="col-12 form-group">
             <div class="row mr-0 ml-0 align-items-center">
                 <div class="font-14-sm fw-600 col-12 col-md-2 pr-0 pl-0">
                     Mã
                 </div>
                 <div class="col-12 col-md-10">
-                    @Html.TextBoxFor(m => m.code, new { @class = "form-control", disabled="true" })
+                    @Html.TextBoxFor(m => m.code, new { @class = "form-control", disabled = "true" })
                 </div>
             </div>
         </div>
@@ -70,7 +70,7 @@
             </div>
         </div>
 
-        @if (Model.parentCode == null)
+        @if (Model.parentCode == null && Model.type == QuestionType.GQ)
         {
             <div class="col-12 form-group">
                 <div class="row mr-0 ml-0">
@@ -121,8 +121,8 @@
                 </div>
             </div>
         }
-        else
-        { 
+        else if (Model.parentCode != null)
+        {
             <div class="col-12 form-group">
                 <div class="row mr-0 ml-0">
                     <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">

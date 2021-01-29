@@ -28,7 +28,6 @@ namespace nuce.web.api.Controllers.Survey.Graduate
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [AppAuthorize(RoleNames.KhaoThi_Survey_Graduate)]
     public class GraduateStudentController : ControllerBase
     {
         private readonly ILogger<GraduateStudentController> _logger;
@@ -47,6 +46,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpPost]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Graduate, RoleNames.KhaoThi_Survey_KhoaBan, RoleNames.KhaoThi_Survey_GiangVien)]
         public async Task<IActionResult> GetGraduateStudent([FromBody] DataTableRequest request)
         {
             var filter = new GraduateStudentFilter();
@@ -69,6 +69,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpGet]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<IActionResult> GetGraduateStudentById(
             [Required(AllowEmptyStrings = false)]
             string id)
@@ -91,6 +92,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpPut]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<IActionResult> TransferDataFromUndergraduate([Required] Guid? surveyRoundId, [Required] [FromBody] TransferDataUndergraduateModel filter)
         {
             try
@@ -107,6 +109,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpGet]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<IActionResult> DownloadTemplateUploadFile()
         {
             var path = _pathProvider.MapPath("Templates/Survey/Template_Graduate_Student.xlsx");
@@ -119,6 +122,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpPost]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<IActionResult> UploadFile(
             [Required]
             IFormFile fileUpload, 
@@ -273,6 +277,28 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpDelete]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Graduate)]
+        public async Task<IActionResult> Delete([Required(AllowEmptyStrings = false)] string studentCode)
+        {
+            try
+            {
+                await _asEduSurveyGraduateStudentService.Delete(studentCode);
+                return Ok();
+            }
+            catch (RecordNotFoundException e)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, new { message = e.Message });
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không lấy được sinh viên", detailMessage = mainMessage });
+            }
+        }
+
+        [HttpDelete]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<IActionResult> DeleteAll()
         {
             try

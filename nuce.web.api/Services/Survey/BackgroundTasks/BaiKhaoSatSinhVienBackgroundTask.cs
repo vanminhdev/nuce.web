@@ -160,7 +160,9 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                             subject = null;
                         }
 
-                        var recordBaikssv = surveyContext.AsEduSurveyBaiKhaoSatSinhVien.FirstOrDefault(o => o.StudentCode == sc.StudentCode && o.ClassRoomCode == sc.ClassRoomCode && o.Nhhk == sc.Nhhk); //sinh viên lớp môn của kỳ đó có chưa
+                        var recordBaikssv = surveyContext.AsEduSurveyBaiKhaoSatSinhVien
+                            .FirstOrDefault(o => o.BaiKhaoSatId == baiKhaoSatId && o.StudentCode == sc.StudentCode && o.ClassRoomCode == sc.ClassRoomCode 
+                            && o.Nhhk == sc.Nhhk && o.Status != (int)SurveyStudentStatus.Done); //sinh viên lớp môn của kỳ đó có chưa
                         //nếu chưa có thì thêm
                         if (recordBaikssv == null)
                         {

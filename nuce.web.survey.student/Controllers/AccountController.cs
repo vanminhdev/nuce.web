@@ -17,11 +17,29 @@ namespace nuce.web.survey.student.Controllers
 {
     public class AccountController : BaseController
     {
+        //đăng nhập cho sinh viên
         [HttpGet]
         public ActionResult Login(string target)
         {
             ViewData["target"] = target;
-            return View(new LoginModel());
+            return View(new LoginModel() {
+                LoginUserType = 1
+            });
+        }
+
+        [HttpGet]
+        public ActionResult LoginCanBo(int type, string target)
+        {
+            ViewData["target"] = target;
+            if (type != (int)LoginType.Faculty && type != (int)LoginType.Department && type != (int)LoginType.Lecturer)
+            {
+                return Redirect($"/error?message={HttpUtility.UrlEncode("Trang không hợp lệ")}&code={(int)HttpStatusCode.NotFound}");
+            }
+
+            return View(new LoginModel()
+            {
+                LoginUserType = type
+            });
         }
 
         [HttpPost]
@@ -30,14 +48,14 @@ namespace nuce.web.survey.student.Controllers
             if (!ModelState.IsValid)
             {
                 ViewData["target"] = target;
-                return View("login", new LoginModel());
+                return View("login", login);
             }
 
             var userNamePasswordJsonString = JsonConvert.SerializeObject(new
             {
                 username = login.Username,
                 password = login.Password,
-                loginUserType = 1
+                loginUserType = login.LoginUserType
             });
 
             var content = new StringContent(userNamePasswordJsonString, Encoding.UTF8, "application/json");
@@ -105,7 +123,9 @@ namespace nuce.web.survey.student.Controllers
         public ActionResult LoginUndergraduate(string target)
         {
             ViewData["target"] = target;
-            return View(new LoginModel());
+            return View(new LoginModel() {
+                LoginUserType = 1
+            });
         }
 
         [HttpGet]

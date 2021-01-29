@@ -41,6 +41,15 @@ namespace nuce.web.api.Models.Survey
         public virtual DbSet<AsEduSurveyUndergraduateStudent> AsEduSurveyUndergraduateStudent { get; set; }
         public virtual DbSet<AsEduSurveyUndergraduateSurveyRound> AsEduSurveyUndergraduateSurveyRound { get; set; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseSqlServer("Data Source=.\\sqlexpress;Initial Catalog=NUCE_SURVEY;Integrated Security=True");
+            }
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AsEduSurveyBaiKhaoSat>(entity =>
@@ -280,10 +289,6 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.DotKhaoSatId).HasColumnName("DotKhaoSatID");
 
-                entity.Property(e => e.EndDate).HasColumnType("datetime");
-
-                entity.Property(e => e.FromDate).HasColumnType("datetime");
-
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(100);
@@ -306,17 +311,18 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.BaiLam).IsRequired();
 
+                entity.Property(e => e.ChuyenNganh).HasMaxLength(100);
+
                 entity.Property(e => e.DeThi).IsRequired();
 
-                entity.Property(e => e.DepartmentCode)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                entity.Property(e => e.LoaiHinh).HasMaxLength(50);
 
                 entity.Property(e => e.LogIp)
                     .HasColumnName("LogIP")
                     .HasMaxLength(50)
                     .IsUnicode(false);
+
+                entity.Property(e => e.Nganh).HasMaxLength(100);
 
                 entity.Property(e => e.NgayGioBatDau).HasColumnType("datetime");
 

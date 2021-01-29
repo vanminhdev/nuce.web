@@ -1,4 +1,4 @@
-﻿
+﻿@using nuce.web.quanly.Common
 @{
     ViewData["Title"] = "Danh sách cựu sinh viên";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -9,42 +9,65 @@
     <link rel="stylesheet" href="~/content/css/dataTables.bootstrap4.min.css" />
 }
 
-<div class="container">
+<div class="ml-md-2 mr-md-2">
     <div class="row mb-3">
         <div class="col-md-12">
             <div class="form-row">
-                <div class="col-12 col-md mb-2">
-                    <input class="form-control form-control" id="masv-search" type="text" placeholder="Tìm theo mã sinh viên" />
-                </div>
-                <div class="col-12 col-md mb-2 d-flex flex-row">
-                    <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
-                        <i class="fas fa-redo"></i>
+                <div id="input-search" class="col-6 col-md-2 mb-2">
+                    <div class="row">
+                        <div class="col-12 col-md-12">
+                            <input class="form-control form-control-sm" id="masv-search" type="text" placeholder="Tìm theo mã sinh viên" />
+                        </div>
+                        @*<div class="col-12 col-md-6">
+                            <select class="form-control form-control-sm selectpicker custom-boostrap-select" name="allDotKhaoSat" id="allDotKhaoSatId" required title="Chọn đợt khảo sát">
+                            </select>
+                        </div>*@
                     </div>
-                    <div class="w-75">
-                        <button id="btn-search" class="btn btn-secondary w-100">Tìm kiếm</button>
+                </div>
+                <div class="col-4 col-md-2 mb-2 d-flex align-items-start justify-content-start">
+                    <div class="d-flex">
+                        <div class="clear-input d-flex align-items-center ml-md-2 mr-md-3" clear-input="#input-search" title="Nhập lại">
+                            <i class="fas fa-redo"></i>
+                        </div>
+                        <button id="btn-search" class="btn btn-secondary btn-sm">Tìm kiếm</button>
                     </div>
                 </div>
-                <div class="col-12 col-md mb-2">
-                    <button class="btn btn-primary w-100" id="upload">Tải lên danh sách</button>
-                </div>
-                <div class="col-12 col-md mb-2">
-                    <button class="btn btn-danger w-100" id="delete-all">Xoá toàn bộ</button>
+                <div class="col-12 col-md mb-2 d-flex align-items-start justify-content-md-end justify-content-center">
+                    <div class="d-flex">
+                        <button class="btn btn-success mx-2 btn-sm" id="tranfer-student">Lấy danh sách</button>
+                        <button class="btn btn-info mr-2 btn-sm" id="download-student">Tải xuống danh sách</button>
+                        <button class="btn btn-primary mr-2 btn-sm" id="upload">Tải lên danh sách</button>
+                        <button class="btn btn-danger" id="delete-all">Xoá toàn bộ</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row">
+    <div class="row m-fs-10">
         <div class="col-md-12">
             <table id="id-datatable" class="table table-bordered">
                 <thead>
                     <tr>
                         <th class="text-center">Đợt khảo sát</th>
-                        <th class="text-center">Đợt tốt nghiệp</th>
-                        <th class="text-center">Số vào sổ</th>
-                        <th class="text-center">Mã sinh viên</th>
-                        <th class="text-center">Tên sinh viên</th>
+                        <th class="text-center">MSSV</th>
+                        <th class="text-center">Họ tên</th>
+                        <th class="text-center">Lớp</th>
+                        <th class="text-center">Ngày sinh</th>
+                        <th class="text-center">Giới tính</th>
+                        <th class="text-center">TBCHT</th>
                         <th class="text-center">Xếp loại</th>
+                        <th class="text-center">Ngành</th>
+                        <th class="text-center">Chuyên ngành</th>
+                        <th class="text-center">Hệ tốt nghiệp</th>
+                        <th class="text-center">Khoa</th>
+                        <th class="text-center">Số quyết định</th>
+                        <th class="text-center">Ngày ra qđ</th>
+                        <th class="text-center">sdt</th>
+                        <th class="text-center">email</th>
+                        <th class="text-center">T.thái bài ks vl</th>
+                        <th class="text-center">loại hình</th>
+                        <th></th>
                     </tr>
                 </thead>
             </table>
@@ -114,6 +137,55 @@
     </div>
 </div>
 
+<div class="modal fade auto-clear-form-on-open" id="modal-transfer" tabindex="-1" role="dialog" aria-labelledby="modal-transfer" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="min-width:800px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Lấy danh sách theo quyết định tốt nghiệp</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form id="form-transfer" class="auto-validate">
+                        <div class="form-group row">
+                            <label class="col-3 col-form-label">Đợt được thêm <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <select class="form-control selectpicker custom-boostrap-select" name="surveyRoundId" id="surveyRoundId-transfer" required>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3 col-form-label">Từ ngày <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <input type="date" class="form-control" name="fromDate" id="fromDate" required data-rule-dateLessThanOrEqual="#toDate">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3 col-form-label">Đến ngày <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <input type="date" class="form-control" name="toDate" id="toDate" required data-rule-dateGreaterThanOrEqual="#fromDate">
+                            </div>
+                        </div>
+                        <div class="form-group row" style="display:none;">
+                            <label class="col-3 col-form-label">Hệ tốt nghiệp <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <input type="text" class="form-control ignore-auto-clear" name="HeTotNghieps[0]" value="Chính quy" required>
+                                <input type="text" class="form-control ignore-auto-clear" name="HeTotNghieps[1]" value="Liên thông" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
+                <button id="start-transfer" type="button" class="btn btn-primary">Bắt đầu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script src="~/Content/js/bootstrap-select.min.js"></script>
     <script src="~/content/js/jquery.dataTables.min.js"></script>
@@ -126,6 +198,12 @@
             dotKhaoSats.append(`<option value="${e.id}">${e.name} (từ ${getDateString(e.fromDate)} đến ${getDateString(e.endDate)})</option>`);
         });
         dotKhaoSats.selectpicker('refresh');
+
+        let dotKhaoSatTransfers = $('#surveyRoundId-transfer');
+        surveyRounds.forEach(e => {
+            dotKhaoSatTransfers.append(`<option value="${e.id}">${e.name} (từ ${getDateString(e.fromDate)} đến ${getDateString(e.endDate)})</option>`);
+        });
+        dotKhaoSatTransfers.selectpicker('refresh');
 
         var table = $('#id-datatable').DataTable({
             processing: true,
@@ -152,22 +230,86 @@
             },
             columns: [
                 {
-                    data: "tenDotKhaoSat"
+                    data: "tenDotKhaoSat",
+                    name: "dotKhaoSatId"
                 },
                 {
-                    data: "dottotnghiep"
-                },
-                {
-                    data: "sovaoso"
-                },
-                {
-                    data: "masv"
+                    data: "exMasv"
                 },
                 {
                     data: "tensinhvien"
                 },
                 {
+                    data: "lopqd"
+                },
+                {
+                    data: null,
+                    mRender: function (data, type, row) {
+                        return getDateStringFromServerType(data.ngaysinh);
+                    }
+                },
+                {
+                    data: "gioitinh"
+                },
+                {
+                    data: "tbcht",
+                },
+                {
                     data: "xeploai"
+                },
+                {
+                    data: "tennganh"
+                },
+                {
+                    data: "tenchnga"
+                },
+                {
+                    data: "hedaotao"
+                },
+                {
+                    data: "makhoa"
+                },
+                {
+                    data: "soqdtn"
+                },
+                {
+                    data: null,
+                    mRender: function (data, type, row) {
+                        return getDateStringFromServerType(data.ngayraqd);
+                    }
+                },
+                {
+                    data: "mobile"
+                },
+                {
+                    data: "email"
+                },
+                {
+                    data: null,
+                    name: "surveyStudentStatus",
+                    mRender: function (data, type, row) {
+                        if (data.surveyStudentStatus === @((int)SurveyStudentStatus.DoNot)) {
+                            return 'Chưa thực hiện';
+                        } else if (data.surveyStudentStatus === @((int)SurveyStudentStatus.Doing)) {
+                            return 'Đang thực hiện';
+                        } else if (data.surveyStudentStatus === @((int)SurveyStudentStatus.Done)) {
+                            return 'Hoàn thành';
+                        } else if (data.surveyStudentStatus === @((int)SurveyStudentStatus.RequestAuthorize)) {
+                            return 'Đang xác thực';
+                        } else if (data.surveyStudentStatus === @((int)SurveyStudentStatus.HaveNot)) {
+                            return 'Không có';
+                        }
+                        return data.surveyStudentStatus;
+                    }
+                },
+                {
+                    data: "loaiHinh"
+                },
+                {
+                    data: null,
+                    mRender: function (data, type, row) {
+                        return `<button class="btn btn-outline-danger btn-sm" onclick="deleteStudent('${data.exMasv}')">Xoá</button>`;
+                    }
                 }
             ]
         });
@@ -178,6 +320,43 @@
                 .draw();
         });
         document.getElementById("footer").scrollIntoView();
+
+        $('#tranfer-student').click(() => {
+            $('#modal-transfer').modal('show'); 
+        });
+
+        $('#start-transfer').click(() => {
+            if ($('#form-transfer').valid()) {
+                $('#loading-screen').show();
+                $.ajax({
+                    data: $('#form-transfer').serializeArray(),
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/TransferDataFromUndergraduate',
+                    complete: () => { }
+                }).done(function (res) {
+                    $('#loading-screen').hide();
+                    if (res.statusCode === 200) {
+                        toastSuccess('Lấy thành công');
+                        table.ajax.reload();
+                        $('#modal-transfer').modal('hide');
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    $('#loading-screen').hide();
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            }
+        });
 
         let modalUpload = $('#modal-upload');
         $('#upload').click(function () {
@@ -205,7 +384,12 @@
                     $('#modal-upload').modal('hide');
                 }
                 else {
-                    toastError('Có lỗi xảy ra');
+                    try {
+                        let content = JSON.parse(res.content);
+                        toastError(content.message);
+                    } catch {
+                        toastError('Có lỗi xảy ra');
+                    }
                     console.log(res);
                 }
             }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -215,30 +399,63 @@
         });
 
         $('#delete-all').click(() => {
+            $('#modal-yes-no-content').html('Xác nhận xoá toàn bộ sinh viên ?');
             $('#modal-yes-no').modal('show');
-        });
-
-        $('#choose-yes').click(() => {
-            $.ajax({
-                dataType: 'json',
-                method: 'Post',
-                url: '/Survey/DeleteAllGraduateStudent',
-                complete: () => { }
-            }).done(function (res) {
-                if (res.statusCode === 200) {
-                    toastSuccess('Xoá thành công');
-                    table.ajax.reload();
-                    $('#modal-yes-no').modal('hide');
-                }
-                else {
-                    toastError('Có lỗi xảy ra');
-                    console.log(res);
-                }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.log(textStatus + ': ' + errorThrown);
-                console.log(jqXHR);
+            $('#choose-yes').off();
+            $('#choose-yes').click(() => {
+                $.ajax({
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/DeleteAllGraduateStudent',
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        toastSuccess('Xoá thành công');
+                        table.ajax.reload();
+                        $('#modal-yes-no').modal('hide');
+                    }
+                    else {
+                        toastError('Có lỗi xảy ra');
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
             });
         });
 
+        function deleteStudent(mssv) {
+            $('#modal-yes-no-content').html('Xác nhận xoá sinh viên có mã: ' + mssv + ' ?');
+            $('#modal-yes-no').modal('show');
+            $('#choose-yes').off();
+            $('#choose-yes').click(() => {
+                $.ajax({
+                    data: { mssv },
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/DeleteGraduateStudent',
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        toastSuccess('Xoá thành công');
+                        table.ajax.reload();
+                        $('#modal-yes-no').modal('hide');
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+        }
     </script>
 }

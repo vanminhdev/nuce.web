@@ -38,12 +38,7 @@
                     <tr>
                         <th class="text-center">Đợt khảo sát</th>
                         <th class="text-center">Tên</th>
-                        <th class="text-center">Từ ngày</th>
-                        <th class="text-center">Đến ngày</th>
-                        <th class="text-center">Mô tả</th>
-                        <th class="text-center">Ghi chú</th>
-                        <th class="text-center">Loại</th>
-                        <th class="text-center">Trạng thái</th>
+                        <th class="text-center" style="max-width: 100px">Trạng thái</th>
                         <th class="text-center" style="min-width:190px"></th>
                     </tr>
                 </thead>
@@ -76,14 +71,6 @@
                             <label class="col-3 col-form-label">Phiếu khảo sát <span class="text-danger">*</span></label>
                             <div class="col-9">
                                 <select class="form-control selectpicker custom-boostrap-select" name="deThiId" id="deThiId" required title="Chọn phiếu khảo sát">
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-3 col-form-label">Loại <span class="text-danger">*</span></label>
-                            <div class="col-9">
-                                <select class="form-control selectpicker custom-boostrap-select" name="type" id="type" data-rule-onlyAcceptListValue="1">
-                                    <option value="1">Loại 1</option>
                                 </select>
                             </div>
                         </div>
@@ -151,7 +138,7 @@
             language: dataTableConfig.language,
             columnDefs: [
                 {
-                    targets: [2, 3, 6, 7, 8],
+                    targets: [2],
                     className: 'text-center'
                 }
             ],
@@ -173,37 +160,14 @@
                 },
                 {
                     data: null,
-                    name: "fromDate",
-                    mRender: function (data, type, row) {
-                        return getDateStringFromServerType(data.fromDate);
-                    }
-                },
-                {
-                    data: null,
-                    name: "endDate",
-                    mRender: function (data, type, row) {
-                        return getDateStringFromServerType(data.endDate);
-                    }
-                },
-                {
-                    data: "description"
-                },
-                {
-                    data: "note"
-                },
-                {
-                    data: "type"
-                },
-                {
-                    data: null,
                     name: "status",
                     mRender: function (data, type, row) {
                         if (data.status === @((int)TheSurveyStatus.New)) {
                             return '<span class="badge badge-pill badge-success">Mới thêm</span>';
                         } else if (data.status === @((int)TheSurveyStatus.Deactive)) {
-                            return '<span class="badge badge-pill badge-secondary">Kết thúc</span>';
+                            return '<span class="badge badge-pill badge-secondary">Đã kết thúc</span>';
                         } else if (data.status === @((int)TheSurveyStatus.Published)) {
-                            return '<span class="badge badge-pill badge-primary">Đã xuất bản</span>';
+                            return '<span class="badge badge-pill badge-primary">Đã phát</span>';
                         } else {
                             return data.status;
                         }
@@ -214,18 +178,14 @@
                     mRender: function (data, type, row) {
                         let html = '';
                         if (data.status === @((int)TheSurveyStatus.New)) {
-                            html += `<button class="btn btn btn-outline-success btn-sm ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
-                            if (tableTheSurveyStudentStatus !== @((int)TableTaskStatus.Doing)) {
-                                html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="publishClick('${data.id}')">Xuất bản</button>`;
-                            } else {
-                                html += `<button class="btn btn btn-outline-secondary btn-sm ml-1 mr-1" disabled title="Bảng đang làm việc thử lại sau">Xuất bản</button>`;
-                            }
+                            html += `<button class="btn btn btn-outline-success btn-sm ml-1 mr-1" title="bài khảo sát chưa phát sẽ có thể chọn lại phiếu khảo sát" onclick="updateClick('${data.id}')">Sửa</button>`;
+                            html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="publishClick('${data.id}')">Phát bài</button>`;
+                            html += `<button class="btn btn btn-outline-danger ml-1 mr-1 btn-sm" title="bài khảo sát chưa phát sẽ có thể xoá" onclick="deleteClick('${data.id}')">Xoá</button>`;
                         } else if (data.status === @((int)TheSurveyStatus.Published)) {
-                            //đã xuất bản
-                            html += `<button class="btn btn btn-outline-warning btn-sm ml-1 mr-1" onclick="closeClick('${data.id}')">Kết thúc</button>`;
+                            html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="publishClick('${data.id}')">Phát bài</button>`;
                         }
                         if (data.status === @((int)TheSurveyStatus.Deactive)) {
-                            html += `<button class="btn btn btn-outline-danger btn-sm ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
+                            //html += `<button class="btn btn btn-outline-danger ml-1 mr-1 btn-sm" onclick="deleteClick('${data.id}')">Xoá</button>`;
                         }
                         return html;
                     }
@@ -315,10 +275,11 @@
         }
 
         function publishClick(id) {
-            $('#modal-yes-no-content').html('Xuất bản bài khảo sát ?');
+            $('#modal-yes-no-content').html('Phát bài khảo sát ?');
             $('#modal-yes-no').modal('show');
             $('#choose-yes').off("click");
             $('#choose-yes').click(() => {
+                $('#loading-screen').show();
                 $.ajax({
                     data: { id },
                     dataType: 'json',
@@ -326,9 +287,10 @@
                     url: '/Survey/GenerateGraduateTheSurveyStudent',
                     complete: () => { }
                 }).done(function (res) {
+                    $('#loading-screen').hide();
                     if (res.statusCode === 200) {
                         $('#modal-yes-no').modal('hide');
-                        toastSuccess('Xuất bản thành công');
+                        toastSuccess('Phát thành công');
                         table.ajax.reload();
                     }
                     else {
@@ -341,6 +303,7 @@
                         console.log(res);
                     }
                 }).fail(function (jqXHR, textStatus, errorThrown) {
+                    $('#loading-screen').hide();
                     console.log(textStatus + ': ' + errorThrown);
                     console.log(jqXHR);
                 });

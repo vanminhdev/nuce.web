@@ -35,7 +35,7 @@
                 <div class="col-12 col-md mb-2 d-flex align-items-start justify-content-md-end justify-content-center">
                     <div class="d-flex">
                         <button class="btn btn-info mx-2 btn-sm" id="download-student">Tải xuống danh sách</button>
-                        <button class="btn btn-primary mx-2 btn-sm" id="upload">Tải lên danh sách</button>
+                        <button class="btn btn-primary mr-2 btn-sm" id="upload">Tải lên danh sách</button>
                         @*<button class="btn btn-danger" id="delete-all">Xoá toàn bộ</button>*@
                     </div>
                 </div>
@@ -291,8 +291,6 @@
                             return 'Đang thực hiện';
                         } else if (data.surveyStudentStatus === @((int)SurveyStudentStatus.Done)) {
                             return 'Hoàn thành';
-                        } else if (data.surveyStudentStatus === @((int)SurveyStudentStatus.RequestAuthorize)) {
-                            return 'Đang xác thực';
                         } else if (data.surveyStudentStatus === @((int)SurveyStudentStatus.HaveNot)) {
                             return 'Không có';
                         }

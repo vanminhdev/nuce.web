@@ -33,7 +33,8 @@ namespace nuce.web.api.Services.Survey.Implements
             var recordsFiltered = join.Count();
 
             var querySkip = join
-                .OrderByDescending(u => u.baikhaosat.FromDate)
+                .OrderByDescending(o => o.dotkhaosat.EndDate)
+                .ThenByDescending(o => o.baikhaosat.Status)
                 .Skip(skip).Take(take)
                 .Select(o => new GraduateTheSurvey
                 {
@@ -41,12 +42,9 @@ namespace nuce.web.api.Services.Survey.Implements
                     DotKhaoSatId = o.baikhaosat.DotKhaoSatId,
                     DeThiId = o.baikhaosat.DeThiId,
                     Name = o.baikhaosat.Name,
-                    FromDate = o.baikhaosat.FromDate,
-                    EndDate = o.baikhaosat.EndDate,
                     Description = o.baikhaosat.Description,
                     Note = o.baikhaosat.Note,
-                    Status = o.baikhaosat.Status,
-                    Type = o.baikhaosat.Type,
+                    Status = (o.dotkhaosat.EndDate <= DateTime.Now) ? (int)TheSurveyStatus.Deactive : o.baikhaosat.Status,
                     SurveyRoundName = o.dotkhaosat.Name
                 });
 
@@ -68,17 +66,16 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException("Id đợt khảo sát không tồn tại");
             }
 
-            var examQuestion = await _context.AsEduSurveyDeThi.FirstOrDefaultAsync(o => o.Id == theSurvey.DeThiId);
+            var examQuestion = await _context.AsEduSurveyGraduateDeThi.FirstOrDefaultAsync(o => o.Id == theSurvey.DeThiId);
             if(examQuestion == null)
             {
                 throw new RecordNotFoundException("Id đề thi không tồn tại");
             }
 
-            var theActivedSurvey = await _context.AsEduSurveyGraduateBaiKhaoSat
-                .FirstOrDefaultAsync(o => o.DotKhaoSatId == theSurvey.DotKhaoSatId && (o.Status == (int)TheSurveyStatus.New || o.Status == (int)TheSurveyStatus.Published));
+            var theActivedSurvey = await _context.AsEduSurveyGraduateBaiKhaoSat.FirstOrDefaultAsync(o => o.DotKhaoSatId == theSurvey.DotKhaoSatId && o.Status != (int)TheSurveyStatus.Deleted);
             if (theActivedSurvey != null)
             {
-                throw new InvalidInputDataException($"Đợt khảo sát \"{surveyRound.Name}\" đang có bài khảo sát còn hoạt động");
+                throw new InvalidInputDataException($"Đợt khảo sát \"{surveyRound.Name}\" đã có bài khảo sát rồi");
             }
 
             _context.AsEduSurveyGraduateBaiKhaoSat.Add(new AsEduSurveyGraduateBaiKhaoSat
@@ -91,8 +88,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 DapAn = examQuestion.DapAn,
                 Description = theSurvey.Description?.Trim(),
                 Note = theSurvey.Note?.Trim(),
-                Status = (int)TheSurveyStatus.New,
-                Type = theSurvey.Type.Value,
+                Status = (int)TheSurveyStatus.New
             });
             await _context.SaveChangesAsync();
         }
@@ -144,7 +140,6 @@ namespace nuce.web.api.Services.Survey.Implements
 
             theSurveyUpdate.Description = theSurvey.Description?.Trim();
             theSurveyUpdate.Note = theSurvey.Note?.Trim();
-            theSurveyUpdate.Type = theSurvey.Type.Value;
             await _context.SaveChangesAsync();
         }
 
@@ -156,7 +151,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException();
             }
 
-            if (theSurvey.Status == (int)TheSurveyStatus.New)
+            if (theSurvey.Status != (int)TheSurveyStatus.New)
             {
                 throw new InvalidInputDataException("Bài khảo sát còn hoạt động không thể xoá");
             }

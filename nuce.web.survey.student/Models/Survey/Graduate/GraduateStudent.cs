@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Web;
 
-namespace nuce.web.api.ViewModel.Survey.Graduate
+namespace nuce.web.survey.student.Models.Survey.Graduate
 {
     public class GraduateStudent
     {
@@ -48,6 +48,7 @@ namespace nuce.web.api.ViewModel.Survey.Graduate
         public string thongtinthem1 { get; set; }
         public Guid dotKhaoSatId { get; set; }
         public string tenDotKhaoSat { get; set; }
+        public string psw { get; set; }
         public string checksum { get; set; }
         public string exMasv { get; set; }
         public int type { get; set; }
@@ -56,13 +57,8 @@ namespace nuce.web.api.ViewModel.Survey.Graduate
         public string malop { get; set; }
         public int? nguoiphatbang { get; set; }
         public string ghichuphatbang { get; set; }
+
         public int surveyStudentStatus { get; set; }
         public string loaiHinh { get; set; }
-    }
-
-    public class GraduateStudentFilter
-    {
-        public string Masv { get; set; }
-        public Guid? DotKhaoSatId { get; set; }
     }
 }

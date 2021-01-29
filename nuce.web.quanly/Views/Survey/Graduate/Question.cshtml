@@ -144,7 +144,7 @@
                     data: null,
                     mRender: function (data, type, row) {
                         let str = ``;
-                        str += `<a class="btn btn-outline-success btn-sm" href="/survey/graduatedetailquestion?questionId=${data.id}">Sửa</a> `;
+                        str += `<a class="btn btn-outline-success btn-sm" href="/survey/detailgraduatequestion?questionId=${data.id}">Sửa</a> `;
                         if (data.type != '@QuestionType.SA' && data.type != '@QuestionType.StarRating' && data.type != '@QuestionType.CityC' && data.type != '@QuestionType.T') {
                             str += `<a class="btn btn-outline-info btn-sm" href="/survey/graduateanswer?questionId=${data.id}">Đáp án</a>`;
                         }

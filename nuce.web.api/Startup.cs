@@ -43,6 +43,8 @@ using nuce.web.api.Services.EduData.BackgroundTasks;
 using nuce.web.api.Repositories.EduData.Interfaces;
 using nuce.web.api.Repositories.EduData.Implements;
 using nuce.web.api.Services.Survey.Implements.Undergraduate;
+using nuce.web.api.Services.Survey.Implements.Graduate;
+using nuce.web.api.Services.Hosted;
 
 namespace nuce.web.api
 {
@@ -191,6 +193,10 @@ namespace nuce.web.api
             });
             #endregion
 
+            #region hosted service
+            services.AddHostedService<TableTaskHostedService>();
+            #endregion
+
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
@@ -226,6 +232,7 @@ namespace nuce.web.api
             services.AddScoped<IAsEduSurveyGraduateDotKhaoSatService, AsEduSurveyGraduateDotKhaoSatService>();
             services.AddScoped<IAsEduSurveyGraduateBaiKhaoSatService, AsEduSurveyGraduateBaiKhaoSatService>();
             services.AddScoped<IAsEduSurveyGraduateBaiKhaoSatSinhVienService, AsEduSurveyGraduateBaiKhaoSatSinhVienService>();
+            services.AddScoped<IAsEduSurveyGraduateReportTotalService, AsEduSurveyGraduateReportTotalService>();
 
             services.AddScoped<IAsEduSurveyUndergraduateCauHoiService, AsEduSurveyUndergraduateCauHoiService>();
             services.AddScoped<IAsEduSurveyUndergraduateDapAnService, AsEduSurveyUndergraduateDapAnService>();
@@ -315,8 +322,6 @@ namespace nuce.web.api
 
             app.UseHttpsRedirection();
 
-            // using Microsoft.Extensions.FileProviders;
-            // using System.IO;
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(

@@ -335,6 +335,13 @@
                 {
                     data: null,
                     mRender: function (data, type, row) {
+                        let regex = /(\d+)/g;
+                        let fromDate = new Date(+data.fromDate.match(regex)[0]);
+                        let endDate = new Date(+data.endDate.match(regex)[0]);
+                        let currentDate = new Date();
+                        if (currentDate > endDate && data.status != @((int)SurveyRoundStatus.End)) {
+                            return '';
+                        }
                         return `<a href='/survey/TheSurvey?surveyRoundId=${data.id}'>Danh sách<a/>`;
                     }
                 },
@@ -361,6 +368,8 @@
                         } else if (currentDate > endDate && data.status != @((int)SurveyRoundStatus.End)) {
                             html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="addEndDateClick('${data.id}')">Gia hạn</button>`;
                             html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê tạm" onclick="xemThongKeTam('${data.id}', this)">T.kê tạm</button>`;
+                        } else if (currentDate > endDate && data.status == @((int)SurveyRoundStatus.End)) {
+                            html += `<button class="btn btn btn-outline-danger btn-sm ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
                         }
                         return html;
                     }

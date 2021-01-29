@@ -12,4 +12,13 @@ namespace nuce.web.survey.student.Common
         public static string JwtRefreshToken = "JWT-refresh-token";
         public static string Roles = "Roles";
     }
+
+    public enum LoginType
+    {
+        Common = 0,
+        Student = 1,
+        Faculty = 2,
+        Department = 3,
+        Lecturer = 4
+    };
 }

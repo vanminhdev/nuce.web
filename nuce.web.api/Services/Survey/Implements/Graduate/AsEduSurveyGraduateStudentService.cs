@@ -34,22 +34,31 @@ namespace nuce.web.api.Services.Survey.Implements
         public async Task<PaginationModel<GraduateStudent>> GetAll(GraduateStudentFilter filter, int skip = 0, int take = 20)
         {
             _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            var query = _context.AsEduSurveyGraduateStudent
-                .Join(_context.AsEduSurveyGraduateSurveyRound, o => o.DotKhaoSatId, o => o.Id, (sv, dotks) => new { sv, dotks });
-            var recordsTotal = query.Count();
+            IQueryable<AsEduSurveyGraduateStudent> dssv = _context.AsEduSurveyGraduateStudent;
+
+            var recordsTotal = dssv.Count();
 
             if (!string.IsNullOrWhiteSpace(filter.Masv))
             {
-                query = query.Where(o => o.sv.Masv.Contains(filter.Masv));
+                dssv = dssv.Where(o => o.Masv.Contains(filter.Masv));
             }
 
-            var recordsFiltered = query.Count();
+            if (filter.DotKhaoSatId != null)
+            {
+                dssv = dssv.Where(o => o.DotKhaoSatId == filter.DotKhaoSatId);
+            }
 
-            var querySkip = query
-                .OrderBy(u => u.sv.Id)
+            var recordsFiltered = dssv.Count();
+
+            var querySkip = dssv
                 .Skip(skip).Take(take);
 
-            var data = await querySkip
+            var svdotks = querySkip.Join(_context.AsEduSurveyGraduateSurveyRound, o => o.DotKhaoSatId, o => o.Id, (sv, dotks) => new { sv, dotks });
+
+            var leftJoin = svdotks.GroupJoin(_context.AsEduSurveyGraduateBaiKhaoSatSinhVien, o => o.sv.ExMasv, o => o.StudentCode, (svdotks, baikssv) => new { svdotks, baikssv })
+                .SelectMany(o => o.baikssv.DefaultIfEmpty(), (r, baikssv) => new { r.svdotks.sv, r.svdotks.dotks, baikssv });
+
+            var data = await leftJoin
                 .Select(o => new GraduateStudent {
                     id = o.sv.Id,
                     dottotnghiep = o.sv.Dottotnghiep,
@@ -59,6 +68,7 @@ namespace nuce.web.api.Services.Survey.Implements
                     tbcht = o.sv.Tbcht,
                     xeploai = o.sv.Xeploai,
                     soqdtn = o.sv.Soqdtn,
+                    ngayraqd = o.sv.Ngayraqd,
                     sohieuba = o.sv.Sohieuba,
                     tinh = o.sv.Tinh,
                     truong = o.sv.Truong,
@@ -94,7 +104,13 @@ namespace nuce.web.api.Services.Survey.Implements
                     checksum = o.sv.Checksum,
                     exMasv = o.sv.ExMasv,
                     type = o.sv.Type,
-                    status = o.sv.Status
+                    status = o.sv.Status,
+                    makhoa = o.sv.Makhoa,
+                    malop = o.sv.Malop,
+                    nguoiphatbang = o.sv.Nguoiphatbang,
+
+                    surveyStudentStatus = o.baikssv != null ? o.baikssv.Status : (int)SurveyStudentStatus.HaveNot,
+                    loaiHinh = o.baikssv.LoaiHinh
                 }).ToListAsync();
 
             return new PaginationModel<GraduateStudent>
@@ -172,9 +188,10 @@ namespace nuce.web.api.Services.Survey.Implements
             }
 
             //lấy ds từ trước tốt nghiệp sang
-            IQueryable<AsEduSurveyUndergraduateStudent> query = _context.AsEduSurveyUndergraduateStudent
+            var query = _context.AsEduSurveyUndergraduateStudent
                 .Where(o => o.Ngayraqd != null)
-                .Where(o => filter.FromDate <= o.Ngayraqd && filter.ToDate >= o.Ngayraqd);
+                .Where(o => filter.FromDate <= o.Ngayraqd && filter.ToDate >= o.Ngayraqd)
+                .Join(_context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien.Where(o => o.Status == (int)SurveyStudentStatus.Done), o => o.ExMasv, o => o.StudentCode, (sv, baikssv) => sv);
 
             if (filter.HeTotNghieps != null)
             {
@@ -292,6 +309,22 @@ namespace nuce.web.api.Services.Survey.Implements
             MemoryStream ms = new MemoryStream();
             await excel.SaveAsAsync(ms);
             return ms.ToArray();
+        }
+
+        public async Task Delete(string studentCode)
+        {
+            var student = await _context.AsEduSurveyGraduateStudent.FirstOrDefaultAsync(o => o.ExMasv == studentCode);
+            if (student == null)
+            {
+                throw new RecordNotFoundException("Không tìm thấy sinh viên");
+            }
+            _context.AsEduSurveyGraduateStudent.Remove(student);
+            var baikssv = await _context.AsEduSurveyGraduateBaiKhaoSatSinhVien.FirstOrDefaultAsync(o => o.StudentCode == student.ExMasv);
+            if (baikssv != null)
+            {
+                _context.AsEduSurveyGraduateBaiKhaoSatSinhVien.Remove(baikssv);
+            }
+            _context.SaveChanges();
         }
     }
 }

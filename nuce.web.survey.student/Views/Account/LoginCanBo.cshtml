@@ -1,32 +1,14 @@
-﻿
-@model nuce.web.survey.student.Models.LoginModel
-
+﻿@model nuce.web.survey.student.Models.LoginModel
 @{
-    var loginAction = "/account/login";
-    if (Model.Type == "GraduateStudent")
-    {
-        loginAction = "/account/logingraduate";
-    }
+    ViewData["Title"] = "Đăng nhập cán bộ";
 }
 
-<h5 class="text-center mb-3 m-text-blue">
-    @{
-        switch (Model.Type)
-        {
-            case "GraduateStudent":
-                <span>Khảo sát tình hình việc làm sinh viên sau tốt nghiệp</span>
-                break;
-            case "UndergraduateStudent":
-                <span>Khảo sát phản hồi của sinh viên về chất lượng đào tạo trước tốt nghiệp</span>
-                break;
-            case "Student":
-                <span>Khảo sát phản hồi của sinh viên về hoạt động giảng dạy của giảng viên</span>
-                break;
-            default:
-                break;
-        }
-    }
-</h5>
+@section Breadcrumb {
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+    <li class="breadcrumb-item active" aria-current="page">
+        Đăng nhập cán bộ
+    </li>
+}
 
 <section id="body" class="login-form">
     <div class="container mt-2">
@@ -35,7 +17,7 @@
                 <div class="card w-100 h-100 m-box-shadow-right-bottom">
                     <h5 class="card-header">Đăng nhập</h5>
                     <div class="card-body">
-                        <form method="post" action="@loginAction" class="pb-2">
+                        <form method="post" action="/account/login" class="pb-2">
                             @Html.AntiForgeryToken()
                             @if (ViewData["target"] != null)
                             {
@@ -43,7 +25,7 @@
                             }
                             <div class="form-group mb-1">
                                 <label for="username" class="w-100">Tên đăng nhập</label>
-                                @Html.TextBoxFor(m => m.Username, new { @placeholder = "Mã số sinh viên", @class = "form-control custom-input" })
+                                @Html.TextBoxFor(m => m.Username, new { @placeholder = "Tên đăng nhập", @class = "form-control custom-input" })
                                 @Html.ValidationMessageFor(m => m.Username, "", new { @class = "form-text", @style = "color: #F70000; height: 24px" })
                             </div>
                             <div class="form-group mb-2">
@@ -62,19 +44,16 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-12 mt-md-0 mt-2">
+            <!--<div class="col-md-6 col-12 mt-md-0 mt-2">
                 <div class="card w-100 h-100 m-box-shadow-right-bottom">
                     <h5 class="card-header">Chú ý</h5>
                     <div class="card-body">
-                        <div id="login-ks-notice">
+                        <div id="login-ks-notice">-->
                             @* HTML format *@
-                        </div>
+                        <!--</div>
                     </div>
                 </div>
-            </div>
+            </div>-->
         </div>
     </div>
 </section>
-<script>
-     console.log(@Html.Raw(ViewData["LoginFailed"]));
-</script>

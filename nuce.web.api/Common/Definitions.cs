@@ -130,11 +130,16 @@ namespace nuce.web.api.Common
     }
 
     /// <summary>
-    /// Loại bài khảo sát cho cựu sinh viên và sinh viên sắp tốt nghiệp
+    /// Loại hình làm bài ks việc làm
     /// </summary>
-    public enum GraduateTheSurveyType
+    public class GraduateBaiLamType
     {
-        Type1 = 1,
+        public static readonly string Online = "Online";
+        public static readonly string Phone = "Điện thoại";
+        public static readonly string Email = "Email";
+        public static readonly string Facebook = "Facebook";
+        public static readonly string Group = "Group lớp";
+        public static readonly string CanBoLop = "Cán bộ lớp";
     }
 
     /// <summary>
@@ -223,6 +228,7 @@ namespace nuce.web.api.Common
         public static readonly string AsEduSurveyBaiKhaoSatSinhVien = "AS_Edu_Survey_BaiKhaoSat_SinhVien";
         public static readonly string AsEduSurveyReportTotal = "AS_Edu_Survey_ReportTotal";
         public static readonly string AsEduSurveyUndergraduateReportTotal = "AS_Edu_Survey_Undergraduate_ReportTotal";
+        public static readonly string AsEduSurveyGraduateBaiKhaoSatSinhVien = "AS_Edu_Survey_Graduate_BaiKhaoSat_SinhVien";
         public static readonly string TempDataNormalSurvey = "TempDataNormalSurvey";
         public static readonly string ExportReportTotalNormalSurvey = "ExportReportTotalNormalSurvey";
     }

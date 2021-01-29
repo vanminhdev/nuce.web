@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using nuce.web.api.Attributes.ValidationAttributes;
+using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.Services.Survey.Interfaces;
@@ -33,6 +34,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             _asEduSurveyGraduateBaiKhaoSatSinhVienService = asEduSurveyGraduateBaiKhaoSatSinhVienService;
         }
 
+        #region sv tự làm bài
         [HttpGet]
         [AppAuthorize(RoleNames.GraduateStudent)]
         public async Task<IActionResult> GetTheSurvey()
@@ -43,16 +45,18 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpGet]
-        [AppAuthorize(RoleNames.GraduateStudent)]
-        public async Task<IActionResult> GetTheSurveyContent(
-            [Required(AllowEmptyStrings = false)]
-            Guid? id)
+        [AppAuthorize(RoleNames.GraduateStudent, RoleNames.KhaoThi_Survey_KhoaBan)]
+        public async Task<IActionResult> GetTheSurveyContent([Required(AllowEmptyStrings = false)] Guid? id, string studentCode)
         {
             try
             {
                 //mã sinh viên kiểm tra sinh viên có bài khảo sát đó thật không
-                var studentCode = _userService.GetCurrentStudentCode();
-                var result = await _asEduSurveyGraduateBaiKhaoSatSinhVienService.GetTheSurveyContent(studentCode, id.Value);
+                var curStudentCode = _userService.GetCurrentStudentCode();
+                if (HttpContext.User.IsInRole(RoleNames.KhaoThi_Survey_KhoaBan))
+                {
+                    curStudentCode = studentCode;
+                }
+                var result = await _asEduSurveyGraduateBaiKhaoSatSinhVienService.GetTheSurveyContent(curStudentCode, id.Value);
                 return Ok(result);
             }
             catch (RecordNotFoundException e)
@@ -62,7 +66,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpGet]
-        [AppAuthorize(RoleNames.GraduateStudent)]
+        [AppAuthorize(RoleNames.GraduateStudent, RoleNames.KhaoThi_Survey_KhoaBan)]
         public async Task<IActionResult> GetSelectedAnswerAutoSave([Required] Guid? theSurveyId)
         {
             try
@@ -78,7 +82,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpPut]
-        [AppAuthorize(RoleNames.GraduateStudent)]
+        [AppAuthorize(RoleNames.GraduateStudent, RoleNames.KhaoThi_Survey_KhoaBan)]
         public async Task<IActionResult> AutoSave([FromBody] GraduateSelectedAnswerAutoSave content)
         {
             try
@@ -107,7 +111,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpPut]
-        [AppAuthorize(RoleNames.GraduateStudent)]
+        [AppAuthorize(RoleNames.GraduateStudent, RoleNames.KhaoThi_Survey_KhoaBan)]
         public async Task<IActionResult> SaveSelectedAnswer([Required] Guid? theSurveyId)
         {
             try
@@ -139,27 +143,6 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             return Ok();
         }
 
-        [HttpGet]
-        [AppAuthorize(RoleNames.KhaoThi_Survey_Graduate)]
-        public async Task<IActionResult> GetGenerateTheSurveyStudentStatus()
-        {
-            try
-            {
-                var status = await _asEduSurveyGraduateBaiKhaoSatSinhVienService.GetGenerateTheSurveyStudentStatus();
-                return Ok(status);
-            }
-            catch (RecordNotFoundException e)
-            {
-                return NotFound(new { message = "Không lấy được trạng thái", detailMessage = e.Message });
-            }
-            catch (Exception e)
-            {
-                var mainMessage = UtilsException.GetMainMessage(e);
-                _logger.LogError(e, mainMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không lấy được trạng thái", detailMessage = mainMessage });
-            }
-        }
-
         [HttpPost]
         [AppAuthorize(RoleNames.KhaoThi_Survey_Graduate)]
         public async Task<IActionResult> GenerateTheSurveyStudent(
@@ -186,5 +169,27 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             }
             return Ok();
         }
+        #endregion
+
+        #region khoa làm hộ bài sv
+        /// <summary>
+        /// lấy bài ks
+        /// </summary>
+        [HttpGet]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_KhoaBan)]
+        public async Task<IActionResult> GetTheSurveyStudent(string studentCode)
+        {
+            try
+            {
+                var facultyCode = _userService.GetClaimByKey(UserParameters.UserCode);
+                var result = await _asEduSurveyGraduateBaiKhaoSatSinhVienService.GetTheSurvey(facultyCode, studentCode);
+                return Ok(result.FirstOrDefault());
+            }
+            catch (RecordNotFoundException e)
+            {
+                return NotFound(new { message = e.Message });
+            }
+        }
+        #endregion
     }
 }

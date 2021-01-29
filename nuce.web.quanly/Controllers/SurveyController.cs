@@ -853,11 +853,11 @@ namespace nuce.web.quanly.Controllers
                     var answer = JsonConvert.DeserializeObject<Answer>(jsonString);
                     if (answer.childQuestionId != null)
                     {
-                        var resChildQues = await base.MakeRequestAuthorizedAsync("Get", $"/api/question/GetById?id={answer.childQuestionId}");
+                        var resChildQues = await base.MakeRequestAuthorizedAsync("Get", $"/api/GraduateQuestion/GetById?id={answer.childQuestionId}");
                         if (resChildQues.IsSuccessStatusCode)
                         {
-                            var str = await resQues.Content.ReadAsStringAsync();
-                            ViewData["childQuestion"] = (JsonConvert.DeserializeObject<Question>(str));
+                            var str = await resChildQues.Content.ReadAsStringAsync();
+                            ViewData["childQuestion"] = str;
                         }
                     }
                     return View("~/Views/Survey/Graduate/DetailAnswer.cshtml", new UpdateAnswer
@@ -1010,6 +1010,34 @@ namespace nuce.web.quanly.Controllers
         }
         #endregion
 
+        #region thống kê cựu sv
+        [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
+        public async Task<ActionResult> ExportReportTotalGraduateSurvey(string surveyRoundId)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/StatisticGraduate/ExportReportTotalGraduateSurvey?surveyRoundId={surveyRoundId}");
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                using (Stream streamToReadFrom = await response.Content.ReadAsStreamAsync())
+                {
+                    using (MemoryStream memoryStream = new MemoryStream())
+                    {
+                        await streamToReadFrom.CopyToAsync(memoryStream);
+                        memoryStream.ToArray();
+                        var guid = Guid.NewGuid();
+                        TempData[guid.ToString()] = new FileDownload()
+                        {
+                            FileName = "thong_ke.xlsx",
+                            ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                            Data = memoryStream.ToArray()
+                        };
+                        return Json(new { statusCode = response.StatusCode, content = new { url = $"/survey/downloadexport?fileGuid={guid}" } }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+            }
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
 
         #region đợt khảo sát đã tốt nghiệp
         [HttpGet]
@@ -1082,6 +1110,14 @@ namespace nuce.web.quanly.Controllers
             var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/GraduateSurveyRound/DeleteSurveyRound?id={id}");
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
+
+        [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
+        public async Task<ActionResult> GetTempDataGraduateSurvey(string id)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/StatisticGraduate/GetTempDataGraduateSurvey?surveyRoundId={id}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
         #endregion
 
         #region sinh viên đã tốt nghiệp
@@ -1093,6 +1129,15 @@ namespace nuce.web.quanly.Controllers
             ViewData["SurveyRoundActive"] =  await response.Content.ReadAsStringAsync();
 
             return View("~/Views/Survey/Graduate/GraduateStudent.cshtml");
+        }
+
+        [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
+        public async Task<ActionResult> TransferDataFromUndergraduate(string surveyRoundId, DateTime? fromDate, DateTime? toDate, List<string> HeTotNghieps)
+        {
+            var content = new StringContent(JsonConvert.SerializeObject(new { fromDate, toDate, HeTotNghieps }), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/GraduateStudent/TransferDataFromUndergraduate?surveyRoundId={surveyRoundId}", content);
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -1162,6 +1207,14 @@ namespace nuce.web.quanly.Controllers
                 var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/GraduateStudent/UploadFile?surveyRoundId={surveyRoundId}", multipartFormData);
                 return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
             }
+        }
+
+        [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
+        public async Task<ActionResult> DeleteGraduateStudent(string mssv)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Delete", $"/api/GraduateStudent/Delete?studentCode={mssv}");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -1461,8 +1514,8 @@ namespace nuce.web.quanly.Controllers
                         var resChildQues = await base.MakeRequestAuthorizedAsync("Get", $"/api/question/GetById?id={answer.childQuestionId}");
                         if (resChildQues.IsSuccessStatusCode)
                         {
-                            var str = await resQues.Content.ReadAsStringAsync();
-                            ViewData["childQuestion"] = (JsonConvert.DeserializeObject<Question>(str));
+                            var str = await resChildQues.Content.ReadAsStringAsync();
+                            ViewData["childQuestion"] = str;
                         }
                     }
                     return View("~/Views/Survey/Undergraduate/DetailAnswer.cshtml", new UpdateAnswer
@@ -1793,7 +1846,7 @@ namespace nuce.web.quanly.Controllers
                             ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                             Data = memoryStream.ToArray()
                         };
-                        return Json(new { statusCode = response.StatusCode, content = new { url = $"/survey/downloadundergraduateexport?fileGuid={guid}" } }, JsonRequestBehavior.AllowGet);
+                        return Json(new { statusCode = response.StatusCode, content = new { url = $"/survey/downloadexport?fileGuid={guid}" } }, JsonRequestBehavior.AllowGet);
                     }
                 }
             }
@@ -1801,8 +1854,8 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpGet]
-        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
-        public ActionResult DownloadUndergraduateExport(Guid fileGuid)
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate, RoleNames.KhaoThi_Survey_Graduate)]
+        public ActionResult DownloadExport(Guid fileGuid)
         {
             return base.DownloadFileFromTempData(fileGuid);
         }
@@ -1952,7 +2005,7 @@ namespace nuce.web.quanly.Controllers
                             ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                             Data = memoryStream.ToArray()
                         };
-                        return Json(new { statusCode = response.StatusCode, content = new { url = $"/survey/downloadundergraduateexport?fileGuid={guid}" } }, JsonRequestBehavior.AllowGet);
+                        return Json(new { statusCode = response.StatusCode, content = new { url = $"/survey/downloadexport?fileGuid={guid}" } }, JsonRequestBehavior.AllowGet);
                     }
                 }
             }

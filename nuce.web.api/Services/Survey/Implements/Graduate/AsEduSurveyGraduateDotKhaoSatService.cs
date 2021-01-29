@@ -61,6 +61,19 @@ namespace nuce.web.api.Services.Survey.Implements
 
         public async Task Create(GraduateSurveyRoundCreate surveyRound)
         {
+            if (await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => DateTime.Now < o.EndDate && o.Status != (int)SurveyRoundStatus.Deleted) != null)
+            {
+                throw new InvalidInputDataException("Một thời điểm chỉ có một đợt khảo sát được lên lịch, qua ngày kết thúc mới tạo được đợt mới");
+            }
+
+            //đóng tất cả các đợt khảo sát trước đang đóng hoặc quá ngày kết thúc
+            var lstDotKs = await _context.AsEduSurveyGraduateSurveyRound.Where(o => (o.Status == (int)SurveyRoundStatus.Closed || DateTime.Now >= o.EndDate) && o.Status != (int)SurveyRoundStatus.Deleted).ToListAsync();
+            foreach (var item in lstDotKs)
+            {
+                item.Status = (int)SurveyRoundStatus.End;
+            }
+            await _context.SaveChangesAsync();
+
             _context.AsEduSurveyGraduateSurveyRound.Add(new AsEduSurveyGraduateSurveyRound
             {
                 Id = Guid.NewGuid(),
@@ -69,8 +82,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 EndDate = surveyRound.EndDate.Value,
                 Description = surveyRound.Description?.Trim(),
                 Note = surveyRound.Note?.Trim(),
-                Status = (int)SurveyRoundStatus.New,
-                Type = surveyRound.Type.Value
+                Status = (int)SurveyRoundStatus.New
             });
             await _context.SaveChangesAsync();
         }
@@ -83,9 +95,9 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException();
             }
 
-            if (surveyRoundUpdate.Status != (int)SurveyRoundStatus.New)
+            if (DateTime.Now >= surveyRoundUpdate.FromDate && DateTime.Now < surveyRoundUpdate.EndDate)
             {
-                throw new InvalidInputDataException("Đợt khảo sát không còn hoạt động, không thể sửa");
+                throw new InvalidInputDataException("Đợt khảo sát đang trong thời gian hoạt động không thể sửa");
             }
 
             surveyRoundUpdate.Name = surveyRound.Name.Trim();
@@ -93,24 +105,35 @@ namespace nuce.web.api.Services.Survey.Implements
             surveyRoundUpdate.EndDate = surveyRound.EndDate.Value;
             surveyRoundUpdate.Description = surveyRound.Description?.Trim();
             surveyRoundUpdate.Note = surveyRound.Note?.Trim();
-            surveyRoundUpdate.Type = surveyRound.Type.Value;
             await _context.SaveChangesAsync();
         }
 
         public async Task Delete(Guid id)
         {
-            var surveyRoundUpdate = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == id && o.Status != (int)SurveyRoundStatus.Deleted);
-            if (surveyRoundUpdate == null)
+            var surveyRound = await _context.AsEduSurveyGraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == id && o.Status != (int)SurveyRoundStatus.Deleted);
+            if (surveyRound == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
             }
 
-            if(surveyRoundUpdate.Status == (int)SurveyRoundStatus.New)
+            if (DateTime.Now >= surveyRound.FromDate && DateTime.Now < surveyRound.EndDate)
             {
-                throw new InvalidInputDataException("Đợt khảo sát còn hoạt động không thể xoá");
+                throw new InvalidInputDataException("Đợt khảo sát đang trong thời gian hoạt động");
             }
 
-            surveyRoundUpdate.Status = (int)SurveyRoundStatus.Deleted;
+            if (surveyRound.Status != (int)SurveyRoundStatus.End)
+            {
+                throw new InvalidInputDataException("Đợt khảo sát chưa kết thúc không thể xoá");
+            }
+
+            if (surveyRound.Status == (int)SurveyRoundStatus.New && DateTime.Now < surveyRound.FromDate)
+            {
+                surveyRound.Status = (int)SurveyRoundStatus.Deleted;
+            }
+            else
+            {
+                surveyRound.Status = (int)SurveyRoundStatus.Deleted;
+            }
             await _context.SaveChangesAsync();
         }
 
@@ -135,7 +158,14 @@ namespace nuce.web.api.Services.Survey.Implements
 
         public async Task<List<AsEduSurveyGraduateSurveyRound>> GetSurveyRoundActive()
         {
-            var surveyRounds = await _context.AsEduSurveyGraduateSurveyRound.Where(o => o.Status == (int)SurveyRoundStatus.New).ToListAsync();
+            var surveyRounds = await _context.AsEduSurveyGraduateSurveyRound.Where(o => o.Status == (int)SurveyRoundStatus.New || o.Status == (int)SurveyRoundStatus.Closed || o.Status == (int)SurveyRoundStatus.Opened).ToListAsync();
+            return surveyRounds;
+        }
+
+        public async Task<List<AsEduSurveyGraduateSurveyRound>> GetSurveyRoundClosedOrEnd()
+        {
+            var surveyRounds = await _context.AsEduSurveyGraduateSurveyRound.Where(o => o.Status == (int)SurveyRoundStatus.Closed || o.EndDate <= DateTime.Now || o.Status == (int)SurveyRoundStatus.End)
+                .OrderByDescending(o => o.FromDate).ToListAsync();
             return surveyRounds;
         }
     }

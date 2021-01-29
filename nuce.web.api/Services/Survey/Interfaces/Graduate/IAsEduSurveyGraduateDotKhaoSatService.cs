@@ -23,5 +23,7 @@ namespace nuce.web.api.Services.Survey.Interfaces
         public Task Close(Guid id);
 
         public Task<List<AsEduSurveyGraduateSurveyRound>> GetSurveyRoundActive();
+
+        public Task<List<AsEduSurveyGraduateSurveyRound>> GetSurveyRoundClosedOrEnd();
     }
 }

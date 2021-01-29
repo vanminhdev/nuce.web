@@ -51,10 +51,10 @@ namespace nuce.web.api.Services.Survey.Implements
         private async Task<bool> IsOpenSurveyRound()
         {
             //lấy đợt ks cuối cùng
-            var surveyRound = await _context.AsEduSurveyDotKhaoSat.OrderByDescending(o => o.FromDate).FirstOrDefaultAsync();
+            var surveyRound = await _context.AsEduSurveyDotKhaoSat.OrderByDescending(o => o.FromDate).FirstOrDefaultAsync(o => o.Status != (int)SurveyRoundStatus.Deleted);
             if (surveyRound == null)
             {
-                throw new RecordNotFoundException("Không tìm thấy đợt khảo sát của sinh viên");
+                throw new RecordNotFoundException("Không có đợt khảo sát");
             }
             if (DateTime.Now >= surveyRound.FromDate && DateTime.Now < surveyRound.EndDate && (surveyRound.Status == (int)SurveyRoundStatus.Opened || surveyRound.Status == (int)SurveyRoundStatus.New))
             {
@@ -70,8 +70,8 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException("Đợt khảo sát không còn mở");
             }
 
-            var baiKSSinhViens = await _context.AsEduSurveyBaiKhaoSatSinhVien
-                .Where(o => o.StudentCode == studentCode && o.ClassRoomCode == classroomCode && o.Nhhk == nhhk && (o.Status != (int)SurveyStudentStatus.Close || o.Status != (int)SurveyStudentStatus.Done)).ToListAsync();
+            var baiKSSinhViens = _context.AsEduSurveyBaiKhaoSatSinhVien
+                .Where(o => o.StudentCode == studentCode && o.ClassRoomCode == classroomCode && o.Nhhk == nhhk && (o.Status != (int)SurveyStudentStatus.Close || o.Status != (int)SurveyStudentStatus.Done));
             var baiKSsv = baiKSSinhViens.FirstOrDefault(o => o.BaiKhaoSatId == theSurveyId);
             if (baiKSsv == null)
             {
@@ -113,7 +113,11 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException("Đợt khảo sát không còn mở");
             }
 
-            return await _context.AsEduSurveyBaiKhaoSatSinhVien.Where(o => o.StudentCode == studentCode)
+            var dotKhaoSatMoiNhat = await _context.AsEduSurveyDotKhaoSat.OrderByDescending(o => o.FromDate).FirstOrDefaultAsync(o => o.Status != (int)SurveyRoundStatus.Deleted);
+
+            var baiKSIds = await _context.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == dotKhaoSatMoiNhat.Id).Select(o => o.Id).ToListAsync();
+
+            return await _context.AsEduSurveyBaiKhaoSatSinhVien.Where(o => baiKSIds.Contains(o.BaiKhaoSatId) && o.StudentCode == studentCode)
                 .Select(o => new TheSurveyStudent
                 {
                     Id = o.Id,

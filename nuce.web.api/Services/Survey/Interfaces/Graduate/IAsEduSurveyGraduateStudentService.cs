@@ -25,5 +25,7 @@ namespace nuce.web.api.Services.Survey.Interfaces
         public Task TransferDataFromUndergraduate(Guid surveyRoundId, TransferDataUndergraduateModel filter);
 
         public Task<byte[]> DownloadListStudent(Guid surveyRoundId);
+
+        public Task Delete(string studentCode);
     }
 }

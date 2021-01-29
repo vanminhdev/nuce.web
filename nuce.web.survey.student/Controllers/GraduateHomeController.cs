@@ -14,7 +14,7 @@ using System.Web.Mvc;
 
 namespace nuce.web.survey.student.Controllers
 {
-    [AuthorizeActionFilter(RoleNames.GraduateStudent)]
+    [AuthorizeActionFilter(RoleNames.GraduateStudent, RoleNames.KhaoThi_Survey_KhoaBan)]
     public class GraduateHomeController : BaseController
     {
         [HttpGet]
@@ -32,9 +32,9 @@ namespace nuce.web.survey.student.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> TheSurvey(string theSurveyId)
+        public async Task<ActionResult> TheSurvey(string theSurveyId, string studentCode)
         {
-            var resSelectedAnswer = await base.MakeRequestAuthorizedAsync("Get", $"/api/GraduateTheSurveyStudent/GetSelectedAnswerAutoSave?theSurveyId={theSurveyId}");
+            var resSelectedAnswer = await base.MakeRequestAuthorizedAsync("Get", $"/api/GraduateTheSurveyStudent/GetSelectedAnswerAutoSave?theSurveyId={theSurveyId}&studentCode={studentCode}");
             await base.HandleResponseAsync(resSelectedAnswer,
                 action200Async: async res =>
                 {
@@ -47,7 +47,7 @@ namespace nuce.web.survey.student.Controllers
                 }
             );
 
-            var resTheSurvey = await base.MakeRequestAuthorizedAsync("Get", $"/api/GraduateTheSurveyStudent/GetTheSurveyContent?id={theSurveyId}");
+            var resTheSurvey = await base.MakeRequestAuthorizedAsync("Get", $"/api/GraduateTheSurveyStudent/GetTheSurveyContent?id={theSurveyId}&studentCode={studentCode}");
             ViewData["TheSurveyId"] = theSurveyId;
             return await base.HandleResponseAsync(resTheSurvey,
                 action200Async: async res =>

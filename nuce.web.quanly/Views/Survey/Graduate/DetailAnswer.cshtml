@@ -173,7 +173,7 @@
     </script>
     @if (ViewData["childQuestion"] != null)
     {
-        <script>
+    <script>
             let answerChildQuestion = {};
             try {
                 answerChildQuestion = JSON.parse('@Html.Raw(ViewData["childQuestion"])');
@@ -191,7 +191,7 @@
 
             }
             let answerChildQuestionId = null;
-        </script>
+    </script>
     }
     else
     {
@@ -240,7 +240,7 @@
                 }
             ],
             ajax: {
-                url: '/Survey/GetAllQuestion',
+                url: '/Survey/GetAllGraduateQuestion',
                 dataType: 'json',
                 contentType: 'application/json',
                 type: "POST",

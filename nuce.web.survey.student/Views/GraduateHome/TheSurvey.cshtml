@@ -27,6 +27,12 @@
     </style>
 }
 
+@section Breadcrumb {
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/graduatehome/index">Khảo sát</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Làm bài khảo sát</li>
+}
+
 @helper GenerateAnswerChildQuestion(AnswerJson answer)
 {
     <div id="answerQuestion-@answer.AnswerChildQuestion.Code" style="display: none;">
