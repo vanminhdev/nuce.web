@@ -236,12 +236,13 @@ namespace nuce.web.api.Controllers.Core
         {
             try
             {
-                bool isSuccess = await _asEduSurveyGraduateStudentService.Login(model.Username, model.Password);
-                if (isSuccess)
+                var resultLogin = await _asEduSurveyGraduateStudentService.Login(model.Username, model.Password);
+                if (resultLogin.IsSuccess)
                 {
                     var authClaims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name, model.Username),
+                        new Claim(ClaimTypes.GivenName, resultLogin.HoVaTen),
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                         new Claim(ClaimTypes.Role, RoleNames.GraduateStudent),
                         new Claim(UserParameters.UserCode, model.Username),

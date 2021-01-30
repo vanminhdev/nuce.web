@@ -88,9 +88,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetSurveyRoundById(
-            [Required(AllowEmptyStrings = false)]
-            Guid? id)
+        public async Task<IActionResult> GetSurveyRoundById([Required(AllowEmptyStrings = false)] Guid? id)
         {
             try
             {

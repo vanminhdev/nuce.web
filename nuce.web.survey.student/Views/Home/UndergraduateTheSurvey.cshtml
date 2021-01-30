@@ -43,9 +43,9 @@
             counter-increment: title-question-counter;
         }
 
-        .question-title:before {
-            content: counter(title-question-counter, upper-roman)". ";
-        }
+            .question-title:before {
+                content: counter(title-question-counter, upper-roman)". ";
+            }
 
         .tag-child-inline > * {
             display: inline;
@@ -106,7 +106,7 @@
 @helper GenerateAnswer(QuestionJson question)
 {
     bool displayLong = false;
-    if (question.Answers != null && (question.Answers.Count > 5 || question.Answers.Where(o => o.Content.Length > 30).Count() > 0))
+    if (question.Answers != null && (question.Answers.Count > 5 || question.Answers.Where(o => o.Content.Length > 20).Count() > 0))
     {
         displayLong = true;
     }
@@ -117,7 +117,7 @@
         {
             if (displayLong)
             {
-                <div class="col-12">
+                <div class="col-12 col-md-6">
                     <div class="d-flex">
                         @* answerchildquestioncode để show hide câu hỏi con của đáp án *@
                         <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
@@ -130,14 +130,14 @@
             }
             else
             {
-                <div class="col">
-                    <div class="form-group mb-0">
+                <div class="col-6 col-md">
+                    <div class="d-flex">
                         @* answerchildquestioncode để show hide câu hỏi con của đáp án *@
-                        <input questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
+                        <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
                                @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "")
                                @(answer.ShowQuestion != null ? $"showquestion={JsonConvert.SerializeObject(answer.ShowQuestion)}" : "")
                                @(answer.HideQuestion != null ? $"hidequestion={JsonConvert.SerializeObject(answer.HideQuestion)}" : "") />
-                        <label class="text-dark">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+                        <label class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
                     </div>
                 </div>
             }
@@ -149,7 +149,7 @@
         {
             if (displayLong)
             {
-                <div class="col-12">
+                <div class="col-12 col-md-6">
                     <div class="d-flex">
                         <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
                                @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "") />
@@ -159,11 +159,11 @@
             }
             else
             {
-                <div class="col">
-                    <div class="form-group mb-0">
-                        <input questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
+                <div class="col-6 col-md">
+                    <div class="d-flex">
+                        <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
                                @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "") />
-                        <label class="text-dark">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+                        <label class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
                     </div>
                 </div>
             }
@@ -174,6 +174,15 @@
         <div class="col">
             <div class="form-group">
                 <textarea class="form-control" style="min-height:100px;" questionCode="@question.Code" name="@question.Code"></textarea>
+            </div>
+        </div>
+    }
+    else if (question.Type == QuestionType.CityC)
+    {
+        <div class="col">
+            <div class="form-group">
+                <select class="form-control lua-chon-tinh-thanh col-12 col-md-3" questionCode="@question.Code" name="@question.Code">
+                </select>
             </div>
         </div>
     }
@@ -399,6 +408,16 @@
 </div>
 
 @section Scripts {
+    <script src="~/Content/js/tinh-thanh.js"></script>
+    <script>
+        $('.lua-chon-tinh-thanh').each(function () {
+            let seft = $(this);
+            let str = '';
+            TenTinhThanh.forEach(item => {
+                seft.append(`<option value="${item}">${item}</option>`);
+            });
+        });
+    </script>
     @if (ViewData["SelectedAnswer"] != null)
     {
         <script>
@@ -418,6 +437,7 @@
                     $(`input[type=radio][questionCode=${element.QuestionCode}][numstar=${element.NumStart}]`).attr('checked', true);
                 } else if (element.AnswerContent !== undefined && element.AnswerContent !== "") {
                     $(`textarea[questionCode=${element.QuestionCode}]`).val(element.AnswerContent);
+                    $(`select[questionCode=${element.QuestionCode}]`).val(element.AnswerContent);
                 }
             });
         </script>
@@ -506,6 +526,27 @@
                     }, 1500)
                 );
             });
+
+            $('.lua-chon-tinh-thanh').each(function () {
+                let seft = $(this);
+                seft.change(function () {
+                    $.ajax({
+                        data: { theSurveyId: '@ViewData["TheSurveyId"]', questionCode: seft.attr('questionCode'), answerContent: seft.val() },
+                        dataType: 'json',
+                        method: 'Post',
+                        url: '/GraduateHome/AutoSave',
+                        timeout: 0,
+                        complete: () => { }
+                    }).done(function (res) {
+                        console.log('tinhthanh');
+                        console.log(res);
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        console.log(textStatus + ': ' + errorThrown);
+                        console.log(jqXHR);
+                    });
+                });
+            });
+
             $('#choose-yes').click(() => {
                 $('#modal-yes-no').modal('hide');
                 $('#loading-screen').show();
@@ -555,7 +596,7 @@
                         continue;
                     }
 
-                    if (questions[i].Type === "@QuestionType.SC" || questions[i].Type === "@QuestionType.MC") {
+                    if (questions[i].Type === "@QuestionType.SC" || questions[i].Type === "@QuestionType.MC" || questions[i].Type === "@QuestionType.StarRating") {
                         hasChecked = false;
                         $(`input[questionCode="${questions[i].Code}"]`).each(function () {
                             if (this.checked) {
@@ -564,6 +605,21 @@
                         });
                         if (hasChecked === false) {
                             document.getElementById(`${questions[i].Code}`).scrollIntoView();
+                            console.log('chua lam cau ' + questions[i].Code);
+                            return false;
+                        }
+                    }
+
+                    if (questions[i].Type === "@QuestionType.CityC") {
+                        hasChecked = true;
+                        $(`select[questionCode="${questions[i].Code}"]`).each(function () {
+                            if ($(this).val() == null) {
+                                document.getElementById(`${questions[i].Code}`).scrollIntoView();
+                                console.log('chua lam cau tinh thanh ' + questions[i].Code);
+                                hasChecked = false;
+                            }
+                        });
+                        if (hasChecked === false) {
                             return false;
                         }
                     }

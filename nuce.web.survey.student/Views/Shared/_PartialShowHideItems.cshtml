@@ -29,19 +29,65 @@
 }
 
 <script>
-    @*@if (roles.Contains(RoleNames.Student) && !roles.Contains(RoleNames.FakeStudent))
-    {
-        @:$(`#short-cut-ks-truoctn`).hide();
-        @:$(`#short-cut-ks-vl`).hide();
+    function showHideItems() {
+        @if (roles.Contains(RoleNames.Student) && !roles.Contains(RoleNames.FakeStudent))
+        {
+            @:$(`#short-cut-ks-truoctn`).hide();
+            @:$(`#short-cut-ks-vl`).hide();
+
+            @:$('#link-menu-child2nd-31').hide();
+            @:$('#link-menu-child2nd-32').hide();
+
+            @:$('#link-menu-child2nd-33').hide();
+            @:$('#link-menu-child2nd-34').hide();
+            @:$('#link-menu-child2nd-35').hide();
+        }
+        @if (roles.Contains(RoleNames.UndergraduateStudent) && !roles.Contains(RoleNames.FakeStudent))
+        {
+            @:$(`#short-cut-ks-hdgd`).hide();
+            @:$(`#short-cut-ks-vl`).hide();
+            @:$('#link-menu-child2nd-31').show();
+            @:$('#link-menu-child2nd-32').hide();
+
+            @:$('#link-menu-child2nd-33').hide();
+            @:$('#link-menu-child2nd-34').hide();
+            @:$('#link-menu-child2nd-35').hide();
+        }
+        @if (roles.Contains(RoleNames.GraduateStudent) && !roles.Contains(RoleNames.FakeStudent))
+        {
+            @:$(`#short-cut-ks-hdgd`).hide();
+            @:$(`#short-cut-ks-truoctn`).hide();
+
+            @:$('#link-menu-child2nd-30').hide();
+            @:$('#link-menu-child2nd-31').hide();
+
+            @:$('#link-menu-child2nd-33').hide();
+            @:$('#link-menu-child2nd-34').hide();
+            @:$('#link-menu-child2nd-35').hide();
+        }
+
+        @if (roles.Contains(RoleNames.KhaoThi_Survey_KhoaBan))
+        {
+            @:$('#link-menu-child-25').hide();
+
+            @:$('#link-menu-child2nd-34').hide();
+            @:$('#link-menu-child2nd-35').hide();
+        }
+
+        @if (roles.Contains(RoleNames.KhaoThi_Survey_Department))
+        {
+            @:$('#link-menu-child-25').hide();
+
+            @:$('#link-menu-child2nd-34').hide();
+            @:$('#link-menu-child2nd-35').hide();
+        }
+
+        @if (roles.Contains(RoleNames.KhaoThi_Survey_GiangVien))
+        {
+            @:$('#link-menu-child-25').hide();
+
+            @:$('#link-menu-child2nd-34').hide();
+            @:$('#link-menu-child2nd-35').hide();
+        }
     }
-    @if (roles.Contains(RoleNames.UndergraduateStudent) && !roles.Contains(RoleNames.FakeStudent))
-    {
-        @:$(`#short-cut-ks-hdgd`).hide();
-        @:$(`#short-cut-ks-vl`).hide();
-    }
-    @if (roles.Contains(RoleNames.GraduateStudent) && !roles.Contains(RoleNames.FakeStudent))
-    {
-        @:$(`#short-cut-ks-hdgd`).hide();
-        @:$(`#short-cut-ks-truoctn`).hide();
-    }*@
 </script>

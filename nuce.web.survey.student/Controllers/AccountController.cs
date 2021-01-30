@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using nuce.web.shared;
 using nuce.web.survey.student.Common;
 using nuce.web.survey.student.Models;
 using System;
@@ -66,11 +67,16 @@ namespace nuce.web.survey.student.Controllers
             var accessToken = responseCookies.FirstOrDefault(c => c.Name == UserParameters.JwtAccessToken);
             var refreshToken = responseCookies.FirstOrDefault(c => c.Name == UserParameters.JwtRefreshToken);
 
+            var roles = new List<string>();
             if (accessToken != null)
             {
                 Response.Cookies[UserParameters.JwtAccessToken].Value = accessToken.Value;
                 Response.Cookies[UserParameters.JwtAccessToken].HttpOnly = true;
                 Response.Cookies[UserParameters.JwtAccessToken].Expires = accessToken.Expires;
+
+                var handler = new JwtSecurityTokenHandler();
+                var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
+                roles = jwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(r => r.Value).ToList();
             }
 
             if (refreshToken != null)
@@ -80,11 +86,20 @@ namespace nuce.web.survey.student.Controllers
                 Response.Cookies[UserParameters.JwtRefreshToken].Expires = refreshToken.Expires;
             }
 
+
             switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:
                     if(target == null)
                     {
+                        if (roles.Contains(RoleNames.Student) && !roles.Contains(RoleNames.FakeStudent))
+                        {
+                            return Redirect("/home/index");
+                        } 
+                        else if (roles.Contains(RoleNames.UndergraduateStudent) && !roles.Contains(RoleNames.FakeStudent))
+                        {
+                            return Redirect("/home/indexundergraduate");
+                        }
                         return Redirect("/default");
                     }
                     else

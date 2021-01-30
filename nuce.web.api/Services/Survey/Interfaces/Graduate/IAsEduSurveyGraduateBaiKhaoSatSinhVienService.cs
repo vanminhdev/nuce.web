@@ -9,7 +9,7 @@ namespace nuce.web.api.Services.Survey.Interfaces
 {
     public interface IAsEduSurveyGraduateBaiKhaoSatSinhVienService
     {
-        public Task SaveSelectedAnswer(Guid theSurveyId, string studentCode, string ipAddress);
+        public Task SaveSelectedAnswer(Guid theSurveyId, string studentCode, string ipAddress, string loaiHinh);
         public Task GenerateTheSurveyStudent(Guid theSurveyId);
         public Task<int> GetGenerateTheSurveyStudentStatus();
         public Task<List<GraduateTheSurveyStudent>> GetTheSurvey(string studentCode);

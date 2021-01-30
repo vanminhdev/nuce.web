@@ -64,5 +64,7 @@ namespace nuce.web.api.ViewModel.Survey.Graduate
     {
         public string Masv { get; set; }
         public Guid? DotKhaoSatId { get; set; }
+        public string MaKhoa { get; set; }
+        public string LopQL { get; set; }
     }
 }

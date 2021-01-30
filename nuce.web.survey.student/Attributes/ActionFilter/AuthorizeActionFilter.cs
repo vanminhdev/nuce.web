@@ -135,15 +135,15 @@ namespace nuce.web.survey.student.Attributes.ActionFilter
             }
             else if (role == RoleNames.KhaoThi_Survey_KhoaBan)
             {
-                filterContext.Result = new RedirectResult($"/account/login?type=2{(targetUrl2nd == "" ? "" : $"&{targetUrl2nd}")}");
+                filterContext.Result = new RedirectResult($"/account/logincanbo?type=2{(targetUrl2nd == "" ? "" : $"&{targetUrl2nd}")}");
             }
             else if (role == RoleNames.KhaoThi_Survey_Department)
             {
-                filterContext.Result = new RedirectResult($"/account/login?type=3{(targetUrl2nd == "" ? "" : $"&{targetUrl2nd}")}");
+                filterContext.Result = new RedirectResult($"/account/logincanbo?type=3{(targetUrl2nd == "" ? "" : $"&{targetUrl2nd}")}");
             }
             else if (role == RoleNames.KhaoThi_Survey_GiangVien)
             {
-                filterContext.Result = new RedirectResult($"/account/login?type=4{(targetUrl2nd == "" ? "" : $"&{targetUrl2nd}")}");
+                filterContext.Result = new RedirectResult($"/account/logincanbo?type=4{(targetUrl2nd == "" ? "" : $"&{targetUrl2nd}")}");
             }
             else
             {

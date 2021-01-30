@@ -48,6 +48,16 @@ namespace nuce.web.api.Services.Survey.Implements
                 dssv = dssv.Where(o => o.DotKhaoSatId == filter.DotKhaoSatId);
             }
 
+            if (filter.MaKhoa != null)
+            {
+                dssv = dssv.Where(o => o.Makhoa == filter.MaKhoa);
+            }
+
+            if (filter.LopQL != null)
+            {
+                dssv = dssv.Where(o => o.Lopqd == filter.LopQL);
+            }
+
             var recordsFiltered = dssv.Count();
 
             var querySkip = dssv
@@ -164,7 +174,7 @@ namespace nuce.web.api.Services.Survey.Implements
             await _context.Database.ExecuteSqlRawAsync("TRUNCATE TABLE AS_Edu_Survey_Graduate_Student");
         }
 
-        public async Task<bool> Login(string masv, string pwd)
+        public async Task<ResultLoginModel> Login(string masv, string pwd)
         {
             var sinhvien = await _context.AsEduSurveyGraduateStudent.FirstOrDefaultAsync(o => o.ExMasv == masv);
             if (sinhvien == null)
@@ -172,11 +182,11 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException("Mã sinh viên không tồn tại trong danh sách");
             }
 
-            if (sinhvien.Psw == pwd)
+            return new ResultLoginModel
             {
-                return true;
-            }
-            return false;
+                IsSuccess = sinhvien.Psw == pwd,
+                HoVaTen = sinhvien.Tensinhvien
+            };
         }
 
         public async Task TransferDataFromUndergraduate(Guid surveyRoundId, TransferDataUndergraduateModel filter)

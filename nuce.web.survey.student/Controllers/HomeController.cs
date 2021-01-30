@@ -56,7 +56,7 @@ namespace nuce.web.survey.student.Controllers
                 action404Async: async res =>
                 {
                     var jsonString = await res.Content.ReadAsStringAsync();
-                    ViewData["message"] = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
+                    ViewData["message"] = JsonConvert.DeserializeObject<ResponseMessage>(jsonString)?.message;
                     return View();
                 }
             );

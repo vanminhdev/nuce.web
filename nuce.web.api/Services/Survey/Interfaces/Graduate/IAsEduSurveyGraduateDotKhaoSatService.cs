@@ -25,5 +25,7 @@ namespace nuce.web.api.Services.Survey.Interfaces
         public Task<List<AsEduSurveyGraduateSurveyRound>> GetSurveyRoundActive();
 
         public Task<List<AsEduSurveyGraduateSurveyRound>> GetSurveyRoundClosedOrEnd();
+
+        public Task<AsEduSurveyGraduateSurveyRound> GetCurrentSurveyRound();
     }
 }

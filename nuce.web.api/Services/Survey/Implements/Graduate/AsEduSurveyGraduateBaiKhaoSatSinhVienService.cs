@@ -222,7 +222,7 @@ namespace nuce.web.api.Services.Survey.Implements
         /// </summary>
         /// <param name="task"></param>
         /// <returns></returns>
-        public async Task SaveSelectedAnswer(Guid theSurveyId, string studentCode, string ipAddress)
+        public async Task SaveSelectedAnswer(Guid theSurveyId, string studentCode, string ipAddress, string loaiHinh)
         {
             var surveyStudent = await _context.AsEduSurveyGraduateBaiKhaoSatSinhVien
                 .FirstOrDefaultAsync(o => o.BaiKhaoSatId == theSurveyId && o.StudentCode == studentCode);
@@ -279,7 +279,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             surveyStudent.NgayGioNopBai = DateTime.Now;
             surveyStudent.Status = (int)SurveyStudentStatus.Done;
-            surveyStudent.LoaiHinh = GraduateBaiLamType.Online;
+            surveyStudent.LoaiHinh = loaiHinh;
             surveyStudent.LogIp = ipAddress;
             await _context.SaveChangesAsync();
         }

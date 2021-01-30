@@ -1,18 +1,14 @@
 ﻿@model nuce.web.survey.student.Models.SurveyResultModel
-
-
 @{
-    ViewBag.Title = "Khoa/Ban";
+    ViewData["Title"] = "Kết quả khảo sát hoạt động giảng dạy";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 
 @section Breadcrumb {
     <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
-    <li class="breadcrumb-item">Kết quả khảo sát</li>
-    <li class="breadcrumb-item active" aria-current="page">
-        Khoa
-    </li>
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/survey/faculty">Khoa</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Kết quả khảo sát </li>
 }
 
 <h5 class="text-center mb-3 m-text-blue">

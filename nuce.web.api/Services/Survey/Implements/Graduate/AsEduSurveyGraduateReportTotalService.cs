@@ -59,7 +59,7 @@ namespace nuce.web.api.Services.Survey.Implements.Graduate
             var noiDungDe = JsonSerializer.Deserialize<List<QuestionJson>>(theSurvey.NoiDungDeThi);
 
             ExcelPackage excel = new ExcelPackage();
-            var worksheet = excel.Workbook.Worksheets.Add("Báo cáo tổng thể toàn trường");
+            var worksheet = excel.Workbook.Worksheets.Add("Báo cáo tình hình việc làm");
 
             #region style
             worksheet.DefaultRowHeight = 14.25;
@@ -160,6 +160,18 @@ namespace nuce.web.api.Services.Survey.Implements.Graduate
                             if(bailam.FirstOrDefault(o => o.QuestionCode == cauhoi.Code && o.AnswerCode == dapan.Code) != null)
                             {
                                 worksheet.Cells[row, col].Value = "x";
+                                //bỏ những câu không cần thiết
+                                if (dapan.HideQuestion != null && dapan.HideQuestion.Count > 0)
+                                {
+                                    dapan.HideQuestion.ForEach(hideCode =>
+                                    {
+                                        var rmQ = bailam.FirstOrDefault(o => o.QuestionCode == hideCode);
+                                        if (rmQ != null)
+                                        {
+                                            bailam.Remove(rmQ);
+                                        }
+                                    });
+                                }
                             }
                             col++;
                         }
@@ -170,8 +182,6 @@ namespace nuce.web.api.Services.Survey.Implements.Graduate
                     {
                         var colStart = col;
                         worksheet.Cells[rowCauHoi, col].Value = $"Câu {++index}: {cauhoi.Content}";
-                        worksheet.Cells[rowCauHoi, col].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        worksheet.Cells[rowCauHoi, col].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(255, 255, 0));
                         foreach (var dapan in cauhoi.Answers)
                         {
                             worksheet.Cells[rowDapAn, col].Value = dapan.Content;
@@ -201,6 +211,17 @@ namespace nuce.web.api.Services.Survey.Implements.Graduate
                     {
                         worksheet.Cells[rowCauHoi, col].Value = $"Câu {++index}: {cauhoi.Content}";
                         worksheet.Column(col).Width = 48;
+                        var selected = bailam.FirstOrDefault(o => o.QuestionCode == cauhoi.Code);
+                        if (selected != null)
+                        {
+                            worksheet.Cells[row, col].Value = selected.AnswerContent;
+                        }
+                        col++;
+                    }
+                    else if (cauhoi.Type == QuestionType.CityC)
+                    {
+                        worksheet.Cells[rowCauHoi, col].Value = $"Câu {++index}: {cauhoi.Content}";
+                        worksheet.Column(col).Width = 25;
                         var selected = bailam.FirstOrDefault(o => o.QuestionCode == cauhoi.Code);
                         if (selected != null)
                         {
@@ -275,6 +296,10 @@ namespace nuce.web.api.Services.Survey.Implements.Graduate
                         }
                     }
                 }
+
+                worksheet.Cells[rowCauHoi, col].Value = "CCCD/CMND";
+                worksheet.Column(col).Width = 20;
+                worksheet.Cells[row, col++].Value = svBaiLam.sv.Cmnd;
 
                 worksheet.Cells[rowCauHoi, col].Value = "Số quyết định tốt nghiệp";
                 worksheet.Column(col).Width = 44.57;

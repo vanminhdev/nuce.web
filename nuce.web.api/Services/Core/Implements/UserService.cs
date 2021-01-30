@@ -79,7 +79,6 @@ namespace nuce.web.api.Services.Core.Implements
             {
                     new Claim(ClaimTypes.Name, username),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(UserParameters.UserCode, username),
                     new Claim(UserParameters.UserType, model.LoginUserType.ToString())
             };
 
@@ -95,12 +94,14 @@ namespace nuce.web.api.Services.Core.Implements
                     name = _studentEduDataService.FindByCode(username)?.FullName;
                 }
                 authClaims.Add(new Claim(ClaimTypes.GivenName, name ?? ""));
+                authClaims.Add(new Claim(UserParameters.UserCode, username));
             }
             else if (model.LoginUserType == LoginUserType.Lecturer)
             {
                 authClaims.Add(new Claim(ClaimTypes.Role, RoleNames.KhaoThi_Survey_GiangVien));
                 string givenName = (await _lecturerRepository.FindByCode(username))?.FullName;
                 authClaims.Add(new Claim(ClaimTypes.GivenName, givenName));
+                authClaims.Add(new Claim(UserParameters.UserCode, username));
             }
             else
             {
@@ -115,10 +116,13 @@ namespace nuce.web.api.Services.Core.Implements
             {
                 string givenName = (await _departmentRepository.FindByCode(username))?.Name;
                 authClaims.Add(new Claim(ClaimTypes.GivenName, givenName));
-            } else if (model.LoginUserType == LoginUserType.Department)
+                authClaims.Add(new Claim(UserParameters.UserCode, username));
+            } 
+            else if (model.LoginUserType == LoginUserType.Department)
             {
                 string givenName = (await _departmentRepository.FindByCode(username))?.Name;
                 authClaims.Add(new Claim(ClaimTypes.GivenName, givenName));
+                authClaims.Add(new Claim(UserParameters.UserCode, username));
             }
             #endregion
             return authClaims;
@@ -192,9 +196,13 @@ namespace nuce.web.api.Services.Core.Implements
                 {
                     throw new RecordNotFoundException("Tài khoản không tồn tại");
                 }
-                else if (user.Status != (int)UserStatus.Active)
+                else if (user.Status == (int)UserStatus.Deactive)
                 {
                     throw new InvalidInputDataException("Tài khoản không được kích hoạt");
+                }
+                else if (user.Status == (int)UserStatus.Deleted)
+                {
+                    throw new InvalidInputDataException("Tài khoản không tồn tại");
                 }
                 else
                 {

@@ -21,6 +21,7 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,28 +35,50 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         private readonly IConfiguration _configuration;
         private readonly IPathProvider _pathProvider;
         private readonly IAsEduSurveyGraduateStudentService _asEduSurveyGraduateStudentService;
+        private readonly IAsEduSurveyGraduateDotKhaoSatService _asEduSurveyGraduateDotKhaoSatService;
 
         public GraduateStudentController(ILogger<GraduateStudentController> logger, IPathProvider pathProvider, 
             IConfiguration configuration,
+            IAsEduSurveyGraduateDotKhaoSatService asEduSurveyGraduateDotKhaoSatService,
             IAsEduSurveyGraduateStudentService asEduSurveyGraduateStudentService)
         {
             _logger = logger;
             _pathProvider = pathProvider;
             _configuration = configuration;
+            _asEduSurveyGraduateDotKhaoSatService = asEduSurveyGraduateDotKhaoSatService;
             _asEduSurveyGraduateStudentService = asEduSurveyGraduateStudentService;
         }
 
         [HttpPost]
-        [AppAuthorize(RoleNames.KhaoThi_Survey_Graduate, RoleNames.KhaoThi_Survey_KhoaBan, RoleNames.KhaoThi_Survey_GiangVien)]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Graduate, RoleNames.KhaoThi_Survey_KhoaBan)]
         public async Task<IActionResult> GetGraduateStudent([FromBody] DataTableRequest request)
         {
             var filter = new GraduateStudentFilter();
             if (request.Columns != null)
             {
                 filter.Masv = request.Columns.FirstOrDefault(c => c.Data == "masv" || c.Name == "masv")?.Search.Value ?? null;
+                filter.LopQL = request.Columns.FirstOrDefault(c => c.Data == "lopqd" || c.Name == "lopqd")?.Search.Value ?? null;
             }
             var skip = request.Start;
             var take = request.Length;
+
+            var maKhoa = (HttpContext.User.Identity as ClaimsIdentity).FindFirst(UserParameters.UserCode)?.Value;
+            if (HttpContext.User.IsInRole(RoleNames.KhaoThi_Survey_KhoaBan) && maKhoa != null) //đợt khảo sát chưa đóng k lấy được danh sách sinh viên
+            {
+                var surveyRound = await _asEduSurveyGraduateDotKhaoSatService.GetCurrentSurveyRound();
+                if(surveyRound == null || !(DateTime.Now >= surveyRound.EndDate)) //đợt đã kết thúc mới lấy được danh sách, nếu chưa kết thúc thì không trả về gì
+                {
+                    return Ok(new DataTableResponse<GraduateStudent>
+                    {
+                        Draw = ++request.Draw,
+                        RecordsTotal = 0,
+                        RecordsFiltered = 0,
+                        Data = new List<GraduateStudent>()
+                    });
+                }
+                filter.MaKhoa = maKhoa;
+            }
+
             var result = await _asEduSurveyGraduateStudentService.GetAll(filter, skip, take);
             return Ok(
                 new DataTableResponse<GraduateStudent>

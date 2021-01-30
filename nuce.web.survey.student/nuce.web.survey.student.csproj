@@ -2594,6 +2594,7 @@
     <Content Include="Content\js\jquery.validate.min.js" />
     <Content Include="Content\js\main.js" />
     <Content Include="Content\js\popper.min.js" />
+    <Content Include="Content\js\tinh-thanh.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\css\bootstrap-select.css.map" />

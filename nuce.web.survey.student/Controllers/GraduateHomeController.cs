@@ -27,6 +27,12 @@ namespace nuce.web.survey.student.Controllers
                     var jsonString = await response.Content.ReadAsStringAsync();
                     ViewData["TheSurveys"] = jsonString;
                     return View();
+                },
+                action404Async: async res =>
+                {
+                    var jsonString = await res.Content.ReadAsStringAsync();
+                    ViewData["message"] = JsonConvert.DeserializeObject<ResponseMessage>(jsonString)?.message;
+                    return View();
                 }
             );
         }
@@ -49,6 +55,7 @@ namespace nuce.web.survey.student.Controllers
 
             var resTheSurvey = await base.MakeRequestAuthorizedAsync("Get", $"/api/GraduateTheSurveyStudent/GetTheSurveyContent?id={theSurveyId}&studentCode={studentCode}");
             ViewData["TheSurveyId"] = theSurveyId;
+            ViewData["studentCode"] = studentCode;
             return await base.HandleResponseAsync(resTheSurvey,
                 action200Async: async res =>
                 {
@@ -60,18 +67,18 @@ namespace nuce.web.survey.student.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AutoSave(string theSurveyId, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, int? numStar, string city, bool isAnswerCodesAdd = true)
+        public async Task<ActionResult> AutoSave(string studentCode, string theSurveyId, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, int? numStar, string city, bool isAnswerCodesAdd = true)
         {
             var jsonStr = JsonConvert.SerializeObject(new { theSurveyId, questionCode, answerCode, answerCodeInMulSelect, isAnswerCodesAdd, answerContent, numStar, city });
             var stringContent = new StringContent(jsonStr, Encoding.UTF8, "application/json");
-            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/GraduateTheSurveyStudent/AutoSave", stringContent);
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/GraduateTheSurveyStudent/AutoSave?studentCode={studentCode}", stringContent);
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
-        public async Task<ActionResult> TheSurveySubmit(string theSurveyId)
+        public async Task<ActionResult> TheSurveySubmit(string theSurveyId, string studentCode, string loaiHinh)
         {
-            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/GraduateTheSurveyStudent/SaveSelectedAnswer?theSurveyId={theSurveyId}");
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/GraduateTheSurveyStudent/SaveSelectedAnswer?theSurveyId={theSurveyId}&studentCode={studentCode}&loaiHinh={loaiHinh}");
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
     }
