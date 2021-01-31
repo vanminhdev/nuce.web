@@ -25,5 +25,6 @@ namespace nuce.web.api.Services.Core.Interfaces
         public Task UpdateNewsCatsAdmin(List<string> roles, NewsCats model);
         public Task<IQueryable<NewsItems>> GetCousinNewsItemsById(int id, NewsItemStatus status);
         public Task UpdateNewsItemStatus(int id, NewsItemStatus newsStatus);
+        public Task DeleteNewsItem(int id);
     }
 }

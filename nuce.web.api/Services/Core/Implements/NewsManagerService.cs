@@ -265,6 +265,30 @@ namespace nuce.web.api.Services.Core.Implements
                 throw ex;
             }
         }
+
+        /// <summary>
+        /// Xoá bài tin
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task DeleteNewsItem(int id)
+        {
+            var newsItem = await _context.NewsItems.FindAsync(id);
+            if (newsItem == null)
+            {
+                throw new RecordNotFoundException("Không tồn tại bài tin");
+            }
+
+            try
+            {
+                _context.Remove(newsItem);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         #endregion
 
         #region client
