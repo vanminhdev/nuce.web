@@ -118,34 +118,37 @@ namespace nuce.web.survey.student.Attributes.ActionFilter
 
         private void RedirecLoginPage(string role, ActionExecutingContext filterContext)
         {
+            var target = filterContext.HttpContext.Request.Path;
+            var targetUrl = target != null ? $"?target={HttpUtility.UrlEncode(target)}" : "";
+            var targetUrl2nd = target != null ? $"target={HttpUtility.UrlEncode(target)}" : "";
             if (role == RoleNames.Student)
             {
-                filterContext.Result = new RedirectResult("/account/login");
-            } else if (role == RoleNames.UndergraduateStudent)
+                filterContext.Result = new RedirectResult($"/account/login{targetUrl}");
+            } 
+            else if (role == RoleNames.UndergraduateStudent)
             {
-                filterContext.Result = new RedirectResult("/account/loginundergraduate");
+                filterContext.Result = new RedirectResult($"/account/loginundergraduate{targetUrl}");
             }
             else if (role == RoleNames.GraduateStudent)
             {
-                filterContext.Result = new RedirectResult("/account/logingraduate");
+                filterContext.Result = new RedirectResult($"/account/logingraduate{targetUrl}");
             }
             else if (role == RoleNames.KhaoThi_Survey_KhoaBan)
             {
-                filterContext.Result = new RedirectResult("/surveyresult/login?loginType=2");
+                filterContext.Result = new RedirectResult($"/account/logincanbo?type=2{(targetUrl2nd == "" ? "" : $"&{targetUrl2nd}")}");
             }
             else if (role == RoleNames.KhaoThi_Survey_Department)
             {
-                filterContext.Result = new RedirectResult("/surveyresult/login?loginType=3");
+                filterContext.Result = new RedirectResult($"/account/logincanbo?type=3{(targetUrl2nd == "" ? "" : $"&{targetUrl2nd}")}");
             }
             else if (role == RoleNames.KhaoThi_Survey_GiangVien)
             {
-                filterContext.Result = new RedirectResult("/surveyresult/login?loginType=4");
+                filterContext.Result = new RedirectResult($"/account/logincanbo?type=4{(targetUrl2nd == "" ? "" : $"&{targetUrl2nd}")}");
             }
             else
             {
-                filterContext.Result = new RedirectResult("/account/login");
+                filterContext.Result = new RedirectResult($"/account/login{targetUrl}");
             }
         }
-
     }
 }

@@ -360,6 +360,7 @@
 
         $('#modal-input').on('shown.bs.modal', function () {
             $('.add-box').hide();
+            table.ajax.reload();
         });
 
         $('#btn-generate-exam').click(() => {

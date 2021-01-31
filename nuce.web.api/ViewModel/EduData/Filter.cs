@@ -46,7 +46,6 @@ namespace nuce.web.api.ViewModel.EduData
     public class ClassRoomFilter
     {
         public string Code { get; set; }
-        public string GroupCode { get; set; }
         public string ClassCode { get; set; }
         public string SubjectCode { get; set; }
     }

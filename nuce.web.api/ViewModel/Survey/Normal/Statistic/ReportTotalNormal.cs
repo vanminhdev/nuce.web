@@ -13,6 +13,7 @@ namespace nuce.web.api.ViewModel.Survey.Normal.Statistic
         public Guid TheSurveyId { get; set; }
         public string TheSurveyName { get; set; }
         public string ClassRoomCode { get; set; }
+        public string NHHK { get; set; }
         public string LecturerCode { get; set; }
         public string QuestionCode { get; set; }
         public string AnswerCode { get; set; }

@@ -71,11 +71,24 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetSurveyRoundClosedOrEnd()
+        {
+            try
+            {
+                var result = await _asEduSurveyGraduateDotKhaoSatService.GetSurveyRoundClosedOrEnd();
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không lấy được đợt khảo sát", detailMessage = mainMessage });
+            }
+        }
 
         [HttpGet]
-        public async Task<IActionResult> GetSurveyRoundById(
-            [Required(AllowEmptyStrings = false)]
-            Guid? id)
+        public async Task<IActionResult> GetSurveyRoundById([Required(AllowEmptyStrings = false)] Guid? id)
         {
             try
             {
@@ -101,6 +114,10 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             {
                 await _asEduSurveyGraduateDotKhaoSatService.Create(surveyRound);
             }
+            catch (InvalidInputDataException e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
             catch (DbUpdateException e)
             {
                 _logger.LogError(e, e.Message);
@@ -124,7 +141,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             }
             catch (InvalidInputDataException e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không cập nhật được đợt khảo sát", detailMessage = e.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
             catch (DbUpdateException e)
             {

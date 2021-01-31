@@ -28,7 +28,7 @@ var dataTableRequest = {
             serverSide: true,
             ordering: false,
             lengthChange: false,
-            stateSave: true,
+            stateSave: false,
             language: dataTableConfig.language,
             columns,
             ajax: {

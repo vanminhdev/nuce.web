@@ -33,7 +33,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Phòng Khảo thí | @ViewData["Title"]</title>
+    <title>Khảo thí và đảm bảo chất lượng | @ViewData["Title"]</title>
     <link rel="stylesheet" href="~/content/css/bootstrap.min.css" />
 
     <!-- Custom -->
@@ -228,11 +228,14 @@
             crossDomain: true,
         });
     </script>
+    @{
+        Html.RenderPartial("~/Views/Shared/_PartialShowHideItems.cshtml");
+    }
     <script>
         var initMenu = function() {
 
-            const cycleTime = 12 * 60 * 60 * 1000;
-
+            //const cycleTime = 12 * 60 * 60 * 1000;
+            const cycleTime = 0;
             const nextStep = cycleGenerateMenu(STORAGE_KEY.MENU_LOAD_DAY, cycleTime, apiGenerateMenu);
 
             if (!nextStep) return;
@@ -308,6 +311,8 @@
                         handleCategoryList(filterMenu(res));
                         localStorage.setItem(STORAGE_KEY.CATEGORY_LIST, JSON.stringify(res));
                         localStorage.setItem(STORAGE_KEY.MENU_LOAD_DAY, JSON.stringify(new Date()));
+
+                        showHideItems();
                     }
                 },
             });
@@ -325,12 +330,23 @@
                                         </a>
                                         [dropdown-template]
                                     </li>`;
-            const dropdownTemplate = `<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            const dropdownTemplate = `<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         [dropdown-detail-template]
-                                    </div>`;
-            const dropdownDetailTemplate = `<a class="dropdown-item m-bg-hover-blue text-truncate"
+                                    </ul>`;
+            const dropdownDetailTemplate = `<li><a class="dropdown-item m-bg-hover-blue text-truncate"
                                                 href="[link]"
-                                                id=[id]>[name]</a>`;
+                                                id=[id]>[name]</a></li>`;
+
+            const dropdownDetailTemplateHasChild2nd = `<li><a class="dropdown-item m-bg-hover-blue text-truncate"
+                                                href="[link]"
+                                                id=[id]>[name] <i class="fas fa-angle-double-right" style="float: right;margin-top: 6px; font-size:12px;"></i></a>
+                                                [dropdown-detail-template]</li>`;
+
+            const dropdownTemplateChild2nd = `<ul class="submenu dropdown-menu">
+                                           [dropdown-detail-template-child]
+                                           </ul>`;
+
+            const dropdownDetailTemplateChild2nd = `<li><a class="dropdown-item m-bg-hover-blue text-truncate" href="[link]" id=[id]>[name]</a></li>`;
 
             data.forEach(cat => {
                 if (cat.parent == -1) {
@@ -339,15 +355,33 @@
                     if (children.length > 0) {
                         let dropdownDetailHtml = '';
                         children.forEach(child => {
-                           dropdownDetailHtml += dropdownDetailTemplate.replace('[name]', child.description)
-                                                                    .replace('[link]', `${child.menuHref}`)
-                                                                    .replace('[id]', `link-menu-child-${child.id}`);
+                            const children2nd = data.filter(c => c.parent == child.id);
+                            if (children2nd.length === 0) {
+                                dropdownDetailHtml += dropdownDetailTemplate.replace('[name]', child.description)
+                                    .replace('[link]', `${child.menuHref}`)
+                                    .replace('[id]', `link-menu-child-${child.id}`);
+                            } else {
+                                let dropDownDetailHtml2nd = '';
+                                children2nd.forEach(child2nd => {
+                                    dropDownDetailHtml2nd += dropdownDetailTemplateChild2nd
+                                        .replace('[name]', child2nd.description)
+                                        .replace('[link]', `${child2nd.menuHref}`)
+                                        .replace('[id]', `link-menu-child2nd-${child2nd.id}`);
+                                });
+                                dropdownDetailHtml += dropdownDetailTemplateHasChild2nd
+                                    .replace('[name]', child.description)
+                                    .replace('[link]', `${child.menuHref}`)
+                                    .replace('[id]', `link-menu-child-${child.id}`)
+                                    .replace('[dropdown-detail-template]', dropdownTemplateChild2nd.replace('[dropdown-detail-template-child]', dropDownDetailHtml2nd));
+                            }
+
                             if (child.divideAfter) {
                                 dropdownDetailHtml += `<div class="dropdown-divider"></div>`;
                             }
                         });
                         dropdownHtml += dropdownTemplate.replace('[dropdown-detail-template]', dropdownDetailHtml);
                     }
+
                     let tempHtml = '';
                     if (cat.menuHref) {
                         tempHtml = `<li class="nav-item m-nav-item-hover">
@@ -363,17 +397,33 @@
                 }
             });
             $('#nav-item-container').html(stringHtml);
+
+            //click menu đa cấp mobile
+            $(document).on('click', '.dropdown-menu', function (e) {
+                e.stopPropagation();
+            });
+            if ($(window).width() < 992) {
+                $('.dropdown-menu a').click(function (e) {
+                    e.preventDefault();
+                    if ($(this).next('.submenu').length) {
+                        $(this).next('.submenu').toggle();
+                    }
+                    $('.dropdown').on('hide.bs.dropdown', function () {
+                        $(this).find('.submenu').hide();
+                    })
+                });
+            }
         };
 
         initMenu();
     </script>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             commonHelper.toggleElementOnScroll('scroll-top-container');
             commonHelper.smoothScrollByAnchor('scroll-top');
 
             const offsetTop = $('#container-menu').offset().top;
-            $(window).scroll(function() {
+            $(window).scroll(function () {
                 if ($(this).scrollTop() > offsetTop) {
                     $('#container-menu').addClass('m-sticky-menu');
                     return;
@@ -385,9 +435,7 @@
     <script>
         _autoLayoutImage.load();
     </script>
-    <script>
-        _autoLayoutImage.load();
-    </script>
+    <script src="~/Content/js/jquery.cookie.min.js"></script>
     <script src="~/Content/js/helper/jquery.validate.custom.rule.js"></script>
     <script src="~/Content/js/helper/jquery.validate.default.message.js"></script>
     <script src="~/Content/js/helper/form.helper.js"></script>

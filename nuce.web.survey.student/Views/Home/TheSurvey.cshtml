@@ -1,9 +1,35 @@
 ﻿@using nuce.web.survey.student.Common
 @using nuce.web.survey.student.Models.JsonData
+@using System.IdentityModel.Tokens.Jwt;
+@using System.Security.Claims;
 @using Newtonsoft.Json;
 @model  List<QuestionJson>
 @{
     ViewData["Title"] = "Bài khảo sát";
+}
+
+@{
+    var handler = new JwtSecurityTokenHandler();
+    var accessToken = Request.Cookies[UserParameters.JwtAccessToken];
+    var username = "";
+    string givenName = "";
+    var roles = new List<string>();
+    if (accessToken != null)
+    {
+
+        var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
+
+        //username
+        var usernameClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+        if (usernameClaim != null)
+        {
+            username = usernameClaim.Value;
+        }
+
+        //role
+        roles = jwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(r => r.Value).ToList();
+        givenName = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value ?? "";
+    }
 }
 
 @section Breadcrumb {
@@ -23,9 +49,9 @@
             counter-increment: title-question-counter;
         }
 
-            .question-title:before {
-                content: counter(title-question-counter, upper-roman)". ";
-            }
+        .question-title:before {
+            content: counter(title-question-counter, upper-roman)". ";
+        }
 
         .tag-child-inline > * {
             display: inline;
@@ -80,7 +106,7 @@
 @helper GenerateAnswer(QuestionJson question)
 {
     bool displayLong = false;
-    if (question.Answers != null && (question.Answers.Count > 5 || question.Answers.Where(o => o.Content.Length > 30).Count() > 0))
+    if (question.Answers != null && (question.Answers.Count > 5 || question.Answers.Where(o => o.Content.Length > 20).Count() > 0))
     {
         displayLong = true;
     }
@@ -91,7 +117,7 @@
         {
             if (displayLong)
             {
-                <div class="col-12">
+                <div class="col-12 col-md-6">
                     <div class="d-flex">
                         @* answerchildquestioncode để show hide câu hỏi con của đáp án *@
                         <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
@@ -104,14 +130,14 @@
             }
             else
             {
-                <div class="col">
-                    <div class="form-group mb-0">
+                <div class="col-6 col-md">
+                    <div class="d-flex">
                         @* answerchildquestioncode để show hide câu hỏi con của đáp án *@
-                        <input questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
+                        <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
                                @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "")
                                @(answer.ShowQuestion != null ? $"showquestion={JsonConvert.SerializeObject(answer.ShowQuestion)}" : "")
                                @(answer.HideQuestion != null ? $"hidequestion={JsonConvert.SerializeObject(answer.HideQuestion)}" : "") />
-                        <label class="text-dark">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+                        <label class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
                     </div>
                 </div>
             }
@@ -123,7 +149,7 @@
         {
             if (displayLong)
             {
-                <div class="col-12">
+                <div class="col-12 col-md-6">
                     <div class="d-flex">
                         <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
                                @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "") />
@@ -133,11 +159,11 @@
             }
             else
             {
-                <div class="col">
-                    <div class="form-group mb-0">
-                        <input questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
+                <div class="col-6 col-md">
+                    <div class="d-flex">
+                        <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
                                @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "") />
-                        <label class="text-dark">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+                        <label class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
                     </div>
                 </div>
             }
@@ -179,10 +205,71 @@
 <div class="container">
     <div class="row">
         <div class="col-12">
-            <h1 class="text-center text-dark">NỘI DUNG KHẢO SÁT</h1>
+            <p class="text-center text-dark m-fs-20 font-weight-bold">PHIẾU KHẢO SÁT Ý KIẾN PHẢN HỒI TỪ NGƯỜI HỌC VỀ HOẠT ĐỘNG GIẢNG DẠY CỦA GIẢNG VIÊN</p>
+            <p class="text-dark font-italic">Những thông tin do anh/chị cung cấp dưới đây sẽ được sử dụng trong việc cải tiến chương trình, không ngừng nâng cao chất lượng đào tạo của Trường ĐHXD. Nhà trường bảo mật các thông tin cá nhân và chỉ công bố kết quả thống kê</p>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-12 font-weight-bold mb-1 pl-0">
+            A. THÔNG TIN CHUNG
+        </div>
+        <div class="col-12 ml-2">
+            <div class="row">
+                <div class="col-6 col-md-4">
+                    <span class="font-weight-bold">Học kỳ: </span>
+                    @if (ViewData["NHHK"] != null)
+                    {
+                        var str = ViewData["NHHK"].ToString();
+                        <span class="font-italic">@(str.Length > 1 ? str.Substring(str.Length - 1, 1) : "") - @(str.Length > 4 ? str.Substring(0, 4) : "")</span>
+                    }
+                </div>
+                <div class="col-6 col-md-4">
+                    <span class="font-weight-bold">Đợt khảo sát: </span>
+                    <span class="font-italic">@ViewData["SurveyRoundName"]</span>
+                </div>
+                <div class="col-6 col-md-4">
+                    <span class="font-weight-bold">Lớp môn học: </span>
+                    <span class="font-italic">@ViewData["classRoomName"]</span>
+                </div>
+                <div class="col-6 col-md-4">
+                    <span class="font-weight-bold">Giảng viên: </span>
+                    <span class="font-italic">@ViewData["LeturerName"]</span>
+                </div>
+                <div class="col-6 col-md-4">
+                    <span class="font-weight-bold">Sinh viên: </span>
+                    <span class="font-italic">@givenName (@username)</span>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row">
+        <div class="col-12 font-weight-bold mb-1 pl-0">
+            B. NỘI DUNG KHẢO SÁT
+        </div>
+        <div class="col-12 mb-2 ml-2">
+            <div>
+                Với những câu hỏi lựa chọn phương án trả lời theo thang đánh giá, sinh viên chọn 01 phương án phù hợp theo thang điểm từ 1 đến 5, trong đó:
+                <div class="row" style="padding-left: 5px; padding-bottom: 3px; padding-top: 3px;">
+                    <div class="col-sm-5 col-xs-12 item">
+                        <span style="font-weight: bold;">1.</span> Hoàn toàn <b>KHÔNG</b> đồng ý/Rất <b>KHÔNG</b> hài lòng
+                    </div>
+                    <div class="col-sm-4 col-xs-12 item">
+                        <b>2. KHÔNG</b> đồng ý/<b>KHÔNG</b> hài lòng
+                    </div>
+                    <div class="col-sm-3 col-xs-12 item">
+                        <b>3. TẠM</b> chấp nhận/<b>TẠM</b> hài lòng
+                    </div>
+                </div>
+                <div class="row" style="padding-left: 5px;">
+                    <div class="col-sm-5 col-xs-12 item">
+                        <b>4. ĐỒNG Ý/HÀI LÒNG</b>
+                    </div>
+                    <div class="col-sm-4 col-xs-12 item">
+                        <b>5. HOÀN TOÀN ĐỒNG Ý/RẤT HÀI LÒNG</b>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="col-12">
             @{
                 var index = 1;
@@ -332,7 +419,7 @@
                 let seft = $(this);
                 let proSeft = this;
                 function handle() {
-                    let data = { classRoomCode: '@ViewData["classRoomCode"]', questionCode: seft.attr('questionCode'), answerCode: seft.attr('answerCode'), numStar: seft.attr('numstar') };
+                    let data = { classRoomCode: '@ViewData["classRoomCode"]', nhhk: '@ViewData["nhhk"]', questionCode: seft.attr('questionCode'), answerCode: seft.attr('answerCode'), numStar: seft.attr('numstar') };
                     let isAnswerCodesAdd = proSeft.checked;
                     if (proSeft.checked == true && seft.attr('answerchildquestioncode') != undefined) {
                         $(`#answerQuestion-${seft.attr('answerchildquestioncode')}`).show();
@@ -371,7 +458,7 @@
                         $(`#answerQuestion-${seft.attr('answerchildquestioncode')}`).hide();
                     }
                     $.ajax({
-                        data: { classRoomCode: '@ViewData["classRoomCode"]', questionCode: seft.attr('questionCode'), answerCodeInMulSelect: seft.attr('answerCode'), isAnswerCodesAdd },
+                        data: { classRoomCode: '@ViewData["classRoomCode"]', nhhk: '@ViewData["nhhk"]', questionCode: seft.attr('questionCode'), answerCodeInMulSelect: seft.attr('answerCode'), isAnswerCodesAdd },
                         dataType: 'json',
                         method: 'Post',
                         url: '/home/AutoSave',
@@ -393,7 +480,7 @@
                 seft.keyup(
                     debounce(function () {
                         $.ajax({
-                            data: { classRoomCode: '@ViewData["classRoomCode"]', questionCode: seft.attr('questionCode'), answerContent: seft.val() },
+                            data: { classRoomCode: '@ViewData["classRoomCode"]',  nhhk: '@ViewData["nhhk"]', questionCode: seft.attr('questionCode'), answerContent: seft.val() },
                             dataType: 'json',
                             method: 'Post',
                             url: '/home/AutoSave',
@@ -413,7 +500,7 @@
                 $('#modal-yes-no').modal('hide');
                 $('#loading-screen').show();
                 $.ajax({
-                    data: { classRoomCode: '@ViewData["classRoomCode"]' },
+                    data: { classRoomCode: '@ViewData["classRoomCode"]', nhhk: '@ViewData["nhhk"]' },
                     dataType: 'json',
                     method: 'Post',
                     url: '/home/TheSurveySubmit',

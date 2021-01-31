@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nuce.web.survey.student", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nuce.web.shared", "nuce.web.shared\nuce.web.shared.csproj", "{5B7BAC6C-8066-43CC-9A07-F8F836E7AAD3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nuce.web.authentication", "nuce.web.authentication\nuce.web.authentication.csproj", "{EC5D4167-9D60-4239-BC13-ADBE3697FB1D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{5B7BAC6C-8066-43CC-9A07-F8F836E7AAD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B7BAC6C-8066-43CC-9A07-F8F836E7AAD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B7BAC6C-8066-43CC-9A07-F8F836E7AAD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC5D4167-9D60-4239-BC13-ADBE3697FB1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC5D4167-9D60-4239-BC13-ADBE3697FB1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC5D4167-9D60-4239-BC13-ADBE3697FB1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC5D4167-9D60-4239-BC13-ADBE3697FB1D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

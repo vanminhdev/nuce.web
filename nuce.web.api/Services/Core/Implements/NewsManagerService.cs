@@ -194,7 +194,8 @@ namespace nuce.web.api.Services.Core.Implements
                 Status = 1,
                 Role = modelRole,
                 Count = modelCount,
-                MenuHref = modelHref
+                MenuHref = modelHref,
+                AllowChildren = true
             };
 
             try

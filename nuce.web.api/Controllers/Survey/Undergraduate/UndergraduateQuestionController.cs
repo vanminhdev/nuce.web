@@ -18,7 +18,7 @@ using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey;
 using nuce.web.shared;
 
-namespace nuce.web.api.Controllers.Survey.Normal
+namespace nuce.web.api.Controllers.Survey.Undergraduate
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
@@ -43,6 +43,10 @@ namespace nuce.web.api.Controllers.Survey.Normal
                 filter.Code = request.Columns.FirstOrDefault(c => c.Data == "code")?.Search.Value ?? null;
                 filter.Content = request.Columns.FirstOrDefault(c => c.Data == "content")?.Search.Value ?? null;
                 filter.Type = request.Columns.FirstOrDefault(c => c.Data == "type" || c.Name == "type")?.Search.Value ?? null;
+                if (filter.Type == "null")
+                {
+                    filter.Type = null;
+                }
             }
             var skip = request.Start;
             var take = request.Length;

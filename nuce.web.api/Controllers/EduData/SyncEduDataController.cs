@@ -39,6 +39,28 @@ namespace nuce.web.api.Controllers.EduData
             _statusService = statusService;
         }
 
+        #region đồng bộ số lượng
+        [HttpGet]
+        public async Task<IActionResult> GetCountEduData()
+        {
+            try
+            {
+                var result = await _syncEduDatabaseService.GetCountEduData();
+                return Ok(result);
+            }
+            catch (CallEduWebServiceException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thể lấy dữ liệu từ đào tạo", detailMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+        }
+        #endregion
+
         #region đồng bộ cơ bản
         [HttpPut]
         public async Task<IActionResult> SyncFaculty()
@@ -119,6 +141,7 @@ namespace nuce.web.api.Controllers.EduData
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
             }
         }
+
         /// <summary>
         /// Đồng bộ môn học
         /// </summary>
@@ -460,7 +483,6 @@ namespace nuce.web.api.Controllers.EduData
             if (request.Columns != null)
             {
                 filter.Code = request.Columns.FirstOrDefault(c => c.Data == "code")?.Search.Value ?? null;
-                filter.GroupCode = request.Columns.FirstOrDefault(c => c.Data == "groupCode")?.Search.Value ?? null;
                 filter.ClassCode = request.Columns.FirstOrDefault(c => c.Data == "classCode")?.Search.Value ?? null;
                 filter.SubjectCode = request.Columns.FirstOrDefault(c => c.Data == "subjectCode")?.Search.Value ?? null;
             }
@@ -634,7 +656,6 @@ namespace nuce.web.api.Controllers.EduData
             if(request.Columns != null)
             {
                 filter.Code = request.Columns.FirstOrDefault(c => c.Data == "code")?.Search.Value ?? null;
-                filter.GroupCode = request.Columns.FirstOrDefault(c => c.Data == "groupCode")?.Search.Value ?? null;
                 filter.ClassCode = request.Columns.FirstOrDefault(c => c.Data == "classCode")?.Search.Value ?? null;
                 filter.SubjectCode = request.Columns.FirstOrDefault(c => c.Data == "subjectCode")?.Search.Value ?? null;
             }

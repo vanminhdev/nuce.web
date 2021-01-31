@@ -19,9 +19,9 @@
             counter-increment: title-question-counter;
         }
 
-        .question-title:before {
-            content: counter(title-question-counter, upper-roman)". ";
-        }
+            .question-title:before {
+                content: counter(title-question-counter, upper-roman)". ";
+            }
 
         .tag-child-inline > * {
             display: inline;
@@ -76,7 +76,7 @@
 @helper GenerateAnswer(QuestionJson question)
 {
     bool displayLong = false;
-    if (question.Answers != null && (question.Answers.Count > 5 || question.Answers.Where(o => o.Content.Length > 30).Count() > 0))
+    if (question.Answers != null && (question.Answers.Count > 5 || question.Answers.Where(o => o.Content.Length > 20).Count() > 0))
     {
         displayLong = true;
     }
@@ -87,29 +87,27 @@
         {
             if (displayLong)
             {
-                <div class="col-12">
+                <div class="col-12 col-md-6">
                     <div class="d-flex">
                         @* answerchildquestioncode để show hide câu hỏi con của đáp án *@
                         <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
                                @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "")
                                @(answer.ShowQuestion != null ? $"showquestion={JsonConvert.SerializeObject(answer.ShowQuestion)}" : "")
-                               @(answer.HideQuestion != null ? $"hidequestion={JsonConvert.SerializeObject(answer.HideQuestion)}" : "")
-                               />
+                               @(answer.HideQuestion != null ? $"hidequestion={JsonConvert.SerializeObject(answer.HideQuestion)}" : "") />
                         <label class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
                     </div>
                 </div>
             }
             else
             {
-                <div class="col">
-                    <div class="form-group mb-0">
+                <div class="col-6 col-md">
+                    <div class="d-flex">
                         @* answerchildquestioncode để show hide câu hỏi con của đáp án *@
-                        <input questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
+                        <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
                                @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "")
                                @(answer.ShowQuestion != null ? $"showquestion={JsonConvert.SerializeObject(answer.ShowQuestion)}" : "")
-                               @(answer.HideQuestion != null ? $"hidequestion={JsonConvert.SerializeObject(answer.HideQuestion)}" : "")
-                               />
-                        <label class="text-dark">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+                               @(answer.HideQuestion != null ? $"hidequestion={JsonConvert.SerializeObject(answer.HideQuestion)}" : "") />
+                        <label class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
                     </div>
                 </div>
             }
@@ -121,7 +119,7 @@
         {
             if (displayLong)
             {
-                <div class="col-12">
+                <div class="col-12 col-md-6">
                     <div class="d-flex">
                         <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
                                @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "") />
@@ -131,11 +129,11 @@
             }
             else
             {
-                <div class="col">
-                    <div class="form-group mb-0">
-                        <input questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
+                <div class="col-6 col-md">
+                    <div class="d-flex">
+                        <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
                                @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "") />
-                        <label class="text-dark">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+                        <label class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
                     </div>
                 </div>
             }
@@ -149,24 +147,33 @@
             </div>
         </div>
     }
+    else if (question.Type == QuestionType.CityC)
+    {
+        <div class="col">
+            <div class="form-group">
+                <select class="form-control lua-chon-tinh-thanh col-12 col-md-3" questionCode="@question.Code" name="@question.Code">
+                </select>
+            </div>
+        </div>
+    }
     else if (question.Type == QuestionType.StarRating)
     {
         <div class="col">
             <div class="d-flex justify-content-center">
                 <div class="rating">
-                    <input id="rating5" type="radio" name="rating" value="5" hidden>
+                    <input questionCode="@question.Code" id="rating5" type="radio" name="rating" numstar="5" hidden>
                     <label class="fas fa-star" for="rating5"></label>
 
-                    <input id="rating4" type="radio" name="rating" value="4" hidden>
+                    <input questionCode="@question.Code" id="rating4" type="radio" name="rating" numstar="4" hidden>
                     <label class="fas fa-star" for="rating4"></label>
 
-                    <input id="rating3" type="radio" name="rating" value="3" hidden>
+                    <input questionCode="@question.Code" id="rating3" type="radio" name="rating" numstar="3" hidden>
                     <label class="fas fa-star" for="rating3"></label>
 
-                    <input id="rating2" type="radio" name="rating" value="2" hidden>
+                    <input questionCode="@question.Code" id="rating2" type="radio" name="rating" numstar="2" hidden>
                     <label class="fas fa-star" for="rating2"></label>
 
-                    <input id="rating1" type="radio" name="rating" value="1" hidden>
+                    <input questionCode="@question.Code" id="rating1" type="radio" name="rating" numstar="1" hidden>
                     <label class="fas fa-star" for="rating1"></label>
                 </div>
             </div>
@@ -270,6 +277,16 @@
 
 
 @section Scripts {
+    <script src="~/Content/js/tinh-thanh.js"></script>
+    <script>
+        $('.lua-chon-tinh-thanh').each(function () {
+            let seft = $(this);
+            let str = '';
+            TenTinhThanh.forEach(item => {
+                seft.append(`<option value="${item}">${item}</option>`);
+            });
+        });
+    </script>
     <script>
         $('input[type=checkbox]').each(function () {
             let seft = $(this);

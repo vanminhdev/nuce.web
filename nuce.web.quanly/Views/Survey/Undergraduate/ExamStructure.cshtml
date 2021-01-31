@@ -255,7 +255,6 @@
         });
 
         function showAddBox(id) {
-            console.log(id);
             let addBox = $('#' + id);
             if (!addBox.is(':visible')) {
                 addBox.show();
@@ -266,9 +265,10 @@
 
         function addItem(addBoxId) {
             let addBoxForm = $('#add-box-' + addBoxId);
+            console.log($('#add-box-' + addBoxId).serializeArray());
             if (addBoxForm.valid()) {
                 $.ajax({
-                    data: getFormData('#add-box-' + addBoxId),
+                    data: $('#add-box-' + addBoxId).serializeArray(),
                     dataType: 'json',
                     method: 'Post',
                     url: '/Survey/AddUndergraduateQuestionExam',
@@ -360,6 +360,7 @@
 
         $('#modal-input').on('shown.bs.modal', function () {
             $('.add-box').hide();
+            table.ajax.reload();
         });
 
         $('#btn-generate-exam').click(() => {

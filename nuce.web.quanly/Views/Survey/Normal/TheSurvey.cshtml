@@ -31,7 +31,7 @@
                         <th class="text-center" style="min-width: 150px">Đợt khảo sát</th>
                         <th class="text-center">Phiếu khảo sát</th>
                         <th class="text-center" style="min-width: 340px;">Loại</th>
-                        <th class="text-center" style="max-width: 100px;">Trạng thái</th>
+                        <th class="text-center" style="max-width: 100px;" id="trang-thai">Trạng thái</th>
                         <th class="text-center" style="min-width:110px"></th>
                     </tr>
                 </thead>
@@ -81,7 +81,6 @@
                                     <option value="2">Môn thực hành, thí nghiệm và thực tập</option>
                                     <option value="3">Môn môn lý thuyết + thực hành</option>
                                     <option value="4">Môn đồ án</option>
-                                    <option value="5">Môn không được phân loại</option>
                                 </select>
                             </div>
                         </div>
@@ -208,8 +207,6 @@
                             return 'Bài ks cho môn môn <b>lý thuyết + thực hành</b>';
                         } else if (data.type === 4) {
                             return 'Bài ks cho môn <b>đồ án</>';
-                        } else if (data.type === 5) {
-                            return 'Bài ks cho môn <b>không</b> được <b>phân loại</b>';
                         } else {
                             return data.type;
                         }
@@ -224,6 +221,13 @@
                         } else if (data.status === @((int)TheSurveyStatus.Deactive)) {
                             return '<span class="badge badge-pill badge-secondary">Kết thúc</span>';
                         } else if (data.status === @((int)TheSurveyStatus.Published)) {
+                            try {
+                                var countBaiKSSv = JSON.parse('@Html.Raw(ViewData["CountGenerateTheSurveyStudent"])');
+                                $('#trang-thai').html(`Đã phát: ${countBaiKSSv.countTheSurveyStudent}/${countBaiKSSv.countStudentClassroom}`);
+                                $('#trang-thai').css("min-width", 170);
+                            } catch {
+                                console.log('@Html.Raw(ViewData["CountGenerateTheSurveyStudent"])');
+                            }
                             return '<span class="badge badge-pill badge-primary">Đã Phát</span>';
                         } else {
                             return data.status;
@@ -459,6 +463,9 @@
                 });
             });
         }
+    </script>
+    <script>
+        
     </script>
 }
 

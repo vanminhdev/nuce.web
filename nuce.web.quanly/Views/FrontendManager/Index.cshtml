@@ -189,7 +189,7 @@
             ],
             configJsTree: function() {},
             convertCategory: function(raw = [], result = [], id = 'tree-tintuc') {
-                console.log(raw);
+                console.log('raw', raw);
                 if (!Array.isArray(raw) || raw.length < 1) return;
 
                 const target = result.find(folder => folder.id === id);
@@ -215,13 +215,26 @@
                         parent.children = [];
                         children.forEach(child => {
                             const son = {
-                                text: `${buttonTemplate.edit(child.id)}${buttonTemplate.catName(child.description || '')}`,
+                                text: `${buttonTemplate.add}${buttonTemplate.edit(child.id)}${buttonTemplate.catName(child.description || '')}`,
                                 data: child,
                                 a_attr: {
                                     href: `/newsmanagement/itemslist?catId=${child.id}`,
                                     class: 'alink',
                                 },
                             };
+                            son.children = [];
+                            const childOfChild = raw.filter(c => c.parent === child.id);
+                            childOfChild.forEach(child2nd => {
+                                const son2nd = {
+                                    text: `${buttonTemplate.edit(child2nd.id)}${buttonTemplate.catName(child2nd.description || '')}`,
+                                    data: child2nd,
+                                    a_attr: {
+                                        href: `/newsmanagement/itemslist?catId=${child2nd.id}`,
+                                        class: 'alink',
+                                    },
+                                };
+                                son.children.push(son2nd);
+                            });
                             parent.children.push(son);
                         });
                     } else if (cat.id in SPECIAL_CATEGORY) {
@@ -397,11 +410,11 @@
             }).bind("select_node.jstree", function (e, data) {
                  feManagerState.selectedNode = { e, data };
                  const href = data.node.a_attr.href;
-                 console.log(data);
+                 //console.log(data);
                  if (typeof data.event === 'undefined') return;
                  const oEvent = data.event.originalEvent;
                  const notRedirect = oEvent.target.getAttribute('data-not-redirect') !== null;
-                 console.log(data);
+                 //console.log(data);
                  if (href !== '#' && href.includes('/') && !notRedirect) {
 //                    document.location.href = href;
                     feManagerState.changeComponent(href);

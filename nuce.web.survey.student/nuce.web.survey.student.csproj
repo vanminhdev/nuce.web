@@ -149,6 +149,7 @@
     <Compile Include="Controllers\GraduateHomeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\NewsController.cs" />
+    <Compile Include="Controllers\SurveyController.cs" />
     <Compile Include="Controllers\SurveyResultController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -161,6 +162,9 @@
     <Compile Include="Models\NewsModel.cs" />
     <Compile Include="Models\ResponseMessage.cs" />
     <Compile Include="Models\SurveyResultModel.cs" />
+    <Compile Include="Models\Survey\Graduate\GraduateStudent.cs" />
+    <Compile Include="Models\Survey\Graduate\TheSurveyContent.cs" />
+    <Compile Include="Models\Survey\Normal\TheSurveyContent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -2590,6 +2594,7 @@
     <Content Include="Content\js\jquery.validate.min.js" />
     <Content Include="Content\js\main.js" />
     <Content Include="Content\js\popper.min.js" />
+    <Content Include="Content\js\tinh-thanh.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\css\bootstrap-select.css.map" />
@@ -2696,6 +2701,10 @@
     <Content Include="Views\SurveyResult\Faculty.cshtml" />
     <Content Include="Views\SurveyResult\Department.cshtml" />
     <Content Include="Views\SurveyResult\Lecturer.cshtml" />
+    <Content Include="Views\Shared\_PartialShowHideItems.cshtml" />
+    <Content Include="Views\Survey\Faculty\Index.cshtml" />
+    <Content Include="Views\Survey\Faculty\GraduateTheSurveyStudent.cshtml" />
+    <Content Include="Views\Account\LoginCanBo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

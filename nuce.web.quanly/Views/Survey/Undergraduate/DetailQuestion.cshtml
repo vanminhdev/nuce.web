@@ -24,14 +24,14 @@
     </div>
 
     <div class="row font-13-sm font-16">
-        @Html.TextBoxFor(m => m.id, new { @type = "hidden", @required=true })
+        @Html.TextBoxFor(m => m.id, new { @type = "hidden", @required = true })
         <div class="col-12 form-group">
             <div class="row mr-0 ml-0 align-items-center">
                 <div class="font-14-sm fw-600 col-12 col-md-2 pr-0 pl-0">
                     Mã
                 </div>
                 <div class="col-12 col-md-10">
-                    @Html.TextBoxFor(m => m.code, new { @class = "form-control", disabled="true" })
+                    @Html.TextBoxFor(m => m.code, new { @class = "form-control", disabled = "true" })
                 </div>
             </div>
         </div>
@@ -70,7 +70,7 @@
             </div>
         </div>
 
-        @if (Model.parentCode == null)
+        @if (Model.parentCode == null && Model.type == QuestionType.GQ)
         {
             <div class="col-12 form-group">
                 <div class="row mr-0 ml-0">
@@ -86,7 +86,7 @@
                                     <div class="d-flex align-items-center border rounded">
                                         <p class="m-0 ml-1">@item.code</p>
                                         <p class="m-0 ml-1 p-1 pl-2 pr-2">@Html.Raw(item.content)</p>
-                                        <button class="ml-auto close pl-1 pr-1" onclick="removeChildQuestion(this, @item.code)" type="button">
+                                        <button class="ml-auto close pl-1 pr-1" onclick="removeChildQuestion(this, '@item.code')" type="button">
                                             <span>&times;</span>
                                         </button>
                                     </div>
@@ -121,8 +121,8 @@
                 </div>
             </div>
         }
-        else
-        { 
+        else if (Model.parentCode != null)
+        {
             <div class="col-12 form-group">
                 <div class="row mr-0 ml-0">
                     <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
@@ -143,7 +143,7 @@
     </div>
 </form>
 
-<div class="modal fade bd-example-modal-lg" id="modal-input" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade bd-example-modal-lg auto-clear-form-on-open" id="modal-input" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document" style="min-width:1000px">
         <div class="modal-content">
             <div class="modal-header">
@@ -233,7 +233,7 @@
                         <div class="d-flex align-items-center border rounded">
                             <p class="m-0 ml-1">${code}</p>
                             <p class="m-0 ml-1 p-1 pl-2 pr-2">${content}</p>
-                            <button class="ml-auto close pl-1 pr-1" onclick="removeChildQuestion(this, ${code}" type="button">
+                            <button class="ml-auto close pl-1 pr-1" onclick="removeChildQuestion(this, '${code}'" type="button">
                                 <span>&times;</span>
                             </button>
                         </div>

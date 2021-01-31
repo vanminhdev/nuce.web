@@ -18,12 +18,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace nuce.web.api.Controllers.Survey.Graduate
+namespace nuce.web.api.Controllers.Survey.Undergraduate
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
@@ -111,11 +112,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
 
         [HttpPost]
         [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
-        public async Task<IActionResult> UploadFile(
-            [Required]
-            IFormFile fileUpload, 
-            [Required]
-            Guid? surveyRoundId)
+        public async Task<IActionResult> UploadFile( [Required] IFormFile fileUpload, [Required] Guid? surveyRoundId)
         {
             if(fileUpload.ContentType != ContentTypes.Xlsx)
             {
@@ -168,14 +165,31 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             }
 
             List<AsEduSurveyUndergraduateStudent> students = new List<AsEduSurveyUndergraduateStudent>();
-            int maxSize = 100;
+            //int maxSize = 100;
 
             for (int i = 2; i <= rows; i++)
             {
                 var masv = worksheet.Cells[i, 2].Value?.ToString();
                 var hoten = worksheet.Cells[i, 3].Value?.ToString();
                 var lop = worksheet.Cells[i, 4].Value?.ToString();
-                var ngaySinh = worksheet.Cells[i, 5].Value?.ToString();
+
+                DateTime? ngaySinh = null;
+                try
+                {
+                    ngaySinh = (DateTime)(worksheet.Cells[i, 5].Value);
+                }
+                catch
+                {
+                    try
+                    {
+                        ngaySinh = DateTime.ParseExact((string)worksheet.Cells[i, 5].Value, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                    }
+                    catch
+                    {
+
+                    }
+                }
+
                 var gioi = worksheet.Cells[i, 6].Value?.ToString();
                 var tichluy = worksheet.Cells[i, 7].Value?.ToString();
                 var xepLoai = worksheet.Cells[i, 8].Value?.ToString();
@@ -186,49 +200,94 @@ namespace nuce.web.api.Controllers.Survey.Graduate
                 var maKhoa = worksheet.Cells[i, 12].Value?.ToString();
                 var soQuyetDinhVaNgayRaQuyetDinh = worksheet.Cells[i, 13].Value?.ToString();
 
+                DateTime? ngayRaQd = null;
+                if (worksheet.Cells[i, 14].Value != null)
+                {
+                    try
+                    {
+                        ngayRaQd = (DateTime)(worksheet.Cells[i, 14].Value);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            ngayRaQd = DateTime.ParseExact((string)worksheet.Cells[i, 14].Value, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                }
+
                 string masvFormated = null;
                 if (masv != null)
                 {
-                    masvFormated = $"{masv:0000000}";
-
+                    masvFormated = $"{masv.Trim():0000000}";
+                    
                     var student = new AsEduSurveyUndergraduateStudent
                     {
                         Id = Guid.NewGuid(),
                         Masv = masvFormated,
-                        Tensinhvien = hoten,
-                        Lopqd = lop,
+                        Tensinhvien = hoten?.Trim() == "" ? null : hoten?.Trim(),
+                        Lopqd = lop?.Trim() == "" ? null : lop?.Trim(),
                         Ngaysinh = ngaySinh,
-                        Gioitinh = gioi,
-                        Tbcht = tichluy,
-                        Xeploai = xepLoai,
-                        Tennganh = tenNganh,
-                        Tenchnga = tenChuyenNganh,
-                        Makhoa = maKhoa,
-                        Hedaotao = heTotNghiep,
-                        ExMasv = masv,
+                        Gioitinh = gioi?.Trim() == "" ? null : gioi?.Trim(),
+                        Tbcht = tichluy?.Trim() == "" ? null : tichluy?.Trim(),
+                        Xeploai = xepLoai?.Trim() == "" ? null : xepLoai?.Trim(),
+                        Tennganh = tenNganh?.Trim() == "" ? null : tenNganh?.Trim(),
+                        Tenchnga = tenChuyenNganh?.Trim() == "" ? null : tenChuyenNganh?.Trim(),
+                        Makhoa = maKhoa?.Trim() == "" ? null : maKhoa?.Trim(),
+                        Hedaotao = heTotNghiep?.Trim() == "" ? null : heTotNghiep?.Trim(),
+                        ExMasv = masv.Trim(),
                         DotKhaoSatId = surveyRoundId,
-                        Soqdtn = soQuyetDinhVaNgayRaQuyetDinh,
+                        Soqdtn = soQuyetDinhVaNgayRaQuyetDinh?.Trim() == "" ? null : soQuyetDinhVaNgayRaQuyetDinh?.Trim(),
+                        Ngayraqd = ngayRaQd,
                         Type = 1,
                         Status = 1
                     };
                     students.Add(student);
                 }
+            }
+            await _asEduSurveyUndergraduateStudentService.CreateAll(students);
+        }
 
-                if (students.Count == maxSize || i == rows) // đủ 100 hoặc là phần tử cuối cùng
-                {
-                    await _asEduSurveyUndergraduateStudentService.CreateAll(students);
-                    students.Clear();
-                }
+        [HttpGet]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
+        public async Task<IActionResult> DownloadListStudent([Required] Guid? surveyRoundId)
+        {
+            var data = await _asEduSurveyUndergraduateStudentService.DownloadListStudent(surveyRoundId.Value);
+            return File(data, ContentTypes.Xlsx, "list_student.xlsx");
+        }
+
+        [HttpDelete]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
+        public async Task<IActionResult> Delete([Required(AllowEmptyStrings = false)] string studentCode)
+        {
+            try
+            {
+                await _asEduSurveyUndergraduateStudentService.Delete(studentCode);
+                return Ok();
+            }
+            catch (RecordNotFoundException e)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, new { message = e.Message });
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không lấy được sinh viên", detailMessage = mainMessage });
             }
         }
 
         [HttpDelete]
         [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
-        public async Task<IActionResult> DeleteAll()
+        public IActionResult DeleteAll()
         {
             try
             {
-                await _asEduSurveyUndergraduateStudentService.TruncateTable();
+                //await _asEduSurveyUndergraduateStudentService.TruncateTable();
                 return Ok();
             }
             catch (Exception e)

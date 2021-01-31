@@ -16,5 +16,10 @@ namespace nuce.web.api.ViewModel.Survey.Undergraduate
         [Phone]
         [Required]
         public string Phone { get; set; }
+
+        [Required]
+        [MinLength(9)]
+        [MaxLength(12)]
+        public string CMND { get; set; }
     }
 }

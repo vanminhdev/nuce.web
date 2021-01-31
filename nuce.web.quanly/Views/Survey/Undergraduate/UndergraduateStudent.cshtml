@@ -9,51 +9,63 @@
     <link rel="stylesheet" href="~/content/css/dataTables.bootstrap4.min.css" />
 }
 
-<div class="container">
+<div class="ml-md-2 mr-md-2">
     <div class="row mb-3">
         <div class="col-md-12">
             <div class="form-row">
-                <div id="input-search" class="col-8 col-md mb-2">
+                <div id="input-search" class="col-6 col-md-4 mb-2">
                     <div class="row">
                         <div class="col-12 col-md-6">
-                            <input class="form-control form-control" id="masv-search" type="text" placeholder="Tìm theo mã sinh viên" />
+                            <input class="form-control form-control-sm" id="masv-search" type="text" placeholder="Tìm theo mã sinh viên" />
                         </div>
                         <div class="col-12 col-md-6">
-                            <select class="form-control selectpicker custom-boostrap-select" name="allDotKhaoSat" id="allDotKhaoSatId" required title="Chọn đợt khảo sát">
+                            <select class="form-control form-control-sm selectpicker custom-boostrap-select" name="allDotKhaoSat" id="allDotKhaoSatId" required title="Chọn đợt khảo sát">
                             </select>
                         </div>
                     </div>
                 </div>
-                <div class="col-4 col-md-2 mb-2 d-flex align-items-start justify-content-center">
+                <div class="col-4 col-md-2 mb-2 d-flex align-items-start justify-content-start">
                     <div class="d-flex">
                         <div class="clear-input d-flex align-items-center ml-md-2 mr-md-3" clear-input="#input-search" title="Nhập lại">
                             <i class="fas fa-redo"></i>
                         </div>
-                        <button id="btn-search" class="btn btn-secondary">Tìm kiếm</button>
+                        <button id="btn-search" class="btn btn-secondary btn-sm">Tìm kiếm</button>
                     </div>
                 </div>
                 <div class="col-12 col-md mb-2 d-flex align-items-start justify-content-md-end justify-content-center">
                     <div class="d-flex">
-                        <button class="btn btn-primary mx-2" id="upload">Tải lên danh sách</button>
-                        <button class="btn btn-danger" id="delete-all">Xoá toàn bộ</button>
+                        <button class="btn btn-info mx-2 btn-sm" id="download-student">Tải xuống danh sách</button>
+                        <button class="btn btn-primary mr-2 btn-sm" id="upload">Tải lên danh sách</button>
+                        @*<button class="btn btn-danger" id="delete-all">Xoá toàn bộ</button>*@
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row">
+    <div class="row m-fs-10">
         <div class="col-md-12">
             <table id="id-datatable" class="table table-bordered">
                 <thead>
                     <tr>
                         <th class="text-center">Đợt khảo sát</th>
-                        <th class="text-center">Mã sinh viên</th>
-                        <th class="text-center">Tên sinh viên</th>
+                        <th class="text-center">MSSV</th>
+                        <th class="text-center">Họ tên</th>
                         <th class="text-center">Lớp</th>
+                        <th class="text-center">Ngày sinh</th>
+                        <th class="text-center">Giới tính</th>
                         <th class="text-center">TBCHT</th>
                         <th class="text-center">Xếp loại</th>
-                        <th class="text-center">Trạng thái bài ks</th>
+                        <th class="text-center">Ngành</th>
+                        <th class="text-center">Chuyên ngành</th>
+                        <th class="text-center">Hệ tốt nghiệp</th>
+                        <th class="text-center">Khoa</th>
+                        <th class="text-center">Số quyết định</th>
+                        <th class="text-center">Ngày ra qđ</th>
+                        <th class="text-center">sdt</th>
+                        <th class="text-center">email</th>
+                        <th class="text-center">T.thái bài ks</th>
+                        <th></th>
                     </tr>
                 </thead>
             </table>
@@ -123,6 +135,37 @@
     </div>
 </div>
 
+<div class="modal fade auto-clear-form-on-open" id="modal-download" tabindex="-1" role="dialog" aria-labelledby="modal-download" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="min-width:800px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tải xuống danh sách</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="form-group row">
+                        <label class="col-3 col-form-label">Đợt khảo sát <span class="text-danger">*</span></label>
+                        <div class="col-9">
+                            <select class="form-control selectpicker custom-boostrap-select" id="surveyRoundId-download" required>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
+                <button id="btn-download-student" class="btn btn-primary ml-1">
+                    <i class="fas fa-upload"></i>
+                    Tải xuống
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script src="~/Content/js/bootstrap-select.min.js"></script>
     <script src="~/content/js/jquery.dataTables.min.js"></script>
@@ -145,14 +188,20 @@
         <script>
             let allSurveyRound = JSON.parse('@Html.Raw(ViewData["AllSurveyRound"])');
             let allDotKhaoSat = $('#allDotKhaoSatId');
+
+            let dotKhaoSatDownloadStudent = $('#surveyRoundId-download');
+
             allSurveyRound.forEach(e => {
                 allDotKhaoSat.append(`<option value="${e.id}">${e.name} (từ ${e.fromDate != null ? getDateString(e.fromDate) : "-"} đến ${e.endDate != null ? getDateString(e.endDate) : ""})</option>`);
+                dotKhaoSatDownloadStudent.append(`<option value="${e.id}">${e.name} (từ ${e.fromDate != null ? getDateString(e.fromDate) : "-"} đến ${e.endDate != null ? getDateString(e.endDate) : ""})</option>`);
             });
             allDotKhaoSat.selectpicker('refresh');
+
+            dotKhaoSatDownloadStudent.selectpicker('refresh');
         </script>
     }
 
-<script>
+    <script>
         var table = $('#id-datatable').DataTable({
             processing: true,
             serverSide: true,
@@ -188,13 +237,49 @@
                     data: "tensinhvien"
                 },
                 {
-                    data: "lopqd",
+                    data: "lopqd"
+                },
+                {
+                    data: null,
+                    mRender: function (data, type, row) {
+                        return getDateStringFromServerType(data.ngaysinh);
+                    }
+                },
+                {
+                    data: "gioitinh"
                 },
                 {
                     data: "tbcht",
                 },
                 {
                     data: "xeploai"
+                },
+                {
+                    data: "tennganh"
+                },
+                {
+                    data: "tenchnga"
+                },
+                {
+                    data: "hedaotao"
+                },
+                {
+                    data: "makhoa"
+                },
+                {
+                    data: "soqdtn"
+                },
+                {
+                    data: null,
+                    mRender: function (data, type, row) {
+                        return getDateStringFromServerType(data.ngayraqd);
+                    }
+                },
+                {
+                    data: "mobile"
+                },
+                {
+                    data: "email"
                 },
                 {
                     data: null,
@@ -206,12 +291,16 @@
                             return 'Đang thực hiện';
                         } else if (data.surveyStudentStatus === @((int)SurveyStudentStatus.Done)) {
                             return 'Hoàn thành';
-                        } else if (data.surveyStudentStatus === @((int)SurveyStudentStatus.RequestAuthorize)) {
-                            return 'Đang xác thực';
                         } else if (data.surveyStudentStatus === @((int)SurveyStudentStatus.HaveNot)) {
                             return 'Không có';
                         }
                         return data.surveyStudentStatus;
+                    }
+                },
+                {
+                    data: null,
+                    mRender: function (data, type, row) {
+                        return `<button class="btn btn-outline-danger btn-sm" onclick="deleteStudent('${data.exMasv}')">Xoá</button>`;
                     }
                 }
             ]
@@ -237,6 +326,7 @@
             var formData = new FormData();
             formData.append("fileUpload", $('#file-upload').prop('files')[0]);
             formData.append("surveyRoundId", $('#surveyRoundId').val());
+            $('#loading-screen').show();
             $.ajax({
                 data: formData,
                 dataType: 'json',
@@ -245,6 +335,7 @@
                 method: 'Post',
                 url: '/Survey/UploadFileUndergraudate',
             }).done(function (res) {
+                $('#loading-screen').hide();
                 if (res.statusCode === 200) {
                     toastSuccess('Lưu thành công');
                     table.ajax.reload();
@@ -260,26 +351,28 @@
                     console.log(res);
                 }
             }).fail(function (jqXHR, textStatus, errorThrown) {
+                $('#loading-screen').hide();
                 console.log(textStatus + ': ' + errorThrown);
                 console.log(jqXHR);
             });
         });
 
-        $('#delete-all').click(() => {
-            $('#modal-yes-no').modal('show');
+        $('#download-student').click(() => {
+            $('#modal-download').modal('show');
         });
 
-        $('#choose-yes').click(() => {
+        $('#btn-download-student').click(() => {
+            $('#loading-screen').show();
             $.ajax({
+                data: { surveyRoundId: $('#surveyRoundId-download').val() },
                 dataType: 'json',
-                method: 'Post',
-                url: '/Survey/DeleteAllUndergraduateStudent',
-                complete: () => { }
+                method: 'Get',
+                url: '/Survey/DownloadListStudent',
             }).done(function (res) {
+                $('#modal-download').modal('hide');
+                $('#loading-screen').hide();
                 if (res.statusCode === 200) {
-                    toastSuccess('Xoá thành công');
-                    table.ajax.reload();
-                    $('#modal-yes-no').modal('hide');
+                    window.open(res.content.url, "_blank");
                 }
                 else {
                     try {
@@ -291,10 +384,75 @@
                     console.log(res);
                 }
             }).fail(function (jqXHR, textStatus, errorThrown) {
+                $('#loading-screen').hide();
                 console.log(textStatus + ': ' + errorThrown);
                 console.log(jqXHR);
             });
         });
 
-</script>
+        $('#delete-all').click(() => {
+            $('#modal-yes-no-content').html('Xác nhận xoá toàn bộ sinh viên ?');
+            $('#modal-yes-no').modal('show');
+            $('#choose-yes').off();
+            $('#choose-yes').click(() => {
+                $.ajax({
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/DeleteAllUndergraduateStudent',
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        toastSuccess('Xoá thành công');
+                        table.ajax.reload();
+                        $('#modal-yes-no').modal('hide');
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+        });
+
+        function deleteStudent(mssv) {
+            $('#modal-yes-no-content').html('Xác nhận xoá sinh viên có mã: ' + mssv + ' ?');
+            $('#modal-yes-no').modal('show');
+            $('#choose-yes').off();
+            $('#choose-yes').click(() => {
+                $.ajax({
+                    data: {mssv},
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/DeleteUndergraduateStudent',
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        toastSuccess('Xoá thành công');
+                        table.ajax.reload();
+                        $('#modal-yes-no').modal('hide');
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+        }
+    </script>
 }

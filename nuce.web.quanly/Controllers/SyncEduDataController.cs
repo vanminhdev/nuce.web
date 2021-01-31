@@ -26,6 +26,13 @@ namespace nuce.web.quanly.Controllers
             return View();
         }
 
+        [HttpGet]
+        public async Task<ActionResult> GetCountEduData()
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/SyncEduData/GetCountEduData");
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
         #region đồng bộ db khảo thí
         [HttpPost]
         public async Task<ActionResult> SyncFromEduData(string action)

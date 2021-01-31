@@ -64,8 +64,9 @@ namespace nuce.web.api.Services.EduData.BackgroundTasks
                 XmlNodeList temp = null;
 
                 _logger.LogInformation("sync last student classroom is start.");
-
+                //eduDataContext.Database.ExecuteSqlRaw($"TRUNCATE TABLE As_Academy_Student_ClassRoom");
                 var semester = await eduDataContext.AsAcademySemester.FirstOrDefaultAsync(o => o.Status == (int)SemesterStatus.IsLast);
+                var countTrungLap = 0;
                 while (true)
                 {
                     transaction = eduDataContext.Database.BeginTransaction();
@@ -80,26 +81,25 @@ namespace nuce.web.api.Services.EduData.BackgroundTasks
                             string strMaSV = temp.Count > 0 ? temp[0].InnerText.Trim() : null;
                             temp = item.GetElementsByTagName("MaDK");
                             string strMaDK = temp.Count > 0 ? temp[0].InnerText.Trim().Replace(" ", "") : null;
-
-                            var classRoom = await eduDataContext.AsAcademyClassRoom.FirstOrDefaultAsync(c => c.Code == strMaDK);
-                            var classRoomId = classRoom != null ? classRoom.Id : -1;
-
-                            var student = await eduDataContext.AsAcademyStudent.FirstOrDefaultAsync(c => c.Code == strMaSV);
-                            var studentId = student != null ? student.Id : -1;
+                            temp = item.GetElementsByTagName("NHHK");
+                            var NHHK = temp.Count > 0 ? temp[0].InnerText.Trim() : null;
 
                             var studentClassRoom = await eduDataContext.AsAcademyStudentClassRoom
-                                .FirstOrDefaultAsync(sc => sc.StudentCode == strMaSV && sc.ClassRoomId == classRoomId);
+                                .FirstOrDefaultAsync(sc => sc.StudentCode == strMaSV && sc.ClassRoomCode == strMaDK && sc.Nhhk == NHHK);
 
-                            if (studentClassRoom == null)
+                            if (studentClassRoom == null) //chưa có thì thêm
                             {
                                 eduDataContext.AsAcademyStudentClassRoom.Add(new AsAcademyStudentClassRoom
                                 {
-                                    ClassRoomId = classRoomId,
                                     ClassRoomCode = strMaDK,
-                                    StudentId = studentId,
                                     StudentCode = strMaSV,
-                                    SemesterId = semester.Id
+                                    Nhhk = NHHK
                                 });
+                            } 
+                            else
+                            {
+                                countTrungLap++;
+                                //_logger.LogInformation($"dong bo sinh vien lop mon hoc bi trung ma sv: {strMaSV}, ma lop: {strMaDK}, nhhk: {NHHK}");
                             }
                         }
                         page++;
@@ -112,6 +112,7 @@ namespace nuce.web.api.Services.EduData.BackgroundTasks
                     _logger.LogInformation($"sync last student classroom {totalDone} record");
                 }
                 _logger.LogInformation("sync last student classroom is done");
+                _logger.LogInformation($"co tat ca {countTrungLap} ban ghi bi trung lap");
 
                 status.Status = (int)TableTaskStatus.Done;
                 status.IsSuccess = true;

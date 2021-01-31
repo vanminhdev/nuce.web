@@ -15,11 +15,12 @@ namespace nuce.web.api.ViewModel.Survey.Graduate
         public string tbcht { get; set; }
         public string xeploai { get; set; }
         public string soqdtn { get; set; }
+        public DateTime? ngayraqd { get; set; }
         public string sohieuba { get; set; }
         public string tinh { get; set; }
         public string truong { get; set; }
         public string gioitinh { get; set; }
-        public string ngaysinh { get; set; }
+        public DateTime? ngaysinh { get; set; }
         public string tkhau { get; set; }
         public string lop12 { get; set; }
         public string namtn { get; set; }
@@ -51,10 +52,19 @@ namespace nuce.web.api.ViewModel.Survey.Graduate
         public string exMasv { get; set; }
         public int type { get; set; }
         public int status { get; set; }
+        public string makhoa { get; set; }
+        public string malop { get; set; }
+        public int? nguoiphatbang { get; set; }
+        public string ghichuphatbang { get; set; }
+        public int surveyStudentStatus { get; set; }
+        public string loaiHinh { get; set; }
     }
 
     public class GraduateStudentFilter
     {
         public string Masv { get; set; }
+        public Guid? DotKhaoSatId { get; set; }
+        public string MaKhoa { get; set; }
+        public string LopQL { get; set; }
     }
 }

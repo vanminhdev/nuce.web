@@ -71,32 +71,30 @@ namespace nuce.web.api.Controllers.Survey.Normal
 
         [HttpGet]
         [AppAuthorize(RoleNames.Student)]
-        public async Task<IActionResult> GetTheSurveyContent([Required(AllowEmptyStrings = false)] Guid? id, [Required(AllowEmptyStrings = false)] string classroomCode)
+        public async Task<IActionResult> GetTheSurveyContent([Required(AllowEmptyStrings = false)] Guid? id, [Required(AllowEmptyStrings = false)] string classroomCode, string nhhk)
         {
             try
             {
                 //mã sinh viên kiểm tra sinh viên có bài khảo sát đó thật không
                 var studentCode = _userService.GetCurrentStudentCode();
-                var result = await _asEduSurveyBaiKhaoSatSinhVienService.GetTheSurveyContent(studentCode, classroomCode, id.Value);
+                var result = await _asEduSurveyBaiKhaoSatSinhVienService.GetTheSurveyContent(studentCode, classroomCode, nhhk, id.Value);
                 return Ok(result);
             }
             catch (RecordNotFoundException e)
             {
-                return NotFound(new { message = "Không lấy được nội dung bài khảo sát", detailMessage = e.Message });
+                return NotFound(new { message = e.Message });
             }
         }
 
         [HttpGet]
         [AppAuthorize(RoleNames.Student)]
         public async Task<IActionResult> GetSelectedAnswerAutoSave(
-            [Required(AllowEmptyStrings = false)]
-            [NotContainWhiteSpace]
-            string classRoomCode)
+            [Required(AllowEmptyStrings = false)] [NotContainWhiteSpace] string classRoomCode, [Required(AllowEmptyStrings = false)] string nhhk)
         {
             try
             {
                 var studentCode = _userService.GetCurrentStudentCode();
-                var result = await _asEduSurveyBaiKhaoSatSinhVienService.GetSelectedAnswerAutoSave(studentCode, classRoomCode);
+                var result = await _asEduSurveyBaiKhaoSatSinhVienService.GetSelectedAnswerAutoSave(studentCode, classRoomCode, nhhk);
                 return Ok(result);
             }
             catch (RecordNotFoundException e)
@@ -113,7 +111,7 @@ namespace nuce.web.api.Controllers.Survey.Normal
             {
                 var studentCode = _userService.GetCurrentStudentCode();
                 var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-                await _asEduSurveyBaiKhaoSatSinhVienService.AutoSave(studentCode, content.ClassRoomCode, content.QuestionCode, content.AnswerCode, content.AnswerCodeInMulSelect,
+                await _asEduSurveyBaiKhaoSatSinhVienService.AutoSave(studentCode, content.ClassRoomCode, content.NHHK, content.QuestionCode, content.AnswerCode, content.AnswerCodeInMulSelect,
                     content.AnswerContent, content.NumStar, content.City, content.IsAnswerCodesAdd == null || content.IsAnswerCodesAdd.Value);
             }
             catch (DbUpdateException e)
@@ -136,16 +134,13 @@ namespace nuce.web.api.Controllers.Survey.Normal
 
         [HttpPut]
         [AppAuthorize(RoleNames.Student)]
-        public async Task<IActionResult> SaveSelectedAnswer([FromBody]
-            [Required(AllowEmptyStrings = false)]
-            [NotContainWhiteSpace]
-            string classRoomCode)
+        public async Task<IActionResult> SaveSelectedAnswer([Required(AllowEmptyStrings = false)] [NotContainWhiteSpace] string classRoomCode, [Required(AllowEmptyStrings = false)] string nhhk)
         {
             try
             {
                 var studentCode = _userService.GetCurrentStudentCode();
                 var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-                await _asEduSurveyBaiKhaoSatSinhVienService.SaveSelectedAnswer(studentCode, classRoomCode, ip);
+                await _asEduSurveyBaiKhaoSatSinhVienService.SaveSelectedAnswer(studentCode, classRoomCode, nhhk, ip);
             }
             catch (InvalidInputDataException e)
             {
@@ -184,6 +179,30 @@ namespace nuce.web.api.Controllers.Survey.Normal
             catch (RecordNotFoundException e)
             {
                 return NotFound(new { message = "Không lấy được trạng thái", detailMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không lấy được trạng thái", detailMessage = mainMessage });
+            }
+        }
+
+        /// <summary>
+        /// Đếm số lượng bản ghi
+        /// </summary>
+        [HttpGet]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
+        public async Task<IActionResult> CountGenerateTheSurveyStudent([Required(AllowEmptyStrings = false)] Guid? surveyRoundId)
+        {
+            try
+            {
+                var result = await _asEduSurveyBaiKhaoSatSinhVienService.CountGenerateTheSurveyStudent(surveyRoundId.Value);
+                return Ok(new { countTheSurveyStudent = result.Item1,  countStudentClassroom = result.Item2 });
+            }
+            catch (RecordNotFoundException e)
+            {
+                return NotFound(new { message = e.Message });
             }
             catch (Exception e)
             {

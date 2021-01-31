@@ -21,5 +21,9 @@ namespace nuce.web.api.Services.Survey.Interfaces
         public Task CreateAll(List<AsEduSurveyUndergraduateStudent> students);
 
         public Task TruncateTable();
+
+        public Task Delete(string studentCode);
+
+        public Task<byte[]> DownloadListStudent(Guid surveyRoundId);
     }
 }

@@ -1,9 +1,35 @@
 ﻿@using nuce.web.survey.student.Common
 @using nuce.web.survey.student.Models.JsonData
 @using Newtonsoft.Json;
+@using System.IdentityModel.Tokens.Jwt;
+@using System.Security.Claims;
 @model  List<QuestionJson>
 @{
     ViewData["Title"] = "Bài khảo sát cựu sinh viên";
+}
+
+@{
+    var handler = new JwtSecurityTokenHandler();
+    var accessToken = Request.Cookies[UserParameters.JwtAccessToken];
+    var username = "";
+    string givenName = "";
+    var roles = new List<string>();
+    if (accessToken != null)
+    {
+
+        var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
+
+        //username
+        var usernameClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+        if (usernameClaim != null)
+        {
+            username = usernameClaim.Value;
+        }
+
+        //role
+        roles = jwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(r => r.Value).ToList();
+        givenName = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value ?? "";
+    }
 }
 
 @section Style {
@@ -25,6 +51,12 @@
             display: inline;
         }
     </style>
+}
+
+@section Breadcrumb {
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/home/indexundergraduate">Khảo sát</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Làm bài khảo sát</li>
 }
 
 @helper GenerateAnswerChildQuestion(AnswerJson answer)
@@ -74,7 +106,7 @@
 @helper GenerateAnswer(QuestionJson question)
 {
     bool displayLong = false;
-    if (question.Answers != null && (question.Answers.Count > 5 || question.Answers.Where(o => o.Content.Length > 30).Count() > 0))
+    if (question.Answers != null && (question.Answers.Count > 5 || question.Answers.Where(o => o.Content.Length > 20).Count() > 0))
     {
         displayLong = true;
     }
@@ -85,7 +117,7 @@
         {
             if (displayLong)
             {
-                <div class="col-12">
+                <div class="col-12 col-md-6">
                     <div class="d-flex">
                         @* answerchildquestioncode để show hide câu hỏi con của đáp án *@
                         <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
@@ -98,14 +130,14 @@
             }
             else
             {
-                <div class="col">
-                    <div class="form-group mb-0">
+                <div class="col-6 col-md">
+                    <div class="d-flex">
                         @* answerchildquestioncode để show hide câu hỏi con của đáp án *@
-                        <input questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
+                        <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
                                @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "")
                                @(answer.ShowQuestion != null ? $"showquestion={JsonConvert.SerializeObject(answer.ShowQuestion)}" : "")
                                @(answer.HideQuestion != null ? $"hidequestion={JsonConvert.SerializeObject(answer.HideQuestion)}" : "") />
-                        <label class="text-dark">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+                        <label class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
                     </div>
                 </div>
             }
@@ -117,7 +149,7 @@
         {
             if (displayLong)
             {
-                <div class="col-12">
+                <div class="col-12 col-md-6">
                     <div class="d-flex">
                         <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
                                @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "") />
@@ -127,11 +159,11 @@
             }
             else
             {
-                <div class="col">
-                    <div class="form-group mb-0">
-                        <input questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
+                <div class="col-6 col-md">
+                    <div class="d-flex">
+                        <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
                                @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "") />
-                        <label class="text-dark">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+                        <label class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
                     </div>
                 </div>
             }
@@ -142,6 +174,15 @@
         <div class="col">
             <div class="form-group">
                 <textarea class="form-control" style="min-height:100px;" questionCode="@question.Code" name="@question.Code"></textarea>
+            </div>
+        </div>
+    }
+    else if (question.Type == QuestionType.CityC)
+    {
+        <div class="col">
+            <div class="form-group">
+                <select class="form-control lua-chon-tinh-thanh col-12 col-md-3" questionCode="@question.Code" name="@question.Code">
+                </select>
             </div>
         </div>
     }
@@ -173,10 +214,80 @@
 <div class="container">
     <div class="row">
         <div class="col-12">
-            <h1 class="text-center text-dark">NỘI DUNG KHẢO SÁT</h1>
+            <p class="text-center text-dark m-fs-20 font-weight-bold">PHIẾU KHẢO SÁT Ý KIẾN PHẢN HỒI TỪ SINH VIÊN VỀ CHẤT LƯỢNG ĐÀO TẠO TRƯỚC TỐT NGHIỆP</p>
+            <p class="text-dark font-italic">Những thông tin do anh/chị cung cấp dưới đây sẽ được sử dụng trong việc cải tiến chương trình, không ngừng nâng cao chất lượng đào tạo của Trường ĐHXD. Nhà trường bảo mật các thông tin cá nhân và chỉ công bố kết quả thống kê</p>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-12 font-weight-bold mb-1 pl-0">
+            A. THÔNG TIN CHUNG
+        </div>
+        <div class="col-12 ml-2">
+            <div class="row">
+                <form id="form-validate" class="col-12 auto-validate">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold">Mã sinh viên</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control-plaintext" value="@username" readonly disabled>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold">Tên sinh viên</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control-plaintext" value="@givenName" readonly disabled>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold">Email <span class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="text" name="email" class="form-control" required data-rule-email="true" data-rule-emailNotEdu="true">
+                            <small class="form-text text-muted">Email này dùng cho việc xác thực hoàn thành bài khảo sát. Lưu ý không sử dụng email có tên miền @@nuce.edu.vn (khuyên dùng @@gmail.com)</small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold">Số điện thoại <span class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="text" name="phone" class="form-control" required data-rule-phoneNumberMobile="true">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label font-weight-bold">CMND/CCCD <span class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="text" name="cmnd" class="form-control" required data-rule-number="true" data-rule-minlength="9" data-rule-maxlength="12">
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
     <div class="row">
+        <div class="col-12 font-weight-bold mb-1 pl-0">
+            B. NỘI DUNG KHẢO SÁT
+        </div>
+        <div class="col-12 mb-2 ml-2">
+            <div>
+                Với những câu hỏi lựa chọn phương án trả lời theo thang đánh giá, sinh viên chọn 01 phương án phù hợp theo thang điểm từ 1 đến 5, trong đó:
+                <div class="row" style="padding-left: 5px; padding-bottom: 3px; padding-top: 3px;">
+                    <div class="col-sm-5 col-xs-12 item">
+                        <span style="font-weight: bold;">1.</span> Hoàn toàn <b>KHÔNG</b> đồng ý/Rất <b>KHÔNG</b> hài lòng
+                    </div>
+                    <div class="col-sm-4 col-xs-12 item">
+                        <b>2. KHÔNG</b> đồng ý/<b>KHÔNG</b> hài lòng
+                    </div>
+                    <div class="col-sm-3 col-xs-12 item">
+                        <b>3. TẠM</b> chấp nhận/<b>TẠM</b> hài lòng
+                    </div>
+                </div>
+                <div class="row" style="padding-left: 5px;">
+                    <div class="col-sm-5 col-xs-12 item">
+                        <b>4. ĐỒNG Ý/HÀI LÒNG</b>
+                    </div>
+                    <div class="col-sm-4 col-xs-12 item">
+                        <b>5. HOÀN TOÀN ĐỒNG Ý/RẤT HÀI LÒNG</b>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="col-12">
             @{
                 var index = 1;
@@ -266,7 +377,8 @@
             </div>
             <div class="modal-body" id="modal-yes-no-content">
                 Xác nhận nộp bài khảo sát. <br />
-                Lưu ý: bài khảo sát đã nộp không thể chỉnh sửa lại
+                Lưu ý: bài khảo sát đã nộp không thể chỉnh sửa lại <br />
+                Sau khi kết thúc bài khảo sát sẽ có một <b>email xác thực hoàn thành bài khảo sát</b> gửi tới địa chỉ email anh/chị cung cấp
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
@@ -296,6 +408,16 @@
 </div>
 
 @section Scripts {
+    <script src="~/Content/js/tinh-thanh.js"></script>
+    <script>
+        $('.lua-chon-tinh-thanh').each(function () {
+            let seft = $(this);
+            let str = '';
+            TenTinhThanh.forEach(item => {
+                seft.append(`<option value="${item}">${item}</option>`);
+            });
+        });
+    </script>
     @if (ViewData["SelectedAnswer"] != null)
     {
         <script>
@@ -315,13 +437,14 @@
                     $(`input[type=radio][questionCode=${element.QuestionCode}][numstar=${element.NumStart}]`).attr('checked', true);
                 } else if (element.AnswerContent !== undefined && element.AnswerContent !== "") {
                     $(`textarea[questionCode=${element.QuestionCode}]`).val(element.AnswerContent);
+                    $(`select[questionCode=${element.QuestionCode}]`).val(element.AnswerContent);
                 }
             });
         </script>
     }
     @if (Model.Count > 0)
     {
-        <script>
+<script>
             $('input[type=radio]').each(function () {
                 let seft = $(this);
                 let proSeft = this;
@@ -403,24 +526,45 @@
                     }, 1500)
                 );
             });
+
+            $('.lua-chon-tinh-thanh').each(function () {
+                let seft = $(this);
+                seft.change(function () {
+                    $.ajax({
+                        data: { theSurveyId: '@ViewData["TheSurveyId"]', questionCode: seft.attr('questionCode'), answerContent: seft.val() },
+                        dataType: 'json',
+                        method: 'Post',
+                        url: '/GraduateHome/AutoSave',
+                        timeout: 0,
+                        complete: () => { }
+                    }).done(function (res) {
+                        console.log('tinhthanh');
+                        console.log(res);
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        console.log(textStatus + ': ' + errorThrown);
+                        console.log(jqXHR);
+                    });
+                });
+            });
+
             $('#choose-yes').click(() => {
                 $('#modal-yes-no').modal('hide');
                 $('#loading-screen').show();
+                let data = $('#form-validate').serializeArray();
+                data.push({ name:"theSurveyId", value: '@ViewData["TheSurveyId"]' });
                 $.ajax({
-                    data: { theSurveyId: '@ViewData["TheSurveyId"]' },
+                    data: data,
                     dataType: 'json',
                     method: 'Post',
                     url: '/Home/UndergraduateTheSurveySubmit',
                     timeout: 0,
-                    complete: () => {
-                    }
+                    complete: () => {}
                 }).done(function (res) {
                     $('#loading-screen').hide();
                     if (res.statusCode === 200) {
                         location.href = '/home/indexundergraduate';
                     }
                     else {
-                        console.log(res);
                         try {
                             var message = JSON.parse(res.content);
                             toastError(message.message);
@@ -439,6 +583,11 @@
 
             let str = '@Html.Raw(JsonConvert.SerializeObject(Model.Select(o => new { o.Code, o.Type }).ToList()))';
             function checkRequired() {
+                if (!$('#form-validate').valid()) {
+                    document.getElementById(`form-validate`).scrollIntoView();
+                    return false;
+                }
+
                 let questions = JSON.parse(str);
                 let hasChecked = false;
                 for (let i = 0; i < questions.length; i++) {
@@ -447,7 +596,7 @@
                         continue;
                     }
 
-                    if (questions[i].Type === "@QuestionType.SC" || questions[i].Type === "@QuestionType.MC") {
+                    if (questions[i].Type === "@QuestionType.SC" || questions[i].Type === "@QuestionType.MC" || questions[i].Type === "@QuestionType.StarRating") {
                         hasChecked = false;
                         $(`input[questionCode="${questions[i].Code}"]`).each(function () {
                             if (this.checked) {
@@ -456,6 +605,21 @@
                         });
                         if (hasChecked === false) {
                             document.getElementById(`${questions[i].Code}`).scrollIntoView();
+                            console.log('chua lam cau ' + questions[i].Code);
+                            return false;
+                        }
+                    }
+
+                    if (questions[i].Type === "@QuestionType.CityC") {
+                        hasChecked = true;
+                        $(`select[questionCode="${questions[i].Code}"]`).each(function () {
+                            if ($(this).val() == null) {
+                                document.getElementById(`${questions[i].Code}`).scrollIntoView();
+                                console.log('chua lam cau tinh thanh ' + questions[i].Code);
+                                hasChecked = false;
+                            }
+                        });
+                        if (hasChecked === false) {
                             return false;
                         }
                     }
@@ -503,7 +667,7 @@
                     });
                 });
             });
-        </script>
+</script>
     }
 }
 

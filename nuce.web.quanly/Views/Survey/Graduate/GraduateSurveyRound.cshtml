@@ -1,4 +1,4 @@
-﻿
+﻿@using nuce.web.quanly.Common
 @{
     ViewData["Title"] = "Đợt khảo sát cựu sinh viên";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -39,9 +39,8 @@
                         <th class="text-center" width="38%">Tên</th>
                         <th class="text-center">Từ ngày</th>
                         <th class="text-center">Đến ngày</th>
-                        <th class="text-center">Loại</th>
                         <th class="text-center">Trạng thái</th>
-                        <th class="text-center" style="min-width:190px"></th>
+                        <th class="text-center" style="min-width:290px"></th>
                     </tr>
                 </thead>
             </table>
@@ -80,26 +79,26 @@
                                 <input type="date" class="form-control" name="endDate" id="endDate" required data-rule-dateGreaterThanOrEqual="#fromDate">
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label class="col-3 col-form-label">Mô tả</label>
-                            <div class="col-9">
-                                <textarea type="text" class="form-control" name="description" id="description"></textarea>
+                        @*<div class="form-group row">
+                                <label class="col-3 col-form-label">Mô tả</label>
+                                <div class="col-9">
+                                    <textarea type="text" class="form-control" name="description" id="description"></textarea>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-3 col-form-label">Ghi chú</label>
-                            <div class="col-9">
-                                <textarea type="text" class="form-control" name="note" id="note"></textarea>
+                            <div class="form-group row">
+                                <label class="col-3 col-form-label">Ghi chú</label>
+                                <div class="col-9">
+                                    <textarea type="text" class="form-control" name="note" id="note"></textarea>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-3 col-form-label">Loại <span class="text-danger">*</span></label>
-                            <div class="col-9">
-                                <select class="form-control selectpicker custom-boostrap-select" name="type" id="type" data-rule-onlyAcceptListValue="1" >
-                                    <option value="1">Đánh giá chất lượng giảng dạy</option>
-                                </select>
-                            </div>
-                        </div>
+                            <div class="form-group row">
+                                <label class="col-3 col-form-label">Loại <span class="text-danger">*</span></label>
+                                <div class="col-9">
+                                    <select class="form-control selectpicker custom-boostrap-select" name="type" id="type" data-rule-onlyAcceptListValue="1" >
+                                        <option value="1">Đánh giá chất lượng giảng dạy</option>
+                                    </select>
+                                </div>
+                            </div>*@
                     </form>
                 </div>
             </div>
@@ -153,6 +152,41 @@
     </div>
 </div>
 
+<div class="modal fade bd-example-modal-lg auto-clear-form-on-open" id="modal-thong-ke" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg mt-0" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thống kê số lượng</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="border-bottom-width: 1px;">Mã khoa</th>
+                                <th class="text-center" style="border-bottom-width: 1px;">Tên khoa</th>
+                                <th class="text-center" style="border-bottom-width: 1px;">Số bài phát ra</th>
+                                <th class="text-center" style="border-bottom-width: 1px;">Số bài thu về</th>
+                                <th class="text-center" style="border-bottom-width: 1px; min-width: 100px">Tỷ lệ tham gia ks</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-thong-ke-tam">
+                            <tr>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script src="~/Content/js/bootstrap-select.min.js"></script>
     <script src="~/content/js/jquery.dataTables.min.js"></script>
@@ -169,7 +203,7 @@
             language: dataTableConfig.language,
             columnDefs: [
                 {
-                    targets: [ 1, 2, 3, 4, 5],
+                    targets: [ 1, 2, 3],
                     className: 'text-center'
                 }
             ],
@@ -201,18 +235,24 @@
                     }
                 },
                 {
-                    data: "type"
-                },
-                {
                     data: null,
                     name: "status",
                     mRender: function (data, type, row) {
-                        if (data.status === 1) {
-                            return '<span class="badge badge-pill badge-success">Hoạt động</span>';
-                        } else if (data.status === 2) {
-                            return '<span class="badge badge-pill badge-secondary">Kết thúc</span>';
+                        let regex = /(\d+)/g;
+                        let fromDate = new Date(+data.fromDate.match(regex)[0]);
+                        let endDate = new Date(+data.endDate.match(regex)[0]);
+                        let currentDate = new Date();
+
+                        if (currentDate < fromDate) {
+                            return '<span class="badge badge-pill badge-primary">Mới</span>';
+                        } else if (currentDate >= fromDate && currentDate < endDate && (data.status == @((int)SurveyRoundStatus.Opened) || data.status == @((int)SurveyRoundStatus.New))) {
+                            return '<span class="badge badge-pill badge-success">Mở</span>';
+                        } else if (currentDate >= fromDate && currentDate < endDate && data.status == @((int)SurveyRoundStatus.Closed)) {
+                            return '<span class="badge badge-pill badge-secondary">Đóng tạm</span>';
+                        } else if (currentDate > endDate && data.status != @((int)SurveyRoundStatus.End)) {
+                            return '<span class="badge badge-pill badge-secondary">Đóng</span>';
                         } else {
-                            return data.status;
+                            return '<span class="badge badge-pill badge-secondary">Kết thúc</span>';
                         }
                     }
                 },
@@ -220,13 +260,28 @@
                     data: null,
                     mRender: function (data, type, row) {
                         let html = '';
-                        if (data.status === 1) {
+                        let regex = /(\d+)/g;
+                        let fromDate = new Date(+data.fromDate.match(regex)[0]);
+                        let endDate = new Date(+data.endDate.match(regex)[0]);
+                        let currentDate = new Date();
+
+                        if (currentDate < fromDate) {
                             html += `<button class="btn btn btn-outline-success btn-sm ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
-                            html += `<button class="btn btn btn-outline-warning btn-sm ml-1 mr-1" onclick="closeClick('${data.id}')">Kết thúc</button>`;
-                        }
-                        if (data.status === 2) {
                             html += `<button class="btn btn btn-outline-danger btn-sm ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
+                        } else if (currentDate >= fromDate && currentDate < endDate && (data.status == @((int)SurveyRoundStatus.Opened) || data.status == @((int)SurveyRoundStatus.New))) {
+                            //html += `<button class="btn btn btn-outline-warning btn-sm ml-1 mr-1" onclick="closeClick('${data.id}')">Đóng tạm</button>`;
+                            html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê số lượng" onclick="xemThongKeTam('${data.id}', this)">T.kê s.lượng</button>`;
+                            html += `<button class="btn btn btn-outline-primary btn-sm mr-1" title="báo cáo" onclick="exportReport('${data.id}')">K.xuất b.cáo</button>`;
+                        } else if (currentDate >= fromDate && currentDate < endDate && data.status == @((int)SurveyRoundStatus.Closed)) {
+                            //html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="openClick('${data.id}')">Mở lại</button>`;
+                            html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê số lượng" onclick="xemThongKeTam('${data.id}', this)">T.kê s.lượng</button>`;
+                            html += `<button class="btn btn btn-outline-primary btn-sm mr-1" title="báo cáo" onclick="exportReport('${data.id}')">K.xuất b.cáo</button>`;
+                        } else if (currentDate > endDate && data.status != @((int)SurveyRoundStatus.End)) {
+                            html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê số lượng" onclick="xemThongKeTam('${data.id}', this)">T.kê s.lượng</button>`;
+                            html += `<button class="btn btn btn-outline-primary btn-sm mr-1" title="báo cáo" onclick="exportReport('${data.id}')">K.xuất b.cáo</button>`;
+                            //html += `<button class="btn btn btn-outline-danger btn-sm ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
                         }
+                        //html += `<button class="btn btn btn-outline-warning btn-sm ml-1 mr-1" onclick="closeClick('${data.id}')">Kết thúc</button>`;
                         return html;
                     }
                 }
@@ -284,7 +339,7 @@
             saveChanges.attr('type-handle', 'create');
         }
 
-        function updateClick(id) { 
+        function updateClick(id) {
             $('#modal-input').modal('show');
             $('#modal-title').html('Cập nhật đợt khảo sát');
             saveChanges.attr('type-handle', 'update');
@@ -363,6 +418,79 @@
                 console.log(jqXHR);
             });
         });
-
+    </script>
+    <script>
+        function xemThongKeTam(id) {
+            $('#loading-screen').show();
+            $.ajax({
+                dataType: 'json',
+                method: 'Get',
+                url: `/Survey/GetTempDataGraduateSurvey?id=${id}`,
+                timeout: 0,
+                complete: () => { }
+            }).done(function (res) {
+                $('#loading-screen').hide();
+                if (res.statusCode === 200) {
+                    let str = '';
+                    let lstData = JSON.parse(res.content);
+                    lstData.forEach(item => {
+                        str += `<tr>
+                            <td class="text-center">${item.maKhoa}</td>
+                            <td class="">${item.tenKhoa}</td>
+                            <td class="text-center">${item.soPhieuPhatRa}</td> 
+                            <td class="text-center">${item.soPhieuThuVe}</td>
+                            <td class="text-center">${item.tyLeThamGia}</td>
+                        </tr>`;
+                    });
+                    $('#tbody-thong-ke-tam').html(str);
+                    $('#modal-thong-ke').modal('show');
+                }
+                else {
+                    try {
+                        let content = JSON.parse(res.content);
+                        toastError(content.message);
+                    }
+                    catch {
+                        console.log(res);
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                $('#loading-screen').hide();
+                console.log(textStatus + ': ' + errorThrown);
+                console.log(jqXHR);
+            });
+        }
+    </script>
+    <script>
+        function exportReport(surveyRoundId) {
+            $('#loading-screen').show();
+            $.ajax({
+                dataType: 'json',
+                method: 'Get',
+                url: '/Survey/ExportReportTotalGraduateSurvey',
+                data: { surveyRoundId },
+                timeout: 0,
+                complete: () => { }
+            }).done(function (res) {
+                $('#loading-screen').hide();
+                if (res.statusCode === 200) {
+                    $('#modal-export-report').modal('hide');
+                    window.open(res.content.url, "_blank");
+                }
+                else {
+                    try {
+                        let content = JSON.parse(res.content);
+                        toastError(content.message);
+                    } catch {
+                        toastError('Có lỗi xảy ra');
+                    }
+                    console.log(res);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                $('#loading-screen').hide();
+                console.log(textStatus + ': ' + errorThrown);
+                console.log(jqXHR);
+            });
+        }
     </script>
 }

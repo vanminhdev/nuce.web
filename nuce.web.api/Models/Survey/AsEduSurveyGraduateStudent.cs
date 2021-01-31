@@ -9,15 +9,17 @@ namespace nuce.web.api.Models.Survey
         public string Dottotnghiep { get; set; }
         public string Sovaoso { get; set; }
         public string Masv { get; set; }
+        public string Cmnd { get; set; }
         public string Noisiti { get; set; }
         public string Tbcht { get; set; }
         public string Xeploai { get; set; }
         public string Soqdtn { get; set; }
+        public DateTime? Ngayraqd { get; set; }
         public string Sohieuba { get; set; }
         public string Tinh { get; set; }
         public string Truong { get; set; }
         public string Gioitinh { get; set; }
-        public string Ngaysinh { get; set; }
+        public DateTime? Ngaysinh { get; set; }
         public string Tkhau { get; set; }
         public string Lop12 { get; set; }
         public string Namtn { get; set; }
@@ -49,5 +51,9 @@ namespace nuce.web.api.Models.Survey
         public string ExMasv { get; set; }
         public int Type { get; set; }
         public int Status { get; set; }
+        public string Makhoa { get; set; }
+        public string Malop { get; set; }
+        public int? Nguoiphatbang { get; set; }
+        public string Ghichuphatbang { get; set; }
     }
 }

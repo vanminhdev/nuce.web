@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using nuce.web.survey.student.Models.Survey.Normal;
 
 namespace nuce.web.survey.student.Controllers
 {
@@ -24,24 +25,6 @@ namespace nuce.web.survey.student.Controllers
         [AuthorizeActionFilter(RoleNames.Student)]
         public async Task<ActionResult> Index()
         {
-            #region lấy cả bài trước tốt nghiệp
-            //var accessToken = Request.Cookies[UserParameters.JwtAccessToken].Value;
-            //var handler = new JwtSecurityTokenHandler();
-            //var jwtSecurityToken = handler.ReadJwtToken(accessToken);
-            //if(jwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(r => r.Value).FirstOrDefault(o => o == "UndergraduateStudent") != null)
-            //{
-            //    var resUndergraduate = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateTheSurveyStudent/GetTheSurvey");
-            //    await base.HandleResponseAsync(resUndergraduate,
-            //        action200Async: async res =>
-            //        {
-            //            var jsonString = await res.Content.ReadAsStringAsync();
-            //            ViewData["UndergraduateTheSurvey"] = jsonString;
-            //            return null;
-            //        }
-            //    );
-            //}
-            #endregion
-
             var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurveyStudent/GetTheSurvey");
             return await base.HandleResponseAsync(response,
                 action200Async: async res =>
@@ -73,7 +56,7 @@ namespace nuce.web.survey.student.Controllers
                 action404Async: async res =>
                 {
                     var jsonString = await res.Content.ReadAsStringAsync();
-                    ViewData["message"] = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
+                    ViewData["message"] = JsonConvert.DeserializeObject<ResponseMessage>(jsonString)?.message;
                     return View();
                 }
             );
@@ -81,9 +64,9 @@ namespace nuce.web.survey.student.Controllers
 
         [HttpGet]
         [AuthorizeActionFilter(RoleNames.Student)]
-        public async Task<ActionResult> TheSurvey(string theSurveyId, string classRoomCode)
+        public async Task<ActionResult> TheSurvey(string theSurveyId, string classRoomCode, string nhhk)
         {
-            var resSelectedAnswer = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurveyStudent/GetSelectedAnswerAutoSave?classRoomCode={classRoomCode}");
+            var resSelectedAnswer = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurveyStudent/GetSelectedAnswerAutoSave?classRoomCode={classRoomCode}&nhhk={nhhk}");
             await base.HandleResponseAsync(resSelectedAnswer,
                 action200Async: async res =>
                 {
@@ -96,13 +79,20 @@ namespace nuce.web.survey.student.Controllers
                 }
             );
 
-            var resTheSurvey = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurveyStudent/GetTheSurveyContent?id={theSurveyId}&classroomCode={classRoomCode}");
+            var resTheSurvey = await base.MakeRequestAuthorizedAsync("Get", $"/api/TheSurveyStudent/GetTheSurveyContent?id={theSurveyId}&classroomCode={classRoomCode}&nhhk={nhhk}");
             return await base.HandleResponseAsync(resTheSurvey,
                 action200Async: async res =>
                 {
                     var jsonString = await res.Content.ReadAsStringAsync();
-                    var questions = JsonConvert.DeserializeObject<List<QuestionJson>>(jsonString);
+                    var theSurveyContent = JsonConvert.DeserializeObject<TheSurveyContent>(jsonString);
+                    var questions = JsonConvert.DeserializeObject<List<QuestionJson>>(theSurveyContent.NoiDungDeKhaoSat);
                     ViewData["classRoomCode"] = classRoomCode;
+                    ViewData["nhhk"] = nhhk;
+
+                    ViewData["ClassroomName"] = theSurveyContent.ClassroomName;
+                    ViewData["NHHK"] = theSurveyContent.NHHK;
+                    ViewData["LeturerName"] = theSurveyContent.LeturerName;
+                    ViewData["SurveyRoundName"] = theSurveyContent.SurveyRoundName;
                     return View(questions);
                 }
             );
@@ -110,9 +100,9 @@ namespace nuce.web.survey.student.Controllers
 
         [HttpPost]
         [AuthorizeActionFilter(RoleNames.Student)]
-        public async Task<ActionResult> AutoSave(string classRoomCode, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, bool isAnswerCodesAdd = true)
+        public async Task<ActionResult> AutoSave(string classRoomCode, string nhhk, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, bool isAnswerCodesAdd = true)
         {
-            var jsonStr = JsonConvert.SerializeObject(new { classRoomCode, questionCode, answerCode, answerCodeInMulSelect, isAnswerCodesAdd, answerContent });
+            var jsonStr = JsonConvert.SerializeObject(new { classRoomCode, nhhk, questionCode, answerCode, answerCodeInMulSelect, isAnswerCodesAdd, answerContent });
             var stringContent = new StringContent(jsonStr, Encoding.UTF8, "application/json");
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/TheSurveyStudent/AutoSave", stringContent);
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
@@ -120,10 +110,9 @@ namespace nuce.web.survey.student.Controllers
 
         [HttpPost]
         [AuthorizeActionFilter(RoleNames.Student)]
-        public async Task<ActionResult> TheSurveySubmit(string classRoomCode)
+        public async Task<ActionResult> TheSurveySubmit(string classRoomCode, string nhhk)
         {
-            var stringContent = new StringContent($"'{classRoomCode}'", Encoding.UTF8, "application/json");
-            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/TheSurveyStudent/SaveSelectedAnswer", stringContent);
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/TheSurveyStudent/SaveSelectedAnswer?classRoomCode={classRoomCode}&nhhk={nhhk}");
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
         #endregion
@@ -170,8 +159,14 @@ namespace nuce.web.survey.student.Controllers
 
         [HttpPost]
         [AuthorizeActionFilter(RoleNames.UndergraduateStudent)]
-        public async Task<ActionResult> UndergraduateTheSurveySubmit(string theSurveyId)
+        public async Task<ActionResult> UndergraduateTheSurveySubmit(string theSurveyId, string email, string phone, string cmnd)
         {
+            var content = new StringContent(JsonConvert.SerializeObject(new { email, phone, cmnd }), Encoding.UTF8, "application/json");
+            var resVeri = await base.MakeRequestAuthorizedAsync("Post", $"/api/UndergraduateTheSurveyStudent/Verification", content);
+            if(!resVeri.IsSuccessStatusCode)
+            {
+                return Json(new { statusCode = resVeri.StatusCode, content = await resVeri.Content.ReadAsStringAsync() });
+            }
             var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/UndergraduateTheSurveyStudent/SaveSelectedAnswer?theSurveyId={theSurveyId}");
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
@@ -185,9 +180,9 @@ namespace nuce.web.survey.student.Controllers
 
         [HttpPost]
         [AuthorizeActionFilter(RoleNames.UndergraduateStudent)]
-        public async Task<ActionResult> Verification(string email, string phone)
+        public async Task<ActionResult> Verification(string email, string phone, string cmnd)
         {
-            var content = new StringContent(JsonConvert.SerializeObject(new { email, phone }), Encoding.UTF8, "application/json");
+            var content = new StringContent(JsonConvert.SerializeObject(new { email, phone, cmnd }), Encoding.UTF8, "application/json");
             var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/UndergraduateTheSurveyStudent/Verification", content);
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() });
         }

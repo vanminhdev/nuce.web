@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using nuce.web.shared;
 using nuce.web.survey.student.Common;
 using nuce.web.survey.student.Models;
 using System;
@@ -17,15 +18,29 @@ namespace nuce.web.survey.student.Controllers
 {
     public class AccountController : BaseController
     {
+        //đăng nhập cho sinh viên
         [HttpGet]
-        public ActionResult Login()
+        public ActionResult Login(string target)
         {
-            //Khi access token hết hạn thì vào trang home sẽ được cấp mới
-            //if (Request.Cookies[UserParameters.JwtRefreshToken] != null)
-            //{
-            //    return Redirect("/home");
-            //}
-            return View(new LoginModel());
+            ViewData["target"] = target;
+            return View(new LoginModel() {
+                LoginUserType = 1
+            });
+        }
+
+        [HttpGet]
+        public ActionResult LoginCanBo(int type, string target)
+        {
+            ViewData["target"] = target;
+            if (type != (int)LoginType.Faculty && type != (int)LoginType.Department && type != (int)LoginType.Lecturer)
+            {
+                return Redirect($"/error?message={HttpUtility.UrlEncode("Trang không hợp lệ")}&code={(int)HttpStatusCode.NotFound}");
+            }
+
+            return View(new LoginModel()
+            {
+                LoginUserType = type
+            });
         }
 
         [HttpPost]
@@ -33,14 +48,15 @@ namespace nuce.web.survey.student.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("login", new LoginModel());
+                ViewData["target"] = target;
+                return View("login", login);
             }
 
             var userNamePasswordJsonString = JsonConvert.SerializeObject(new
             {
                 username = login.Username,
                 password = login.Password,
-                loginUserType = 1
+                loginUserType = login.LoginUserType
             });
 
             var content = new StringContent(userNamePasswordJsonString, Encoding.UTF8, "application/json");
@@ -51,11 +67,16 @@ namespace nuce.web.survey.student.Controllers
             var accessToken = responseCookies.FirstOrDefault(c => c.Name == UserParameters.JwtAccessToken);
             var refreshToken = responseCookies.FirstOrDefault(c => c.Name == UserParameters.JwtRefreshToken);
 
+            var roles = new List<string>();
             if (accessToken != null)
             {
                 Response.Cookies[UserParameters.JwtAccessToken].Value = accessToken.Value;
                 Response.Cookies[UserParameters.JwtAccessToken].HttpOnly = true;
                 Response.Cookies[UserParameters.JwtAccessToken].Expires = accessToken.Expires;
+
+                var handler = new JwtSecurityTokenHandler();
+                var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
+                roles = jwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(r => r.Value).ToList();
             }
 
             if (refreshToken != null)
@@ -65,14 +86,20 @@ namespace nuce.web.survey.student.Controllers
                 Response.Cookies[UserParameters.JwtRefreshToken].Expires = refreshToken.Expires;
             }
 
+
             switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:
-                    var handler = new JwtSecurityTokenHandler();
-                    var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
-                    var roles = jwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(r => r.Value).ToList();
                     if(target == null)
                     {
+                        if (roles.Contains(RoleNames.Student) && !roles.Contains(RoleNames.FakeStudent))
+                        {
+                            return Redirect("/home/index");
+                        } 
+                        else if (roles.Contains(RoleNames.UndergraduateStudent) && !roles.Contains(RoleNames.FakeStudent))
+                        {
+                            return Redirect("/home/indexundergraduate");
+                        }
                         return Redirect("/default");
                     }
                     else
@@ -103,26 +130,32 @@ namespace nuce.web.survey.student.Controllers
                     ViewData["LoginFailed"] = jsonString;
                     break;
             }
+            ViewData["target"] = target;
             return View("login", new LoginModel());
         }
 
         [HttpGet]
-        public ActionResult LoginUndergraduate()
+        public ActionResult LoginUndergraduate(string target)
         {
-            return View(new LoginModel());
+            ViewData["target"] = target;
+            return View(new LoginModel() {
+                LoginUserType = 1
+            });
         }
 
         [HttpGet]
-        public ActionResult LoginGraduate()
+        public ActionResult LoginGraduate(string target)
         {
+            ViewData["target"] = target;
             return View(new LoginModel());
         }
 
         [HttpPost]
-        public async Task<ActionResult> LoginGraduate(LoginModel login)
+        public async Task<ActionResult> LoginGraduate(LoginModel login, string target)
         {
             if (!ModelState.IsValid)
             {
+                ViewData["target"] = target;
                 return View("logingraduate", new LoginModel());
             }
 
@@ -158,7 +191,14 @@ namespace nuce.web.survey.student.Controllers
             switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:
-                    return Redirect("/graduatehome/index");
+                    if (target == null)
+                    {
+                        return Redirect("/default");
+                    }
+                    else
+                    {
+                        return Redirect(target);
+                    }
                 case HttpStatusCode.NotFound:
                     ViewData["LoginMessage"] = "Tài khoản không tồn tại";
                     break;
@@ -183,6 +223,7 @@ namespace nuce.web.survey.student.Controllers
                     ViewData["LoginFailed"] = jsonString;
                     break;
             }
+            ViewData["target"] = target;
             return View("logingraduate", new LoginModel());
         }
 

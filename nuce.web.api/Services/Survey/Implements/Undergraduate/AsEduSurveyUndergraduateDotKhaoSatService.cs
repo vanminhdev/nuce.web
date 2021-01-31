@@ -146,7 +146,7 @@ namespace nuce.web.api.Services.Survey.Implements
             {
                 throw new InvalidInputDataException("Đợt khảo sát không ở trạng thái đóng cửa hoặc mới tạo");
             }
-
+            surveyRound.FromDate = DateTime.Now;
             surveyRound.Status = (int)SurveyRoundStatus.Opened;
             await _context.SaveChangesAsync();
         }
@@ -158,6 +158,7 @@ namespace nuce.web.api.Services.Survey.Implements
             {
                 throw new RecordNotFoundException();
             }
+            surveyRound.EndDate = DateTime.Now;
             surveyRound.Status = (int)SurveyRoundStatus.Closed;
             await _context.SaveChangesAsync();
         }
@@ -175,6 +176,13 @@ namespace nuce.web.api.Services.Survey.Implements
         public async Task<List<AsEduSurveyUndergraduateSurveyRound>> GetAllSurveyRound()
         {
             var surveyRounds = await _context.AsEduSurveyUndergraduateSurveyRound.Where(o => o.Status != (int)SurveyRoundStatus.Deleted).ToListAsync();
+            return surveyRounds;
+        }
+
+        public async Task<List<AsEduSurveyUndergraduateSurveyRound>> GetSurveyRoundClosedOrEnd()
+        {
+            var surveyRounds = await _context.AsEduSurveyUndergraduateSurveyRound.Where(o => o.Status == (int)SurveyRoundStatus.Closed || o.Status == (int)SurveyRoundStatus.End)
+               .OrderByDescending(o => o.FromDate).ToListAsync();
             return surveyRounds;
         }
     }

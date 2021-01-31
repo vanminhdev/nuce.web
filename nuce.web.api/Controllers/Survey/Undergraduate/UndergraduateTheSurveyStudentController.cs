@@ -19,7 +19,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace nuce.web.api.Controllers.Survey.Graduate
+namespace nuce.web.api.Controllers.Survey.Undergraduate
 {
     [Route("api/[controller]/[action]")]
     [ApiController]

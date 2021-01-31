@@ -105,7 +105,7 @@
 </div>
 </form>
 
-<div class="modal fade bd-example-modal-lg" id="modal-input" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade bd-example-modal-lg auto-clear-form-on-open" id="modal-input" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document" style="min-width:1000px">
         <div class="modal-content">
             <div class="modal-header">
@@ -124,10 +124,6 @@
                                 </div>
                                 <div class="col-6 col-md mb-2">
                                     <input class="form-control form-control" id="noidung" type="text" placeholder="Tìm theo nội dung" />
-                                </div>
-                                <div class="col-6 col-md mb-2">
-                                    @Html.DropDownList("type", new SelectList(Definitions.QuestionType, "Key", "Value"),
-                                        new { @id = "loai", @class = "selectpicker form-control custom-boostrap-select", title = "Tìm theo loại câu hỏi" })
                                 </div>
                                 <div class="col-12 col-md mb-2 d-flex flex-row">
                                     <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
@@ -177,7 +173,7 @@
     </script>
     @if (ViewData["childQuestion"] != null)
     {
-        <script>
+    <script>
             let answerChildQuestion = {};
             try {
                 answerChildQuestion = JSON.parse('@Html.Raw(ViewData["childQuestion"])');
@@ -195,7 +191,7 @@
 
             }
             let answerChildQuestionId = null;
-        </script>
+    </script>
     }
     else
     {
@@ -244,7 +240,7 @@
                 }
             ],
             ajax: {
-                url: '/Survey/GetAllQuestion',
+                url: '/Survey/GetAllGraduateQuestion',
                 dataType: 'json',
                 contentType: 'application/json',
                 type: "POST",
@@ -280,7 +276,7 @@
                     data: null,
                     name: "type",
                     mRender: function (data, type, row) {
-                        let questionType = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(Definitions.QuestionType.ToList()))');
+                        let questionType = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(Definitions.GraduateQuestionType.ToList()))');
                         let result = questionType.find(element => element.Key == data.type);
                         return result.Value;
                     }
@@ -308,6 +304,7 @@
             table
                 .column(1).search($("#ma-cauhoi").val())
                 .column(3).search($("#noidung").val())
+                .column(4).search('@(QuestionType.SA)')
                 .draw();
         });
         table.column(4).search('@(QuestionType.SA)').draw();

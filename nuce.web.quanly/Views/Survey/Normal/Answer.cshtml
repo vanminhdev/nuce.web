@@ -28,7 +28,7 @@
                         <th class="text-center">Mã</th>
                         <th class="text-center" style="min-width:300px;">Nội dung</th>
                         <th class="text-center">Thứ tự</th>
-                        <th class="text-center"></th>
+                        <th class="text-center" style="min-width:140px;"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -48,8 +48,8 @@
                                 @Model.Answers[i].order
                             </td>
                             <td class="text-center">
-                                <a class="btn btn-outline-success" href='/survey/detailanswer?id=@Model.Answers[i].id&questionId=@Model.Answers[i].cauHoiId'>Sửa</a>
-                                <button class="btn btn-outline-danger" onclick="deleteAnswer('@Model.Answers[i].id')">Xoá</button>
+                                <a class="btn btn-outline-success btn-sm" href='/survey/detailanswer?id=@Model.Answers[i].id&questionId=@Model.Answers[i].cauHoiId'>Sửa</a>
+                                <button class="btn btn-outline-danger btn-sm" onclick="deleteAnswer('@Model.Answers[i].id')">Xoá</button>
                             </td>
                         </tr>
                     }

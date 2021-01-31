@@ -8,6 +8,7 @@ namespace nuce.web.api.Models.Survey
         public Guid Id { get; set; }
         public Guid SurveyRoundId { get; set; }
         public Guid TheSurveyId { get; set; }
+        public string ChuyenNganh { get; set; }
         public string QuestionCode { get; set; }
         public string AnswerCode { get; set; }
         public int? Total { get; set; }

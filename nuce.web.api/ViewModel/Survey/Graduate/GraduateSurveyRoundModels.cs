@@ -34,9 +34,5 @@ namespace nuce.web.api.ViewModel.Survey.Graduate
         public string Description { get; set; }
 
         public string Note { get; set; }
-
-        [Required]
-        [EnumDataType(typeof(SurveyRoundType))]
-        public int? Type { get; set; }
     }
 }

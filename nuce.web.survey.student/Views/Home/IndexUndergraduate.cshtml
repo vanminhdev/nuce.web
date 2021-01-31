@@ -6,7 +6,7 @@
 
 @section Breadcrumb {
     <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Khảo sát trước tốt nghiệp</li>
+    <li class="breadcrumb-item active" aria-current="page">Danh sách bài khảo sát trước tốt nghiệp</li>
 }
 
 <div class="container">
@@ -14,7 +14,7 @@
     {
         <div class="row">
             <div class="col-12">
-                <h2 class="text-center text-dark mb-3">Danh sách bài khảo sát trước tốt nghiệp</h2>
+                <h2 class="text-center text-dark mb-3">Danh sách bài khảo sát phản hồi của sinh viên về chất lượng đào tạo trước khi tốt nghiệp</h2>
             </div>
             <div class="col-12">
                 <p class="text-center text-dark mb-3 m-fs-20">@(((ResponseMessage)ViewData["message"]).message)</p>
@@ -24,15 +24,15 @@
 
     <div id="undergraduate-thesurvey" class="row" style="display: none;">
         <div class="col-12">
-            <h2 class="text-center text-dark mb-3">Danh sách bài khảo sát trước tốt nghiệp</h2>
+            <h2 class="text-center text-dark mb-3">Danh sách bài khảo sát phản hồi của sinh viên về chất lượng đào tạo trước khi tốt nghiệp</h2>
         </div>
         <div class="col-12">
             <table class="table m-table-bordered">
                 <thead>
                     <tr>
-                        <th class="text-center">STT</th>
-                        <th class="text-center" width="75%">Bài khảo sát</th>
-                        <th class="text-center"></th>
+                        <th class="text-center" width="1px">STT</th>
+                        <th class="text-center" width="70%">Bài khảo sát</th>
+                        <th class="text-center" style="width:100px"></th>
                     </tr>
                 </thead>
                 <tbody id="table-undergraduate-thesurvey">
@@ -64,7 +64,7 @@
                 } else if (element.status === @((int)SurveyStudentStatus.Done)) {
                     htmlUndergraduate += `Đã hoàn thành`;
                 } else if (element.status === @((int)SurveyStudentStatus.RequestAuthorize)) {
-                    htmlUndergraduate += `<a href="/home/verification">Xác thực</a>`;
+                    htmlUndergraduate += `<a href="/home/verification">Xác thực</a><br/><small>(Xác thực lại nếu bạn không nhận được email xác thực trong khoảng 3 - 5 phút)<small/>`;
                 }
                 htmlUndergraduate += `</td>`;
                 htmlUndergraduate += `</tr>`;

@@ -29,6 +29,15 @@ namespace nuce.web.quanly.Common
         {
             {"SC", "Một lựa chọn" },
             {"MC", "Nhiều lựa chọn" },
+            {"SA", "Trả lời ngắn" },
+            {"GQ", "Nhiều câu hỏi phụ" },
+            {"T",  "Tiêu đề"}
+        };
+
+        public static Dictionary<string, string> GraduateQuestionType = new Dictionary<string, string>()
+        {
+            {"SC", "Một lựa chọn" },
+            {"MC", "Nhiều lựa chọn" },
             //{"TQ", "Câu hỏi đúng" },
             //{"FQ", "Câu hỏi sai" },
             //{"SQ", "Câu hỏi kéo thả" },
@@ -37,11 +46,11 @@ namespace nuce.web.quanly.Common
             {"SA", "Trả lời ngắn" },
             //{"NR", "Câu hỏi số" },
             //{"HS", "Khoanh vùng điểm ảnh" },
-            {"GQ", "Có nhiều câu hỏi phụ" },
+            {"GQ", "Nhiều câu hỏi phụ" },
             //{"SP", "Nghe nói" },
             //{"EQ", "Câu hỏi cảm xúc" },
             //{"TL", "Hai cấp" },
-            {"T",  "Chỉ là tiêu đề"},
+            {"T",  "Tiêu đề"},
             {"CityC", "Lựa chọn tỉnh thành" },
             {"StarRating", "Vote Sao" },
         };
@@ -159,12 +168,7 @@ namespace nuce.web.quanly.Common
         /// <summary>
         /// Đề cho môn đồ án
         /// </summary>
-        AssignmentSubjects = 4,
-
-        /// <summary>
-        /// Đề cho môn không được phần loại
-        /// </summary>
-        DefaultSubjects = 5,
+        AssignmentSubjects = 4
     }
 
     /// <summary>

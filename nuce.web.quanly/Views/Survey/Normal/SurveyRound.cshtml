@@ -36,12 +36,12 @@
             <table id="id-datatable" class="table table-bordered">
                 <thead>
                     <tr>
-                        <th class="text-center" style="min-width:300px">Tên</th>
+                        <th class="text-center">Tên</th>
                         <th class="text-center">Từ ngày</th>
                         <th class="text-center">Đến ngày</th>
                         <th class="text-center" style="max-width:88px">Trạng thái</th>
                         <th class="text-center" style="max-width:88px">Bài khảo sát</th>
-                        <th class="text-center" style="min-width:190px"></th>
+                        <th class="text-center" style="min-width:250px"></th>
                     </tr>
                 </thead>
             </table>
@@ -168,9 +168,9 @@
                             <tr>
                                 <th class="text-center" style="border-bottom-width: 1px; width: 1px;">Mã khoa</th>
                                 <th class="text-center" style="border-bottom-width: 1px;">Tên khoa</th>
+                                <th class="text-center" style="border-bottom-width: 1px;">Tổng số sv</th>
                                 <th class="text-center" style="border-bottom-width: 1px;">Số sv đã làm bài</th>
                                 <th class="text-center" style="border-bottom-width: 1px;">Số sv chưa làm bài</th>
-                                <th class="text-center" style="border-bottom-width: 1px;">Tổng số sv</th>
                                 <th class="text-center" style="border-bottom-width: 1px; min-width: 100px">Tỷ lệ tham gia ks</th>
                             </tr>
                         </thead>
@@ -184,8 +184,30 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                <button id="btn-gui-mail-nhac" type="button" class="btn btn-info">Gửi mail nhắc nhở</button>
+                <button id="btn-gui-mail-nhac" type="button" class="btn btn-info" hidden>Gửi mail nhắc nhở</button>
+                <button id="btn-preview-mail-nhac" type="button" class="btn btn-info">Preview mail nhắc nhở</button>
                 <button id="btn-thong-ke-lai" type="button" data-dismiss="modal" class="btn btn-primary">Thống kê lại</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg auto-clear-form-on-open" id="modal-preview" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg mt-0" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-dark">Preview mail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-dark">
+                <div class="container-fluid" id="content-email">
+                    
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
             </div>
         </div>
     </div>
@@ -216,26 +238,28 @@
             let sumTotalDaLam = 0;
             let sumTotalChuaLam = 0;
             let sumTotalSinhVien = 0;
-            message.TongHopKhoa.forEach(item => {
+            if (message != null) {
+                message.TongHopKhoa.forEach(item => {
+                    str += `<tr class="text-dark">`;
+                    str += `<td class="text-center">${item.FacultyCode}</td>`;
+                    str += `<td>${item.FacultyName}</td>`;
+                    str += `<td class="text-center">${item.TotalSinhVien}</td>`;
+                    str += `<td class="text-center">${item.TotalDaLam}</td>`;
+                    sumTotalDaLam += +item.TotalDaLam;
+                    str += `<td class="text-center">${item.TotalChuaLam}</td>`;
+                    sumTotalChuaLam += +item.TotalChuaLam;
+                    sumTotalSinhVien += +item.TotalSinhVien;
+                    str += `<td class="text-center">${item.Percent}%</td>`;
+                    str += `</tr>`;
+                });
                 str += `<tr class="text-dark">`;
-                str += `<td class="text-center">${item.FacultyCode}</td>`;
-                str += `<td>${item.FacultyName}</td>`;
-                str += `<td class="text-center">${item.TotalDaLam}</td>`;
-                sumTotalDaLam += +item.TotalDaLam;
-                str += `<td class="text-center">${item.TotalChuaLam}</td>`;
-                sumTotalChuaLam += +item.TotalChuaLam;
-                str += `<td class="text-center">${item.TotalSinhVien}</td>`;
-                sumTotalSinhVien += +item.TotalSinhVien;
-                str += `<td class="text-center">${item.Percent}%</td>`;
+                str += `<td class="text-center" colspan="2">Toàn trường</td>`;
+                str += `<td class="text-center">${sumTotalSinhVien}</td>`;
+                str += `<td class="text-center">${sumTotalDaLam}</td>`;
+                str += `<td class="text-center">${sumTotalChuaLam}</td>`;
+                str += `<td class="text-center">${message.ChiemTiLe}%</td>`;
                 str += `</tr>`;
-            });
-            str += `<tr class="text-dark">`;
-            str += `<td class="text-center" colspan="2">Toàn trường</td>`;
-            str += `<td class="text-center">${sumTotalDaLam}</td>`;
-            str += `<td class="text-center">${sumTotalChuaLam}</td>`;
-            str += `<td class="text-center">${sumTotalSinhVien}</td>`;
-            str += `<td class="text-center">${message.ChiemTiLe}%</td>`;
-            str += `</tr>`;
+            }
             $('#tbody-thong-ke-tam').html(str);
         }
         console.log('t.kê tạm ', tempReportNomalStatus);
@@ -313,6 +337,13 @@
                 {
                     data: null,
                     mRender: function (data, type, row) {
+                        let regex = /(\d+)/g;
+                        let fromDate = new Date(+data.fromDate.match(regex)[0]);
+                        let endDate = new Date(+data.endDate.match(regex)[0]);
+                        let currentDate = new Date();
+                        if (currentDate > endDate && data.status != @((int)SurveyRoundStatus.End)) {
+                            return '';
+                        }
                         return `<a href='/survey/TheSurvey?surveyRoundId=${data.id}'>Danh sách<a/>`;
                     }
                 },
@@ -339,6 +370,8 @@
                         } else if (currentDate > endDate && data.status != @((int)SurveyRoundStatus.End)) {
                             html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="addEndDateClick('${data.id}')">Gia hạn</button>`;
                             html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê tạm" onclick="xemThongKeTam('${data.id}', this)">T.kê tạm</button>`;
+                        } else if (currentDate > endDate && data.status == @((int)SurveyRoundStatus.End)) {
+                            html += `<button class="btn btn btn-outline-danger btn-sm ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
                         }
                         return html;
                     }
@@ -616,6 +649,34 @@
                 }).done(function (res) {
                     if (res.statusCode === 200) {
                         toastSuccess("Gửi mail thành công");
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        }
+                        catch {
+                            console.log(res);
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+
+            $('#btn-preview-mail-nhac').off();
+            $('#btn-preview-mail-nhac').click(() => {
+                $('#modal-preview').modal('show');
+                $.ajax({
+                    dataType: 'json',
+                    method: 'Get',
+                    url: `/Survey/PreviewUrgingEmail`,
+                    timeout: 0,
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        $('#content-email').html(res.content);
                     }
                     else {
                         try {

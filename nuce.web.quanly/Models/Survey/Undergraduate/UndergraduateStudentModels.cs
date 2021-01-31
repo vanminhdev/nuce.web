@@ -15,11 +15,12 @@ namespace nuce.web.quanly.Models.Survey.Undergraduate
         public string tbcht { get; set; }
         public string xeploai { get; set; }
         public string soqdtn { get; set; }
+        public DateTime? ngayraqd { get; set; }
         public string sohieuba { get; set; }
         public string tinh { get; set; }
         public string truong { get; set; }
         public string gioitinh { get; set; }
-        public string ngaysinh { get; set; }
+        public DateTime? ngaysinh { get; set; }
         public string tkhau { get; set; }
         public string lop12 { get; set; }
         public string namtn { get; set; }

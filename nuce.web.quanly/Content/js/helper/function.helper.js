@@ -101,3 +101,7 @@ $('.toast').each((index, el) => {
         });
     });
 });
+
+function formatDisplayNumber(n) {
+    return String(n).replace(/(.)(?=(\d{3})+$)/g, '$1,')
+}

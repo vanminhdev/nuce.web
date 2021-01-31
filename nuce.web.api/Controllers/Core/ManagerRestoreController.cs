@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using System.Net.Mime;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -114,6 +115,78 @@ namespace nuce.web.api.Controllers.Core
                     Username = HttpContext.User.Identity.Name,
                     LogCode = ActivityLogParameters.CODE_RESTORE_DATABASE,
                     LogMessage = $"Restore database NUCE_SURVEY"
+                });
+            }
+            catch (FileNotFoundException e)
+            {
+                _logger.LogError(e, "Không tìm thấy file backup database khảo thí");
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (RecordNotFoundException e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không ghi được log restore db", detailMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Có lỗi xảy ra", detailMessage = mainMessage });
+            }
+            return Ok();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DownloadFileBackupDatabaseSurvey([Required] Guid? id)
+        {
+            try
+            {
+                var file = await _managerBackupService.DownloadFileBackupSurveyDataBase(id.Value);
+                await _logService.WriteLog(new ActivityLogModel
+                {
+                    Username = HttpContext.User.Identity.Name,
+                    LogCode = ActivityLogParameters.CODE_DOWNLOAD_FILE_BACKUP,
+                    LogMessage = $"Download file backup database NUCE_SURVEY"
+                });
+                return File(file, MediaTypeNames.Application.Octet);
+            }
+            catch (FileNotFoundException e)
+            {
+                _logger.LogError(e, "Không tìm thấy file backup database khảo thí");
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (RecordNotFoundException e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không ghi được log restore db", detailMessage = e.Message });
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Có lỗi xảy ra", detailMessage = mainMessage });
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteHistoryBackupDatabaseSurvey([Required] Guid? id)
+        {
+            try
+            {
+                await _managerBackupService.DeleteHistoryBackupDatabaseSurvey(id.Value);
+                await _logService.WriteLog(new ActivityLogModel
+                {
+                    Username = HttpContext.User.Identity.Name,
+                    LogCode = ActivityLogParameters.CODE_DELETE_FILE_BACKUP,
+                    LogMessage = $"Delete file backup database NUCE_SURVEY"
                 });
             }
             catch (FileNotFoundException e)

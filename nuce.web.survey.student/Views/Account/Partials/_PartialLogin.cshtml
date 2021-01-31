@@ -14,7 +14,7 @@
         switch (Model.Type)
         {
             case "GraduateStudent":
-            <span>Khảo sát tình hình việc làm sinh viên sau tốt nghiệp</span>
+                <span>Khảo sát tình hình việc làm sinh viên sau tốt nghiệp</span>
                 break;
             case "UndergraduateStudent":
                 <span>Khảo sát phản hồi của sinh viên về chất lượng đào tạo trước tốt nghiệp</span>
@@ -37,6 +37,10 @@
                     <div class="card-body">
                         <form method="post" action="@loginAction" class="pb-2">
                             @Html.AntiForgeryToken()
+                            @if (ViewData["target"] != null)
+                            {
+                                <input name="target" value="@ViewData["target"]" hidden />
+                            }
                             <div class="form-group mb-1">
                                 <label for="username" class="w-100">Tên đăng nhập</label>
                                 @Html.TextBoxFor(m => m.Username, new { @placeholder = "Mã số sinh viên", @class = "form-control custom-input" })
@@ -47,6 +51,9 @@
                                 @Html.PasswordFor(m => m.Password, new { @placeholder = "Mật khẩu", @class = "form-control custom-input" })
                                 <span class="form-text" style="color: #F70000;">@ViewData["LoginMessage"]</span>
                                 @Html.ValidationMessageFor(m => m.Password, "", new { @class = "form-text", @style = "color: #F70000; height: 24px" })
+                            </div>
+                            <div style="display: none">
+                                @Html.TextBoxFor(m => m.LoginUserType)
                             </div>
                             <button type="submit" class="btn m-bg-blue text-light w-100">
                                 Đăng nhập

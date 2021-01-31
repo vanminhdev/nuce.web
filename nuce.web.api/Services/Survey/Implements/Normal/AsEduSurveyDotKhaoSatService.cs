@@ -61,20 +61,13 @@ namespace nuce.web.api.Services.Survey.Implements
 
         public async Task Create(SurveyRoundCreate surveyRound)
         {
-            if (await _context.AsEduSurveyDotKhaoSat.FirstOrDefaultAsync(o => o.Status == (int)SurveyRoundStatus.New) != null)
+            if (await _context.AsEduSurveyDotKhaoSat.FirstOrDefaultAsync(o => DateTime.Now < o.EndDate && o.Status != (int)SurveyRoundStatus.Deleted) != null)
             {
-                throw new InvalidInputDataException("Một thời điểm chỉ có một đợt khảo sát mới");
-            }
-
-            var surveyRoundActive = await _context.AsEduSurveyDotKhaoSat.Where(o => o.Status != (int)SurveyRoundStatus.Deleted)
-                .FirstOrDefaultAsync(o => (DateTime.Now >= o.FromDate && DateTime.Now < o.EndDate));
-            if (surveyRoundActive != null)
-            {
-                throw new InvalidInputDataException("Một thời điểm chỉ có một đợt khảo sát được hoạt động trong khoảng thời gian của đợt khảo sát đó");
+                throw new InvalidInputDataException("Một thời điểm chỉ có một đợt khảo sát được lên lịch, qua ngày kết thúc mới tạo được đợt mới");
             }
 
             //đóng tất cả các đợt khảo sát trước đang đóng hoặc quá ngày kết thúc
-            var lstDotKs = await _context.AsEduSurveyDotKhaoSat.Where(o => o.Status == (int)SurveyRoundStatus.Closed || DateTime.Now >= o.EndDate).ToListAsync();
+            var lstDotKs = await _context.AsEduSurveyDotKhaoSat.Where(o => (o.Status == (int)SurveyRoundStatus.Closed || DateTime.Now >= o.EndDate) && o.Status != (int)SurveyRoundStatus.Deleted).ToListAsync();
             foreach(var item in lstDotKs)
             {
                 item.Status = (int)SurveyRoundStatus.End;
@@ -130,12 +123,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new InvalidInputDataException("Đợt khảo sát đang mở");
             }
 
-            if (surveyRound.Status == (int)SurveyRoundStatus.Opened)
-            {
-                throw new InvalidInputDataException("Đợt khảo sát đang mở");
-            }
-
-            if (surveyRound.Status == (int)SurveyRoundStatus.Closed)
+            if (surveyRound.Status != (int)SurveyRoundStatus.End)
             {
                 throw new InvalidInputDataException("Đợt khảo sát chưa kết thúc không thể xoá");
             }

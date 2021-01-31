@@ -8,7 +8,9 @@ $(document).ready(function () {
             let element;
             for (let i = 0; i < inputs.length; i++) {
                 element = $(inputs[i]);
-                element.val('');
+                if (!element.hasClass("ignore-auto-clear")) {
+                    element.val('');
+                }
                 element.removeClass('error');
                 element.removeClass('is-invalid');
                 element.tooltip('dispose');
@@ -29,7 +31,9 @@ $(document).ready(function () {
                 }
 
                 if (element.attr('title') != undefined) { //cho những select mặc định là không chọn gì
-                    element.val(null).trigger('change');
+                    if (!element.hasClass("ignore-auto-clear")) {
+                        element.val(null).trigger('change');
+                    }
                 }
             }
         });
