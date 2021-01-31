@@ -238,26 +238,28 @@
             let sumTotalDaLam = 0;
             let sumTotalChuaLam = 0;
             let sumTotalSinhVien = 0;
-            message.TongHopKhoa.forEach(item => {
+            if (message != null) {
+                message.TongHopKhoa.forEach(item => {
+                    str += `<tr class="text-dark">`;
+                    str += `<td class="text-center">${item.FacultyCode}</td>`;
+                    str += `<td>${item.FacultyName}</td>`;
+                    str += `<td class="text-center">${item.TotalSinhVien}</td>`;
+                    str += `<td class="text-center">${item.TotalDaLam}</td>`;
+                    sumTotalDaLam += +item.TotalDaLam;
+                    str += `<td class="text-center">${item.TotalChuaLam}</td>`;
+                    sumTotalChuaLam += +item.TotalChuaLam;
+                    sumTotalSinhVien += +item.TotalSinhVien;
+                    str += `<td class="text-center">${item.Percent}%</td>`;
+                    str += `</tr>`;
+                });
                 str += `<tr class="text-dark">`;
-                str += `<td class="text-center">${item.FacultyCode}</td>`;
-                str += `<td>${item.FacultyName}</td>`;
-                str += `<td class="text-center">${item.TotalSinhVien}</td>`;
-                str += `<td class="text-center">${item.TotalDaLam}</td>`;
-                sumTotalDaLam += +item.TotalDaLam;
-                str += `<td class="text-center">${item.TotalChuaLam}</td>`;
-                sumTotalChuaLam += +item.TotalChuaLam;
-                sumTotalSinhVien += +item.TotalSinhVien;
-                str += `<td class="text-center">${item.Percent}%</td>`;
+                str += `<td class="text-center" colspan="2">Toàn trường</td>`;
+                str += `<td class="text-center">${sumTotalSinhVien}</td>`;
+                str += `<td class="text-center">${sumTotalDaLam}</td>`;
+                str += `<td class="text-center">${sumTotalChuaLam}</td>`;
+                str += `<td class="text-center">${message.ChiemTiLe}%</td>`;
                 str += `</tr>`;
-            });
-            str += `<tr class="text-dark">`;
-            str += `<td class="text-center" colspan="2">Toàn trường</td>`;
-            str += `<td class="text-center">${sumTotalSinhVien}</td>`;
-            str += `<td class="text-center">${sumTotalDaLam}</td>`;
-            str += `<td class="text-center">${sumTotalChuaLam}</td>`;
-            str += `<td class="text-center">${message.ChiemTiLe}%</td>`;
-            str += `</tr>`;
+            }
             $('#tbody-thong-ke-tam').html(str);
         }
         console.log('t.kê tạm ', tempReportNomalStatus);
