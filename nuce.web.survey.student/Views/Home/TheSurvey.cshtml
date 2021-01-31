@@ -437,6 +437,15 @@
                     }).done(function (res) {
                         console.log('radio');
                         console.log(res);
+                        if (res.statusCode != 200) {
+                            try {
+                                let data = JSON.parse(res.content);
+                                toastError(data.message);
+                            }
+                            catch {
+                                toastError('Có lỗi xảy ra');
+                            }
+                        }
                     }).fail(function (jqXHR, textStatus, errorThrown) {
                         $('#loading-screen').hide();
                         console.log(textStatus + ': ' + errorThrown);
@@ -467,6 +476,15 @@
                     }).done(function (res) {
                         console.log('checkbox');
                         console.log(res);
+                        if (res.statusCode != 200) {
+                            try {
+                                let data = JSON.parse(res.content);
+                                toastError(data.message);
+                            }
+                            catch {
+                                toastError('Có lỗi xảy ra');
+                            }
+                        }
                     }).fail(function (jqXHR, textStatus, errorThrown) {
                         console.log(textStatus + ': ' + errorThrown);
                         console.log(jqXHR);
@@ -489,6 +507,15 @@
                         }).done(function (res) {
                             console.log('textarea');
                             console.log(res);
+                            if (res.statusCode != 200) {
+                                try {
+                                    let data = JSON.parse(res.content);
+                                    toastError(data.message);
+                                }
+                                catch {
+                                    toastError('Có lỗi xảy ra');
+                                }
+                            }
                         }).fail(function (jqXHR, textStatus, errorThrown) {
                             console.log(textStatus + ': ' + errorThrown);
                             console.log(jqXHR);
@@ -512,6 +539,13 @@
                         location.href = '/home';
                     }
                     else {
+                        try {
+                            let data = JSON.parse(res.content);
+                            toastError(data.message);
+                        }
+                        catch {
+                            toastError('Có lỗi xảy ra');
+                        }
                         console.log(res);
                     }
                 }).fail(function (jqXHR, textStatus, errorThrown) {
