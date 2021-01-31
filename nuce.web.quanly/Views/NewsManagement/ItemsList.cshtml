@@ -52,6 +52,26 @@
         </table>
     </div>
 </div>
+<!-- DELETE MODAL -->
+<div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Xoá bài tin</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h5 class="text-center">Bạn có chắc chắn muốn xoá bài tin này?</h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Thoát</button>
+                <button type="button" class="btn btn-primary" onclick="state.deleteNewsItem()">Xoá</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 @*@section Scripts {*@
@@ -62,6 +82,7 @@
 <script>
         var state = {
             catId: null,
+            newsItemId: null,
             allowEdit: '@allowEdit' == 'True',
             allowApprove: '@allowApprove' == 'True',
             allowCreate: '@allowCreate' == 'True',
@@ -81,9 +102,41 @@
                 }).done(res => {
                     if (res.StatusCode == 200) {
                         toastSuccess('Thay đổi thành công');
+                        searchData();
                     }
                 }).fail(err => {
                     toastError(err.Message || 'Lỗi hệ thống trong lúc xử lý');
+                }).always(() => {
+                    $('#loading-screen').hide();
+                });
+            },
+            setNewsItem: function (id) {
+                state.newsItemId = id;
+            },
+            deleteNewsItem: function () {
+                state.callApiDelete(state.newsItemId);
+            },
+            callApiDelete: function(id) {
+                $('#loading-screen').show();
+                const data = JSON.stringify(body);
+
+                $.ajax({
+                    type: 'post',
+                    url: `NewsManagement/DeleteNewsItem?id=${id}`,
+                    dataType: 'json',
+                    contentType: 'application/json',
+                }).done(res => {
+                    if (res.StatusCode == 200) {
+                        $('#delete-modal').modal('hide');
+                        toastSuccess('Xoá thành công');
+                        searchData();
+                    } else {
+                        toastError(res.Message || 'Lỗi hệ thống trong lúc xử lý');
+                        console.log(res);
+                    }
+                }).fail(err => {
+                    toastError(err.Message || 'Lỗi hệ thống trong lúc xử lý');
+                    console.log(err);
                 }).always(() => {
                     $('#loading-screen').hide();
                 });
@@ -119,12 +172,17 @@
                 {
                     data: null,
                     mRender: function(data, type, row, meta) {
-
                         const editBlock = state.allowEdit ? `<a href="/newsmanagement/itemsupdate?id=${data.id}"
-                                        role="button" class="btn btn-outline-success"
+                                        role="button" class="btn btn-outline-success "
                                         onclick="return feManagerState.changeComponent('/newsmanagement/itemsupdate?id=${data.id}');">
                                         Cập nhật
-                                    </a>` : '';
+                                    </a>
+                                    <button
+                                        class="btn btn-outline-danger ml-3"
+                                        onclick="state.setNewsItem(${data.id})"
+                                        data-toggle="modal" data-target="#delete-modal">
+                                        Xoá
+                                    </button>` : '';
                         const approveText = data.status !== 2 ? 'Duyệt' : 'Bỏ duyệt';
                         const willUpdateStatus = data.status === 2 ? 1 : 2;
                         const approveBlock = state.allowApprove ? `<button

@@ -295,6 +295,22 @@ namespace nuce.web.api.Controllers.Core
                 return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
             }
         }
+
+        [AppAuthorize(RoleNames.KhaoThi_Edit_NewsItem)]
+        [HttpDelete]
+        [Route("admin/news-items/{id}")]
+        public async Task<IActionResult> DeleteNewsItemAsync(int id)
+        {
+            try
+            {
+                await _newsManagerService.DeleteNewsItem(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { Data = ex, Message = ex.Message });
+            }
+        }
         #endregion
 
         #region common
