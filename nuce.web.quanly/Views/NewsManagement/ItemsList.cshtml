@@ -102,6 +102,7 @@
                 }).done(res => {
                     if (res.StatusCode == 200) {
                         toastSuccess('Thay đổi thành công');
+                        searchData();
                     }
                 }).fail(err => {
                     toastError(err.Message || 'Lỗi hệ thống trong lúc xử lý');
