@@ -48,7 +48,8 @@
         } else {
             let stt = 0;
             for (let element of content) {
-                if (element.subjectName === "") {
+                //lớp không có môn học, chưa phát đúng loại bài khảo sát
+                if (element.subjectName === "" || element.status === @((int)SurveyStudentStatus.HaveNot)) {
                     continue;
                 }
                 htmlStr += `

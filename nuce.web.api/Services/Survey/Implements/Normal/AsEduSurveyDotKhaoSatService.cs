@@ -123,12 +123,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new InvalidInputDataException("Đợt khảo sát đang mở");
             }
 
-            if (surveyRound.Status != (int)SurveyRoundStatus.End)
-            {
-                throw new InvalidInputDataException("Đợt khảo sát chưa kết thúc không thể xoá");
-            }
-
-            if (await _context.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == surveyRound.Id).FirstOrDefaultAsync() != null)
+            if (await _context.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == surveyRound.Id).FirstOrDefaultAsync() != null && surveyRound.Status != (int)SurveyRoundStatus.End)
             {
                 throw new InvalidInputDataException("Đợt khảo sát đã có bài khảo sát không thể xoá");
             }

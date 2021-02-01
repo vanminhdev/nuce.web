@@ -108,6 +108,8 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 var defaultTheSurveyTypeId = theoreticalSubjects.Id;
                 Guid baiKhaoSatId = defaultTheSurveyTypeId; //mặc định
 
+                bool chuaDungLoaiMon = false;
+
                 while (skip <= numStudent)
                 {
                     studentClassrooms = query.Skip(skip).Take(take).ToList();
@@ -133,6 +135,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                 //loại môn của môn đó
                                 subjectExtend = eduContext.AsAcademySubjectExtend.FirstOrDefault(o => o.Code == subject.Code);
                                 baiKhaoSatId = defaultTheSurveyTypeId; //mặc định
+                                chuaDungLoaiMon = false;
                                 if (subjectExtend != null && subjectExtend.Type != null)
                                 {
                                     if (subjectExtend.Type == (int)TheSurveyType.TheoreticalSubjects)
@@ -150,6 +153,11 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                     else if (subjectExtend.Type == (int)TheSurveyType.AssignmentSubjects)
                                     {
                                         baiKhaoSatId = assignmentSubjects.Id;
+                                    }
+                                    else
+                                    {
+                                        //trường hợp môn không thuộc 4 loại 
+                                        chuaDungLoaiMon = true;
                                     }
                                 }
                             }
@@ -183,12 +191,16 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                 BaiLam = "",
                                 NgayGioBatDau = DateTime.Now,
                                 NgayGioNopBai = DateTime.Now,
-                                Status = (int)SurveyStudentStatus.DoNot,
+                                Status = chuaDungLoaiMon ? (int)SurveyStudentStatus.HaveNot : (int)SurveyStudentStatus.DoNot,
                                 Type = 1,
                             });
                         }
                         else //có rồi thì update một số trường bị thiếu
                         {
+                            if ((recordBaikssv.Status == (int)SurveyStudentStatus.DoNot || recordBaikssv.Status == (int)SurveyStudentStatus.HaveNot) && recordBaikssv.BaiKhaoSatId != baiKhaoSatId)
+                            {
+                                recordBaikssv.BaiKhaoSatId = baiKhaoSatId;
+                            }
                             recordBaikssv.DepartmentCode = lecturer != null ? lecturer.DepartmentCode : "";
                             recordBaikssv.LecturerCode = lecturer != null ? lecturer.Code : "";
                             recordBaikssv.LecturerName = lecturer != null ? lecturer.FullName : "";

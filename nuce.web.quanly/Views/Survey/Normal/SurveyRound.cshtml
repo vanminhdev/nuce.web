@@ -341,7 +341,7 @@
                         let fromDate = new Date(+data.fromDate.match(regex)[0]);
                         let endDate = new Date(+data.endDate.match(regex)[0]);
                         let currentDate = new Date();
-                        if (currentDate > endDate && data.status != @((int)SurveyRoundStatus.End)) {
+                        if (currentDate > endDate && data.status == @((int)SurveyRoundStatus.End)) {
                             return '';
                         }
                         return `<a href='/survey/TheSurvey?surveyRoundId=${data.id}'>Danh sách<a/>`;
