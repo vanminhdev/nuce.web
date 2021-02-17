@@ -238,9 +238,12 @@ namespace nuce.web.api.Services.Survey.Implements
         {
             var tmpLoaiMon = Enum.GetValues(typeof(TheSurveyType)).Cast<int>().ToList();
             var danhSachLoaiMonHoc = tmpLoaiMon.Cast<int?>().ToList();
-            List<int?> ss = new List<int?> { 1, 2, 3, 4 };
             Result.DeparmentName = department.Name;
             Result.DepartmentCode = department.Code;
+
+            //giảng viên của bộ môn
+            var lerturerCodes = _eduContext.AsAcademyLecturer.Where(o => o.DepartmentCode == department.Code).Select(o => o.Code).ToList();
+
             //lấy môn học của bộ môn
             var monHocCuaBoMon = _eduContext.AsAcademySubject.Where(o => o.DepartmentCode == department.Code)
                 .Join(_eduContext.AsAcademySubjectExtend, o => o.Code, o => o.Code, (monhoc, loaimon) => new { monhoc, loaimon.Type })
@@ -253,10 +256,8 @@ namespace nuce.web.api.Services.Survey.Implements
                 }).ToList();
 
             #region môn
-            var monLyThuyetCuaBoMonCodes = monHocCuaBoMon.ToList().Where(o => o.Type == loaiMon).Select(o => o.Code).ToList();
-
             //các bài làm của môn lý thuyết của bộ môn đang xét
-            var baiLamKhaoSatLyThuyet = baiLamKhaoSatCacDotDangXet.ToList().Where(o => monLyThuyetCuaBoMonCodes.Contains(o.SubjectCode));
+            var baiLamKhaoSatLyThuyet = baiLamKhaoSatCacDotDangXet.ToList().Where(o => o.SubjectType == loaiMon && lerturerCodes.Contains(o.LecturerCode));
             var baiLamKhaoSatLyThuyetHoanThanh = baiLamKhaoSatLyThuyet.ToList().Where(o => o.Status == (int)SurveyStudentStatus.Done)
                                                         .Select(o => new { o.StudentCode, o.LecturerCode });
 
@@ -567,7 +568,7 @@ namespace nuce.web.api.Services.Survey.Implements
                                                         .Select(o => o.Code);
 
             //các bài làm của môn lý thuyết của bộ môn đang xét
-            var baiLamKhaoSatLyThuyet = baiLamKhaoSatCacDotDangXet.Where(o => o.LecturerCode == lecturer.Code && monLyThuyetCuaBoMonCodes.Contains(o.SubjectCode));
+            var baiLamKhaoSatLyThuyet = baiLamKhaoSatCacDotDangXet.Where(o => o.LecturerCode == lecturer.Code && o.SubjectType == loaiMon);
             var baiLamKhaoSatLyThuyetHoanThanh = baiLamKhaoSatLyThuyet.Where(o => o.Status == (int)SurveyStudentStatus.Done)
                                                         .Select(o => new { o.StudentCode, o.LecturerCode });
 
