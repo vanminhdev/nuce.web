@@ -84,28 +84,7 @@
 
                 <div class="collapse navbar-collapse w-100" id="navbarSupportedContent">
                     <ul class="navbar-nav m-nav-item mr-auto" id="nav-item-container">
-                        <li class="nav-item dropdown m-nav-item-hover">
-                            <a class="nav-link text-white mt-1 mb-1" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Giới thiệu
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="#">Sứ mệnh tầm nhìn của Đại học Xây Dựng</a>
-                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="#">Chứng nhận kiểm định CLGD Đại học Xây Dựng</a>
-                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="#">Giới thiệu chung</a>
-                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="#">Chức năng nhiệm vụ</a>
-                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="#">Cơ cấu tổ chức</a>
-                            </div>
-                        </li>
-                        <li class="nav-item dropdown m-nav-item-hover">
-                            <a class="nav-link text-white mt-1 mb-1" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Khảo thí
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="#">Văn bản của Nhà nước & Bộ</a>
-                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="#">Văn bản của Trường</a>
-                                <a class="dropdown-item m-bg-hover-blue text-truncate" href="#">Hướng dẫn quy trình và biểu mẫu</a>
-                            </div>
-                        </li>
+                        
                     </ul>
                 </div>
             </nav>
@@ -404,9 +383,9 @@
             });
             if ($(window).width() < 992) {
                 $('.dropdown-menu a').click(function (e) {
-                    e.preventDefault();
                     if ($(this).next('.submenu').length) {
                         $(this).next('.submenu').toggle();
+                        e.preventDefault();
                     }
                     $('.dropdown').on('hide.bs.dropdown', function () {
                         $(this).find('.submenu').hide();
