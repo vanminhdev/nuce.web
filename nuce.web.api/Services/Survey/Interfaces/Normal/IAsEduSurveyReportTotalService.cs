@@ -12,5 +12,6 @@ namespace nuce.web.api.Services.Survey.Interfaces
         public Task<PaginationModel<ReportTotalNormal>> GetRawReportTotalNormalSurvey(ReportTotalNormalFilter filter, int skip = 0, int take = 20);
         public Task SendUrgingEmail();
         public Task<string> PreviewUrgingEmail();
+        public Task<byte[]> ExportStudentDidSurvey(Guid surveyRoundId);
     }
 }

@@ -12,6 +12,7 @@ using nuce.web.api.Services.Status.Interfaces;
 using nuce.web.api.Services.Survey.Interfaces;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey.Normal.Statistic;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -232,6 +233,67 @@ namespace nuce.web.api.Services.Survey.Implements
                 .Replace("\r", "");
 
             return contentEmail;
+        }
+
+        public async Task<byte[]> ExportStudentDidSurvey(Guid surveyRoundId)
+        {
+            ExcelPackage excel = new ExcelPackage();
+            var worksheet = excel.Workbook.Worksheets.Add("Danh sách sinh viên");
+
+            #region style
+            worksheet.DefaultRowHeight = 14.25;
+            worksheet.DefaultColWidth = 8.5;
+            worksheet.Cells.Style.Font.Name = "Arial";
+
+            worksheet.Cells.Style.WrapText = true;
+            worksheet.Column(1).Width = 13;
+            worksheet.Column(2).Width = 23;
+            worksheet.Column(3).Width = 10;
+            worksheet.Column(4).Width = 10;
+            worksheet.Column(5).Width = 5;
+            #endregion
+
+            worksheet.Cells[1, 1].Value = "Mã SV";
+            worksheet.Cells[1, 2].Value = "Họ tên";
+            worksheet.Cells[1, 3].Value = "Lớp";
+            worksheet.Cells[1, 4].Value = "Khoa";
+            worksheet.Cells[1, 5].Value = "Tham gia";
+
+            var dotKs = await _context.AsEduSurveyDotKhaoSat.FirstOrDefaultAsync(o => o.Id == surveyRoundId && o.Status != (int)SurveyRoundStatus.Deleted);
+            if (dotKs == null)
+            {
+                throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
+            }
+
+            var baiKsIds = await _context.AsEduSurveyBaiKhaoSat
+                .Where(o => o.DotKhaoSatId == dotKs.Id && o.Status != (int)SurveyRoundStatus.Deleted)
+                .Select(o => o.Id)
+                .ToListAsync();
+
+            var baiLamKs = await _context.AsEduSurveyBaiKhaoSatSinhVien.Where(o => baiKsIds.Contains(o.BaiKhaoSatId)).ToListAsync();
+
+            var studentThamGias = baiLamKs
+                .GroupBy(o => new { o.StudentCode })
+                .Select(o => new { o.Key.StudentCode, DaThamGia = o.FirstOrDefault(bl => bl.Status == (int)SurveyStudentStatus.Done) != null })
+                .Join(_eduContext.AsAcademyStudent, ks => ks.StudentCode, s => s.Code, (ks, s) => new { s.Code, s.ClassCode, s.FullName, ks.DaThamGia })
+                .Join(_eduContext.AsAcademyClass, o => o.ClassCode, c => c.Code, (o, c) => new { o.Code, o.ClassCode, o.FullName, o.DaThamGia, c.FacultyCode })
+                .OrderBy(o => o.ClassCode)
+                .ToList();
+
+            int row = 2;
+            foreach (var student in studentThamGias)
+            {
+                worksheet.Cells[row, 1].Value = student.Code;
+                worksheet.Cells[row, 2].Value = student.FullName;
+                worksheet.Cells[row, 3].Value = student.ClassCode;
+                worksheet.Cells[row, 4].Value = student.FacultyCode;
+                worksheet.Cells[row, 5].Value = student.DaThamGia ? "1" : "0";
+                row++;
+            }
+
+            using MemoryStream ms = new MemoryStream();
+            await excel.SaveAsAsync(ms);
+            return ms.ToArray();
         }
     }
 }

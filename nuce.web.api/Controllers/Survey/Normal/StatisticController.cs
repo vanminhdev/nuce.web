@@ -306,5 +306,28 @@ namespace nuce.web.api.Controllers.Survey.Normal
             }
         }
         #endregion
+
+        #region thống kê sinh viên đã tham gia ks
+        [HttpGet]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
+        public async Task<IActionResult> ExportStudentDidSurvey([Required] Guid? surveyRoundId)
+        {
+            try
+            {
+                var result = await _asEduSurveyReportTotalService.ExportStudentDidSurvey(surveyRoundId.Value);
+                return File(result, ContentTypes.Xlsx, "Ds_sv_lam_chua_lam_bai_ks");
+            }
+            catch (RecordNotFoundException e)
+            {
+                _logger.LogError(e, e.Message);
+                return NotFound(new { message = e.Message });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không lấy được danh sách" });
+            }
+        }
+        #endregion
     }
 }

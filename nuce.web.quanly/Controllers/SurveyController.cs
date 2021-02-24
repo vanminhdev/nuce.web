@@ -657,6 +657,25 @@ namespace nuce.web.quanly.Controllers
             }
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
+
+        [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Normal)]
+        public async Task<ActionResult> ExportStudentDidSurvey(string surveyRoundId)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/Statistic/ExportStudentDidSurvey?surveyRoundId={surveyRoundId}");
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                using (Stream streamToReadFrom = await response.Content.ReadAsStreamAsync())
+                {
+                    using (MemoryStream memoryStream = new MemoryStream())
+                    {
+                        await streamToReadFrom.CopyToAsync(memoryStream);
+                        return File(memoryStream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Ds sinh viên tham gia.xlsx");
+                    }
+                }
+            }
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
         #endregion
 
 
