@@ -156,14 +156,14 @@ namespace nuce.web.quanly.Common
         TheoreticalSubjects = 1,
 
         /// <summary>
-        /// Đề cho môn thực hành, thí nghiệm và thực tập
-        /// </summary>
-        PracticalSubjects = 2,
-
-        /// <summary>
         /// Đề cho môn lý thuyết + thực hành
         /// </summary>
-        TheoreticalPracticalSubjects = 3,
+        TheoreticalPracticalSubjects = 2,
+
+        /// <summary>
+        /// Đề cho môn thực hành, thí nghiệm và thực tập
+        /// </summary>
+        PracticalSubjects = 3,
 
         /// <summary>
         /// Đề cho môn đồ án

@@ -166,11 +166,12 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                         {
                             _logger.LogWarning($"Lop co ma {sc.ClassRoomCode} khong ton tai");
                             subject = null;
+                            subjectExtend = null;
                         }
 
                         var recordBaikssv = surveyContext.AsEduSurveyBaiKhaoSatSinhVien
                             .FirstOrDefault(o => o.BaiKhaoSatId == baiKhaoSatId && o.StudentCode == sc.StudentCode && o.ClassRoomCode == sc.ClassRoomCode 
-                            && o.Nhhk == sc.Nhhk && o.Status != (int)SurveyStudentStatus.Done); //sinh viên lớp môn của kỳ đó có chưa
+                            && o.Nhhk == sc.Nhhk); //sinh viên lớp môn của kỳ đó có chưa
                         //nếu chưa có thì thêm
                         if (recordBaikssv == null)
                         {
@@ -191,13 +192,13 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                 BaiLam = "",
                                 NgayGioBatDau = DateTime.Now,
                                 NgayGioNopBai = DateTime.Now,
-                                Status = chuaDungLoaiMon ? (int)SurveyStudentStatus.HaveNot : (int)SurveyStudentStatus.DoNot,
+                                Status = (int)SurveyStudentStatus.DoNot,
                                 Type = 1,
                             });
                         }
                         else //có rồi thì update một số trường bị thiếu
                         {
-                            if ((recordBaikssv.Status == (int)SurveyStudentStatus.DoNot || recordBaikssv.Status == (int)SurveyStudentStatus.HaveNot) && recordBaikssv.BaiKhaoSatId != baiKhaoSatId)
+                            if(recordBaikssv.Status != (int)SurveyStudentStatus.Done)
                             {
                                 recordBaikssv.BaiKhaoSatId = baiKhaoSatId;
                             }
@@ -207,6 +208,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                             recordBaikssv.SubjectCode = subject != null ? subject.Code : "";
                             recordBaikssv.SubjectName = subject != null ? subject.Name : "";
                             recordBaikssv.SubjectType = subjectExtend != null ? subjectExtend.Type != null ? subjectExtend.Type.Value : -1 : -1;
+                            recordBaikssv.Status = (int)SurveyStudentStatus.DoNot;
                         }
                     }
                     surveyContext.SaveChanges();
