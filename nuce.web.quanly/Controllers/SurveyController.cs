@@ -1530,7 +1530,7 @@ namespace nuce.web.quanly.Controllers
                     var answer = JsonConvert.DeserializeObject<Answer>(jsonString);
                     if (answer.childQuestionId != null)
                     {
-                        var resChildQues = await base.MakeRequestAuthorizedAsync("Get", $"/api/question/GetById?id={answer.childQuestionId}");
+                        var resChildQues = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateQuestion/GetById?id={answer.childQuestionId}");
                         if (resChildQues.IsSuccessStatusCode)
                         {
                             var str = await resChildQues.Content.ReadAsStringAsync();

@@ -74,7 +74,7 @@
                     Loại câu hỏi
                 </div>
                 <div class=" col-12 col-md-10">
-                    @Html.DropDownListFor(m => m.type, new SelectList(nuce.web.quanly.Common.Definitions.QuestionType, "Key", "Value"),
+                    @Html.DropDownListFor(m => m.type, new SelectList(nuce.web.quanly.Common.Definitions.UndergraduateQuestionType, "Key", "Value"),
                         new { @class = "selectpicker form-control custom-boostrap-select", title = "Chọn loại câu hỏi" })
                     @Html.ValidationMessageFor(m => m.type, "", new { @class = "form-text text-danger" })
                 </div>

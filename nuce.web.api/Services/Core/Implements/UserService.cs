@@ -158,7 +158,6 @@ namespace nuce.web.api.Services.Core.Implements
             
             if (UserParameters.LoginViaDaotao.Contains(model.LoginUserType))
             {
-                return true;
                 ServiceSoapClient srvc = new ServiceSoapClient(EndpointConfiguration.ServiceSoap12);
                 try
                 {

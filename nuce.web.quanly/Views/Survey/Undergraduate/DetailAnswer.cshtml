@@ -240,7 +240,7 @@
                 }
             ],
             ajax: {
-                url: '/Survey/GetAllUnderraduateQuestion',
+                url: '/Survey/GetAllUndergraduateQuestion',
                 dataType: 'json',
                 contentType: 'application/json',
                 type: "POST",
@@ -276,7 +276,7 @@
                     data: null,
                     name: "type",
                     mRender: function (data, type, row) {
-                        let questionType = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(Definitions.QuestionType.ToList()))');
+                        let questionType = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(Definitions.UndergraduateQuestionType.ToList()))');
                         let result = questionType.find(element => element.Key == data.type);
                         return result.Value;
                     }
