@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using nuce.web.api.Models.Ctsv;
 using nuce.web.api.Services.Ctsv.Interfaces;
 using nuce.web.api.ViewModel;
@@ -17,9 +19,11 @@ namespace nuce.web.api.Controllers.Ctsv
     public class StudentController : ControllerBase
     {
         private readonly IStudentService _studentService;
-        public StudentController(IStudentService _studentService)
+        private readonly ILogger<StudentController> _logger;
+        public StudentController(IStudentService _studentService, ILogger<StudentController> _logger)
         {
             this._studentService = _studentService;
+            this._logger = _logger;
         }
         /// <summary>
         /// Thông tin sv
@@ -80,6 +84,7 @@ namespace nuce.web.api.Controllers.Ctsv
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] AsAcademyStudent student)
         {
+            _logger.LogInformation("api: " + JsonConvert.SerializeObject(student).ToString());
             var result = await _studentService.UpdateStudent(student);
             if (result != null)
             {
