@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.api.Services.Survey.Interfaces;
+using nuce.web.shared;
 
 namespace nuce.web.api.Controllers.Survey.Normal
 {
@@ -20,6 +22,7 @@ namespace nuce.web.api.Controllers.Survey.Normal
 
         [Route("faculty/{code}")]
         [HttpPost]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_KhoaBan)]
         public async Task<IActionResult> FacultyResultAsync(string code)
         {
             return Ok(await _surveyResultService.FacultyResultAsync(code));

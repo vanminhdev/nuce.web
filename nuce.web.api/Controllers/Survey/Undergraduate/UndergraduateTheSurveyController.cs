@@ -149,9 +149,9 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
             {
                 await _asEduSurveyUndergraduateBaiKhaoSatService.Delete(id.Value);
             }
-            catch (RecordNotFoundException)
+            catch (RecordNotFoundException e)
             {
-                return NotFound(new { message = "Không tìm thấy bài khảo sát" });
+                return NotFound(new { message = e.Message });
             }
             catch (DbUpdateException e)
             {

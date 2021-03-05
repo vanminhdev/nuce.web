@@ -110,7 +110,7 @@ namespace nuce.web.api.Services.Survey.Implements
             var theSurvey = await _context.AsEduSurveyUndergraduateBaiKhaoSat.FirstOrDefaultAsync(o => o.Id == id && o.Status != (int)TheSurveyStatus.Deleted);
             if (theSurvey == null)
             {
-                throw new RecordNotFoundException();
+                throw new RecordNotFoundException("Không tìm thấy bài khảo sát");
             }
 
             if (theSurvey.Status == (int)TheSurveyStatus.Published)

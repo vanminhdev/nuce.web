@@ -341,7 +341,7 @@
                         let fromDate = new Date(+data.fromDate.match(regex)[0]);
                         let endDate = new Date(+data.endDate.match(regex)[0]);
                         let currentDate = new Date();
-                        if (currentDate > endDate && data.status != @((int)SurveyRoundStatus.End)) {
+                        if (currentDate > endDate && data.status == @((int)SurveyRoundStatus.End)) {
                             return '';
                         }
                         return `<a href='/survey/TheSurvey?surveyRoundId=${data.id}'>Danh sách<a/>`;
@@ -363,15 +363,19 @@
                             html += `<button class="btn btn btn-outline-warning btn-sm ml-1 mr-1" onclick="closeClick('${data.id}')">Đóng tạm</button>`;
                             html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="addEndDateClick('${data.id}')">Gia hạn</button>`;
                             html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê tạm" onclick="xemThongKeTam('${data.id}', this)">T.kê tạm</button>`;
+                            html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê danh sách sinh viên có tham gia ks không" onclick="dsSVThamGia('${data.id}')">Sv tham gia</button>`;
                         } else if (currentDate >= fromDate && currentDate < endDate && data.status == @((int)SurveyRoundStatus.Closed)) {
                             html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="openClick('${data.id}')">Mở lại</button>`;
                             html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="addEndDateClick('${data.id}')">Gia hạn</button>`;
                             html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê tạm" onclick="xemThongKeTam('${data.id}', this)">T.kê tạm</button>`;
+                            html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê danh sách sinh viên có tham gia ks không" onclick="dsSVThamGia('${data.id}')">Sv tham gia</button>`;
                         } else if (currentDate > endDate && data.status != @((int)SurveyRoundStatus.End)) {
                             html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="addEndDateClick('${data.id}')">Gia hạn</button>`;
                             html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê tạm" onclick="xemThongKeTam('${data.id}', this)">T.kê tạm</button>`;
+                            html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê danh sách sinh viên có tham gia ks không" onclick="dsSVThamGia('${data.id}')">Sv tham gia</button>`;
                         } else if (currentDate > endDate && data.status == @((int)SurveyRoundStatus.End)) {
                             html += `<button class="btn btn btn-outline-danger btn-sm ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
+                            html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê danh sách sinh viên có tham gia ks không" onclick="dsSVThamGia('${data.id}')">Sv tham gia</button>`;
                         }
                         return html;
                     }
@@ -692,6 +696,11 @@
                     console.log(jqXHR);
                 });
             });
+        }
+    </script>
+    <script>
+        function dsSVThamGia(id) {
+            window.open(`/Survey/ExportStudentDidSurvey?surveyRoundId=${id}`, '_blank');
         }
     </script>
 }

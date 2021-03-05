@@ -108,6 +108,8 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 var defaultTheSurveyTypeId = theoreticalSubjects.Id;
                 Guid baiKhaoSatId = defaultTheSurveyTypeId; //mặc định
 
+                bool chuaDungLoaiMon = false;
+
                 while (skip <= numStudent)
                 {
                     studentClassrooms = query.Skip(skip).Take(take).ToList();
@@ -133,6 +135,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                 //loại môn của môn đó
                                 subjectExtend = eduContext.AsAcademySubjectExtend.FirstOrDefault(o => o.Code == subject.Code);
                                 baiKhaoSatId = defaultTheSurveyTypeId; //mặc định
+                                chuaDungLoaiMon = false;
                                 if (subjectExtend != null && subjectExtend.Type != null)
                                 {
                                     if (subjectExtend.Type == (int)TheSurveyType.TheoreticalSubjects)
@@ -151,6 +154,11 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                     {
                                         baiKhaoSatId = assignmentSubjects.Id;
                                     }
+                                    else
+                                    {
+                                        //trường hợp môn không thuộc 4 loại 
+                                        chuaDungLoaiMon = true;
+                                    }
                                 }
                             }
                         }
@@ -158,11 +166,12 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                         {
                             _logger.LogWarning($"Lop co ma {sc.ClassRoomCode} khong ton tai");
                             subject = null;
+                            subjectExtend = null;
                         }
 
                         var recordBaikssv = surveyContext.AsEduSurveyBaiKhaoSatSinhVien
                             .FirstOrDefault(o => o.BaiKhaoSatId == baiKhaoSatId && o.StudentCode == sc.StudentCode && o.ClassRoomCode == sc.ClassRoomCode 
-                            && o.Nhhk == sc.Nhhk && o.Status != (int)SurveyStudentStatus.Done); //sinh viên lớp môn của kỳ đó có chưa
+                            && o.Nhhk == sc.Nhhk); //sinh viên lớp môn của kỳ đó có chưa
                         //nếu chưa có thì thêm
                         if (recordBaikssv == null)
                         {
@@ -189,12 +198,17 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                         }
                         else //có rồi thì update một số trường bị thiếu
                         {
+                            if(recordBaikssv.Status != (int)SurveyStudentStatus.Done)
+                            {
+                                recordBaikssv.BaiKhaoSatId = baiKhaoSatId;
+                            }
                             recordBaikssv.DepartmentCode = lecturer != null ? lecturer.DepartmentCode : "";
                             recordBaikssv.LecturerCode = lecturer != null ? lecturer.Code : "";
                             recordBaikssv.LecturerName = lecturer != null ? lecturer.FullName : "";
                             recordBaikssv.SubjectCode = subject != null ? subject.Code : "";
                             recordBaikssv.SubjectName = subject != null ? subject.Name : "";
                             recordBaikssv.SubjectType = subjectExtend != null ? subjectExtend.Type != null ? subjectExtend.Type.Value : -1 : -1;
+                            recordBaikssv.Status = (int)SurveyStudentStatus.DoNot;
                         }
                     }
                     surveyContext.SaveChanges();

@@ -20,6 +20,7 @@ using System.Transactions;
 using System.Xml;
 using System.Xml.Linq;
 using static EduWebService.ServiceSoapClient;
+using AsAcademyStudent = nuce.web.api.Models.EduData.AsAcademyStudent;
 
 namespace nuce.web.api.Services.EduData.Implements
 {

@@ -393,12 +393,16 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 var tongSoGiangVienCanKs = 0;
                 var tongSoGiangVienDaDuocKs = 0;
 
+                //tính ra dòng tổng của khoa
                 var rowTotal = row + departments.Count();
 
                 //lấy môn học của bộ môn
                 foreach (var d in departments)
                 {
                     _logger.LogInformation($"Dang ket xuat loai {loaiMon} bo mon co ma {d.Code} cua khoa {f.Code}");
+                    //mã giảng viên dùng cho các cột đếm số lượng sv, gv từng bộ môn
+                    var lerturerCodes = eduContext.AsAcademyLecturer.Where(o => o.DepartmentCode == d.Code).Select(o => o.Code).ToList();
+
                     var monHocCuaBoMon = eduContext.AsAcademySubject.Where(o => o.DepartmentCode == d.Code)
                         .Join(eduContext.AsAcademySubjectExtend, o => o.Code, o => o.Code, (monhoc, loaimon) => new { monhoc, loaimon.Type })
                         .Select(o => new
@@ -409,15 +413,10 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                             o.Type
                         });
 
-                    #region môn
-                    var monLyThuyetCuaBoMonCodes = monHocCuaBoMon.Where(o => o.Type == loaiMon).Select(o => o.Code).ToList();
-                    //if(monLyThuyetCuaBoMonCodes.Count == 0) //bộ môn không có môn loại này
-                    //{
-                    //    continue;
-                    //}
-
+                    #region thống kê
+                    #region đếm số lượng
                     //các bài làm của môn lý thuyết của bộ môn đang xét
-                    var baiLamKhaoSatLyThuyet = baiLamKhaoSatCacDotDangXet.Where(o => monLyThuyetCuaBoMonCodes.Contains(o.SubjectCode));
+                    var baiLamKhaoSatLyThuyet = baiLamKhaoSatCacDotDangXet.Where(o => o.SubjectType == loaiMon && lerturerCodes.Contains(o.LecturerCode));
                     var baiLamKhaoSatLyThuyetHoanThanh = baiLamKhaoSatLyThuyet.Where(o => o.Status == (int)SurveyStudentStatus.Done).Select(o => new { o.StudentCode, o.LecturerCode });
 
                     var soPhieuPhatRa = baiLamKhaoSatLyThuyet.Count();
@@ -434,8 +433,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                     tongSoGiangVienCanKs += soGiangVienCanKs;
                     var soGiangVienDaDuocKs = baiLamKhaoSatLyThuyetHoanThanh.GroupBy(o => o.LecturerCode).Select(o => o.Key).Count();
                     tongSoGiangVienDaDuocKs += soGiangVienDaDuocKs;
-
-                    #region tổng hợp số lượng
+                    
                     wsLyThuyet.Cells[row, col++].Value = f.Name;
                     wsLyThuyet.Cells[row, col++].Value = d.Name;
                     wsLyThuyet.Cells[row, col++].Value = soSVThamGiaKhaoSat;
@@ -495,8 +493,6 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                     #endregion
 
                     #region tổng hợp dữ liệu thống kê thô
-                    var lerturerCodes = eduContext.AsAcademyLecturer.Where(o => o.DepartmentCode == d.Code).Select(o => o.Code).ToList();
-
                     var theSurveyIdLyThuyets = baiKhaoSats.Where(o => o.Type == loaiMon).Select(o => o.Id).ToList();
                     var reportTotalLyThuyet = surveyContext.AsEduSurveyReportTotal.Where(o => theSurveyIdLyThuyets.Contains(o.TheSurveyId));
                     var index = 0;

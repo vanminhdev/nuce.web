@@ -34,6 +34,16 @@ namespace nuce.web.quanly.Common
             {"T",  "Tiêu đề"}
         };
 
+        public static Dictionary<string, string> UndergraduateQuestionType = new Dictionary<string, string>()
+        {
+            {"SC", "Một lựa chọn" },
+            {"MC", "Nhiều lựa chọn" },
+            {"SA", "Trả lời ngắn" },
+            {"GQ", "Nhiều câu hỏi phụ" },
+            {"T",  "Tiêu đề"},
+            {"CityC", "Lựa chọn tỉnh thành" }
+        };
+
         public static Dictionary<string, string> GraduateQuestionType = new Dictionary<string, string>()
         {
             {"SC", "Một lựa chọn" },
@@ -51,8 +61,7 @@ namespace nuce.web.quanly.Common
             //{"EQ", "Câu hỏi cảm xúc" },
             //{"TL", "Hai cấp" },
             {"T",  "Tiêu đề"},
-            {"CityC", "Lựa chọn tỉnh thành" },
-            {"StarRating", "Vote Sao" },
+            {"CityC", "Lựa chọn tỉnh thành" }
         };
     }
 
@@ -156,14 +165,14 @@ namespace nuce.web.quanly.Common
         TheoreticalSubjects = 1,
 
         /// <summary>
-        /// Đề cho môn thực hành, thí nghiệm và thực tập
-        /// </summary>
-        PracticalSubjects = 2,
-
-        /// <summary>
         /// Đề cho môn lý thuyết + thực hành
         /// </summary>
-        TheoreticalPracticalSubjects = 3,
+        TheoreticalPracticalSubjects = 2,
+
+        /// <summary>
+        /// Đề cho môn thực hành, thí nghiệm và thực tập
+        /// </summary>
+        PracticalSubjects = 3,
 
         /// <summary>
         /// Đề cho môn đồ án

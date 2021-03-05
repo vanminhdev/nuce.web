@@ -123,12 +123,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new InvalidInputDataException("Đợt khảo sát đang mở");
             }
 
-            if (surveyRound.Status != (int)SurveyRoundStatus.End)
-            {
-                throw new InvalidInputDataException("Đợt khảo sát chưa kết thúc không thể xoá");
-            }
-
-            if (await _context.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == surveyRound.Id).FirstOrDefaultAsync() != null)
+            if (await _context.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == surveyRound.Id).FirstOrDefaultAsync() != null && surveyRound.Status != (int)SurveyRoundStatus.End)
             {
                 throw new InvalidInputDataException("Đợt khảo sát đã có bài khảo sát không thể xoá");
             }
@@ -218,7 +213,8 @@ namespace nuce.web.api.Services.Survey.Implements
 
         public async Task<List<AsEduSurveyDotKhaoSat>> GetSurveyRoundClosedOrEnd()
         {
-            var surveyRounds = await _context.AsEduSurveyDotKhaoSat.Where(o => o.Status == (int)SurveyRoundStatus.Closed || o.EndDate <= DateTime.Now || o.Status == (int)SurveyRoundStatus.End)
+            var surveyRounds = await _context.AsEduSurveyDotKhaoSat
+                .Where(o => o.Status == (int)SurveyRoundStatus.Closed || (o.EndDate <= DateTime.Now && o.Status != (int)SurveyRoundStatus.Deleted) || o.Status == (int)SurveyRoundStatus.End)
                 .OrderByDescending(o => o.FromDate).ToListAsync();
             return surveyRounds;
         }
