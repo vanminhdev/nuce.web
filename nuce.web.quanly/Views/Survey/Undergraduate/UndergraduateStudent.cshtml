@@ -146,13 +146,30 @@
             </div>
             <div class="modal-body">
                 <div class="container-fluid">
-                    <div class="form-group row">
-                        <label class="col-3 col-form-label">Đợt khảo sát <span class="text-danger">*</span></label>
-                        <div class="col-9">
-                            <select class="form-control selectpicker custom-boostrap-select" id="surveyRoundId-download" required>
-                            </select>
+                    <p class="mb-2">Theo ngày ra quyết định</p>
+                    <form id="form-download-student" class="auto-validate">
+                        @*
+                        <div class="form-group row">
+                            <label class="col-3 col-form-label">Đợt khảo sát <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <select class="form-control selectpicker custom-boostrap-select" id="surveyRoundId-download" required>
+                                </select>
+                            </div>
                         </div>
-                    </div>
+                        *@
+                        <div class="form-group row">
+                            <label class="col-3 col-form-label">Từ ngày <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <input type="date" class="form-control" name="fromDate" id="fromDate" required data-rule-dateLessThanOrEqual="#toDate">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3 col-form-label">Đến ngày <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <input type="date" class="form-control" name="toDate" id="toDate" required data-rule-dateGreaterThanOrEqual="#fromDate">
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
             <div class="modal-footer">
@@ -201,7 +218,7 @@
         </script>
     }
 
-    <script>
+<script>
         var table = $('#id-datatable').DataTable({
             processing: true,
             serverSide: true,
@@ -249,7 +266,7 @@
                     data: "gioitinh"
                 },
                 {
-                    data: "tbcht",
+                    data: "tbcht"
                 },
                 {
                     data: "xeploai"
@@ -293,6 +310,8 @@
                             return 'Hoàn thành';
                         } else if (data.surveyStudentStatus === @((int)SurveyStudentStatus.HaveNot)) {
                             return 'Không có';
+                        } else if (data.surveyStudentStatus === @((int)SurveyStudentStatus.RequestAuthorize)) {
+                            return 'Chưa xác thực';
                         }
                         return data.surveyStudentStatus;
                     }
@@ -364,7 +383,7 @@
         $('#btn-download-student').click(() => {
             $('#loading-screen').show();
             $.ajax({
-                data: { surveyRoundId: $('#surveyRoundId-download').val() },
+                data: $('#form-download-student').serializeArray(),
                 dataType: 'json',
                 method: 'Get',
                 url: '/Survey/DownloadListStudent',
@@ -390,6 +409,7 @@
             });
         });
 
+        @*
         $('#delete-all').click(() => {
             $('#modal-yes-no-content').html('Xác nhận xoá toàn bộ sinh viên ?');
             $('#modal-yes-no').modal('show');
@@ -421,6 +441,7 @@
                 });
             });
         });
+        *@
 
         function deleteStudent(mssv) {
             $('#modal-yes-no-content').html('Xác nhận xoá sinh viên có mã: ' + mssv + ' ?');
@@ -454,5 +475,5 @@
                 });
             });
         }
-    </script>
+</script>
 }

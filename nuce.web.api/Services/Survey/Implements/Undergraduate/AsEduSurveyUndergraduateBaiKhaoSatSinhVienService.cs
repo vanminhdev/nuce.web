@@ -387,7 +387,7 @@ namespace nuce.web.api.Services.Survey.Implements
         public async Task SendEmailVerify(string email, string url)
         {
             HttpClient client = new HttpClient();
-            var strContent = JsonSerializer.Serialize(new { 
+            var strContent = JsonSerializer.Serialize(new {
                 emails = new[] { 
                     new { 
                         email,

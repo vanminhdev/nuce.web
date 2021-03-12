@@ -24,6 +24,6 @@ namespace nuce.web.api.Services.Survey.Interfaces
 
         public Task Delete(string studentCode);
 
-        public Task<byte[]> DownloadListStudent(Guid surveyRoundId);
+        public Task<byte[]> DownloadListStudent(DateTime? fromDate, DateTime? toDate);
     }
 }

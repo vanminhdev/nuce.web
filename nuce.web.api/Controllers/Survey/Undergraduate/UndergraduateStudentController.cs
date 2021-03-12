@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -7,6 +8,7 @@ using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Helper;
+using nuce.web.api.Models.Core;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.Services.Survey.Interfaces;
@@ -21,6 +23,7 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,31 +34,46 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
     public class UndergraduateStudentController : ControllerBase
     {
         private readonly ILogger<UndergraduateStudentController> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
         private readonly IPathProvider _pathProvider;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUserService _userService;
         private readonly IAsEduSurveyUndergraduateStudentService _asEduSurveyUndergraduateStudentService;
 
-        public UndergraduateStudentController(ILogger<UndergraduateStudentController> logger, IPathProvider pathProvider, 
+        public UndergraduateStudentController(ILogger<UndergraduateStudentController> logger, IPathProvider pathProvider,
+            UserManager<ApplicationUser> userManager,
             IConfiguration configuration,
+            IHttpContextAccessor httpContextAccessor,
+            IUserService userService,
             IAsEduSurveyUndergraduateStudentService asEduSurveyUndergraduateStudentService)
         {
             _logger = logger;
+            _userManager = userManager;
             _pathProvider = pathProvider;
             _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
+            _userService = userService;
             _asEduSurveyUndergraduateStudentService = asEduSurveyUndergraduateStudentService;
         }
 
         [HttpPost]
-        [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
+        [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate, RoleNames.KhaoThi_Survey_KhoaBan)]
         public async Task<IActionResult> GetUndergraduateStudent([FromBody] DataTableRequest request)
         {
             var filter = new UndergraduateStudentFilter();
+            var lsRole = _userService.GetClaimListByKey(ClaimTypes.Role);
+            if (lsRole.Contains(RoleNames.KhaoThi_Survey_KhoaBan))
+            {
+                filter.MaKhoa = _userService.GetUserName();
+            }
+
             if (request.Columns != null)
             {
                 filter.Masv = request.Columns.FirstOrDefault(c => c.Data == "masv" || c.Name == "masv")?.Search.Value ?? null;
 
                 var dotKhaoSatId = request.Columns.FirstOrDefault(c => c.Data == "dotKhaoSatId" || c.Name == "dotKhaoSatId")?.Search.Value;
-                if(dotKhaoSatId != null)
+                if (dotKhaoSatId != null)
                 {
                     filter.DotKhaoSatId = Guid.Parse(dotKhaoSatId);
                 }
@@ -174,19 +192,22 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
                 var lop = worksheet.Cells[i, 4].Value?.ToString();
 
                 DateTime? ngaySinh = null;
-                try
-                {
-                    ngaySinh = (DateTime)(worksheet.Cells[i, 5].Value);
-                }
-                catch
+                if (worksheet.Cells[i, 5].Value != null)
                 {
                     try
                     {
-                        ngaySinh = DateTime.ParseExact((string)worksheet.Cells[i, 5].Value, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                        ngaySinh = (DateTime)(worksheet.Cells[i, 5].Value);
                     }
                     catch
                     {
+                        try
+                        {
+                            ngaySinh = DateTime.ParseExact((string)worksheet.Cells[i, 5].Value, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                        }
+                        catch
+                        {
 
+                        }
                     }
                 }
 
@@ -220,7 +241,7 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
                     }
                 }
 
-                string masvFormated = null;
+                string masvFormated;
                 if (masv != null)
                 {
                     masvFormated = $"{masv.Trim():0000000}";
@@ -254,9 +275,9 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
 
         [HttpGet]
         [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
-        public async Task<IActionResult> DownloadListStudent([Required] Guid? surveyRoundId)
+        public async Task<IActionResult> DownloadListStudent(DateTime? fromDate, DateTime? toDate)
         {
-            var data = await _asEduSurveyUndergraduateStudentService.DownloadListStudent(surveyRoundId.Value);
+            var data = await _asEduSurveyUndergraduateStudentService.DownloadListStudent(fromDate, toDate);
             return File(data, ContentTypes.Xlsx, "list_student.xlsx");
         }
 

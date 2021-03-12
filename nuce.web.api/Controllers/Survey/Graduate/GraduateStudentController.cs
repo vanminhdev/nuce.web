@@ -212,19 +212,22 @@ namespace nuce.web.api.Controllers.Survey.Graduate
                 var lop = worksheet.Cells[i, 4].Value?.ToString();
 
                 DateTime? ngaySinh = null;
-                try
-                {
-                    ngaySinh = (DateTime)(worksheet.Cells[i, 5].Value);
-                }
-                catch
+                if (worksheet.Cells[i, 5].Value != null)
                 {
                     try
                     {
-                        ngaySinh = DateTime.ParseExact((string)worksheet.Cells[i, 5].Value, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                        ngaySinh = (DateTime)(worksheet.Cells[i, 5].Value);
                     }
                     catch
                     {
+                        try
+                        {
+                            ngaySinh = DateTime.ParseExact((string)worksheet.Cells[i, 5].Value, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                        }
+                        catch
+                        {
 
+                        }
                     }
                 }
 

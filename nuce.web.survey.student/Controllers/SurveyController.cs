@@ -4,6 +4,7 @@ using nuce.web.survey.student.Attributes.ActionFilter;
 using nuce.web.survey.student.Models.Base;
 using nuce.web.survey.student.Models.JsonData;
 using nuce.web.survey.student.Models.Survey.Graduate;
+using nuce.web.survey.student.Models.Survey.Undergaduate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,6 +57,20 @@ namespace nuce.web.survey.student.Controllers
                     return Redirect($"/error?message={HttpUtility.UrlEncode("Sinh viên không có bài khảo sát")}&code={(int)HttpStatusCode.NotFound}");
                 }
             );
+        }
+
+        [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_KhoaBan)]
+        public ActionResult UndergraduateStudent()
+        {
+            return View("~/Views/Survey/Faculty/UndergraduateStudent.cshtml");
+        }
+
+        [HttpPost]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_KhoaBan)]
+        public async Task<ActionResult> GetAllUndergraduateStudent(DataTableRequest request)
+        {
+            return await GetDataTabeFromApi<UndergraduateStudent>(request, "/api/UndergraduateStudent/GetUndergraduateStudent");
         }
     }
 }
