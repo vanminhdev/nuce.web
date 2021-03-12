@@ -52,9 +52,9 @@
                         <th class="text-center">Ngành</th>
                         <th class="text-center">Chuyên ngành</th>
                         <th class="text-center">Hệ tốt nghiệp</th>
-                        <th class="text-center">Khoa</th>
-                        <th class="text-center">Số quyết định</th>
-                        <th class="text-center">Ngày ra qđ</th>
+                        @*<th class="text-center">Khoa</th>*@
+                        @*<th class="text-center">Số quyết định</th>
+                        <th class="text-center">Ngày ra qđ</th>*@
                         <th class="text-center">sdt</th>
                         <th class="text-center">email</th>
                         <th class="text-center">T.thái bài ks</th>
@@ -129,18 +129,18 @@
                 {
                     data: "hedaotao"
                 },
-                {
-                    data: "makhoa"
-                },
-                {
-                    data: "soqdtn"
-                },
-                {
-                    data: null,
-                    mRender: function (data, type, row) {
-                        return getDateStringFromServerType(data.ngayraqd);
-                    }
-                },
+                //{
+                //    data: "makhoa"
+                //},
+                //{
+                //    data: "soqdtn"
+                //},
+                //{
+                //    data: null,
+                //    mRender: function (data, type, row) {
+                //        return getDateStringFromServerType(data.ngayraqd);
+                //    }
+                //},
                 {
                     data: "mobile"
                 },

@@ -32,6 +32,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="cache-control" content="max-age=3600" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Khảo thí và đảm bảo chất lượng | @ViewData["Title"]</title>
     <link rel="stylesheet" href="~/content/css/bootstrap.min.css" />
@@ -41,14 +42,14 @@
     <link rel="stylesheet" href="~/content/css/m-style.css" />
     <link rel="stylesheet" href="~/Content/css/fontawesome-free-5.15.1-web/css/all.min.css" />
     <script type="text/javascript">
-        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-        (function(){
-        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-        s1.async=true;
-        s1.src='https://embed.tawk.to/5fd973c8df060f156a8d7a7d/1epkmoi47';
-        s1.charset='UTF-8';
-        s1.setAttribute('crossorigin','*');
-        s0.parentNode.insertBefore(s1,s0);
+        var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+        (function () {
+            var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+            s1.async = true;
+            s1.src = 'https://embed.tawk.to/5fd973c8df060f156a8d7a7d/1epkmoi47';
+            s1.charset = 'UTF-8';
+            s1.setAttribute('crossorigin', '*');
+            s0.parentNode.insertBefore(s1, s0);
         })();
     </script>
     @RenderSection("Style", required: false)
@@ -74,7 +75,7 @@
             </div>
         </div>
         <div class="container" id="container-menu">
-            <nav class="navbar m-navbar navbar-expand-lg navbar-dark m-bg-blue pt-0 pb-0 pr-0">
+            <nav style="text-transform: uppercase;" class="navbar m-navbar navbar-expand-lg navbar-dark m-bg-blue pt-0 pb-0 pr-0">
                 <a class="navbar-brand" href="/default">
                     <i class="fas fa-home text-white"></i>
                 </a>

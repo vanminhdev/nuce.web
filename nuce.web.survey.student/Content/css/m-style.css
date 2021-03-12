@@ -28,6 +28,11 @@
     color: white;
 }
 
+.m-bg-hover-white-blue:hover {
+    border: 2px solid #0A67AF;
+    background-color: #0A67AF;
+}
+
 .m-text-hover-blue:hover {
     color: #112B7F;
 }
@@ -50,6 +55,10 @@
 
 .m-all-text-white > * {
     color: white;
+}
+
+.m-border-blue {
+    border: 2px solid #112B7F;
 }
 
 .m-border-b-blue {
