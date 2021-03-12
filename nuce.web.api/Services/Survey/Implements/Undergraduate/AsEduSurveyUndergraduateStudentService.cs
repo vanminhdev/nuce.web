@@ -39,12 +39,17 @@ namespace nuce.web.api.Services.Survey.Implements
 
             if (!string.IsNullOrWhiteSpace(filter.Masv))
             {
-                dssv = dssv.Where(o => o.Masv.Contains(filter.Masv));
+                dssv = dssv.Where(o => o.Masv == filter.Masv);
             }
 
             if (filter.DotKhaoSatId != null)
             {
                 dssv = dssv.Where(o => o.DotKhaoSatId == filter.DotKhaoSatId);
+            }
+
+            if (filter.MaKhoa != null)
+            {
+                dssv = dssv.Where(o => o.Makhoa == filter.MaKhoa);
             }
 
             var recordsFiltered = dssv.Count();

@@ -165,6 +165,7 @@
     <Compile Include="Models\Survey\Graduate\GraduateStudent.cs" />
     <Compile Include="Models\Survey\Graduate\TheSurveyContent.cs" />
     <Compile Include="Models\Survey\Normal\TheSurveyContent.cs" />
+    <Compile Include="Models\Survey\Undergaduate\UndergraduateStudent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -2706,6 +2707,7 @@
     <Content Include="Views\Survey\Faculty\GraduateTheSurveyStudent.cshtml" />
     <Content Include="Views\Account\LoginCanBo.cshtml" />
     <Content Include="Views\Error\UnderConstruction.cshtml" />
+    <Content Include="Views\Survey\Faculty\UndergraduateStudent.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -73,10 +73,11 @@ namespace nuce.web.api.Controllers.Core
         {
             var loggedUserRoles = _userService.GetClaimListByKey(ClaimTypes.Role);
             var roles = new List<ApplicationRole>();
-            if (loggedUserRoles.Contains("Admin"))
+            if (loggedUserRoles.Contains(RoleNames.Admin))
             {
                 roles = await _roleManager.Roles.ToListAsync();
-            } else
+            }
+            else
             {
                 roles = await _roleManager.Roles.Where(r => loggedUserRoles.Contains(r.Parent)).ToListAsync();
             }            
