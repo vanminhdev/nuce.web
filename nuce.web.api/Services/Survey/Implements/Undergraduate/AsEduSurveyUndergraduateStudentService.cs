@@ -50,6 +50,7 @@ namespace nuce.web.api.Services.Survey.Implements
             var recordsFiltered = dssv.Count();
 
             var querySkip = dssv
+                .OrderByDescending(o => o.Ngayraqd)
                 .Skip(skip).Take(take);
 
             var svdotks = querySkip.Join(_context.AsEduSurveyUndergraduateSurveyRound, o => o.DotKhaoSatId, o => o.Id, (sv, dotks) => new { sv, dotks });
@@ -113,8 +114,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
                     surveyStudentStatus = o.baikssv != null ? o.baikssv.Status : (int)SurveyStudentStatus.HaveNot
                 })
-                .OrderBy(o => o.dotKhaoSatId)
-                .ThenBy(o => o.exMasv)
+                .OrderByDescending(o => o.lopqd)
                 .ToListAsync();
 
             return new PaginationModel<UndergraduateStudent>
@@ -202,7 +202,7 @@ namespace nuce.web.api.Services.Survey.Implements
             _context.SaveChanges();
         }
 
-        public async Task<byte[]> DownloadListStudent(Guid surveyRoundId)
+        public async Task<byte[]> DownloadListStudent(DateTime? fromDate, DateTime? toDate)
         {
             ExcelPackage excel = new ExcelPackage();
             var worksheet = excel.Workbook.Worksheets.Add("Danh sách sinh viên");
@@ -261,10 +261,20 @@ namespace nuce.web.api.Services.Survey.Implements
             worksheet.Column(7).Style.Numberformat.Format = "0.0";
             worksheet.Column(14).Style.Numberformat.Format = "dd-MM-yy";
 
-            var students = await _context.AsEduSurveyUndergraduateStudent
-                .Where(o => o.DotKhaoSatId == surveyRoundId)
-                .ToListAsync();
-            
+            IQueryable<AsEduSurveyUndergraduateStudent> query = _context.AsEduSurveyUndergraduateStudent;
+
+            if (fromDate != null)
+            {
+                query = query.Where(o => o.Ngayraqd >= fromDate.Value);
+            }
+
+            if (toDate != null)
+            {
+                query = query.Where(o => o.Ngayraqd <= toDate.Value);
+            }
+
+            var students = await query.ToListAsync();
+
             int row = 2;
             int stt = 1;
             foreach (var student in students)

@@ -2705,6 +2705,7 @@
     <Content Include="Views\Survey\Faculty\Index.cshtml" />
     <Content Include="Views\Survey\Faculty\GraduateTheSurveyStudent.cshtml" />
     <Content Include="Views\Account\LoginCanBo.cshtml" />
+    <Content Include="Views\Error\UnderConstruction.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

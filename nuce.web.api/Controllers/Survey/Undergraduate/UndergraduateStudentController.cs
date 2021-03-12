@@ -174,19 +174,22 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
                 var lop = worksheet.Cells[i, 4].Value?.ToString();
 
                 DateTime? ngaySinh = null;
-                try
-                {
-                    ngaySinh = (DateTime)(worksheet.Cells[i, 5].Value);
-                }
-                catch
+                if (worksheet.Cells[i, 5].Value != null)
                 {
                     try
                     {
-                        ngaySinh = DateTime.ParseExact((string)worksheet.Cells[i, 5].Value, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                        ngaySinh = (DateTime)(worksheet.Cells[i, 5].Value);
                     }
                     catch
                     {
+                        try
+                        {
+                            ngaySinh = DateTime.ParseExact((string)worksheet.Cells[i, 5].Value, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                        }
+                        catch
+                        {
 
+                        }
                     }
                 }
 
@@ -220,7 +223,7 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
                     }
                 }
 
-                string masvFormated = null;
+                string masvFormated;
                 if (masv != null)
                 {
                     masvFormated = $"{masv.Trim():0000000}";
@@ -254,9 +257,9 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
 
         [HttpGet]
         [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
-        public async Task<IActionResult> DownloadListStudent([Required] Guid? surveyRoundId)
+        public async Task<IActionResult> DownloadListStudent(DateTime? fromDate, DateTime? toDate)
         {
-            var data = await _asEduSurveyUndergraduateStudentService.DownloadListStudent(surveyRoundId.Value);
+            var data = await _asEduSurveyUndergraduateStudentService.DownloadListStudent(fromDate, toDate);
             return File(data, ContentTypes.Xlsx, "list_student.xlsx");
         }
 

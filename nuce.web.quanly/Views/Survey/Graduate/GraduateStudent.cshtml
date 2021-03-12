@@ -35,8 +35,8 @@
                 <div class="col-12 col-md mb-2 d-flex align-items-start justify-content-md-end justify-content-center">
                     <div class="d-flex">
                         <button class="btn btn-success mx-2 btn-sm" id="tranfer-student">Lấy danh sách</button>
-                        <button class="btn btn-info mr-2 btn-sm" id="download-student">Tải xuống danh sách</button>
-                        <button class="btn btn-primary mr-2 btn-sm" id="upload">Tải lên danh sách</button>
+                        @*<button class="btn btn-info mr-2 btn-sm" id="download-student">Tải xuống danh sách</button>*@
+                        @*<button class="btn btn-primary mr-2 btn-sm" id="upload">Tải lên danh sách</button>*@
                         @*<button class="btn btn-danger btn-sm" id="delete-all">Xoá toàn bộ</button>*@
                     </div>
                 </div>
@@ -398,6 +398,7 @@
             });
         });
 
+        @*
         $('#delete-all').click(() => {
             $('#modal-yes-no-content').html('Xác nhận xoá toàn bộ sinh viên ?');
             $('#modal-yes-no').modal('show');
@@ -424,6 +425,7 @@
                 });
             });
         });
+        *@
 
         function deleteStudent(mssv) {
             $('#modal-yes-no-content').html('Xác nhận xoá sinh viên có mã: ' + mssv + ' ?');

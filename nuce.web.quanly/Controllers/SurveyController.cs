@@ -1847,9 +1847,9 @@ namespace nuce.web.quanly.Controllers
 
         [HttpGet]
         [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
-        public async Task<ActionResult> DownloadListStudent(string surveyRoundId)
+        public async Task<ActionResult> DownloadListStudent(DateTime? fromDate, DateTime? toDate)
         {
-            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateStudent/DownloadListStudent?surveyRoundId={surveyRoundId}");
+            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/UndergraduateStudent/DownloadListStudent?fromDate={fromDate}&toDate={toDate}");
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 using (Stream streamToReadFrom = await response.Content.ReadAsStreamAsync())
