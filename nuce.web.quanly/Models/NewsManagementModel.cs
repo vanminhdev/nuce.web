@@ -26,6 +26,7 @@ namespace nuce.web.quanly.Models
         public int id { get; set; }
         public int catId { get; set; }
         public string title { get; set; }
+        public int? order { get; set; }
         public string avatar { get; set; }
         public string file { get; set; }
         public string description { get; set; }
@@ -57,6 +58,7 @@ namespace nuce.web.quanly.Models
     {
         public int catId { get; set; }
         public string title { get; set; }
+        public int? order { get; set; }
         public string description { get; set; }
         public string content { get; set; }
         public object avatar { get; set; }

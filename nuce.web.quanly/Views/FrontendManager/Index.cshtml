@@ -138,7 +138,7 @@
     <script src="~/content/js/jquery.dataTables.min.js"></script>
     <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/content/js/dataTables.config.js"></script>
-
+    <script src="~/Content/js/common/fileHelper.js"></script>
     <link rel="stylesheet" href="~/Content/js/jstree/themes/default/style.min.css" />
     <script src="~/Content/js/jstree/jstree.min.js"></script>
 
@@ -429,7 +429,7 @@
     </script>
     @* ux *@
     <script>
-        $('#btn-toggle').click(function() {
+        $('#btn-toggle').click(function () {
             $('#right-pane').toggleClass('col-12').toggleClass('col-8');
             $(this).find('i').toggleClass('m-rotate-90');
         });

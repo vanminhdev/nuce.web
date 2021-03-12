@@ -24,6 +24,10 @@
                 <div class="font-14-sm fw-600 font-18">Tiêu đề</div>
                 <input id="txtTitle" name="title" type="text" class="form-control" required />
             </div>
+            <div class="form-group">
+                <div class="font-14-sm fw-600 font-18">Thứ tự ưu tiên</div>
+                <input id="txtOrder" name="order" type="number" class="form-control" min="1" max="20" />
+            </div>
             <div class="row">
                 <div class="col-12">
                     <div class="row">
@@ -80,6 +84,7 @@
             if (!form.valid()) return;
 
             const body = state.newsItem;
+            body.order = $('#txtOrder').val();
             body.title = $('#txtTitle').val();
             body.description = $('#txtDescription').val();
             body.newContent = CKEDITOR.instances["news-content"].getData();
@@ -120,6 +125,7 @@
             });
             state.newsItem = @Html.Raw(Json.Encode(Model));
             $('#txtTitle').val(state.newsItem.title);
+            $('#txtOrder').val(state.newsItem.order);
             $('#txtDescription').val(state.newsItem.description);
             $('#news-content').val(state.newsItem.newContent);
             _fileHelper.loadImageOnLink(`${API_URL}/api/NewsManager/news-items/avatar/${state.newsItem.id}`, 'imgAvaPreview');
