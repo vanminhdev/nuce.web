@@ -136,29 +136,36 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
         public async Task<ResponseBody> UpdateStudent(AsAcademyStudent student)
         {
-            var currentStudent = _userService.GetCurrentStudent();
-
-            currentStudent.HkttPhuong = student.HkttPhuong;
-            currentStudent.HkttPho = student.HkttPho;
-            currentStudent.HkttQuan = student.HkttQuan;
-            currentStudent.HkttTinh = student.HkttTinh;
-            currentStudent.HkttSoNha = student.HkttSoNha;
-            currentStudent.Cmt = student.Cmt;
-            currentStudent.CmtNgayCap = student.CmtNgayCap;
-            currentStudent.CmtNoiCap = student.CmtNoiCap;
-            currentStudent.LaNoiTru = student.LaNoiTru;
-            currentStudent.Mobile = student.Mobile;
-            currentStudent.Email = student.Email;
-            currentStudent.EmailNhaTruong = student.EmailNhaTruong;
-
             try
             {
+                var currentStudent = _userService.GetCurrentStudent();
+                _logger.LogInformation("model: " + JsonConvert.SerializeObject(student).ToString());
+                _logger.LogInformation("Thông tin SV: " + JsonConvert.SerializeObject(currentStudent).ToString());
+
+                if (currentStudent == null)
+                {
+                    currentStudent = _studentRepository.FindByCode(student.Code);
+                }
+
+                currentStudent.HkttPhuong = student.HkttPhuong;
+                currentStudent.HkttPho = student.HkttPho;
+                currentStudent.HkttQuan = student.HkttQuan;
+                currentStudent.HkttTinh = student.HkttTinh;
+                currentStudent.HkttSoNha = student.HkttSoNha;
+                currentStudent.Cmt = student.Cmt;
+                currentStudent.CmtNgayCap = student.CmtNgayCap;
+                currentStudent.CmtNoiCap = student.CmtNoiCap;
+                currentStudent.LaNoiTru = student.LaNoiTru;
+                currentStudent.Mobile = student.Mobile;
+                currentStudent.Email = student.Email;
+                currentStudent.EmailNhaTruong = student.EmailNhaTruong;
+                _logger.LogInformation("save change");
                 _studentRepository.Update(currentStudent);
                 await _unitOfWork.SaveAsync();
             }
             catch (Exception ex)
             {
-                _logger.LogError("Cập nhật thông tin SV", $"{ex.ToString()} \n", JsonConvert.SerializeObject(student));
+                _logger.LogError("Cập nhật thông tin SV: " + $"{ex.ToString()} \n" + JsonConvert.SerializeObject(student).ToString());
                 return new ResponseBody { Message = "Lỗi hệ thống" };
             }
             return null;

@@ -291,6 +291,7 @@ namespace nuce.web.api.Controllers.Core
                 return NotFound("Sinh viên không tồn tại");
             }
             model.Username = student.Code;
+            model.LoginUserType = LoginUserType.Student;
 
             var user = new ApplicationUser { UserName = model.Username };
 
