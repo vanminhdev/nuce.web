@@ -407,6 +407,8 @@ namespace nuce.web.api.Services.Survey.Implements
             var response = await client.PostAsync(_configuration.GetValue<string>("ApiSendEmail"), content);
             if (!response.IsSuccessStatusCode)
             {
+                var test = await response.Content.ReadAsStringAsync();
+                _logger.LogError(test);
                 throw new SendEmailException(await response.Content.ReadAsStringAsync());
             }
         }

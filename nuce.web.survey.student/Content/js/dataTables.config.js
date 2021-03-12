@@ -1,7 +1,7 @@
 ﻿var dataTableConfig = {
     language: {
         "decimal": "",
-        "emptyTable": "Không có dữ liệu",
+        "emptyTable": "Đang cập nhật",
         "info": "Từ _START_ tới _END_ trong _TOTAL_",
         "infoEmpty": "",
         "infoFiltered": "(Lọc từ _MAX_)",
