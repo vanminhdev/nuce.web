@@ -9,6 +9,7 @@ namespace nuce.web.api.Repositories.Ctsv.Interfaces
     public interface IBaseStudentServiceRepository<Entity> where Entity: class
     {
         public IQueryable<Entity> GetAll(long studentId);
+        public IQueryable<Entity> GetAll(string studentCode);
         public Task<GetAllForAdminResponseRepo<Entity>> GetAllForAdmin(QuanLyDichVuDetailModel model);
         public Task AddAsync(Entity model);
         public bool IsDuplicated(long studentId, string reason = null);

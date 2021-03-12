@@ -27,6 +27,6 @@ namespace nuce.web.api.Services.Ctsv.Interfaces
         public Task UpdateThamSoDichVu(Dictionary<long, string> thamSoDictionary);
         public Task<DataTableResponse<AsAcademyStudentSvThietLapThamSoDichVu>> GetThamSoByDichVu(int loaiDichVu);
         public Task UpdatePartialInfoMuonHocBa(UpdateRequestStatusMuonHocBaGocModel model);
-        public Task<byte[]> ExportWordMuonHocBaAsync();
+        public Task<byte[]> ExportWordMuonHocBaAsync(string studentCode);
     }
 }

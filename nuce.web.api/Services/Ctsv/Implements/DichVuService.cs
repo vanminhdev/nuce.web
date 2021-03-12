@@ -979,12 +979,11 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 throw ex;
             }
         }
-        public async Task<byte[]> ExportWordMuonHocBaAsync()
+        public async Task<byte[]> ExportWordMuonHocBaAsync(string studentCode)
         {
             try
             {
-                var studentId = _userService.GetCurrentStudentID() ?? 0;
-                var muonHocBaDefault = _muonHocBaRepository.GetAll(studentId).FirstOrDefault();
+                var muonHocBaDefault = _muonHocBaRepository.GetAll(studentCode).FirstOrDefault();
                 if (muonHocBaDefault == null)
                 {
                     throw new ArgumentNullException("Không có yêu cầu mượn học bạ nào!");

@@ -32,6 +32,15 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
                     .AsQueryable();
         }
 
+        public IQueryable<Entity> GetAll(string studentCode)
+        {
+            return _context.Set<Entity>().AsNoTracking().AsEnumerable()
+                    .Where(item => item.GetType().GetProperty("StudentCode").GetValue(item, null)?.ToString() == studentCode &&
+                            !Convert.ToBoolean(item.GetType().GetProperty("Deleted").GetValue(item, null)))
+                    .OrderByDescending(item => item.GetType().GetProperty("LastModifiedTime").GetValue(item, null))
+                    .AsQueryable();
+        }
+
         public async Task<GetAllForAdminResponseRepo<Entity>> GetAllForAdmin(QuanLyDichVuDetailModel model)
         {
             DateTime dtCompare = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);

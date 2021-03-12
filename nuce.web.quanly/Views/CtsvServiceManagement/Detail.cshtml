@@ -1034,7 +1034,7 @@
             var rs = getNgayTraDuKien('txtMuonHocBaNgayTra', 'txtMuonHocBaGioTra', 'txtMuonHocBaPhutTra');
             if (!rs.ok) return;
             var body = {
-                Id: serviceType,
+                Id: selectedYeuCau.DichVu.id,
                 NgayMuonThucTe: null,
                 NgayTraDuKien: rs.strNgayTraDuKien,
                 Notice: $(`#txtMuonHocBaGhiChu`).val(),

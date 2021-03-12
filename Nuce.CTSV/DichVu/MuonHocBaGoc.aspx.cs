@@ -86,5 +86,17 @@ namespace Nuce.CTSV
                 }
             }
         }
+
+        protected async void btnDownloadForm_Click(object sender, EventArgs e)
+        {
+            string api = $"/api/DichVu/export-word/muon-hoc-ba/{m_SinhVien.MaSV}";
+            var res = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, api, "");
+            byte[] content = await res.Content.ReadAsByteArrayAsync();
+            Response.ContentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            Response.AddHeader("Content-Disposition", "attachment; filename=myfile.docx");
+            Response.BinaryWrite(content);
+            Response.Flush();
+            Response.End();
+        }
     }
 }
