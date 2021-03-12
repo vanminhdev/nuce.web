@@ -116,6 +116,7 @@
                                 <option value="3">Đã tiếp nhận và đang xử lý</option>
                                 <option value="4">Đã xử lý và có lịch hẹn</option>
                                 <option value="5">Từ chối dịch vụ</option>
+                                <option value="6">Hoàn thành</option>
                             </select>
                             <!-- NGÀY HẸN -->
                             <div id="blockNgayHen" class="mt-3">
@@ -245,6 +246,50 @@
                 </div>
             </div>
         </div>
+        <!-- Modal Update MƯỢN HỌC BẠ -->
+        <div id="myModalUpdateMuonHocBa" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title font-14-sm fw-700">Cập nhật thông tin</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mt-3">
+                            <div class="fw-700 font-13-sm">Ngày trả dự kiến:</div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <input type="text" class="form-control" id="txtMuonHocBaNgayTra" placeholder="Ngày" />
+                                </div>
+                                <div class="col-3">
+                                    <input type="text" class="form-control" id="txtMuonHocBaGioTra" placeholder="Giờ" />
+                                </div>
+                                <div class="col-3">
+                                    <input type="text" class="form-control" id="txtMuonHocBaPhutTra" placeholder="Phút" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <div class="fw-700 font-13-sm">Mô tả:</div>
+                            <textarea class="form-control mt-3" id="txtMuonHocBaMoTa"></textarea>
+                        </div>
+                        <div class="mt-3">
+                            <div class="fw-700 font-13-sm">Ghi chú:</div>
+                            <textarea class="form-control mt-3" id="txtMuonHocBaGhiChu"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Thoát</button>
+                        <button id="btn-activate" type="button"
+                                onclick="onUpdatePartialMuonHocBa()"
+                                class="btn btn-primary">
+                            Xác nhận
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -319,6 +364,7 @@
         var initDatepicker = function() {
             var date_input_ngaybatdau = $('#txtNgayBatDau'); //our date input has the name "date"
             var date_input_ngayketthuc = $('#txtNgayKetThuc'); //our date input has the name "date"
+            var date_input_ngaytradukien = $('#txtMuonHocBaNgayTra'); //our date input has the name "date"
 
 
             var options = {
@@ -328,6 +374,7 @@
             };
             date_input_ngaybatdau.datepicker(options);
             date_input_ngayketthuc.datepicker(options);
+            date_input_ngaytradukien.datepicker(options);
         }
 
         var timeToString = function(value) {
@@ -377,6 +424,18 @@
                 });
             }
         };
+        var onRowClick = function (dichVuID) {
+            isUpdateStatusMulti = false;
+            $('#divConfirm').html('');
+            showThongBaoOnStatusForm('');
+            if (Array.isArray(dataList)) {
+                dataList.forEach(item => {
+                    if (item.DichVu.id === `${dichVuID}`) {
+                        selectedYeuCau = { ...item };
+                    }
+                });
+            }
+        }
 
         var generateStatusOptions = function(status = 1) {
             let options = `<option value="3">Đã tiếp nhận và đang xử lý</option>
@@ -399,6 +458,9 @@
                 default:
                     break;
             };
+            if (serviceType == 5) {
+                options += `<option value="6">Hoàn thành</option>`;
+            }
             $(`#slUpdateStatus`).html(options);
             return status;
         }
@@ -446,8 +508,8 @@
             $('.list-item-avatar').each(function(index, el) {
                 const id = $(el).attr('id');
                 $('<img/>')
-                    .on('error', () => { 
-                        $(`#${id}`).attr('src', `/content/images/person.png`); 
+                    .on('error', () => {
+                        $(`#${id}`).attr('src', `/content/images/person.png`);
                     })
                     .attr("src", $(`#${id}`).attr('src'))
                 ;
@@ -456,6 +518,7 @@
 
         var getMainContentSection = function(dichVu) {
             let result = '';
+            $('#divCustomMuonHocBa').hide();
             switch (Number(serviceType)) {
                 case dichVuEnum.XAC_NHAN:
                     result = `<div class="mb-3">${dichVu.lyDo}</div>`;
@@ -480,10 +543,16 @@
                     result = `<div class="mb-3"><b>Thuộc diện: </b>${ThuocDien[dichVu.thuocDien]}<br><b>Thuộc đối tượng: </b>${ThuocDoiTuong[dichVu.thuocDoiTuong]}</div>`;
                     break;
                 case dichVuEnum.MUON_HOC_BA_GOC:
-                    result = `<div class="mb-3">
-                                    <b>Thời gian mượn: </b>${dichVu.thoiGianMuon || ''}<br>
-                                    <b>Mục đích: </b>${dichVu.lyDo}<br>
+                    if (dichVu.ngayTra || dichVu.ngayHenDenNgay) {
+                        console.log(dichVu)
+                        result = `<div class="mb-3">
+                                    <b>Thời gian mượn: </b>${convertDateTime(dichVu.ngayMuon)}<br>
+                                    <b>Thời gian trả (dự kiến): </b>${convertDateTime(dichVu.ngayTraDuKien)}<br>
+                                    <b>Mô tả: </b>${dichVu.description || ''}<br>
+                                    <b>Ghi chú: </b>${dichVu.notice || ''}
                                 </div>`;
+                    }
+                    $('#divCustomMuonHocBa').show();
                     break;
                 case dichVuEnum.THUE_KTX:
                     result = '';
@@ -510,13 +579,14 @@
             const studentCode = dichVu.studentCode;
             const statusCode = Number(dichVu.status);
             const statusName = statusDictionary[statusCode];
-            
 
-            
+
+
             const avaPath = `api/student/avatar/${studentCode}?width=64&height=64`;
             const studentAva = `@ConfigurationManager.AppSettings.Get("API_URL")/${avaPath}`;
             const avaId = `ava-${dichVu.id}`;
-            
+            let customizeBtnsTemplate = '';
+
             let ngayHenFrom = new Date();
             let ngayHenTo = new Date();
 
@@ -530,7 +600,7 @@
             const statusTextClass = templateStatus[statusCode];
 
             const mainContentSection = getMainContentSection(dichVu);
-            
+
             let noteSection = '';
 
             if ([4, 6].includes(statusCode)) {
@@ -539,6 +609,17 @@
                                 Đến <b>${ngayHenTo.getHours()}</b> giờ - <b>${ngayHenTo.getMinutes()}</b> phút - Ngày <b>${convertDateTime(dichVu.ngayHenDenNgay)}</b></div>`;
             } else if (statusCode === 5) {
                 noteSection += `<div class="fw-700 mb-3 mt-3" style="color:red;">- Phản hồi: ${dichVu.phanHoi || ''}</div>`;
+            }
+
+            if (serviceType === dichVuEnum.MUON_HOC_BA_GOC && statusCode === 4) {
+                customizeBtnsTemplate = `<div
+                          class="info-badge text-light text-center cursor-pointer ml-2"
+                          data-toggle="modal"
+                          data-target="#myModalUpdateMuonHocBa"
+                          onclick="onRowClick(${dichVu.id})"
+                        >
+                          Cập nhật thông tin
+                        </div>`;
             }
 
             return `
@@ -566,6 +647,7 @@
                         >
                           Chuyển trạng thái
                         </div>
+                        ${customizeBtnsTemplate}
                       </div>
                       <div class="row mt-2">
                         <div>
@@ -605,6 +687,7 @@
                       >
                         Chuyển trạng thái
                       </div>
+                        ${customizeBtnsTemplate}
                     </div>
                     <div class="col-12 mt-2">
                       <div>Mã sinh viên: ${studentCode}</div>
@@ -664,7 +747,7 @@
                     dataList = json.data;
                     selectedIndex = [];
                     $(`#select-all`).prop({checked: false, indeterminate: false});
-                    
+
                     return json.data;
                 }
             },
@@ -724,6 +807,10 @@
                     $('#PhanHoi').val('');
                     $('#blockNgayHen').hide();
                     break;
+                case 6:
+                    $('#divPhanHoi').hide();
+                    $('#PhanHoi').val('');
+                    $('#blockNgayHen').hide();
                 default:
                     break;
             }
@@ -900,6 +987,68 @@
             return result;
         };
 
+        var getNgayTraDuKien = function (idNgayTraDuKien = 'txtNgayTra', idGioTraDuKien = '', idPhutTraDuKien = '') {
+            var result = {
+                ok: true,
+                strNgayTraDuKien: "01/01/1990 00:00",
+            }
+            if ($(`#${idNgayTraDuKien}`).val() === '') {
+                showThongBaoOnStatusForm("Bạn hãy chọn thời gian trả dự kiến");
+                result.ok = false;
+                return result;
+            }
+            if ($(`#${idGioTraDuKien}`).val() === "" || $(`#${idGioTraDuKien}`).val() === null) {
+                $(`#${idGioTraDuKien}`).val("00");
+            }
+            else {
+                var hh = parseInt($(`#${idGioTraDuKien}`).val());
+                if (isNaN(hh))
+                    hh = 0;
+                if (hh < 0 || hh > 24)
+                    $(`#${idGioTraDuKien}`).val("00");
+                else if (hh < 10)
+                    $(`#${idGioTraDuKien}`).val("0" + hh);
+            }
+
+            if ($(`#${idPhutTraDuKien}`).val() === '' || $(`#${idPhutTraDuKien}`).val() === null) {
+                $(`#${idPhutTraDuKien}`).val("00");
+            }
+            else {
+                var mm = parseInt($(`#${idPhutTraDuKien}`).val());
+                if (isNaN(mm))
+                    mm = 0;
+                if (mm < 0 || mm > 60)
+                    $(`#${idPhutTraDuKien}`).val("00");
+                else if (mm < 10)
+                    $(`#${idPhutTraDuKien}`).val("0" + mm);
+            }
+
+            if ($(`#${idNgayTraDuKien}`).val() != "") {
+                const tmpNgayBatDau = $(`#${idNgayTraDuKien}`).val().split('/').reverse().join('/');
+                result.strNgayTraDuKien = tmpNgayBatDau + " " + $(`#${idGioTraDuKien}`).val() + ":" + $(`#${idPhutTraDuKien}`).val();
+            }
+            return result;
+        };
+
+        var onUpdatePartialMuonHocBa = function (event) {
+            var rs = getNgayTraDuKien('txtMuonHocBaNgayTra', 'txtMuonHocBaGioTra', 'txtMuonHocBaPhutTra');
+            if (!rs.ok) return;
+            var body = {
+                Id: serviceType,
+                NgayMuonThucTe: null,
+                NgayTraDuKien: rs.strNgayTraDuKien,
+                Notice: $(`#txtMuonHocBaGhiChu`).val(),
+                Description: $(`#txtMuonHocBaMoTa`).val(),
+            };
+
+            try {
+                callApiUpdateParitalMuonHocBa(body);
+                $('#myModalUpdateMuonHocBa').modal('hide');
+            } catch (error) {
+
+            }
+        }
+
         var onUpdateStatus = function(event) {
             if (isUpdateStatusMulti) {
                 onUpdateMultiStatus(event);
@@ -928,9 +1077,9 @@
             try {
                 handleUpdateStatusData(body);
                 callApiUpdateMultiStatus(body);
-                $('#update-status-modal').modal('hide');   
+                $('#update-status-modal').modal('hide');
             } catch (error) {
-                
+
             }
         };
 
@@ -950,10 +1099,10 @@
             try {
                 handleUpdateStatusData(data);
                 callApiUpdateStatus(data);
-                $('#update-status-modal').modal('hide');   
+                $('#update-status-modal').modal('hide');
             } catch (error) {
-                
-            }            
+
+            }
         };
 
         var handleUpdateStatusData = function(data) {
@@ -970,6 +1119,31 @@
             } else if (data.Status * 1 === 5) {
                 data.PhanHoi = $('#PhanHoi').val();
             }
+        }
+
+        var callApiUpdateParitalMuonHocBa = function (data) {
+            $('#loading-screen').show();
+            $.ajax({
+                type: 'POST',
+                url: `@Url.Action("UpdatePartialMuonHocBa", "CtsvServiceManagement")`,
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+            }).done(res => {
+                $('#loading-screen').hide();
+                if (res.StatusCode === 200) {
+                    $("#h_noidung_thongbao").html("Cập nhật thành công");
+                    $('#myModalThongBao').modal();
+                    searchData();
+                } else {
+                    $("#h_noidung_thongbao").html(res.Message);
+                    $('#myModalThongBao').modal();
+                }
+            }).fail(err => {
+                $('#loading-screen').hide();
+                $("#h_noidung_thongbao").html("Lỗi hệ thống");
+                $('#myModalThongBao').modal();
+            });
         }
 
         var callApiUpdateStatus = function(data) {

@@ -229,8 +229,9 @@ namespace nuce.web.api.Services.Ctsv.Implements
                                 AutoUpdateNgayHen = true,
                                 Status = 4,
                                 Type = (int)DichVu.MuonHocBaGoc,
-                                RequestID = (int)muonHocBa.Id
+                                RequestID = (int)muonHocBa.Id,
                             });
+                            //templateName = "template_mail_tao_yeu_cau_dich_vu_muon_hoc_ba.txt";
                             break;
                         case DichVu.UuDaiGiaoDuc:
                             if (_uuDaiRepository.IsDuplicated(currentStudent.Id))
@@ -674,7 +675,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         PhanHoi = model.PhanHoi,
                         Status = model.Status,
                         RequestID = model.RequestID,
-                        Type = model.Type
+                        Type = model.Type,
+                        MuonHocBaGoc = model.MuonHocBaGoc
                     });
                     if (run)
                     {
@@ -728,6 +730,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                             PhanHoi = null,
                             Status = status,
                             Type = (int)loaiDichVu,
+                            MuonHocBaGoc = model.MuonHocBaGoc
                         });
                         if (run)
                         {
@@ -851,16 +854,25 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     student = _studentRepository.FindByCode(capLaiThe.StudentCode);
                     break;
                 case DichVu.MuonHocBaGoc:
+                    templateMail = "template_mail_cap_nhat_trang_thai_dich_vu_muon_hoc_ba.txt";
+
                     var muonHocBa = await _muonHocBaRepository.FindByIdAsync(model.RequestID);
                     muonHocBa.Status = model.Status;
                     muonHocBa.NgayHenTuNgay = model.NgayHenBatDau;
                     muonHocBa.NgayHenDenNgay = model.NgayHenKetThuc;
                     muonHocBa.PhanHoi = model.PhanHoi;
+
+                    if (muonHocBa.Status == (int)TrangThaiYeuCau.HoanThanh)
+                    {
+                        muonHocBa.NgayTra = DateTime.Now;
+                        templateMail = "";
+                    }
+
+
                     ngayTao = muonHocBa.CreatedTime;
 
                     student = _studentRepository.FindByCode(muonHocBa.StudentCode);
 
-                    templateMail = "template_mail_cap_nhat_trang_thai_dich_vu_muon_hoc_ba.txt";
                     break;
                 case DichVu.ThueNha:
                     var thueNha = await _thueNhaRepository.FindByIdAsync(model.RequestID);
@@ -927,7 +939,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     NgayTao = ngayTao,
                     TemplateName = templateMail,
                 };
-                var sendEmailRs = await _emailService.SendEmailUpdateStatusRequest(tinNhan);
+                var sendEmailRs = new ResponseBody();
+                if (model.Status == (int)TrangThaiYeuCau.HoanThanh)
+                {
+                    sendEmailRs = await _emailService.SendEmailDoneRequest(tinNhan);
+                } else
+                {
+                    sendEmailRs = await _emailService.SendEmailUpdateStatusRequest(tinNhan);
+                }
                 if (sendEmailRs != null)
                 {
                     throw new Exception(sendEmailRs.Message);
@@ -936,6 +955,57 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 #endregion
             }
             return anyAction;
+        }
+        #endregion
+
+        #region Mượn học bạ (riêng)
+        public async Task UpdatePartialInfoMuonHocBa(UpdateRequestStatusMuonHocBaGocModel model)
+        {
+            try
+            {
+                if (model.NgayTraDuKien == null)
+                {
+                    throw new ArgumentNullException("Ngày trả dự kiến không được để trống");
+                }
+                var muonHocBa = await _muonHocBaRepository.FindByIdAsync(model.Id);
+                muonHocBa.Description = model.Description;
+                muonHocBa.Notice = model.Notice;
+                muonHocBa.NgayMuon = DateTime.Now;
+                muonHocBa.NgayTraDuKien = model.NgayTraDuKien ?? DateTime.Now;
+                await _unitOfWork.SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<byte[]> ExportWordMuonHocBaAsync()
+        {
+            try
+            {
+                var studentId = _userService.GetCurrentStudentID() ?? 0;
+                var muonHocBaDefault = _muonHocBaRepository.GetAll(studentId).FirstOrDefault();
+                if (muonHocBaDefault == null)
+                {
+                    throw new ArgumentNullException("Không có yêu cầu mượn học bạ nào!");
+                }
+                var exportOutput = await GetExportOutput(DichVu.MuonHocBaGoc, (int)muonHocBaDefault.Id);
+                if (exportOutput == null) return null;
+                if (exportOutput.document != null)
+                {
+                    return await DocumentToByteAsync(exportOutput.document, exportOutput.filePath);
+                }
+                else if (exportOutput.document == null)
+                {
+                    return await FileToByteAsync(exportOutput.filePath);
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Có lỗi: ", ex.Message, " |||| \n", ex.ToString());
+                throw ex;
+            }
         }
         #endregion
 

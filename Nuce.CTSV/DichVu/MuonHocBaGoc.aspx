@@ -80,9 +80,16 @@
     <div class="container-fluid">
         <div class="col-12">
             <div class="row justify-content-end">
-                <div class="col-12 col-md-3">
+                <div class="col-12 col-md-3 d-flex justify-content-end">
                     <button
-                        class="confirm-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2"
+                        class="btn btn-secondary text-light text-uppercase font-14-sm pt-2 pb-2 mr-2"
+                        type="button"
+                        onclick="MuonHocBaGoc.downloadDoc();"
+                        >
+                        <i class="fa fa-download"></i> Tải mẫu
+                    </button>
+                    <button
+                        class="btn btn-primary text-light text-uppercase font-14-sm pt-2 pb-2"
                         type="button"
                         onclick="MuonHocBaGoc.ThemMoi();"
                         >
@@ -245,7 +252,10 @@
             },
             ThemMoi: function () {
                 window.location.href = "/dichvu/MuonHocBaGoc_yeucaumoi";
-            }
+            },
+            downloadDoc: function () {
+                window.location.href = "http://localhost:8086/api/DichVu/export-word/muon-hoc-ba";
+            },
         };
     </script>
 </asp:Content>

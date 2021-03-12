@@ -46,6 +46,28 @@ namespace nuce.web.api.Services.Ctsv.Implements
             return null;
         }
 
+        public async Task<ResponseBody> SendEmailDoneRequest(TinNhanModel model)
+        {
+            var now = DateTime.Now;
+
+            string filePath = "Templates/Ctsv/template_mail_hoan_thanh_dich_vu.txt";
+            if (!string.IsNullOrEmpty(model.TemplateName))
+            {
+                filePath = $"Templates/Ctsv/{model.TemplateName}";
+            }
+            var dir = _pathProvider.MapPath(filePath);
+            if (!File.Exists(dir))
+            {
+                return new ResponseBody { Message = "Template không tồn tại", StatusCode = System.Net.HttpStatusCode.NotFound };
+            }
+            string templateContent = await File.ReadAllTextAsync(dir);
+            string tinNhanContent = templateContent.Replace("[ten_sinh_vien]", model.StudentName)
+                                                .Replace("[ten_dich_vu]", model.TenDichVu)
+                                                .Replace("[ngay_gio]", model.NgayTao?.ToString("dd/MM/yyyy HH:mm"));
+            await SaveTinNhanAsync(model, tinNhanContent, now);
+            return null;
+        }
+
         public async Task<ResponseBody> SendEmailUpdateStatusRequest(TinNhanModel model)
         {
             var now = DateTime.Now;

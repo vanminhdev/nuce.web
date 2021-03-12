@@ -45,11 +45,6 @@ namespace nuce.web.api.Models.Ctsv
         public virtual DbSet<AsNewsItems> AsNewsItems { get; set; }
         public virtual DbSet<GsSetting> GsSetting { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AsAcademyAcademics>(entity =>
@@ -619,7 +614,11 @@ namespace nuce.web.api.Models.Ctsv
                     .HasColumnName("NgayHen_TuNgay")
                     .HasColumnType("datetime");
 
+                entity.Property(e => e.NgayMuon).HasColumnType("datetime");
+
                 entity.Property(e => e.NgayTra).HasColumnType("datetime");
+
+                entity.Property(e => e.NgayTraDuKien).HasColumnType("datetime");
 
                 entity.Property(e => e.StudentCode)
                     .IsRequired()

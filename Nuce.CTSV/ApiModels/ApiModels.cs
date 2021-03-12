@@ -229,6 +229,10 @@ namespace Nuce.CTSV.ApiModels
         public DateTime? NgayHenDenNgay { get; set; }
         public string MaXacNhan { get; set; }
         public string ThoiGianMuon { get; set; }
+        public DateTime? NgayTraDuKien { get; set; }
+        public DateTime? NgayMuon { get; set; }
+        public string Description { get; set; }
+        public string Notice { get; set; }
     }
 
     public class AddDichVuModel

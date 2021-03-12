@@ -100,6 +100,16 @@ namespace nuce.web.quanly.Models
         public bool AutoUpdateNgayHen { get; set; }
         public int Status { get; set; }
         public List<DichVuExport> DichVuList { get; set; }
+        public UpdateRequestStatusMuonHocBaGocModel MuonHocBaGoc { get; set; }
+    }
+
+    public class UpdateRequestStatusMuonHocBaGocModel
+    {
+        public int Id { get; set; }
+        public DateTime? NgayMuonThucTe { get; set; }
+        public DateTime? NgayTraDuKien { get; set; }
+        public string Notice { get; set; }
+        public string Description { get; set; }
     }
 
     public class ExportModel

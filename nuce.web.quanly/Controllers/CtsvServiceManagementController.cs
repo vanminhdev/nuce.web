@@ -56,6 +56,16 @@ namespace nuce.web.quanly.Controllers
         }
 
         [HttpPost]
+        public async Task<ActionResult> UpdatePartialMuonHocBa(UpdateRequestStatusMuonHocBaGocModel model)
+        {
+            string api = "api/dichVu/admin/muon-hoc-ba/update";
+            var stringContent = base.MakeContent(model);
+            var response = await base.MakeRequestAuthorizedAsync("put", api, stringContent);
+
+            return await HandleApiResponseUpdate(response);
+        }
+
+        [HttpPost]
         public async Task<ActionResult> UpdateMultiStatus(UpdateStatusModel model)
         {
             string api = "api/dichVu/admin/update-status/multi/four";

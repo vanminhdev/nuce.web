@@ -12,5 +12,6 @@ namespace nuce.web.api.Services.Ctsv.Interfaces
     {
         public Task<ResponseBody> SendEmailNewServiceRequest(TinNhanModel tinNhan);
         public Task<ResponseBody> SendEmailUpdateStatusRequest(TinNhanModel tinNhan);
+        public Task<ResponseBody> SendEmailDoneRequest(TinNhanModel tinNhan);
     }
 }

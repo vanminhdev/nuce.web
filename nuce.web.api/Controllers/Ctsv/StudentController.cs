@@ -84,7 +84,6 @@ namespace nuce.web.api.Controllers.Ctsv
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] AsAcademyStudent student)
         {
-            _logger.LogInformation("api: " + JsonConvert.SerializeObject(student).ToString());
             var result = await _studentService.UpdateStudent(student);
             if (result != null)
             {

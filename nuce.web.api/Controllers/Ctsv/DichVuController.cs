@@ -66,6 +66,35 @@ namespace nuce.web.api.Controllers.Ctsv
             }
         }
 
+        [AllowAnonymous]
+        [Route("export-word/muon-hoc-ba")]
+        [HttpGet]
+        public async Task<FileStreamResult> ExportWordMuonHocBa()
+        {
+            var result = await _dichVuService.ExportWordMuonHocBaAsync();
+            return new FileStreamResult(new MemoryStream(result), "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        }
+
+        [Route("admin/muon-hoc-ba/update")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateMuonHocBa([FromBody] UpdateRequestStatusMuonHocBaGocModel model)
+        {
+            try
+            {
+                await _dichVuService.UpdatePartialInfoMuonHocBa(model);
+                return Ok();
+            }
+            catch(ArgumentNullException ex)
+            {
+                return BadRequest(new ResponseBody { Data = ex, Message = ex.Message ?? "Lỗi hệ thống" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { Data = ex, Message = ex.Message ?? "Lỗi hệ thống" });
+            }
+
+        }
+
         [Authorize(Roles = "P_CTSV")]
         [HttpPost]
         [Route("admin/search-request")]

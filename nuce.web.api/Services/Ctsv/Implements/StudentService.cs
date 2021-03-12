@@ -173,43 +173,45 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
         public async Task<ResponseBody> UpdateStudentBasic(StudentUpdateModel basicStudent)
         {
-            if (!Common.Validate.IsMobile(basicStudent.Mobile.Trim()))
-            {
-                return new ResponseBody { Message = "Mobile sai quy cách" };
-            } else if (!Common.Validate.IsMobile(basicStudent.MobileBaoTin.Trim()))
-            {
-                return new ResponseBody { Message = "Số điện thoại người nhận sai quy cách" };
-            } else if (!Common.Validate.IsValidEmail(basicStudent.Email.Trim()))
-            {
-                return new ResponseBody { Message = "Email sai quy cách" };
-            } else if (!Common.Validate.IsValidEmail(basicStudent.EmailBaoTin.Trim()))
-            {
-                return new ResponseBody { Message = "Email người nhận sai quy cách" };
-            }
-
-            var student = _userService.GetCurrentStudent();
-            student.Email = basicStudent.Email.Trim();
-            student.Mobile = basicStudent.Mobile.Trim();
-            student.BaoTinDiaChi = basicStudent.DiaChiBaotin.Trim();
-            student.BaoTinHoVaTen = basicStudent.HoTenBaoTin.Trim();
-            student.BaoTinEmail = basicStudent.EmailBaoTin.Trim();
-            student.BaoTinSoDienThoai = basicStudent.MobileBaoTin.Trim();
-            student.BaoTinDiaChiNguoiNhan = basicStudent.DiaChiNguoiNhanBaotin.Trim();
-            student.LaNoiTru = basicStudent.CoNoiOCuThe;
-            student.DiaChiCuThe = basicStudent.DiaChiCuThe.Trim();
-
-            student.HkttPhuong = basicStudent.PhuongXa.Trim();
-            student.HkttQuan = basicStudent.QuanHuyen.Trim();
-            student.HkttTinh = basicStudent.TinhThanhPho.Trim();
-
             try
             {
+                if (!Common.Validate.IsMobile(basicStudent.Mobile.Trim()))
+                {
+                    return new ResponseBody { Message = "Mobile sai quy cách" };
+                }
+                else if (!Common.Validate.IsMobile(basicStudent.MobileBaoTin.Trim()))
+                {
+                    return new ResponseBody { Message = "Số điện thoại người nhận sai quy cách" };
+                }
+                else if (!Common.Validate.IsValidEmail(basicStudent.Email.Trim()))
+                {
+                    return new ResponseBody { Message = "Email sai quy cách" };
+                }
+                else if (!Common.Validate.IsValidEmail(basicStudent.EmailBaoTin.Trim()))
+                {
+                    return new ResponseBody { Message = "Email người nhận sai quy cách" };
+                }
+
+                var student = _userService.GetCurrentStudent();
+                student.Email = basicStudent.Email.Trim();
+                student.Mobile = basicStudent.Mobile.Trim();
+                student.BaoTinDiaChi = basicStudent.DiaChiBaotin.Trim();
+                student.BaoTinHoVaTen = basicStudent.HoTenBaoTin.Trim();
+                student.BaoTinEmail = basicStudent.EmailBaoTin.Trim();
+                student.BaoTinSoDienThoai = basicStudent.MobileBaoTin.Trim();
+                student.BaoTinDiaChiNguoiNhan = basicStudent.DiaChiNguoiNhanBaotin.Trim();
+                student.LaNoiTru = basicStudent.CoNoiOCuThe;
+                student.DiaChiCuThe = basicStudent.DiaChiCuThe.Trim();
+
+                student.HkttPhuong = basicStudent.PhuongXa.Trim();
+                student.HkttQuan = basicStudent.QuanHuyen.Trim();
+                student.HkttTinh = basicStudent.TinhThanhPho.Trim();
                 _studentRepository.Update(student);
                 await _unitOfWork.SaveAsync();
             }
             catch (Exception ex)
             {
-                _logger.LogError("Cập nhật hồ sơ SV", $"{ex.ToString()} \n", JsonConvert.SerializeObject(student));
+                _logger.LogError("Cập nhật thông tin SV: " + $"{ex.ToString()} \n" + JsonConvert.SerializeObject(basicStudent).ToString());
                 return new ResponseBody { Message = "Lỗi hệ thống", Data = ex };
             }
 

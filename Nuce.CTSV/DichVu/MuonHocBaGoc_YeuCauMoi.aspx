@@ -37,7 +37,7 @@
             <div class="main-color text-uppercase font-15-sm fw-600 font-25 service-title">
                 giấy xác nhận
             </div>
-            <div class="form-group">
+            <%--<div class="form-group">
                 <div class="form-group">
                     <label class="font-14-sm fw-600 font-18" for="txtLyDoMuonHocBaGoc">Mục đích:</label>
                     <asp:TextBox ID="txtLyDoMuonHocBaGoc" runat="server" class="form-control"></asp:TextBox>
@@ -46,7 +46,7 @@
                     <label class="font-14-sm fw-600 font-18" for="txtThoiGianMuon">Thời gian mượn:</label>
                     <asp:TextBox ID="txtThoiGianMuon" runat="server" class="form-control"></asp:TextBox>
                 </div>
-            </div>
+            </div>--%>
             <div class='g-recaptcha' data-sitekey='6Lf3Lc8ZAAAAANyHCgqSpM_NDwBTJQZIsEnUQJ1s'></div>
             <%--<div class="form-group">
                 <button type="button" id="btnModalUpdate" class="btn btn-primary mt-2" data-toggle="modal" data-target="#myModalUpdate">Gửi yêu cầu</button>
@@ -147,7 +147,6 @@
         var MuonHocBaGoc_yeucaumoi = {
             update: function () {
                 document.getElementById("<%=btnCapNhat.ClientID %>").click();
-                //alert($("#" + "<%=txtLyDoMuonHocBaGoc.ClientID %>").val());
             },
             vedanhsach: function () {
                 window.location.href = "/dichvu/MuonHocBaGoc";
@@ -156,12 +155,10 @@
             {
                 //alert(obj.value);
                 if (obj.value == "-1") {
-                    $("#" + "<%=txtLyDoMuonHocBaGoc.ClientID %>").val("");
                     $("#frmMuonHocBaGoc").show();
                 }
                 else {
                     $("#frmMuonHocBaGoc").hide();
-                    $("#" + "<%=txtLyDoMuonHocBaGoc.ClientID %>").val(obj.value);
                 }
             }
         };

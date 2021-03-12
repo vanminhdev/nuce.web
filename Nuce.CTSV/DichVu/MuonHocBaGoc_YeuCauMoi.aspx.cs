@@ -40,45 +40,37 @@ namespace Nuce.CTSV
                 }
             }
 
-            string strLyDo = txtLyDoMuonHocBaGoc.Text;
-            if (string.IsNullOrEmpty(strLyDo?.Trim()))
+            string strRandom = nuce.web.tienich.email.RandomString(6, false);
+            var body = new AddDichVuModel()
             {
-                divThongBao.InnerHtml = "Không được để trống lý do";
+                type = (int)DichVu.MuonHocBaGoc,
+                lyDo = "",
+                maXacNhan = strRandom,
+                thoiGianMuon = "",
+                notSendEmail = true
+            };
+
+            var jsonBody = JsonConvert.SerializeObject(body);
+            var response = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Post, "api/DichVu/add", jsonBody);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string msg = "Thêm mới dịch vụ thành công. Để làm thủ tục, bạn phải viết đơn xin mượn và mang theo sổ hộ khẩu gia đình bản gốc đến phòng CTCT&QLSV.";
+                divThongBao.InnerHtml = msg;
+                divThongBaoCapNhat.InnerHtml = msg;
+                spScript.InnerHtml = string.Format("<script>$('#myModalThongBao').modal();</script>");
                 return;
             }
-            else
+            try
             {
-                string strRandom = nuce.web.tienich.email.RandomString(6, false);
-                var body = new AddDichVuModel()
-                {
-                    type = (int)DichVu.MuonHocBaGoc,
-                    lyDo = strLyDo.Trim(),
-                    maXacNhan = strRandom,
-                    thoiGianMuon = txtThoiGianMuon.Text ?? "",
-                    notSendEmail = true
-                };
-
-                var jsonBody = JsonConvert.SerializeObject(body);
-                var response = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Post, "api/DichVu/add", jsonBody);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    divThongBao.InnerHtml = "Thêm mới dịch vụ thành công";
-                    divThongBaoCapNhat.InnerHtml = "Thêm mới dịch vụ thành công";
-                    spScript.InnerHtml = string.Format("<script>$('#myModalThongBao').modal();</script>");
-                    return;
-                }
-                try
-                {
-                    var error = await CustomizeHttp.DeserializeAsync<ResponseBody>(response.Content);
-                    divThongBao.InnerText = $"{error.Message}";
-                }
-                catch (Exception)
-                {
-                    divThongBao.InnerText = "Thêm mới dịch vụ thất bại - lỗi hệ thống";
-                    divThongBaoCapNhat.InnerHtml = "Cập nhật thất bại - lỗi hệ thống";
-                    return;
-                }
+                var error = await CustomizeHttp.DeserializeAsync<ResponseBody>(response.Content);
+                divThongBao.InnerText = $"{error.Message}";
+            }
+            catch (Exception)
+            {
+                divThongBao.InnerText = "Thêm mới dịch vụ thất bại - lỗi hệ thống";
+                divThongBaoCapNhat.InnerHtml = "Cập nhật thất bại - lỗi hệ thống";
+                return;
             }
         }
     }

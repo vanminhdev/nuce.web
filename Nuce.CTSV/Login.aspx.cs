@@ -134,7 +134,7 @@ namespace Nuce.CTSV
             StudentModel student = null;
             using (HttpClient httpClient = new HttpClient())
             {
-                string body = JsonConvert.SerializeObject(new { username = userinfo.email, password = userinfo.email, isStudent = true });
+                string body = JsonConvert.SerializeObject(new { username = userinfo.email, password = userinfo.email, loginUserType = 1 });
                 var content = new StringContent(body, Encoding.UTF8, "application/json");
 
                 var res = await httpClient.PostAsync($"{CustomizeHttp.API_URI}/{ApiModels.ApiEndPoint.PostLoginEduEmail}", content);
