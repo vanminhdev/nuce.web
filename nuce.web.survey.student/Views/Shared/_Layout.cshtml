@@ -335,7 +335,7 @@
                     if (children.length > 0) {
                         let dropdownDetailHtml = '';
                         children.forEach(child => {
-                            const children2nd = data.filter(c => c.parent == child.id);
+                            const children2nd = data.filter(c => c.parent == child.id && c.onMenu);
                             if (children2nd.length === 0) {
                                 dropdownDetailHtml += dropdownDetailTemplate.replace('[name]', child.description)
                                     .replace('[link]', `${child.menuHref}`)
