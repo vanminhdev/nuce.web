@@ -67,11 +67,11 @@ namespace nuce.web.api.Controllers.Ctsv
         }
 
         [AllowAnonymous]
-        [Route("export-word/muon-hoc-ba")]
+        [Route("export-word/muon-hoc-ba/{studentCode}")]
         [HttpGet]
-        public async Task<FileStreamResult> ExportWordMuonHocBa()
+        public async Task<FileStreamResult> ExportWordMuonHocBa(string studentCode)
         {
-            var result = await _dichVuService.ExportWordMuonHocBaAsync();
+            var result = await _dichVuService.ExportWordMuonHocBaAsync(studentCode);
             return new FileStreamResult(new MemoryStream(result), "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
         }
 

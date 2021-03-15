@@ -81,13 +81,7 @@
         <div class="col-12">
             <div class="row justify-content-end">
                 <div class="col-12 col-md-3 d-flex justify-content-end">
-                    <button
-                        class="btn btn-secondary text-light text-uppercase font-14-sm pt-2 pb-2 mr-2"
-                        type="button"
-                        onclick="MuonHocBaGoc.downloadDoc();"
-                        >
-                        <i class="fa fa-download"></i> Tải mẫu
-                    </button>
+                    <asp:Button ID="btnDownloadForm" runat="server" OnClick="btnDownloadForm_Click" CssClass="btn btn-secondary text-light text-uppercase font-14-sm pt-2 pb-2 mr-2" Text="Tải mẫu" />
                     <button
                         class="btn btn-primary text-light text-uppercase font-14-sm pt-2 pb-2"
                         type="button"
@@ -254,7 +248,8 @@
                 window.location.href = "/dichvu/MuonHocBaGoc_yeucaumoi";
             },
             downloadDoc: function () {
-                window.location.href = "http://localhost:8086/api/DichVu/export-word/muon-hoc-ba";
+                <%--window.location.href = "http://localhost:8086/api/DichVu/export-word/muon-hoc-ba/<%= m_SinhVien.MaSV %>";--%>
+                window.location.href = "http://api.ktdb.nuce.edu.vn/api/DichVu/export-word/muon-hoc-ba/<%= m_SinhVien.MaSV %>";
             },
         };
     </script>
