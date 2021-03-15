@@ -8,6 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Repositories\Core\**" />
+    <Compile Remove="Repositories\Survey\**" />
+    <Content Remove="Repositories\Core\**" />
+    <Content Remove="Repositories\Survey\**" />
+    <EmbeddedResource Remove="Repositories\Core\**" />
+    <EmbeddedResource Remove="Repositories\Survey\**" />
+    <None Remove="Repositories\Core\**" />
+    <None Remove="Repositories\Survey\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Models\Core\AspNetRoles.cs" />
     <Compile Remove="Models\Core\NuceCoreContext.cs" />
   </ItemGroup>
@@ -43,8 +54,6 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="Repositories\Core\" />
-    <Folder Include="Repositories\Survey\" />
     <Folder Include="Resources\Core\" />
     <Folder Include="Resources\Ctsv\" />
     <Folder Include="Resources\Survey\" />

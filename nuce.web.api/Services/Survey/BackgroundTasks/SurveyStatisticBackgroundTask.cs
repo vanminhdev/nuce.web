@@ -403,16 +403,6 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                     //mã giảng viên dùng cho các cột đếm số lượng sv, gv từng bộ môn
                     var lerturerCodes = eduContext.AsAcademyLecturer.Where(o => o.DepartmentCode == d.Code).Select(o => o.Code).ToList();
 
-                    var monHocCuaBoMon = eduContext.AsAcademySubject.Where(o => o.DepartmentCode == d.Code)
-                        .Join(eduContext.AsAcademySubjectExtend, o => o.Code, o => o.Code, (monhoc, loaimon) => new { monhoc, loaimon.Type })
-                        .Select(o => new
-                        {
-                            o.monhoc.Code,
-                            o.monhoc.DepartmentCode,
-                            o.monhoc.Name,
-                            o.Type
-                        });
-
                     #region thống kê
                     #region đếm số lượng
                     //các bài làm của môn lý thuyết của bộ môn đang xét
@@ -660,7 +650,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                 {
                                     col++;
                                     wsLyThuyet.Cells[rowDapAn, col].Value = dapan.AnswerChildQuestion.Content;
-                                    var ketquaCon = reportTotalLyThuyet.FirstOrDefault(o => o.QuestionCode == $"{dapan.Code}_{dapan.AnswerChildQuestion.Code}" && o.AnswerCode == dapan.Code);
+                                    var ketquaCon = reportTotalLyThuyet.FirstOrDefault(o => lerturerCodes.Contains(o.LecturerCode) && o.QuestionCode == $"{dapan.Code}_{dapan.AnswerChildQuestion.Code}" && o.AnswerCode == dapan.Code);
                                     wsLyThuyet.Cells[row, col].Value = ketquaCon?.Content ?? "";
                                 }
                                 col++;
@@ -852,7 +842,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                         {
                                             col++;
                                             wsLyThuyet.Cells[rowDapAn, col].Value = dapan.AnswerChildQuestion.Content;
-                                            var ketquaCon = reportTotalLyThuyet.FirstOrDefault(o => o.QuestionCode == $"{dapan.Code}_{dapan.AnswerChildQuestion.Code}" && o.AnswerCode == dapan.Code);
+                                            var ketquaCon = reportTotalLyThuyet.FirstOrDefault(o => lerturerCodes.Contains(o.LecturerCode) && o.QuestionCode == $"{dapan.Code}_{dapan.AnswerChildQuestion.Code}" && o.AnswerCode == dapan.Code);
                                             wsLyThuyet.Cells[row, col].Value = ketquaCon?.Content ?? "";
                                         }
                                         col++;
