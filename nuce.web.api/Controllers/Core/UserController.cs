@@ -383,11 +383,10 @@ namespace nuce.web.api.Controllers.Core
                 ClockSkew = TimeSpan.FromDays(999) //expiration token
             };
 
-            SecurityToken validatedToken;
             var refreshToken = HttpContext.Request.Cookies[UserParameters.JwtRefreshToken];
-            if(refreshToken == null)
+            if (refreshToken == null)
                 return Unauthorized();
-            var principle = new JwtSecurityTokenHandler().ValidateToken(refreshToken, tokenValidationParameters, out validatedToken);
+            var principle = new JwtSecurityTokenHandler().ValidateToken(refreshToken, tokenValidationParameters, out SecurityToken validatedToken);
 
             JwtSecurityToken jwtValidatedRefreshToken = validatedToken as JwtSecurityToken;
             if (validatedToken != null && jwtValidatedRefreshToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
@@ -398,6 +397,15 @@ namespace nuce.web.api.Controllers.Core
                     return Unauthorized();
                 }
                 string username = claimName.Value;
+
+                var userInThisSystem = await _userManager.FindByNameAsync(username);
+                if (userInThisSystem != null) //dành cho user trong hệ thống
+                {
+                    if (userInThisSystem.Status == (int)UserStatus.Deactive || userInThisSystem.Status == (int)UserStatus.Deleted)
+                    {
+                        return Unauthorized();
+                    }
+                }
 
                 var roles = jwtValidatedRefreshToken.Claims.Where(o => o.Type == ClaimTypes.Role).ToList();
                 if (roles.FirstOrDefault(o => o.Value == RoleNames.FakeStudent) != null) //la fake student
