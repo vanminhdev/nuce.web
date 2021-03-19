@@ -300,7 +300,52 @@
             <div class="form-group">
                 <div class="font-14-sm fw-600 font-18">Điểm nhận thẻ</div>
                 <select class="form-control mt-3" name="slNoiNhan" id="slNoiNhan" runat="server">
-                    <option value="1">A01-BX Giáp Bát</option>
+                    <option value="1">A1-BX Giáp Bát</option>
+                    <option value="2">A2-Học viện Nông Nghiệp</option>
+                    <option value="3">A3-Công viên Thống nhất</option>
+                    <option value="4">A4-Công viên Thủ Lệ</option>
+                    <option value="5">A5-BX Gia Lâm</option>
+                    <option value="6">A6-Bãi đỗ xe Trần Khánh Dư</option>
+                    <option value="7">A7-BX Nam Thăng Long</option>
+                    <option value="8">A8-BX Mỹ Đình</option>
+                    <option value="9">A9-479 Hoàng Quốc Việt</option>
+                    <option value="10">A10-Học viện Bưu chính viễn thông</option>
+                    <option value="11">A11-Học viện Quân Y- Hà Đông</option>
+                    <option value="12">A12-Đối diện 346  Kim Ngưu</option>
+                    <option value="13">A13-32 Nguyễn Công Trứ</option>
+                    <option value="14">A14-Điểm trung chuyển Long Biên</option>
+                    <option value="15">A15-Toà nhà PTA - Số 01 Kim Mã</option>
+                    <option value="16">A16-Bách Khoa- Đường Lê Thanh Nghị</option>
+                    <option value="17">A17-BX Yên Nghĩa</option>
+                    <option value="18">A18-Kiều Mai- Ngõ 91 Cầu Diễn</option>
+                    <option value="19">A19-Công viên Nghĩa Đô</option>
+                    <option value="20">A20-Bộ Y Tế - 138 Giảng Võ</option>
+                    <option value="21">A21-Siêu thị HC – 549 Ng Văn Cừ</option>
+                    <option value="22">A22-Khu SV- Nguyễn Cơ Thạch</option>
+                    <option value="23">A23-BX Thường Tín</option>
+                    <option value="24">A24-BX Phùng</option>
+                    <option value="25">A25-Điểm trung chuyển Cầu Giấy</option>
+                    <option value="26">A26-Điểm trung chuyển Long Biên</option>
+                    <option value="27">A27-Điểm trung chuyển Nhổn</option>
+                    <option value="28">A28-Học viện Ngân Hàng</option>
+                    <option value="29">A29-Nhà máy xà phòng- Nguyễn Trãi</option>
+                    <option value="30">A30-Đại học Quốc Gia- Xuân Thuỷ</option>
+                    <option value="31">A31-Khu đô thị Linh Đàm</option>
+                    <option value="32">A32-Công ty CPVTTM và DL Đông Anh- Thị trấn Đông Anh</option>
+                    <option value="33">A33-Ngã 3 xay sát Đông Quan</option>
+                    <option value="34">A34-Điểm trung chuyển H.Quốc Việt</option>
+                    <option value="35">A35-Ngã tư thị trấn Sóc Sơn</option>
+                    <option value="36">A36-Trung tâm thương mại Mê Linh Palaza</option>
+                    <option value="37">A37-Tổng cục Hải Quan- 162 NVCừ</option>
+                    <option value="38">A38-Đại học Thương Mại</option>
+                    <option value="39">A39-Đại học Thủy Lợi</option>
+                    <option value="40">A40-Học viên Thanh thiếu niên- Nguyễn Chí Thanh</option>
+                    <option value="41">A41-ĐH Lao động xã hội</option>
+                    <option value="42">A42-Kim Chung</option>
+                    <option value="43">A43-BX Sơn Tây</option>
+                    <option value="44">A44-Yên Viên</option>
+                    <option value="45">A45-Chèm</option>
+                    <%--<option value="1">A01-BX Giáp Bát</option>
                                                     
                     <option value="40">A02-Học viện Nông Nghiệp</option>
                                                     
@@ -340,7 +385,7 @@
                                                     
                     <option value="45">A45-ĐH Lao động và Xã hội</option>
                                                     
-                    <option value="44">A46-Kim Chung</option>
+                    <option value="44">A46-Kim Chung</option>--%>
                                                     
                 </select>
             </div>
