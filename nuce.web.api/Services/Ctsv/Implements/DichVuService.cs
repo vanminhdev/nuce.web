@@ -2517,16 +2517,6 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
             string desChucDanhNguoiKy = ChucDanhNguoiKy.Replace("\r", "_").Replace("\n", "_");
             string desTenNguoiKy = TenNguoiKy.Replace("\r", "_").Replace("\n", "_");
-            DateTime NgaySinh;
-            string tmpNgaySinh = studentInfo.Student.DateOfBirth ?? "1/1/1980";
-            try
-            {
-                NgaySinh = DateTime.ParseExact(tmpNgaySinh, "dd/MM/yy", CultureInfo.InvariantCulture);
-            }
-            catch (Exception)
-            {
-                NgaySinh = DateTime.Parse(tmpNgaySinh);
-            }
 
             string HKTT_SoNha = studentInfo.Student.HkttSoNha ?? "";
             string HKTT_Pho = studentInfo.Student.HkttPho ?? "";
@@ -2539,415 +2529,55 @@ namespace nuce.web.api.Services.Ctsv.Implements
             string TenKhoa = studentInfo.Faculty?.Name ?? "";
             string NienKhoa = studentInfo.AcademyClass.SchoolYear;
             string DiaChiCuThe = studentInfo.Student.DiaChiCuThe ?? "";
+            string NamHocHienTai = string.Format("{0} - {1}", DateTime.Now.Year, DateTime.Now.Year + 1);
+            string thoiGianKhoaHoc = getThoiGianKhoaHoc(NienKhoa);
+            string HinhThuc = isLienThong(Class) ? "Liên thông" : "Chính qui";
+            var NamThu = getNamThu(NienKhoa);
 
-            ComponentInfo.SetLicense("FREE-LIMITED-KEY");
-            DocumentModel document = new DocumentModel();
-            document.DefaultCharacterFormat.Size = 12;
-            document.DefaultCharacterFormat.FontName = "Times New Roman";
-            Section section;
-            section = new Section(document);
+            string filePath = _pathProvider.MapPath($"Templates/Ctsv/giay_uu_dai.docx");
+            string destination = _pathProvider.MapPath($"Templates/Ctsv/uudai_{studentInfo.Student.Code}_{DateTime.Now.ToFileTime()}.docx");
 
-            int commonFontSize = 14;
-            #region Mẫu số
-            GemboxParagraph paragraphMauSo = new GemboxParagraph(
-                document,
-                new GemboxRun(document, "Mẫu số 02/ƯĐGD")
-                {
-                    CharacterFormat = new CharacterFormat { Bold = true, Size = 13 }
-                })
-            {
-                ParagraphFormat = new ParagraphFormat()
-                {
-                    Alignment = HorizontalAlignment.Right,
-                    LineSpacing = 1.25
-                }
-            };
-            section.Blocks.Add(paragraphMauSo);
-            #endregion
+            var now = DateTime.Now;
 
-            #region TieuDe
-            GemboxParagraph paragraphTieuDe = new GemboxParagraph(document,
-             new GemboxRun(document, string.Format("{0}", "GIẤY XÁC NHẬN"))
-             {
-                 CharacterFormat = new CharacterFormat()
-                 {
-                     Bold = true,
-                     Size = 13
-                 }
-             },
-             new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-            new GemboxRun(document, string.Format("{0}", "(Ban hành kèm theo Thông tư số 36/2015/TT-BLĐTBXH ngày 28 tháng 9 năm 2015 của Bộ Lao động-Thương binh và Xã hội)"))
+            var ngayKy = now.ToString("dd");
+            var thangKy = now.Month.ToString();
+            var namKy = now.Year.ToString();
+
+            byte[] templateBytes = await File.ReadAllBytesAsync(filePath);
+            using (MemoryStream templateStream = new MemoryStream())
             {
-                CharacterFormat = new CharacterFormat()
+                templateStream.Write(templateBytes, 0, templateBytes.Length);
+                using (WordprocessingDocument doc = WordprocessingDocument.Open(templateStream, true))
                 {
-                    Italic = true,
-                    Size = 13
-                }
-            },
-            new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-            new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-            new GemboxRun(document, string.Format("{0}", "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM"))
-            {
-                CharacterFormat = new CharacterFormat()
-                {
-                    Bold = true,
-                    Size = 13
-                }
-            },
-             new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-             new GemboxRun(document, string.Format("{0}", "Độc lập - Tự do - Hạnh phúc"))
-             {
-                 CharacterFormat = new CharacterFormat()
-                 {
-                     Bold = true,
-                     Size = 13
-                 }
-             })
-            {
-                ParagraphFormat = new ParagraphFormat()
-                {
-                    Alignment = GemBox.Document.HorizontalAlignment.Center,
-                    LineSpacing = 1.25
-                }
-            };
-            var horizontalLine1 = new Shape(document, ShapeType.Line, GemBox.Document.Layout.Floating(
-                 new HorizontalPosition(5.2, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
-                new VerticalPosition(7.5, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
-                new GemBox.Document.Size(155, 0)));
-            horizontalLine1.Outline.Width = 1;
-            horizontalLine1.Outline.Fill.SetSolid(GemboxColor.Black);
-            paragraphTieuDe.Inlines.Add(horizontalLine1);
-            section.Blocks.Add(paragraphTieuDe);
-            #endregion
-            #region Giay xac nhan
-            GemboxParagraph paragraphXacNhan = new GemboxParagraph(document,
-                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new GemboxRun(document, string.Format("{0}", "GIẤY XÁC NHẬN"))
-                {
-                    CharacterFormat = new CharacterFormat()
+                    doc.ChangeDocumentType(WordprocessingDocumentType.Document);
+                    var mainPart = doc.MainDocumentPart;
+                    #region handle text
+                    var textList = mainPart.Document.Descendants<Text>().ToList();
+                    foreach (var text in textList)
                     {
-                        Bold = true,
-                        Size = 14,
+                        replaceTextTemplate(text, "<ho_ten>", studentInfo.Student.FulName);
+                        replaceTextTemplate(text, "<nam_thu>", NamThu);
+                        replaceTextTemplate(text, "<hoc_ky>", "1");
+                        replaceTextTemplate(text, "<nam_hoc>", NamHocHienTai);
+                        replaceTextTemplate(text, "<mssv>", MaSV);
+                        replaceTextTemplate(text, "<ma_lop>", Class);
+                        replaceTextTemplate(text, "<khoa>", TenKhoa);
+                        replaceTextTemplate(text, "<nien_khoa>", NienKhoa);
+                        replaceTextTemplate(text, "<tgkh>", thoiGianKhoaHoc);
+                        replaceTextTemplate(text, "<hinh_thuc>", HinhThuc);
+                        replaceTextTemplate(text, "<ngay>", ngayKy);
+                        replaceTextTemplate(text, "<thang>", thangKy);
+                        replaceTextTemplate(text, "<nam>", namKy);
+                        replaceTextTemplate(text, "<chuc_danh_nguoi_ky>", ChucDanhNguoiKy);
+                        replaceTextTemplate(text, "<ten_nguoi_ky>", TenNguoiKy);
                     }
+                    #endregion
+                    mainPart.Document.Save();
                 }
-                , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-                , new GemboxRun(document, "(Dùng cho các cơ sở giáo dục nghề nghiệp, giáo dục đại học xác nhận)")
-                {
-                    CharacterFormat = new CharacterFormat()
-                    {
-                        Bold = true,
-                        Size = 14
-                    }
-                }
-                 , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-              )
-            {
-                ParagraphFormat = new ParagraphFormat()
-                {
-                    Alignment = GemBox.Document.HorizontalAlignment.Center,
-                    LineSpacing = 1.25
-                }
-            };
-            section.Blocks.Add(paragraphXacNhan);
-            #endregion
-            #region NoiDung
-            GemboxParagraph paragraphNoiDung = new GemboxParagraph(document,
-           // new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-           new GemboxRun(document, string.Format("{0}", "Trường: "))
-           {
-               CharacterFormat = new CharacterFormat()
-               {
-                   Size = commonFontSize
-               }
-           }
-           , new SpecialCharacter(document, SpecialCharacterType.Tab)
-           , new GemboxRun(document, string.Format("{0}", "ĐẠI HỌC XÂY DỰNG"))
-           {
-               CharacterFormat = new CharacterFormat()
-               {
-                   Bold = true,
-                   Size = commonFontSize
-               }
-           }
-           , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-           , new GemboxRun(document, "Xác nhận anh/chị: ")
-           {
-               CharacterFormat = new CharacterFormat()
-               {
-                   Size = commonFontSize
-               }
-           }
-            , new GemboxRun(document, string.Format("{0} ", HoVaTen))
-            {
-                CharacterFormat = new CharacterFormat()
-                {
-                    Size = commonFontSize,
-                    Bold = true,
-                }
+                await File.WriteAllBytesAsync(destination, templateStream.ToArray());
             }
-            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-            , new GemboxRun(document, "Hiện là sinh viên năm thứ: ")
-            {
-                CharacterFormat = new CharacterFormat()
-                {
-                    Size = commonFontSize
-                }
-            }
-                , new GemboxRun(document, string.Format("{0} ", getNamThu(NienKhoa)))
-                {
-                    CharacterFormat = new CharacterFormat()
-                    {
-                        Size = commonFontSize,
-                        Bold = true,
-                    }
-                }
-                , new SpecialCharacter(document, SpecialCharacterType.Tab)
-                , new GemboxRun(document, "Học kỳ: ")
-                {
-                    CharacterFormat = new CharacterFormat()
-                    {
-                        Size = commonFontSize
-                    }
-                }
-                , new GemboxRun(document, string.Format("{0} ", "1"))
-                {
-                    CharacterFormat = new CharacterFormat()
-                    {
-                        Size = commonFontSize,
-                        Bold = true,
-                    }
-                }
-                , new SpecialCharacter(document, SpecialCharacterType.Tab)
-                 , new GemboxRun(document, "Năm học: ")
-                 {
-                     CharacterFormat = new CharacterFormat()
-                     {
-                         Size = commonFontSize
-                     }
-                 }
-                , new GemboxRun(document, string.Format("{0} - {1}", DateTime.Now.Year, DateTime.Now.Year + 1))
-                {
-                    CharacterFormat = new CharacterFormat()
-                    {
-                        Size = commonFontSize,
-                        Bold = true,
-                    }
-                }
-            )
-            {
-                ParagraphFormat = new ParagraphFormat()
-                {
-                    Alignment = GemBox.Document.HorizontalAlignment.Left,
-                    LineSpacing = 1.25,
-                    SpaceAfter = 0
-                }
-            };
-            section.Blocks.Add(paragraphNoiDung);
-            #endregion
-            #region Hien la sinh vien
-            GemboxTable tableNoiDung = new GemboxTable(document);
-            tableNoiDung.TableFormat.PreferredWidth = new GemboxTableWidth(100, TableWidthUnit.Percentage);
-            tableNoiDung.TableFormat.Alignment = GemBox.Document.HorizontalAlignment.Center;
-            tableNoiDung.TableFormat.AutomaticallyResizeToFitContents = false;
-            var tableBordersNoiDung = tableNoiDung.TableFormat.Borders;
-            tableBordersNoiDung.SetBorders(MultipleBorderTypes.All, BorderStyle.None, GemboxColor.Empty, 0);
-            tableNoiDung.Columns.Add(new TableColumn(55));
-            tableNoiDung.Columns.Add(new TableColumn(45));
-            GemboxTableRow rowT1NoiDung = new GemboxTableRow(document);
-            tableNoiDung.Rows.Add(rowT1NoiDung);
 
-            rowT1NoiDung.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document,
-                new GemboxRun(document, "Mã số sinh viên: ") { CharacterFormat = new CharacterFormat { Size = commonFontSize } },
-                new GemboxRun(document, $"{MaSV}   ")
-                {
-                    CharacterFormat = new CharacterFormat { Size = commonFontSize, Bold = true }
-                },
-                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new GemboxRun(document, "Khoa: ")
-                {
-                    CharacterFormat = new CharacterFormat()
-                    {
-                        Size = commonFontSize
-                    }
-                }
-                , new GemboxRun(document, string.Format("{0}", TenKhoa))
-                {
-                    CharacterFormat = new CharacterFormat()
-                    {
-                        Bold = true,
-                        Size = commonFontSize
-                    }
-                },
-                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new GemboxRun(document, "Hình thức đào tạo: ")
-                {
-                    CharacterFormat = new CharacterFormat()
-                    {
-                        Size = commonFontSize
-                    }
-                }
-                , new GemboxRun(document, "Chính quy")
-                {
-                    CharacterFormat = new CharacterFormat()
-                    {
-                        Bold = true,
-                        Size = commonFontSize
-                    }
-                }
-            )
-            {
-                ParagraphFormat = new ParagraphFormat
-                {
-                    LineSpacing = 1.25,
-                }
-            }));
-
-            rowT1NoiDung.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document,
-                new GemboxRun(document, "Lớp: ") { CharacterFormat = new CharacterFormat { Size = commonFontSize } },
-                new GemboxRun(document, Class)
-                {
-                    CharacterFormat = new CharacterFormat { Size = commonFontSize, Bold = true }
-                }
-                , new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new GemboxRun(document, "Khoá học: ")
-                {
-                    CharacterFormat = new CharacterFormat()
-                    {
-                        Size = commonFontSize
-                    }
-                },
-                new GemboxRun(document, NienKhoa)
-                {
-                    CharacterFormat = new CharacterFormat()
-                    {
-                        Bold = true,
-                        Size = commonFontSize
-                    }
-                },
-                new SpecialCharacter(document, SpecialCharacterType.LineBreak),
-                new GemboxRun(document, "Thời gian khoá học: ")
-                {
-                    CharacterFormat = new CharacterFormat()
-                    {
-                        Size = commonFontSize
-                    }
-                },
-                new GemboxRun(document, getThoiGianKhoaHoc(NienKhoa))
-                {
-                    CharacterFormat = new CharacterFormat()
-                    {
-                        Bold = true,
-                        Size = commonFontSize
-                    }
-                },
-                new GemboxRun(document, " (năm);")
-                {
-                    CharacterFormat = new CharacterFormat()
-                    {
-                        Size = commonFontSize
-                    }
-                }
-            )
-            {
-                ParagraphFormat = new ParagraphFormat
-                {
-                    LineSpacing = 1.25,
-                }
-            }));
-
-            section.Blocks.Add(tableNoiDung);
-            #endregion
-            #region Đề nghị
-            GemboxParagraph paragraphDeNghi = new GemboxParagraph(
-                document,
-                new GemboxRun(document, "Đề nghị Phòng Lao động-Thương binh và Xã hội xem xét, giải quyết chế độ ưu đãi trong giáo dục đào tạo cho anh/chị")
-                {
-                    CharacterFormat = new CharacterFormat()
-                    {
-                        Size = commonFontSize
-                    },
-                },
-                new GemboxRun(document, string.Format(" {0} ", HoVaTen)) { CharacterFormat = new CharacterFormat() { Size = commonFontSize, Bold = true } },
-                new GemboxRun(document, "theo quy định và chế độ hiện hành.") { CharacterFormat = new CharacterFormat() { Size = commonFontSize } },
-                new SpecialCharacter(document, SpecialCharacterType.LineBreak))
-            {
-                ParagraphFormat = new ParagraphFormat()
-                {
-                    Alignment = HorizontalAlignment.Left,
-                    LineSpacing = 1.25
-                }
-            };
-            section.Blocks.Add(paragraphDeNghi);
-            #endregion
-            #region Chu ky
-            GemboxTable tableCK = new GemboxTable(document);
-            tableCK.TableFormat.PreferredWidth = new GemboxTableWidth(100, TableWidthUnit.Percentage);
-            tableCK.TableFormat.Alignment = GemBox.Document.HorizontalAlignment.Center;
-            tableCK.TableFormat.AutomaticallyResizeToFitContents = false;
-            var tableBordersCK = tableCK.TableFormat.Borders;
-            tableBordersCK.SetBorders(MultipleBorderTypes.All, BorderStyle.None, GemboxColor.Empty, 0);
-            tableCK.Columns.Add(new TableColumn(45));
-            tableCK.Columns.Add(new TableColumn(55));
-            GemboxTableRow rowT1CK = new GemboxTableRow(document);
-            tableCK.Rows.Add(rowT1CK);
-
-            rowT1CK.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document, new GemboxRun(document, string.Format("{0}", " ")))));
-
-            rowT1CK.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document,
-                new GemboxRun(document, string.Format("Hà Nội, ngày {0} tháng {1} năm {2}", DateTime.Now.Day, DateTime.Now.Month, DateTime.Now.Year))
-                {
-                    CharacterFormat = new CharacterFormat()
-                    {
-                        Italic = true,
-                        Size = 13
-                    }
-                }
-            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-            , new GemboxRun(document, desChucDanhNguoiKy)
-            {
-                CharacterFormat = new CharacterFormat()
-                {
-                    Bold = true,
-                    Size = 12
-                }
-            }
-            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-            , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-            , new GemboxRun(document, desTenNguoiKy)
-            {
-                CharacterFormat = new CharacterFormat()
-                {
-                    Bold = true,
-                    Size = 13
-                }
-            }
-           )
-            {
-                ParagraphFormat = new ParagraphFormat()
-                {
-                    Alignment = GemBox.Document.HorizontalAlignment.Center
-                }
-            })
-            {
-                CellFormat = new TableCellFormat()
-                {
-                    VerticalAlignment = GemBox.Document.VerticalAlignment.Center
-                }
-            }
-           );
-            section.Blocks.Add(tableCK);
-            #endregion
-            document.Sections.Add(section);
-            document.Content.Replace(desChucDanhNguoiKy, ChucDanhNguoiKy);
-            document.Content.Replace(desTenNguoiKy, TenNguoiKy);
-
-            string filePath = _pathProvider.MapPath($"Templates/Ctsv/uudai_{studentInfo.Student.Code}_{DateTime.Now.ToFileTime()}.docx");
-            return new ExportFileOutputModel { document = document, filePath = filePath };
+            return new ExportFileOutputModel { document = null, filePath = destination };
         }
 
         private async Task<ExportFileOutputModel> ExportWordVayVon(int id)
