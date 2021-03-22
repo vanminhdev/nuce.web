@@ -57,6 +57,7 @@ namespace nuce.web.api.Services.Core.Implements
                         CatId = model.CatId,
                         NewContent = model.Content,
                         Title = model.Title,
+                        Order = model.Order,
                         Description = model.Description,
                         EntryUsername = username,
                         UpdateUsername = username,
@@ -361,7 +362,8 @@ namespace nuce.web.api.Services.Core.Implements
                         left => left.newsItem.DefaultIfEmpty(),
                         (left, newsitem) => newsitem
                     ).Where(ni => ni != null && (ni.Status == itemStatus || ignoreStatus))
-                    .OrderByDescending(ni => ni.EntryDatetime);
+                    .OrderBy(ni => ni.Order)
+                    .ThenByDescending(ni => ni.EntryDatetime);
 
             var takedData = await data.Skip(seen).Take(size).ToListAsync();
             return new DataTableResponse<NewsItems>
@@ -414,6 +416,7 @@ namespace nuce.web.api.Services.Core.Implements
             newsItems.NewContent = model.NewContent;
             newsItems.CatId = model.CatId;
             newsItems.Title = model.Title;
+            newsItems.Order = model.Order;
             newsItems.Description = model.Description;
             newsItems.UpdateDatetime = DateTime.Now;
             newsItems.UpdateUsername = _userService.GetUserName();

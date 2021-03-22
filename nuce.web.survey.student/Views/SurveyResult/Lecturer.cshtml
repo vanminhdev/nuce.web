@@ -7,18 +7,15 @@
 
 @section Breadcrumb {
     <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
-    <li class="breadcrumb-item">Kết quả khảo sát</li>
     @if (!string.IsNullOrEmpty(Model.FacultyCode))
     {
-        <li class="breadcrumb-item active" aria-current="page">
-            <a class="m-text-blue" href="/surveyresult/faculty?code=@Model.FacultyCode">Khoa/Ban</a>
-        </li>
+        <li class="breadcrumb-item"><a class="m-text-blue" href="/survey/faculty">Khoa</a></li>
+        <li class="breadcrumb-item"><a class="m-text-blue" href="/surveyresult/faculty">Kết quả khảo sát HĐGD</a></li>
+        <li class="breadcrumb-item"><a class="m-text-blue" href="/surveyresult/department?code=@Model.DepartmentCode&facultyCode=@Model.FacultyCode">Bộ môn</a></li>
     }
-    @if (!string.IsNullOrEmpty(Model.DepartmentCode))
+    else if (!string.IsNullOrEmpty(Model.DepartmentCode))
     {
-        <li class="breadcrumb-item active" aria-current="page">
-            <a class="m-text-blue" href="/surveyresult/department?code=@Model.DepartmentCode&facultyCode=@Model.FacultyCode">Bộ môn</a>
-        </li>
+        <li class="breadcrumb-item"><a class="m-text-blue" href="/surveyresult/department?code=@Model.DepartmentCode">Kết quả khảo sát HĐGD</a></li>
     }
     <li class="breadcrumb-item active" aria-current="page">
         Giảng viên
@@ -30,10 +27,22 @@
         .table-list table:not(:first-child) tr:first-child td {
             border-top: none;
         }
-    </style>    
+
+        body {
+            counter-reset: title-question-counter;
+        }
+
+        .question-title {
+            counter-increment: title-question-counter;
+        }
+
+        .question-title:before {
+            content: counter(title-question-counter, upper-roman)". ";
+        }
+    </style>
 }
 
-@* Tên bộ môn *@
+@* Tên giảng viên *@
 <h5 class="text-center mb-1 m-text-blue">
     <span>
         @Model.Data.LecturerName
@@ -42,95 +51,61 @@
 
 <div class="row">
     <div class="col-12">
-        @foreach (var demuc in Model.Data.LoaiMonHoc)
+        @if (Model.Data.ChiTietTungLopMonHoc.Count == 0)
         {
-            <h5 class="my-3 m-text-blue">@demuc.Title</h5>
+            <p class="mt-4 m-fs-22 text-center">Giảng viên chưa được thống kê hoặc không tồn tại trong lớp môn học nào</p>
+        }
+
+        @foreach (var demuc in Model.Data.ChiTietTungLopMonHoc)
+        {
+            <h5 class="my-3 m-text-blue">@demuc.TenLop - @demuc.TenMon</h5>
             <div class="table-list">
                 @foreach (var cauhoi in demuc.CauHoi)
-                    {
+                {
                     <table class="table th-border-none mb-0">
                         <tbody>
-                            <tr>
-                                <td colspan="@cauhoi.DanhSachDiem.Count" class="font-weight-bold">
-                                    @cauhoi.Content
-                                </td>
-                            </tr>
-                            <tr>
-                                @foreach (var dapan in cauhoi.DanhSachDiem.Keys)
-                                {
-                                    if (dapan != "SA")
+                            @if (cauhoi.OnlyTitle != null)
+                            {
+                                <tr>
+                                    <td class="font-weight-bold pl-1 question-title">
+                                        @cauhoi.OnlyTitle
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="@cauhoi.DanhSachDiem.Count" class="pl-3" style="font-weight:500;">
+                                        @cauhoi.Content
+                                    </td>
+                                </tr>
+                                <tr>
+                                    @foreach (var dapan in cauhoi.DanhSachDiem.Keys)
                                     {
-                                        <td class="text-center">@dapan</td>
+                                        if (dapan != "SA")
+                                        {
+                                            <td class="text-center">@Html.Raw(dapan)</td>
+                                        }
                                     }
-                                }
-                            </tr>
-                            <tr>
-                                @foreach (var ketQua in cauhoi.DanhSachDiem.Values)
-                                {
-                                    <td class="text-center">@ketQua</td>
-                                }
-                            </tr>
+                                </tr>
+                                <tr>
+                                    @foreach (var ketQua in cauhoi.DanhSachDiem.Values)
+                                    {
+                                        if (cauhoi.DanhSachDiem.Keys.Contains("SA"))
+                                        {
+                                            <td class="pl-5">@ketQua</td>
+                                        }
+                                        else
+                                        {
+                                            <td class="text-center">@ketQua</td>
+                                        }
+                                    }
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 }
             </div>
-         }
+        }
     </div>
 </div>
-
-@*@section Scripts {
-    <script src="~/content/js/jquery.dataTables.min.js"></script>
-    <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
-    <script src="~/content/js/dataTables.config.js"></script>
-    <script>
-        var facultyResultState = {
-            userTable: function() {
-                return $('#department-survey-result-datatable').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    ordering: false,
-                    lengthChange: false,
-                    stateSave: true,
-                    language: dataTableConfig.language,
-                    ajax: {
-                        url: `GetDepartmentResult?code=@Model.DepartmentCode`,
-                        dataType: 'json',
-                        contentType: 'application/json',
-                        type: 'post',
-                        data: function (d) {
-                            return JSON.stringify(d);
-                        },
-                    },
-                    columns: [
-                        {
-                            data: 'name',
-                            mRender: function(data, type, row) {
-                                return `<a href="/surveyresult/lecturer?code=${row.LecturerCode}&facultyCode=@Model.FacultyCode&departmentCode=@Model.DepartmentCode">${row.LecturerName}</a>`;
-                            },
-                        },
-                        {
-                            data: 'SoSvThamGiaKhaoSat',
-                        },
-                        {
-                            data: 'SoSvDuocKhaoSat',
-                        },
-                        {
-                            data: 'SoPhieuThuVe',
-                        },
-                        {
-                            data: 'SoPhieuPhatRa',
-                        },
-                    ],
-                });
-            },
-            init: function() {
-                facultyResultState.userTable();
-                $('#department-survey-result-datatable_filter').hide();
-            },
-        };
-        facultyResultState.init();
-    </script>
-}*@
-
-
-

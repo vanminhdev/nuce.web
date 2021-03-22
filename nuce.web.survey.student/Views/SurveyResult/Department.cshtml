@@ -7,16 +7,16 @@
 
 @section Breadcrumb {
     <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
-    <li class="breadcrumb-item">Kết quả khảo sát</li>
     @if (!string.IsNullOrEmpty(Model.FacultyCode))
     {
-        <li class="breadcrumb-item active" aria-current="page">
-            <a class="m-text-blue" href="/surveyresult/faculty?code=@Model.FacultyCode">Khoa</a>
-        </li>
+        <li class="breadcrumb-item"><a class="m-text-blue" href="/survey/faculty">Khoa</a></li>
+        <li class="breadcrumb-item"><a class="m-text-blue" href="/surveyresult/faculty">Kết quả khảo sát HĐGD</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Bộ môn</li>
     }
-    <li class="breadcrumb-item active" aria-current="page">
-        Bộ môn
-    </li>
+    else if (!string.IsNullOrEmpty(Model.DepartmentCode))
+    {
+        <li class="breadcrumb-item"><a class="m-text-blue" href="/surveyresult/department?code=@Model.DepartmentCode&facultyCode=@Model.FacultyCode">Kết quả khảo sát HĐGD</a></li>
+    }
 }
 @* Tên bộ môn *@
 <h5 class="text-center mb-3 m-text-blue">
@@ -31,7 +31,7 @@
                class="table th-border-none">
             <thead>
                 <tr>
-                    <td>Bộ môn</td>
+                    <td>Giảng viên</td>
                     <td>Số sv tham gia khảo sát</td>
                     <td>Số sv được khảo sát</td>
                     <td>Số phiếu thu về</td>

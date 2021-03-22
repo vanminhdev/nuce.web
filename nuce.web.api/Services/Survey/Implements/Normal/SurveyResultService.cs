@@ -40,7 +40,9 @@ namespace nuce.web.api.Services.Survey.Implements
         public async Task<FacultyResultModel> FacultyResultAsync(string code)
         {
             #region setup
-            var lastDotKhaoSat = _surveyContext.AsEduSurveyDotKhaoSat.OrderByDescending(dks => dks.EndDate).FirstOrDefault();
+            var lastDotKhaoSat = _surveyContext.AsEduSurveyDotKhaoSat
+                .OrderByDescending(dks => dks.EndDate)
+                .FirstOrDefault(dks => dks.Status != (int)SurveyRoundStatus.Deleted);
             if (lastDotKhaoSat == null)
             {
                 return null;
@@ -82,10 +84,7 @@ namespace nuce.web.api.Services.Survey.Implements
                     SoSvThamGiaKhaoSat = 0,
                 };
 
-                CalculateDeparatmentResult(tmp, baiLamKhaoSatCacDotDangXet, department, 1);
-                CalculateDeparatmentResult(tmp, baiLamKhaoSatCacDotDangXet, department, 2);
-                CalculateDeparatmentResult(tmp, baiLamKhaoSatCacDotDangXet, department, 3);
-                CalculateDeparatmentResult(tmp, baiLamKhaoSatCacDotDangXet, department, 4);
+                CalculateDeparatmentResult(tmp, baiLamKhaoSatCacDotDangXet, department);
 
                 total.SoGiangVienCanLayYKien += tmp.SoGiangVienCanLayYKien;
                 total.SoGiangVienDaKhaoSat += tmp.SoGiangVienDaKhaoSat;
@@ -107,7 +106,9 @@ namespace nuce.web.api.Services.Survey.Implements
         public async Task<DepartmentResultModel> DepartmentResultAsync(string code)
         {
             #region setup
-            var lastDotKhaoSat = await _surveyContext.AsEduSurveyDotKhaoSat.OrderByDescending(dks => dks.EndDate).FirstOrDefaultAsync();
+            var lastDotKhaoSat = _surveyContext.AsEduSurveyDotKhaoSat
+                .OrderByDescending(dks => dks.EndDate)
+                .FirstOrDefault(dks => dks.Status != (int)SurveyRoundStatus.Deleted);
             if (lastDotKhaoSat == null)
             {
                 return null;
@@ -127,7 +128,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 FacultyName = faculty.Name,
                 DepartmentCode = department.Code,
                 DepartmentName = department.Name,
-                Result = new List<SurveyResultResponseModel>(),
+                Result = new List<SurveyResultResponseModel>()
             };
 
             var total = new SurveyResultResponseModel
@@ -152,14 +153,16 @@ namespace nuce.web.api.Services.Survey.Implements
                     SoSvDuocKhaoSat = 0,
                     SoSvThamGiaKhaoSat = 0,
                 };
-                await CalculateLecturerResult(tmp, lecturer, baiLamKhaoSatCacDotDangXet, 1);
-                await CalculateLecturerResult(tmp, lecturer, baiLamKhaoSatCacDotDangXet, 2);
-                await CalculateLecturerResult(tmp, lecturer, baiLamKhaoSatCacDotDangXet, 3);
-                await CalculateLecturerResult(tmp, lecturer, baiLamKhaoSatCacDotDangXet, 4);
+                await CalculateLecturerResult(tmp, lecturer, baiLamKhaoSatCacDotDangXet);
+
+                if (tmp.SoPhieuPhatRa == 0)
+                {
+                    continue;
+                }
 
                 total.SoGiangVienCanLayYKien += tmp.SoGiangVienCanLayYKien;
                 total.SoGiangVienDaKhaoSat += tmp.SoGiangVienDaKhaoSat;
-                total.SoPhieuPhatRa += tmp.SoGiangVienCanLayYKien;
+                total.SoPhieuPhatRa += tmp.SoPhieuPhatRa;
                 total.SoPhieuThuVe += tmp.SoPhieuThuVe;
                 total.SoSvDuocKhaoSat += tmp.SoSvDuocKhaoSat;
                 total.SoSvThamGiaKhaoSat += tmp.SoSvThamGiaKhaoSat;
@@ -179,28 +182,14 @@ namespace nuce.web.api.Services.Survey.Implements
         public async Task<SurveyResultResponseModel> LecturerResultAsync(string code)
         {
             #region setup
-            var lastDotKhaoSat = _surveyContext.AsEduSurveyDotKhaoSat.OrderByDescending(dks => dks.EndDate).FirstOrDefault();
-            var dotKhaoSats = _surveyContext.AsEduSurveyDotKhaoSat.Where(o => o.EndDate == lastDotKhaoSat.EndDate);
+            var lastDotKhaoSat = _surveyContext.AsEduSurveyDotKhaoSat
+                .OrderByDescending(dks => dks.EndDate)
+                .FirstOrDefault(dks => dks.Status != (int)SurveyRoundStatus.Deleted);
             if (lastDotKhaoSat == null)
             {
                 return null;
             }
             var baiKhaoSats = _surveyContext.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == lastDotKhaoSat.Id && o.Status != (int)TheSurveyStatus.Deleted);
-
-            var dotKhaoSatThuNhat = dotKhaoSats.FirstOrDefault(); // vì nếu các đợt là giống nhau về đề ks thì lấy thằng đầu tiên
-            var baiKhaoSatCuaDotThuNhats = _surveyContext.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == dotKhaoSatThuNhat.Id && o.Status != (int)TheSurveyStatus.Deleted);
-
-            var baiKsLyThuyet = baiKhaoSatCuaDotThuNhats.FirstOrDefault(o => o.Type == (int)TheSurveyType.TheoreticalSubjects);
-            var deLyThuyet = JsonSerializer.Deserialize<List<QuestionJson>>(baiKsLyThuyet.NoiDungDeThi);
-
-            var baiKsThucHanh = baiKhaoSatCuaDotThuNhats.FirstOrDefault(o => o.Type == (int)TheSurveyType.TheoreticalPracticalSubjects);
-            var deLyThuyetThucHanh = JsonSerializer.Deserialize<List<QuestionJson>>(baiKsThucHanh.NoiDungDeThi);
-
-            var baiKsThucHanhThiNghiem = baiKhaoSatCuaDotThuNhats.FirstOrDefault(o => o.Type == (int)TheSurveyType.PracticalSubjects);
-            var deThucHanhThiNghiem = JsonSerializer.Deserialize<List<QuestionJson>>(baiKsThucHanhThiNghiem.NoiDungDeThi);
-
-            var baiKsDeDoAn = baiKhaoSatCuaDotThuNhats.FirstOrDefault(o => o.Type == (int)TheSurveyType.AssignmentSubjects);
-            var deDoAn = JsonSerializer.Deserialize<List<QuestionJson>>(baiKsDeDoAn.NoiDungDeThi);
             #endregion
 
             var lecturer = await _lecturerRepository.FindByCode(code);
@@ -215,14 +204,36 @@ namespace nuce.web.api.Services.Survey.Implements
                 DeparmentName = department.Name,
                 LecturerCode = lecturer.Code,
                 LecturerName = lecturer.FullName,
-                LoaiMonHoc = new List<ChiTietLoaiMonHoc>(),
+                ChiTietTungLopMonHoc = new List<ChiTietLopMonHoc>(),
             };
 
-            CalculateDetailResult(result, lecturer, deLyThuyet, baiKhaoSats, (int)TheSurveyType.TheoreticalSubjects);
-            CalculateDetailResult(result, lecturer, deLyThuyetThucHanh, baiKhaoSats, (int)TheSurveyType.TheoreticalPracticalSubjects);
-            CalculateDetailResult(result, lecturer, deThucHanhThiNghiem, baiKhaoSats, (int)TheSurveyType.PracticalSubjects);
-            CalculateDetailResult(result, lecturer, deDoAn, baiKhaoSats, (int)TheSurveyType.AssignmentSubjects);
+            var classroom = _surveyContext.AsEduSurveyReportTotal
+                .Where(o => o.SurveyRoundId == lastDotKhaoSat.Id && o.LecturerCode == code)
+                .GroupBy(o => new { o.ClassRoomCode, o.TheSurveyId }).Select(o => o.Key).ToList();
 
+            foreach (var c in classroom)
+            {
+                var tenLop = "";
+                var tenMon = "";
+                var lopMonHoc = _eduContext.AsAcademyClassRoom.FirstOrDefault(o => o.Code == c.ClassRoomCode);
+                if (lopMonHoc != null)
+                {
+                    tenLop = lopMonHoc.ClassCode;
+
+                    var monHoc = _eduContext.AsAcademySubject.FirstOrDefault(o => o.Code == lopMonHoc.SubjectCode);
+                    if (monHoc != null)
+                    {
+                        tenMon = monHoc.Name;
+                    }
+                }
+
+                var baiks = baiKhaoSats.FirstOrDefault(o => o.Id == c.TheSurveyId);
+                if (baiks != null)
+                {
+                    List<QuestionJson> deThi = JsonSerializer.Deserialize<List<QuestionJson>>(baiks.NoiDungDeThi);
+                    CalculateDetailResult(result, lecturer, deThi, c.TheSurveyId, tenLop, tenMon, c.ClassRoomCode);
+                }
+            }
             return result;
         }
 
@@ -234,7 +245,7 @@ namespace nuce.web.api.Services.Survey.Implements
         /// <param name="baiLamKhaoSatCacDotDangXet"></param>
         /// <param name="department"></param>
         /// <param name="loaiMon"></param>
-        private void CalculateDeparatmentResult(SurveyResultResponseModel Result, List<AsEduSurveyBaiKhaoSatSinhVien> baiLamKhaoSatCacDotDangXet, AsAcademyDepartment department, int loaiMon = 1)
+        private void CalculateDeparatmentResult(SurveyResultResponseModel Result, List<AsEduSurveyBaiKhaoSatSinhVien> baiLamKhaoSatCacDotDangXet, AsAcademyDepartment department)
         {
             var tmpLoaiMon = Enum.GetValues(typeof(TheSurveyType)).Cast<int>().ToList();
             var danhSachLoaiMonHoc = tmpLoaiMon.Cast<int?>().ToList();
@@ -244,20 +255,9 @@ namespace nuce.web.api.Services.Survey.Implements
             //giảng viên của bộ môn
             var lerturerCodes = _eduContext.AsAcademyLecturer.Where(o => o.DepartmentCode == department.Code).Select(o => o.Code).ToList();
 
-            //lấy môn học của bộ môn
-            var monHocCuaBoMon = _eduContext.AsAcademySubject.Where(o => o.DepartmentCode == department.Code)
-                .Join(_eduContext.AsAcademySubjectExtend, o => o.Code, o => o.Code, (monhoc, loaimon) => new { monhoc, loaimon.Type })
-                .Select(o => new
-                {
-                    o.monhoc.Code,
-                    o.monhoc.DepartmentCode,
-                    o.monhoc.Name,
-                    o.Type
-                }).ToList();
-
             #region môn
             //các bài làm của môn lý thuyết của bộ môn đang xét
-            var baiLamKhaoSatLyThuyet = baiLamKhaoSatCacDotDangXet.ToList().Where(o => o.SubjectType == loaiMon && lerturerCodes.Contains(o.LecturerCode));
+            var baiLamKhaoSatLyThuyet = baiLamKhaoSatCacDotDangXet.ToList().Where(o => lerturerCodes.Contains(o.LecturerCode));
             var baiLamKhaoSatLyThuyetHoanThanh = baiLamKhaoSatLyThuyet.ToList().Where(o => o.Status == (int)SurveyStudentStatus.Done)
                                                         .Select(o => new { o.StudentCode, o.LecturerCode });
 
@@ -283,25 +283,27 @@ namespace nuce.web.api.Services.Survey.Implements
         /// </summary>
         /// <param name="Result"></param>
         /// <param name="lecturer"></param>
-        /// <param name="deLyThuyet"></param>
+        /// <param name="deThiJson"></param>
         /// <param name="baiKhaoSats"></param>
         /// <param name="loaiMon"></param>
-        private void CalculateDetailResult(SurveyResultResponseModel Result, AsAcademyLecturer lecturer, List<QuestionJson> deLyThuyet, IQueryable<AsEduSurveyBaiKhaoSat> baiKhaoSats, int loaiMon)
+        private void CalculateDetailResult(SurveyResultResponseModel Result, AsAcademyLecturer lecturer, List<QuestionJson> deThiJson, 
+            Guid baiKhaoSatId, string tenLop, string tenMon, string maLop)
         {
             #region tổng hợp dữ liệu thống kê thô
 
             string saCode = QuestionType.SA;
 
-            var theSurveyIdLyThuyets = baiKhaoSats.Where(o => o.Type == loaiMon).Select(o => o.Id).ToList();
-            var reportTotalLyThuyet = _surveyContext.AsEduSurveyReportTotal.Where(o => theSurveyIdLyThuyets.Contains(o.TheSurveyId));
+            var reportTotalCuThe = _surveyContext.AsEduSurveyReportTotal.Where(o => o.TheSurveyId == baiKhaoSatId);
             var index = 0;
 
+            var test = reportTotalCuThe.Count();
+
             List<ChiTietCauHoi> chiTietCauHoiList = new List<ChiTietCauHoi>();
-            foreach (var cauhoi in deLyThuyet)
+            foreach (var cauhoi in deThiJson)
             {
                 var chiTietCauHoi = new ChiTietCauHoi();
                 if (cauhoi.Type == QuestionType.SC)
-                { 
+                {
                     chiTietCauHoi.Content = $"Câu {++index}: {cauhoi.Content}";
                     Dictionary<string, string> diemList = new Dictionary<string, string>();
 
@@ -311,11 +313,12 @@ namespace nuce.web.api.Services.Survey.Implements
                     foreach (var dapan in cauhoi.Answers)
                     {
                         diem++;
-                        string diemKey = diem.ToString();
+                        string diemKey = dapan.Content;
                         diemList.Add(diemKey, "0");
 
-                        var ketqua = reportTotalLyThuyet.FirstOrDefault(o => o.LecturerCode == lecturer.Code && 
-                                                                                o.QuestionCode == cauhoi.Code && 
+                        var ketqua = reportTotalCuThe.FirstOrDefault(o => o.LecturerCode == lecturer.Code &&
+                                                                                o.ClassRoomCode == maLop &&
+                                                                                o.QuestionCode == cauhoi.Code &&
                                                                                 o.AnswerCode == dapan.Code);
                         if (ketqua != null)
                         {
@@ -351,8 +354,9 @@ namespace nuce.web.api.Services.Survey.Implements
                         //wsLyThuyet.Cells[rowDapAn, col].Value = dapan.Content;
                         string dapAnKey = dapan.Content;
                         string dapAnValue = "";
-                        var ketqua = reportTotalLyThuyet.FirstOrDefault(o => o.LecturerCode == lecturer.Code && 
-                                                                                o.QuestionCode == cauhoi.Code && 
+                        var ketqua = reportTotalCuThe.FirstOrDefault(o => o.LecturerCode == lecturer.Code &&
+                                                                                o.ClassRoomCode == maLop &&
+                                                                                o.QuestionCode == cauhoi.Code &&
                                                                                 o.AnswerCode == dapan.Code);
                         if (ketqua != null)
                         {
@@ -367,7 +371,10 @@ namespace nuce.web.api.Services.Survey.Implements
                         //câu hỏi con của đáp án
                         if (dapan.AnswerChildQuestion != null)
                         {
-                            var ketquaCon = reportTotalLyThuyet.FirstOrDefault(o => o.QuestionCode == $"{dapan.Code}_{dapan.AnswerChildQuestion.Code}" && o.AnswerCode == dapan.Code);
+                            var ketquaCon = reportTotalCuThe.FirstOrDefault(o => o.LecturerCode == lecturer.Code &&
+                                                                                o.ClassRoomCode == maLop &&
+                                                                                o.QuestionCode == $"{dapan.Code}_{dapan.AnswerChildQuestion.Code}" &&
+                                                                                o.AnswerCode == dapan.Code);
                             dapAnValue = ketquaCon?.Content ?? "";
                         }
 
@@ -384,7 +391,9 @@ namespace nuce.web.api.Services.Survey.Implements
                     chiTietCauHoi.Content = $"Câu {++index}: {cauhoi.Content}";
                     Dictionary<string, string> diemList = new Dictionary<string, string>();
 
-                    var ketqua = reportTotalLyThuyet.FirstOrDefault(o => o.LecturerCode == lecturer.Code && o.QuestionCode == cauhoi.Code);
+                    var ketqua = reportTotalCuThe.FirstOrDefault(o => o.LecturerCode == lecturer.Code &&
+                                                                        o.ClassRoomCode == maLop &&
+                                                                        o.QuestionCode == cauhoi.Code);
                     if (ketqua != null && ketqua.Content != null)
                     {
                         var str = "";
@@ -402,12 +411,17 @@ namespace nuce.web.api.Services.Survey.Implements
                 {
                     index++;
                     var indexChild = 0;
+                    chiTietCauHoiList.Add(new ChiTietCauHoi
+                    {
+                        Content = $"Câu {index}: {cauhoi.Content}"
+                    });
                     foreach (var cauhoicon in cauhoi.ChildQuestion)
                     {
+                        var chiTietCauHoiCon = new ChiTietCauHoi();
+                        Dictionary<string, string> diemList = new Dictionary<string, string>();
                         if (cauhoicon.Type == QuestionType.SC)
                         {
-                            chiTietCauHoi.Content = $"Câu {index}.{++indexChild}: {cauhoicon.Content}";
-                            Dictionary<string, string> diemList = new Dictionary<string, string>();
+                            chiTietCauHoiCon.Content = $"   Câu {index}.{++indexChild}: {cauhoicon.Content}";
 
                             var dTB = 0;
                             var sumTotal = 0;
@@ -419,8 +433,9 @@ namespace nuce.web.api.Services.Survey.Implements
                                 string diemKey = diem.ToString();
                                 diemList.Add(diemKey, "0");
 
-                                var ketqua = reportTotalLyThuyet.FirstOrDefault(o => o.LecturerCode == lecturer.Code && 
-                                                                                        o.QuestionCode == cauhoicon.Code && 
+                                var ketqua = reportTotalCuThe.FirstOrDefault(o => o.LecturerCode == lecturer.Code &&
+                                                                                        o.ClassRoomCode == maLop &&
+                                                                                        o.QuestionCode == cauhoicon.Code &&
                                                                                         o.AnswerCode == dapan.Code);
                                 if (ketqua != null)
                                 {
@@ -443,19 +458,21 @@ namespace nuce.web.api.Services.Survey.Implements
                                 string dtbValue = ((double)dTB / sumTotal).ToString();
                                 diemList[dtbKey] = dtbValue;
                             }
-                            chiTietCauHoi.DanhSachDiem = diemList;
-                            chiTietCauHoiList.Add(chiTietCauHoi);
+                            chiTietCauHoiCon.DanhSachDiem = diemList;
+                            chiTietCauHoiList.Add(chiTietCauHoiCon);
                         }
                         else if (cauhoicon.Type == QuestionType.MC)
                         {
-                            chiTietCauHoi.Content = $"Câu {++index}: {cauhoicon.Content}";
-                            Dictionary<string, string> diemList = new Dictionary<string, string>();
+                            chiTietCauHoiCon.Content = $"   Câu {++index}: {cauhoicon.Content}";
 
                             foreach (var dapan in cauhoicon.Answers)
                             {
                                 string dapanKey = dapan.Content;
                                 string dapAnValue = "";
-                                var ketqua = reportTotalLyThuyet.FirstOrDefault(o => o.LecturerCode == lecturer.Code && o.QuestionCode == cauhoicon.Code && o.AnswerCode == dapan.Code);
+                                var ketqua = reportTotalCuThe.FirstOrDefault(o => o.LecturerCode == lecturer.Code &&
+                                                                                o.ClassRoomCode == maLop &&
+                                                                                o.QuestionCode == cauhoicon.Code &&
+                                                                                o.AnswerCode == dapan.Code);
                                 if (ketqua != null)
                                 {
                                     var total = ketqua.Total != null ? ketqua.Total.Value : 0;
@@ -469,106 +486,66 @@ namespace nuce.web.api.Services.Survey.Implements
                                 //câu hỏi con của đáp án
                                 if (dapan.AnswerChildQuestion != null)
                                 {
-                                    var ketquaCon = reportTotalLyThuyet.FirstOrDefault(o => o.QuestionCode == $"{dapan.Code}_{dapan.AnswerChildQuestion.Code}" && o.AnswerCode == dapan.Code);
+                                    var ketquaCon = reportTotalCuThe.FirstOrDefault(o => o.LecturerCode == lecturer.Code &&
+                                                                                        o.ClassRoomCode == maLop &&
+                                                                                        o.QuestionCode == $"{dapan.Code}_{dapan.AnswerChildQuestion.Code}" &&
+                                                                                        o.AnswerCode == dapan.Code);
                                     dapAnValue = ketquaCon?.Content ?? "";
                                 }
                             }
-                            chiTietCauHoi.DanhSachDiem = diemList;
-                            chiTietCauHoiList.Add(chiTietCauHoi);
+                            chiTietCauHoiCon.DanhSachDiem = diemList;
+                            chiTietCauHoiList.Add(chiTietCauHoiCon);
                         }
                         if (cauhoicon.Type == QuestionType.SA)
                         {
-                            chiTietCauHoi.Content = $"Câu {index}.{++indexChild}: {cauhoicon.Content}";
-                            Dictionary<string, string> diemList = new Dictionary<string, string>();
+                            chiTietCauHoiCon.Content = $"   Câu {index}.{++indexChild}: {cauhoicon.Content}";
 
-                            var ketqua = reportTotalLyThuyet.FirstOrDefault(o => o.LecturerCode == lecturer.Code && o.QuestionCode == cauhoicon.Code);
+                            var ketqua = reportTotalCuThe.FirstOrDefault(o => o.LecturerCode == lecturer.Code &&
+                                                                              o.ClassRoomCode == maLop &&
+                                                                              o.QuestionCode == cauhoicon.Code);
                             if (ketqua != null && ketqua.Content != null)
                             {
                                 var str = "";
                                 var listStr = JsonSerializer.Deserialize<List<string>>(ketqua.Content);
                                 listStr.ForEach(s =>
                                 {
-                                    str += $"{s};";
+                                    str += $"{s}; ";
                                 });
                                 diemList.Add(saCode, str);
                             }
 
-                            chiTietCauHoi.DanhSachDiem = diemList;
-                            chiTietCauHoiList.Add(chiTietCauHoi);
+                            chiTietCauHoiCon.DanhSachDiem = diemList;
+                            chiTietCauHoiList.Add(chiTietCauHoiCon);
                         }
                     }
                     //chiTietCauHoi.Content = "group choice";
                     //chiTietCauHoiList.Add(chiTietCauHoi);
                 }
+                else if (cauhoi.Type == QuestionType.T)
+                {
+                    chiTietCauHoiList.Add(new ChiTietCauHoi
+                    {
+                        OnlyTitle = cauhoi.Content
+                    });
+                }
             }
 
-            string loaiMonHoc = "";
-            switch ((TheSurveyType)loaiMon)
+            Result.ChiTietTungLopMonHoc.Add(new ChiTietLopMonHoc
             {
-                case TheSurveyType.TheoreticalSubjects:
-                    loaiMonHoc = "Lý thuyết";
-                    break;
-                case TheSurveyType.TheoreticalPracticalSubjects:
-                    loaiMonHoc = "Lý thuyết thực hành";
-                    break;
-                case TheSurveyType.PracticalSubjects:
-                    loaiMonHoc = "Thực hành";
-                    break;
-                case TheSurveyType.AssignmentSubjects:
-                    loaiMonHoc = "Đồ án";
-                    break;
-                default:
-                    break;
-            }
-
-            Result.LoaiMonHoc.Add(new ChiTietLoaiMonHoc
-            {
-                Title = loaiMonHoc,
+                TenLop = tenLop,
+                TenMon = tenMon,
                 CauHoi = chiTietCauHoiList
             });
             #endregion
         }
         // subject <= classroom <= lecturer classroom <= lecturer
-        private async Task CalculateLecturerResult(SurveyResultResponseModel Result, AsAcademyLecturer lecturer, List<AsEduSurveyBaiKhaoSatSinhVien> baiLamKhaoSatCacDotDangXet, int loaiMon = 1)
+        private async Task CalculateLecturerResult(SurveyResultResponseModel Result, AsAcademyLecturer lecturer, List<AsEduSurveyBaiKhaoSatSinhVien> baiLamKhaoSatCacDotDangXet)
         {
             Result.LecturerCode = lecturer.Code;
             Result.LecturerName = lecturer.FullName;
-            var tmpLoaiMon = Enum.GetValues(typeof(TheSurveyType)).Cast<int>().ToList();
-            var danhSachLoaiMonHoc = tmpLoaiMon.Cast<int?>().ToList();
-
-            var monHocCuaGiangVien = await _eduContext.AsAcademyLecturerClassRoom
-                                                .Where(lcr => lcr.LecturerCode == lecturer.Code)
-                                                .Join(_eduContext.AsAcademyClassRoom,
-                                                        lcr => lcr.ClassRoomCode,
-                                                        cr => cr.Code,
-                                                        (lcr, cr) => cr)
-                                                .Distinct()
-                                                .Join(_eduContext.AsAcademySubject,
-                                                    cr => cr.SubjectCode,
-                                                    s => s.Code,
-                                                    (cr, s) => s)
-                                                .Join(_eduContext.AsAcademySubjectExtend,
-                                                    s => s.Code,
-                                                    se => se.Code,
-                                                    (s, se) => new
-                                                    {
-                                                        s,
-                                                        se.Type
-                                                    })
-                                                .Select(subject => new
-                                                {
-                                                    subject.s.Code,
-                                                    subject.s.DepartmentCode,
-                                                    subject.s.Name,
-                                                    subject.Type
-                                                }).ToListAsync();
-
-
-            var monLyThuyetCuaBoMonCodes = monHocCuaGiangVien.Where(o => loaiMon == o.Type)
-                                                        .Select(o => o.Code);
 
             //các bài làm của môn lý thuyết của bộ môn đang xét
-            var baiLamKhaoSatLyThuyet = baiLamKhaoSatCacDotDangXet.Where(o => o.LecturerCode == lecturer.Code && o.SubjectType == loaiMon);
+            var baiLamKhaoSatLyThuyet = baiLamKhaoSatCacDotDangXet.Where(o => o.LecturerCode == lecturer.Code);
             var baiLamKhaoSatLyThuyetHoanThanh = baiLamKhaoSatLyThuyet.Where(o => o.Status == (int)SurveyStudentStatus.Done)
                                                         .Select(o => new { o.StudentCode, o.LecturerCode });
 

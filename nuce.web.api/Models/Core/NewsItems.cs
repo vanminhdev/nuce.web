@@ -27,5 +27,6 @@ namespace nuce.web.api.Models.Core
         public string MetaKeyword { get; set; }
         public string MetaDesciption { get; set; }
         public int Status { get; set; }
+        public int? Order { get; set; }
     }
 }

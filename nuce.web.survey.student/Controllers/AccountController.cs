@@ -131,6 +131,11 @@ namespace nuce.web.survey.student.Controllers
                     break;
             }
             ViewData["target"] = target;
+
+            if (login.Type == null)
+            {
+                return View("loginCanBo", login);
+            }
             return View("login", new LoginModel());
         }
 

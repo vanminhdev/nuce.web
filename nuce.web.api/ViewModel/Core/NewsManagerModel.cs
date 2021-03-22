@@ -7,6 +7,7 @@ namespace nuce.web.api.ViewModel.Core
     {
         public int CatId { get; set; }
         public string Title { get; set; }
+        public int? Order { get; set; }
         public string Description { get; set; }
         public string Content { get; set; }
         public string Avatar { get; set; }
