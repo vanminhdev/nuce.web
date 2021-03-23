@@ -65,7 +65,7 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
             var lsRole = _userService.GetClaimListByKey(ClaimTypes.Role);
             if (lsRole.Contains(RoleNames.KhaoThi_Survey_KhoaBan) && (!lsRole.Contains(RoleNames.KhaoThi) || !lsRole.Contains(RoleNames.Admin)))
             {
-                filter.MaKhoa = _userService.GetUserName();
+                filter.MaKhoa = _userService.GetClaimByKey(UserParameters.UserCode);
             }
 
             if (request.Columns != null)

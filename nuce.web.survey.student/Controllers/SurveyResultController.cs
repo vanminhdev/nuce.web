@@ -45,7 +45,7 @@ namespace nuce.web.survey.student.Controllers
         {
             var model = new SurveyResultModel
             {
-                FacultyCode = code ?? base.GetCurrentUsername(),
+                FacultyCode = code ?? GetCurrentUserCode(),
             };
             return View("Faculty", model);
         }

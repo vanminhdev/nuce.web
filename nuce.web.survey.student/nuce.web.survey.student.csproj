@@ -2708,6 +2708,7 @@
     <Content Include="Views\Account\LoginCanBo.cshtml" />
     <Content Include="Views\Error\UnderConstruction.cshtml" />
     <Content Include="Views\Survey\Faculty\UndergraduateStudent.cshtml" />
+    <Content Include="Views\Account\ChangePassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

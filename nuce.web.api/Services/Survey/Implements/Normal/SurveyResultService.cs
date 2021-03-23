@@ -12,20 +12,23 @@ using nuce.web.api.Models.Survey.JsonData;
 using nuce.web.api.Common;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace nuce.web.api.Services.Survey.Implements
 {
     public class SurveyResultService : ISurveyResultService
     {
+        private readonly ILogger<SurveyResultService> _logger;
         private readonly SurveyContext _surveyContext;
         private readonly EduDataContext _eduContext;
         private readonly IFacultyRepository _facultyRepository;
         private readonly IDepartmentRepository _departmentRepository;
         private readonly ILecturerRepository _lecturerRepository;
-        public SurveyResultService(SurveyContext _surveyContext, IFacultyRepository _facultyRepository, 
+        public SurveyResultService(ILogger<SurveyResultService> _logger, SurveyContext _surveyContext, IFacultyRepository _facultyRepository, 
                 IDepartmentRepository _departmentRepository, ILecturerRepository _lecturerRepository,
                 EduDataContext _eduContext)
         {
+            this._logger = _logger;
             this._surveyContext = _surveyContext;
             this._facultyRepository = _facultyRepository;
             this._departmentRepository = _departmentRepository;
@@ -54,12 +57,17 @@ namespace nuce.web.api.Services.Survey.Implements
             #endregion
 
             var departments = await _facultyRepository.GetDepartment(code).ToListAsync();
-            var faculty = departments.FirstOrDefault(d => d.Code == code);
+            var faculty = await _facultyRepository.FindByCode(code);
+
+            if (faculty == null)
+            {
+                _logger.LogError($"Khong tim thay khoa tai 'FacultyResultAsync{code}' 'await _facultyRepository.GetDepartment({code})'");
+            }
 
             var result = new FacultyResultModel
             {
-                FacultyCode = faculty.Code,
-                FacultyName = faculty.Name,
+                FacultyCode = faculty?.Code ?? "",
+                FacultyName = faculty?.Name ?? "",
                 Result = new List<SurveyResultResponseModel>(),
             };
 
@@ -68,7 +76,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 IsTotal = true,
             };
 
-            var actualDeparments = departments.Where(d => d.Code != faculty.Code).ToList();
+            var actualDeparments = departments.Where(d => d.Code != (faculty?.Code ?? "")).ToList();
 
             foreach (var department in departments)
             {
@@ -120,14 +128,26 @@ namespace nuce.web.api.Services.Survey.Implements
             #endregion
 
             var department = await _departmentRepository.FindByCode(code);
-            var faculty = await _facultyRepository.FindByCode(department.FacultyCode);
+
+            if (department == null)
+            {
+                _logger.LogError($"Khong tim thay bo mon tai 'DepartmentResultAsync{code}' 'await _departmentRepository.FindByCode({code})'");
+            }
+
+            var faculty = await _facultyRepository.FindByCode(department?.FacultyCode ?? code);
             var lecturers = await _departmentRepository.GetLecturer(code).ToListAsync();
+
+            if (faculty == null)
+            {
+                _logger.LogError($"Khong tim thay khoa tai 'DepartmentResultAsync{code}' 'await _facultyRepository.FindByCode(department.FacultyCode)'");
+            }
+
             var result = new DepartmentResultModel
             {
-                FacultyCode = faculty.Code,
-                FacultyName = faculty.Name,
-                DepartmentCode = department.Code,
-                DepartmentName = department.Name,
+                FacultyCode = faculty?.Code ?? "",
+                FacultyName = faculty?.Name ?? "",
+                DepartmentCode = department?.Code ?? "",
+                DepartmentName = department?.Name ?? "",
                 Result = new List<SurveyResultResponseModel>()
             };
 

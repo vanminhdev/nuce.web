@@ -107,11 +107,18 @@
             @if (accessToken != null)
             {
                 <div class="col-lg-4 m-fs-14 col-md-5 col-12 order-md-8 order-1 mb-md-0 mb-md-2 mb-0">
-                    <div class="d-flex justify-content-end">
+                    <div class="d-flex justify-content-end text-right">
                         @givenName - @username
                     </div>
                     <div class="d-flex justify-content-end">
-                        <a href="/Account/Logout">
+                        @if (roles.Contains(RoleNames.KhaoThi_Survey_KhoaBan))
+                        {
+                            <a class="mr-md-3 mr-2" href="/account/changepassword">
+                                Đổi mật khẩu
+                                <i class="fa fa-key"></i>
+                            </a>
+                        }
+                        <a href="/account/logout">
                             Đăng xuất
                             <i class="fas fa-sign-out-alt"></i>
                         </a>

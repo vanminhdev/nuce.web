@@ -43,6 +43,44 @@ namespace nuce.web.survey.student.Controllers
             });
         }
 
+        [HttpGet]
+        public ActionResult ChangePassword()
+        {
+            return View(new ChangePassword());
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> ChangePassword(ChangePassword model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
+            var response = await MakeRequestAuthorizedAsync("Put", "/api/user/ChangePassword", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                ViewData["success"] = "Đổi mật khẩu thành công";
+                return View(new ChangePassword());
+            }
+            else
+            {
+                var message = "Đổi mật khẩu không thành công";
+                try
+                {
+                    var resStr = await response.Content.ReadAsStringAsync();
+                    message = (JsonConvert.DeserializeObject<ResponseMessage>(resStr)).message;
+                }
+                catch
+                {
+                }
+                ViewData["fail"] = message;
+                return View(model);
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult> Login(LoginModel login, string target)
         {
@@ -132,7 +170,7 @@ namespace nuce.web.survey.student.Controllers
             }
             ViewData["target"] = target;
 
-            if (login.Type == null)
+            if (login.LoginUserType == (int)LoginType.Faculty || login.LoginUserType == (int)LoginType.Department || login.LoginUserType == (int)LoginType.Lecturer)
             {
                 return View("loginCanBo", login);
             }

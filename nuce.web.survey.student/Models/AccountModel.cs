@@ -28,4 +28,16 @@ namespace nuce.web.survey.student.Models
         public string Text { get; set; }
         public int Value { get; set; }
     }
+
+    public class ChangePassword
+    {
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Mật khẩu không được để trống")]
+        public string Password { get; set; }
+
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Mật khẩu không được để trống")]
+        [MinLength(6, ErrorMessage = "Mật khẩu dài ít nhất 6 ký tự")]
+        [MaxLength(30, ErrorMessage = "Mật khẩu dài tối đa 30 ký tự")]
+        [NotContainWhiteSpace(ErrorMessage = "Mật khẩu không được chứa khoảng trắng")]
+        public string NewPassword { get; set; }
+    }
 }

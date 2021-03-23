@@ -618,7 +618,7 @@ namespace nuce.web.api.Controllers.Core
             }
             catch (RecordNotFoundException)
             {
-                return NotFound(new { message = "Không tìm thấy bản ghi" });
+                return NotFound(new { message = "Không tìm thấy tài khoản" });
             }
             catch (Exception e)
             {

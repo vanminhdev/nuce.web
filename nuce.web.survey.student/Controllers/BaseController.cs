@@ -266,5 +266,22 @@ namespace nuce.web.survey.student.Controllers
             }
             return username;
         }
+
+        protected string GetCurrentUserCode()
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var accessToken = Request.Cookies[UserParameters.JwtAccessToken];
+            var code = "";
+            if (accessToken != null)
+            {
+                var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
+                var claim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == UserParameters.UserCode);
+                if (claim != null)
+                {
+                    code = claim.Value;
+                }
+            }
+            return code;
+        }
     }
 }

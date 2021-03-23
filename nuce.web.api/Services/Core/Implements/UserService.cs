@@ -114,15 +114,33 @@ namespace nuce.web.api.Services.Core.Implements
             #region gán tên cho tài khoản của khoa & bộ môn
             if (model.LoginUserType == LoginUserType.Faculty)
             {
-                string givenName = (await _departmentRepository.FindByCode(username))?.Name ?? user.UserName;
+                if (user.ExCode == null)
+                {
+                    throw new ArgumentException("ExCode đăng nhập khoa = null");
+                }
+                var faculty = await _facultyRepository.FindByCode(user.ExCode);
+                string givenName = faculty?.Name ?? user.UserName;
+                if (faculty == null)
+                {
+                    _logger.LogError($"Khong tim thay khoa {username} khi add Claim tai '_facultyRepository.FindByCode(user.ExCode)' voi ExCode = {user.ExCode}");
+                }
                 authClaims.Add(new Claim(ClaimTypes.GivenName, givenName));
-                authClaims.Add(new Claim(UserParameters.UserCode, username));
+                authClaims.Add(new Claim(UserParameters.UserCode, user.ExCode));
             }
             else if (model.LoginUserType == LoginUserType.Department)
             {
-                string givenName = (await _departmentRepository.FindByCode(username))?.Name ?? user.UserName;
+                if (user.ExCode == null)
+                {
+                    throw new ArgumentException("ExCode đăng nhập bộ môn = null");
+                }
+                var department = await _departmentRepository.FindByCode(user.ExCode);
+                string givenName = department?.Name ?? user.UserName;
+                if (department == null)
+                {
+                    _logger.LogError($"Khong tim thay bo mon {username} khi add Claim tai '_departmentRepository.FindByCode(user.ExCode)' voi ExCode = {user.ExCode}");
+                }
                 authClaims.Add(new Claim(ClaimTypes.GivenName, givenName));
-                authClaims.Add(new Claim(UserParameters.UserCode, username));
+                authClaims.Add(new Claim(UserParameters.UserCode, user.ExCode));
             }
             #endregion
             return authClaims;
