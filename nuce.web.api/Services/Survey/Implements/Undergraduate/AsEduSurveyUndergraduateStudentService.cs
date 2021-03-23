@@ -39,7 +39,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             if (!string.IsNullOrWhiteSpace(filter.Masv))
             {
-                dssv = dssv.Where(o => o.Masv == filter.Masv);
+                dssv = dssv.Where(o => o.ExMasv == filter.Masv);
             }
 
             if (filter.DotKhaoSatId != null)

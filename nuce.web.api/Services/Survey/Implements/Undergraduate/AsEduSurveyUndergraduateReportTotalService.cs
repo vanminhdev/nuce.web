@@ -281,20 +281,20 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
                     }
                     else if (cauhoi.Type == QuestionType.SA)
                     {
-                        worksheet.Cells[rowCauHoi, col].Value = $"Câu {++index}: {cauhoi.Content}";
-                        worksheet.Column(col).Width = 48;
-                        var ketqua = reportTotal.FirstOrDefault(o => o.ChuyenNganh == chuyenNganh && o.QuestionCode == cauhoi.Code);
-                        if (ketqua != null && ketqua.Content != null)
-                        {
-                            var str = "";
-                            var listStr = JsonSerializer.Deserialize<List<string>>(ketqua.Content);
-                            listStr.ForEach(s =>
-                            {
-                                str += $"{s};";
-                            });
-                            worksheet.Cells[row, col].Value = str;
-                        }
-                        col++;
+                        //worksheet.Cells[rowCauHoi, col].Value = $"Câu {++index}: {cauhoi.Content}";
+                        //worksheet.Column(col).Width = 48;
+                        //var ketqua = reportTotal.FirstOrDefault(o => o.ChuyenNganh == chuyenNganh && o.QuestionCode == cauhoi.Code);
+                        //if (ketqua != null && ketqua.Content != null)
+                        //{
+                        //    var str = "";
+                        //    var listStr = JsonSerializer.Deserialize<List<string>>(ketqua.Content);
+                        //    listStr.ForEach(s =>
+                        //    {
+                        //        str += $"{s};";
+                        //    });
+                        //    worksheet.Cells[row, col].Value = str;
+                        //}
+                        //col++;
                     }
                     else if (cauhoi.Type == QuestionType.GQ)
                     {
@@ -431,23 +431,23 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
                                 var colEnd = col - 1;
                                 worksheet.Cells[rowCauHoi, colStart, rowCauHoi, colEnd].Merge = true;
                             }
-                            else if (childQuestion.Type == QuestionType.SA)
-                            {
-                                worksheet.Cells[rowCauHoi, col].Value = $"Câu {index}.{indexChildQuestion}: {childQuestion.Content}";
-                                worksheet.Column(col).Width = 48;
-                                var ketqua = reportTotal.FirstOrDefault(o => o.ChuyenNganh == chuyenNganh && o.QuestionCode == childQuestion.Code);
-                                if (ketqua != null && ketqua.Content != null)
-                                {
-                                    var str = "";
-                                    var listStr = JsonSerializer.Deserialize<List<string>>(ketqua.Content);
-                                    listStr.ForEach(s =>
-                                    {
-                                        str += $"{s};";
-                                    });
-                                    worksheet.Cells[row, col].Value = str;
-                                }
-                                col++;
-                            }
+                            //else if (childQuestion.Type == QuestionType.SA)
+                            //{
+                            //    worksheet.Cells[rowCauHoi, col].Value = $"Câu {index}.{indexChildQuestion}: {childQuestion.Content}";
+                            //    worksheet.Column(col).Width = 48;
+                            //    var ketqua = reportTotal.FirstOrDefault(o => o.ChuyenNganh == chuyenNganh && o.QuestionCode == childQuestion.Code);
+                            //    if (ketqua != null && ketqua.Content != null)
+                            //    {
+                            //        var str = "";
+                            //        var listStr = JsonSerializer.Deserialize<List<string>>(ketqua.Content);
+                            //        listStr.ForEach(s =>
+                            //        {
+                            //            str += $"{s};";
+                            //        });
+                            //        worksheet.Cells[row, col].Value = str;
+                            //    }
+                            //    col++;
+                            //}
                             index++;
                         }
                         #endregion

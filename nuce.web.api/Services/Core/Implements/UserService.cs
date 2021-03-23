@@ -99,7 +99,7 @@ namespace nuce.web.api.Services.Core.Implements
             else if (model.LoginUserType == LoginUserType.Lecturer)
             {
                 authClaims.Add(new Claim(ClaimTypes.Role, RoleNames.KhaoThi_Survey_GiangVien));
-                string givenName = (await _lecturerRepository.FindByCode(username))?.FullName;
+                string givenName = (await _lecturerRepository.FindByCode(username))?.FullName ?? user.UserName;
                 authClaims.Add(new Claim(ClaimTypes.GivenName, givenName));
                 authClaims.Add(new Claim(UserParameters.UserCode, username));
             }
@@ -114,13 +114,13 @@ namespace nuce.web.api.Services.Core.Implements
             #region gán tên cho tài khoản của khoa & bộ môn
             if (model.LoginUserType == LoginUserType.Faculty)
             {
-                string givenName = (await _departmentRepository.FindByCode(username))?.Name;
+                string givenName = (await _departmentRepository.FindByCode(username))?.Name ?? user.UserName;
                 authClaims.Add(new Claim(ClaimTypes.GivenName, givenName));
                 authClaims.Add(new Claim(UserParameters.UserCode, username));
-            } 
+            }
             else if (model.LoginUserType == LoginUserType.Department)
             {
-                string givenName = (await _departmentRepository.FindByCode(username))?.Name;
+                string givenName = (await _departmentRepository.FindByCode(username))?.Name ?? user.UserName;
                 authClaims.Add(new Claim(ClaimTypes.GivenName, givenName));
                 authClaims.Add(new Claim(UserParameters.UserCode, username));
             }

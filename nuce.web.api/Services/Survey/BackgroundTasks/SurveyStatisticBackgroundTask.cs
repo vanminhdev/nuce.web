@@ -660,20 +660,20 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                         }
                         else if (cauhoi.Type == QuestionType.SA)
                         {
-                            wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {++index}: {cauhoi.Content}";
-                            wsLyThuyet.Column(col).Width = 48;
-                            var ketqua = reportTotalLyThuyet.FirstOrDefault(o => lerturerCodes.Contains(o.LecturerCode) && o.QuestionCode == cauhoi.Code);
-                            if(ketqua != null && ketqua.Content != null)
-                            {
-                                var str = "";
-                                var listStr = JsonSerializer.Deserialize<List<string>>(ketqua.Content);
-                                listStr.ForEach(s =>
-                                {
-                                    str += $"{s};";
-                                });
-                                wsLyThuyet.Cells[row, col].Value = str;
-                            }
-                            col++;
+                            //wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {++index}: {cauhoi.Content}";
+                            //wsLyThuyet.Column(col).Width = 48;
+                            //var ketqua = reportTotalLyThuyet.FirstOrDefault(o => lerturerCodes.Contains(o.LecturerCode) && o.QuestionCode == cauhoi.Code);
+                            //if(ketqua != null && ketqua.Content != null)
+                            //{
+                            //    var str = "";
+                            //    var listStr = JsonSerializer.Deserialize<List<string>>(ketqua.Content);
+                            //    listStr.ForEach(s =>
+                            //    {
+                            //        str += $"{s};";
+                            //    });
+                            //    wsLyThuyet.Cells[row, col].Value = str;
+                            //}
+                            //col++;
                         }
                         else if (cauhoi.Type == QuestionType.GQ)
                         {
@@ -852,19 +852,19 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                 }
                                 if (cauhoicon.Type == QuestionType.SA)
                                 {
-                                    wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {index}.{++indexChild}: {cauhoicon.Content}";
-                                    wsLyThuyet.Column(col).Width = 48;
-                                    var ketqua = reportTotalLyThuyet.FirstOrDefault(o => lerturerCodes.Contains(o.LecturerCode) && o.QuestionCode == cauhoicon.Code);
-                                    if (ketqua != null && ketqua.Content != null)
-                                    {
-                                        var str = "";
-                                        var listStr = JsonSerializer.Deserialize<List<string>>(ketqua.Content);
-                                        listStr.ForEach(s =>
-                                        {
-                                            str += $"{s};";
-                                        });
-                                        wsLyThuyet.Cells[row, col].Value = str;
-                                    }
+                                    //wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {index}.{++indexChild}: {cauhoicon.Content}";
+                                    //wsLyThuyet.Column(col).Width = 48;
+                                    //var ketqua = reportTotalLyThuyet.FirstOrDefault(o => lerturerCodes.Contains(o.LecturerCode) && o.QuestionCode == cauhoicon.Code);
+                                    //if (ketqua != null && ketqua.Content != null)
+                                    //{
+                                    //    var str = "";
+                                    //    var listStr = JsonSerializer.Deserialize<List<string>>(ketqua.Content);
+                                    //    listStr.ForEach(s =>
+                                    //    {
+                                    //        str += $"{s};";
+                                    //    });
+                                    //    wsLyThuyet.Cells[row, col].Value = str;
+                                    //}
                                 }
                                 col++;
                             }
