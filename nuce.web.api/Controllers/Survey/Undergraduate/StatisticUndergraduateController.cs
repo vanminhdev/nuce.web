@@ -37,40 +37,40 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
         }
 
         #region thống kê sinh viên trước tốt nghiệp
-        [HttpPost]
-        [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
-        public async Task<IActionResult> ReportTotalUndergraduateSurvey([Required] Guid? surveyRoundId, [Required] Guid? theSurveyId)
-        {
-            try
-            {
-                await _reportTotalService.ReportTotalUndergraduateSurvey(surveyRoundId.Value, theSurveyId.Value);
-            }
-            catch (RecordNotFoundException e)
-            {
-                _logger.LogError(e, e.Message);
-                return NotFound(new { message = e.Message });
-            }
-            catch (InvalidInputDataException e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
-            }
-            catch (TableBusyException e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
-            }
-            catch (DbUpdateException e)
-            {
-                _logger.LogError(e, e.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thống kê được đợt khảo sát", detailMessage = e.Message });
-            }
-            catch (Exception e)
-            {
-                var mainMessage = UtilsException.GetMainMessage(e);
-                _logger.LogError(e, mainMessage);
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thống kê được đợt khảo sát", detailMessage = mainMessage });
-            }
-            return Ok();
-        }
+        //[HttpPost]
+        //[AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
+        //public async Task<IActionResult> ReportTotalUndergraduateSurvey([Required] Guid? surveyRoundId, [Required] Guid? theSurveyId)
+        //{
+        //    try
+        //    {
+        //          await _reportTotalService.ReportTotalUndergraduateSurvey(surveyRoundId.Value, theSurveyId.Value, fromDate.Value, toDate.Value);
+        //    }
+        //    catch (RecordNotFoundException e)
+        //    {
+        //        _logger.LogError(e, e.Message);
+        //        return NotFound(new { message = e.Message });
+        //    }
+        //    catch (InvalidInputDataException e)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+        //    }
+        //    catch (TableBusyException e)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+        //    }
+        //    catch (DbUpdateException e)
+        //    {
+        //        _logger.LogError(e, e.Message);
+        //        return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thống kê được đợt khảo sát", detailMessage = e.Message });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        var mainMessage = UtilsException.GetMainMessage(e);
+        //        _logger.LogError(e, mainMessage);
+        //        return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không thống kê được đợt khảo sát", detailMessage = mainMessage });
+        //    }
+        //    return Ok();
+        //}
 
         [HttpPost]
         [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
@@ -97,10 +97,12 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
 
         [HttpPost]
         [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
-        public async Task<IActionResult> ExportReportTotalUndergraduateSurvey([Required] Guid? surveyRoundId, [Required] Guid? theSurveyId)
+        public async Task<IActionResult> ExportReportTotalUndergraduateSurvey([Required] Guid? surveyRoundId, [Required] Guid? theSurveyId,
+            [Required] DateTime? fromDate, [Required] DateTime? toDate)
         {
             try
             {
+                _reportTotalService.ReportTotalUndergraduateSurvey(surveyRoundId.Value, theSurveyId.Value, fromDate.Value, toDate.Value);
                 var data = await _reportTotalService.ExportReportTotalUndergraduateSurvey(surveyRoundId.Value, theSurveyId.Value);
                 return File(data, ContentTypes.Xlsx);
             }

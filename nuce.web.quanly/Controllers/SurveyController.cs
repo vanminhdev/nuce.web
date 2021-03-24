@@ -2006,9 +2006,9 @@ namespace nuce.web.quanly.Controllers
 
         [HttpPost]
         [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
-        public async Task<ActionResult> ExportReportTotalUndergraduateSurvey(string surveyRoundId, string theSurveyId)
+        public async Task<ActionResult> ExportReportTotalUndergraduateSurvey(string surveyRoundId, string theSurveyId, DateTime fromDate, DateTime toDate)
         {
-            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/StatisticUndergraduate/ExportReportTotalUndergraduateSurvey?surveyRoundId={surveyRoundId}&theSurveyId={theSurveyId}");
+            var response = await base.MakeRequestAuthorizedAsync("Post", $"/api/StatisticUndergraduate/ExportReportTotalUndergraduateSurvey?surveyRoundId={surveyRoundId}&theSurveyId={theSurveyId}&fromDate={fromDate}&toDate={toDate}");
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 using (Stream streamToReadFrom = await response.Content.ReadAsStreamAsync())

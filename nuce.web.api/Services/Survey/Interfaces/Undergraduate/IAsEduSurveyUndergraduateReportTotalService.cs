@@ -11,7 +11,7 @@ namespace nuce.web.api.Services.Survey.Interfaces
     {
         public Task<PaginationModel<ReportTotalUndergraduate>> GetRawReportTotalUndergraduateSurvey(ReportTotalUndergraduateFilter filter, int skip = 0, int take = 20);
 
-        public Task ReportTotalUndergraduateSurvey(Guid surveyRoundId, Guid theSurveyId);
+        public void ReportTotalUndergraduateSurvey(Guid surveyRoundId, Guid theSurveyId, DateTime fromDate, DateTime toDate);
 
         public Task<byte[]> ExportReportTotalUndergraduateSurvey(Guid surveyRoundId, Guid theSurveyId);
     }

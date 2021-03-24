@@ -23,10 +23,10 @@
             <button class="btn btn-success mr-2" id="btn-export">
                 <i class="fas fa-file-export"></i> Kết xuất báo cáo
             </button>
-            <button class="btn btn-primary" id="btn-statistic-survey">
+            @*<button class="btn btn-primary" id="btn-statistic-survey">
                 <i class="fas fa-chart-pie"></i>
                 Thống kê
-            </button>
+            </button>*@
         </div>
     </div>
     <div class="row">
@@ -109,6 +109,18 @@
                             <div class="col-9">
                                 <select class="form-control selectpicker custom-boostrap-select" name="theSurveyId" id="baikhaosat-ketxuat" required title="Chọn bài khảo sát">
                                 </select>
+                            </div>
+                        </div>
+                        <div class="form-group row" title="Khoảng thời gian làm bài khảo sát">
+                            <label class="col-3 col-form-label">Từ ngày <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <input type="date" class="form-control" name="fromDate" id="fromDate" required data-rule-dateLessThanOrEqual="#toDate">
+                            </div>
+                        </div>
+                        <div class="form-group row" title="Khoảng thời gian làm bài khảo sát">
+                            <label class="col-3 col-form-label">Đến ngày <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <input type="date" class="form-control" name="toDate" id="toDate" required data-rule-dateGreaterThanOrEqual="#fromDate">
                             </div>
                         </div>
                     </form>

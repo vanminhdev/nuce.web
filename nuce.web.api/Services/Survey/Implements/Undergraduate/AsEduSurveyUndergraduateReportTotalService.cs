@@ -528,8 +528,9 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
             };
         }
 
-        public async Task ReportTotalUndergraduateSurvey(Guid surveyRoundId, Guid theSurveyId)
+        public void ReportTotalUndergraduateSurvey(Guid surveyRoundId, Guid theSurveyId, DateTime fromDate, DateTime toDate)
         {
+            _context.Database.ExecuteSqlRaw("TRUNCATE TABLE As_Edu_Survey_Undergraduate_ReportTotal");
             var surveyRound = _context.AsEduSurveyUndergraduateSurveyRound.FirstOrDefault(o => o.Id == surveyRoundId && o.Status != (int)SurveyRoundStatus.Deleted);
             if (surveyRound == null)
             {
@@ -542,7 +543,7 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
                 throw new HandleException.InvalidInputDataException("Đợt khảo sát chưa đóng hoặc chưa kết thúc");
             }
 
-            var theSurvey = await _context.AsEduSurveyUndergraduateBaiKhaoSat.FirstOrDefaultAsync(o => o.Id == theSurveyId && o.Status != (int)TheSurveyStatus.Deleted);
+            var theSurvey = _context.AsEduSurveyUndergraduateBaiKhaoSat.FirstOrDefault(o => o.Id == theSurveyId && o.Status != (int)TheSurveyStatus.Deleted);
             if (theSurvey == null)
             {
                 throw new RecordNotFoundException("Không tìm thấy bài khảo sát");
@@ -550,20 +551,22 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
 
             _logger.LogInformation("report total undergraduate is start.");
             var students = _context.AsEduSurveyUndergraduateStudent.Where(o => o.DotKhaoSatId == surveyRoundId);
-            var baiKSSinhViens = _context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien.Where(o => o.BaiKhaoSatId == theSurveyId && o.Status == (int)SurveyStudentStatus.Done);
+            var baiKSSinhViens = _context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien
+                .Where(o => o.BaiKhaoSatId == theSurveyId && o.Status == (int)SurveyStudentStatus.Done && fromDate <= o.NgayGioNopBai && toDate >= o.NgayGioNopBai);
             var svBaiLam = students.Join(baiKSSinhViens, o => o.Masv, o => o.StudentCode, (sv, baikssv) => new { baikssv })
                 .Select(o => o.baikssv)
                 .ToList();
 
             var groupSvBaiLamTheoChNganh = svBaiLam
-                .Select(o => new { 
+                .Select(o => new
+                {
                     o.Id,
                     o.BaiKhaoSatId,
                     o.StudentCode,
                     o.DeThi,
                     o.BaiLam,
                     o.Nganh,
-                    ChuyenNganh = o.ChuyenNganh ?? o.Nganh,
+                    ChuyenNganh = !string.IsNullOrWhiteSpace(o.ChuyenNganh) ? o.ChuyenNganh : o.Nganh,
                     o.NgayGioBatDau,
                     o.NgayGioNopBai,
                     o.LogIp,
@@ -590,8 +593,8 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
 
                 foreach (var item in total)
                 {
-                    var report = await _context.AsEduSurveyUndergraduateReportTotal
-                        .FirstOrDefaultAsync(o => o.SurveyRoundId == surveyRoundId && o.TheSurveyId == o.TheSurveyId && o.ChuyenNganh == itemSvBaiLam.Key.ChuyenNganh && o.QuestionCode == item.QuestionCode && o.AnswerCode == item.AnswerCode);
+                    var report = _context.AsEduSurveyUndergraduateReportTotal
+                        .FirstOrDefault(o => o.SurveyRoundId == surveyRoundId && o.TheSurveyId == o.TheSurveyId && o.ChuyenNganh == itemSvBaiLam.Key.ChuyenNganh && o.QuestionCode == item.QuestionCode && o.AnswerCode == item.AnswerCode);
                     if (report == null) //chưa có thì thêm
                     {
                         _context.AsEduSurveyUndergraduateReportTotal.Add(new AsEduSurveyUndergraduateReportTotal
