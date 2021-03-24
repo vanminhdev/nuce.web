@@ -4,7 +4,7 @@
     <div style='padding:5px;'>Trân trọng</div>
     <div style='padding:5px;'>----------------------</div>
     <div style='padding:5px;'>Phòng Công tác Chính trị và Quản lý Sinh viên Trường Đại học Xây dựng</div>
-    <div style='padding:5px;'>Trường đại học Xây Dựng, 55 Giải Phóng - Hai Bà Trưng - Hà Nội</div>
+    <div style='padding:5px;'>Tầng 2, Trung tâm Hỗ trợ Sinh viên, Trường đại học Xây Dựng, 55 Giải Phóng - Hai Bà Trưng - Hà Nội</div>
     <div style='padding:5px;'></div>
     <div style='padding:5px;'>TEL: 02438697004</div>
     <div style='padding:5px;'>Email: ctsv@nuce.edu.vn</div>
