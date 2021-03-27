@@ -25,6 +25,7 @@ using nuce.web.api.Services.Survey.Interfaces;
 using System.Collections.Generic;
 using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.shared;
+using nuce.web.api.Services.EduData.Interfaces;
 
 namespace nuce.web.api.Controllers.Core
 {
@@ -41,10 +42,12 @@ namespace nuce.web.api.Controllers.Core
         private readonly ILogService _logService;
         private readonly IAsEduSurveyGraduateStudentService _asEduSurveyGraduateStudentService;
         private readonly IAsEduSurveyUndergraduateStudentService _asEduSurveyUndergraduateStudentService;
+        private readonly IStudentEduDataService _studentEduDataService;
 
         public UserController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, NuceCoreIdentityContext identityContext,
             ILogger<UserController> logger, IUserService userService, IConfiguration configuration, ILogService logService, 
-            IAsEduSurveyGraduateStudentService asEduSurveyGraduateStudentService, IAsEduSurveyUndergraduateStudentService asEduSurveyUndergraduateStudentService)
+            IAsEduSurveyGraduateStudentService asEduSurveyGraduateStudentService, IAsEduSurveyUndergraduateStudentService asEduSurveyUndergraduateStudentService,
+            IStudentEduDataService studentEduDataService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -55,9 +58,9 @@ namespace nuce.web.api.Controllers.Core
             _logService = logService;
             _asEduSurveyGraduateStudentService = asEduSurveyGraduateStudentService;
             _asEduSurveyUndergraduateStudentService = asEduSurveyUndergraduateStudentService;
+            _studentEduDataService = studentEduDataService;
         }
 
-        
         [HttpGet]
         [Route("TestAPI")]
         public IActionResult TestAPI()
@@ -86,6 +89,7 @@ namespace nuce.web.api.Controllers.Core
 
         private IActionResult FakeStudent(LoginModel model)
         {
+            var student = _studentEduDataService.FindByCode(model.Username);
             var authClaims = new List<Claim>
             {
                 //new Claim(ClaimTypes.Role, RoleNames.FakeStudent), //vai trò fake student
@@ -94,7 +98,7 @@ namespace nuce.web.api.Controllers.Core
                 new Claim(ClaimTypes.Role, RoleNames.GraduateStudent),
                 new Claim(UserParameters.UserCode, model.Username),
                 new Claim(ClaimTypes.Name, model.Username),
-                new Claim(ClaimTypes.GivenName, "ktdb")
+                new Claim(ClaimTypes.GivenName, student?.FullName ?? "ktdb")
             };
 
             var accessToken = _userService.CreateJWTAccessToken(authClaims);

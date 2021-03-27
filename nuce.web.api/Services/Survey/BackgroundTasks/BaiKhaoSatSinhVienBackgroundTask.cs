@@ -208,7 +208,6 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                             recordBaikssv.SubjectCode = subject != null ? subject.Code : "";
                             recordBaikssv.SubjectName = subject != null ? subject.Name : "";
                             recordBaikssv.SubjectType = subjectExtend != null ? subjectExtend.Type != null ? subjectExtend.Type.Value : -1 : -1;
-                            recordBaikssv.Status = (int)SurveyStudentStatus.DoNot;
                         }
                     }
                     surveyContext.SaveChanges();
