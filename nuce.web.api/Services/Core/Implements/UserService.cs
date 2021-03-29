@@ -173,38 +173,51 @@ namespace nuce.web.api.Services.Core.Implements
 
         public async Task<bool> UserLogin(LoginModel model)
         {
-            
             if (UserParameters.LoginViaDaotao.Contains(model.LoginUserType))
             {
-                ServiceSoapClient srvc = new ServiceSoapClient(EndpointConfiguration.ServiceSoap12);
+                bool isSuccess = false;
+                bool checkCallServiceSoap = false;
+                ServiceSoapClient srvc = new ServiceSoapClient(EndpointConfiguration.ServiceSoap12); //lấy trên đào tạo
                 try
                 {
-                    return await srvc.authenAsync(model.Username, model.Password) == 1;
+                    isSuccess = await srvc.authenAsync(model.Username, model.Password) == 1;
                 }
-                catch (Exception)
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "khong goi duoc service soap");
+                    checkCallServiceSoap = true;
+                }
+
+                if (!isSuccess) //lấy trong local
+                {
+                    try
+                    {
+                        HttpClient clientAuth = new HttpClient()
+                        {
+                            BaseAddress = new Uri(_configuration["ApiAuth"]),
+                            Timeout = TimeSpan.FromSeconds(60)
+                        };
+                        var json = JsonSerializer.Serialize(new
+                        {
+                            MaND = model.Username,
+                            Pass = model.Password
+                        });
+                        var content = new StringContent(json, Encoding.UTF8, MediaTypeNames.Application.Json);
+                        var res = await clientAuth.PostAsync("/api/Auth", content);
+                        isSuccess =  res.IsSuccessStatusCode;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "khong goi duoc api xac thuc local");
+                        throw new CallEduWebServiceException("Hiện tại không thể kết nối đến Đào tạo");
+                    }
+                }
+
+                if (checkCallServiceSoap && !isSuccess) //không gọi được đào tạo và local cũng k có
                 {
                     throw new CallEduWebServiceException("Hiện tại không thể kết nối đến Đào tạo");
                 }
-                //try
-                //{
-                //    HttpClient clientAuth = new HttpClient()
-                //    {
-                //        BaseAddress = new Uri(_configuration["ApiAuth"]),
-                //        Timeout = TimeSpan.FromSeconds(60)
-                //    };
-                //    var json = JsonSerializer.Serialize(new {
-                //        MaND = model.Username,
-                //        Pass = model.Password
-                //    });
-                //    var content = new StringContent(json, Encoding.UTF8, MediaTypeNames.Application.Json);
-                //    var res = await clientAuth.PostAsync("/api/Auth", content);
-                //    return res.IsSuccessStatusCode;
-                //}
-                //catch (Exception ex)
-                //{
-                //    _logger.LogError(ex, UtilsException.GetMainMessage(ex));
-                //    throw new CallEduWebServiceException("Hiện tại không thể kết nối đến Đào tạo");
-                //}
+                return isSuccess;
             }
             else
             {
