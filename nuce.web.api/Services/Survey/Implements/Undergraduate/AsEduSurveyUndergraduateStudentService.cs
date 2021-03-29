@@ -47,10 +47,10 @@ namespace nuce.web.api.Services.Survey.Implements
                 dssv = dssv.Where(o => o.DotKhaoSatId == filter.DotKhaoSatId);
             }
 
-            if (filter.MaKhoa != null)
-            {
-                dssv = dssv.Where(o => o.Makhoa == filter.MaKhoa);
-            }
+            //if (filter.MaKhoa != null)
+            //{
+            //    dssv = dssv.Where(o => o.Makhoa == filter.MaKhoa);
+            //}
 
             var recordsFiltered = dssv.Count();
 

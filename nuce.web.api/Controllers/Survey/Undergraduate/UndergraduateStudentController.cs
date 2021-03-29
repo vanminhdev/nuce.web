@@ -196,17 +196,24 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
                 {
                     try
                     {
-                        ngaySinh = (DateTime)(worksheet.Cells[i, 5].Value);
+                        ngaySinh = DateTime.FromOADate((double)worksheet.Cells[i, 5].Value);
+                        if (ngaySinh == null) throw new Exception();
                     }
                     catch
                     {
                         try
                         {
-                            ngaySinh = DateTime.ParseExact((string)worksheet.Cells[i, 5].Value, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                            ngaySinh = (DateTime)worksheet.Cells[i, 5].Value;
                         }
                         catch
                         {
-
+                            try
+                            {
+                                ngaySinh = DateTime.ParseExact((string)worksheet.Cells[i, 5].Value, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                            }
+                            catch
+                            {
+                            }
                         }
                     }
                 }
@@ -226,17 +233,24 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
                 {
                     try
                     {
-                        ngayRaQd = (DateTime)(worksheet.Cells[i, 14].Value);
+                        ngayRaQd = DateTime.FromOADate((double)worksheet.Cells[i, 14].Value);
+                        if (ngayRaQd == null) throw new Exception();
                     }
                     catch
                     {
                         try
                         {
-                            ngayRaQd = DateTime.ParseExact((string)worksheet.Cells[i, 14].Value, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                            ngayRaQd = (DateTime)worksheet.Cells[i, 14].Value;
                         }
                         catch
                         {
-
+                            try
+                            {
+                                ngayRaQd = DateTime.ParseExact((string)worksheet.Cells[i, 14].Value, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                            }
+                            catch
+                            {
+                            }
                         }
                     }
                 }
