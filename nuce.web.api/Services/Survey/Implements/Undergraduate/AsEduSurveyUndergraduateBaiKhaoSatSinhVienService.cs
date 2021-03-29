@@ -52,10 +52,11 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException("Sinh viên không tồn tại trong đợt khảo sát");
             }
 
-            var surveyRound = await _context.AsEduSurveyUndergraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == studentSurveyRound.DotKhaoSatId);
+            //đợt khảo sát mới nhất
+            var surveyRound = await _context.AsEduSurveyUndergraduateSurveyRound.FirstOrDefaultAsync(o => o.Status != (int)SurveyRoundStatus.Deleted && o.Status != (int)SurveyRoundStatus.End);
             if (surveyRound == null)
             {
-                throw new RecordNotFoundException("Không tìm thấy đợt khảo sát của sinh viên");
+                throw new RecordNotFoundException("Không tìm thấy đợt khảo sát mới nhất");
             }
 
             if (surveyRound.Status == (int)SurveyRoundStatus.Opened)
@@ -347,12 +348,13 @@ namespace nuce.web.api.Services.Survey.Implements
             {
                 throw new RecordNotFoundException("Không tìm thấy sinh viên");
             }
-
             student.Email = verification.Email;
             student.Mobile = verification.Phone;
             student.Cmnd = verification.CMND;
-
-            student.KeyAuthorize = Guid.NewGuid().ToString();
+            if (string.IsNullOrEmpty(student.KeyAuthorize))
+            {
+                student.KeyAuthorize = Guid.NewGuid().ToString();
+            }
             await _context.SaveChangesAsync();
 
             return student.KeyAuthorize;

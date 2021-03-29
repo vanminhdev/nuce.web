@@ -73,7 +73,7 @@ namespace nuce.web.api.Services.Core.Implements
 
         public async Task<List<Claim>> AddClaimsAsync(LoginModel model, ApplicationUser user)
         {
-            string username = UserParameters.LoginViaDaotao.Contains(model.LoginUserType) ? model.Username : user.UserName;
+            string username = UserParameters.LoginViaDaotao.Contains(model.LoginUserType) ? model.Username : user?.UserName ?? model.Username;
 
             var authClaims = new List<Claim>
             {
