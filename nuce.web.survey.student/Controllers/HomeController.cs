@@ -190,9 +190,11 @@ namespace nuce.web.survey.student.Controllers
         [HttpGet]
         public async Task<ActionResult> VerifyByToken(string studentCode, string token)
         {
-            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/UndergraduateTheSurveyStudent/VerifyByToken?studentCode={studentCode}&token={token}");
+            HttpClient httpClient = new HttpClient();
+            var response = await httpClient.PutAsync($"{API_URL}/api/UndergraduateTheSurveyStudent/VerifyByToken?studentCode={studentCode}&token={token}", new StringContent(""));
             ViewData["statusCode"] = response.StatusCode;
-            ViewData["content"] = JsonConvert.DeserializeObject<ResponseMessage>(await response.Content.ReadAsStringAsync());
+            var content = await response.Content.ReadAsStringAsync();
+            ViewData["content"] = JsonConvert.DeserializeObject<ResponseMessage>(content);
             return View();
         }
         #endregion
