@@ -45,6 +45,7 @@ using nuce.web.api.Repositories.EduData.Implements;
 using nuce.web.api.Services.Survey.Implements.Undergraduate;
 using nuce.web.api.Services.Survey.Implements.Graduate;
 using nuce.web.api.Services.Hosted;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace nuce.web.api
 {
@@ -304,8 +305,10 @@ namespace nuce.web.api
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Nuce API V1");
                     c.RoutePrefix = "swagger";
+                    c.DocExpansion(DocExpansion.None);
                 });
             }
+
             var loggingOptions = this.Configuration.GetSection("Log4NetCore").Get<Log4NetProviderOptions>();
             loggerFactory.AddLog4Net(loggingOptions);
 

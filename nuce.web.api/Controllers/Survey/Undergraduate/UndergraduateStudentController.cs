@@ -163,6 +163,42 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
             }
         }
 
+        private DateTime? GetDateTimeFromCell(object value)
+        {
+            DateTime? result = null;
+            try
+            {
+                result = DateTime.FromOADate((double)value);
+                if (result == null) throw new Exception();
+            }
+            catch
+            {
+                try
+                {
+                    result = (DateTime)value;
+                }
+                catch
+                {
+                    try
+                    {
+                        result = DateTime.ParseExact((string)value, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                        if (result == null) throw new Exception();
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            result = DateTime.ParseExact((string)value, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                        }
+                        catch
+                        {
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
         private async Task ReadFileUpload(string filepath, Guid surveyRoundId)
         {
             FileInfo fileInfo = new FileInfo(filepath);
@@ -196,25 +232,10 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
                 {
                     try
                     {
-                        ngaySinh = DateTime.FromOADate((double)worksheet.Cells[i, 5].Value);
-                        if (ngaySinh == null) throw new Exception();
+                        ngaySinh = GetDateTimeFromCell(worksheet.Cells[i, 5].Value);
                     }
                     catch
                     {
-                        try
-                        {
-                            ngaySinh = (DateTime)worksheet.Cells[i, 5].Value;
-                        }
-                        catch
-                        {
-                            try
-                            {
-                                ngaySinh = DateTime.ParseExact((string)worksheet.Cells[i, 5].Value, "dd-MM-yyyy", CultureInfo.InvariantCulture);
-                            }
-                            catch
-                            {
-                            }
-                        }
                     }
                 }
 
@@ -233,25 +254,10 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
                 {
                     try
                     {
-                        ngayRaQd = DateTime.FromOADate((double)worksheet.Cells[i, 14].Value);
-                        if (ngayRaQd == null) throw new Exception();
+                        ngayRaQd = GetDateTimeFromCell(worksheet.Cells[i, 14].Value);
                     }
                     catch
                     {
-                        try
-                        {
-                            ngayRaQd = (DateTime)worksheet.Cells[i, 14].Value;
-                        }
-                        catch
-                        {
-                            try
-                            {
-                                ngayRaQd = DateTime.ParseExact((string)worksheet.Cells[i, 14].Value, "dd-MM-yyyy", CultureInfo.InvariantCulture);
-                            }
-                            catch
-                            {
-                            }
-                        }
                     }
                 }
 
@@ -259,7 +265,6 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
                 if (masv != null)
                 {
                     masvFormated = $"{masv.Trim():0000000}";
-                    
                     var student = new AsEduSurveyUndergraduateStudent
                     {
                         Id = Guid.NewGuid(),
