@@ -370,10 +370,18 @@ namespace nuce.web.api.Services.Survey.Implements
 
             if (student.KeyAuthorize == token)
             {
-                var baikssv = await _context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien.Where(o => o.StudentCode == studentCode && o.Status == (int)SurveyStudentStatus.RequestAuthorize).ToListAsync();
+                var baikssv = await _context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien.Where(o => o.StudentCode == studentCode).ToListAsync();
                 if(baikssv.Count == 0)
                 {
-                    throw new RecordNotFoundException("Không tìm thấy bài khảo sát của sinh viên đang chờ xác thực hoặc bài khảo sát đã được xác thực");
+                    throw new RecordNotFoundException("Không tìm thấy bài khảo sát của sinh viên");
+                }
+                else
+                {
+                    var first = baikssv.FirstOrDefault(o => o.Status == (int)SurveyStudentStatus.Done);
+                    if (first != null)
+                    {
+                        return true;
+                    }
                 }
 
                 foreach(var bai in baikssv)

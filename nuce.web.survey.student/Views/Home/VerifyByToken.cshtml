@@ -22,13 +22,25 @@
                 else if ((int)ViewData["statusCode"] == (int)HttpStatusCode.Unauthorized)
                 {
                     <p>
-                        Xác thực không thành công! Token không hợp lệ
+                        Xác thực không thành công! Token không chính xác
+                    </p>
+                }
+                else if ((int)ViewData["statusCode"] == (int)HttpStatusCode.NotFound)
+                {
+                    <p>
+                        Không tìm thấy sinh viên trong danh sách
+                    </p>
+                }
+                else if ((int)ViewData["statusCode"] == (int)HttpStatusCode.InternalServerError)
+                {
+                    <p>
+                        Xác thực không thành công!
                     </p>
                 }
                 else
                 {
                     <p>
-                        Xác thực không thành công! @(((ResponseMessage)ViewData["content"]).message)
+                        Xác thực không thành công!
                     </p>
                 }
             </div>
