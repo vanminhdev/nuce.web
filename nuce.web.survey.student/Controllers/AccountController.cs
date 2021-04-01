@@ -87,7 +87,21 @@ namespace nuce.web.survey.student.Controllers
             if (!ModelState.IsValid)
             {
                 ViewData["target"] = target;
-                return View("login", login);
+                if (login.LoginUserType == (int)LoginType.Faculty || login.LoginUserType == (int)LoginType.Department || login.LoginUserType == (int)LoginType.Lecturer)
+                {
+                    return View("loginCanBo", login);
+                }
+                if (target == "/home/indexundergraduate")
+                {
+                    return View("LoginUndergraduate", new LoginModel()
+                    {
+                        LoginUserType = 1
+                    });
+                }
+                return View("login", new LoginModel()
+                {
+                    LoginUserType = 1
+                });
             }
 
             var userNamePasswordJsonString = JsonConvert.SerializeObject(new
@@ -169,12 +183,21 @@ namespace nuce.web.survey.student.Controllers
                     break;
             }
             ViewData["target"] = target;
-
             if (login.LoginUserType == (int)LoginType.Faculty || login.LoginUserType == (int)LoginType.Department || login.LoginUserType == (int)LoginType.Lecturer)
             {
                 return View("loginCanBo", login);
             }
-            return View("login", new LoginModel());
+            if (target == "/home/indexundergraduate")
+            {
+                return View("LoginUndergraduate", new LoginModel()
+                {
+                    LoginUserType = 1
+                });
+            }
+            return View("login", new LoginModel()
+            {
+                LoginUserType = 1
+            });
         }
 
         [HttpGet]
@@ -190,7 +213,9 @@ namespace nuce.web.survey.student.Controllers
         public ActionResult LoginGraduate(string target)
         {
             ViewData["target"] = target;
-            return View(new LoginModel());
+            return View(new LoginModel() {
+                LoginUserType = 1
+            });
         }
 
         [HttpPost]
