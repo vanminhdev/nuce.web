@@ -885,12 +885,16 @@ on a.MaDK=b.MaDK");
             return dataTable;
         }
 
+        /// <summary>
+        /// lấy lớp môn học
+        /// </summary>
+        /// <returns></returns>
         [WebMethod]
         public DataTable getMaDKTkb1()
         {
             DataTable dataTable = new DataTable();
             dataTable.TableName = "data";
-            string strSql = $"select distinct MaDK, NHHK from tkb1";
+            string strSql = $"select distinct MaDK, NHHK from kqdk1";
             SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["eduwebConnectionString"].ConnectionString);
             SqlCommand cmd = new SqlCommand(strSql, conn);
             cmd.CommandTimeout = 0;
@@ -906,12 +910,16 @@ on a.MaDK=b.MaDK");
             return dataTable;
         }
 
+        /// <summary>
+        /// đếm số lớp môn học
+        /// </summary>
+        /// <returns></returns>
         [WebMethod]
         public int countMaDKTkb1()
         {
             string strConnectionString = ConfigurationManager.ConnectionStrings["eduwebConnectionString"].ConnectionString;
             //Execute select command
-            string strSql = string.Format(@"select count(*) from (select distinct MaDK, NHHK from tkb1) as a");
+            string strSql = string.Format(@"select count(*) from (select distinct MaDK, NHHK from kqdk1) as a");
             return (int)Microsoft.ApplicationBlocks.Data.SqlHelper.ExecuteScalar(strConnectionString, CommandType.Text, strSql);
         }
 
