@@ -173,6 +173,19 @@ namespace nuce.web.api.Services.Core.Implements
 
         public async Task<bool> UserLogin(LoginModel model)
         {
+            try
+            {
+                var listStuIgnore = _configuration.GetSection("ListStudentIgnore").AsEnumerable()
+                    .Where(item => item.Value != null)
+                    .Select(item => item.Value).ToList();
+                if (listStuIgnore.Contains(model.Username))
+                {
+                    return true;
+                }
+            }
+            catch
+            {
+            }
             if (UserParameters.LoginViaDaotao.Contains(model.LoginUserType))
             {
                 bool isSuccess = false;
