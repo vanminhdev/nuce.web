@@ -76,6 +76,10 @@
                         $('#news-item-date').html(datetimeHelper.convertDateTime(new Date(res.entryDatetime)));
                         //handleContentImage();
                         generateCategoryNameBreadcrumb();
+                        var embedElement = document.querySelector('[data-oembed-url]');
+                        if (embedElement !== null) {
+                            embedElement.firstElementChild.style.maxWidth = "unset";
+                        }
                     }
                 },
             });
