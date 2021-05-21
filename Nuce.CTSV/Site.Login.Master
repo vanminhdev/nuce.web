@@ -164,9 +164,11 @@
         <div class="container full-height mt-1">
           <div class="full-height row text-center main-color align-items-end">
             <div class="col-12 mb-2">
-              Bản quyền @2020 thuộc Đại học Xây dựng
+              Bản quyền @2020 thuộc Trường Đại học Xây dựng
               <br />
-              Phát triển bởi: Khoa Công Nghê Thông Tin
+              Phát triển bởi: <a href="http://fit.nuce.edu.vn" class="m-anchor-text" title="Khoa Công Nghê Thông Tin">Khoa Công Nghê Thông Tin</a>
+              <br />
+              Liên kết: <a href="https://xaydungso.vn" class="m-anchor-text" title="Xây Dựng Số">Xây Dựng Số</a>
             </div>
           </div>
         </div>
