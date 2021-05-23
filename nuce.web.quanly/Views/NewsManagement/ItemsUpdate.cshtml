@@ -120,9 +120,10 @@
         };
 
         var init = function() {
-            CKEDITOR.replace('news-content', {
+            var editor = CKEDITOR.replace('news-content', {
                 embed_provider: '//ckeditor.iframe.ly/api/oembed?url={url}&callback={callback}',
             });
+            CKFinder.setupCKEditor(editor);
             state.newsItem = @Html.Raw(Json.Encode(Model));
             $('#txtTitle').val(state.newsItem.title);
             $('#txtOrder').val(state.newsItem.order);
