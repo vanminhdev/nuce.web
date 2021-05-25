@@ -81,7 +81,7 @@ namespace MVCIntegrationExample
 
                         //}
                         //config.AddBackend("default", new LocalStorage(@"D:/Code/NUCE/code/nuce.web.resources"));
-                        config.AddResourceType("images", builder => builder.SetBackend("default", folderName));
+                        config.AddResourceType("Private", builder => builder.SetBackend("private", $"{folderName}"));
                         config.AddAclRule(new AclRule(
                             new StringMatcher("*"),
                             new StringMatcher("*"),
