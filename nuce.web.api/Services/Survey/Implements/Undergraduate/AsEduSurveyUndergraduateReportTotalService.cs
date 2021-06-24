@@ -583,10 +583,17 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
                 {
                     var baikhaosatId = baikssv.BaiKhaoSatId;
 
-                    var json = JsonSerializer.Deserialize<List<SelectedAnswerExtend>>(baikssv.BaiLam);
+                    try
+                    {
+                        var json = JsonSerializer.Deserialize<List<SelectedAnswerExtend>>(baikssv.BaiLam);
 
-                    json.ForEach(o => o.TheSurveyId = baikhaosatId);
-                    selectedAnswers.AddRange(json);
+                        json.ForEach(o => o.TheSurveyId = baikhaosatId);
+                        selectedAnswers.AddRange(json);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogWarning(e, $"khong Deserialize bai khao sat sinh vien id = {baikssv.Id}, student code = {baikssv.StudentCode}, bai lam = {baikssv.BaiLam}");
+                    }
                 }
 
                 var total = AnswerSelectedReportTotal(selectedAnswers);

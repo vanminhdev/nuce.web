@@ -68,13 +68,15 @@ namespace nuce.web.api
                 options.UseSqlServer(Configuration.GetConnectionString("NUCE_CORE"))
             );
             services.AddDbContext<SurveyContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"))
+                options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"),
+                sqlServerOptions => sqlServerOptions.CommandTimeout(60 * 60))
             );
             services.AddDbContext<CTSVNUCE_DATAContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("NUCE_CTSV"))
             );
             services.AddDbContext<EduDataContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"))
+                options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"),
+                sqlServerOptions => sqlServerOptions.CommandTimeout(60 * 60))
             );
             services.AddDbContext<StatusContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"))
