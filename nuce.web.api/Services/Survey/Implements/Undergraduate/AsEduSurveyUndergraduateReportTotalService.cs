@@ -34,7 +34,7 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
             _eduContext = eduContext;
         }
 
-        public async Task<byte[]> ExportReportTotalUndergraduateSurvey(Guid surveyRoundId, Guid theSurveyId)
+        public async Task<byte[]> ExportReportTotalUndergraduateSurvey(Guid surveyRoundId, Guid theSurveyId, DateTime fromDate, DateTime toDate)
         {
             var surveyRound = await _context.AsEduSurveyUndergraduateSurveyRound.FirstOrDefaultAsync(o => o.Id == surveyRoundId && o.Status != (int)SurveyRoundStatus.Deleted);
             if (surveyRound == null)
@@ -99,8 +99,13 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
             var groupChuyenNganh = students.Select(o => o.Tenchnga ?? o.Tennganh).Distinct().ToList();
 
             //join bài làm được xét, => loại sinh viên không có bài được xét
-            var sinhVienBaiLam = students.Join(_context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien.Where(o => o.BaiKhaoSatId == theSurveyId), o => o.ExMasv, o => o.StudentCode, (sv, bailam) => new { sv, bailam });
-
+            var sinhVienBaiLam = students
+                    .Join(_context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien
+                        .Where(o => o.BaiKhaoSatId == theSurveyId && fromDate <= o.NgayGioNopBai && toDate >= o.NgayGioNopBai),
+                    o => o.ExMasv, o => o.StudentCode, (sv, bailam) => new { sv, bailam });
+#if DEBUG
+            var test = sinhVienBaiLam.Count();
+#endif
             //thống kê theo đợt và bài ks
             var reportTotal = _context.AsEduSurveyUndergraduateReportTotal.Where(o => o.TheSurveyId == theSurvey.Id && o.SurveyRoundId == surveyRoundId);
             foreach (var chuyenNganh in groupChuyenNganh)
@@ -110,7 +115,6 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
                 var bailamsv = sinhVienBaiLam.Where(o => o.sv.Tenchnga == chuyenNganh || (o.sv.Tenchnga == null && o.sv.Tennganh == chuyenNganh));
                 var soPhieuPhatRa = bailamsv.Count();
                 var soPhieuThuVe = bailamsv.Where(o => o.bailam.Status == (int)SurveyStudentStatus.Done).Count();
-
 
                 var tyLeThamGia = "0%";
                 if (soPhieuThuVe > 0)
@@ -553,7 +557,10 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
             var students = _context.AsEduSurveyUndergraduateStudent.Where(o => o.DotKhaoSatId == surveyRoundId);
             var baiKSSinhViens = _context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien
                 .Where(o => o.BaiKhaoSatId == theSurveyId && o.Status == (int)SurveyStudentStatus.Done && fromDate <= o.NgayGioNopBai && toDate >= o.NgayGioNopBai);
-            var svBaiLam = students.Join(baiKSSinhViens, o => o.Masv, o => o.StudentCode, (sv, baikssv) => new { baikssv })
+#if DEBUG
+            var test = baiKSSinhViens.Count();
+#endif
+            var svBaiLam = students.Join(baiKSSinhViens, o => o.ExMasv, o => o.StudentCode, (sv, baikssv) => new { baikssv })
                 .Select(o => o.baikssv)
                 .ToList();
 
@@ -627,6 +634,5 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
             _context.SaveChanges();
             _logger.LogInformation("report total undergraduate is done.");
         }
-
     }
 }

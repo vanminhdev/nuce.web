@@ -103,7 +103,7 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
             try
             {
                 _reportTotalService.ReportTotalUndergraduateSurvey(surveyRoundId.Value, theSurveyId.Value, fromDate.Value, toDate.Value);
-                var data = await _reportTotalService.ExportReportTotalUndergraduateSurvey(surveyRoundId.Value, theSurveyId.Value);
+                var data = await _reportTotalService.ExportReportTotalUndergraduateSurvey(surveyRoundId.Value, theSurveyId.Value, fromDate.Value, toDate.Value);
                 return File(data, ContentTypes.Xlsx);
             }
             catch (RecordNotFoundException e)
