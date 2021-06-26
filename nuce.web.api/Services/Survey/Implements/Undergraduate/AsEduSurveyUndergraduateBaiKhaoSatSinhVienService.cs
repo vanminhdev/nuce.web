@@ -193,7 +193,7 @@ namespace nuce.web.api.Services.Survey.Implements
                             Type = 1,
                         });
                     }
-                    else //nếu có rồi và chưa làm bài thì cập nhật theo mẫu mới
+                    else //nếu có rồi và chưa làm bài thì cập nhật theo mẫu mới không cập nhật lại các trường thông tin khác
                     {
                         //có rồi và chưa làm thì cập nhật bài ks mới
                         if(baikssv.Status != (int)SurveyStudentStatus.RequestAuthorize && baikssv.Status != (int)SurveyStudentStatus.Done)

@@ -95,16 +95,24 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
 
             var tongToanTruong = new Dictionary<int, float>();
             //sinh viên trong đợt
-            var students = _context.AsEduSurveyUndergraduateStudent.Where(o => o.DotKhaoSatId == surveyRoundId);
-            var groupChuyenNganh = students.Select(o => o.Tenchnga ?? o.Tennganh).Distinct().ToList();
+            var students = _context.AsEduSurveyUndergraduateStudent.Where(o => o.DotKhaoSatId == surveyRoundId)
+                .Select(stu => new { 
+                    stu.ExMasv,
+                    //trường kết hợp ngành /chuyên ngành, chuyên ngành mà không bỏ trống thì lấy nếu bỏ trống thì lấy ngành
+                    ChuyenNganh = !string.IsNullOrWhiteSpace(stu.Tenchnga) ? stu.Tenchnga.Trim() : stu.Tennganh.Trim() 
+                });
+            var groupChuyenNganh = students.Select(o => o.ChuyenNganh).Distinct().ToList();
 
             //join bài làm được xét, => loại sinh viên không có bài được xét
-            var sinhVienBaiLam = students
-                    .Join(_context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien
-                        .Where(o => o.BaiKhaoSatId == theSurveyId && fromDate <= o.NgayGioNopBai && toDate >= o.NgayGioNopBai),
+            var joinSinhVienBaiLam = students
+                    .Join(_context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien.Where(o => o.BaiKhaoSatId == theSurveyId && fromDate <= o.NgayGioNopBai && toDate >= o.NgayGioNopBai),
                     o => o.ExMasv, o => o.StudentCode, (sv, bailam) => new { sv, bailam });
 #if DEBUG
-            var test = sinhVienBaiLam.Count();
+            //var soStudent = students.Where(o => o.Tennganh == "Kiến trúc" || o.Tenchnga == "Kiến trúc").Count();
+            //var svBaiLam = sinhVienBaiLam.Where(o => o.bailam.Nganh == "Kiến trúc" || o.bailam.ChuyenNganh == "Kiến trúc" && o.bailam.Status == 5).Count();
+            //var svBaiLam2 = _context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien
+            //    .Where(o => (o.Nganh == "Kiến trúc" || o.ChuyenNganh == "Kiến trúc") && o.Status == 5 && fromDate <= o.NgayGioNopBai && toDate >= o.NgayGioNopBai).Count();
+
 #endif
             //thống kê theo đợt và bài ks
             var reportTotal = _context.AsEduSurveyUndergraduateReportTotal.Where(o => o.TheSurveyId == theSurvey.Id && o.SurveyRoundId == surveyRoundId);
@@ -112,7 +120,7 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
             {
                 _logger.LogInformation($"export nganh: {chuyenNganh}");
                 col = 1;
-                var bailamsv = sinhVienBaiLam.Where(o => o.sv.Tenchnga == chuyenNganh || (o.sv.Tenchnga == null && o.sv.Tennganh == chuyenNganh));
+                var bailamsv = joinSinhVienBaiLam.Where(o => o.sv.ChuyenNganh == chuyenNganh || o.sv.ChuyenNganh == chuyenNganh);
                 var soPhieuPhatRa = bailamsv.Count();
                 var soPhieuThuVe = bailamsv.Where(o => o.bailam.Status == (int)SurveyStudentStatus.Done).Count();
 
@@ -486,6 +494,12 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
             var filePath = System.IO.Path.GetTempPath() + fileName;
             _logger.LogInformation($"{filePath}");
             _logger.LogInformation("export report undergraduate is done.");
+#if DEBUG
+            using (FileStream fs = new FileStream(filePath, FileMode.Create))
+            {
+                excel.SaveAs(fs);
+            }
+#endif
             using (MemoryStream ms = new MemoryStream())
             {
                 excel.SaveAs(ms);
@@ -558,7 +572,7 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
             var baiKSSinhViens = _context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien
                 .Where(o => o.BaiKhaoSatId == theSurveyId && o.Status == (int)SurveyStudentStatus.Done && fromDate <= o.NgayGioNopBai && toDate >= o.NgayGioNopBai);
 #if DEBUG
-            var test = baiKSSinhViens.Count();
+            //var test = baiKSSinhViens.Count();
 #endif
             var svBaiLam = students.Join(baiKSSinhViens, o => o.ExMasv, o => o.StudentCode, (sv, baikssv) => new { baikssv })
                 .Select(o => o.baikssv)
@@ -573,18 +587,25 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
                     o.DeThi,
                     o.BaiLam,
                     o.Nganh,
-                    ChuyenNganh = !string.IsNullOrWhiteSpace(o.ChuyenNganh) ? o.ChuyenNganh : o.Nganh,
+                    ChuyenNganh = !string.IsNullOrWhiteSpace(o.ChuyenNganh) ? o.ChuyenNganh.Trim() : o.Nganh.Trim(), //trường kết hợp ngành /chuyên ngành
                     o.NgayGioBatDau,
                     o.NgayGioNopBai,
                     o.LogIp,
                     o.Type,
                     o.Status
                 })
-                .GroupBy(o => new { o.ChuyenNganh }).ToList();
+                .OrderBy(o => o.ChuyenNganh)
+                .GroupBy(o => o.ChuyenNganh).ToList();
 
             foreach (var itemSvBaiLam in groupSvBaiLamTheoChNganh)
             {
                 var dsBaiKSSV = itemSvBaiLam.ToList();
+#if DEBUG
+                if (itemSvBaiLam.Key == "Kỹ thuật xây dựng Công trình Giao thông")
+                {
+                    var count = dsBaiKSSV.Count();
+                }
+#endif
                 var selectedAnswers = new List<SelectedAnswerExtend>();
                 foreach (var baikssv in dsBaiKSSV)
                 {
@@ -608,7 +629,8 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
                 foreach (var item in total)
                 {
                     var report = _context.AsEduSurveyUndergraduateReportTotal
-                        .FirstOrDefault(o => o.SurveyRoundId == surveyRoundId && o.TheSurveyId == o.TheSurveyId && o.ChuyenNganh == itemSvBaiLam.Key.ChuyenNganh && o.QuestionCode == item.QuestionCode && o.AnswerCode == item.AnswerCode);
+                        .FirstOrDefault(o => o.SurveyRoundId == surveyRoundId && o.TheSurveyId == o.TheSurveyId &&
+                        o.ChuyenNganh == itemSvBaiLam.Key && o.QuestionCode == item.QuestionCode && o.AnswerCode == item.AnswerCode);
                     if (report == null) //chưa có thì thêm
                     {
                         _context.AsEduSurveyUndergraduateReportTotal.Add(new AsEduSurveyUndergraduateReportTotal
@@ -616,7 +638,7 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
                             Id = Guid.NewGuid(),
                             SurveyRoundId = surveyRoundId,
                             TheSurveyId = item.TheSurveyId,
-                            ChuyenNganh = itemSvBaiLam.Key.ChuyenNganh,
+                            ChuyenNganh = itemSvBaiLam.Key,
                             QuestionCode = item.QuestionCode,
                             AnswerCode = item.AnswerCode,
                             Content = item.Content,
