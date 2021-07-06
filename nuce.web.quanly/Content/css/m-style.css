@@ -125,6 +125,11 @@
     color: transparent;
 }
 
+.m-anchor-text {
+    color: inherit;
+    text-decoration: none !important;
+}
+
 /* MEDIA QUERY */
 @media screen and (max-width: 768px) {
     .m-nav-item li {

@@ -142,7 +142,16 @@
         };
 
         var init = function() {
-            CKEDITOR.replace('news-content');
+            var editor = CKEDITOR.replace('news-content');
+            CKFinder.setupCKEditor(editor, {
+                //swatch: 'b',
+                //onInit: function (finder) {
+                //    finder.on('files:choose', function (evt) {
+                //        var file = evt.data.files.first();
+                //        console.log('Selected: ', evt.data);
+                //    });
+                //}
+            });
             autoValidate();
         };
 

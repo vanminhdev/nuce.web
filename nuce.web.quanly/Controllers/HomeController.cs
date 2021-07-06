@@ -14,5 +14,7 @@ namespace nuce.web.quanly.Controllers
         {
             return View();
         }
+
+        
     }
 }

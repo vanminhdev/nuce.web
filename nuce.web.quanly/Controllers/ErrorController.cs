@@ -9,7 +9,7 @@ namespace nuce.web.quanly.Controllers
     public class ErrorController : Controller
     {
         [HttpGet]
-        public ActionResult Index(string message, int code)
+        public ActionResult Index(string message = "", int code = 0)
         {
             ViewData["Title"] = code;
             ViewData["Message"] = message;

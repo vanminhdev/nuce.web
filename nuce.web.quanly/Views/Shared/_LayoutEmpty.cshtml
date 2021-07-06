@@ -6,7 +6,7 @@
     <title>Đại Học Xây Dựng | @ViewData["Title"]</title>
     <!-- BootStrap -->
     <link rel="stylesheet" href="~/content/css/bootstrap.min.css" />
-
+    
     <!-- Custom -->
     <link rel="stylesheet" href="~/content/css/util.css" />
     <link rel="stylesheet" href="~/content/css/style.css" />
@@ -99,24 +99,28 @@
         <!-- footer section -->
         <section id="footer">
             <div class="container full-height">
-                <div class="full-height row text-center main-color align-items-end">
+                <div class="full-height row text-center text-dark align-items-end">
                     <div class="col-12 mb-2">
-                        Bản quyền  &copy;@(DateTime.Now.Year) thuộc Đại học Xây dựng
+                        Bản quyền  &copy;@(DateTime.Now.Year) thuộc Trường Đại học Xây dựng
                         <br />
-                        Phát triển bởi: Khoa Công Nghê Thông Tin
+                        Phát triển bởi: <a href="http://fit.nuce.edu.vn" target="_blank" title="Khoa Công Nghê Thông Tin">Khoa Công Nghê Thông Tin</a>
+                        <br />
+                        Liên kết: <a href="https://xaydungso.vn" target="_blank" title="Xây Dựng Số">Xây Dựng Số</a>
                     </div>
                 </div>
             </div>
         </section>
         <!-- end footer section -->
     </div>
-    @*<script src="~/content/js/jquery.min.js"></script>*@
+    <script src="~/content/js/jquery.min.js"></script>
     <script src="~/content/js/popper.min.js"></script>
     @*<script src="~/content/js/bootstrap.min.js"></script>*@
     <script src="~/Content/js/common/config.js"></script>
     <script>
-        $('#web-mobile').html(COMMON_CONFIG.getDomainConfig().mobile);
-        $('#web-email').html(COMMON_CONFIG.getDomainConfig().email);
+        $(function () {
+            $('#web-mobile').html(COMMON_CONFIG.getDomainConfig().mobile);
+            $('#web-email').html(COMMON_CONFIG.getDomainConfig().email);
+        });
     </script>
     @RenderSection("Scripts", required: false)
 </body>
