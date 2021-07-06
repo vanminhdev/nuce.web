@@ -345,6 +345,39 @@ namespace nuce.web.api.Services.Ctsv.Implements
                             };
                             await _veXeBusRepository.AddAsync(veXeBus);
                             break;
+                        case DichVu.DangKyChoO:
+                            if (!NhuCauNhaO.All.Contains(model.NhuCauNhaO))
+                            {
+                                throw new Exception("Nhu cầu nhà ở không hợp lệ");
+                            }
+
+                            if (!DoiTuongUuTienNhaO.All.Contains(model.DoiTuongUuTienNhaO))
+                            {
+                                throw new Exception("Đối tượng ưu tiên nhà ở không hợp lệ");
+                            }
+
+                            //AsAcademyStudentSvVeXeBus veXeBus = new AsAcademyStudentSvVeXeBus
+                            //{
+                            //    PhanHoi = model.PhanHoi,
+                            //    CreatedTime = now,
+                            //    DeletedTime = now,
+                            //    LastModifiedTime = now,
+                            //    MaXacNhan = model.MaXacNhan,
+                            //    StudentId = studentID,
+                            //    StudentCode = currentStudent.Code,
+                            //    StudentName = currentStudent.FulName,
+                            //    Status = requestStatus,
+                            //    Deleted = false,
+                            //    CreatedBy = studentID,
+                            //    LastModifiedBy = studentID,
+                            //    DeletedBy = -1,
+                            //    TuyenType = model.VeBusTuyenType,
+                            //    TuyenCode = model.VeBusTuyenCode,
+                            //    TuyenName = model.VeBusTuyenName,
+                            //    NoiNhanThe = model.VeBusNoiNhanThe
+                            //};
+                            //await _veXeBusRepository.AddAsync(veXeBus);
+                            break;
                         default:
                             run = false;
                             break;

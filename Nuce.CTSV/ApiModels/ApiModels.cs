@@ -208,6 +208,32 @@ namespace Nuce.CTSV.ApiModels
         public string NoiNhanThe { get; set; }
     }
 
+    public class KhaoSatNhaOModel
+    {
+        public long Id { get; set; }
+        public int StudentId { get; set; }
+        public string StudentCode { get; set; }
+        public string StudentName { get; set; }
+        public int? Status { get; set; }
+        public string LyDo { get; set; }
+        public string PhanHoi { get; set; }
+        public bool? Deleted { get; set; }
+        public int? CreatedBy { get; set; }
+        public int? LastModifiedBy { get; set; }
+        public int? DeletedBy { get; set; }
+        public DateTime? CreatedTime { get; set; }
+        public DateTime? DeletedTime { get; set; }
+        public DateTime? LastModifiedTime { get; set; }
+        public DateTime? NgayGui { get; set; }
+        public DateTime? NgayHenTuNgay { get; set; }
+        public DateTime? NgayHenDenNgay { get; set; }
+        public string MaXacNhan { get; set; }
+        public int? TuyenType { get; set; }
+        public string TuyenCode { get; set; }
+        public string TuyenName { get; set; }
+        public string NoiNhanThe { get; set; }
+    }
+
     public class MuonHocBaGocModel
     {
         public long Id { get; set; }
@@ -253,6 +279,8 @@ namespace Nuce.CTSV.ApiModels
         public string veBusNoiNhanThe { get; set; }
         public string thoiGianMuon { get; set; }
         public bool notSendEmail { get; set; }
+        public string nhuCauNhaO { get; set; }
+        public string doiTuongUuTienNhaO { get; set; }
 
     }
     public class ThiHsgModel
@@ -388,6 +416,7 @@ namespace Nuce.CTSV.ApiModels
         VayVonNganHang = 6,
         ThueNha = 7,
         VeXeBus = 8,
+        DangKyChoO = 9
     }
 
     public enum DichVuXeBusLoaiTuyen

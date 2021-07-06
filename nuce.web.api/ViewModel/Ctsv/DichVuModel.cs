@@ -47,6 +47,14 @@ namespace nuce.web.api.ViewModel.Ctsv
         /// Option gửi mail cho sv khi tạo mới yêu cầu
         /// </summary>
         public bool NotSendEmail { get; set; }
+        /// <summary>
+        /// nhà ở
+        /// </summary>
+        public string NhuCauNhaO { get; set; }
+        /// <summary>
+        /// nhà ở
+        /// </summary>
+        public string DoiTuongUuTienNhaO { get; set; }
     }
 
     public class AllTypeDichVuModel

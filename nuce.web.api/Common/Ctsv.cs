@@ -16,7 +16,8 @@ namespace nuce.web.api.Common
             MuonHocBaGoc = 5,
             VayVonNganHang = 6,
             ThueNha = 7,
-            VeBus = 8
+            VeBus = 8,
+            DangKyChoO = 9
         }
 
         public enum TrangThaiYeuCau
@@ -32,6 +33,20 @@ namespace nuce.web.api.Common
         {
             MotTuyen = 1,
             LienTuyen = 2
+        }
+
+        public class NhuCauNhaO
+        {
+            public const string KTX = "KTX";
+            public const string PHAP_VAN = "PHAP_VAN";
+            public static readonly List<string> All = new List<string> { KTX, PHAP_VAN };
+        }
+
+        public class DoiTuongUuTienNhaO
+        {
+            public const string NHOM_1 = "NHOM_1";
+            public const string NHOM_2 = "NHOM_2";
+            public static readonly List<string> All = new List<string> { NHOM_1, NHOM_2 };
         }
 
         public static Dictionary<int, DichVuStructure> DichVuDictionary = new Dictionary<int, DichVuStructure>
