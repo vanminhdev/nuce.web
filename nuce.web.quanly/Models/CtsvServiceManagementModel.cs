@@ -145,4 +145,19 @@ namespace nuce.web.quanly.Models
         public HttpStatusCode StatusCode { get; set; }
     }
 
+    public class AddDotDangKyChoOModel
+    {
+        public string Name { get; set; }
+        public DateTime? TuNgay { get; set; }
+        public DateTime? DenNgay { get; set; }
+    }
+
+    public class DotDangKyChoOModel
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime TuNgay { get; set; }
+        public DateTime DenNgay { get; set; }
+    }
 }

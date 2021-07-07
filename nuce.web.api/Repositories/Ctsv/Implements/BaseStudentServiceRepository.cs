@@ -12,7 +12,7 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
 {
     public class BaseStudentServiceRepository<Entity> : IBaseStudentServiceRepository<Entity> where Entity : class
     {
-        private readonly CTSVNUCE_DATAContext _context;
+        protected readonly CTSVNUCE_DATAContext _context;
         public BaseStudentServiceRepository(CTSVNUCE_DATAContext _context)
         {
             this._context = _context;
@@ -152,7 +152,7 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
             return entity.GetType().GetProperty(field).GetValue(entity, null);
         }
 
-        private string getValueString(Entity entity, string field)
+        protected string getValueString(Entity entity, string field)
         {
             var value = entity.GetType().GetProperty(field).GetValue(entity, null);
             return value != null ? value.ToString().ToLower() : "";

@@ -2,6 +2,7 @@
 using nuce.web.api.Models.Ctsv;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using static nuce.web.api.Common.Ctsv;
 
@@ -158,5 +159,15 @@ namespace nuce.web.api.ViewModel.Ctsv
     {
         public DateTime? NgayHenBatDau { get; set; }
         public DateTime? NgayHenKetThuc { get; set; }
+    }
+
+    public class AddDotDangKyChoOModel
+    {
+        [Required(ErrorMessage = "Tên không được để trống")]
+        public string Name { get; set; }
+        [Required(ErrorMessage = "Từ ngày không được để trống")]
+        public DateTime? TuNgay { get; set; }
+        [Required(ErrorMessage = "Đến ngày không được để trống")]
+        public DateTime? DenNgay { get; set; }
     }
 }

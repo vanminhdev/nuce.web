@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace nuce.web.api.Models.Ctsv
 {
-    public partial class AsAcademyStudentSvDangKyNhaO
+    public partial class AsAcademyStudentSvDangKyChoO
     {
         public long Id { get; set; }
         public int StudentId { get; set; }
@@ -25,5 +25,6 @@ namespace nuce.web.api.Models.Ctsv
         public string MaXacNhan { get; set; }
         public string NhuCauNhaO { get; set; }
         public string DoiTuongUuTienNhaO { get; set; }
+        public long DotDangKy { get; set; }
     }
 }

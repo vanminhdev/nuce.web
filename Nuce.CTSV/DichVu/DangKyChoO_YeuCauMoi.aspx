@@ -161,7 +161,7 @@
                 document.getElementById("<%=btnCapNhat.ClientID %>").click();
             },
             vedanhsach: function () {
-                window.location.href = "/dichvu/vexebus";
+                window.location.href = "/dichvu/dangkychoo";
             },
         };
         

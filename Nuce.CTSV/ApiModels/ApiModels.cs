@@ -208,7 +208,16 @@ namespace Nuce.CTSV.ApiModels
         public string NoiNhanThe { get; set; }
     }
 
-    public class KhaoSatNhaOModel
+    public class DotDangKyChoOModel
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime TuNgay { get; set; }
+        public DateTime DenNgay { get; set; }
+    }
+
+    public class DangKyChoOModel
     {
         public long Id { get; set; }
         public int StudentId { get; set; }
@@ -228,10 +237,8 @@ namespace Nuce.CTSV.ApiModels
         public DateTime? NgayHenTuNgay { get; set; }
         public DateTime? NgayHenDenNgay { get; set; }
         public string MaXacNhan { get; set; }
-        public int? TuyenType { get; set; }
-        public string TuyenCode { get; set; }
-        public string TuyenName { get; set; }
-        public string NoiNhanThe { get; set; }
+        public string NhuCauNhaO { get; set; }
+        public string DoiTuongUuTienNhaO { get; set; }
     }
 
     public class MuonHocBaGocModel

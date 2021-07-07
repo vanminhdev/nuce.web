@@ -64,20 +64,37 @@
                     <option value="90">Trong vòng 90 ngày</option>
                 </select>
             </div>
-            <div class="col-sm-4" style="text-align: right">
-                <button type="button" class="btn btn-success"
-                        onclick="onExportExcel()">
-                    Excel
-                </button>
-                <button type="button" class="btn btn-primary"
-                        onclick="onExportWordList()">
-                    In
-                </button>
-                <button type="button" class="btn btn-info"
-                        onclick="onClickChangeMultiStatus()">
-                    Chuyển trạng thái
-                </button>
-            </div>
+
+            @if ((int)ViewData["id"] == 9)
+            {
+                <div class="col-sm-4" style="text-align: right">
+                    <button type="button" class="btn btn-primary" 
+                            onclick="dotDangKyChoO()">
+                        Đợt đăng ký chỗ ở
+                    </button>
+                    <button type="button" class="btn btn-success"
+                            onclick="onExportExcelDangKyChoO()">
+                        Excel
+                    </button>
+                </div>
+            }
+            else
+            {
+                <div class="col-sm-4" style="text-align: right">
+                    <button type="button" class="btn btn-success"
+                            onclick="onExportExcel()">
+                        Excel
+                    </button>
+                    <button type="button" class="btn btn-primary"
+                            onclick="onExportWordList()">
+                        In
+                    </button>
+                    <button type="button" class="btn btn-info"
+                            onclick="onClickChangeMultiStatus()">
+                        Chuyển trạng thái
+                    </button>
+                </div>
+            }
         </div>
         <div class="row">
             <div class="col-12">
@@ -345,6 +362,10 @@
                 name: 'làm vé tháng xe bus',
                 key: 'VE_XE_BUS',
             },
+            9: {
+                name: 'đăng ký chỗ ở',
+                key: 'DANG_KY_CHO_O',
+            },
         };
         var templateStatus = {
             2: 'text-warning',
@@ -565,6 +586,9 @@
                     }
                     result += `<div>Nơi nhận thẻ: ${dichVu.noiNhanThe}</div>`;
                     break;
+                case dichVuEnum.DANG_KY_CHO_O:
+                    result += `<div></div>`;
+                    break;
                 default:
                     break;
             }
@@ -573,6 +597,7 @@
 
         var template = function(data) {
             const dichVu = data.DichVu;
+            console.log('dich vu:', dichVu);
             const student = data.Student;
 
             const studentName = dichVu.studentName;
@@ -602,8 +627,9 @@
             const mainContentSection = getMainContentSection(dichVu);
 
             let noteSection = '';
-
-            if ([4, 6].includes(statusCode)) {
+            if (serviceType == 9) { //dịch vụ là đăng ký chỗ ở thì k cần show
+                noteSection = '';
+            } else if ([4, 6].includes(statusCode)) {
                 noteSection += `<div class="fw-700 mb-3 mt-3" style="color:blue;">
                               * Ngày hẹn: Từ <b>${ngayHenFrom.getHours()}</b> giờ - <b>${ngayHenFrom.getMinutes()}</b> phút - Ngày <b>${convertDateTime(dichVu.ngayHenTuNgay)}</b></br>
                                 Đến <b>${ngayHenTo.getHours()}</b> giờ - <b>${ngayHenTo.getMinutes()}</b> phút - Ngày <b>${convertDateTime(dichVu.ngayHenDenNgay)}</b></div>`;
@@ -706,19 +732,21 @@
                   ${mainContentSection}
                   ${noteSection}
                   <div class="row ml-0 mr-0 align-items-center">
-                    <a
-                      class="print-btn col-3 text-light font-14-sm text-decoration-none cursor-pointer col-md-1"
-                      onclick="onExportWord(${dichVu.id})"
-                    >
-                      <div class="row justify-content-center">
-                        <img
-                          src="/content/images/icons/upload-white.png"
-                          alt=""
-                          class="mr-2 upload-white-icon"
-                        />
-                        <div>IN</div>
-                      </div>
-                    </a>
+                    ${serviceType != 9 ?
+                       `<a
+                            class="print-btn col-3 text-light font-14-sm text-decoration-none cursor-pointer col-md-1"
+                            onclick="onExportWord(${dichVu.id})"
+                        >
+                            <div class="row justify-content-center">
+                                <img
+                                    src="/content/images/icons/upload-white.png"
+                                    alt=""
+                                    class="mr-2 upload-white-icon"
+                                />
+                                <div>IN</div>
+                            </div>
+                        </a>` : ''
+                    }
                     <div class="col-9 col-md-11 text-right">
                       Thời gian gửi yêu cầu:
                       <span class="main-color">${convertDateTime(dichVu.createdTime)}</span>
@@ -771,7 +799,7 @@
                 },
                 {
                     data: null,
-                    mRender: function(data, type, row) {
+                    mRender: function (data, type, row) {
                         return template(data);
                     }
                 },
@@ -865,6 +893,7 @@
             }, 'zip');
         };
 
+
         var onExportExcel = function() {
             const data = getDataToExportMultiYeuCau();
             if (data.length < 1 ) {
@@ -872,6 +901,19 @@
             }
             callApiExport({
                 DichVuList: data,
+                ExportType: 'excel',
+                DichVuType: serviceType
+            }, 'xlsx');
+        }
+
+        var dotDangKyChoO = function () {
+            window.location = `/CtsvServiceManagement/DotDangKyChoO`;
+        }
+
+        //mặc định tin tất trong đợt đăng ký mới nhất
+        var onExportExcelDangKyChoO = function () {
+            callApiExport({
+                DichVuList: [],
                 ExportType: 'excel',
                 DichVuType: serviceType
             }, 'xlsx');

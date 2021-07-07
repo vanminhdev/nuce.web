@@ -20,46 +20,53 @@ namespace Nuce.CTSV
             {
                 string api = $"/api/DichVu/type/{(int)DichVu.DangKyChoO}";
                 var res = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, api, "");
-                List<KhaoSatNhaOModel> ksNhaOList = new List<KhaoSatNhaOModel>();
+                List<DangKyChoOModel> dkChoOList = new List<DangKyChoOModel>();
 
                 if (res.IsSuccessStatusCode)
                 {
                     string strResponse = await res.Content.ReadAsStringAsync();
-                    ksNhaOList = JsonConvert.DeserializeObject<List<KhaoSatNhaOModel>>(strResponse);
+                    dkChoOList = JsonConvert.DeserializeObject<List<DangKyChoOModel>>(strResponse);
                 }
 
-                if (ksNhaOList != null && ksNhaOList.Count > 0)
+                if (dkChoOList != null && dkChoOList.Count > 0)
                 {
                     string strContent = "";
-                    for (int i = 0; i < ksNhaOList.Count; i++)
+                    for (int i = 0; i < dkChoOList.Count; i++)
                     {
-                        var khaoSat = ksNhaOList[i];
-                        string strPhanHoi = khaoSat.PhanHoi;
+                        var dkChoO = dkChoOList[i];
+                        string strPhanHoi = dkChoO.PhanHoi;
                         strContent += "<tr>";
                         strContent += string.Format("<td style=\"text-align:center;\">{0}</td>", (i+1));
-                        strContent += string.Format("<td style=\"text-align:center;\">{0}</td>", khaoSat.CreatedTime?.ToString("dd/MM/yyyy"));
+                        strContent += string.Format("<td style=\"text-align:center;\">{0}</td>", dkChoO.CreatedTime?.ToString("dd/MM/yyyy"));
                         //if(strPhanHoi.Trim()=="")
                         //    strContent += string.Format("<td>{0}</td>", dt.Rows[i]["LyDo"].ToString());
                         //else
                         //    strContent += string.Format("<td><div>{0}<div><div style='color:red;'>- Phản hồi: {1}</div></td>", dt.Rows[i]["LyDo"].ToString(),strPhanHoi);
-                        int status = khaoSat.Status ?? -1;
-                        DateTime dtNgayHenBatDau = khaoSat.NgayHenTuNgay ?? DateTime.Now;
-                        DateTime dtNgayHenDenNgay = khaoSat.NgayHenDenNgay ?? DateTime.Now.AddDays(7);
+                        int status = dkChoO.Status ?? -1;
+                        DateTime dtNgayHenBatDau = dkChoO.NgayHenTuNgay ?? DateTime.Now;
+                        DateTime dtNgayHenDenNgay = dkChoO.NgayHenDenNgay ?? DateTime.Now.AddDays(7);
 
                         string content = "";
-                        switch ((DichVuXeBusLoaiTuyen)khaoSat.TuyenType)
+                        string nhuCauNhaO = "";
+                        if (dkChoO.NhuCauNhaO == "KTX")
                         {
-                            case DichVuXeBusLoaiTuyen.MotTuyen:
-                                content = $"<div>Loại tuyến: Một tuyến</div><div>Số tuyến: {khaoSat.TuyenCode ?? ""}</div>";
-                                break;
-                            case DichVuXeBusLoaiTuyen.LienTuyen:
-                                content = $"<div>Loại tuyến: Liên tuyến</div>";
-                                break;
-                            default:
-                                break;
+                            nhuCauNhaO = "Ký túc xá ĐHXD";
                         }
-                        content += $"<div>Nơi nhận thẻ: {khaoSat.NoiNhanThe ?? ""}</div>";
+                        else if (dkChoO.NhuCauNhaO == "PHAP_VAN")
+                        {
+                            nhuCauNhaO = "Khu nhà ở Pháp Vân";
+                        }
 
+                        string doiTuongUuTien = "";
+                        if (dkChoO.DoiTuongUuTienNhaO == "NHOM_1")
+                        {
+                            doiTuongUuTien = "Nhóm 1: Sinh viên đang ở Ký túc xá ĐHXD";
+                        }
+                        else if (dkChoO.DoiTuongUuTienNhaO == "NHOM_2")
+                        {
+                            doiTuongUuTien = "Nhóm 2: Sinh viên thuộc đối tượng chính sách, hoàn cảnh khó khăn; Sinh viên nữ";
+                        }
+                        content += $"<div>{nhuCauNhaO} - {doiTuongUuTien}</div>";
                         switch (status)
                         {
                             case 1:

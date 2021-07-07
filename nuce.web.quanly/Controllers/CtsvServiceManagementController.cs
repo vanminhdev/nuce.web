@@ -11,6 +11,7 @@ using System.Net.Http;
 using System.Net;
 using nuce.web.quanly.Attributes.ActionFilter;
 using nuce.web.shared;
+using Newtonsoft.Json;
 
 namespace nuce.web.quanly.Controllers
 {
@@ -255,5 +256,62 @@ namespace nuce.web.quanly.Controllers
                 return Json(raw);
             });
         }
+
+        #region đợt đăng ký
+        [HttpGet]
+        public ActionResult DotDangKyChoO()
+        {
+            return View("DotDangKyChoO");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetAllDotDangKyNhaO(DataTableRequest request)
+        {
+            string api = "api/DichVu/admin/dang-ky-cho-o/get-all";
+            var stringContent = base.MakeContent(request);
+            var response = await base.MakeRequestAuthorizedAsync("post", api, stringContent);
+            return await base.HandleResponseAsync(response,
+                action200Async: async res =>
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var data = JsonConvert.DeserializeObject<DataTableResponse<DotDangKyChoOModel>>(jsonString);
+                    return Json(new
+                    {
+                        draw = data.Draw,
+                        recordsTotal = data.RecordsTotal,
+                        recordsFiltered = data.RecordsFiltered,
+                        data = data.Data
+                    });
+                }
+            );
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AddDotDangKyNhaO(AddDotDangKyChoOModel model)
+        {
+            string api = "api/dichVu/admin/dang-ky-cho-o/add";
+            var stringContent = base.MakeContent(model);
+            var response = await base.MakeRequestAuthorizedAsync("post", api, stringContent);
+
+            return await HandleApiResponseUpdate(response);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UpdateDotDangKyNhaO(int id, AddDotDangKyChoOModel model)
+        {
+            string api = $"api/dichVu/admin/dang-ky-cho-o/update?id={id}";
+            var stringContent = base.MakeContent(model);
+            var response = await base.MakeRequestAuthorizedAsync("put", api, stringContent);
+            return await HandleApiResponseUpdate(response);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> DeleteDotDangKyNhaO(int id)
+        {
+            string api = $"api/dichVu/admin/dang-ky-cho-o/delete?id={id}";
+            var response = await base.MakeRequestAuthorizedAsync("delete", api);
+            return await HandleApiResponseUpdate(response);
+        }
+        #endregion
     }
 }

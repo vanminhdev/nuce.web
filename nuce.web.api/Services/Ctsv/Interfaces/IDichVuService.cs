@@ -22,11 +22,27 @@ namespace nuce.web.api.Services.Ctsv.Interfaces
         public Task UpdateRequestStatus(UpdateRequestStatusModel model);
         public Task<byte[]> ExportWordAsync(DichVu dichVu, int id);
         public Task<byte[]> ExportWordListAsync(DichVu dichVu, List<DichVuExport> dichVuList);
-        public Task<byte[]> ExportExcelAsync(DichVu loaiDichVu, List<DichVuExport> dichVuList);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="loaiDichVu"></param>
+        /// <param name="dichVuList"></param>
+        /// <param name="dotDangKyNhaO">Chỉ dùng cho dịch vụ đăng ký nhà ở</param>
+        /// <returns></returns>
+        public Task<byte[]> ExportExcelAsync(DichVu loaiDichVu, List<DichVuExport> dichVuList, long dotDangKyNhaO = 0);
         public Task<byte[]> ExportExcelOverviewAsync();
         public Task UpdateThamSoDichVu(Dictionary<long, string> thamSoDictionary);
         public Task<DataTableResponse<AsAcademyStudentSvThietLapThamSoDichVu>> GetThamSoByDichVu(int loaiDichVu);
         public Task UpdatePartialInfoMuonHocBa(UpdateRequestStatusMuonHocBaGocModel model);
         public Task<byte[]> ExportWordMuonHocBaAsync(string studentCode);
+        /// <summary>
+        /// Lấy đợt đang active nếu không có trả về -1
+        /// </summary>
+        /// <returns></returns>
+        public Task<AsAcademyStudentSvDangKyChoODot> GetDotDangKyChoOActive();
+        public Task<PaginationModel<AsAcademyStudentSvDangKyChoODot>> GetAllDotDangKyChoO(int skip = 0, int pageSize = 20);
+        public Task AddDotDangKyChoO(AddDotDangKyChoOModel model);
+        public Task UpdateDotDangKyChoO(int id, AddDotDangKyChoOModel model);
+        public Task DeleteDotDangKyChoO(int id);
     }
 }

@@ -50,6 +50,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
         private readonly ILoaiDichVuRepository _loaiDichVuRepository;
         private readonly IStudentRepository _studentRepository;
         private readonly IVeXeBusRepository _veXeBusRepository;
+        private readonly IDangKyChoORepository _dangKyChoORepository;
+        private readonly IDotDangKyChoORepository _dotDangKyChoORepository;
         private readonly ICapLaiTheRepository _capLaiTheRepository;
         private readonly IMuonHocBaRepository _muonHocBaRepository;
 
@@ -68,7 +70,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
             ILoaiDichVuRepository _loaiDichVuRepository, IStudentRepository _studentRepository,
             IThamSoDichVuService _thamSoDichVuService, IPathProvider _pathProvider,
             ILogger<DichVuService> _logger, IVeXeBusRepository _veXeBusRepository,
-            ICapLaiTheRepository _capLaiTheRepository, IMuonHocBaRepository _muonHocBaRepository
+            ICapLaiTheRepository _capLaiTheRepository, IMuonHocBaRepository _muonHocBaRepository,
+            IDangKyChoORepository _dangKyChoORepository, IDotDangKyChoORepository _dotDangKyChoORepository
         )
         {
             this._xacNhanRepository = _xacNhanRepository;
@@ -78,6 +81,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
             this._vayVonRepository = _vayVonRepository;
             this._thueNhaRepository = _thueNhaRepository;
             this._veXeBusRepository = _veXeBusRepository;
+            this._dangKyChoORepository = _dangKyChoORepository;
+            this._dotDangKyChoORepository = _dotDangKyChoORepository;
             this._loaiDichVuRepository = _loaiDichVuRepository;
             this._studentRepository = _studentRepository;
             this._muonHocBaRepository = _muonHocBaRepository;
@@ -356,27 +361,27 @@ namespace nuce.web.api.Services.Ctsv.Implements
                                 throw new Exception("Đối tượng ưu tiên nhà ở không hợp lệ");
                             }
 
-                            //AsAcademyStudentSvVeXeBus veXeBus = new AsAcademyStudentSvVeXeBus
-                            //{
-                            //    PhanHoi = model.PhanHoi,
-                            //    CreatedTime = now,
-                            //    DeletedTime = now,
-                            //    LastModifiedTime = now,
-                            //    MaXacNhan = model.MaXacNhan,
-                            //    StudentId = studentID,
-                            //    StudentCode = currentStudent.Code,
-                            //    StudentName = currentStudent.FulName,
-                            //    Status = requestStatus,
-                            //    Deleted = false,
-                            //    CreatedBy = studentID,
-                            //    LastModifiedBy = studentID,
-                            //    DeletedBy = -1,
-                            //    TuyenType = model.VeBusTuyenType,
-                            //    TuyenCode = model.VeBusTuyenCode,
-                            //    TuyenName = model.VeBusTuyenName,
-                            //    NoiNhanThe = model.VeBusNoiNhanThe
-                            //};
-                            //await _veXeBusRepository.AddAsync(veXeBus);
+                            var dotActive = await _dotDangKyChoORepository.GetDotActive();
+                            AsAcademyStudentSvDangKyChoO dkNhaO = new AsAcademyStudentSvDangKyChoO
+                            {
+                                PhanHoi = model.PhanHoi,
+                                CreatedTime = now,
+                                DeletedTime = now,
+                                LastModifiedTime = now,
+                                MaXacNhan = model.MaXacNhan,
+                                StudentId = studentID,
+                                StudentCode = currentStudent.Code,
+                                StudentName = currentStudent.FulName,
+                                Status = (int)TrangThaiYeuCau.HoanThanh,
+                                Deleted = false,
+                                CreatedBy = studentID,
+                                LastModifiedBy = studentID,
+                                DeletedBy = -1,
+                                DotDangKy = dotActive.Id,
+                                NhuCauNhaO = model.NhuCauNhaO,
+                                DoiTuongUuTienNhaO = model.DoiTuongUuTienNhaO
+                            };
+                            await _dangKyChoORepository.AddDangKyNhaO(dkNhaO);
                             break;
                         default:
                             run = false;
@@ -413,11 +418,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 if (run)
                 {
                     var dichVu = DichVuDictionary[model.Type];
-                    await _logService.WriteLog(new ActivityLogModel
+                    if (!model.NotSendEmail)
                     {
-                        LogCode = dichVu.LogCodeSendEmail,
-                        LogMessage = $"gửi mail tới {currentStudent.EmailNhaTruong}",
-                    });
+                        await _logService.WriteLog(new ActivityLogModel
+                        {
+                            LogCode = dichVu.LogCodeSendEmail,
+                            LogMessage = $"gửi mail tới {currentStudent.EmailNhaTruong}",
+                        });
+                    }
                 }
                 #endregion
             }
@@ -453,6 +461,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     return _thueNhaRepository.GetAll(studentId);
                 case DichVu.VeBus:
                     return _veXeBusRepository.GetAll(studentId);
+                case DichVu.DangKyChoO:
+                    return _dangKyChoORepository.GetAllDangKyChoO(studentId);
                 default:
                     break;
             }
@@ -599,6 +609,21 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         result.Add(item);
                     }
                     break;
+                case DichVu.DangKyChoO:
+                    var dangKyChoOGetAll = await _dangKyChoORepository.GetAllForAdminDangKyChoO(model);
+                    var dangKyChoOList = dangKyChoOGetAll.FinalData;
+
+                    foreach (var yeuCau in dangKyChoOList)
+                    {
+                        var student = studentList.FirstOrDefault(s => s.Code == yeuCau.StudentCode);
+                        var item = new QuanLyDichVuDetailResponse()
+                        {
+                            Student = student,
+                            DichVu = yeuCau
+                        };
+                        result.Add(item);
+                    }
+                    break;
                 default:
                     break;
             }
@@ -632,7 +657,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 { (int)DichVu.MuonHocBaGoc, _muonHocBaRepository.GetRequestInfo() },
                 { (int)DichVu.UuDaiGiaoDuc, _uuDaiRepository.GetRequestInfo() },
                 { (int)DichVu.VayVonNganHang, _vayVonRepository.GetRequestInfo() },
-                { (int)DichVu.VeBus, _veXeBusRepository.GetRequestInfo() }                
+                { (int)DichVu.VeBus, _veXeBusRepository.GetRequestInfo() },
+                { (int)DichVu.DangKyChoO, _dangKyChoORepository.GetRequestInfo() }
             };
 
             var SumDichVu = new AllTypeDichVuModel
@@ -663,6 +689,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
             return quantityDictionary;
         }
+        
         #region tham số dịch vụ
         public async Task<DataTableResponse<AsAcademyStudentSvThietLapThamSoDichVu>> GetThamSoByDichVu(int loaiDichVu)
         {
@@ -685,6 +712,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             await _unitOfWork.SaveAsync();
         }
         #endregion
+
         #region Update Status
         /// <summary>
         /// Chuyển trạng thái một yêu cầu
@@ -1041,6 +1069,33 @@ namespace nuce.web.api.Services.Ctsv.Implements
         }
         #endregion
 
+        #region Đợt đăng ký chỗ ở (riêng)
+        public async Task<AsAcademyStudentSvDangKyChoODot> GetDotDangKyChoOActive()
+        {
+            return await _dotDangKyChoORepository.GetDotActive();
+        }
+
+        public async Task<PaginationModel<AsAcademyStudentSvDangKyChoODot>> GetAllDotDangKyChoO(int skip = 0, int take = 20)
+        {
+            return await _dotDangKyChoORepository.GetAll(skip, take);
+        }
+
+        public async Task AddDotDangKyChoO(AddDotDangKyChoOModel model)
+        {
+           await _dotDangKyChoORepository.Add(model);
+        }
+
+        public async Task UpdateDotDangKyChoO(int id, AddDotDangKyChoOModel model)
+        {
+            await _dotDangKyChoORepository.Update(id, model);
+        }
+
+        public async Task DeleteDotDangKyChoO(int id)
+        {
+            await _dotDangKyChoORepository.Delete(id);
+        }
+        #endregion
+
         #region Export Excel
         public async Task<byte[]> ExportExcelOverviewAsync()
         {
@@ -1103,7 +1158,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             }
         }
 
-        public async Task<byte[]> ExportExcelAsync(DichVu loaiDichVu, List<DichVuExport> dichVuList)
+        public async Task<byte[]> ExportExcelAsync(DichVu loaiDichVu, List<DichVuExport> dichVuList, long dotDangKy = 0)
         {
             switch (loaiDichVu)
             {
@@ -1123,6 +1178,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     return await ExportExcelVeXeBus(dichVuList);
                 case DichVu.CapLaiThe:
                     return await ExportExcelCapLaiThe(dichVuList);
+                case DichVu.DangKyChoO:
+                    return await ExportExcelDangKyChoO(dotDangKy);
                 default:
                     break;
             }
@@ -1657,6 +1714,98 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(now.Day);
                     ws.Cell(row, ++col).SetValue(now.Month);
                     ws.Cell(row, ++col).SetValue(now.Year);
+                }
+                for (int j = 0; j < col; j++)
+                {
+                    ws.Column(j + 1).AdjustToContents();
+                }
+                #endregion
+                string file = _pathProvider.MapPath($"Templates/Ctsv/vayvon_{Guid.NewGuid().ToString()}.xlsx");
+                wb.SaveAs(file);
+                return await FileToByteAsync(file);
+            }
+        }
+
+        /// <summary>
+        /// Mặc định lấy đợt đăng ký mới nhất
+        /// </summary>
+        /// <returns></returns>
+        private async Task<byte[]> ExportExcelDangKyChoO(long dotDangKy)
+        {
+            var yeuCauList = (await _dangKyChoORepository.GetAllYeuCauDichVuTheoDot(dotDangKy)).ToList();
+
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                var style = XLWorkbook.DefaultStyle;
+                var ws = wb.Worksheets.Add("Sheet1");
+                ws.Style.Font.SetFontSize(12);
+                ws.Style.Font.SetFontName("Times New Roman");
+
+                int i = 0;
+                int firstRow = 1;
+                #region title
+                setStyle(ws, firstRow, ++i, "STT");
+                setStyle(ws, firstRow, ++i, "Dấu thời gian");
+                setStyle(ws, firstRow, ++i, "Họ và tên");
+                setStyle(ws, firstRow, ++i, "Mã số SV");
+                setStyle(ws, firstRow, ++i, "Lớp");
+                setStyle(ws, firstRow, ++i, "Khoa quản lý");
+                setStyle(ws, firstRow, ++i, "Nhu cầu nhà ở");
+                setStyle(ws, firstRow, ++i, "Đối tượng ưu tiên");
+
+                ws.Row(firstRow).Height = 32;
+
+                int colNum = i;
+                #endregion
+                #region value
+                int recordLen = yeuCauList.Count;
+                int col = 0;
+                for (int j = 0; j < recordLen; j++)
+                {
+                    var yeuCau = yeuCauList[j];
+                    DateTime ngaySinh = convertStudentDateOfBirth(yeuCau.Student.DateOfBirth);
+                    string studentCode = yeuCau.YeuCauDichVu.StudentCode ?? "";
+                    string studentName = yeuCau.YeuCauDichVu.StudentName ?? "";
+                    string email = yeuCau.Student.EmailNhaTruong ?? "";
+                    string phuong = yeuCau.Student.HkttPhuong ?? "";
+                    string quan = yeuCau.Student.HkttQuan ?? "";
+                    string tinh = yeuCau.Student.HkttTinh ?? "";
+                    string classCode = yeuCau.Student.ClassCode ?? "";
+                    string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
+                    string tenKhoa = yeuCau.Faculty?.Name ?? "";
+                    string mobile = yeuCau.Student.Mobile ?? "";
+                    string dauThoiGian = yeuCau.YeuCauDichVu.CreatedTime?.ToString("dd/MM/yyyy HH:MM:ss") ?? "";
+                    string nhuCauNhaO = "";
+                    switch(yeuCau.YeuCauDichVu.NhuCauNhaO)
+                    {
+                        case NhuCauNhaO.KTX:
+                            nhuCauNhaO = "Ký túc xá ĐHXD";
+                            break;
+                        case NhuCauNhaO.PHAP_VAN:
+                            nhuCauNhaO = "Khu nhà ở Pháp Vân";
+                            break;
+                    }
+                    string doiTuongUuTien = "";
+                    switch (yeuCau.YeuCauDichVu.DoiTuongUuTienNhaO)
+                    {
+                        case DoiTuongUuTienNhaO.NHOM_1:
+                            doiTuongUuTien = "Nhóm 1: Sinh viên đang ở Ký túc xá ĐHXD";
+                            break;
+                        case DoiTuongUuTienNhaO.NHOM_2:
+                            doiTuongUuTien = "Nhóm 2: Sinh viên thuộc đối tượng chính sách, hoàn cảnh khó khăn; Sinh viên nữ";
+                            break;
+                    }
+                    int row = j + 2;
+
+                    col = 0;
+                    ws.Cell(row, ++col).SetValue(j + 1);
+                    ws.Cell(row, ++col).SetValue(dauThoiGian);
+                    ws.Cell(row, ++col).SetValue(studentName);
+                    ws.Cell(row, ++col).SetValue(studentCode);
+                    ws.Cell(row, ++col).SetValue(classCode);
+                    ws.Cell(row, ++col).SetValue(tenKhoa);
+                    ws.Cell(row, ++col).SetValue(nhuCauNhaO);
+                    ws.Cell(row, ++col).SetValue(doiTuongUuTien);
                 }
                 for (int j = 0; j < col; j++)
                 {

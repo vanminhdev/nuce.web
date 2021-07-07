@@ -10,6 +10,7 @@ using GemBox.Document;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using nuce.web.api.Models.Ctsv;
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.Services.Ctsv.Interfaces;
 using nuce.web.api.ViewModel;
@@ -225,7 +226,16 @@ namespace nuce.web.api.Controllers.Ctsv
         [HttpPost]
         public async Task<FileStreamResult> ExportExcel([FromBody] ExportModel model)
         {
-            var result = await _dichVuService.ExportExcelAsync(model.DichVuType, model.DichVuList);
+            byte[] result;
+            if (model.DichVuType == Common.Ctsv.DichVu.DangKyChoO)
+            {
+                var dotDangKy = await _dichVuService.GetDotDangKyChoOActive();
+                result = await _dichVuService.ExportExcelAsync(model.DichVuType, model.DichVuList, dotDangKy.Id);
+            }
+            else
+            {
+                result = await _dichVuService.ExportExcelAsync(model.DichVuType, model.DichVuList);
+            }
             return new FileStreamResult(new MemoryStream(result), "application/octet-stream");
         }
 
@@ -236,6 +246,74 @@ namespace nuce.web.api.Controllers.Ctsv
         {
             var result = await _dichVuService.ExportExcelOverviewAsync();
             return new FileStreamResult(new MemoryStream(result), "application/octet-stream");
+        }
+
+
+        [Authorize(Roles = "P_CTSV")]
+        [HttpPost]
+        [Route("admin/dang-ky-cho-o/get-all")]
+        public async Task<IActionResult> GetAllDotDangKyNhaO([FromBody] DataTableRequest request)
+        {
+            var skip = request.Start;
+            var take = request.Length;
+            var result = await _dichVuService.GetAllDotDangKyChoO(skip, take);
+            return Ok(
+                new DataTableResponse<AsAcademyStudentSvDangKyChoODot>
+                {
+                    Draw = ++request.Draw,
+                    RecordsTotal = result.RecordsTotal,
+                    RecordsFiltered = result.RecordsFiltered,
+                    Data = result.Data
+                }
+            );
+        }
+
+        [Authorize(Roles = "P_CTSV")]
+        [HttpPost]
+        [Route("admin/dang-ky-cho-o/add")]
+        public async Task<IActionResult> AddDotDangKyNhaO([FromBody] AddDotDangKyChoOModel model)
+        {
+            try
+            {
+                await _dichVuService.AddDotDangKyChoO(model);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { StatusCode = HttpStatusCode.BadRequest, Message = ex.Message, Data = ex });
+            }
+        }
+
+        [Authorize(Roles = "P_CTSV")]
+        [HttpPut]
+        [Route("admin/dang-ky-cho-o/update")]
+        public async Task<IActionResult> UpdateDotDangKyNhaO(int id, [FromBody] AddDotDangKyChoOModel model)
+        {
+            try
+            {
+                await _dichVuService.UpdateDotDangKyChoO(id, model);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { StatusCode = HttpStatusCode.BadRequest, Message = ex.Message, Data = ex });
+            }
+        }
+
+        [Authorize(Roles = "P_CTSV")]
+        [HttpDelete]
+        [Route("admin/dang-ky-cho-o/delete")]
+        public async Task<IActionResult> DeleteDotDangKyNhaO(int id)
+        {
+            try
+            {
+                await _dichVuService.DeleteDotDangKyChoO(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { StatusCode = HttpStatusCode.BadRequest, Message = ex.Message, Data = ex });
+            }
         }
     }
 }
