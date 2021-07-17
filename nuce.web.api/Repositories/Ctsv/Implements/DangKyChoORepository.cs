@@ -53,7 +53,7 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
                 throw new Exception("Ngoài thời gian đăng ký");
             }
 
-            if (_context.AsAcademyStudentSvDangKyChoO.Any(dk => dk.DotDangKy == dotActive.Id))
+            if (_context.AsAcademyStudentSvDangKyChoO.Any(dk =>dk.StudentCode == model.StudentCode && dk.DotDangKy == dotActive.Id))
             {
                 throw new Exception("Đã đăng ký trong đợt hiện tại, không thể đăng ký thêm");
             }
