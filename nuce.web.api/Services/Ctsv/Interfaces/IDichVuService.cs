@@ -35,6 +35,8 @@ namespace nuce.web.api.Services.Ctsv.Interfaces
         public Task<DataTableResponse<AsAcademyStudentSvThietLapThamSoDichVu>> GetThamSoByDichVu(int loaiDichVu);
         public Task UpdatePartialInfoMuonHocBa(UpdateRequestStatusMuonHocBaGocModel model);
         public Task<byte[]> ExportWordMuonHocBaAsync(string studentCode);
+
+        #region đăng ký chỗ ở
         /// <summary>
         /// Lấy đợt đang active nếu không có trả về -1
         /// </summary>
@@ -44,5 +46,30 @@ namespace nuce.web.api.Services.Ctsv.Interfaces
         public Task AddDotDangKyChoO(AddDotDangKyChoOModel model);
         public Task UpdateDotDangKyChoO(int id, AddDotDangKyChoOModel model);
         public Task DeleteDotDangKyChoO(int id);
+        #endregion
+
+        #region xin miễn giảm học phí
+        /// <summary>
+        /// Lấy đợt đang active nếu không có trả về -1
+        /// </summary>
+        /// <returns></returns>
+        public Task<AsAcademyStudentSvXinMienGiamHocPhiDot> GetDotXinMienGiamHocPhiActive();
+        public Task<PaginationModel<AsAcademyStudentSvXinMienGiamHocPhiDot>> GetAllDotXinMienGiamHocPhi(int skip = 0, int pageSize = 20);
+        public Task AddDotXinMienGiamHocPhi(AddDotXinMienGiamHocPhi model);
+        public Task UpdateDotXinMienGiamHocPhi(int id, AddDotXinMienGiamHocPhi model);
+        public Task DeleteDotXinMienGiamHocPhi(int id);
+        #endregion
+
+        #region đề nghị hỗ trợ chi phí
+        /// <summary>
+        /// Lấy đợt đang active nếu không có trả về -1
+        /// </summary>
+        /// <returns></returns>
+        public Task<AsAcademyStudentSvDeNghiHoTroChiPhiHocTapDot> GetDotDeNghiHoTroChiPhiActive();
+        public Task<PaginationModel<AsAcademyStudentSvDeNghiHoTroChiPhiHocTapDot>> GetAllDotDeNghiHoTroChiPhi(int skip = 0, int pageSize = 20);
+        public Task AddDotDeNghiHoTroChiPhi(AddDotDeNghiHoTroChiPhi model);
+        public Task UpdateDotDeNghiHoTroChiPhi(int id, AddDotDeNghiHoTroChiPhi model);
+        public Task DeleteDotDeNghiHoTroChiPhi(int id);
+        #endregion
     }
 }

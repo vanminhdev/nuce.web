@@ -52,6 +52,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
         private readonly IVeXeBusRepository _veXeBusRepository;
         private readonly IDangKyChoORepository _dangKyChoORepository;
         private readonly IDotDangKyChoORepository _dotDangKyChoORepository;
+        private readonly IXinMienGiamHocPhiRepository _xinMienGiamHocPhiRepository;
+        private readonly IDotXinMienGiamHocPhiRepository _dotXinMienGiamHocPhiRepository;
+        private readonly IDeNghiHoTroChiPhiRepository _deNghiHoTroChiPhiRepository;
+        private readonly IDotDeNghiHoTroChiPhiRepository _dotDeNghiHoTroChiPhiRepository;
         private readonly ICapLaiTheRepository _capLaiTheRepository;
         private readonly IMuonHocBaRepository _muonHocBaRepository;
 
@@ -71,7 +75,9 @@ namespace nuce.web.api.Services.Ctsv.Implements
             IThamSoDichVuService _thamSoDichVuService, IPathProvider _pathProvider,
             ILogger<DichVuService> _logger, IVeXeBusRepository _veXeBusRepository,
             ICapLaiTheRepository _capLaiTheRepository, IMuonHocBaRepository _muonHocBaRepository,
-            IDangKyChoORepository _dangKyChoORepository, IDotDangKyChoORepository _dotDangKyChoORepository
+            IDangKyChoORepository _dangKyChoORepository, IDotDangKyChoORepository _dotDangKyChoORepository,
+            IXinMienGiamHocPhiRepository _xinMienGiamHocPhiRepository, IDotXinMienGiamHocPhiRepository _dotXinMienGiamHocPhiRepository,
+            IDeNghiHoTroChiPhiRepository _deNghiHoTroChiPhiRepository, IDotDeNghiHoTroChiPhiRepository _dotDeNghiHoTroChiPhiRepository
         )
         {
             this._xacNhanRepository = _xacNhanRepository;
@@ -83,6 +89,11 @@ namespace nuce.web.api.Services.Ctsv.Implements
             this._veXeBusRepository = _veXeBusRepository;
             this._dangKyChoORepository = _dangKyChoORepository;
             this._dotDangKyChoORepository = _dotDangKyChoORepository;
+            this._xinMienGiamHocPhiRepository = _xinMienGiamHocPhiRepository;
+            this._dotXinMienGiamHocPhiRepository = _dotXinMienGiamHocPhiRepository;
+            this._deNghiHoTroChiPhiRepository = _deNghiHoTroChiPhiRepository;
+            this._dotDeNghiHoTroChiPhiRepository = _dotDeNghiHoTroChiPhiRepository;
+
             this._loaiDichVuRepository = _loaiDichVuRepository;
             this._studentRepository = _studentRepository;
             this._muonHocBaRepository = _muonHocBaRepository;
@@ -383,6 +394,59 @@ namespace nuce.web.api.Services.Ctsv.Implements
                             };
                             await _dangKyChoORepository.AddDangKyNhaO(dkNhaO);
                             break;
+                        case DichVu.XinMienGiamHocPhi:
+                            if (!DoiTuongXinMienGiamHocPhi.All.Contains(model.DoiTuongHuongMienGiam))
+                            {
+                                throw new Exception("Lựa chọn đối tượng không hợp lệ");
+                            }
+
+                            var dotXinActive = await _dotXinMienGiamHocPhiRepository.GetDotActive();
+                            AsAcademyStudentSvXinMienGiamHocPhi xinMien = new AsAcademyStudentSvXinMienGiamHocPhi
+                            {
+                                PhanHoi = model.PhanHoi,
+                                CreatedTime = now,
+                                DeletedTime = now,
+                                LastModifiedTime = now,
+                                MaXacNhan = model.MaXacNhan,
+                                StudentId = studentID,
+                                StudentCode = currentStudent.Code,
+                                StudentName = currentStudent.FulName,
+                                Status = (int)TrangThaiYeuCau.HoanThanh,
+                                Deleted = false,
+                                CreatedBy = studentID,
+                                LastModifiedBy = studentID,
+                                DeletedBy = -1,
+                                DotDangKy = dotXinActive.Id,
+                                DoiTuongHuong = model.DoiTuongHuongMienGiam
+                            };
+                            await _xinMienGiamHocPhiRepository.AddDangKyNhaO(xinMien);
+                            break;
+                        case DichVu.DeNghiHoTroChiPhiHocTap:
+                            if (!DoiTuongDeNghiHoTroChiPhi.All.Contains(model.DoiTuongDeNghiHoTro))
+                            {
+                                throw new Exception("Lựa chọn đối tượng không hợp lệ");
+                            }
+                            var dotDeNghiActive = await _dotXinMienGiamHocPhiRepository.GetDotActive();
+                            AsAcademyStudentSvDeNghiHoTroChiPhiHocTap deNghi = new AsAcademyStudentSvDeNghiHoTroChiPhiHocTap
+                            {
+                                PhanHoi = model.PhanHoi,
+                                CreatedTime = now,
+                                DeletedTime = now,
+                                LastModifiedTime = now,
+                                MaXacNhan = model.MaXacNhan,
+                                StudentId = studentID,
+                                StudentCode = currentStudent.Code,
+                                StudentName = currentStudent.FulName,
+                                Status = (int)TrangThaiYeuCau.HoanThanh,
+                                Deleted = false,
+                                CreatedBy = studentID,
+                                LastModifiedBy = studentID,
+                                DeletedBy = -1,
+                                DotDangKy = dotDeNghiActive.Id,
+                                DoiTuongHuong = model.DoiTuongDeNghiHoTro
+                            };
+                            await _deNghiHoTroChiPhiRepository.AddDangKyNhaO(deNghi);
+                            break;
                         default:
                             run = false;
                             break;
@@ -463,6 +527,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     return _veXeBusRepository.GetAll(studentId);
                 case DichVu.DangKyChoO:
                     return _dangKyChoORepository.GetAllDangKyChoO(studentId);
+                case DichVu.XinMienGiamHocPhi:
+                    return _xinMienGiamHocPhiRepository.GetAllDangKyChoO(studentId);
+                case DichVu.DeNghiHoTroChiPhiHocTap:
+                    return _deNghiHoTroChiPhiRepository.GetAllDangKyChoO(studentId);
                 default:
                     break;
             }
@@ -658,7 +726,9 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 { (int)DichVu.UuDaiGiaoDuc, _uuDaiRepository.GetRequestInfo() },
                 { (int)DichVu.VayVonNganHang, _vayVonRepository.GetRequestInfo() },
                 { (int)DichVu.VeBus, _veXeBusRepository.GetRequestInfo() },
-                { (int)DichVu.DangKyChoO, _dangKyChoORepository.GetRequestInfo() }
+                { (int)DichVu.DangKyChoO, _dangKyChoORepository.GetRequestInfo() },
+                { (int)DichVu.XinMienGiamHocPhi, _xinMienGiamHocPhiRepository.GetRequestInfo() },
+                { (int)DichVu.DeNghiHoTroChiPhiHocTap, _deNghiHoTroChiPhiRepository.GetRequestInfo() }
             };
 
             var SumDichVu = new AllTypeDichVuModel
@@ -1093,6 +1163,60 @@ namespace nuce.web.api.Services.Ctsv.Implements
         public async Task DeleteDotDangKyChoO(int id)
         {
             await _dotDangKyChoORepository.Delete(id);
+        }
+        #endregion
+
+        #region Đợt xin miễn giảm hp (riêng)
+        public async Task<AsAcademyStudentSvXinMienGiamHocPhiDot> GetDotXinMienGiamHocPhiActive()
+        {
+            return await _dotXinMienGiamHocPhiRepository.GetDotActive();
+        }
+
+        public async Task<PaginationModel<AsAcademyStudentSvXinMienGiamHocPhiDot>> GetAllDotXinMienGiamHocPhi(int skip = 0, int take = 20)
+        {
+            return await _dotXinMienGiamHocPhiRepository.GetAll(skip, take);
+        }
+
+        public async Task AddDotXinMienGiamHocPhi(AddDotXinMienGiamHocPhi model)
+        {
+            await _dotXinMienGiamHocPhiRepository.Add(model);
+        }
+
+        public async Task UpdateDotXinMienGiamHocPhi(int id, AddDotXinMienGiamHocPhi model)
+        {
+            await _dotXinMienGiamHocPhiRepository.Update(id, model);
+        }
+
+        public async Task DeleteDotXinMienGiamHocPhi(int id)
+        {
+            await _dotXinMienGiamHocPhiRepository.Delete(id);
+        }
+        #endregion
+
+        #region Đợt đề nghị giảm chi phí học tập (riêng)
+        public async Task<AsAcademyStudentSvDeNghiHoTroChiPhiHocTapDot> GetDotDeNghiHoTroChiPhiActive()
+        {
+            return await _dotDeNghiHoTroChiPhiRepository.GetDotActive();
+        }
+
+        public async Task<PaginationModel<AsAcademyStudentSvDeNghiHoTroChiPhiHocTapDot>> GetAllDotDeNghiHoTroChiPhi(int skip = 0, int take = 20)
+        {
+            return await _dotDeNghiHoTroChiPhiRepository.GetAll(skip, take);
+        }
+
+        public async Task AddDotDeNghiHoTroChiPhi(AddDotDeNghiHoTroChiPhi model)
+        {
+            await _dotDeNghiHoTroChiPhiRepository.Add(model);
+        }
+
+        public async Task UpdateDotDeNghiHoTroChiPhi(int id, AddDotDeNghiHoTroChiPhi model)
+        {
+            await _dotDeNghiHoTroChiPhiRepository.Update(id, model);
+        }
+
+        public async Task DeleteDotDeNghiHoTroChiPhi(int id)
+        {
+            await _dotDeNghiHoTroChiPhiRepository.Delete(id);
         }
         #endregion
 

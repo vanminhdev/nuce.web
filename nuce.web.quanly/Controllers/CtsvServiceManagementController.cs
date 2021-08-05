@@ -257,7 +257,7 @@ namespace nuce.web.quanly.Controllers
             });
         }
 
-        #region đợt đăng ký
+        #region đợt đăng ký chỗ ở
         [HttpGet]
         public ActionResult DotDangKyChoO()
         {
@@ -309,6 +309,120 @@ namespace nuce.web.quanly.Controllers
         public async Task<ActionResult> DeleteDotDangKyNhaO(int id)
         {
             string api = $"api/dichVu/admin/dang-ky-cho-o/delete?id={id}";
+            var response = await base.MakeRequestAuthorizedAsync("delete", api);
+            return await HandleApiResponseUpdate(response);
+        }
+        #endregion
+
+        #region đợt xin miễn giảm học phí
+        [HttpGet]
+        public ActionResult DotXinMienGiamHocPhi()
+        {
+            return View("DotXinMienGiamHocPhi");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetAllDotXinMienGiamHocPhi(DataTableRequest request)
+        {
+            string api = "api/DichVu/admin/xin-mien-giam-hoc-phi/get-all";
+            var stringContent = base.MakeContent(request);
+            var response = await base.MakeRequestAuthorizedAsync("post", api, stringContent);
+            return await base.HandleResponseAsync(response,
+                action200Async: async res =>
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var data = JsonConvert.DeserializeObject<DataTableResponse<DotXinMienGiamHocPhiModel>>(jsonString);
+                    return Json(new
+                    {
+                        draw = data.Draw,
+                        recordsTotal = data.RecordsTotal,
+                        recordsFiltered = data.RecordsFiltered,
+                        data = data.Data
+                    });
+                }
+            );
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AddDotXinMienGiamHocPhi(AddDotXinMienGiamHocPhiModel model)
+        {
+            string api = "api/dichVu/admin/xin-mien-giam-hoc-phi/add";
+            var stringContent = base.MakeContent(model);
+            var response = await base.MakeRequestAuthorizedAsync("post", api, stringContent);
+
+            return await HandleApiResponseUpdate(response);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UpdateDotXinMienGiamHocPhi(int id, AddDotXinMienGiamHocPhiModel model)
+        {
+            string api = $"api/dichVu/admin/xin-mien-giam-hoc-phi/update?id={id}";
+            var stringContent = base.MakeContent(model);
+            var response = await base.MakeRequestAuthorizedAsync("put", api, stringContent);
+            return await HandleApiResponseUpdate(response);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> DeleteDotXinMienGiamHocPhi(int id)
+        {
+            string api = $"api/dichVu/admin/xin-mien-giam-hoc-phi/delete?id={id}";
+            var response = await base.MakeRequestAuthorizedAsync("delete", api);
+            return await HandleApiResponseUpdate(response);
+        }
+        #endregion
+
+        #region đợt đề nghị hỗ trợ chi phí
+        [HttpGet]
+        public ActionResult DotDeNghiHoTroChiPhi()
+        {
+            return View("DotDeNghiHoTroChiPhi");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetAllDotDeNghiHoTroChiPhi(DataTableRequest request)
+        {
+            string api = "api/DichVu/admin/de-nghi-ho-tro-chi-phi/get-all";
+            var stringContent = base.MakeContent(request);
+            var response = await base.MakeRequestAuthorizedAsync("post", api, stringContent);
+            return await base.HandleResponseAsync(response,
+                action200Async: async res =>
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var data = JsonConvert.DeserializeObject<DataTableResponse<DotDeNghiHoTroChiPhiModel>>(jsonString);
+                    return Json(new
+                    {
+                        draw = data.Draw,
+                        recordsTotal = data.RecordsTotal,
+                        recordsFiltered = data.RecordsFiltered,
+                        data = data.Data
+                    });
+                }
+            );
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AddDotDeNghiHoTroChiPhi(AddDotDeNghiHoTroChiPhiModel model)
+        {
+            string api = "api/dichVu/admin/de-nghi-ho-tro-chi-phi/add";
+            var stringContent = base.MakeContent(model);
+            var response = await base.MakeRequestAuthorizedAsync("post", api, stringContent);
+
+            return await HandleApiResponseUpdate(response);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UpdateDotDeNghiHoTroChiPhi(int id, AddDotDeNghiHoTroChiPhiModel model)
+        {
+            string api = $"api/dichVu/admin/de-nghi-ho-tro-chi-phi/update?id={id}";
+            var stringContent = base.MakeContent(model);
+            var response = await base.MakeRequestAuthorizedAsync("put", api, stringContent);
+            return await HandleApiResponseUpdate(response);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> DeleteDotDeNghiHoTroChiPhi(int id)
+        {
+            string api = $"api/dichVu/admin/de-nghi-ho-tro-chi-phi/delete?id={id}";
             var response = await base.MakeRequestAuthorizedAsync("delete", api);
             return await HandleApiResponseUpdate(response);
         }

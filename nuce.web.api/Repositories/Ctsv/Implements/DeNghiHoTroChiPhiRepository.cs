@@ -10,9 +10,9 @@ using nuce.web.api.HandleException;
 
 namespace nuce.web.api.Repositories.Ctsv.Implements
 {
-    public class DangKyChoORepository : BaseStudentServiceRepository<AsAcademyStudentSvDangKyChoO>, IDangKyChoORepository
+    public class DeNghiHoTroChiPhiRepository : BaseStudentServiceRepository<AsAcademyStudentSvDeNghiHoTroChiPhiHocTap>, IDeNghiHoTroChiPhiRepository
     {
-        public DangKyChoORepository(CTSVNUCE_DATAContext _context) : base(_context)
+        public DeNghiHoTroChiPhiRepository(CTSVNUCE_DATAContext _context) : base(_context)
         {
         }
 
@@ -21,15 +21,15 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
         /// </summary>
         /// <param name="studentId"></param>
         /// <returns></returns>
-        public IQueryable<AsAcademyStudentSvDangKyChoO> GetAllDangKyChoO(long studentId)
+        public IQueryable<AsAcademyStudentSvDeNghiHoTroChiPhiHocTap> GetAllDangKyChoO(long studentId)
         {
-            var dotActive = _context.AsAcademyStudentSvDangKyChoODot.FirstOrDefault(d => d.IsActive);
+            var dotActive = _context.AsAcademyStudentSvDeNghiHoTroChiPhiHocTapDot.FirstOrDefault(d => d.IsActive);
             long dotDangKy = 0;
             if (dotActive != null)
             {
                 dotDangKy = dotActive.Id;
             }
-            return _context.AsAcademyStudentSvDangKyChoO.AsNoTracking()
+            return _context.AsAcademyStudentSvDeNghiHoTroChiPhiHocTap.AsNoTracking()
                     .Where(item => item.StudentId == studentId && item.DotDangKy == dotDangKy && (item.Deleted != null || !item.Deleted.Value))
                     .OrderByDescending(item => item.LastModifiedTime)
                     .AsQueryable();
@@ -40,9 +40,9 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public async Task AddDangKyNhaO(AsAcademyStudentSvDangKyChoO model)
+        public async Task AddDangKyNhaO(AsAcademyStudentSvDeNghiHoTroChiPhiHocTap model)
         {
-            var dotActive = await _context.AsAcademyStudentSvDangKyChoODot.FirstOrDefaultAsync(d => d.IsActive);
+            var dotActive = await _context.AsAcademyStudentSvDeNghiHoTroChiPhiHocTapDot.FirstOrDefaultAsync(d => d.IsActive);
             if (dotActive == null)
             {
                 throw new RecordNotFoundException("Không có đợt đăng ký");
@@ -53,20 +53,20 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
                 throw new Exception("Ngoài thời gian đăng ký");
             }
 
-            if (_context.AsAcademyStudentSvDangKyChoO.Any(dk =>dk.StudentCode == model.StudentCode && dk.DotDangKy == dotActive.Id))
+            if (_context.AsAcademyStudentSvDeNghiHoTroChiPhiHocTap.Any(dk =>dk.StudentCode == model.StudentCode && dk.DotDangKy == dotActive.Id))
             {
                 throw new Exception("Đã đăng ký trong đợt hiện tại, không thể đăng ký thêm");
             }
 
-            await _context.AsAcademyStudentSvDangKyChoO.AddAsync(model);
+            await _context.AsAcademyStudentSvDeNghiHoTroChiPhiHocTap.AddAsync(model);
         }
 
-        public async Task<IEnumerable<YeuCauDichVuStudentModel<AsAcademyStudentSvDangKyChoO>>> GetAllYeuCauDichVuTheoDot(long dotDangKy)
+        public async Task<IEnumerable<YeuCauDichVuStudentModel<AsAcademyStudentSvDeNghiHoTroChiPhiHocTap>>> GetAllYeuCauDichVuTheoDot(long dotDangKy)
         {
             var year = _context.AsAcademyYear.AsNoTracking().AsEnumerable()
                             .OrderByDescending(yr => yr.Id)
                             .FirstOrDefault(yr => (yr.Enabled ?? false) || (yr.IsCurrent ?? false));
-            var joinStudent = (await _context.Set<AsAcademyStudentSvDangKyChoO>().AsNoTracking().Where(dk => dk.DotDangKy == dotDangKy).ToListAsync())
+            var joinStudent = (await _context.Set<AsAcademyStudentSvDeNghiHoTroChiPhiHocTap>().AsNoTracking().Where(dk => dk.DotDangKy == dotDangKy).ToListAsync())
                         .Join(_context.AsAcademyStudent.AsNoTracking(),
                                 e => getValueString(e, "StudentId"),
                                 student => student.Id.ToString(),
@@ -97,7 +97,7 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
             var test4 = joinNganh.Count();
 #endif
             var result = joinNganh.SelectMany(o => o.academics.DefaultIfEmpty(), 
-                (r, academic) => new YeuCauDichVuStudentModel<AsAcademyStudentSvDangKyChoO>
+                (r, academic) => new YeuCauDichVuStudentModel<AsAcademyStudentSvDeNghiHoTroChiPhiHocTap>
                 {
                     Year = year,
                     Student = r.tmp.student,
@@ -109,9 +109,9 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
             return result;
         }
 
-        public async Task<GetAllForAdminResponseRepo<AsAcademyStudentSvDangKyChoO>> GetAllForAdminDangKyChoO(QuanLyDichVuDetailModel model)
+        public async Task<GetAllForAdminResponseRepo<AsAcademyStudentSvDeNghiHoTroChiPhiHocTap>> GetAllForAdminDangKyChoO(QuanLyDichVuDetailModel model)
         {
-            var dotActive = await _context.AsAcademyStudentSvDangKyChoODot.FirstOrDefaultAsync(d => d.IsActive);
+            var dotActive = await _context.AsAcademyStudentSvDeNghiHoTroChiPhiHocTapDot.FirstOrDefaultAsync(d => d.IsActive);
             long dotActiveId = 0;
             if (dotActive != null)
             {
@@ -121,7 +121,7 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
             dtCompare = dtCompare.AddDays(-1 * model.DayRange);
             model.SearchText = model.SearchText?.Trim()?.ToLower();
 
-            var beforeFilteredData = (await _context.AsAcademyStudentSvDangKyChoO.AsNoTracking().ToListAsync())
+            var beforeFilteredData = (await _context.AsAcademyStudentSvDeNghiHoTroChiPhiHocTap.AsNoTracking().ToListAsync())
                                         .Where(item => item.DotDangKy == dotActiveId && item.Status > 1 && (item.Deleted == null || !item.Deleted.Value));
 
             var finalData = beforeFilteredData
@@ -135,7 +135,7 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
                                         DateTime.Parse(getValueString(item, "LastModifiedTime")) >= dtCompare)
                         .OrderBy(r => r.Status)
                         .ThenByDescending(r => r.LastModifiedTime);
-            return new GetAllForAdminResponseRepo<AsAcademyStudentSvDangKyChoO>
+            return new GetAllForAdminResponseRepo<AsAcademyStudentSvDeNghiHoTroChiPhiHocTap>
             {
                 FinalData = finalData.AsQueryable()
             };

@@ -17,7 +17,9 @@ namespace nuce.web.api.Common
             VayVonNganHang = 6,
             ThueNha = 7,
             VeBus = 8,
-            DangKyChoO = 9
+            DangKyChoO = 9,
+            XinMienGiamHocPhi = 10,
+            DeNghiHoTroChiPhiHocTap = 11
         }
 
         public enum TrangThaiYeuCau
@@ -49,6 +51,26 @@ namespace nuce.web.api.Common
             public static readonly List<string> All = new List<string> { NHOM_1, NHOM_2 };
         }
 
+        public class DoiTuongXinMienGiamHocPhi
+        {
+            public const string CO_CONG_CACH_MANG = "CO_CONG_CACH_MANG";
+            public const string SV_VAN_BANG_1 = "SV_VAN_BANG_1";
+            public const string TAN_TAT_KHO_KHAN_KINH_TE = "TAN_TAT_KHO_KHAN_KINH_TE";
+            public const string DAN_TOC_HO_NGHEO = "DAN_TOC_HO_NGHEO";
+            public const string DAN_TOC_IT_NGUOI_VUNG_KHO_KHAN = "DAN_TOC_IT_NGUOI_VUNG_KHO_KHAN";
+            public const string DAN_TOC_VUNG_KHO_KHAN = "DAN_TOC_VUNG_KHO_KHAN";
+            public const string CHA_ME_TAI_NAN_DUOC_TRO_CAP = "CHA_ME_TAI_NAN_DUOC_TRO_CAP";
+            public static readonly List<string> All = new List<string> { CO_CONG_CACH_MANG, SV_VAN_BANG_1, TAN_TAT_KHO_KHAN_KINH_TE,
+                DAN_TOC_HO_NGHEO, DAN_TOC_IT_NGUOI_VUNG_KHO_KHAN, DAN_TOC_VUNG_KHO_KHAN, CHA_ME_TAI_NAN_DUOC_TRO_CAP };
+        }
+
+        public class DoiTuongDeNghiHoTroChiPhi
+        {
+            public const string DAN_TOC_HO_NGHEO = "DAN_TOC_HO_NGHEO";
+            public const string DAN_TOC_HO_CAN_NGHEO = "DAN_TOC_HO_CAN_NGHEO";
+            public static readonly List<string> All = new List<string> { DAN_TOC_HO_NGHEO, DAN_TOC_HO_CAN_NGHEO };
+        }
+
         public static Dictionary<int, DichVuStructure> DichVuDictionary = new Dictionary<int, DichVuStructure>
         {
             { 1, new DichVuStructure { ID = 1, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ xin giấy xác nhận sinh viên", TenDichVu = "dịch vụ xin giấy xác nhận sinh viên", TinNhanCode = "XAC_NHAN", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_XAC_NHAN" } },
@@ -59,7 +81,9 @@ namespace nuce.web.api.Common
             { 6, new DichVuStructure { ID = 6, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ vay vốn ngân hàng chính sách - xã hội", TenDichVu = "dịch vụ vay vốn ngân hàng chính sách - xã hội", TinNhanCode = "VAY_VON", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_XAC_NHAN_VAY_VON" } },
             { 7, new DichVuStructure { ID = 7, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ thuê ký túc xá Pháp Vân - Tứ Hiệp", TenDichVu = "dịch vụ thuê ký túc xá Pháp Vân - Tứ Hiệp", TinNhanCode = "THUE_KTX", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_THUE_KTX" } },
             { 8, new DichVuStructure { ID = 8, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ làm vé tháng xe bus", TenDichVu = "dịch vụ làm vé tháng xe bus", TinNhanCode = "VE_XE_BUS", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_VE_XE_BUS" } },
-            { 9, new DichVuStructure { ID = 9, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ đăng ký chỗ ở", TenDichVu = "dịch vụ đăng ký chỗ ở", TinNhanCode = "DANG_KY_CHO_O", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_DANG_KY_CHO_O" } }
+            { 9, new DichVuStructure { ID = 9, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ đăng ký chỗ ở", TenDichVu = "dịch vụ đăng ký chỗ ở", TinNhanCode = "DANG_KY_CHO_O", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_DANG_KY_CHO_O" } },
+            { 10, new DichVuStructure { ID = 10, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ xin miễn giảm học phí", TenDichVu = "xin miễn giảm học phí", TinNhanCode = "XIN_MIEN_GIAM_HOC_PHI", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_XIN_MIEN_GIAM_HOC_PHI" } },
+            { 11, new DichVuStructure { ID = 11, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ đề nghị hỗ trợ chi phí học tập", TenDichVu = "đề nghị hỗ trợ chi phí học tập", TinNhanCode = "DE_NGHI_HO_TRO_CHI_PHI_HOC_TAP", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_DE_NGHI_HO_TRO_CHI_PHI_HOC_TAP" } }
         };
 
         public static Dictionary<int, string> TrangThaiYeuCauDictionary = new Dictionary<int, string>

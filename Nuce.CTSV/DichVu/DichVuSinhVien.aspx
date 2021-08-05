@@ -144,26 +144,12 @@
                     href="/dichvu/miengiamhocphi.aspx"
                     class="row justify-content-center">
                     <img
-                        src="/Data/icons/dich-vu-ho-tro.jpg"
+                        src="/Data/icons/dang_ky_cho_o.jpg"
                         alt="service"
                         class="service-avatar col-10"/>
                     <div
                         class="col-10 mt-2 text-center text-uppercase main-color fw-600 font-14-sm font-18-md font-18 title-service">
-                        Xin miễn giảm học phí
-                    </div>
-                </a>
-            </div>
-            <div class="col-12 col-md-4 service-avatar-wrp cursor-pointer">
-                <a
-                    href="/dichvu/denghihotrochiphihoctap.aspx"
-                    class="row justify-content-center">
-                    <img
-                        src="/Data/icons/dich-vu-ho-tro.jpg"
-                        alt="service"
-                        class="service-avatar col-10"/>
-                    <div
-                        class="col-10 mt-2 text-center text-uppercase main-color fw-600 font-14-sm font-18-md font-18 title-service">
-                        Đề nghị hỗ trợ chi phí học tập
+                        Miễn giảm học phí
                     </div>
                 </a>
             </div>

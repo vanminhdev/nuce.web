@@ -160,4 +160,36 @@ namespace nuce.web.quanly.Models
         public DateTime TuNgay { get; set; }
         public DateTime DenNgay { get; set; }
     }
+
+    public class AddDotXinMienGiamHocPhiModel
+    {
+        public string Name { get; set; }
+        public DateTime? TuNgay { get; set; }
+        public DateTime? DenNgay { get; set; }
+    }
+
+    public class DotXinMienGiamHocPhiModel
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime TuNgay { get; set; }
+        public DateTime DenNgay { get; set; }
+    }
+
+    public class AddDotDeNghiHoTroChiPhiModel
+    {
+        public string Name { get; set; }
+        public DateTime? TuNgay { get; set; }
+        public DateTime? DenNgay { get; set; }
+    }
+
+    public class DotDeNghiHoTroChiPhiModel
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime TuNgay { get; set; }
+        public DateTime DenNgay { get; set; }
+    }
 }

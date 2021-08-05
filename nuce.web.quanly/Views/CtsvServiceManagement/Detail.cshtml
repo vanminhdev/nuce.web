@@ -68,12 +68,38 @@
             @if ((int)ViewData["id"] == 9)
             {
                 <div class="col-sm-4" style="text-align: right">
-                    <button type="button" class="btn btn-primary" 
-                            onclick="dotDangKyChoO()">
+                    <button type="button" class="btn btn-primary"
+                            onclick="danhSachDotDangKy()">
                         Đợt đăng ký chỗ ở
                     </button>
                     <button type="button" class="btn btn-success"
-                            onclick="onExportExcelDangKyChoO()">
+                            onclick="onExportExcelDotDangKy()">
+                        Excel
+                    </button>
+                </div>
+            }
+            else if ((int)ViewData["id"] == 10)
+            {
+                <div class="col-sm-4" style="text-align: right">
+                    <button type="button" class="btn btn-primary"
+                            onclick="danhSachDotDangKy()">
+                        Đợt xin miễn giảm học phí
+                    </button>
+                    <button type="button" class="btn btn-success"
+                            onclick="onExportExcelDotDangKy()">
+                        Excel
+                    </button>
+                </div>
+            }
+            else if ((int)ViewData["id"] == 11)
+            {
+                <div class="col-sm-4" style="text-align: right">
+                    <button type="button" class="btn btn-primary"
+                            onclick="danhSachDotDangKy()">
+                        Đợt đề nghị hỗ trợ chi phí học tập
+                    </button>
+                    <button type="button" class="btn btn-success"
+                            onclick="onExportExcelDotDangKy()">
                         Excel
                     </button>
                 </div>
@@ -366,6 +392,14 @@
                 name: 'đăng ký chỗ ở',
                 key: 'DANG_KY_CHO_O',
             },
+            10: {
+                name: 'xin miễn giảm học phí',
+                key: 'XIN_MIEN_GIAM_HOC_PHI',
+            },
+            11: {
+                name: 'đề nghị hỗ trợ chi phí học tập',
+                key: 'DE_NGHI_HO_TRO_CHI_PHI',
+            },
         };
         var templateStatus = {
             2: 'text-warning',
@@ -587,6 +621,12 @@
                     result += `<div>Nơi nhận thẻ: ${dichVu.noiNhanThe}</div>`;
                     break;
                 case dichVuEnum.DANG_KY_CHO_O:
+                    result += `<div></div>`;
+                    break;
+                case dichVuEnum.XIN_MIEN_GIAM_HOC_PHI:
+                    result += `<div></div>`;
+                    break;
+                case dichVuEnum.DE_NGHI_HO_TRO_CHI_PHI:
                     result += `<div></div>`;
                     break;
                 default:
@@ -906,12 +946,20 @@
             }, 'xlsx');
         }
 
-        var dotDangKyChoO = function () {
-            window.location = `/CtsvServiceManagement/DotDangKyChoO`;
+        var danhSachDotDangKy = function () {
+            if (serviceType == 9) {
+                window.location = `/CtsvServiceManagement/DotDangKyChoO`;
+            }
+            else if (serviceType == 10) {
+                window.location = `/CtsvServiceManagement/DotXinMienGiamHocPhi`;
+            }
+            else if (serviceType == 11) {
+                window.location = `/CtsvServiceManagement/DotDeNghiHoTroChiPhi`;
+            }
         }
 
         //mặc định tin tất trong đợt đăng ký mới nhất
-        var onExportExcelDangKyChoO = function () {
+        var onExportExcelDotDangKy = function () {
             callApiExport({
                 DichVuList: [],
                 ExportType: 'excel',

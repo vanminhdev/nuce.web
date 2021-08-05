@@ -56,6 +56,14 @@ namespace nuce.web.api.ViewModel.Ctsv
         /// nhà ở
         /// </summary>
         public string DoiTuongUuTienNhaO { get; set; }
+        /// <summary>
+        /// xin miễn giảm học phí
+        /// </summary>
+        public string DoiTuongHuongMienGiam { get; set; }
+        /// <summary>
+        /// đề nghị hỗ trợ chi phí học tập
+        /// </summary>
+        public string DoiTuongDeNghiHoTro { get; set; }
     }
 
     public class AllTypeDichVuModel
@@ -162,6 +170,26 @@ namespace nuce.web.api.ViewModel.Ctsv
     }
 
     public class AddDotDangKyChoOModel
+    {
+        [Required(ErrorMessage = "Tên không được để trống")]
+        public string Name { get; set; }
+        [Required(ErrorMessage = "Từ ngày không được để trống")]
+        public DateTime? TuNgay { get; set; }
+        [Required(ErrorMessage = "Đến ngày không được để trống")]
+        public DateTime? DenNgay { get; set; }
+    }
+
+    public class AddDotXinMienGiamHocPhi
+    {
+        [Required(ErrorMessage = "Tên không được để trống")]
+        public string Name { get; set; }
+        [Required(ErrorMessage = "Từ ngày không được để trống")]
+        public DateTime? TuNgay { get; set; }
+        [Required(ErrorMessage = "Đến ngày không được để trống")]
+        public DateTime? DenNgay { get; set; }
+    }
+
+    public class AddDotDeNghiHoTroChiPhi
     {
         [Required(ErrorMessage = "Tên không được để trống")]
         public string Name { get; set; }

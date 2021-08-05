@@ -248,7 +248,7 @@ namespace nuce.web.api.Controllers.Ctsv
             return new FileStreamResult(new MemoryStream(result), "application/octet-stream");
         }
 
-
+        #region đợt đăng ký chỗ ở
         [Authorize(Roles = "P_CTSV")]
         [HttpPost]
         [Route("admin/dang-ky-cho-o/get-all")]
@@ -315,5 +315,144 @@ namespace nuce.web.api.Controllers.Ctsv
                 return BadRequest(new ResponseBody { StatusCode = HttpStatusCode.BadRequest, Message = ex.Message, Data = ex });
             }
         }
+        #endregion
+
+        #region đợt xin miễn giảm học phí
+        [Authorize(Roles = "P_CTSV")]
+        [HttpPost]
+        [Route("admin/xin-mien-giam-hoc-phi/get-all")]
+        public async Task<IActionResult> AllDotXinMienGiamHocPhi([FromBody] DataTableRequest request)
+        {
+            var skip = request.Start;
+            var take = request.Length;
+            var result = await _dichVuService.GetAllDotXinMienGiamHocPhi(skip, take);
+            return Ok(
+                new DataTableResponse<AsAcademyStudentSvXinMienGiamHocPhiDot>
+                {
+                    Draw = ++request.Draw,
+                    RecordsTotal = result.RecordsTotal,
+                    RecordsFiltered = result.RecordsFiltered,
+                    Data = result.Data
+                }
+            );
+        }
+
+        [Authorize(Roles = "P_CTSV")]
+        [HttpPost]
+        [Route("admin/xin-mien-giam-hoc-phi/add")]
+        public async Task<IActionResult> AddDotXinMienGiamHocPhi([FromBody] AddDotXinMienGiamHocPhi model)
+        {
+            try
+            {
+                await _dichVuService.AddDotXinMienGiamHocPhi(model);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { StatusCode = HttpStatusCode.BadRequest, Message = ex.Message, Data = ex });
+            }
+        }
+
+        [Authorize(Roles = "P_CTSV")]
+        [HttpPut]
+        [Route("admin/xin-mien-giam-hoc-phi/update")]
+        public async Task<IActionResult> UpdateXinMienGiamHocPhi(int id, [FromBody] AddDotXinMienGiamHocPhi model)
+        {
+            try
+            {
+                await _dichVuService.UpdateDotXinMienGiamHocPhi(id, model);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { StatusCode = HttpStatusCode.BadRequest, Message = ex.Message, Data = ex });
+            }
+        }
+
+        [Authorize(Roles = "P_CTSV")]
+        [HttpDelete]
+        [Route("admin/xin-mien-giam-hoc-phi/delete")]
+        public async Task<IActionResult> DeleteXinMienGiamHocPhi(int id)
+        {
+            try
+            {
+                await _dichVuService.DeleteDotXinMienGiamHocPhi(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { StatusCode = HttpStatusCode.BadRequest, Message = ex.Message, Data = ex });
+            }
+        }
+        #endregion
+
+        #region đợt đề nghị giảm chi phí
+        [Authorize(Roles = "P_CTSV")]
+        [HttpPost]
+        [Route("admin/de-nghi-ho-tro-chi-phi/get-all")]
+        public async Task<IActionResult> GetAllDotDeNghiHoTroChiPhi([FromBody] DataTableRequest request)
+        {
+            var skip = request.Start;
+            var take = request.Length;
+            var result = await _dichVuService.GetAllDotDeNghiHoTroChiPhi(skip, take);
+            return Ok(
+                new DataTableResponse<AsAcademyStudentSvDeNghiHoTroChiPhiHocTapDot>
+                {
+                    Draw = ++request.Draw,
+                    RecordsTotal = result.RecordsTotal,
+                    RecordsFiltered = result.RecordsFiltered,
+                    Data = result.Data
+                }
+            );
+        }
+
+        [Authorize(Roles = "P_CTSV")]
+        [HttpPost]
+        [Route("admin/de-nghi-ho-tro-chi-phi/add")]
+        public async Task<IActionResult> AddDotDeNghiHoTroChiPhi([FromBody] AddDotDeNghiHoTroChiPhi model)
+        {
+            try
+            {
+                await _dichVuService.AddDotDeNghiHoTroChiPhi(model);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { StatusCode = HttpStatusCode.BadRequest, Message = ex.Message, Data = ex });
+            }
+        }
+
+        [Authorize(Roles = "P_CTSV")]
+        [HttpPut]
+        [Route("admin/de-nghi-ho-tro-chi-phi/update")]
+        public async Task<IActionResult> UpdateDeNghiHoTroChiPhi(int id, [FromBody] AddDotDeNghiHoTroChiPhi model)
+        {
+            try
+            {
+                await _dichVuService.UpdateDotDeNghiHoTroChiPhi(id, model);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { StatusCode = HttpStatusCode.BadRequest, Message = ex.Message, Data = ex });
+            }
+        }
+
+        [Authorize(Roles = "P_CTSV")]
+        [HttpDelete]
+        [Route("admin/de-nghi-ho-tro-chi-phi/delete")]
+        public async Task<IActionResult> DeleteDeNghiHoTroChiPhi(int id)
+        {
+            try
+            {
+                await _dichVuService.DeleteDotDeNghiHoTroChiPhi(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { StatusCode = HttpStatusCode.BadRequest, Message = ex.Message, Data = ex });
+            }
+        }
+        #endregion
     }
 }

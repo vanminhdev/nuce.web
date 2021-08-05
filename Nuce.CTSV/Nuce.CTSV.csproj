@@ -145,6 +145,9 @@
   <ItemGroup>
     <Content Include="CapNhatHoSoDayDu.aspx" />
     <Content Include="Default1.aspx" />
+    <Content Include="DichVu\MienGiamHocPhi.aspx" />
+    <Content Include="DichVu\MienGiamHocPhi_YeuCauMoi.aspx" />
+    <Content Include="DichVu\DichVuSinhVien.aspx" />
     <Content Include="DichVu\VayVonNganHang.aspx" />
     <Content Include="DichVu\VayVonNganHang_YeuCauMoi.aspx" />
     <Content Include="DichVu\ThueNhaSinhVien.aspx" />
@@ -2394,6 +2397,27 @@
     </Compile>
     <Compile Include="Default1.aspx.designer.cs">
       <DependentUpon>Default1.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="DichVu\MienGiamHocPhi.aspx.cs">
+      <DependentUpon>MienGiamHocPhi.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DichVu\MienGiamHocPhi.aspx.designer.cs">
+      <DependentUpon>MienGiamHocPhi.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="DichVu\MienGiamHocPhi_YeuCauMoi.aspx.cs">
+      <DependentUpon>MienGiamHocPhi_YeuCauMoi.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DichVu\MienGiamHocPhi_YeuCauMoi.aspx.designer.cs">
+      <DependentUpon>MienGiamHocPhi_YeuCauMoi.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="DichVu\DichVuSinhVien.aspx.cs">
+      <DependentUpon>DichVuSinhVien.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DichVu\DichVuSinhVien.aspx.designer.cs">
+      <DependentUpon>DichVuSinhVien.aspx</DependentUpon>
     </Compile>
     <Compile Include="DichVu\VayVonNganHang.aspx.cs">
       <DependentUpon>VayVonNganHang.aspx</DependentUpon>

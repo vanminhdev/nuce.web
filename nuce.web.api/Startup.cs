@@ -277,6 +277,12 @@ namespace nuce.web.api
             services.AddScoped<IVeXeBusRepository, VeXeBusRepository>();
             services.AddScoped<IDangKyChoORepository, DangKyChoORepository>();
             services.AddScoped<IDotDangKyChoORepository, DotDangKyChoORepository>();
+
+            services.AddScoped<IXinMienGiamHocPhiRepository, XinMienGiamHocPhiRepository>();
+            services.AddScoped<IDotXinMienGiamHocPhiRepository, DotXinMienGiamHocPhiRepository>();
+            services.AddScoped<IDeNghiHoTroChiPhiRepository, DeNghiHoTroChiPhiRepository>();
+            services.AddScoped<IDotDeNghiHoTroChiPhiRepository, DotDeNghiHoTroChiPhiRepository>();
+
             services.AddScoped<ICapLaiTheRepository, CapLaiTheRepository>();
             services.AddScoped<IMuonHocBaRepository, MuonHocBaRepository>();
 

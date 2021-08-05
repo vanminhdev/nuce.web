@@ -1,0 +1,311 @@
+﻿@using System.Configuration;
+
+@{
+    ViewBag.Title = "Đợt xin miễn giảm học phí";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    @@media only screen and (min-width: 1025px) {
+        .search-bar-wrp input {
+            padding: 16px 8px;
+        }
+    }
+
+    @@media only screen and (min-width: 1025px) {
+        .main-content-wrp {
+            margin-top: 0;
+        }
+    }
+
+    .checkbox-select {
+        cursor: pointer;
+    }
+
+    .search-icon-wrapper {
+        padding: 3px 8px;
+    }
+</style>
+<div class="row main-content-wrp ml-0 mr-0">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-12">
+                <a class="update-btn text-light p-2 mb-3"
+                   style="text-decoration: none; display: inline-block"
+                   href="/ctsvservicemanagement/detail?id=10">← Quay lại danh sách</a>
+                <div class="main-color text-uppercase font-15-sm fw-600 font-25 service-title">
+                    đợt xin miễn giảm học phí
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4 search-bar-wrp mb-3">
+            </div>
+            <div class="col-4">
+            </div>
+            <div class="col-sm-4" style="text-align: right">
+                <button type="button" class="btn btn-success"
+                        onclick="dotDangKy.onCreate()">
+                    Thêm đợt
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <table id="dot-dang-ky-datatable" data-page-length='25' class="table m-table-no-border-y">
+                    <thead>
+                        <tr>
+                            <th>
+                                Tên đợt
+                            </th>
+                            <th width="330px">
+                                Từ ngày
+                            </th>
+                            <th width="330px">
+                                Đến ngày
+                            </th>
+                            <th width="200px">
+                                Trạng thái
+                            </th>
+                            <th width="300px">
+                                Thao tác
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <!-- Modal create -->
+        <div id="modal-create" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="title-modal-create">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="form-create" class="auto-validate">
+                            <div class="form-group">
+                                <label>Tên đợt <span class="text-danger">*</span></label>
+                                <input id="name" type="text" class="form-control" name="Name" placeholder="Tên đợt" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Từ ngày <span class="text-danger">*</span></label>
+                                <input id="tuNgay" type="date" class="form-control" name="TuNgay" placeholder="Từ ngày" required
+                                       data-rule-dateLessThanOrEqual="#denNgay">
+                            </div>
+                            <div class="form-group">
+                                <label>Đến ngày <span class="text-danger">*</span></label>
+                                <input id="denNgay" type="date" class="form-control" name="DenNgay" placeholder="Đến ngày" required
+                                       data-rule-dateGreaterThanOrEqual="#tuNgay">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-primary" id="btn-save-create">Lưu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal delete -->
+        <div id="modal-delete" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Xóa đợt đăng ký</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Bạn chắc chắn muốn xóa?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-primary" id="btn-delete">Xóa</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <link href="~/content/css/bootstrap-datepicker3.min.css" rel="stylesheet" />
+    <script src="~/content/js/jquery.dataTables.min.js"></script>
+    <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/content/js/dataTables.config.js"></script>
+    <script src="~/content/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/content/js/bootstrap-datepicker.vi.min.js"></script>
+    <script>
+        const dotDangKy = {
+            dataTable: {},
+            initDataTable: () => {
+                dotDangKy.dataTable = $('#dot-dang-ky-datatable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ordering: false,
+                    lengthChange: false,
+                    stateSave: true,
+                    searching: false,
+                    language: dataTableConfig.language,
+                    ajax: {
+                        url: '/CtsvServiceManagement/GetAllDotXinMienGiamHocPhi',
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        type: 'POST',
+                        data: function (d) {
+                            return JSON.stringify(d);
+                        },
+                        dataSrc: function (json) {
+                            return json.data;
+                        }
+                    },
+                    columns: [
+                        {
+                            data: 'Name',
+                        },
+                        {
+                            data: null,
+                            mRender: function (data, type, row) {
+                                return getDateStringFromServerType(data.TuNgay);
+                            }
+                        },
+                        {
+                            data: null,
+                            mRender: function (data, type, row) {
+                                return getDateStringFromServerType(data.DenNgay);
+                            }
+                        },
+                        {
+                            data: null,
+                            mRender: function (data, type, row) {
+                                if (data.IsActive) {
+                                    return '<div class="text-primary">Hiện tại<div>';
+                                }
+                                return '<div class="text-secondary">Kết thúc<div>';
+                            }
+                        },
+                        {
+                            data: null,
+                            mRender: function (data, type, row) {
+                                console.log(data);
+                                data.TuNgay = getDateStringFromServerType(data.TuNgay);
+                                data.DenNgay = getDateStringFromServerType(data.DenNgay);
+                                let html = '';
+                                html += "<button class='btn btn btn-outline-success mr-2' title='sửa' onclick='dotDangKy.onUpdate(" + JSON.stringify(data) + ")'>Sửa</button>";
+                                if (!data.IsActive) {
+                                    html += `<button class="btn btn btn-outline-danger" title="xóa" onclick="dotDangKy.onDelete(${data.Id})">Xoá</button>`;
+                                }
+                                return html;
+                            }
+                        }
+                    ]
+                });
+            },
+            onCreate: () => {
+                $('#form-create').trigger("reset");
+                $('#title-modal-create').html("Thêm đợt");
+                $('#modal-create').modal('show');
+                $('#btn-save-create').off();
+                $('#btn-save-create').click(() => {
+                    if (!$('#form-create').valid()) {
+                        return;
+                    }
+                    $.ajax({
+                        dataType: 'json',
+                        method: 'Post',
+                        url: '/CtsvServiceManagement/AddDotXinMienGiamHocPhi',
+                        data: $('#form-create').serializeArray(),
+                        timeout: 0,
+                        complete: () => { }
+                    }).done(function (res) {
+                        $('#loading-screen').hide();
+                        if (res.StatusCode === 200) {
+                            toastSuccess('thêm thành công');
+                            dotDangKy.dataTable.ajax.reload();
+                            $('#modal-create').modal('hide');
+                        }
+                        else {
+                            toastError(res.Message);
+                            console.log(res);
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        toastError('Có lỗi xảy ra');
+                        console.log(textStatus + ': ' + errorThrown);
+                        console.log(jqXHR);
+                    });
+                });
+            },
+            onUpdate: (data) => {
+                $('#title-modal-create').html("Sửa đợt");
+                fillFormData("#form-create", data);
+                $('#modal-create').modal('show');
+                $('#btn-save-create').off();
+                $('#btn-save-create').click(() => {
+                    if (!$('#form-create').valid()) {
+                        return;
+                    }
+                    $.ajax({
+                        dataType: 'json',
+                        method: 'Post',
+                        url: '/CtsvServiceManagement/UpdateDotXinMienGiamHocPhi?id=' + data.Id,
+                        data: $('#form-create').serializeArray(),
+                        timeout: 0,
+                        complete: () => { }
+                    }).done(function (res) {
+                        $('#loading-screen').hide();
+                        if (res.StatusCode === 200) {
+                            toastSuccess('cập nhật thành công');
+                            dotDangKy.dataTable.ajax.reload();
+                            $('#modal-create').modal('hide');
+                        }
+                        else {
+                            toastError(res.Message);
+                            console.log(res);
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        toastError('Có lỗi xảy ra');
+                        console.log(textStatus + ': ' + errorThrown);
+                        console.log(jqXHR);
+                    });
+                });
+            },
+            onDelete: (id) => {
+                $('#modal-delete').modal('show');
+                $('#btn-delete').off();
+                $('#btn-delete').click(() => {
+                    $.ajax({
+                        dataType: 'json',
+                        method: 'Post',
+                        url: '/CtsvServiceManagement/DeleteDotXinMienGiamHocPhi?id=' + id,
+                        timeout: 0,
+                    }).done(function (res) {
+                        if (res.StatusCode === 200) {
+                            toastSuccess('xóa thành công');
+                            dotDangKy.dataTable.ajax.reload();
+                            $('#modal-delete').modal('hide');
+                        }
+                        else {
+                            toastError(res.Message);
+                            console.log(res);
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        toastError('Có lỗi xảy ra');
+                        console.log(textStatus + ': ' + errorThrown);
+                        console.log(jqXHR);
+                    });
+                });
+            },
+            init: () => {
+                dotDangKy.initDataTable();
+            }
+        };
+        dotDangKy.init();
+    </script>
+}
