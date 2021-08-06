@@ -474,7 +474,8 @@ namespace Nuce.CTSV.ApiModels
         ThueNha = 7,
         VeXeBus = 8,
         DangKyChoO = 9,
-        MienGiamHocPhi = 10
+        MienGiamHocPhi = 10,
+        DeNghiHoTroChiPhiHocTap = 11
     }
 
     public enum DichVuXeBusLoaiTuyen

@@ -40,22 +40,22 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public async Task AddDangKyNhaO(AsAcademyStudentSvXinMienGiamHocPhi model)
+        public async Task AddDangKy(AsAcademyStudentSvXinMienGiamHocPhi model)
         {
             var dotActive = await _context.AsAcademyStudentSvXinMienGiamHocPhiDot.FirstOrDefaultAsync(d => d.IsActive);
             if (dotActive == null)
             {
-                throw new RecordNotFoundException("Không có đợt đăng ký");
+                throw new RecordNotFoundException("Không có đợt được mở");
             }
 
             if (DateTime.Now > dotActive.DenNgay)
             {
-                throw new Exception("Ngoài thời gian đăng ký");
+                throw new Exception("Ngoài thời gian yêu cầu");
             }
 
             if (_context.AsAcademyStudentSvXinMienGiamHocPhi.Any(dk =>dk.StudentCode == model.StudentCode && dk.DotDangKy == dotActive.Id))
             {
-                throw new Exception("Đã đăng ký trong đợt hiện tại, không thể đăng ký thêm");
+                throw new Exception("Đã yêu cầu trong đợt hiện tại, không thể gửi thêm");
             }
 
             await _context.AsAcademyStudentSvXinMienGiamHocPhi.AddAsync(model);

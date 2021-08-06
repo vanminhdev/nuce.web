@@ -232,6 +232,16 @@ namespace nuce.web.api.Controllers.Ctsv
                 var dotDangKy = await _dichVuService.GetDotDangKyChoOActive();
                 result = await _dichVuService.ExportExcelAsync(model.DichVuType, model.DichVuList, dotDangKy.Id);
             }
+            else if (model.DichVuType == Common.Ctsv.DichVu.XinMienGiamHocPhi)
+            {
+                var dotDangKy = await _dichVuService.GetDotXinMienGiamHocPhiActive();
+                result = await _dichVuService.ExportExcelAsync(model.DichVuType, model.DichVuList, dotDangKy.Id);
+            }
+            else if (model.DichVuType == Common.Ctsv.DichVu.DeNghiHoTroChiPhiHocTap)
+            {
+                var dotDangKy = await _dichVuService.GetDotDeNghiHoTroChiPhiActive();
+                result = await _dichVuService.ExportExcelAsync(model.DichVuType, model.DichVuList, dotDangKy.Id);
+            }
             else
             {
                 result = await _dichVuService.ExportExcelAsync(model.DichVuType, model.DichVuList);

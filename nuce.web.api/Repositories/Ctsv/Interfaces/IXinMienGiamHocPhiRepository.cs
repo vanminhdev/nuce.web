@@ -11,7 +11,7 @@ namespace nuce.web.api.Repositories.Ctsv.Interfaces
     {
         Task<GetAllForAdminResponseRepo<AsAcademyStudentSvXinMienGiamHocPhi>> GetAllForAdminDangKyChoO(QuanLyDichVuDetailModel model);
         IQueryable<AsAcademyStudentSvXinMienGiamHocPhi> GetAllDangKyChoO(long studentId);
-        Task AddDangKyNhaO(AsAcademyStudentSvXinMienGiamHocPhi model);
+        Task AddDangKy(AsAcademyStudentSvXinMienGiamHocPhi model);
         Task<IEnumerable<YeuCauDichVuStudentModel<AsAcademyStudentSvXinMienGiamHocPhi>>> GetAllYeuCauDichVuTheoDot(long dotDangKy);
     }
 }

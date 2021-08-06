@@ -624,10 +624,24 @@
                     result += `<div></div>`;
                     break;
                 case dichVuEnum.XIN_MIEN_GIAM_HOC_PHI:
-                    result += `<div></div>`;
+                    console.log(dichVu.doiTuongHuong);
+                    const doiTuongHuong = {
+                        'CO_CONG_CACH_MANG': 'Là con của người có công với cách mạng được hưởng ưu đãi',
+                        'SV_VAN_BANG_1': 'Là sinh viên học đại học văn bằng thứ nhất từ 16 tuổi đến 22 tuổi thuộc một trong các trường hợp quy định tại Khoản 1 Điều 5 Nghị định số 136/2013/NĐ - CP ngày 21/10/2013 của Chính phủ quy định chính sách trợ giúp xã hội',
+                        'TAN_TAT_KHO_KHAN_KINH_TE': 'Bản thân bị khuyết tật, tàn tật có khó khăn về kinh tế',
+                        'DAN_TOC_HO_NGHEO': 'Bản thân là người dân tộc thiểu số thuộc hộ nghèo, hộ cận nghèo',
+                        'DAN_TOC_IT_NGUOI_VUNG_KHO_KHAN': 'Bản thân là người dân tộc thiểu số rất ít người và ở vùng có điều kiện kinh tế - xã hội khó khăn hoặc đặc biệt khó khăn',
+                        'DAN_TOC_VUNG_KHO_KHAN': 'Bản thân là người dân tộc thiểu số và ở vùng có điều kiện kinh tế - xã hội đặc biệt khó khăn',
+                        'CHA_ME_TAI_NAN_DUOC_TRO_CAP': 'Là con của cán bộ, công nhân, viên chức mà cha hoặc mẹ bị tai nạn lao động hoặc mắc bệnh nghề nghiệp được hưởng trợ cấp thường xuyên'
+                    };
+                    result += `<div>${doiTuongHuong[dichVu.doiTuongHuong]}</div>`;
                     break;
                 case dichVuEnum.DE_NGHI_HO_TRO_CHI_PHI:
-                    result += `<div></div>`;
+                    const doiTuongDeNghi = {
+                        'DAN_TOC_HO_NGHEO': 'Bản thân là người dân tộc thiểu số thuộc hộ nghèo',
+                        'DAN_TOC_HO_CAN_NGHEO': 'Bản thân là người dân tộc thiểu số thuộc hộ cận nghèo'
+                    };
+                    result += `<div>${doiTuongDeNghi[dichVu.doiTuongHuong]}</div>`;
                     break;
                 default:
                     break;
@@ -667,7 +681,7 @@
             const mainContentSection = getMainContentSection(dichVu);
 
             let noteSection = '';
-            if (serviceType == 9) { //dịch vụ là đăng ký chỗ ở thì k cần show
+            if (serviceType == 9 || serviceType == 10 || serviceType == 11) { //dịch vụ là đăng ký chỗ ở, xin miễn học phí, đề nghị hỗ trợ chi phí thì k cần show
                 noteSection = '';
             } else if ([4, 6].includes(statusCode)) {
                 noteSection += `<div class="fw-700 mb-3 mt-3" style="color:blue;">
