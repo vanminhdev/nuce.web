@@ -38,7 +38,7 @@
                 ĐƠN ĐỀ NGHỊ HỖ TRỢ CHI PHÍ HỌC TẬP
             </div>
             <div class="font-14-sm fw-600 font-18 mb-3">
-                Em thuộc đối tượng được hỗ trợ chi phí học tập (tích vào ô dưới đây):
+                Sinh viên thuộc đối tượng được hỗ trợ chi phí học tập (tích vào ô dưới đây):
             </div>
             <div class="form-group">
                 <asp:RadioButtonList ID="radioDoiTuong"

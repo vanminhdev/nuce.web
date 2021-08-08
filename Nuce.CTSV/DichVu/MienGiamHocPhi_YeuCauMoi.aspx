@@ -38,7 +38,7 @@
                 Đơn xin miễn giảm học phí
             </div>
             <div class="font-14-sm fw-600 font-18 mb-3">
-                Em thuộc đối tượng được hưởng chính sách miễn, giảm học phí (tích vào ô dưới đây):
+                Sinh viên thuộc đối tượng được hưởng chính sách miễn, giảm học phí (tích vào ô dưới đây):
             </div>
             <div class="form-group">
                 <asp:RadioButtonList ID="radioDoiTuong"

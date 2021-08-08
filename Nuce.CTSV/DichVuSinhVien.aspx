@@ -144,12 +144,12 @@
                     href="/dichvu/miengiamhocphi.aspx"
                     class="row justify-content-center">
                     <img
-                        src="/Data/icons/dich-vu-ho-tro.jpg"
+                        src="/Data/icons/don-xin-mien-giam-hoc-phi.jpg"
                         alt="service"
                         class="service-avatar col-10"/>
                     <div
                         class="col-10 mt-2 text-center text-uppercase main-color fw-600 font-14-sm font-18-md font-18 title-service">
-                        Xin miễn giảm học phí
+                        Đơn xin miễn giảm học phí
                     </div>
                 </a>
             </div>
@@ -158,12 +158,12 @@
                     href="/dichvu/denghihotrochiphihoctap.aspx"
                     class="row justify-content-center">
                     <img
-                        src="/Data/icons/dich-vu-ho-tro.jpg"
+                        src="/Data/icons/de-nghi-ho-tro-chi-phi-hoc-tap.jpg"
                         alt="service"
                         class="service-avatar col-10"/>
                     <div
                         class="col-10 mt-2 text-center text-uppercase main-color fw-600 font-14-sm font-18-md font-18 title-service">
-                        Đề nghị hỗ trợ chi phí học tập
+                        Đơn đề nghị hỗ trợ chi phí học tập
                     </div>
                 </a>
             </div>
