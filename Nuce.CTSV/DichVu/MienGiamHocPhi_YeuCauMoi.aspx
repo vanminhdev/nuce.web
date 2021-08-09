@@ -10,7 +10,7 @@
         <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
     </div>
     <div class="d-flex align-items-center">
-        <a href="/dichvu/miengiamhocphi.aspx">miễn giảm học phí</a>
+        <a href="/dichvu/miengiamhocphi.aspx">Đơn xin miễn giảm học phí</a>
         <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
     </div>
     <div class="main-color text-decoration-none">yêu cầu mới</div>
@@ -21,10 +21,10 @@
         <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
     </div>
     <div class="d-flex align-items-center">
-        <a href="/dichvu/dangkychoo.aspx">đăng ký chỗ ở</a>
+        <a href="/dichvu/miengiamhocphi.aspx">Đơn xin miễn giảm học phí đăng ký chỗ ở</a>
         <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
     </div>
-    <div class="main-color text-decoration-none">miễn giảm học phí</div>
+    <div class="main-color text-decoration-none">yêu cầu mới</div>
 </asp:Content>
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <script src='https://www.google.com/recaptcha/api.js'></script>
@@ -37,10 +37,13 @@
             <div class="main-color text-uppercase font-15-sm fw-600 font-25 service-title">
                 Đơn xin miễn giảm học phí
             </div>
+            <div class="text-danger font-16 font-italic mb-4">
+                Lưu ý: Những đối tượng (con thương binh, con bệnh binh, con liệt sĩ; con của người bị tai nạn lao động; mồ côi cả cha lẫn mẹ, sinh viên bị khuyết tật, ...) đã hoàn tất thủ tục hồ sơ miễn giảm học phí khi nhập học sẽ không phải nộp lại hồ sơ theo từng năm học.
+            </div>
             <div class="font-14-sm fw-600 font-18 mb-3">
                 Sinh viên thuộc đối tượng được hưởng chính sách miễn, giảm học phí (tích vào ô dưới đây):
             </div>
-            <div class="form-group">
+            <div class="form-group mb-0">
                 <asp:RadioButtonList ID="radioDoiTuong"
                     runat="server"
                     RepeatDirection="Vertical">
@@ -71,7 +74,14 @@
                     </asp:ListItem>
                 </asp:RadioButtonList>
             </div>
-            <div class='g-recaptcha' data-sitekey='6Lf3Lc8ZAAAAANyHCgqSpM_NDwBTJQZIsEnUQJ1s'></div>
+            <div class="font-14-sm fw-600 font-18 mb-3">
+                Số điện thoại liên lạc:
+            </div>
+            <div class="form-group">
+                <asp:TextBox ID="textBoxSdt" runat="server" MaxLength="10">
+                </asp:TextBox>
+            </div>
+            <div class='g-recaptcha mt-5' data-sitekey='6Lf3Lc8ZAAAAANyHCgqSpM_NDwBTJQZIsEnUQJ1s'></div>
         </div>
 
         <div class="col-12 col-md-3 mt-4" runat="server" id="divBtnContainer">

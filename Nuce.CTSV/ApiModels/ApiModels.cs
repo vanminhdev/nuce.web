@@ -334,11 +334,11 @@ namespace Nuce.CTSV.ApiModels
         public string veBusNoiNhanThe { get; set; }
         public string thoiGianMuon { get; set; }
         public bool notSendEmail { get; set; }
+        public string sdt { get; set; }
         public string nhuCauNhaO { get; set; }
         public string doiTuongUuTienNhaO { get; set; }
         public string doiTuongHuongMienGiam { get; set; }
         public string doiTuongDeNghiHoTro { get; set; }
-
     }
     public class ThiHsgModel
     {

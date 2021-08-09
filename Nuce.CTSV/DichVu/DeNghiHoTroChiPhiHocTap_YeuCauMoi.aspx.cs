@@ -12,6 +12,8 @@ namespace Nuce.CTSV
             if (!IsPostBack)
             {
                 this.radioDoiTuong.Attributes.Add("class", "radio-list");
+                this.textBoxSdt.Attributes.Add("class", "form-control col-md-3 col-12");
+                this.textBoxSdt.Attributes.Add("type", "tel");
             }
         }
         protected async void btnCapNhat_Click(object sender, EventArgs e)
@@ -41,6 +43,7 @@ namespace Nuce.CTSV
             {
                 type = (int)DichVu.DeNghiHoTroChiPhiHocTap,
                 doiTuongDeNghiHoTro = doiTuong,
+                sdt = this.textBoxSdt.Text,
                 notSendEmail = true
             };
 

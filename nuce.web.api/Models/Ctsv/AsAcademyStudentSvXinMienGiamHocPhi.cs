@@ -25,5 +25,6 @@ namespace nuce.web.api.Models.Ctsv
         public string MaXacNhan { get; set; }
         public string DoiTuongHuong { get; set; }
         public long DotDangKy { get; set; }
+        public string Sdt { get; set; }
     }
 }

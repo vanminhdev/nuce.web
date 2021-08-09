@@ -605,6 +605,10 @@ namespace nuce.web.api.Models.Ctsv
                     .HasColumnName("NgayHen_TuNgay")
                     .HasColumnType("datetime");
 
+                entity.Property(e => e.Sdt)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.StudentCode)
                     .IsRequired()
                     .HasMaxLength(50)
@@ -1005,6 +1009,10 @@ namespace nuce.web.api.Models.Ctsv
                 entity.Property(e => e.NgayHenTuNgay)
                     .HasColumnName("NgayHen_TuNgay")
                     .HasColumnType("datetime");
+
+                entity.Property(e => e.Sdt)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.StudentCode)
                     .IsRequired()

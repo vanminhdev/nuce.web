@@ -36,6 +36,7 @@ using OXRun = DocumentFormat.OpenXml.Wordprocessing.Run;
 using OXInline = DocumentFormat.OpenXml.Drawing.Wordprocessing.Inline;
 using System.Drawing;
 using nuce.web.api.Helper;
+using System.Text.RegularExpressions;
 
 namespace nuce.web.api.Services.Ctsv.Implements
 {
@@ -400,6 +401,11 @@ namespace nuce.web.api.Services.Ctsv.Implements
                                 throw new Exception("Lựa chọn đối tượng không hợp lệ");
                             }
 
+                            if (!Regex.IsMatch(model.Sdt, "^[0-9]{10}$"))
+                            {
+                                throw new Exception("Số điện thoại không được bỏ trống và phải là 10 số");
+                            }
+
                             var dotXinActive = await _dotXinMienGiamHocPhiRepository.GetDotActive();
                             AsAcademyStudentSvXinMienGiamHocPhi xinMien = new AsAcademyStudentSvXinMienGiamHocPhi
                             {
@@ -417,7 +423,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                                 LastModifiedBy = studentID,
                                 DeletedBy = -1,
                                 DotDangKy = dotXinActive.Id,
-                                DoiTuongHuong = model.DoiTuongHuongMienGiam
+                                DoiTuongHuong = model.DoiTuongHuongMienGiam,
+                                Sdt = model.Sdt
                             };
                             await _xinMienGiamHocPhiRepository.AddDangKy(xinMien);
                             break;
@@ -426,6 +433,12 @@ namespace nuce.web.api.Services.Ctsv.Implements
                             {
                                 throw new Exception("Lựa chọn đối tượng không hợp lệ");
                             }
+
+                            if (!Regex.IsMatch(model.Sdt, "^[0-9]{10}$"))
+                            {
+                                throw new Exception("Số điện thoại không được bỏ trống và phải là 10 số");
+                            }
+
                             var dotDeNghiActive = await _dotXinMienGiamHocPhiRepository.GetDotActive();
                             AsAcademyStudentSvDeNghiHoTroChiPhiHocTap deNghi = new AsAcademyStudentSvDeNghiHoTroChiPhiHocTap
                             {
@@ -443,7 +456,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                                 LastModifiedBy = studentID,
                                 DeletedBy = -1,
                                 DotDangKy = dotDeNghiActive.Id,
-                                DoiTuongHuong = model.DoiTuongDeNghiHoTro
+                                DoiTuongHuong = model.DoiTuongDeNghiHoTro,
+                                Sdt = model.Sdt
                             };
                             await _deNghiHoTroChiPhiRepository.AddDangKy(deNghi);
                             break;
@@ -2001,6 +2015,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 setStyle(ws, firstRow, ++i, "Lớp");
                 setStyle(ws, firstRow, ++i, "Khoa quản lý");
                 setStyle(ws, firstRow, ++i, "Đối tượng");
+                setStyle(ws, firstRow, ++i, "Số điện thoại");
 
                 ws.Row(firstRow).Height = 32;
 
@@ -2024,6 +2039,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string tenKhoa = yeuCau.Faculty?.Name ?? "";
                     string mobile = yeuCau.Student.Mobile ?? "";
                     string dauThoiGian = yeuCau.YeuCauDichVu.CreatedTime?.ToString("dd/MM/yyyy HH:MM:ss") ?? "";
+                    string sdt = yeuCau.YeuCauDichVu.Sdt;
                     string doiTuong = "";
                     switch (yeuCau.YeuCauDichVu.DoiTuongHuong)
                     {
@@ -2059,13 +2075,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(classCode);
                     ws.Cell(row, ++col).SetValue(tenKhoa);
                     ws.Cell(row, ++col).SetValue(doiTuong);
+                    ws.Cell(row, ++col).SetValue(sdt);
                 }
                 for (int j = 0; j < col; j++)
                 {
                     ws.Column(j + 1).AdjustToContents();
                 }
                 #endregion
-                string file = _pathProvider.MapPath($"Templates/Ctsv/vayvon_{Guid.NewGuid().ToString()}.xlsx");
+                string file = _pathProvider.MapPath($"Templates/Ctsv/vayvon_{Guid.NewGuid()}.xlsx");
                 wb.SaveAs(file);
                 return await FileToByteAsync(file);
             }
@@ -2096,6 +2113,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 setStyle(ws, firstRow, ++i, "Lớp");
                 setStyle(ws, firstRow, ++i, "Khoa quản lý");
                 setStyle(ws, firstRow, ++i, "Đối tượng");
+                setStyle(ws, firstRow, ++i, "Số điện thoại");
 
                 ws.Row(firstRow).Height = 32;
 
@@ -2119,6 +2137,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string tenKhoa = yeuCau.Faculty?.Name ?? "";
                     string mobile = yeuCau.Student.Mobile ?? "";
                     string dauThoiGian = yeuCau.YeuCauDichVu.CreatedTime?.ToString("dd/MM/yyyy HH:MM:ss") ?? "";
+                    string sdt = yeuCau.YeuCauDichVu.Sdt;
                     string doiTuong = "";
                     switch (yeuCau.YeuCauDichVu.DoiTuongHuong)
                     {
@@ -2139,6 +2158,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(classCode);
                     ws.Cell(row, ++col).SetValue(tenKhoa);
                     ws.Cell(row, ++col).SetValue(doiTuong);
+                    ws.Cell(row, ++col).SetValue(sdt);
                 }
                 for (int j = 0; j < col; j++)
                 {

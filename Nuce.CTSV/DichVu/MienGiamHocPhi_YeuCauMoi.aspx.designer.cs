@@ -33,6 +33,15 @@ namespace Nuce.CTSV
         protected global::System.Web.UI.WebControls.RadioButtonList radioDoiTuong;
 
         /// <summary>
+        /// textBoxSdt control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox textBoxSdt;
+
+        /// <summary>
         /// divBtnContainer control.
         /// </summary>
         /// <remarks>

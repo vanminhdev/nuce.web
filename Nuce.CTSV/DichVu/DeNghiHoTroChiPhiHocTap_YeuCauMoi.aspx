@@ -10,7 +10,7 @@
         <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
     </div>
     <div class="d-flex align-items-center">
-        <a href="/dichvu/miengiamhocphi.aspx">miễn giảm học phí</a>
+        <a href="/dichvu/denghihotrochiphihoctap.aspx">đơn đề nghị hỗ trợ chi phí học tập</a>
         <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
     </div>
     <div class="main-color text-decoration-none">yêu cầu mới</div>
@@ -21,7 +21,7 @@
         <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
     </div>
     <div class="d-flex align-items-center">
-        <a href="/dichvu/dangkychoo.aspx">đăng ký chỗ ở</a>
+        <a href="/dichvu/denghihotrochiphihoctap.aspx">đơn đề nghị hỗ trợ chi phí học tập</a>
         <div id="circle" style="display: inline-block" class="ml-3 mr-3"></div>
     </div>
     <div class="main-color text-decoration-none">miễn giảm học phí</div>
@@ -40,7 +40,7 @@
             <div class="font-14-sm fw-600 font-18 mb-3">
                 Sinh viên thuộc đối tượng được hỗ trợ chi phí học tập (tích vào ô dưới đây):
             </div>
-            <div class="form-group">
+            <div class="form-group mb-0">
                 <asp:RadioButtonList ID="radioDoiTuong"
                     runat="server"
                     RepeatDirection="Vertical">
@@ -57,9 +57,15 @@
                     Ghi chú: Sinh viên là người dân tộc thiểu số thuộc hộ nghèo, hộ cận nghèo theo quy định của Thủ tướng Chính phủ thuộc đối tượng: cử tuyển, các đối tượng chính sách được xét tuyển, đào tạo theo địa chỉ, đào tạo liên thông, văn bằng hai và học đại học, cao đẳng sau khi hoàn thành chương trình dự bị đại học sẽ không thuộc diện được hỗ trợ chi phí học tập
                 </div>
             </div>
-            <div class='g-recaptcha' data-sitekey='6Lf3Lc8ZAAAAANyHCgqSpM_NDwBTJQZIsEnUQJ1s'></div>
+            <div class="font-14-sm fw-600 font-18 mb-3">
+                Số điện thoại liên lạc:
+            </div>
+            <div class="form-group">
+                <asp:TextBox ID="textBoxSdt" runat="server" MaxLength="10">
+                </asp:TextBox>
+            </div>
+            <div class='g-recaptcha mt-5' data-sitekey='6Lf3Lc8ZAAAAANyHCgqSpM_NDwBTJQZIsEnUQJ1s'></div>
         </div>
-
         <div class="col-12 col-md-3 mt-4" runat="server" id="divBtnContainer">
             <button type="button" id="btnModalUpdate" 
                     class="confirm-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2"

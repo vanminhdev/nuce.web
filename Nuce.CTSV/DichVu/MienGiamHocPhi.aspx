@@ -82,7 +82,7 @@
             <div class="row justify-content-end">
                 <div class="col-12 col-md-3">
                     <button
-                        class="confirm-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2"
+                        class="confirm-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2 mb-4"
                         type="button"
                         onclick="MienGiamHocPhi.ThemMoi();"
                         >
@@ -91,7 +91,9 @@
                 </div>
             </div>
         </div>
-
+        <div class="col-12 text-danger font-18 font-italic mb-4">
+            Lưu ý: Những đối tượng (con thương binh, con bệnh binh, con liệt sĩ; con của người bị tai nạn lao động; mồ côi cả cha lẫn mẹ, sinh viên bị khuyết tật, ...) đã hoàn tất thủ tục hồ sơ miễn giảm học phí khi nhập học sẽ không phải nộp lại hồ sơ theo từng năm học.
+        </div>
         <div class="col-12">
             <div
                 class="text-uppercase font-15-sm fw-600 font-25 service-title"
