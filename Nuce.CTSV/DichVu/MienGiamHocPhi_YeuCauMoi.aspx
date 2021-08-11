@@ -38,7 +38,7 @@
                 Đơn xin miễn giảm học phí
             </div>
             <div class="text-danger font-16 font-italic mb-4">
-                Lưu ý: Những đối tượng (con thương binh, con bệnh binh, con liệt sĩ; con của người bị tai nạn lao động; mồ côi cả cha lẫn mẹ, sinh viên bị khuyết tật, ...) đã hoàn tất thủ tục hồ sơ miễn giảm học phí khi nhập học sẽ không phải nộp lại hồ sơ theo từng năm học.
+                Lưu ý: Những đối tượng (con thương binh, con bệnh binh, con liệt sĩ, con của người bị tai nạn lao động, mồ côi cả cha lẫn mẹ, sinh viên bị khuyết tật, ...) đã hoàn tất thủ tục hồ sơ miễn giảm học phí khi nhập học sẽ không phải nộp lại hồ sơ theo từng năm học.
             </div>
             <div class="font-14-sm fw-600 font-18 mb-3">
                 Sinh viên thuộc đối tượng được hưởng chính sách miễn, giảm học phí (tích vào ô dưới đây):

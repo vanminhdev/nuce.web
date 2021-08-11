@@ -1089,6 +1089,26 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
                     student = _studentRepository.FindByCode(veBus.StudentCode);
                     break;
+                case DichVu.XinMienGiamHocPhi:
+                    var xinMienGiam = await _xinMienGiamHocPhiRepository.FindByIdAsync(model.RequestID);
+                    xinMienGiam.Status = model.Status;
+                    xinMienGiam.PhanHoi = model.PhanHoi;
+                    xinMienGiam.NgayHenTuNgay = model.NgayHenBatDau;
+                    xinMienGiam.NgayHenDenNgay = model.NgayHenKetThuc;
+                    ngayTao = xinMienGiam.CreatedTime;
+
+                    student = _studentRepository.FindByCode(xinMienGiam.StudentCode);
+                    break;
+                case DichVu.DeNghiHoTroChiPhiHocTap:
+                    var deNghi = await _deNghiHoTroChiPhiRepository.FindByIdAsync(model.RequestID);
+                    deNghi.Status = model.Status;
+                    deNghi.PhanHoi = model.PhanHoi;
+                    deNghi.NgayHenTuNgay = model.NgayHenBatDau;
+                    deNghi.NgayHenDenNgay = model.NgayHenKetThuc;
+                    ngayTao = deNghi.CreatedTime;
+
+                    student = _studentRepository.FindByCode(deNghi.StudentCode);
+                    break;
                 default:
                     break;
             }
@@ -2524,6 +2544,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     return await ExportWordThueNha(id);
                 case DichVu.VeBus:
                     return await ExportWordVeXeBus(id);
+                case DichVu.XinMienGiamHocPhi:
+                    return await ExportWordXinMienGiamHP(id);
+                case DichVu.DeNghiHoTroChiPhiHocTap:
+                    return await ExportWordDeNghiHoTroChiPhiHocTap(id);
                 default:
                     break;
             }
@@ -4126,6 +4150,119 @@ namespace nuce.web.api.Services.Ctsv.Implements
             }
             return new ExportFileOutputModel { document = null, filePath = destination };
         }
+
+        private async Task<ExportFileOutputModel> ExportWordXinMienGiamHP(int id)
+        {
+            var mienGiamHP = await _xinMienGiamHocPhiRepository.FindByIdAsync(id);
+            if (mienGiamHP == null)
+            {
+                throw new Exception("Yêu cầu không tồn tại");
+            }
+            var studentInfo = await _studentRepository.GetStudentDichVuInfoAsync(mienGiamHP.StudentCode);
+            if (studentInfo == null)
+            {
+                throw new Exception("Sinh viên không tồn tại");
+            }
+
+            var paramSet = _thamSoDichVuService.GetParameters(DichVu.VeBus)
+                                .ToDictionary(x => x.Name, x => x.Value);
+
+            string ChucDanhNguoiKy = paramSet.ContainsKey("ChucDanhNguoiKy") ? paramSet["ChucDanhNguoiKy"] : "";
+            string TenNguoiKy = paramSet.ContainsKey("TenNguoiKy") ? paramSet["TenNguoiKy"] : "";
+
+            string filePath = _pathProvider.MapPath($"Templates/Ctsv/don_xin_mien_giam_hoc_phi.docx");
+            string destination = _pathProvider.MapPath($"Templates/Ctsv/xin-mien-{DateTime.Now.ToFileTime()}.docx");
+            string newImgPath = _pathProvider.MapPath($"{studentInfo.Student.File1}");
+
+
+            var ngaySinh = convertStudentDateOfBirth(studentInfo.Student.DateOfBirth);
+
+            byte[] templateBytes = await File.ReadAllBytesAsync(filePath);
+            using (MemoryStream templateStream = new MemoryStream())
+            {
+                templateStream.Write(templateBytes, 0, templateBytes.Length);
+                using (WordprocessingDocument doc = WordprocessingDocument.Open(templateStream, true))
+                {
+                    doc.ChangeDocumentType(WordprocessingDocumentType.Document);
+                    var mainPart = doc.MainDocumentPart;
+                    #region handle text
+                    var textList = mainPart.Document.Descendants<Text>().ToList();
+                    foreach (var text in textList)
+                    {
+                        replaceTextTemplate(text, "<ho_ten>", studentInfo.Student.FulName.ToUpper());
+                        replaceTextTemplate(text, "<ho_ten_ky>", studentInfo.Student.FulName);
+                        replaceTextTemplate(text, "<sdt>", studentInfo.Student.Mobile);
+                        replaceTextTemplate(text, "<nam_sinh>", ngaySinh.ToString("dd/MM/yyyy"));
+                        replaceTextTemplate(text, "<ma_lop>", studentInfo.Student.ClassCode);
+                        replaceTextTemplate(text, "<ten_khoa>", studentInfo.Faculty?.Name);
+                        replaceTextTemplate(text, "<chuc_danh_nguoi_ky>", ChucDanhNguoiKy);
+                        replaceTextTemplate(text, "<ten_nguoi_ky>", TenNguoiKy);
+                    }
+                    #endregion
+                    mainPart.Document.Save();
+                }
+                await File.WriteAllBytesAsync(destination, templateStream.ToArray());
+            }
+            return new ExportFileOutputModel { document = null, filePath = destination };
+        }
+
+        private async Task<ExportFileOutputModel> ExportWordDeNghiHoTroChiPhiHocTap(int id)
+        {
+            var deNghi = await _deNghiHoTroChiPhiRepository.FindByIdAsync(id);
+            if (deNghi == null)
+            {
+                throw new Exception("Yêu cầu không tồn tại");
+            }
+            var studentInfo = await _studentRepository.GetStudentDichVuInfoAsync(deNghi.StudentCode);
+            if (studentInfo == null)
+            {
+                throw new Exception("Sinh viên không tồn tại");
+            }
+
+            var paramSet = _thamSoDichVuService.GetParameters(DichVu.VeBus)
+                                .ToDictionary(x => x.Name, x => x.Value);
+
+            string ChucDanhNguoiKy = paramSet.ContainsKey("ChucDanhNguoiKy") ? paramSet["ChucDanhNguoiKy"] : "";
+            string TenNguoiKy = paramSet.ContainsKey("TenNguoiKy") ? paramSet["TenNguoiKy"] : "";
+
+            string filePath = _pathProvider.MapPath($"Templates/Ctsv/don_de_nghi_ho_tro_chi_phi_hoc_tap.docx");
+            string destination = _pathProvider.MapPath($"Templates/Ctsv/de-nghi-{DateTime.Now.ToFileTime()}.docx");
+            string newImgPath = _pathProvider.MapPath($"{studentInfo.Student.File1}");
+
+            var ngaySinh = convertStudentDateOfBirth(studentInfo.Student.DateOfBirth);
+
+            byte[] templateBytes = await File.ReadAllBytesAsync(filePath);
+            using (MemoryStream templateStream = new MemoryStream())
+            {
+                templateStream.Write(templateBytes, 0, templateBytes.Length);
+                using (WordprocessingDocument doc = WordprocessingDocument.Open(templateStream, true))
+                {
+                    doc.ChangeDocumentType(WordprocessingDocumentType.Document);
+                    var mainPart = doc.MainDocumentPart;
+                    #region handle text
+                    var textList = mainPart.Document.Descendants<Text>().ToList();
+                    foreach (var text in textList)
+                    {
+                        replaceTextTemplate(text, "<ho_ten>", studentInfo.Student.FulName.ToUpper());
+                        replaceTextTemplate(text, "<ho_ten_ky>", studentInfo.Student.FulName);
+                        replaceTextTemplate(text, "<sdt>", studentInfo.Student.Mobile);
+                        replaceTextTemplate(text, "<nam_sinh>", ngaySinh.ToString("dd/MM/yyyy"));
+                        replaceTextTemplate(text, "<ma_lop>", studentInfo.Student.ClassCode);
+                        replaceTextTemplate(text, "<ten_khoa>", studentInfo.Faculty?.Name);
+                        replaceTextTemplate(text, "<mot_tuyen>", motTuyen);
+                        replaceTextTemplate(text, "<lien_tuyen>", lienTuyen);
+                        replaceTextTemplate(text, "<noi_nhan>", deNghi.NoiNhanThe);
+                        replaceTextTemplate(text, "<chuc_danh_nguoi_ky>", ChucDanhNguoiKy);
+                        replaceTextTemplate(text, "<ten_nguoi_ky>", TenNguoiKy);
+                    }
+                    #endregion
+                    mainPart.Document.Save();
+                }
+                await File.WriteAllBytesAsync(destination, templateStream.ToArray());
+            }
+            return new ExportFileOutputModel { document = null, filePath = destination };
+        }
+
         #endregion
 
         #region Helper
