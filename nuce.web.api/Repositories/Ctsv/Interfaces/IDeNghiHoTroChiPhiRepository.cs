@@ -9,7 +9,7 @@ namespace nuce.web.api.Repositories.Ctsv.Interfaces
 {
     public interface IDeNghiHoTroChiPhiRepository : IBaseStudentServiceRepository<AsAcademyStudentSvDeNghiHoTroChiPhiHocTap>
     {
-        Task<GetAllForAdminResponseRepo<AsAcademyStudentSvDeNghiHoTroChiPhiHocTap>> GetAllForAdminDangKyChoO(QuanLyDichVuDetailModel model);
+        Task<GetAllForAdminResponseRepo<AsAcademyStudentSvDeNghiHoTroChiPhiHocTap>> GetAllForAdminDangKy(QuanLyDichVuDetailModel model);
         IQueryable<AsAcademyStudentSvDeNghiHoTroChiPhiHocTap> GetAllDangKyChoO(long studentId);
         Task AddDangKy(AsAcademyStudentSvDeNghiHoTroChiPhiHocTap model);
         Task<IEnumerable<YeuCauDichVuStudentModel<AsAcademyStudentSvDeNghiHoTroChiPhiHocTap>>> GetAllYeuCauDichVuTheoDot(long dotDangKy);

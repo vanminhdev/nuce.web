@@ -707,7 +707,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     }
                     break;
                 case DichVu.XinMienGiamHocPhi:
-                    var xinMienGetAll = await _xinMienGiamHocPhiRepository.GetAllForAdminDangKyChoO(model);
+                    var xinMienGetAll = await _xinMienGiamHocPhiRepository.GetAllForAdminDangKy(model);
                     var xinMienList = xinMienGetAll.FinalData;
 
                     foreach (var yeuCau in xinMienList)
@@ -722,7 +722,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     }
                     break;
                 case DichVu.DeNghiHoTroChiPhiHocTap:
-                    var deNghiGetAll = await _deNghiHoTroChiPhiRepository.GetAllForAdminDangKyChoO(model);
+                    var deNghiGetAll = await _deNghiHoTroChiPhiRepository.GetAllForAdminDangKy(model);
                     var deNghiList = deNghiGetAll.FinalData;
 
                     foreach (var yeuCau in deNghiList)
@@ -4164,16 +4164,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 throw new Exception("Sinh viên không tồn tại");
             }
 
-            var paramSet = _thamSoDichVuService.GetParameters(DichVu.VeBus)
-                                .ToDictionary(x => x.Name, x => x.Value);
-
-            string ChucDanhNguoiKy = paramSet.ContainsKey("ChucDanhNguoiKy") ? paramSet["ChucDanhNguoiKy"] : "";
-            string TenNguoiKy = paramSet.ContainsKey("TenNguoiKy") ? paramSet["TenNguoiKy"] : "";
-
             string filePath = _pathProvider.MapPath($"Templates/Ctsv/don_xin_mien_giam_hoc_phi.docx");
             string destination = _pathProvider.MapPath($"Templates/Ctsv/xin-mien-{DateTime.Now.ToFileTime()}.docx");
-            string newImgPath = _pathProvider.MapPath($"{studentInfo.Student.File1}");
-
 
             var ngaySinh = convertStudentDateOfBirth(studentInfo.Student.DateOfBirth);
 
@@ -4189,14 +4181,54 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     var textList = mainPart.Document.Descendants<Text>().ToList();
                     foreach (var text in textList)
                     {
-                        replaceTextTemplate(text, "<ho_ten>", studentInfo.Student.FulName.ToUpper());
-                        replaceTextTemplate(text, "<ho_ten_ky>", studentInfo.Student.FulName);
-                        replaceTextTemplate(text, "<sdt>", studentInfo.Student.Mobile);
-                        replaceTextTemplate(text, "<nam_sinh>", ngaySinh.ToString("dd/MM/yyyy"));
-                        replaceTextTemplate(text, "<ma_lop>", studentInfo.Student.ClassCode);
-                        replaceTextTemplate(text, "<ten_khoa>", studentInfo.Faculty?.Name);
-                        replaceTextTemplate(text, "<chuc_danh_nguoi_ky>", ChucDanhNguoiKy);
-                        replaceTextTemplate(text, "<ten_nguoi_ky>", TenNguoiKy);
+                        replaceTextTemplate(text, "<ten_sv>", studentInfo.Student.FulName.ToUpper());
+                        replaceTextTemplate(text, "<ten_nguoi_ky>", studentInfo.Student.FulName);
+                        replaceTextTemplate(text, "<ma_sv>", studentInfo.Student.Code);
+                        replaceTextTemplate(text, "<lop>", studentInfo.Student.ClassCode);
+                        replaceTextTemplate(text, "<khoa>", studentInfo.Faculty?.Name);
+                        replaceTextTemplate(text, "<ngay_sinh>", ngaySinh.ToString("dd/MM/yyyy"));
+                        replaceTextTemplate(text, "<so_dt>", mienGiamHP.Sdt);
+
+                        string option1 = "";
+                        string option2 = "";
+                        string option3 = "";
+                        string option4 = "";
+                        string option5 = "";
+                        string option6 = "";
+                        string option7 = "";
+
+                        switch (mienGiamHP.DoiTuongHuong)
+                        {
+                            case DoiTuongXinMienGiamHocPhi.CO_CONG_CACH_MANG:
+                                option1 = "x";
+                                break;
+                            case DoiTuongXinMienGiamHocPhi.SV_VAN_BANG_1:
+                                option2 = "x";
+                                break;
+                            case DoiTuongXinMienGiamHocPhi.TAN_TAT_KHO_KHAN_KINH_TE:
+                                option3 = "x";
+                                break;
+                            case DoiTuongXinMienGiamHocPhi.DAN_TOC_HO_NGHEO:
+                                option4 = "x";
+                                break;
+                            case DoiTuongXinMienGiamHocPhi.DAN_TOC_IT_NGUOI_VUNG_KHO_KHAN:
+                                option5 = "x";
+                                break;
+                            case DoiTuongXinMienGiamHocPhi.DAN_TOC_VUNG_KHO_KHAN:
+                                option6 = "x";
+                                break;
+                            case DoiTuongXinMienGiamHocPhi.CHA_ME_TAI_NAN_DUOC_TRO_CAP:
+                                option7 = "x";
+                                break;
+                        }
+
+                        replaceTextTemplate(text, "<option1>", option1);
+                        replaceTextTemplate(text, "<option2>", option2);
+                        replaceTextTemplate(text, "<option3>", option3);
+                        replaceTextTemplate(text, "<option4>", option4);
+                        replaceTextTemplate(text, "<option5>", option5);
+                        replaceTextTemplate(text, "<option6>", option6);
+                        replaceTextTemplate(text, "<option7>", option7);
                     }
                     #endregion
                     mainPart.Document.Save();
@@ -4243,17 +4275,29 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     var textList = mainPart.Document.Descendants<Text>().ToList();
                     foreach (var text in textList)
                     {
-                        replaceTextTemplate(text, "<ho_ten>", studentInfo.Student.FulName.ToUpper());
-                        replaceTextTemplate(text, "<ho_ten_ky>", studentInfo.Student.FulName);
-                        replaceTextTemplate(text, "<sdt>", studentInfo.Student.Mobile);
-                        replaceTextTemplate(text, "<nam_sinh>", ngaySinh.ToString("dd/MM/yyyy"));
-                        replaceTextTemplate(text, "<ma_lop>", studentInfo.Student.ClassCode);
-                        replaceTextTemplate(text, "<ten_khoa>", studentInfo.Faculty?.Name);
-                        replaceTextTemplate(text, "<mot_tuyen>", motTuyen);
-                        replaceTextTemplate(text, "<lien_tuyen>", lienTuyen);
-                        replaceTextTemplate(text, "<noi_nhan>", deNghi.NoiNhanThe);
-                        replaceTextTemplate(text, "<chuc_danh_nguoi_ky>", ChucDanhNguoiKy);
-                        replaceTextTemplate(text, "<ten_nguoi_ky>", TenNguoiKy);
+                        replaceTextTemplate(text, "<ten_sv>", studentInfo.Student.FulName.ToUpper());
+                        replaceTextTemplate(text, "<ten_nguoi_ky>", studentInfo.Student.FulName);
+                        replaceTextTemplate(text, "<ma_sv>", studentInfo.Student.Code);
+                        replaceTextTemplate(text, "<lop>", studentInfo.Student.ClassCode);
+                        replaceTextTemplate(text, "<khoa>", studentInfo.Faculty?.Name);
+                        replaceTextTemplate(text, "<ngay_sinh>", ngaySinh.ToString("dd/MM/yyyy"));
+                        replaceTextTemplate(text, "<so_dt>", deNghi.Sdt);
+
+                        string option1 = "";
+                        string option2 = "";
+
+                        switch (deNghi.DoiTuongHuong)
+                        {
+                            case DoiTuongDeNghiHoTroChiPhi.DAN_TOC_HO_NGHEO:
+                                option1 = "x";
+                                break;
+                            case DoiTuongDeNghiHoTroChiPhi.DAN_TOC_HO_CAN_NGHEO:
+                                option2 = "x";
+                                break;
+                        }
+
+                        replaceTextTemplate(text, "<option1>", option1);
+                        replaceTextTemplate(text, "<option2>", option2);
                     }
                     #endregion
                     mainPart.Document.Save();

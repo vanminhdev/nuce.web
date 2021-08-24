@@ -109,7 +109,7 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
             return result;
         }
 
-        public async Task<GetAllForAdminResponseRepo<AsAcademyStudentSvXinMienGiamHocPhi>> GetAllForAdminDangKyChoO(QuanLyDichVuDetailModel model)
+        public async Task<GetAllForAdminResponseRepo<AsAcademyStudentSvXinMienGiamHocPhi>> GetAllForAdminDangKy(QuanLyDichVuDetailModel model)
         {
             var dotActive = await _context.AsAcademyStudentSvXinMienGiamHocPhiDot.FirstOrDefaultAsync(d => d.IsActive);
             long dotActiveId = 0;
@@ -117,6 +117,7 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
             {
                 dotActiveId = dotActive.Id;
             }
+            //quay lại 7 ngày gần đây
             DateTime dtCompare = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
             dtCompare = dtCompare.AddDays(-1 * model.DayRange);
             model.SearchText = model.SearchText?.Trim()?.ToLower();
@@ -131,8 +132,7 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
                                             getValueString(item, "StudentCode").Contains(model.SearchText) ||
                                             getValueString(item, "StudentName").Contains(model.SearchText) ||
                                             getValueString(item, "PhanHoi").Contains(model.SearchText)
-                                        ) &&
-                                        DateTime.Parse(getValueString(item, "LastModifiedTime")) >= dtCompare)
+                                        ))
                         .OrderBy(r => r.Status)
                         .ThenByDescending(r => r.LastModifiedTime);
             return new GetAllForAdminResponseRepo<AsAcademyStudentSvXinMienGiamHocPhi>
