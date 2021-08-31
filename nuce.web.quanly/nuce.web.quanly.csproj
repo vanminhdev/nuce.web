@@ -199,7 +199,6 @@
     <Compile Include="Attributes\ValidationAttributes\NotOnlyContainWhiteSpaceAttribute.cs" />
     <Compile Include="Attributes\ValidationAttributes\OnlyNumberAttribute.cs" />
     <Compile Include="CKFinder\CustomCKFinderAuthenticator.cs" />
-    <Compile Include="CKFinder\CustomizeCommand.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CKFinderController.cs" />
     <Compile Include="Controllers\RestoreController.cs" />
