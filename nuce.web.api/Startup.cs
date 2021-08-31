@@ -68,13 +68,15 @@ namespace nuce.web.api
                 options.UseSqlServer(Configuration.GetConnectionString("NUCE_CORE"))
             );
             services.AddDbContext<SurveyContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"))
+                options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"),
+                sqlServerOptions => sqlServerOptions.CommandTimeout(60 * 60))
             );
             services.AddDbContext<CTSVNUCE_DATAContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("NUCE_CTSV"))
             );
             services.AddDbContext<EduDataContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"))
+                options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"),
+                sqlServerOptions => sqlServerOptions.CommandTimeout(60 * 60))
             );
             services.AddDbContext<StatusContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"))
@@ -273,6 +275,14 @@ namespace nuce.web.api
             services.AddScoped<IQuaTrinhHocRepository, QuaTrinhHocRepository>();
             services.AddScoped<ILoaiDichVuRepository, LoaiDichVuRepository>();
             services.AddScoped<IVeXeBusRepository, VeXeBusRepository>();
+            services.AddScoped<IDangKyChoORepository, DangKyChoORepository>();
+            services.AddScoped<IDotDangKyChoORepository, DotDangKyChoORepository>();
+
+            services.AddScoped<IXinMienGiamHocPhiRepository, XinMienGiamHocPhiRepository>();
+            services.AddScoped<IDotXinMienGiamHocPhiRepository, DotXinMienGiamHocPhiRepository>();
+            services.AddScoped<IDeNghiHoTroChiPhiRepository, DeNghiHoTroChiPhiRepository>();
+            services.AddScoped<IDotDeNghiHoTroChiPhiRepository, DotDeNghiHoTroChiPhiRepository>();
+
             services.AddScoped<ICapLaiTheRepository, CapLaiTheRepository>();
             services.AddScoped<IMuonHocBaRepository, MuonHocBaRepository>();
 

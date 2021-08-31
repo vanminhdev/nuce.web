@@ -64,20 +64,63 @@
                     <option value="90">Trong vòng 90 ngày</option>
                 </select>
             </div>
-            <div class="col-sm-4" style="text-align: right">
-                <button type="button" class="btn btn-success"
-                        onclick="onExportExcel()">
-                    Excel
-                </button>
-                <button type="button" class="btn btn-primary"
-                        onclick="onExportWordList()">
-                    In
-                </button>
-                <button type="button" class="btn btn-info"
-                        onclick="onClickChangeMultiStatus()">
-                    Chuyển trạng thái
-                </button>
-            </div>
+
+            @if ((int)ViewData["id"] == 9)
+            {
+                <div class="col-sm-4" style="text-align: right">
+                    <button type="button" class="btn btn-primary"
+                            onclick="danhSachDotDangKy()">
+                        Đợt đăng ký chỗ ở
+                    </button>
+                    <button type="button" class="btn btn-success"
+                            onclick="onExportExcelDotDangKy()">
+                        Excel
+                    </button>
+                </div>
+            }
+            else if ((int)ViewData["id"] == 10)
+            {
+                <div class="col-sm-4" style="text-align: right">
+                    <button type="button" class="btn btn-primary"
+                            onclick="danhSachDotDangKy()">
+                        Đợt xin miễn giảm học phí
+                    </button>
+                    <button type="button" class="btn btn-success"
+                            onclick="onExportExcelDotDangKy()">
+                        Excel
+                    </button>
+                </div>
+            }
+            else if ((int)ViewData["id"] == 11)
+            {
+                <div class="col-sm-4" style="text-align: right">
+                    <button type="button" class="btn btn-primary"
+                            onclick="danhSachDotDangKy()">
+                        Đợt đề nghị hỗ trợ chi phí học tập
+                    </button>
+                    <button type="button" class="btn btn-success"
+                            onclick="onExportExcelDotDangKy()">
+                        Excel
+                    </button>
+                </div>
+            }
+            else
+            {
+                <div class="col-sm-4" style="text-align: right">
+                    <button type="button" class="btn btn-success"
+                            onclick="onExportExcel()">
+                        Excel
+                    </button>
+                    <button type="button" class="btn btn-primary"
+                            onclick="onExportWordList()">
+                        In
+                    </button>
+                    <button type="button" class="btn btn-info"
+                            onclick="onClickChangeMultiStatus()">
+                        Chuyển trạng thái
+                    </button>
+                </div>
+            }
         </div>
         <div class="row">
             <div class="col-12">
@@ -345,6 +388,18 @@
                 name: 'làm vé tháng xe bus',
                 key: 'VE_XE_BUS',
             },
+            9: {
+                name: 'đăng ký chỗ ở',
+                key: 'DANG_KY_CHO_O',
+            },
+            10: {
+                name: 'xin miễn giảm học phí',
+                key: 'XIN_MIEN_GIAM_HOC_PHI',
+            },
+            11: {
+                name: 'đề nghị hỗ trợ chi phí học tập',
+                key: 'DE_NGHI_HO_TRO_CHI_PHI',
+            },
         };
         var templateStatus = {
             2: 'text-warning',
@@ -565,6 +620,29 @@
                     }
                     result += `<div>Nơi nhận thẻ: ${dichVu.noiNhanThe}</div>`;
                     break;
+                case dichVuEnum.DANG_KY_CHO_O:
+                    result += `<div></div>`;
+                    break;
+                case dichVuEnum.XIN_MIEN_GIAM_HOC_PHI:
+                    console.log(dichVu.doiTuongHuong);
+                    const doiTuongHuong = {
+                        'CO_CONG_CACH_MANG': 'Là con của người có công với cách mạng được hưởng ưu đãi',
+                        'SV_VAN_BANG_1': 'Là sinh viên học đại học văn bằng thứ nhất từ 16 tuổi đến 22 tuổi thuộc một trong các trường hợp quy định tại Khoản 1 Điều 5 Nghị định số 136/2013/NĐ - CP ngày 21/10/2013 của Chính phủ quy định chính sách trợ giúp xã hội',
+                        'TAN_TAT_KHO_KHAN_KINH_TE': 'Bản thân bị khuyết tật, tàn tật có khó khăn về kinh tế',
+                        'DAN_TOC_HO_NGHEO': 'Bản thân là người dân tộc thiểu số thuộc hộ nghèo, hộ cận nghèo',
+                        'DAN_TOC_IT_NGUOI_VUNG_KHO_KHAN': 'Bản thân là người dân tộc thiểu số rất ít người và ở vùng có điều kiện kinh tế - xã hội khó khăn hoặc đặc biệt khó khăn',
+                        'DAN_TOC_VUNG_KHO_KHAN': 'Bản thân là người dân tộc thiểu số và ở vùng có điều kiện kinh tế - xã hội đặc biệt khó khăn',
+                        'CHA_ME_TAI_NAN_DUOC_TRO_CAP': 'Là con của cán bộ, công nhân, viên chức mà cha hoặc mẹ bị tai nạn lao động hoặc mắc bệnh nghề nghiệp được hưởng trợ cấp thường xuyên'
+                    };
+                    result += `<div>${doiTuongHuong[dichVu.doiTuongHuong]}</div>`;
+                    break;
+                case dichVuEnum.DE_NGHI_HO_TRO_CHI_PHI:
+                    const doiTuongDeNghi = {
+                        'DAN_TOC_HO_NGHEO': 'Bản thân là người dân tộc thiểu số thuộc hộ nghèo',
+                        'DAN_TOC_HO_CAN_NGHEO': 'Bản thân là người dân tộc thiểu số thuộc hộ cận nghèo'
+                    };
+                    result += `<div>${doiTuongDeNghi[dichVu.doiTuongHuong]}</div>`;
+                    break;
                 default:
                     break;
             }
@@ -573,6 +651,7 @@
 
         var template = function(data) {
             const dichVu = data.DichVu;
+            console.log('dich vu:', dichVu);
             const student = data.Student;
 
             const studentName = dichVu.studentName;
@@ -602,8 +681,9 @@
             const mainContentSection = getMainContentSection(dichVu);
 
             let noteSection = '';
-
-            if ([4, 6].includes(statusCode)) {
+            if (serviceType == 9 || serviceType == 10 || serviceType == 11) { //dịch vụ là đăng ký chỗ ở, xin miễn học phí, đề nghị hỗ trợ chi phí thì k cần show
+                noteSection = '';
+            } else if ([4, 6].includes(statusCode)) {
                 noteSection += `<div class="fw-700 mb-3 mt-3" style="color:blue;">
                               * Ngày hẹn: Từ <b>${ngayHenFrom.getHours()}</b> giờ - <b>${ngayHenFrom.getMinutes()}</b> phút - Ngày <b>${convertDateTime(dichVu.ngayHenTuNgay)}</b></br>
                                 Đến <b>${ngayHenTo.getHours()}</b> giờ - <b>${ngayHenTo.getMinutes()}</b> phút - Ngày <b>${convertDateTime(dichVu.ngayHenDenNgay)}</b></div>`;
@@ -706,19 +786,21 @@
                   ${mainContentSection}
                   ${noteSection}
                   <div class="row ml-0 mr-0 align-items-center">
-                    <a
-                      class="print-btn col-3 text-light font-14-sm text-decoration-none cursor-pointer col-md-1"
-                      onclick="onExportWord(${dichVu.id})"
-                    >
-                      <div class="row justify-content-center">
-                        <img
-                          src="/content/images/icons/upload-white.png"
-                          alt=""
-                          class="mr-2 upload-white-icon"
-                        />
-                        <div>IN</div>
-                      </div>
-                    </a>
+                    ${serviceType != 9 ?
+                       `<a
+                            class="print-btn col-3 text-light font-14-sm text-decoration-none cursor-pointer col-md-1"
+                            onclick="onExportWord(${dichVu.id})"
+                        >
+                            <div class="row justify-content-center">
+                                <img
+                                    src="/content/images/icons/upload-white.png"
+                                    alt=""
+                                    class="mr-2 upload-white-icon"
+                                />
+                                <div>IN</div>
+                            </div>
+                        </a>` : ''
+                    }
                     <div class="col-9 col-md-11 text-right">
                       Thời gian gửi yêu cầu:
                       <span class="main-color">${convertDateTime(dichVu.createdTime)}</span>
@@ -771,7 +853,7 @@
                 },
                 {
                     data: null,
-                    mRender: function(data, type, row) {
+                    mRender: function (data, type, row) {
                         return template(data);
                     }
                 },
@@ -865,6 +947,7 @@
             }, 'zip');
         };
 
+
         var onExportExcel = function() {
             const data = getDataToExportMultiYeuCau();
             if (data.length < 1 ) {
@@ -872,6 +955,27 @@
             }
             callApiExport({
                 DichVuList: data,
+                ExportType: 'excel',
+                DichVuType: serviceType
+            }, 'xlsx');
+        }
+
+        var danhSachDotDangKy = function () {
+            if (serviceType == 9) {
+                window.location = `/CtsvServiceManagement/DotDangKyChoO`;
+            }
+            else if (serviceType == 10) {
+                window.location = `/CtsvServiceManagement/DotXinMienGiamHocPhi`;
+            }
+            else if (serviceType == 11) {
+                window.location = `/CtsvServiceManagement/DotDeNghiHoTroChiPhi`;
+            }
+        }
+
+        //mặc định tin tất trong đợt đăng ký mới nhất
+        var onExportExcelDotDangKy = function () {
+            callApiExport({
+                DichVuList: [],
                 ExportType: 'excel',
                 DichVuType: serviceType
             }, 'xlsx');

@@ -69,6 +69,14 @@
         .service-categories-wrp {
             margin-top: 5px;
         }
+        .radio-list td {
+            display: flex;
+            padding-bottom: 20px; 
+        }
+        .radio-list input {
+            margin-top: 5px;
+        }
+
     </style>
 </head>
 <body id="page-top">

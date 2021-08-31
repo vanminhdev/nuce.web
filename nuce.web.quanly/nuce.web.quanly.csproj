@@ -2456,6 +2456,9 @@
     <Content Include="Views\SyncEduData\_PartialTableDataScript.cshtml" />
     <Content Include="Views\Survey\Undergraduate\Statistic.cshtml" />
     <Content Include="Views\CKFinder\CKFinder.cshtml" />
+    <Content Include="Views\CtsvServiceManagement\DotXinMienGiamHocPhi.cshtml" />
+    <Content Include="Views\CtsvServiceManagement\DotDangKyChoO.cshtml" />
+    <Content Include="Views\CtsvServiceManagement\DotDeNghiHoTroChiPhi.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -2497,7 +2500,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>57283</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:56972/</IISUrl>
+          <IISUrl>http://localhost:57973/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

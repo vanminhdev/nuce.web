@@ -208,6 +208,87 @@ namespace Nuce.CTSV.ApiModels
         public string NoiNhanThe { get; set; }
     }
 
+    public class DotDangKyChoOModel
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime TuNgay { get; set; }
+        public DateTime DenNgay { get; set; }
+    }
+
+    public class DangKyChoOModel
+    {
+        public long Id { get; set; }
+        public int StudentId { get; set; }
+        public string StudentCode { get; set; }
+        public string StudentName { get; set; }
+        public int? Status { get; set; }
+        public string LyDo { get; set; }
+        public string PhanHoi { get; set; }
+        public bool? Deleted { get; set; }
+        public int? CreatedBy { get; set; }
+        public int? LastModifiedBy { get; set; }
+        public int? DeletedBy { get; set; }
+        public DateTime? CreatedTime { get; set; }
+        public DateTime? DeletedTime { get; set; }
+        public DateTime? LastModifiedTime { get; set; }
+        public DateTime? NgayGui { get; set; }
+        public DateTime? NgayHenTuNgay { get; set; }
+        public DateTime? NgayHenDenNgay { get; set; }
+        public string MaXacNhan { get; set; }
+        public string NhuCauNhaO { get; set; }
+        public string DoiTuongUuTienNhaO { get; set; }
+    }
+
+    public class XinMienGiamHocPhiModel
+    {
+        public long Id { get; set; }
+        public int StudentId { get; set; }
+        public string StudentCode { get; set; }
+        public string StudentName { get; set; }
+        public int? Status { get; set; }
+        public string LyDo { get; set; }
+        public string PhanHoi { get; set; }
+        public bool? Deleted { get; set; }
+        public int? CreatedBy { get; set; }
+        public int? LastModifiedBy { get; set; }
+        public int? DeletedBy { get; set; }
+        public DateTime? CreatedTime { get; set; }
+        public DateTime? DeletedTime { get; set; }
+        public DateTime? LastModifiedTime { get; set; }
+        public DateTime? NgayGui { get; set; }
+        public DateTime? NgayHenTuNgay { get; set; }
+        public DateTime? NgayHenDenNgay { get; set; }
+        public string MaXacNhan { get; set; }
+        public string DoiTuongHuong { get; set; }
+        public long DotDangKy { get; set; }
+    }
+
+    public class DeNghiHoTroChiPhiHocTapModel
+    {
+        public long Id { get; set; }
+        public int StudentId { get; set; }
+        public string StudentCode { get; set; }
+        public string StudentName { get; set; }
+        public int? Status { get; set; }
+        public string LyDo { get; set; }
+        public string PhanHoi { get; set; }
+        public bool? Deleted { get; set; }
+        public int? CreatedBy { get; set; }
+        public int? LastModifiedBy { get; set; }
+        public int? DeletedBy { get; set; }
+        public DateTime? CreatedTime { get; set; }
+        public DateTime? DeletedTime { get; set; }
+        public DateTime? LastModifiedTime { get; set; }
+        public DateTime? NgayGui { get; set; }
+        public DateTime? NgayHenTuNgay { get; set; }
+        public DateTime? NgayHenDenNgay { get; set; }
+        public string MaXacNhan { get; set; }
+        public string DoiTuongHuong { get; set; }
+        public long DotDangKy { get; set; }
+    }
+
     public class MuonHocBaGocModel
     {
         public long Id { get; set; }
@@ -253,7 +334,11 @@ namespace Nuce.CTSV.ApiModels
         public string veBusNoiNhanThe { get; set; }
         public string thoiGianMuon { get; set; }
         public bool notSendEmail { get; set; }
-
+        public string sdt { get; set; }
+        public string nhuCauNhaO { get; set; }
+        public string doiTuongUuTienNhaO { get; set; }
+        public string doiTuongHuongMienGiam { get; set; }
+        public string doiTuongDeNghiHoTro { get; set; }
     }
     public class ThiHsgModel
     {
@@ -388,6 +473,9 @@ namespace Nuce.CTSV.ApiModels
         VayVonNganHang = 6,
         ThueNha = 7,
         VeXeBus = 8,
+        DangKyChoO = 9,
+        MienGiamHocPhi = 10,
+        DeNghiHoTroChiPhiHocTap = 11
     }
 
     public enum DichVuXeBusLoaiTuyen
