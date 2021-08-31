@@ -1640,7 +1640,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 initHeaderCell(ws, firstRow, ++i, "Số điện thoại");
 
                 ws.Row(firstRow).Height = 32;
-                string tenTruong = "ĐẠI HỌC XÂY DỰNG";
+                string tenTruong = "ĐẠI HỌC XÂY DỰNG HÀ NỘI";
 
                 int colNum = i;
                 #endregion
@@ -2628,7 +2628,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             {
                 CharacterFormat = new CharacterFormat()
                 {
-                    Size = 12
+                    Size = 11
                 }
             }
             )
@@ -2650,7 +2650,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 CharacterFormat = new CharacterFormat()
                 {
                     Bold = true,
-                    Size = 12
+                    Size = 11
                 }
             }
            )
@@ -2670,12 +2670,12 @@ namespace nuce.web.api.Services.Ctsv.Implements
             GemboxTableRow rowT2 = new GemboxTableRow(document);
             table.Rows.Add(rowT2);
 
-            rowT2.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document, new GemboxRun(document, string.Format("{0}", "TRƯỜNG ĐẠI HỌC XÂY DỰNG"))
+            rowT2.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document, new GemboxRun(document, string.Format("{0}", "TRƯỜNG ĐẠI HỌC XÂY DỰNG HÀ NỘI"))
             {
                 CharacterFormat = new CharacterFormat()
                 {
                     Bold = true,
-                    Size = 12
+                    Size = 11
                 }
             }
             )
@@ -2697,7 +2697,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 CharacterFormat = new CharacterFormat()
                 {
                     Bold = true,
-                    Size = 12
+                    Size = 11
                 }
             }
            )
@@ -2717,7 +2717,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             var paragraph = new GemboxParagraph(document);
 
             var horizontalLine1 = new Shape(document, ShapeType.Line, GemBox.Document.Layout.Floating(
-                 new HorizontalPosition(1, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
+                 new HorizontalPosition(1.65, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
                 new VerticalPosition(3.5, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
                 new GemBox.Document.Size(125, 0)));
             horizontalLine1.Outline.Width = 1;
@@ -2725,7 +2725,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             paragraph.Inlines.Add(horizontalLine1);
 
             var horizontalLine2 = new Shape(document, ShapeType.Line, GemBox.Document.Layout.Floating(
-                new HorizontalPosition(8.78, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
+                new HorizontalPosition(9.18, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
                new VerticalPosition(3.5, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
                new GemBox.Document.Size(151, 0)));
             horizontalLine2.Outline.Width = 1;
@@ -2748,7 +2748,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 }
             }
             , new SpecialCharacter(document, SpecialCharacterType.LineBreak)
-            , new GemboxRun(document, "TRƯỜNG ĐẠI HỌC XÂY DỰNG")
+            , new GemboxRun(document, "TRƯỜNG ĐẠI HỌC XÂY DỰNG HÀ NỘI")
             {
                 CharacterFormat = new CharacterFormat()
                 {
@@ -3192,7 +3192,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             string gioiTinh = studentInfo.Student.GioiTinh;
             gioiTinh = getGender(gioiTinh);
             string matruong = "XD1";
-            string tenTruong = "TRƯỜNG ĐẠI HỌC XÂY DỰNG";
+            string tenTruong = "TRƯỜNG ĐẠI HỌC XÂY DỰNG HÀ NỘI";
             string heDaoTao = "ĐẠI HỌC";
             string khoa = getKhoa(Class);
             string namNhapHoc = getNamNhapHoc(NienKhoa);
@@ -3251,7 +3251,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             {
                 CharacterFormat = new CharacterFormat()
                 {
-                    Size = 12
+                    Size = 11
                 }
             }
             )
@@ -3273,7 +3273,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 CharacterFormat = new CharacterFormat()
                 {
                     Bold = true,
-                    Size = 12
+                    Size = 11
                 }
             }
            )
@@ -3293,12 +3293,12 @@ namespace nuce.web.api.Services.Ctsv.Implements
             GemboxTableRow rowT2 = new GemboxTableRow(document);
             table.Rows.Add(rowT2);
 
-            rowT2.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document, new GemboxRun(document, string.Format("{0}", "TRƯỜNG ĐẠI HỌC XÂY DỰNG"))
+            rowT2.Cells.Add(new GemBox.Document.Tables.TableCell(document, new GemboxParagraph(document, new GemboxRun(document, string.Format("{0}", "TRƯỜNG ĐẠI HỌC XÂY DỰNG HÀ NỘI"))
             {
                 CharacterFormat = new CharacterFormat()
                 {
                     Bold = true,
-                    Size = 12
+                    Size = 11
                 }
             }
             )
@@ -3320,7 +3320,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 CharacterFormat = new CharacterFormat()
                 {
                     Bold = true,
-                    Size = 12
+                    Size = 11
                 }
             }
            )
@@ -3340,7 +3340,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             var paragraph = new GemboxParagraph(document);
 
             var horizontalLine1 = new Shape(document, ShapeType.Line, GemBox.Document.Layout.Floating(
-                 new HorizontalPosition(1.45, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
+                 new HorizontalPosition(2.15, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
                 new VerticalPosition(3.5, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
                 new GemBox.Document.Size(80, 0)));
             horizontalLine1.Outline.Width = 1;
@@ -3348,7 +3348,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             paragraph.Inlines.Add(horizontalLine1);
 
             var horizontalLine2 = new Shape(document, ShapeType.Line, GemBox.Document.Layout.Floating(
-                new HorizontalPosition(8.78, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
+                new HorizontalPosition(9.2, GemBox.Document.LengthUnit.Centimeter, HorizontalPositionAnchor.Margin),
                new VerticalPosition(3.5, GemBox.Document.LengthUnit.Centimeter, VerticalPositionAnchor.InsideMargin),
                new GemBox.Document.Size(151, 0)));
             horizontalLine2.Outline.Width = 1;
