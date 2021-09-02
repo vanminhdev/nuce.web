@@ -1035,6 +1035,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     muonHocBa.Status = model.Status;
                     muonHocBa.NgayHenTuNgay = model.NgayHenBatDau;
                     muonHocBa.NgayHenDenNgay = model.NgayHenKetThuc;
+                    muonHocBa.NgayMuon = model.NgayHenBatDau;
+                    muonHocBa.NgayTraDuKien = model.NgayHenKetThuc;
                     muonHocBa.PhanHoi = model.PhanHoi;
 
                     if (muonHocBa.Status == (int)TrangThaiYeuCau.HoanThanh)
@@ -1638,6 +1640,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 initHeaderCell(ws, firstRow, ++i, "Tháng ký");
                 initHeaderCell(ws, firstRow, ++i, "Năm ký");
                 initHeaderCell(ws, firstRow, ++i, "Số điện thoại");
+                initHeaderCell(ws, firstRow, ++i, "Email");
 
                 ws.Row(firstRow).Height = 32;
                 string tenTruong = "ĐẠI HỌC XÂY DỰNG HÀ NỘI";
@@ -1695,6 +1698,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(now.Month);
                     ws.Cell(row, ++col).SetValue(now.Year);
                     ws.Cell(row, ++col).SetValue(soDienThoai);
+                    ws.Cell(row, ++col).SetValue(email);
                 }
                 for (int j = 0; j < col; j++)
                 {
@@ -1944,6 +1948,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 setStyle(ws, firstRow, ++i, "Khoa quản lý");
                 setStyle(ws, firstRow, ++i, "Nhu cầu nhà ở");
                 setStyle(ws, firstRow, ++i, "Đối tượng ưu tiên");
+                setStyle(ws, firstRow, ++i, "Số điện thoại");
+                setStyle(ws, firstRow, ++i, "Email");
 
                 ws.Row(firstRow).Height = 32;
 
@@ -1998,6 +2004,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(tenKhoa);
                     ws.Cell(row, ++col).SetValue(nhuCauNhaO);
                     ws.Cell(row, ++col).SetValue(doiTuongUuTien);
+                    ws.Cell(row, ++col).SetValue(mobile);
+                    ws.Cell(row, ++col).SetValue(email);
                 }
                 for (int j = 0; j < col; j++)
                 {
@@ -2036,6 +2044,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 setStyle(ws, firstRow, ++i, "Khoa quản lý");
                 setStyle(ws, firstRow, ++i, "Đối tượng");
                 setStyle(ws, firstRow, ++i, "Số điện thoại");
+                setStyle(ws, firstRow, ++i, "Email");
 
                 ws.Row(firstRow).Height = 32;
 
@@ -2096,6 +2105,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(tenKhoa);
                     ws.Cell(row, ++col).SetValue(doiTuong);
                     ws.Cell(row, ++col).SetValue(sdt);
+                    ws.Cell(row, ++col).SetValue(email);
                 }
                 for (int j = 0; j < col; j++)
                 {
@@ -2134,6 +2144,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 setStyle(ws, firstRow, ++i, "Khoa quản lý");
                 setStyle(ws, firstRow, ++i, "Đối tượng");
                 setStyle(ws, firstRow, ++i, "Số điện thoại");
+                setStyle(ws, firstRow, ++i, "Email");
 
                 ws.Row(firstRow).Height = 32;
 
@@ -2179,6 +2190,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(tenKhoa);
                     ws.Cell(row, ++col).SetValue(doiTuong);
                     ws.Cell(row, ++col).SetValue(sdt);
+                    ws.Cell(row, ++col).SetValue(email);
                 }
                 for (int j = 0; j < col; j++)
                 {
@@ -3743,7 +3755,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 new GemboxRun(document, TenKhoa) { CharacterFormat = new CharacterFormat { Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.Tab),
                 new GemboxRun(document, "Trường: "),
-                new GemboxRun(document, "Đại học Xây dựng") { CharacterFormat = new CharacterFormat { Bold = true } },
+                new GemboxRun(document, "Đại học Xây dựng Hà Nội") { CharacterFormat = new CharacterFormat { Bold = true } },
                 new SpecialCharacter(document, SpecialCharacterType.LineBreak),
                 new GemboxRun(document, "     "),
                 new GemboxRun(document, "Số thẻ sinh viên, học viên (nếu có): "),

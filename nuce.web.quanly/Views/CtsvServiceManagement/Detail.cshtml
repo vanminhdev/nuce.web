@@ -62,6 +62,7 @@
                     <option value="30">Trong vòng 30 ngày</option>
                     <option value="60">Trong vòng 60 ngày</option>
                     <option value="90">Trong vòng 90 ngày</option>
+                    <option value="365">Trong vòng 1 năm</option>
                 </select>
             </div>
 
@@ -601,8 +602,8 @@
                     if (dichVu.ngayTra || dichVu.ngayHenDenNgay) {
                         console.log(dichVu)
                         result = `<div class="mb-3">
-                                    <b>Thời gian mượn: </b>${convertDateTime(dichVu.ngayMuon)}<br>
-                                    <b>Thời gian trả (dự kiến): </b>${convertDateTime(dichVu.ngayTraDuKien)}<br>
+                                    <b>Thời gian đăng ký mượn: </b>${dichVu.ngayMuon ? convertDateTime(dichVu.ngayMuon) : ''}<br>
+                                    <b>Thời gian trả (dự kiến): </b>${dichVu.ngayMuon ? convertDateTime(dichVu.ngayTraDuKien) : ''}<br>
                                     <b>Mô tả: </b>${dichVu.description || ''}<br>
                                     <b>Ghi chú: </b>${dichVu.notice || ''}
                                 </div>`;
