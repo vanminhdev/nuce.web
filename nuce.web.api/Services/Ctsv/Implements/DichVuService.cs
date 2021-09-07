@@ -567,6 +567,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             {
                 case DichVu.XacNhan:
                     var xacNhanGetAll = await _xacNhanRepository.GetAllForAdmin(model);
+                    //var xacNhanGetAll = _xacNhanRepository.GetAllForAdminCustom(model);
                     var xacNhanList = xacNhanGetAll.FinalData;
 
                     foreach (var yeuCau in xacNhanList)
@@ -4132,6 +4133,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
             var ngayKy = now.ToString("dd");
             var thangKy = now.Month.ToString();
             var namKy = now.Year.ToString();
+            string ngayMuon = muonHocBa.NgayMuon != null ? muonHocBa.NgayMuon?.ToString("dd/MM/yyyy") : "          ";
+            string ngayTra = muonHocBa.NgayTraDuKien != null ? muonHocBa.NgayTraDuKien?.ToString("dd/MM/yyyy") : "          ";
 
             byte[] templateBytes = await File.ReadAllBytesAsync(filePath);
             using (MemoryStream templateStream = new MemoryStream())
@@ -4149,7 +4152,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         replaceTextTemplate(text, "<mssv>", studentInfo.Student.Code);
                         replaceTextTemplate(text, "<ten_lop>", studentInfo.Student.ClassCode);
                         replaceTextTemplate(text, "<ten_khoa>", tenKhoa);
+                        replaceTextTemplate(text, "<ngay_muon>", ngayMuon);
+                        replaceTextTemplate(text, "<ngay_tra>", ngayTra);
                         replaceTextTemplate(text, "<thoi_gian_muon>", muonHocBa.ThoiGianMuon);
+                        //replaceTextTemplate(text, "<thoi_gian_muon>", muonHocBa.ThoiGianMuon);
                         replaceTextTemplate(text, "<muc_dich>", muonHocBa.LyDo);
                         replaceTextTemplate(text, "<ngay_ky>", ngayKy);
                         replaceTextTemplate(text, "<thang_ky>", thangKy);

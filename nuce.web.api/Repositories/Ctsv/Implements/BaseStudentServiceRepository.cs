@@ -43,8 +43,12 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
 
         public async Task<GetAllForAdminResponseRepo<Entity>> GetAllForAdmin(QuanLyDichVuDetailModel model)
         {
-            DateTime dtCompare = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
-            dtCompare = dtCompare.AddDays(-1 * model.DayRange);
+            DateTime? dtCompare = null;
+            if (model.DayRange != null)
+            {
+                dtCompare = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+                dtCompare = dtCompare?.AddDays(-1 * model.DayRange ?? 0);
+            }
             model.SearchText = model.SearchText?.Trim()?.ToLower();
 
             var beforeFilteredData = (await _context.Set<Entity>().AsNoTracking().ToListAsync())
@@ -58,7 +62,7 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
                                             getValueString(item, "StudentName").Contains(model.SearchText) ||
                                             getValueString(item, "PhanHoi").Contains(model.SearchText)
                                         ) &&
-                                        DateTime.Parse(getValueString(item, "LastModifiedTime")) >= dtCompare)
+                                        (dtCompare == null || DateTime.Parse(getValueString(item, "LastModifiedTime")) >= dtCompare))
                         .OrderBy(r => getValue(r, "Status"))
                         .ThenByDescending(r => getValue(r, "LastModifiedTime"));
             return new GetAllForAdminResponseRepo<Entity>

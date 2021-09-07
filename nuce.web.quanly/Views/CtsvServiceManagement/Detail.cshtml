@@ -63,6 +63,7 @@
                     <option value="60">Trong vòng 60 ngày</option>
                     <option value="90">Trong vòng 90 ngày</option>
                     <option value="365">Trong vòng 1 năm</option>
+                    <option value="null">Cũ hơn</option>
                 </select>
             </div>
 
@@ -914,11 +915,17 @@
           searchData();
         }
 
-        var searchData = function() {
+        var searchData = function () {
+            let dayRange = 7;
+            if ($('#slChonNgay').val() === "null") {
+                dayRange = null;
+            } else if ($('#slChonNgay').val()) {
+                dayRange = $('#slChonNgay').val();
+            }
             const data = {
                 type: serviceType,
                 searchText: $("#txt-srvc-search").val() || '',
-                dayRange: $('#slChonNgay').val() || 7,
+                dayRange,
                 page: null,
                 size: null,
             };

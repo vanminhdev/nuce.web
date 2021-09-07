@@ -118,8 +118,12 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
                 dotActiveId = dotActive.Id;
             }
             //quay lại 7 ngày gần đây
-            DateTime dtCompare = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
-            dtCompare = dtCompare.AddDays(-1 * model.DayRange);
+            DateTime? dtCompare = null;
+            if (model.DayRange != null)
+            {
+                dtCompare = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+                dtCompare = dtCompare?.AddDays(-1 * model.DayRange ?? 0);
+            }
             model.SearchText = model.SearchText?.Trim()?.ToLower();
 
             var beforeFilteredData = (await _context.AsAcademyStudentSvDeNghiHoTroChiPhiHocTap.AsNoTracking().ToListAsync())

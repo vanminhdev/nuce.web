@@ -19,7 +19,7 @@ namespace Nuce.CTSV
                 if (!studentAva.IsSuccessStatusCode)
                 {
                     divBtnContainer.Visible = false;
-                    divThongBao.InnerHtml = $"Sinh viên chưa có thẻ. Trực tiếp lên Phòng Công tác Chính trị và Quản lý Sinh viên tại phòng 302, nhà A1 để làm việc";
+                    divThongBao.InnerHtml = $"Sinh viên chưa có thẻ. Trực tiếp lên Phòng Công tác Chính trị và Quản lý Sinh viên tại tầng 2, Trung tâm Hỗ trợ Sinh viên để làm việc";
                     return;
                 }
                 var studentResponse = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, $"{ApiEndPoint.GetStudentInfo}/{m_SinhVien.MaSV}", "");

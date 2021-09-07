@@ -82,7 +82,7 @@ namespace nuce.web.api.ViewModel.Ctsv
     {
         public int Type { get; set; }
         public string SearchText { get; set; }
-        public int DayRange { get; set; }
+        public int? DayRange { get; set; }
         public int? Page { get; set; }
         public int? Size { get; set; }
     }
