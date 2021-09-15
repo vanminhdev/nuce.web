@@ -1400,24 +1400,25 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 int i = 0;
                 int firstRow = 1;
                 #region title
-                setStyle(ws, firstRow, ++i, "Mã số SV");
-                setStyle(ws, firstRow, ++i, "Họ và tên");
-                setStyle(ws, firstRow, ++i, "Ngày sinh");
-                setStyle(ws, firstRow, ++i, "Email");
-                setStyle(ws, firstRow, ++i, "Xã");
-                setStyle(ws, firstRow, ++i, "Huyện");
-                setStyle(ws, firstRow, ++i, "Tỉnh");
-                setStyle(ws, firstRow, ++i, "Lớp");
-                setStyle(ws, firstRow, ++i, "Niên khóa");
-                setStyle(ws, firstRow, ++i, "Khoa quản lý");
-                setStyle(ws, firstRow, ++i, "Số điện thoại");
-                setStyle(ws, firstRow, ++i, "Hệ đào tạo");
-                setStyle(ws, firstRow, ++i, "Lý do xác nhận");
+                initHeaderCell(ws, firstRow, ++i, "Mã số SV");
+                initHeaderCell(ws, firstRow, ++i, "Họ và tên");
+                initHeaderCell(ws, firstRow, ++i, "Ngày sinh");
+                initHeaderCell(ws, firstRow, ++i, "Email");
+                initHeaderCell(ws, firstRow, ++i, "Xã");
+                initHeaderCell(ws, firstRow, ++i, "Huyện");
+                initHeaderCell(ws, firstRow, ++i, "Tỉnh");
+                initHeaderCell(ws, firstRow, ++i, "Lớp");
+                initHeaderCell(ws, firstRow, ++i, "Niên khóa");
+                initHeaderCell(ws, firstRow, ++i, "Khoa quản lý");
+                initHeaderCell(ws, firstRow, ++i, "Số điện thoại");
+                initHeaderCell(ws, firstRow, ++i, "Địa chỉ người nhận");
+                initHeaderCell(ws, firstRow, ++i, "Hệ đào tạo");
+                initHeaderCell(ws, firstRow, ++i, "Lý do xác nhận");
                 ws.Cell(firstRow, i).Style.Fill.SetBackgroundColor(XLColor.White);
 
-                setStyle(ws, firstRow, ++i, "Ngày ký");
-                setStyle(ws, firstRow, ++i, "Tháng ký");
-                setStyle(ws, firstRow, ++i, "Năm ký");
+                initHeaderCell(ws, firstRow, ++i, "Ngày ký");
+                initHeaderCell(ws, firstRow, ++i, "Tháng ký");
+                initHeaderCell(ws, firstRow, ++i, "Năm ký");
 
                 ws.Row(firstRow).Height = 32;
 
@@ -1440,6 +1441,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
                     string tenKhoa = yeuCau.Faculty?.Name ?? "";
                     string mobile = yeuCau.Student.Mobile ?? "";
+                    string diaChiBaoTin = yeuCau.Student.BaoTinDiaChiNguoiNhan ?? "";
 
                     string lyDo = yeuCau.YeuCauDichVu.LyDo ?? "";
                     DateTime now = DateTime.Now;
@@ -1457,6 +1459,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(nienKhoa);
                     ws.Cell(row, ++col).SetValue(tenKhoa);
                     ws.Cell(row, ++col).SetValue(mobile);
+                    ws.Cell(row, ++col).SetValue(diaChiBaoTin);
                     ws.Cell(row, ++col).SetValue("Chính quy");
                     ws.Cell(row, ++col).SetValue(lyDo);
                     ws.Cell(row, ++col).SetValue(now.Day);
@@ -1501,33 +1504,34 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 int i = 0;
                 int firstRow = 1;
                 #region title
-                setStyle(ws, firstRow, ++i, "Mã số SV");
-                setStyle(ws, firstRow, ++i, "Họ và tên");
-                setStyle(ws, firstRow, ++i, "Ngày sinh");
-                setStyle(ws, firstRow, ++i, "Email");
-                setStyle(ws, firstRow, ++i, "Xã");
-                setStyle(ws, firstRow, ++i, "Huyện");
-                setStyle(ws, firstRow, ++i, "Tỉnh");
-                setStyle(ws, firstRow, ++i, "Lớp");
-                setStyle(ws, firstRow, ++i, "Niên khóa");
-                setStyle(ws, firstRow, ++i, "Khoa quản lý");
-                setStyle(ws, firstRow, ++i, "Số điện thoại");
-                setStyle(ws, firstRow, ++i, "Hệ đào tạo");
-                setStyle(ws, firstRow, ++i, "Năm thứ");
+                initHeaderCell(ws, firstRow, ++i, "Mã số SV");
+                initHeaderCell(ws, firstRow, ++i, "Họ và tên");
+                initHeaderCell(ws, firstRow, ++i, "Ngày sinh");
+                initHeaderCell(ws, firstRow, ++i, "Email");
+                initHeaderCell(ws, firstRow, ++i, "Xã");
+                initHeaderCell(ws, firstRow, ++i, "Huyện");
+                initHeaderCell(ws, firstRow, ++i, "Tỉnh");
+                initHeaderCell(ws, firstRow, ++i, "Lớp");
+                initHeaderCell(ws, firstRow, ++i, "Niên khóa");
+                initHeaderCell(ws, firstRow, ++i, "Khoa quản lý");
+                initHeaderCell(ws, firstRow, ++i, "Số điện thoại");
+                initHeaderCell(ws, firstRow, ++i, "Địa chỉ người nhận");
+                initHeaderCell(ws, firstRow, ++i, "Hệ đào tạo");
+                initHeaderCell(ws, firstRow, ++i, "Năm thứ");
                 ws.Cell(firstRow, i).Style.Fill.SetBackgroundColor(XLColor.White);
-                setStyle(ws, firstRow, ++i, "Học Kỳ");
+                initHeaderCell(ws, firstRow, ++i, "Học Kỳ");
                 ws.Cell(firstRow, i).Style.Fill.SetBackgroundColor(XLColor.White);
-                setStyle(ws, firstRow, ++i, "Năm học");
+                initHeaderCell(ws, firstRow, ++i, "Năm học");
                 ws.Cell(firstRow, i).Style.Fill.SetBackgroundColor(XLColor.White);
-                setStyle(ws, firstRow, ++i, "Thời gian khóa học \n (bao nhiêu năm)");
+                initHeaderCell(ws, firstRow, ++i, "Thời gian khóa học \n (bao nhiêu năm)");
                 ws.Cell(firstRow, i).Style.Fill.SetBackgroundColor(XLColor.White);
                 ws.Cell(firstRow, i).Style.Alignment.WrapText = true;
-                setStyle(ws, firstRow, ++i, "Kỷ luật");
+                initHeaderCell(ws, firstRow, ++i, "Kỷ luật");
                 ws.Cell(firstRow, i).Style.Fill.SetBackgroundColor(XLColor.White);
 
-                setStyle(ws, firstRow, ++i, "Ngày ký");
-                setStyle(ws, firstRow, ++i, "Tháng ký");
-                setStyle(ws, firstRow, ++i, "Năm ký");
+                initHeaderCell(ws, firstRow, ++i, "Ngày ký");
+                initHeaderCell(ws, firstRow, ++i, "Tháng ký");
+                initHeaderCell(ws, firstRow, ++i, "Năm ký");
 
                 ws.Row(firstRow).Height = 32;
 
@@ -1550,6 +1554,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
                     string tenKhoa = yeuCau.Faculty?.Name ?? "";
                     string mobile = yeuCau.Student.Mobile ?? "";
+                    string diaChiBaoTin = yeuCau.Student.BaoTinDiaChiNguoiNhan ?? "";
 
                     string kyLuat = yeuCau.YeuCauDichVu.KyLuat ?? "Không";
                     string namThu = getNamThu(nienKhoa);
@@ -1570,6 +1575,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(nienKhoa);
                     ws.Cell(row, ++col).SetValue(tenKhoa);
                     ws.Cell(row, ++col).SetValue(mobile);
+                    ws.Cell(row, ++col).SetValue(diaChiBaoTin);
                     ws.Cell(row, ++col).SetValue("Chính quy");
                     ws.Cell(row, ++col).SetValue(namThu);
                     ws.Cell(row, col).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
@@ -1642,6 +1648,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 initHeaderCell(ws, firstRow, ++i, "Năm ký");
                 initHeaderCell(ws, firstRow, ++i, "Số điện thoại");
                 initHeaderCell(ws, firstRow, ++i, "Email");
+                initHeaderCell(ws, firstRow, ++i, "Địa chỉ người nhận");
+
 
                 ws.Row(firstRow).Height = 32;
                 string tenTruong = "ĐẠI HỌC XÂY DỰNG HÀ NỘI";
@@ -1667,6 +1675,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
                     string tenKhoa = yeuCau.Faculty?.Name ?? "";
                     string mobile = yeuCau.Student.Mobile ?? "";
+                    string diaChiBaoTin = yeuCau.Student.BaoTinDiaChiNguoiNhan ?? "";
                     string gioiTinh = yeuCau.Student.GioiTinh ?? "";
                     gioiTinh = getGender(gioiTinh);
                     string cmtNoiCap = yeuCau.Student.CmtNoiCap ?? "";
@@ -1700,6 +1709,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(now.Year);
                     ws.Cell(row, ++col).SetValue(soDienThoai);
                     ws.Cell(row, ++col).SetValue(email);
+                    ws.Cell(row, ++col).SetValue(diaChiBaoTin);
                 }
                 for (int j = 0; j < col; j++)
                 {
@@ -1731,31 +1741,32 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 int i = 0;
                 int firstRow = 1;
                 #region title
-                setStyle(ws, firstRow, ++i, "Mã số SV");
-                setStyle(ws, firstRow, ++i, "Họ và tên");
-                setStyle(ws, firstRow, ++i, "Ngày sinh");
-                setStyle(ws, firstRow, ++i, "Email");
-                setStyle(ws, firstRow, ++i, "Xã");
-                setStyle(ws, firstRow, ++i, "Huyện");
-                setStyle(ws, firstRow, ++i, "Tỉnh");
-                setStyle(ws, firstRow, ++i, "Lớp");
-                setStyle(ws, firstRow, ++i, "Niên khóa");
-                setStyle(ws, firstRow, ++i, "Khoa quản lý");
-                setStyle(ws, firstRow, ++i, "Số điện thoại");
-                setStyle(ws, firstRow, ++i, "Hệ đào tạo");
+                initHeaderCell(ws, firstRow, ++i, "Mã số SV");
+                initHeaderCell(ws, firstRow, ++i, "Họ và tên");
+                initHeaderCell(ws, firstRow, ++i, "Ngày sinh");
+                initHeaderCell(ws, firstRow, ++i, "Email");
+                initHeaderCell(ws, firstRow, ++i, "Xã");
+                initHeaderCell(ws, firstRow, ++i, "Huyện");
+                initHeaderCell(ws, firstRow, ++i, "Tỉnh");
+                initHeaderCell(ws, firstRow, ++i, "Lớp");
+                initHeaderCell(ws, firstRow, ++i, "Niên khóa");
+                initHeaderCell(ws, firstRow, ++i, "Khoa quản lý");
+                initHeaderCell(ws, firstRow, ++i, "Số điện thoại");
+                initHeaderCell(ws, firstRow, ++i, "Địa chỉ người nhận");
+                initHeaderCell(ws, firstRow, ++i, "Hệ đào tạo");
 
-                setStyleUniqueCol(ws, firstRow, ++i, "Năm thứ");
-                setStyleUniqueCol(ws, firstRow, ++i, "Giới tính");
-                setStyleUniqueCol(ws, firstRow, ++i, "Đối tượng\nưu tiên");
+                initHeaderCell(ws, firstRow, ++i, "Năm thứ");
+                initHeaderCell(ws, firstRow, ++i, "Giới tính");
+                initHeaderCell(ws, firstRow, ++i, "Đối tượng\nưu tiên");
                 ws.Cell(firstRow, i).Style.Alignment.WrapText = true;
-                setStyleUniqueCol(ws, firstRow, ++i, "Số CMTND");
-                setStyleUniqueCol(ws, firstRow, ++i, "Cấp\nngày/tháng/năm");
+                initHeaderCell(ws, firstRow, ++i, "Số CMTND");
+                initHeaderCell(ws, firstRow, ++i, "Cấp\nngày/tháng/năm");
                 ws.Cell(firstRow, i).Style.Alignment.WrapText = true;
-                setStyleUniqueCol(ws, firstRow, ++i, "Nơi cấp");
+                initHeaderCell(ws, firstRow, ++i, "Nơi cấp");
 
-                setStyle(ws, firstRow, ++i, "Ngày ký");
-                setStyle(ws, firstRow, ++i, "Tháng ký");
-                setStyle(ws, firstRow, ++i, "Năm ký");
+                initHeaderCell(ws, firstRow, ++i, "Ngày ký");
+                initHeaderCell(ws, firstRow, ++i, "Tháng ký");
+                initHeaderCell(ws, firstRow, ++i, "Năm ký");
 
                 ws.Row(firstRow).Height = 32;
 
@@ -1784,6 +1795,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string cmtNoiCap = yeuCau.Student.CmtNoiCap ?? "";
                     string cmt = yeuCau.Student.Cmt ?? "";
                     string soDienThoai = mobile;
+                    string diaChiBaoTin = yeuCau.Student.BaoTinDiaChiNguoiNhan ?? "";
                     string nganhHoc = yeuCau.Academics?.Name ?? "";
                     string doiTuongUuTien = yeuCau.Student.DoiTuongUuTien ?? "";
                     DateTime now = DateTime.Now;
@@ -1801,6 +1813,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(nienKhoa);
                     ws.Cell(row, ++col).SetValue(tenKhoa);
                     ws.Cell(row, ++col).SetValue(mobile);
+                    ws.Cell(row, ++col).SetValue(diaChiBaoTin);
                     ws.Cell(row, ++col).SetValue("Chính quy");
                     ws.Cell(row, ++col).SetValue(getNamThu(nienKhoa));
                     ws.Cell(row, ++col).SetValue(gioiTinh);
@@ -1842,26 +1855,27 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 int i = 0;
                 int firstRow = 1;
                 #region title
-                setStyle(ws, firstRow, ++i, "Mã số SV");
-                setStyle(ws, firstRow, ++i, "Họ và tên");
-                setStyle(ws, firstRow, ++i, "Ngày sinh");
-                setStyle(ws, firstRow, ++i, "Email");
-                setStyle(ws, firstRow, ++i, "Xã");
-                setStyle(ws, firstRow, ++i, "Huyện");
-                setStyle(ws, firstRow, ++i, "Tỉnh");
-                setStyle(ws, firstRow, ++i, "Lớp");
-                setStyle(ws, firstRow, ++i, "Niên khóa");
-                setStyle(ws, firstRow, ++i, "Khoa quản lý");
-                setStyle(ws, firstRow, ++i, "Số điện thoại");
-                setStyle(ws, firstRow, ++i, "Hệ đào tạo");
+                initHeaderCell(ws, firstRow, ++i, "Mã số SV");
+                initHeaderCell(ws, firstRow, ++i, "Họ và tên");
+                initHeaderCell(ws, firstRow, ++i, "Ngày sinh");
+                initHeaderCell(ws, firstRow, ++i, "Email");
+                initHeaderCell(ws, firstRow, ++i, "Xã");
+                initHeaderCell(ws, firstRow, ++i, "Huyện");
+                initHeaderCell(ws, firstRow, ++i, "Tỉnh");
+                initHeaderCell(ws, firstRow, ++i, "Lớp");
+                initHeaderCell(ws, firstRow, ++i, "Niên khóa");
+                initHeaderCell(ws, firstRow, ++i, "Khoa quản lý");
+                initHeaderCell(ws, firstRow, ++i, "Số điện thoại");
+                initHeaderCell(ws, firstRow, ++i, "Địa chỉ người nhận");
+                initHeaderCell(ws, firstRow, ++i, "Hệ đào tạo");
 
-                setStyleUniqueCol(ws, firstRow, ++i, "Liên tuyến");
-                setStyleUniqueCol(ws, firstRow, ++i, "Số tuyến");
-                setStyleUniqueCol(ws, firstRow, ++i, "Nơi nộp đơn và nhận thẻ");
+                initHeaderCell(ws, firstRow, ++i, "Liên tuyến");
+                initHeaderCell(ws, firstRow, ++i, "Số tuyến");
+                initHeaderCell(ws, firstRow, ++i, "Nơi nộp đơn và nhận thẻ");
 
-                setStyle(ws, firstRow, ++i, "Ngày ký");
-                setStyle(ws, firstRow, ++i, "Tháng ký");
-                setStyle(ws, firstRow, ++i, "Năm ký");
+                initHeaderCell(ws, firstRow, ++i, "Ngày ký");
+                initHeaderCell(ws, firstRow, ++i, "Tháng ký");
+                initHeaderCell(ws, firstRow, ++i, "Năm ký");
 
                 ws.Row(firstRow).Height = 32;
 
@@ -1884,6 +1898,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
                     string tenKhoa = yeuCau.Faculty?.Name ?? "";
                     string mobile = yeuCau.Student.Mobile ?? "";
+                    string diaChiBaoTin = yeuCau.Student.BaoTinDiaChiNguoiNhan ?? "";
                     string lienTuyen = (DichVuXeBusLoaiTuyen)yeuCau.YeuCauDichVu.TuyenType == DichVuXeBusLoaiTuyen.LienTuyen ? "x" : "";
                     string soTuyen = yeuCau.YeuCauDichVu.TuyenCode;
                     string noiNhanThe = yeuCau.YeuCauDichVu.NoiNhanThe;
@@ -1902,6 +1917,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(nienKhoa);
                     ws.Cell(row, ++col).SetValue(tenKhoa);
                     ws.Cell(row, ++col).SetValue(mobile);
+                    ws.Cell(row, ++col).SetValue(diaChiBaoTin);
                     ws.Cell(row, ++col).SetValue("Chính quy");
 
                     ws.Cell(row, ++col).SetValue(lienTuyen);
@@ -1941,16 +1957,18 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 int i = 0;
                 int firstRow = 1;
                 #region title
-                setStyle(ws, firstRow, ++i, "STT");
-                setStyle(ws, firstRow, ++i, "Dấu thời gian");
-                setStyle(ws, firstRow, ++i, "Họ và tên");
-                setStyle(ws, firstRow, ++i, "Mã số SV");
-                setStyle(ws, firstRow, ++i, "Lớp");
-                setStyle(ws, firstRow, ++i, "Khoa quản lý");
-                setStyle(ws, firstRow, ++i, "Nhu cầu nhà ở");
-                setStyle(ws, firstRow, ++i, "Đối tượng ưu tiên");
-                setStyle(ws, firstRow, ++i, "Số điện thoại");
-                setStyle(ws, firstRow, ++i, "Email");
+                initHeaderCell(ws, firstRow, ++i, "STT");
+                initHeaderCell(ws, firstRow, ++i, "Dấu thời gian");
+                initHeaderCell(ws, firstRow, ++i, "Họ và tên");
+                initHeaderCell(ws, firstRow, ++i, "Mã số SV");
+                initHeaderCell(ws, firstRow, ++i, "Lớp");
+                initHeaderCell(ws, firstRow, ++i, "Khoa quản lý");
+                initHeaderCell(ws, firstRow, ++i, "Nhu cầu nhà ở");
+                initHeaderCell(ws, firstRow, ++i, "Đối tượng ưu tiên");
+                initHeaderCell(ws, firstRow, ++i, "Số điện thoại");
+                initHeaderCell(ws, firstRow, ++i, "Email");
+                initHeaderCell(ws, firstRow, ++i, "Địa chỉ người nhận");
+
 
                 ws.Row(firstRow).Height = 32;
 
@@ -1973,6 +1991,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
                     string tenKhoa = yeuCau.Faculty?.Name ?? "";
                     string mobile = yeuCau.Student.Mobile ?? "";
+                    string diaChiBaoTin = yeuCau.Student.BaoTinDiaChiNguoiNhan ?? "";
                     string dauThoiGian = yeuCau.YeuCauDichVu.CreatedTime?.ToString("dd/MM/yyyy HH:MM:ss") ?? "";
                     string nhuCauNhaO = "";
                     switch(yeuCau.YeuCauDichVu.NhuCauNhaO)
@@ -2007,6 +2026,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(doiTuongUuTien);
                     ws.Cell(row, ++col).SetValue(mobile);
                     ws.Cell(row, ++col).SetValue(email);
+                    ws.Cell(row, ++col).SetValue(diaChiBaoTin);
                 }
                 for (int j = 0; j < col; j++)
                 {
@@ -2037,15 +2057,16 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 int i = 0;
                 int firstRow = 1;
                 #region title
-                setStyle(ws, firstRow, ++i, "STT");
-                setStyle(ws, firstRow, ++i, "Dấu thời gian");
-                setStyle(ws, firstRow, ++i, "Họ và tên");
-                setStyle(ws, firstRow, ++i, "Mã số SV");
-                setStyle(ws, firstRow, ++i, "Lớp");
-                setStyle(ws, firstRow, ++i, "Khoa quản lý");
-                setStyle(ws, firstRow, ++i, "Đối tượng");
-                setStyle(ws, firstRow, ++i, "Số điện thoại");
-                setStyle(ws, firstRow, ++i, "Email");
+                initHeaderCell(ws, firstRow, ++i, "STT");
+                initHeaderCell(ws, firstRow, ++i, "Dấu thời gian");
+                initHeaderCell(ws, firstRow, ++i, "Họ và tên");
+                initHeaderCell(ws, firstRow, ++i, "Mã số SV");
+                initHeaderCell(ws, firstRow, ++i, "Lớp");
+                initHeaderCell(ws, firstRow, ++i, "Khoa quản lý");
+                initHeaderCell(ws, firstRow, ++i, "Đối tượng");
+                initHeaderCell(ws, firstRow, ++i, "Số điện thoại");
+                initHeaderCell(ws, firstRow, ++i, "Email");
+                initHeaderCell(ws, firstRow, ++i, "Địa chỉ người nhận");
 
                 ws.Row(firstRow).Height = 32;
 
@@ -2070,6 +2091,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string mobile = yeuCau.Student.Mobile ?? "";
                     string dauThoiGian = yeuCau.YeuCauDichVu.CreatedTime?.ToString("dd/MM/yyyy HH:MM:ss") ?? "";
                     string sdt = yeuCau.YeuCauDichVu.Sdt;
+                    string diaChiBaoTin = yeuCau.Student.BaoTinDiaChiNguoiNhan ?? "";
                     string doiTuong = "";
                     switch (yeuCau.YeuCauDichVu.DoiTuongHuong)
                     {
@@ -2107,6 +2129,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(doiTuong);
                     ws.Cell(row, ++col).SetValue(sdt);
                     ws.Cell(row, ++col).SetValue(email);
+                    ws.Cell(row, ++col).SetValue(diaChiBaoTin);
                 }
                 for (int j = 0; j < col; j++)
                 {
@@ -2137,15 +2160,16 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 int i = 0;
                 int firstRow = 1;
                 #region title
-                setStyle(ws, firstRow, ++i, "STT");
-                setStyle(ws, firstRow, ++i, "Dấu thời gian");
-                setStyle(ws, firstRow, ++i, "Họ và tên");
-                setStyle(ws, firstRow, ++i, "Mã số SV");
-                setStyle(ws, firstRow, ++i, "Lớp");
-                setStyle(ws, firstRow, ++i, "Khoa quản lý");
-                setStyle(ws, firstRow, ++i, "Đối tượng");
-                setStyle(ws, firstRow, ++i, "Số điện thoại");
-                setStyle(ws, firstRow, ++i, "Email");
+                initHeaderCell(ws, firstRow, ++i, "STT");
+                initHeaderCell(ws, firstRow, ++i, "Dấu thời gian");
+                initHeaderCell(ws, firstRow, ++i, "Họ và tên");
+                initHeaderCell(ws, firstRow, ++i, "Mã số SV");
+                initHeaderCell(ws, firstRow, ++i, "Lớp");
+                initHeaderCell(ws, firstRow, ++i, "Khoa quản lý");
+                initHeaderCell(ws, firstRow, ++i, "Đối tượng");
+                initHeaderCell(ws, firstRow, ++i, "Số điện thoại");
+                initHeaderCell(ws, firstRow, ++i, "Email");
+                initHeaderCell(ws, firstRow, ++i, "Địa chỉ người nhận");
 
                 ws.Row(firstRow).Height = 32;
 
@@ -2170,6 +2194,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string mobile = yeuCau.Student.Mobile ?? "";
                     string dauThoiGian = yeuCau.YeuCauDichVu.CreatedTime?.ToString("dd/MM/yyyy HH:MM:ss") ?? "";
                     string sdt = yeuCau.YeuCauDichVu.Sdt;
+                    string diaChiBaoTin = yeuCau.Student.BaoTinDiaChiNguoiNhan ?? "";
                     string doiTuong = "";
                     switch (yeuCau.YeuCauDichVu.DoiTuongHuong)
                     {
@@ -2192,6 +2217,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(doiTuong);
                     ws.Cell(row, ++col).SetValue(sdt);
                     ws.Cell(row, ++col).SetValue(email);
+                    ws.Cell(row, ++col).SetValue(diaChiBaoTin);
                 }
                 for (int j = 0; j < col; j++)
                 {
@@ -2224,24 +2250,25 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 int i = 0;
                 int firstRow = 1;
                 #region title
-                setStyle(ws, firstRow, ++i, "Mã số SV");
-                setStyle(ws, firstRow, ++i, "Họ và tên");
-                setStyle(ws, firstRow, ++i, "Ngày sinh");
-                setStyle(ws, firstRow, ++i, "Email");
-                setStyle(ws, firstRow, ++i, "Xã");
-                setStyle(ws, firstRow, ++i, "Huyện");
-                setStyle(ws, firstRow, ++i, "Tỉnh");
-                setStyle(ws, firstRow, ++i, "Lớp");
-                setStyle(ws, firstRow, ++i, "Niên khóa");
-                setStyle(ws, firstRow, ++i, "Khoa quản lý");
-                setStyle(ws, firstRow, ++i, "Số điện thoại");
-                setStyle(ws, firstRow, ++i, "Hệ đào tạo");
-                setStyleUniqueCol(ws, firstRow, ++i, "Kính gửi");
-                setStyleUniqueCol(ws, firstRow, ++i, "Đến gặp");
-                setStyleUniqueCol(ws, firstRow, ++i, "Về việc");
-                setStyle(ws, firstRow, ++i, "Ngày ký");
-                setStyle(ws, firstRow, ++i, "Tháng ký");
-                setStyle(ws, firstRow, ++i, "Năm ký");
+                initHeaderCell(ws, firstRow, ++i, "Mã số SV");
+                initHeaderCell(ws, firstRow, ++i, "Họ và tên");
+                initHeaderCell(ws, firstRow, ++i, "Ngày sinh");
+                initHeaderCell(ws, firstRow, ++i, "Email");
+                initHeaderCell(ws, firstRow, ++i, "Xã");
+                initHeaderCell(ws, firstRow, ++i, "Huyện");
+                initHeaderCell(ws, firstRow, ++i, "Tỉnh");
+                initHeaderCell(ws, firstRow, ++i, "Lớp");
+                initHeaderCell(ws, firstRow, ++i, "Niên khóa");
+                initHeaderCell(ws, firstRow, ++i, "Khoa quản lý");
+                initHeaderCell(ws, firstRow, ++i, "Số điện thoại");
+                initHeaderCell(ws, firstRow, ++i, "Địa chỉ người nhận");
+                initHeaderCell(ws, firstRow, ++i, "Hệ đào tạo");
+                initHeaderCell(ws, firstRow, ++i, "Kính gửi");
+                initHeaderCell(ws, firstRow, ++i, "Đến gặp");
+                initHeaderCell(ws, firstRow, ++i, "Về việc");
+                initHeaderCell(ws, firstRow, ++i, "Ngày ký");
+                initHeaderCell(ws, firstRow, ++i, "Tháng ký");
+                initHeaderCell(ws, firstRow, ++i, "Năm ký");
 
                 ws.Row(firstRow).Height = 32;
 
@@ -2265,6 +2292,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
                     string tenKhoa = yeuCau.Faculty?.Name ?? "";
                     string mobile = yeuCau.Student.Mobile ?? "";
+                    string diaChiBaoTin = yeuCau.Student.BaoTinDiaChiNguoiNhan ?? "";
 
                     string donVi = yeuCau.YeuCauDichVu.DonVi ?? "";
                     string denGap = yeuCau.YeuCauDichVu.DenGap ?? "";
@@ -2284,6 +2312,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(nienKhoa);
                     ws.Cell(row, ++col).SetValue(tenKhoa);
                     ws.Cell(row, ++col).SetValue(mobile);
+                    ws.Cell(row, ++col).SetValue(diaChiBaoTin);
                     ws.Cell(row, ++col).SetValue("Chính quy");
                     ws.Cell(row, ++col).SetValue(donVi);
                     ws.Cell(row, ++col).SetValue(denGap);
@@ -2322,20 +2351,21 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 int i = 0;
                 int firstRow = 1;
                 #region title
-                setStyle(ws, firstRow, ++i, "Mã số SV");
-                setStyle(ws, firstRow, ++i, "Họ và tên");
-                setStyle(ws, firstRow, ++i, "Ngày sinh");
-                setStyle(ws, firstRow, ++i, "Email");
-                setStyle(ws, firstRow, ++i, "Xã");
-                setStyle(ws, firstRow, ++i, "Huyện");
-                setStyle(ws, firstRow, ++i, "Tỉnh");
-                setStyle(ws, firstRow, ++i, "Lớp");
-                setStyle(ws, firstRow, ++i, "Niên khóa");
-                setStyle(ws, firstRow, ++i, "Khoa quản lý");
-                setStyle(ws, firstRow, ++i, "Số điện thoại");
-                setStyle(ws, firstRow, ++i, "Ngày ký");
-                setStyle(ws, firstRow, ++i, "Tháng ký");
-                setStyle(ws, firstRow, ++i, "Năm ký");
+                initHeaderCell(ws, firstRow, ++i, "Mã số SV");
+                initHeaderCell(ws, firstRow, ++i, "Họ và tên");
+                initHeaderCell(ws, firstRow, ++i, "Ngày sinh");
+                initHeaderCell(ws, firstRow, ++i, "Email");
+                initHeaderCell(ws, firstRow, ++i, "Xã");
+                initHeaderCell(ws, firstRow, ++i, "Huyện");
+                initHeaderCell(ws, firstRow, ++i, "Tỉnh");
+                initHeaderCell(ws, firstRow, ++i, "Lớp");
+                initHeaderCell(ws, firstRow, ++i, "Niên khóa");
+                initHeaderCell(ws, firstRow, ++i, "Khoa quản lý");
+                initHeaderCell(ws, firstRow, ++i, "Số điện thoại");
+                initHeaderCell(ws, firstRow, ++i, "Địa chỉ người nhận");
+                initHeaderCell(ws, firstRow, ++i, "Ngày ký");
+                initHeaderCell(ws, firstRow, ++i, "Tháng ký");
+                initHeaderCell(ws, firstRow, ++i, "Năm ký");
 
                 ws.Row(firstRow).Height = 32;
 
@@ -2359,6 +2389,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
                     string tenKhoa = yeuCau.Faculty?.Name ?? "";
                     string mobile = yeuCau.Student.Mobile ?? "";
+                    string diaChiBaoTin = yeuCau.Student.BaoTinDiaChiNguoiNhan ?? "";
 
                     DateTime now = DateTime.Now;
                     int row = j + 2;
@@ -2375,6 +2406,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(nienKhoa);
                     ws.Cell(row, ++col).SetValue(tenKhoa);
                     ws.Cell(row, ++col).SetValue(mobile);
+                    ws.Cell(row, ++col).SetValue(diaChiBaoTin);
                     ws.Cell(row, ++col).SetValue(now.Day);
                     ws.Cell(row, ++col).SetValue(now.Month);
                     ws.Cell(row, ++col).SetValue(now.Year);
@@ -2409,23 +2441,24 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 int i = 0;
                 int firstRow = 1;
                 #region title
-                setStyle(ws, firstRow, ++i, "Mã số SV");
-                setStyle(ws, firstRow, ++i, "Họ và tên");
-                setStyle(ws, firstRow, ++i, "Ngày sinh");
-                setStyle(ws, firstRow, ++i, "Email");
-                setStyle(ws, firstRow, ++i, "Xã");
-                setStyle(ws, firstRow, ++i, "Huyện");
-                setStyle(ws, firstRow, ++i, "Tỉnh");
-                setStyle(ws, firstRow, ++i, "Lớp");
-                setStyle(ws, firstRow, ++i, "Khoa quản lý");
-                setStyle(ws, firstRow, ++i, "Số điện thoại");
+                initHeaderCell(ws, firstRow, ++i, "Mã số SV");
+                initHeaderCell(ws, firstRow, ++i, "Họ và tên");
+                initHeaderCell(ws, firstRow, ++i, "Ngày sinh");
+                initHeaderCell(ws, firstRow, ++i, "Email");
+                initHeaderCell(ws, firstRow, ++i, "Xã");
+                initHeaderCell(ws, firstRow, ++i, "Huyện");
+                initHeaderCell(ws, firstRow, ++i, "Tỉnh");
+                initHeaderCell(ws, firstRow, ++i, "Lớp");
+                initHeaderCell(ws, firstRow, ++i, "Khoa quản lý");
+                initHeaderCell(ws, firstRow, ++i, "Số điện thoại");
+                initHeaderCell(ws, firstRow, ++i, "Địa chỉ người nhận");
 
-                setStyle(ws, firstRow, ++i, "Thời gian mượn");
-                setStyle(ws, firstRow, ++i, "Mục đích");
+                initHeaderCell(ws, firstRow, ++i, "Thời gian mượn");
+                initHeaderCell(ws, firstRow, ++i, "Mục đích");
 
-                setStyle(ws, firstRow, ++i, "Ngày ký");
-                setStyle(ws, firstRow, ++i, "Tháng ký");
-                setStyle(ws, firstRow, ++i, "Năm ký");
+                initHeaderCell(ws, firstRow, ++i, "Ngày ký");
+                initHeaderCell(ws, firstRow, ++i, "Tháng ký");
+                initHeaderCell(ws, firstRow, ++i, "Năm ký");
 
                 ws.Row(firstRow).Height = 32;
 
@@ -2449,6 +2482,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
                     string tenKhoa = yeuCau.Faculty?.Name ?? "";
                     string mobile = yeuCau.Student.Mobile ?? "";
+                    string diaChiBaoTin = yeuCau.Student.BaoTinDiaChiNguoiNhan ?? "";
 
                     string thoiGianMuon = yeuCau.YeuCauDichVu.ThoiGianMuon ?? "";
                     string mucDich = yeuCau.YeuCauDichVu.LyDo ?? "";
@@ -2467,6 +2501,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(classCode);
                     ws.Cell(row, ++col).SetValue(tenKhoa);
                     ws.Cell(row, ++col).SetValue(mobile);
+                    ws.Cell(row, ++col).SetValue(diaChiBaoTin);
 
                     ws.Cell(row, ++col).SetValue(thoiGianMuon);
                     ws.Cell(row, ++col).SetValue(mucDich);
