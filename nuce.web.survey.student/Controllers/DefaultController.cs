@@ -13,5 +13,11 @@ namespace nuce.web.survey.student.Controllers
         {
             return View();
         }
+
+        [HttpGet]
+        public ActionResult KhaoSatNhapHoc()
+        {
+            return View();
+        }
     }
 }

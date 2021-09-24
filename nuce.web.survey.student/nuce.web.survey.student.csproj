@@ -2709,6 +2709,7 @@
     <Content Include="Views\Error\UnderConstruction.cshtml" />
     <Content Include="Views\Survey\Faculty\UndergraduateStudent.cshtml" />
     <Content Include="Views\Account\ChangePassword.cshtml" />
+    <Content Include="Views\Default\KhaoSatNhapHoc.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

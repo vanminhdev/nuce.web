@@ -539,7 +539,9 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
 
                             if (sumTotal > 0)
                             {
-                                wsLyThuyet.Cells[row, col].Value = $"{(double)dTB / sumTotal:0.0}";
+                                wsLyThuyet.Cells[row, col].Value = (double)dTB / sumTotal;
+                                //format cell number
+                                wsLyThuyet.Cells[row, col].Style.Numberformat.Format = "0.00";
                             }
                             else
                             {
@@ -573,7 +575,9 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                             //tổng hợp tb khoa
                             if (sumdTBTotal > 0)
                             {
-                                wsLyThuyet.Cells[rowTotal, colTotal].Value = $"{(float)dTBTotal / sumdTBTotal:0.0}";
+                                wsLyThuyet.Cells[rowTotal, colTotal].Value = (float)dTBTotal / sumdTBTotal;
+                                //format cell number
+                                wsLyThuyet.Cells[rowTotal, col].Style.Numberformat.Format = "0.00";
                             }
                             else
                             {
@@ -731,7 +735,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
 
                                     if (sumTotal > 0)
                                     {
-                                        wsLyThuyet.Cells[row, col].Value = $"{(double)dTB / sumTotal:0.0}";
+                                        wsLyThuyet.Cells[row, col].Value = (double)dTB / sumTotal;
                                     }
                                     else
                                     {
@@ -765,7 +769,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                     //tổng hợp tb khoa
                                     if (sumdTBTotal > 0)
                                     {
-                                        wsLyThuyet.Cells[rowTotal, colTotal].Value = $"{(float)dTBTotal / sumdTBTotal:0.0}";
+                                        wsLyThuyet.Cells[rowTotal, colTotal].Value = (float)dTBTotal / sumdTBTotal;
                                     }
                                     else
                                     {
@@ -903,18 +907,20 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 var value = item.Value.ToString().Split(".");
                 if (value[^1] == "0" || value.Length == 1)
                 {
-                    wsLyThuyet.Cells[row, item.Key].Value = $"{item.Value:0}";
+                    wsLyThuyet.Cells[row, item.Key].Value = item.Value;
                 }
                 else
                 {
-                    wsLyThuyet.Cells[row, item.Key].Value = $"{item.Value:0.0}";
+                    wsLyThuyet.Cells[row, item.Key].Value = item.Value;
+                    //format cell number
+                    wsLyThuyet.Cells[row, item.Key].Style.Numberformat.Format = "0.00";
                 }
             }
 
-            wsLyThuyet.Cells[1, 1, row, wsLyThuyet.Dimension.Columns - 1].Style.Border.Top.Style = ExcelBorderStyle.Thin;
-            wsLyThuyet.Cells[1, 1, row, wsLyThuyet.Dimension.Columns - 1].Style.Border.Left.Style = ExcelBorderStyle.Thin;
-            wsLyThuyet.Cells[1, 1, row, wsLyThuyet.Dimension.Columns - 1].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-            wsLyThuyet.Cells[1, 1, row, wsLyThuyet.Dimension.Columns - 1].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            wsLyThuyet.Cells[1, 1, row, wsLyThuyet.Dimension.Columns].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+            wsLyThuyet.Cells[1, 1, row, wsLyThuyet.Dimension.Columns].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            wsLyThuyet.Cells[1, 1, row, wsLyThuyet.Dimension.Columns].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+            wsLyThuyet.Cells[1, 1, row, wsLyThuyet.Dimension.Columns].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
         }
 
         private void ExportReportTotalNormalSurveyBG(List<Guid> surveyRoundIds)
@@ -981,6 +987,9 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
 
                 #region kết xuất
                 _logger.LogInformation($"Bat dau ket xuat");
+                //tổng hợp chung
+                baiLamKhaoSatCacDotDangXet.GroupBy(bl => new { bl.Nhhk, bl.LecturerCode });
+
                 ThongKeTungLoaiBaiKS(wsLyThuyet, eduContext, surveyContext, baiLamKhaoSatCacDotDangXet, baiKhaoSats, deLyThuyet, (int)TheSurveyType.TheoreticalSubjects);
                 ThongKeTungLoaiBaiKS(wsLyThuyetThucHanh, eduContext, surveyContext, baiLamKhaoSatCacDotDangXet, baiKhaoSats, deLyThuyetThucHanh, (int)TheSurveyType.TheoreticalPracticalSubjects);
                 ThongKeTungLoaiBaiKS(wsThucHanh, eduContext, surveyContext, baiLamKhaoSatCacDotDangXet, baiKhaoSats, deThucHanhThiNghiem, (int)TheSurveyType.PracticalSubjects);
