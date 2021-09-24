@@ -1,0 +1,59 @@
+﻿@using nuce.web.survey.student.Common;
+@{
+    ViewData["Title"] = "Trang chủ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Breadcrumb {
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Danh sách bài khảo sát tình hình việc làm</li>
+}
+
+<div class="container">
+    @if (ViewData["Message"] != null)
+    {
+        <h1 class="text-center">@ViewData["Message"]</h1>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="text-center" width="75%">Bài khảo sát</th>
+                            <th class="text-center"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-content">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        let content = @Html.Raw(ViewData["TheSurveys"]);
+        let tableContent = $('#table-content')
+        let htmlStr = '';
+        for (let element of content) {
+            htmlStr += `
+                <tr>
+                    <td>${element.name}</td>`;
+            htmlStr += `<td class="text-center">`;
+            if (element.status === @((int)SurveyStudentStatus.DoNot)) {
+                htmlStr += `<a href="/graduatehome/thesurvey?theSurveyId=${element.baiKhaoSatId}">Thực hiện</a>`;
+            } else if (element.status === @((int)SurveyStudentStatus.Doing)) {
+                htmlStr += `<a href="/graduatehome/thesurvey?theSurveyId=${element.baiKhaoSatId}">Tiếp tục</a>`;
+            } else if (element.status === @((int)SurveyStudentStatus.Done)) {
+                htmlStr += `Đã hoàn thành`;
+            }
+            htmlStr += `</td>`;
+            htmlStr += `</tr>`;
+        }
+        tableContent.html(htmlStr);
+    </script>
+}
+

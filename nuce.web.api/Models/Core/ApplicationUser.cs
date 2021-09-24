@@ -9,5 +9,6 @@ namespace nuce.web.api.Models.Core
     public class ApplicationUser : IdentityUser
     {
         public int Status { get; set; }
+        public string ExCode { get; set; }
     }
 }

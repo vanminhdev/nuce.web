@@ -1,0 +1,18 @@
+﻿@model nuce.web.survey.student.Models.LoginModel
+@{
+    ViewData["Title"] = "Đăng nhập";
+    Model.Type = "Student";
+}
+
+@section Breadcrumb {
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+    <li class="breadcrumb-item active" aria-current="page">
+        Khảo sát phản hồi của sinh viên về hoạt động giảng dạy giảng viên
+    </li>
+}
+
+@Html.Partial("~/Views/Account/Partials/_PartialLogin.cshtml", Model)
+
+@section Scripts {
+    @Html.Partial("~/Views/Account/Partials/_PartialLoginJS.cshtml", Model);
+}

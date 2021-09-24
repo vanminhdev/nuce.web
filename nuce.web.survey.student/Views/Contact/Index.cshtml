@@ -1,0 +1,130 @@
+﻿@using nuce.web.survey.student.Models;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Breadcrumb {
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+    <li class="breadcrumb-item active" aria-current="page">
+        Liên hệ
+    </li>
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-md-5 mb-3">
+                <h5 class="text-justify text-center mb-4">Phòng Khảo thí và Đảm bảo chất lượng giáo dục</h5>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-1 d-flex align-items-center justify-content-center m-text-blue pr-0">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="col-lg-10 col-md-10 col-11">
+                        <h6 class="my-0 text-danger">Địa chỉ</h6>
+                        <p class="my-0" id="txtAddress">Phòng 302, Nhà A1</p>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-1 d-flex align-items-center justify-content-center m-text-blue pr-0">
+                        <i class="fas fa-mobile"></i>
+                    </div>
+                    <div class="col-lg-10 col-md-10 col-11">
+                        <h6 class="my-0 text-danger">Điện thoại</h6>
+                        <p class="my-0" id="txtMobile"></p>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-lg-2 col-md-2 col-1 d-flex align-items-center justify-content-center m-text-blue pr-0">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="col-lg-10 col-md-10 col-11">
+                        <h6 class="my-0 text-danger">Email</h6>
+                        <p class="my-0" id="txtEmail">ks.ktdb@nuce.edu.vn</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-1 col-12 d-flex justify-content-center align-items-center">
+                <div class="m-border-right-divider">
+                    
+                </div>
+            </div>
+            <div class="col-md-6 col-12">
+                <p class="m-fs-14 text-secondary text-justify">
+                    Nếu bạn cần hỗ trợ, hãy gửi thông tin vào biểu mẫu dưới đây. Chúng tôi sẽ cố gắng phản hồi sớm nhất!
+                </p>
+                <form id="form-send-email" class="auto-validate">
+                    <div class="form-group">
+                        <label class="text-warning font-weight-bold">Họ tên</label>
+                        <input type="text" class="form-control" name="name" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="text-warning font-weight-bold">Email</label>
+                        <input type="email" class="form-control" name="email" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="text-warning font-weight-bold">Nội dung</label>
+                        <textarea class="form-control" rows="5"
+                                  name="content" required></textarea>
+                    </div>
+                </form>
+                <div class="d-flex flex-row justify-content-end">
+                    <button class="btn btn-primary m-btn-width-80"
+                            onclick="contactState.submitForm()">
+                        Gửi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/Content/js/helper/clientParameter.js"></script>
+    <script>
+        var contactState = {
+            getData: function() {
+                _clientParameterHelper.getDataApi('' ,CLIENT_PARAMETERS_TYPE.CONTACT, res => {
+                    const mobile = _clientParameterHelper.getValueByCode(res, CLIENT_PARAMETERS_CODE.MOBILE);
+                    const address = _clientParameterHelper.getValueByCode(res, CLIENT_PARAMETERS_CODE.ADDRESS);
+                    const email = _clientParameterHelper.getValueByCode(res, CLIENT_PARAMETERS_CODE.EMAIL);
+                    $('#txtAddress').html(address);
+                    $('#txtMobile').html(mobile);
+                    $('#txtEmail').html(email);
+                });
+            },
+            submitForm: function() {
+                let form = $('#form-send-email');
+                if (!form.valid()) return;
+                
+                const body = {};
+
+                const formObj = form.serializeArray();
+                formObj.forEach(input => {
+                    body[input.name] = input.value;
+                });
+                $('#loading-screen').show();
+                $.ajax({
+                    type: 'post',
+                    url: `${API_URL}/api/contact/email/ktdb`,
+                    data: JSON.stringify(body),
+                    contentType: 'application/json',
+                })
+                .done(res => {
+                    toastSuccess('Đã gửi');
+                })
+                .fail(err => {
+                    toastError(err.Message || 'Lỗi hệ thống');
+                })
+                .always(() => {
+                    $('#loading-screen').hide();
+                });
+                return false;
+            },
+            init: function() {
+                contactState.getData();
+            },
+        };
+        contactState.init();
+    </script>    
+}

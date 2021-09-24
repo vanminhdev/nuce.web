@@ -1,0 +1,180 @@
+﻿
+@{
+    ViewBag.Title = "Thiết lập tham số";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    @@media only screen and (min-width: 1025px) {
+        .main-content-wrp {
+            margin-top: 0;
+        }
+    }
+</style>
+
+<div class="row main-content-wrp ml-0 mr-0">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-md-6 col-12 my-1">
+                <select class="form-control" id="slChonDichVu" onchange="onChangeDichVu(this);">
+                    <option value="1">Xác nhận</option>
+                </select>
+            </div>
+            <div class="col-md-6 col-12 my-1 text-right">
+                <button class="btn btn-primary"
+                        onclick="onSaveData()">
+                    Lưu
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <table id="qldv-parameters-datatable" data-page-length='25' class="table">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 10%">
+                                TT
+                            </th>
+                            <th class="text-center" style="width: 20%">
+                                Tên tham số
+                            </th>
+                            <th class="text-center">
+                                Giá trị
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link href="~/content/css/bootstrap-datepicker3.min.css" rel="stylesheet" />
+    <script src="~/content/js/jquery.dataTables.min.js"></script>
+    <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/content/js/dataTables.config.js"></script>
+    <script>
+        var state = {
+            dataList: [],
+        };
+
+        var onChangeDichVu = function(event) {
+            searchData();
+        }
+
+        var userTable = $('#qldv-parameters-datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ordering: false,
+            lengthChange: false,
+            stateSave: true,
+            deferLoading: 0,
+            language: dataTableConfig.language,
+            ajax: {
+                url: 'SearchThamSoDichVu',
+                dataType: 'json',
+                contentType: 'application/json',
+                type: 'POST',
+                data: function (d) {
+                    return JSON.stringify(d);
+                },
+                dataSrc: function(json) {
+                    state.dataList = json.data;
+                    return json.data;
+                }
+            },
+            columns: [
+                {
+                    data: null,
+                    mRender: function(data, type, row, meta) {
+                        const i = meta.row;
+                        return `${i + 1}`;
+                    },
+                },
+                {
+                    data: 'name',
+                },
+                {
+                    data: null,
+                    mRender: function(data, type, row, meta) {
+                        return `<textarea class="form-control"
+                                    rows="3" cols="55"
+                                    onkeyup="setValue(this, ${meta.row}, 'value')"
+                                    style="resize: none">${data.value}</textarea>`;
+                    }
+                },
+            ]
+        });
+
+        var setValue = function(context, index, field) {
+            state.dataList[index][field] = context.value;
+        };
+
+        var searchData = function() {
+            const jsonData = $('#slChonDichVu').val();
+            userTable.page.len(50).search(jsonData).draw();
+        };
+
+        var onSaveData = function() {
+            const body = {};
+
+            state.dataList.forEach(item => {
+                body[item.id] = item.value;
+            });
+
+            callApiUpdateParameters(body);
+        };
+
+        var init = function() {
+            $('#qldv-parameters-datatable_filter').hide();
+            callApiGetServicesType(searchData);
+        };
+
+        var callApiGetServicesType = function(cb) {
+            $.ajax({
+                type: 'GET',
+                url: `@Url.Action("GetTypeDichVu", "CtsvServiceManagement")`,
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function(res) {
+                    $('#slChonDichVu').html('');
+                    let strHtml = '';
+                    res.forEach(item => {
+                        strHtml += `
+                            <option value="${item.id}">${item.description}</option>
+                        `;
+                    });
+                    $('#slChonDichVu').html(strHtml);
+                    cb();
+                },
+            }).done(res => {
+            }).fail(res => {
+            });
+        };
+
+        var callApiUpdateParameters = function(body) {
+            $('#loading-screen').show();
+            const data = JSON.stringify({
+                dict: body
+            });
+            console.log(data);
+            $.ajax({
+                type: 'POST',
+                url: `@Url.Action("UpdateParameters", "CtsvServiceManagement")`,
+                data: data,
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function(res) {
+                    searchData();
+                    $('#loading-screen').hide();
+                },
+            }).done(res => {
+            }).fail(res => {
+                $('#loading-screen').hide();
+            });
+        };
+
+        init();
+    </script>
+}

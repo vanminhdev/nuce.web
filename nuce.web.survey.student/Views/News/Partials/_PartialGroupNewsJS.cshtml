@@ -1,0 +1,95 @@
+﻿@using nuce.web.survey.student.Models;
+@model PartialGroupNewsModel
+
+<script src="~/Content/js/helper/datetime.js"></script>
+<script>
+    var partialGroupNewsObject = {
+        config: {
+            parentElementId: 'body',
+            limitNumber: 2,
+            body: {
+                    draw: 1,
+                    columns: [],
+                    order: [],
+                    start: 0,
+                    length: 2,
+                    search: {
+                        value: '',
+                        regex: false
+                    }
+            },
+            cat: {
+                thongBao: {
+                    id: THONGBAO_ID,
+                    elementId: 'side-announcement',
+                    containerId: 'side-announcement-container',
+                },
+                tinTuc: {
+                    id: TINTUC_ID,
+                    elementId: 'side-news-event',
+                    containerId: 'side-news-event-container',
+                },
+            },
+        },
+        getNewsItemDetail: function(config = { id: '', elementI: '' }) {
+            $.ajax({
+                type: 'post',
+                url: `${API_URL}/api/NewsManager/news-items/category/${config.id}`,
+                data: JSON.stringify(partialGroupNewsObject.config.body),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function(res) {
+                    if (res.data != null && Array.isArray(res.data)) {
+                        console.log(res);
+                        partialGroupNewsObject.handleContent(res.data, config.elementId);
+                    }
+                },
+            });
+        },
+        handleContent: function(data = [], elementId = '') {
+            let resultHtml = '';
+            const template = `<div class="pt-2 pb-2 m-border-b-gray">
+                                <a class="m-text-black m-text-decoration-none m-text-hover-blue" href="[link]">
+                                    [title]
+                                </a>
+                                <br />
+                                <span class="text-muted m-fs-13">[entry-date]</span>
+                            </div>`;
+            for(let i = 0; i < partialGroupNewsObject.config.limitNumber; i++) {
+                const newsItem = data[i];
+                if (typeof newsItem === 'undefined') {
+                    break;
+                }
+                var entryDate = datetimeHelper.convertDateTime(new Date(newsItem.entryDatetime));
+                resultHtml += template.replace('[title]', `${newsItem.title || ''}`)
+                                        .replace('[link]', `/news/detail?catId=${newsItem.catId}&itemId=${newsItem.id}`)
+                                        .replace('[entry-date]', `${entryDate}`);
+            };
+            $(`#${elementId}`).html(resultHtml);
+        },
+        init: function() {
+            @{
+                if (Model != null)
+                {
+                    if (Model.showAnnoucement)
+                    {
+                        @:partialGroupNewsObject.getNewsItemDetail(partialGroupNewsObject.config.cat.thongBao);
+                        @:$(`#${partialGroupNewsObject.config.cat.thongBao.containerId}`).show();
+                    }
+                    if (Model.showNewsEvent)
+                    {
+                        @:partialGroupNewsObject.getNewsItemDetail(partialGroupNewsObject.config.cat.tinTuc);
+                        @:$(`#${partialGroupNewsObject.config.cat.tinTuc.containerId}`).show();
+                    }
+                } else
+                {
+                    @:partialGroupNewsObject.getNewsItemDetail(partialGroupNewsObject.config.cat.thongBao);
+                    @:$(`#${partialGroupNewsObject.config.cat.thongBao.containerId}`).show();
+                    @:$(`#${partialGroupNewsObject.config.cat.tinTuc.containerId}`).hide();
+                }
+            }
+        },
+    };
+
+    partialGroupNewsObject.init();
+</script>

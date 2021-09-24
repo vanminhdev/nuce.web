@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -17,6 +19,7 @@ using Microsoft.OpenApi.Models;
 using nuce.web.api.Common;
 using nuce.web.api.Models.Core;
 using nuce.web.api.Models.Ctsv;
+using nuce.web.api.Models.EduData;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Repositories.Ctsv.Implements;
 using nuce.web.api.Repositories.Ctsv.Interfaces;
@@ -26,6 +29,23 @@ using nuce.web.api.Services.Ctsv.Implements;
 using nuce.web.api.Services.Ctsv.Interfaces;
 using nuce.web.api.Services.Survey.Implements;
 using nuce.web.api.Services.Survey.Interfaces;
+using nuce.web.api.Services.EduData.Implements;
+using nuce.web.api.Services.EduData.Interfaces;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using nuce.web.api.Models.Status;
+using nuce.web.api.Services.Status.Interfaces;
+using nuce.web.api.Services.Status.Implements;
+using System.Net;
+using nuce.web.api.Services.Background;
+using nuce.web.api.Services.Survey.BackgroundTasks;
+using nuce.web.api.Services.Shared;
+using nuce.web.api.Services.EduData.BackgroundTasks;
+using nuce.web.api.Repositories.EduData.Interfaces;
+using nuce.web.api.Repositories.EduData.Implements;
+using nuce.web.api.Services.Survey.Implements.Undergraduate;
+using nuce.web.api.Services.Survey.Implements.Graduate;
+using nuce.web.api.Services.Hosted;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace nuce.web.api
 {
@@ -48,18 +68,28 @@ namespace nuce.web.api
                 options.UseSqlServer(Configuration.GetConnectionString("NUCE_CORE"))
             );
             services.AddDbContext<SurveyContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"))
+                options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"),
+                sqlServerOptions => sqlServerOptions.CommandTimeout(60 * 60))
             );
             services.AddDbContext<CTSVNUCE_DATAContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("NUCE_CTSV"))
             );
+            services.AddDbContext<EduDataContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"),
+                sqlServerOptions => sqlServerOptions.CommandTimeout(60 * 60))
+            );
+            services.AddDbContext<StatusContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("NUCE_SURVEY"))
+            );
             #endregion
 
             #region config usermanager
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<NuceCoreIdentityContext>()
                 .AddDefaultTokenProviders();
+            #endregion
 
+            #region config authentication
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -125,8 +155,9 @@ namespace nuce.web.api
                                   {
                                       builder.WithOrigins(corsUrls)
                                       .AllowAnyHeader()
-                                      .AllowAnyMethod()
-                                      .AllowCredentials();
+                                        .AllowAnyMethod()
+                                        .SetIsOriginAllowed((host) => true)
+                                        .AllowCredentials();
                                   });
             });
             #endregion
@@ -137,7 +168,7 @@ namespace nuce.web.api
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "API V1"
+                    Title = "NUCE API"
                 });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -165,18 +196,70 @@ namespace nuce.web.api
             });
             #endregion
 
+            #region hosted service
+            services.AddHostedService<TableTaskHostedService>();
+            #endregion
+
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
             services.AddHttpContextAccessor();
             services.AddSingleton<IPathProvider, PathProvider>();
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
-            #region config service
+            #region core service
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ILogService, LogService>();
+            services.AddScoped<IManagerRestoreService, ManagerRestoreService>();
+            services.AddScoped<INewsManagerService, NewsManagerService>();
+            services.AddScoped<IClientParameterService, ClientParameterService>();
+            services.AddScoped<ISendEmailService, SendEmailService>();
+            services.AddScoped<IUserFileService, UserFileService>();
+            services.AddScoped<IInitializeService, InitializeService>();
+            #endregion
+            #region config survey service
+            services.AddScoped<IStatusService, StatusService>();
             services.AddScoped<IAsEduSurveyCauHoiService, AsEduSurveyCauHoiService>();
             services.AddScoped<IAsEduSurveyDapAnService, AsEduSurveyDapAnService>();
             services.AddScoped<IAsEduSurveyDeThiService, AsEduSurveyDeThiService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<ILogService, LogService>();
+            services.AddScoped<IAsEduSurveyDotKhaoSatService, AsEduSurveyDotKhaoSatService>();
+            services.AddScoped<IAsEduSurveyBaiKhaoSatService, AsEduSurveyBaiKhaoSatService>();
+            services.AddScoped<IAsEduSurveyBaiKhaoSatSinhVienService, AsEduSurveyBaiKhaoSatSinhVienService>();
+            services.AddScoped<BaiKhaoSatSinhVienBackgroundTask>();
+            services.AddScoped<IAsEduSurveyReportTotalService, AsEduSurveyReportTotalService>();
+
+            services.AddScoped<IAsEduSurveyGraduateCauHoiService, AsEduSurveyGraduateCauHoiService>();
+            services.AddScoped<IAsEduSurveyGraduateDapAnService, AsEduSurveyGraduateDapAnService>();
+            services.AddScoped<IAsEduSurveyGraduateDeThiService, AsEduSurveyGraduateDeThiService>();
+            services.AddScoped<IAsEduSurveyGraduateStudentService, AsEduSurveyGraduateStudentService>();
+            services.AddScoped<IAsEduSurveyGraduateDotKhaoSatService, AsEduSurveyGraduateDotKhaoSatService>();
+            services.AddScoped<IAsEduSurveyGraduateBaiKhaoSatService, AsEduSurveyGraduateBaiKhaoSatService>();
+            services.AddScoped<IAsEduSurveyGraduateBaiKhaoSatSinhVienService, AsEduSurveyGraduateBaiKhaoSatSinhVienService>();
+            services.AddScoped<IAsEduSurveyGraduateReportTotalService, AsEduSurveyGraduateReportTotalService>();
+
+            services.AddScoped<IAsEduSurveyUndergraduateCauHoiService, AsEduSurveyUndergraduateCauHoiService>();
+            services.AddScoped<IAsEduSurveyUndergraduateDapAnService, AsEduSurveyUndergraduateDapAnService>();
+            services.AddScoped<IAsEduSurveyUndergraduateDeThiService, AsEduSurveyUndergraudateDeThiService>();
+            services.AddScoped<IAsEduSurveyUndergraduateStudentService, AsEduSurveyUndergraduateStudentService>();
+            services.AddScoped<IAsEduSurveyUndergraduateDotKhaoSatService, AsEduSurveyUndergraduateDotKhaoSatService>();
+            services.AddScoped<IAsEduSurveyUndergraduateBaiKhaoSatService, AsEduSurveyUndergraduateBaiKhaoSatService>();
+            services.AddScoped<IAsEduSurveyUndergraduateBaiKhaoSatSinhVienService, AsEduSurveyUndergraduateBaiKhaoSatSinhVienService>();
+            services.AddScoped<IAsEduSurveyUndergraduateReportTotalService, AsEduSurveyUndergraduateReportTotalService>();
+
+            services.AddScoped<ISurveyResultService, SurveyResultService>();
+
+            services.AddScoped<SurveyStatisticBackgroundTask>();
+            #endregion
+            #region sync edu database service
+            services.AddScoped<ISyncEduDatabaseService, SyncEduDatabaseService>();
+            services.AddScoped<IStudentEduDataService, StudentEduDataService>();
+
+            services.AddScoped<SyncEduDataBackgroundTask>();
+            #endregion
+            #region edu data repo
+            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            services.AddScoped<IFacultyRepository, FacultyRepository>();
+            services.AddScoped<ILecturerRepository, LecturerRepository>();
             #endregion
             #region ctsv service
             services.AddScoped<IXacNhanRepository, XacNhanRepository>();
@@ -190,8 +273,20 @@ namespace nuce.web.api
             services.AddScoped<IGiaDinhRepository, GiaDinhRepository>();
             services.AddScoped<IThiHsgRepository, ThiHsgRepository>();
             services.AddScoped<IQuaTrinhHocRepository, QuaTrinhHocRepository>();
+            services.AddScoped<ILoaiDichVuRepository, LoaiDichVuRepository>();
+            services.AddScoped<IVeXeBusRepository, VeXeBusRepository>();
+            services.AddScoped<IDangKyChoORepository, DangKyChoORepository>();
+            services.AddScoped<IDotDangKyChoORepository, DotDangKyChoORepository>();
 
+            services.AddScoped<IXinMienGiamHocPhiRepository, XinMienGiamHocPhiRepository>();
+            services.AddScoped<IDotXinMienGiamHocPhiRepository, DotXinMienGiamHocPhiRepository>();
+            services.AddScoped<IDeNghiHoTroChiPhiRepository, DeNghiHoTroChiPhiRepository>();
+            services.AddScoped<IDotDeNghiHoTroChiPhiRepository, DotDeNghiHoTroChiPhiRepository>();
 
+            services.AddScoped<ICapLaiTheRepository, CapLaiTheRepository>();
+            services.AddScoped<IMuonHocBaRepository, MuonHocBaRepository>();
+
+            services.AddScoped<IThamSoDichVuService, ThamSoDichVuService>();
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<IDichVuService, DichVuService>();
             services.AddScoped<INewsService, NewsService>();
@@ -199,6 +294,14 @@ namespace nuce.web.api
             services.AddScoped<IParameterService, ParameterService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             #endregion
+
+            #region background
+            services.AddSingleton<BackgroundTaskWorkder>();
+            services.AddHostedService<QueuedHostedService>();
+            services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+            #endregion
+
+            services.AddScoped<FakerService, FakerService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -212,11 +315,32 @@ namespace nuce.web.api
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Nuce API V1");
                     c.RoutePrefix = "swagger";
+                    c.DocExpansion(DocExpansion.None);
                 });
             }
+
             var loggingOptions = this.Configuration.GetSection("Log4NetCore").Get<Log4NetProviderOptions>();
             loggerFactory.AddLog4Net(loggingOptions);
+
+            //app.Run(async context =>
+            //{
+            //    var userStatus = context.Items["UserStatus"];
+            //    if (userStatus != null && ((int)userStatus == (int)UserStatus.Deactive || (int)userStatus == (int)UserStatus.Deleted))
+            //    {
+            //        context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            //        context.Response.Cookies.Delete(UserParameters.JwtAccessToken);
+            //        context.Response.Cookies.Delete(UserParameters.JwtRefreshToken);
+            //    }
+            //});
+
             app.UseHttpsRedirection();
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(env.ContentRootPath, "Resources")),
+                RequestPath = "/Resources"
+            });
 
             app.UseRouting();
             app.UseCors(_allowSpecificOrigins);

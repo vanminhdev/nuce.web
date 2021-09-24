@@ -1,0 +1,14 @@
+<div style="color:black;">
+    <div style="padding:5px;">Xin chào [ho_ten]</div>
+    <div style="padding:5px;">
+        Hệ thống Quản lý thông tin sinh viên xác nhận bạn đã gửi thành công yêu cầu "[ten_dich_vu]". Yêu cầu được tạo lúc [ngay_tao].
+    </div>
+    <div style='padding:5px;'><b>Để thực hiện thủ tục mượn, sinh viên viết đơn xin mượn và mang theo sổ hộ khẩu gia đình bản gốc đến Phòng CTCT&QLSV.</b></div>
+    <div style="padding:5px;">Trân trọng.</div>
+    <div style="padding:5px;">---------------------------</div>
+    <div style="padding:5px;">Phòng Công tác Chính trị và Quản lý Sinh viên Trường Đại học Xây dựng Hà Nội</div>
+    <div style='padding:5px;'>Tầng 2, Trung tâm Hỗ trợ Sinh viên, Trường đại học Xây Dựng Hà Nội, 55 Giải Phóng - Hai Bà Trưng - Hà Nội</div>
+    <div style="padding:5px;"></div>
+    <div style="padding:5px;">TEL: 02438697004</div>
+    <div style="padding:5px;">Email: ctsv@nuce.edu.vn</div>
+</div>

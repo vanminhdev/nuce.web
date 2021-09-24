@@ -14,7 +14,7 @@ var refreshToken = function(callback) {
         },
         error: function(err) {
             console.log('refresh-error: ', err);
-            href = `/admin/login`;
+            href = `/login`;
             window.location.href = href;
         }
     });
@@ -28,7 +28,7 @@ var dataTableRequest = {
             serverSide: true,
             ordering: false,
             lengthChange: false,
-            stateSave: true,
+            stateSave: false,
             language: dataTableConfig.language,
             columns,
             ajax: {
@@ -50,7 +50,7 @@ var dataTableRequest = {
                         window.location.href = `/notfound?message=${encodeURI("Không có quyền truy cập")}`;
                     } else {
                         console.log('drop');
-                        window.location.href = `/admin/login`;
+                        window.location.href = `/login`;
                     }
                 },
             },

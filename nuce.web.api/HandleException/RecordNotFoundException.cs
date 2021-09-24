@@ -7,12 +7,13 @@ namespace nuce.web.api.HandleException
 {
     public class RecordNotFoundException : Exception
     {
-        public RecordNotFoundException() : base()
+        public RecordNotFoundException() : base(message: "Không tìm thấy bản ghi")
         {
         }
 
-        public RecordNotFoundException(string message) : base(message)
+        public RecordNotFoundException(string message = "Không tìm thấy bản ghi") : base(message)
         {
+            
         }
     }
 }

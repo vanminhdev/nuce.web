@@ -1,0 +1,370 @@
+﻿@using nuce.web.quanly.Common
+@{
+    ViewData["Title"] = "Đồng bộ dữ liệu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style {
+    <link rel="stylesheet" href="~/content/css/dataTables.bootstrap4.min.css" />
+    <style>
+        @@media (min-width: 768px) {
+            .btn-sync-small-text {
+                font-size: 10px;
+            }
+        }
+    </style>
+}
+
+<div class="mx-md-5 mx-2 mt-md-0" style="margin-top: 100px;">
+    <div class="">
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="dong-bo-tab" data-toggle="tab" href="#dong-bo" role="tab" aria-selected="true">Đồng bộ dữ liệu</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="ra-soat-tab" data-toggle="tab" href="#ra-soat" role="tab" aria-selected="true">Rà soát dữ liệu</a>
+            </li>
+        </ul>
+    </div>
+    <div>
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="dong-bo" role="tabpanel" aria-labelledby="dong-bo">
+                <div class="row">
+                    <div class="col-12 mt-2">
+                        <div class="d-flex">
+                            <div style="min-width:160px;">
+                                <button class="btn btn-primary" id="btn-dong-bo-so-luong">Đồng bộ số lượng</button>
+                            </div>
+                            <div class="flex-grow-1 d-md-flex">
+                                <div class="ml-1 ml-md-5" style="min-width: 355px; width: 355px;">
+                                    <ul class="list-group">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Khoa
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;" id="countKhoa">0</span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Ngành học
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;" id="countNganhHoc">0</span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Bộ môn
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;" id="countBoMon">0</span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Môn học
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;" id="countMonHoc">0</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="ml-1 ml-md-5" style="min-width: 355px; width: 355px;">
+                                    <ul class="list-group">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Giảng viên
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;" id="countGiangVien">0</span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Lớp quản lý
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;" id="countLopQuanLy">0</span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Sinh viên
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;" id="countSinhVien">0</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="ml-1 ml-md-5" style="min-width: 355px; width: 355px;">
+                                    <ul class="list-group">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Lớp môn học
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;" id="countLopMonHoc">0</span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Lớp môn học giảng viên
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;" id="countLopMonHocGiangVien">0</span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Lớp môn học sinh viên
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;" id="countLopMonHocSinhVien">0</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <div class="d-flex">
+                            <div style="min-width:160px;">
+                                <button class="btn btn-primary" id="btn-sync-all-table">Đồng bộ dữ liệu</button>
+                            </div>
+                            <div class="flex-grow-1 d-md-flex">
+                                <div class="ml-1 ml-md-5" style="min-width: 355px; width: 355px;">
+                                    <ul class="list-group">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Khoa
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;"><span id="sync-countKhoa">0</span>/<span id="per-countKhoa">0</span></span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Ngành học
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;"><span id="sync-countNganhHoc">0</span>/<span id="per-countNganhHoc">0</span></span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Bộ môn
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;"><span id="sync-countBoMon">0</span>/<span id="per-countBoMon">0</span></span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Môn học
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;"><span id="sync-countMonHoc">0</span>/<span id="per-countMonHoc">0</span></span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="ml-1 ml-md-5" style="min-width: 355px; width: 355px;">
+                                    <ul class="list-group">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Giảng viên
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;"><span id="sync-countGiangVien">0</span>/<span id="per-countGiangVien">0</span></span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Lớp quản lý
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;"><span id="sync-countLopQuanLy">0</span>/<span id="per-countLopQuanLy">0</span></span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Sinh viên
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;"><span id="sync-countSinhVien">0</span>/<span id="per-countSinhVien">0</span></span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="ml-1 ml-md-5" style="min-width: 355px; width: 355px;">
+                                    <ul class="list-group">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Lớp môn học
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;"><span id="sync-countLopMonHoc">0</span>/<span id="per-countLopMonHoc">0</span></span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Lớp môn học giảng viên
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;"><span id="sync-countLopMonHocGiangVien">0</span>/<span id="per-countLopMonHocGiangVien">0</span></span>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                Lớp môn học sinh viên
+                                                <span class="m-fs-14" style="float: right; margin-top:2px; margin-right: 5px;"><span id="sync-countLopMonHocSinhVien">0</span>/<span id="per-countLopMonHocSinhVien">0</span></span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="ra-soat" role="tabpanel" aria-labelledby="ra-soat">
+                <div class="mt-2">
+                    @{
+                        Html.RenderPartial("~/Views/SyncEduData/_PartialTableData.cshtml");
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-yes-no" tabindex="-1" role="dialog" aria-labelledby="modal-yes-no" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-yes-no-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-yes-no-content">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
+                <button id="choose-yes" type="button" formaction="/usermanager/changestatus" class="btn btn-primary">Có</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/content/js/jquery.dataTables.min.js"></script>
+    <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/content/js/dataTables.config.js"></script>
+    @{ 
+        Html.RenderPartial("~/Views/SyncEduData/_PartialTableDataScript.cshtml");
+    }
+    <script>
+        $('#btn-dong-bo-so-luong').click(() => {
+            $('#loading-screen').show();
+            $.ajax({
+                dataType: 'json',
+                method: 'Get',
+                url: '/SyncEduData/GetCountEduData',
+                timeout: 0,
+                complete: () => { }
+            }).done(function (res) {
+                $('#loading-screen').hide();
+                if (res.statusCode === 200) {
+                    let countData = JSON.parse(res.content);
+                    $('#countKhoa').html(formatDisplayNumber(countData.countKhoa));
+                    $('#per-countKhoa').html(formatDisplayNumber(countData.countKhoa));
+
+                    $('#countBoMon').html(formatDisplayNumber(countData.countBoMon));
+                    $('#per-countBoMon').html(formatDisplayNumber(countData.countBoMon));
+
+                    $('#countNganhHoc').html(formatDisplayNumber(countData.countNganhHoc));
+                    $('#per-countNganhHoc').html(formatDisplayNumber(countData.countNganhHoc));
+
+                    $('#countMonHoc').html(formatDisplayNumber(countData.countMonHoc));
+                    $('#per-countMonHoc').html(formatDisplayNumber(countData.countMonHoc));
+
+                    $('#countLopQuanLy').html(formatDisplayNumber(countData.countLopQuanLy));
+                    $('#per-countLopQuanLy').html(formatDisplayNumber(countData.countLopQuanLy));
+
+                    $('#countGiangVien').html(formatDisplayNumber(countData.countGiangVien));
+                    $('#per-countGiangVien').html(formatDisplayNumber(countData.countGiangVien));
+
+                    $('#countSinhVien').html(formatDisplayNumber(countData.countSinhVien));
+                    $('#per-countSinhVien').html(formatDisplayNumber(countData.countSinhVien));
+
+                    $('#countLopMonHoc').html(formatDisplayNumber(countData.countLopMonHoc));
+                    $('#per-countLopMonHoc').html(formatDisplayNumber(countData.countLopMonHoc));
+
+                    $('#countLopMonHocGiangVien').html(formatDisplayNumber(countData.countLopMonHocGiangVien));
+                    $('#per-countLopMonHocGiangVien').html(formatDisplayNumber(countData.countLopMonHocGiangVien));
+
+                    $('#countLopMonHocSinhVien').html(formatDisplayNumber(countData.countLopMonHocSinhVien));
+                    $('#per-countLopMonHocSinhVien').html(formatDisplayNumber(countData.countLopMonHocSinhVien));
+                }
+                else {
+                    try {
+                        let content = JSON.parse(res.content);
+                        toastError(content.message);
+                    }
+                    catch {
+                        console.log(res);
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                $('#loading-screen').hide();
+                console.log(textStatus + ': ' + errorThrown);
+                console.log(jqXHR);
+            });
+        });
+        $('#btn-dong-bo-so-luong').click();
+    </script>
+    <script>
+        function reloadNormalDataTable() {
+            $('#datatable-faculty').DataTable().ajax.reload();
+            $('#datatable-academics').DataTable().ajax.reload();
+            $('#datatable-department').DataTable().ajax.reload();
+            $('#datatable-lecturer').DataTable().ajax.reload();
+            $('#datatable-student').DataTable().ajax.reload();
+            $('#datatable-class').DataTable().ajax.reload();
+            $('#datatable-last-classroom').DataTable().ajax.reload();
+            $('#datatable-last-lecturer-classroom').DataTable().ajax.reload();
+        }
+
+        let tableNormalSync = [{ action: "SyncFaculty", name: "Khoa" }, { action: "SyncDepartment", name: "Bộ môn" }, { action: "SyncAcademics", name: "Ngành học" },
+            { action: "SyncSubject", name: "Môn học" }, { action: "SyncClass", name: "Lớp quản lý" }, { action: "SyncLecturer", name: "Giảng viên" }, { action: "SyncStudent", name: "Sinh viên" },
+            { action: "SyncLastClassRoom", name: "Lớp môn học" }, { action: "SyncLastLecturerClassRoom", name: "Lớp môn học giảng viên" }];
+        $('#btn-sync-all-table').click(() => {
+            toastSuccess("Bắt đầu đồng bộ");
+            tableNormalSync.forEach(item => {
+                $.ajax({
+                    dataType: 'json',
+                    method: 'Post',
+                    data: { action: item.action },
+                    url: '/SyncEduData/SyncFromEduData',
+                    timeout: 0,
+                    complete: () => {}
+                }).done(function (res) {
+                    if (res.type === "success") {
+                        toastSuccess(`Đồng bộ thành công ${item.name}`);
+                        reloadNormalDataTable();
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res);
+                            toastError(content.message);
+                        }
+                        catch {
+                            console.log(res);
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+
+            $.ajax({
+                dataType: 'json',
+                method: 'Post',
+                url: "/SyncEduData/SyncLastStudentClassRoom",
+                complete: () => { }
+            }).done(function (res) {
+                $('#loading-screen').hide();
+                if (res.statusCode === 200) {
+                    btnSyncLastStudentClassroom.html('<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang đồng bộ');
+                    btnSyncLastStudentClassroom.prop('disabled', true);
+                    toastSuccess('Đang đồng bộ sinh viên lớp môn học');
+                } else {
+                    try {
+                        let content = JSON.parse(res.content);
+                        toastError("Lỗi đồng bộ sinh viên lớp môn học: " + content.message);
+                    } catch {
+                        toastError('Có lỗi xảy ra');
+                    }
+                    console.log(res);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                $('#loading-screen').hide();
+                console.log(textStatus + ': ' + errorThrown);
+                console.log(jqXHR);
+            });
+        });
+    </script>
+}

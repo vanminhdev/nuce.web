@@ -1,0 +1,160 @@
+﻿
+@{
+    ViewBag.Title = "Đăng bài";
+    Layout = "";
+}
+<div class="row">
+    <div class="col-6">
+        <a class="update-btn text-light p-2 mb-3"
+           style="text-decoration: none; display: inline-block"
+           onclick="return feManagerState.changeComponent('/newsmanagement/itemslist?catId=@TempData.Peek("catId")')">
+            ← Quay lại danh sách bài tin
+        </a>
+    </div>
+    <div class="col-6 text-right">
+        <button class="btn btn-outline-success"
+                onclick="onPostNewsItem()">
+            Đăng bài
+        </button>
+    </div>
+    <div class="col-lg-12">
+        <form id="form-data" class="auto-validate">
+            <div class="form-group">
+                <div class="font-14-sm fw-600 font-18">Tiêu đề</div>
+                <input id="txtTitle" name="title" type="text" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <div class="font-14-sm fw-600 font-18">Thứ tự ưu tiên</div>
+                <input id="txtOrder" name="order" type="number" class="form-control" min="1" max="20" />
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="font-14-sm font-weight-bold mb-2">
+                                Ảnh đại diện
+                            </div>
+                            <div class="custom-file">
+                                <input id="file" type="file" class="m-input-file-no-tooltip"
+                                       onchange="onChangeFileUpload(this)" />
+                            </div>
+                            <div class="font-10-sm mt-2 sub-upload-file">
+                                Dung lượng < 1MB. Định dạng hỗ trợ: jpg, jpeg, png, gift
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <img id="imgAvaPreview"
+                                 src="/style/public/images/person1.png"
+                                 alt=""
+                                 class="upload-user-avatar" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="font-14-sm fw-600 font-18">Mô tả</div>
+                <input id="txtDescription" name="description" type="text" class="form-control" />
+            </div>
+            <div class="form-group">
+                <div class="font-14-sm fw-600 font-18">Nội dung</div>
+                <textarea id="news-content"></textarea>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@*@section Scripts {*@
+<script src="~/Content/js/common/fileHelper.js"></script>
+<script src="~/Content/js/helper/jquery.validate.custom.rule.js"></script>
+<script src="~/Content/js/helper/jquery.validate.default.message.js"></script>
+<script src="~/Content/js/helper/form.helper.js"></script>
+<script src="~/Content/js/helper/function.helper.js"></script>
+<script>
+        var state = {
+            catId: @TempData.Peek("catId"),
+        };
+
+        var onChangeFileUpload = function(e) {
+            _fileHelper.loadImageOnChangeInput(e, 'imgAvaPreview');
+        };
+
+        var onPostNewsItem = function() {
+            let form = $('#form-data');
+            if (!form.valid()) return;
+            const content = CKEDITOR.instances["news-content"].getData();
+            const title = $('#txtTitle').val();
+            const order = $('#txtOrder').val();
+            const description = $('#txtDescription').val();
+            const body = {
+                catId: state.catId,
+                title,
+                order,
+                description,
+                content,
+                avatar: '',
+                file: '',
+            };
+            callApiSaveNewsItem(body);
+        };
+
+        var callApiSaveNewsItem = function(body) {
+            $('#loading-screen').show();
+            const data = JSON.stringify(body);
+
+            $.ajax({
+                type: 'POST',
+                url: `/NewsManagement/CreateNewsItem`,
+                data,
+                dataType: 'json',
+                contentType: 'application/json',
+            }).done(res => {
+                if (res.StatusCode == 200) {
+                    var file = document.getElementById('file').files[0];
+                    if (file) {
+                        const id = res.Data;
+                        callApiSaveAvatar(file, id);
+                    }
+                    toastSuccess('Lưu thành công');
+                } else {
+                    toastError(res.Message || 'Lỗi hệ thống');
+                }
+                $('#loading-screen').hide();
+            }).fail(err => {
+                toastError('Lỗi hệ thống');
+                $('#loading-screen').hide();
+            });
+        };
+
+        var callApiSaveAvatar = function(file, id) {
+            var formData = new FormData();
+            // Attach file
+            formData.append(file.type, file);
+
+            $.ajax({
+                url: `/newsmanagement/uploadavatar?id=${id}`,
+                data: formData,
+                type: 'POST',
+                contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+                processData: false, // NEEDED, DON'T OMIT THIS
+                // ... Other options like success and etc
+            });
+        };
+
+        var init = function() {
+            var editor = CKEDITOR.replace('news-content');
+            CKFinder.setupCKEditor(editor, {
+                //swatch: 'b',
+                //onInit: function (finder) {
+                //    finder.on('files:choose', function (evt) {
+                //        var file = evt.data.files.first();
+                //        console.log('Selected: ', evt.data);
+                //    });
+                //}
+            });
+            autoValidate();
+        };
+
+        init();
+</script>
+@*}*@

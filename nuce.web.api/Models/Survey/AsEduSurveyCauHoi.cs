@@ -6,10 +6,9 @@ namespace nuce.web.api.Models.Survey
     public partial class AsEduSurveyCauHoi
     {
         public Guid Id { get; set; }
-        public int CauHoiId { get; set; }
         public int BoCauHoiId { get; set; }
         public int DoKhoId { get; set; }
-        public string Ma { get; set; }
+        public string Code { get; set; }
         public string Content { get; set; }
         public string Image { get; set; }
         public string MediaUrl { get; set; }
@@ -19,7 +18,6 @@ namespace nuce.web.api.Models.Survey
         public bool? IsOption { get; set; }
         public int? PartId { get; set; }
         public string Explain { get; set; }
-        public int? ParentQuestionId { get; set; }
         public int? NoAnswerOnRow { get; set; }
         public DateTime? ExpiredDate { get; set; }
         public int? TimeVisibleAnswer { get; set; }
@@ -32,5 +30,6 @@ namespace nuce.web.api.Models.Survey
         public string Type { get; set; }
         public int Status { get; set; }
         public string CheckImport { get; set; }
+        public string ParentCode { get; set; }
     }
 }

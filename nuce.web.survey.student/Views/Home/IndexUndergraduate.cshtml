@@ -1,0 +1,75 @@
+﻿@using nuce.web.survey.student.Common;
+@using nuce.web.survey.student.Models;
+@{
+    ViewData["Title"] = "Khảo sát trước tốt nghiệp";
+}
+
+@section Breadcrumb {
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Danh sách bài khảo sát trước tốt nghiệp</li>
+}
+
+<div class="container">
+    @if (ViewData["message"] != null)
+    {
+        <div class="row">
+            <div class="col-12">
+                <h4 class="text-center text-dark mb-3">Danh sách bài khảo sát phản hồi của sinh viên về chất lượng đào tạo trước khi tốt nghiệp</h4>
+            </div>
+            <div class="col-12">
+                <p class="text-center text-dark mb-3 m-fs-23">@(ViewData["message"])</p>
+            </div>
+        </div>
+    }
+
+    <div id="undergraduate-thesurvey" class="row" style="display: none;">
+        <div class="col-12">
+            <h2 class="text-center text-dark mb-3">Danh sách bài khảo sát phản hồi của sinh viên về chất lượng đào tạo trước khi tốt nghiệp</h2>
+        </div>
+        <div class="col-12">
+            <table class="table m-table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center" width="1px">STT</th>
+                        <th class="text-center" width="70%">Bài khảo sát</th>
+                        <th class="text-center" style="width:100px"></th>
+                    </tr>
+                </thead>
+                <tbody id="table-undergraduate-thesurvey">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @if (ViewData["UndergraduateTheSurvey"] != null)
+    {
+        <script>
+            $('#undergraduate-thesurvey').show();
+            let undergraduateTheSurvey = @Html.Raw(ViewData["UndergraduateTheSurvey"]);
+            let tableUndergraduate = $('#table-undergraduate-thesurvey');
+            let htmlUndergraduate = '';
+            let stt = 0;
+            for (let element of undergraduateTheSurvey) {
+                htmlUndergraduate += `
+                    <tr>
+                        <td class="text-center">${stt+=1}</td>
+                        <td>${element.name}</td>`;
+                htmlUndergraduate += `<td class="text-center">`;
+                if (element.status === @((int)SurveyStudentStatus.DoNot)) {
+                    htmlUndergraduate += `<a href="/home/undergraduatethesurvey?theSurveyId=${element.baiKhaoSatId}">Thực hiện</a>`;
+                } else if (element.status === @((int)SurveyStudentStatus.Doing)) {
+                    htmlUndergraduate += `<a href="/home/undergraduatethesurvey?theSurveyId=${element.baiKhaoSatId}">Tiếp tục</a>`;
+                } else if (element.status === @((int)SurveyStudentStatus.Done)) {
+                    htmlUndergraduate += `Đã hoàn thành`;
+                } else if (element.status === @((int)SurveyStudentStatus.RequestAuthorize)) {
+                    htmlUndergraduate += `<a href="/home/verification">Xác thực lại</a><br/><small>(Vui lòng đợi email xác thực không xác thực nhiều lần)<small/>`;
+                }
+                htmlUndergraduate += `</td>`;
+                htmlUndergraduate += `</tr>`;
+            }
+            tableUndergraduate.html(htmlUndergraduate);
+        </script>
+    }
+}

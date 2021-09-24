@@ -1,0 +1,179 @@
+﻿@using nuce.web.survey.student.Common
+@{
+    ViewData["Title"] = "Kết quả khảo sát trước tốt nghiệp";
+}
+
+@section Style {
+    <link rel="stylesheet" href="~/content/css/dataTables.bootstrap4.min.css" />
+    <link rel="stylesheet" href="~/content/css/bootstrap-select.min.css" />
+}
+
+@section Breadcrumb {
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/survey/faculty">Khoa</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Kết quả khảo sát trước tốt nghiệp</li>
+}
+
+<div class="ml-md-2 mr-md-2">
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="form-row">
+                <div id="input-search" class="col-6 col-md-3 mb-2">
+                    <div class="row">
+                        <div class="col-12">
+                            <input class="form-control form-control-sm" id="masv-search" type="text" placeholder="Tìm theo mã sinh viên" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 col-md-2 mb-2 d-flex align-items-start justify-content-start">
+                    <div class="d-flex">
+                        <div class="clear-input d-flex align-items-center ml-md-2 mr-1 mr-md-3" clear-input="#input-search" title="Nhập lại">
+                            <i class="fas fa-redo"></i>
+                        </div>
+                        <button id="btn-search" class="btn btn-secondary btn-sm">Tìm kiếm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row m-fs-10">
+        <div class="col-md-12">
+            <table id="id-datatable" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center">MSSV</th>
+                        <th class="text-center">Họ tên</th>
+                        <th class="text-center">Lớp</th>
+                        <th class="text-center">Ngày sinh</th>
+                        <th class="text-center">Giới tính</th>
+                        <th class="text-center">TBCHT</th>
+                        <th class="text-center">Xếp loại</th>
+                        <th class="text-center">Ngành</th>
+                        <th class="text-center">Chuyên ngành</th>
+                        <th class="text-center">Hệ tốt nghiệp</th>
+                        @*<th class="text-center">Khoa</th>*@
+                        @*<th class="text-center">Số quyết định</th>
+                        <th class="text-center">Ngày ra qđ</th>*@
+                        <th class="text-center">sdt</th>
+                        <th class="text-center">email</th>
+                        <th class="text-center">T.thái bài ks</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/Content/js/bootstrap-select.min.js"></script>
+    <script src="~/content/js/jquery.dataTables.min.js"></script>
+    <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/content/js/dataTables.config.js"></script>
+
+    <script>
+        var table = $('#id-datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ordering: false,
+            lengthChange: false,
+            stateSave: false,
+            pageLength: 20,
+            language: dataTableConfig.language,
+            columnDefs: [
+                {
+                    targets: [0, 1, 2, 3, 4, 5, 6],
+                    className: 'text-center'
+                }
+            ],
+            ajax: {
+                url: '/Survey/GetAllUndergraduateStudent',
+                dataType: 'json',
+                contentType: 'application/json',
+                type: "POST",
+                data: function (d) {
+                    return JSON.stringify(d);
+                },
+            },
+            columns: [
+                {
+                    data: "masv"
+                },
+                {
+                    data: "tensinhvien"
+                },
+                {
+                    data: "lopqd"
+                },
+                {
+                    data: null,
+                    mRender: function (data, type, row) {
+                        return getDateStringFromServerType(data.ngaysinh);
+                    }
+                },
+                {
+                    data: "gioitinh"
+                },
+                {
+                    data: "tbcht"
+                },
+                {
+                    data: "xeploai"
+                },
+                {
+                    data: "tennganh"
+                },
+                {
+                    data: "tenchnga"
+                },
+                {
+                    data: "hedaotao"
+                },
+                //{
+                //    data: "makhoa"
+                //},
+                //{
+                //    data: "soqdtn"
+                //},
+                //{
+                //    data: null,
+                //    mRender: function (data, type, row) {
+                //        return getDateStringFromServerType(data.ngayraqd);
+                //    }
+                //},
+                {
+                    data: "mobile"
+                },
+                {
+                    data: "email"
+                },
+                {
+                    data: null,
+                    name: "surveyStudentStatus",
+                    mRender: function (data, type, row) {
+                        if (data.surveyStudentStatus === @((int)SurveyStudentStatus.DoNot)) {
+                            return 'Chưa thực hiện';
+                        } else if (data.surveyStudentStatus === @((int)SurveyStudentStatus.Doing)) {
+                            return 'Đang thực hiện';
+                        } else if (data.surveyStudentStatus === @((int)SurveyStudentStatus.Done)) {
+                            return 'Hoàn thành';
+                        } else if (data.surveyStudentStatus === @((int)SurveyStudentStatus.HaveNot)) {
+                            return 'Không có';
+                        } else if (data.surveyStudentStatus === @((int)SurveyStudentStatus.RequestAuthorize)) {
+                            return 'Chưa xác thực';
+                        }
+                        return data.surveyStudentStatus;
+                    }
+                }
+            ]
+        });
+        $('#id-datatable_filter').hide();
+        $("#btn-search").click(() => {
+            table
+                .column(0).search($("#masv-search").val())
+                .draw();
+        });
+
+
+    </script>
+}

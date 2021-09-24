@@ -67,7 +67,7 @@
       <section id="header">
         <div class="container-fluid">
           <div class="row justify-content-around align-items-center">
-            <div class="col-12 col-md-7">
+            <div class="col-12 col-md-8">
               <div class="row">
                 <div class="col-2">
                   <img
@@ -81,12 +81,12 @@
                   <div
                     class="col-12 main-title main-color font-18-sm font-32 font-28-md text-left"
                   >
-                    trường đại học xây dựng
+                    trường đại học xây dựng hà nội
                   </div>
                   <div
                     class="col-12 main-color sub-title font-14-sm font-25 font-22-md"
                   >
-                    National University of Civil Engeering
+                    Hanoi University of Civil Engineering
                   </div>
                   <div class="col-12">
                     <div class="row">
@@ -99,7 +99,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-12 col-md-5">
+            <div class="col-12 col-md-4 px-2">
               <div class="row">
                 <div class="col-5 p-1">
                   <div class="row">
@@ -129,12 +129,12 @@
                         class="email-icon"
                       />
                     </div>
-                    <div class="col-9">
+                    <div class="col-9 pr-0">
                       <div class="row">
                         <div class="col-12 main-color icon-title font-14-sm">
                           Email
                         </div>
-                        <div class="col-10 icon-sub-title">
+                        <div class="col-10 icon-sub-title pr-0">
                           ctsv@nuce.edu.vn
                         </div>
                       </div>
@@ -162,11 +162,13 @@
       <!-- footer section -->
       <section id="footer">
         <div class="container full-height mt-1">
-          <div class="full-height row text-center main-color align-items-end">
+          <div class="full-height row text-center text-dark align-items-end">
             <div class="col-12 mb-2">
-              Bản quyền @2020 thuộc Đại học Xây dựng
+              Bản quyền @2020 thuộc Trường Đại học Xây dựng Hà Nội
               <br />
-              Phát triển bởi: Khoa Công Nghê Thông Tin
+              Phát triển bởi: <a href="http://fit.nuce.edu.vn" target="_blank" title="Khoa Công Nghê Thông Tin">Khoa Công Nghê Thông Tin</a>
+              <br />
+              Liên kết: <a href="https://xaydungso.vn" target="_blank" title="Xây Dựng Số">Xây Dựng Số</a>
             </div>
           </div>
         </div>

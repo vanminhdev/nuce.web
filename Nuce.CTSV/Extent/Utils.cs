@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
+using Nuce.CTSV.ApiModels;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -356,8 +358,6 @@ namespace Nuce.CTSV
 
         public static Uri BASE_ADDRESS = new Uri(API_URI);
 
-        //private static HttpClientHandler handler = new HttpClientHandler { UseCookies = false };
-        //private static HttpClient client = new HttpClient(handler) { BaseAddress = baseAddress };
         public static async Task<HttpResponseMessage> SendRequest(HttpRequest Request, HttpResponse Response, HttpMethod method, string path, string content)
         {
             using (HttpClientHandler handler = new HttpClientHandler { UseCookies = false })
@@ -370,13 +370,14 @@ namespace Nuce.CTSV
                 }
                 HttpRequestMessage req = CreateRequest(method, path, cookies, content);
                 var firstResponse = await client.SendAsync(req);
-
+                req.Dispose();
                 if (firstResponse.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     var endPoint = $"/api/User/refreshToken";
                     var refreshTokenRequest = new HttpRequestMessage(HttpMethod.Post, endPoint);
                     refreshTokenRequest.Headers.Add("Cookie", cookies);
                     var refreshResponse = await client.SendAsync(refreshTokenRequest);
+                    refreshTokenRequest.Dispose();
                     if (refreshResponse.IsSuccessStatusCode)
                     {
                         var newCookies = refreshResponse.Headers.GetValues("Set-Cookie");
@@ -423,6 +424,74 @@ namespace Nuce.CTSV
                 return firstResponse;
             }
         }
+        public static async Task<HttpResponseMessage> SendRequest(HttpRequest Request, HttpResponse Response, string path, UploadFileModel model)
+        {
+            using (HttpClientHandler handler = new HttpClientHandler { UseCookies = false })
+            using (HttpClient client = new HttpClient(handler) { BaseAddress = BASE_ADDRESS })
+            {
+
+                string cookies = "";
+                foreach (var key in Request.Cookies.AllKeys)
+                {
+                    cookies += $"{key}={Request.Cookies[key].Value};";
+                }
+                var req = CreateRequest(path, cookies, model);
+                var firstResponse = await client.SendAsync(req);
+                req.Dispose();
+
+                if (firstResponse.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    var endPoint = $"/api/User/refreshToken";
+                    var refreshTokenRequest = new HttpRequestMessage(HttpMethod.Post, endPoint);
+                    refreshTokenRequest.Headers.Add("Cookie", cookies);
+                    var refreshResponse = await client.SendAsync(refreshTokenRequest);
+                    refreshTokenRequest.Dispose();
+                    if (refreshResponse.IsSuccessStatusCode)
+                    {
+                        var newCookies = refreshResponse.Headers.GetValues("Set-Cookie");
+                        foreach (var responseCookie in newCookies)
+                        {
+                            var splited = responseCookie.Split(';');
+                            var value = splited[0].Split('=');
+                            var expires = splited[1].Split('=');
+                            var tmpCookie = new HttpCookie(value[0], value[1]);
+
+                            if (splited.Length > 1)
+                            {
+                                DateTime expireDate;
+                                bool parsed = DateTime.TryParse(expires[1], out expireDate);
+                                if (parsed)
+                                {
+                                    tmpCookie.Expires = expireDate;
+                                }
+                            }
+
+                            Request.Cookies.Set(tmpCookie);
+                            Response.Cookies.Set(tmpCookie);
+                        }
+                        cookies = "";
+                        foreach (var key in Request.Cookies.AllKeys)
+                        {
+                            cookies += $"{key}={Request.Cookies[key].Value};";
+                        }
+                        var newReq = CreateRequest(path, cookies, model);
+                        return await client.SendAsync(newReq);
+                    }
+                    else
+                    {
+                        foreach (var cookie in Request.Cookies.AllKeys)
+                        {
+                            var clearCookie = new HttpCookie(cookie);
+                            clearCookie.Expires = DateTime.Now.AddDays(-1);
+                            Response.Cookies.Add(clearCookie);
+                        }
+                        Response.Redirect("/Login.aspx");
+                    }
+                    return refreshResponse;
+                }
+                return firstResponse;
+            }
+        }
         public static async Task<T> DeserializeAsync<T>(HttpContent responseContent){
             string content = await responseContent.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<T>(content);
@@ -436,6 +505,14 @@ namespace Nuce.CTSV
                 req.Content = new StringContent(content, Encoding.UTF8, "application/json");
             }
             return req;
+        }
+        private static HttpRequestMessage CreateRequest(string path, string cookies, UploadFileModel model)
+        {
+            var req = new MultipartFormDataContent();
+            req.Headers.Add("Cookie", cookies);
+            req.Headers.Add("ContentType", model.ContentType ?? "");
+            req.Add(new StreamContent(new MemoryStream(model.Content)), model.Key, model.FileName);
+            return new HttpRequestMessage(HttpMethod.Post, path) { Content = req }; ;
         }
     }
 

@@ -66,16 +66,26 @@
         .rounded {
             border-radius: 0.35rem !important;
         }
+        .service-categories-wrp {
+            margin-top: 5px;
+        }
+        .radio-list td {
+            display: flex;
+            padding-bottom: 20px; 
+        }
+        .radio-list input {
+            margin-top: 5px;
+        }
+
     </style>
 </head>
 <body id="page-top">
-    <!-- test -->
     <div class="full-height body-wrp">
       <!-- header section -->
       <section id="header">
         <div class="container-fluid header-wrp">
           <div class="row justify-content-between align-items-center">
-            <div class="col-12 col-md-7">
+            <div class="col-12 col-md-8">
               <div class="row">
                 <div class="col-2">
                   <img
@@ -84,18 +94,18 @@
                     alt="logo"
                   />
                 </div>
-                <div class="col-10 col-md-10 mb-3">
+                <div class="col-10 col-md-10 mb-3 px-0">
                   <div
-                    class="col-12 text-left main-title main-color font-18-sm font-32 font-28-md"
+                    class="col-12 text-left main-title main-color font-18-sm font-32 font-28-md px-0"
                   >
-                    trường đại học xây dựng
+                    trường đại học xây dựng hà nội
                   </div>
                   <div
-                    class="col-12 main-color sub-title font-14-sm font-25 font-22-md"
+                    class="col-12 main-color sub-title font-14-sm font-25 font-22-md px-0"
                   >
-                    National University of Civil Engeering
+                    Hanoi University of Civil Engineering
                   </div>
-                  <div class="col-12">
+                  <div class="col-12 px-0">
                     <div class="row">
                       <div class="col-2 pr-0"><hr class="line-label" /></div>
                       <div class="col-10 small-title font-9-sm font-15">
@@ -106,7 +116,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-12 col-md-5">
+            <div class="col-12 col-md-4 px-4 px-md-0">
               <div class="row">
                 <div class="col-5 p-1">
                   <div class="row">
@@ -136,12 +146,12 @@
                         class="email-icon"
                       />
                     </div>
-                    <div class="col-9">
+                    <div class="col-9 pr-0">
                       <div class="row">
                         <div class="col-12 main-color icon-title font-14-sm">
                           Email
                         </div>
-                        <div class="col-10 icon-sub-title">
+                        <div class="col-10 icon-sub-title pr-0">
                           ctsv@nuce.edu.vn
                         </div>
                       </div>
@@ -196,7 +206,7 @@
             class="row justify-content-center banner-wrp service-banner mt-3 ml-0 mr-0"
           >
             <div class="col-12 text-center text-light text-uppercase banner-title font-18-sm font-42 font-32-md">
-              hệ thống thông tin nhân viên
+                hệ thống đăng ký thủ tục hành chính sv online
             </div>
             <div class="col-8 col-md-3"><hr class="banner-line" /></div>
             <div class="col-12 text-center text-light text-uppercase banner-title font-18-sm font-40 font-30-md">
@@ -205,8 +215,7 @@
           </div>
           <img
             id="avatar"
-            runat="server"
-            src="/style/public/images/person.png"
+            src="http://localhost:8086/Resources/Students/ava_114759.png"
             alt=""
             class="user-avatar position-absolute"
           />
@@ -263,44 +272,42 @@
           <div
             class="row user-wrp align-items-start justify-content-between display-lg"
           >
-            <div class="col-7 col-md-3 col-lg-5 col-xl-3 mt-3">
-              <div class="row">
-                <div class="col-12 mb-2">
-                  <div class="row align-items-center">
-                    <div id="divLargeUsername" runat="server" class="main-color text-uppercase fw-600 font-16-sm">
-                      minh khôi
+            <div class="col-12 mt-3">
+                <div class="d-flex flex-row align-items-center">
+                    <div id="divLargeUsername" runat="server" 
+                        class="d-flex flex-col main-color text-uppercase fw-600 font-16-sm">
+                        minh khôi
                     </div>
-                    <button
-                        id="btnLargeCapNhatHoSo" runat="server"
-                      type="button"
-                      class="btn text-light font-14-sm login-btn ml-3"
-                      onclick="location.href='/capnhathoso.aspx';"
-                    >
-                      Cập nhật hồ sơ
-                    </button>
-                  </div>
-                  <div class="row mt-2 align-items-center">
-                    <div id="divLargeMssv" runat="server"
-                      class="col-5 col-md-5 col-xl-4 font-14-sm text-left pl-0"
-                    >
-                      ID: 125998
+                    <div class="d-flex flex-col ml-2">
+                        <div class="d-flex flex-row">
+                            <div id="divLargeMssv" runat="server"
+                                class="d-flex flex- font-14-sm text-left pl-0">
+                                ID: 125998
+                            </div>
+                            <div class="d-flex flex-col pl-2 pr-2">|</div>
+                            <div class="d-flex flex-col">
+                                <a class="d-flex flex-row align-items-center cursor-pointer"
+                                    data-toggle="modal"
+                                    data-target="#logoutModal">
+                                    <div class="main-color font-14-sm">Log out</div>
+                                    <img
+                                    src="/style/public/images/icons/logout.png"
+                                    alt="logout-icon"
+                                    class="logout-icon ml-3"
+                                    />
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-2 pl-0 pr-0">|</div>
-                    <a class="row cursor-pointer"
-                        data-toggle="modal"
-                        data-target="#logoutModal">
-                      <div class="main-color font-14-sm">Log out</div>
-                      <img
-                        src="/style/public/images/icons/logout.png"
-                        alt="logout-icon"
-                        class="logout-icon ml-3"
-                      />
-                    </a>
-                  </div>
                 </div>
-              </div>
+                <button id="btnLargeCapNhatHoSo" runat="server"
+                        type="button"
+                        class="btn text-light font-14-sm login-btn ml-3"
+                        onclick="location.href='/capnhathoso.aspx';">
+                        Cập nhật hồ sơ
+                </button>
             </div>
-            <div class="col-lg-4 col-xl-4 mt-3 font-14 font-14-md">
+            <div class="col-12 mt-2 font-14 font-14-md">
                 <div class="row text-uppercase justify-content-start mr-5 align-items-center">
                     <asp:ContentPlaceHolder ID="BreadCrum" runat="server"></asp:ContentPlaceHolder>
                 </div>
@@ -308,7 +315,7 @@
           </div>
         </div>
 
-        <div class="container-fluid service-categories-wrp">
+        <div id="content" class="container-fluid service-categories-wrp">
             <form runat="server">
                 <asp:ContentPlaceHolder ID="MainContent" runat="server">
                 </asp:ContentPlaceHolder>
@@ -320,11 +327,13 @@
       <!-- footer section -->
       <section id="footer">
         <div class="container full-height mt-1">
-          <div class="full-height row text-center main-color align-items-end">
+          <div class="full-height row text-center text-dark align-items-end">
             <div class="col-12 mb-2">
-              Bản quyền @2020 thuộc Đại học Xây dựng
+              Bản quyền @2020 thuộc Trường Đại học Xây dựng Hà Nội
               <br />
-              Phát triển bởi: Khoa Công Nghê Thông Tin
+              Phát triển bởi: <a href="http://fit.nuce.edu.vn" target="_blank" title="Khoa Công Nghê Thông Tin">Khoa Công Nghê Thông Tin</a>
+              <br />
+              Liên kết: <a href="https://xaydungso.vn" target="_blank" title="Xây Dựng Số">Xây Dựng Số</a>
             </div>
           </div>
         </div>
@@ -333,7 +342,7 @@
     </div>
 
     <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
+    <a id="scrollTop" class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
     <!-- Logout Modal-->
@@ -373,6 +382,26 @@
             </div>
         </div>
     </div>
+    <script>
+        var masv = '<%= ((nuce.web.model.SinhVien)Session[Nuce.CTSV.Utils.session_sinhvien]).MaSV %>';
+        var apiURL = '<%= Nuce.CTSV.CustomizeHttp.API_URI %>';
+        $('#avatar').attr('src', `${apiURL}/api/student/avatar/${masv}?width=166&height=166`);
+
+        $('<img/>')
+            .on('error', function() { $('#avatar').attr('src', `/Data/images/noimage_human.png`); })
+            .attr("src", $('#avatar').attr("src"))
+        ;
+
+        $('body').scroll(function () {
+	        if ($(this).scrollTop() > 100) {
+		        $("#scrollTop").fadeIn(400);
+	        } else {
+		        $('#scrollTop').fadeOut(400);
+	        }     
+        });
+
+        $('html,body').animate({scrollTop: $(`#content`).offset().top}, 'slow');
+    </script>
     <!-- Custom scripts for all pages-->
     <script src="/js/sb-admin-2.min.js"></script>
 

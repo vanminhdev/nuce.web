@@ -1,0 +1,154 @@
+﻿
+@{
+    ViewBag.Title = "Cập nhật bản tin";
+    Layout = "";
+}
+
+<div class="row">
+    <div class="col-6">
+        <a class="update-btn text-light cursor-pointer p-2 mb-3"
+           style="text-decoration: none; display: inline-block"
+           onclick="return feManagerState.changeComponent('/newsmanagement/itemslist?catId=@TempData.Peek("catId")')">
+            ← Quay lại danh sách bài tin
+        </a>
+    </div>
+    <div class="col-6 text-right">
+        <button class="btn btn-outline-success"
+                onclick="onUpdate()">
+            Cập nhật
+        </button>
+    </div>
+    <div class="col-lg-12">
+        <form id="form-data" class="auto-validate">
+            <div class="form-group">
+                <div class="font-14-sm fw-600 font-18">Tiêu đề</div>
+                <input id="txtTitle" name="title" type="text" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <div class="font-14-sm fw-600 font-18">Thứ tự ưu tiên</div>
+                <input id="txtOrder" name="order" type="number" class="form-control" min="1" max="20" />
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="font-14-sm font-weight-bold mb-2">
+                                Ảnh đại diện
+                            </div>
+                            <div class="custom-file">
+                                <input id="file" type="file" class="m-input-file-no-tooltip"
+                                       onchange="onChangeFileUpload(this)" />
+                            </div>
+                            <div class="font-10-sm mt-2 sub-upload-file">
+                                Dung lượng < 1MB. Định dạng hỗ trợ: jpg, jpeg, png, gift
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <img id="imgAvaPreview"
+                                 src="/style/public/images/person1.png"
+                                 alt=""
+                                 class="upload-user-avatar" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="font-14-sm fw-600 font-18">Mô tả</div>
+                <input id="txtDescription" name="description" type="text" class="form-control" />
+            </div>
+            <div class="form-group">
+                <div class="font-14-sm fw-600 font-18">Nội dung</div>
+                <textarea id="news-content"></textarea>
+            </div>
+        </form>
+    </div>
+</div>
+
+@*@section Scripts {*@
+<script src="~/Content/js/common/fileHelper.js"></script>
+<script src="~/Content/js/helper/jquery.validate.custom.rule.js"></script>
+<script src="~/Content/js/helper/jquery.validate.default.message.js"></script>
+<script src="~/Content/js/helper/form.helper.js"></script>
+<script src="~/Content/js/helper/function.helper.js"></script>
+<script>
+        var state = {
+            newsItem: {},
+        };
+
+        var onChangeFileUpload = function(e) {
+            _fileHelper.loadImageOnChangeInput(e, 'imgAvaPreview');
+        };
+
+        var onUpdate = function() {
+            let form = $('#form-data');
+            if (!form.valid()) return;
+
+            const body = state.newsItem;
+            body.order = $('#txtOrder').val();
+            body.title = $('#txtTitle').val();
+            body.description = $('#txtDescription').val();
+            body.newContent = CKEDITOR.instances["news-content"].getData();
+
+            callApiUpdate(body);
+        };
+
+        var callApiUpdate = function(body) {
+            $('#loading-screen').show();
+            const data = JSON.stringify(body);
+
+            $.ajax({
+                type: 'POST',
+                url: `@Url.Action("UpdateNewsItem", "NewsManagement")`,
+                data,
+                dataType: 'json',
+                contentType: 'application/json',
+            }).done(res => {
+                if (res.StatusCode == 200) {
+                    var file = document.getElementById('file').files[0];
+                    if (file) {
+                        callApiSaveAvatar(file);
+                    }
+                    toastSuccess('Lưu thành công');
+                } else {
+                    toastError(res.Message || 'Lỗi hệ thống');
+                }
+                $('#loading-screen').hide();
+            }).fail(err => {
+                toastError('Lỗi hệ thống');
+                $('#loading-screen').hide();
+            });
+        };
+
+        var init = function() {
+            var editor = CKEDITOR.replace('news-content', {
+                embed_provider: '//ckeditor.iframe.ly/api/oembed?url={url}&callback={callback}',
+            });
+            CKFinder.setupCKEditor(editor);
+            state.newsItem = @Html.Raw(Json.Encode(Model));
+            $('#txtTitle').val(state.newsItem.title);
+            $('#txtOrder').val(state.newsItem.order);
+            $('#txtDescription').val(state.newsItem.description);
+            $('#news-content').val(state.newsItem.newContent);
+            _fileHelper.loadImageOnLink(`${API_URL}/api/NewsManager/news-items/avatar/${state.newsItem.id}`, 'imgAvaPreview');
+        };
+
+        var callApiSaveAvatar = function(file) {
+            var formData = new FormData();
+            // Attach file
+            formData.append(file.type, file);
+
+            $.ajax({
+                url: `/newsmanagement/uploadavatar?id=${state.newsItem.id}`,
+                data: formData,
+                type: 'POST',
+                contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+                processData: false, // NEEDED, DON'T OMIT THIS
+                // ... Other options like success and etc
+            });
+        };
+
+        init();
+
+</script>
+@*}*@
+

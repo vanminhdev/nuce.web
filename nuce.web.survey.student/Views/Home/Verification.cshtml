@@ -1,0 +1,144 @@
+﻿@using nuce.web.survey.student.Common
+
+@{
+    var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+    var accessToken = Request.Cookies[nuce.web.survey.student.Common.UserParameters.JwtAccessToken];
+    var masv = "";
+    var hoten = "";
+    var roles = new List<string>();
+    if (accessToken != null)
+    {
+
+        var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
+
+        var masvClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == UserParameters.UserCode);
+        if (masvClaim != null)
+        {
+            masv = masvClaim.Value;
+        }
+
+        var hotenClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.GivenName);
+        if (hotenClaim != null)
+        {
+            hoten = hotenClaim.Value;
+        }
+    }
+}
+
+@{
+    ViewData["Title"] = "Xác thực hoàn thành bài khảo sát";
+}
+
+@section Breadcrumb {
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Xác thực hoàn thành bài khảo sát</li>
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-12">
+            <div class="card w-100 m-box-shadow-right-bottom">
+                <h5 class="card-header">Xác thực thông tin</h5>
+                <div class="card-body">
+                    <form id="form-data" class="auto-validate">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Mã sinh viên</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control-plaintext" value="@masv" readonly disabled>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Tên sinh viên</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control-plaintext" value="@hoten" readonly disabled>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label pr-0">Email <span class="text-danger">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" name="email" class="form-control" required data-rule-email="true" data-rule-emailNotEdu="true">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label pr-0">Số điện thoại <span class="text-danger">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" name="phone" class="form-control" required data-rule-phoneNumberMobile="true">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label pr-0">CMND/CCCD <span class="text-danger">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" name="cmnd" class="form-control" required data-rule-number="true" data-rule-minlength="9" data-rule-maxlength="12">
+                            </div>
+                        </div>
+                        <div class="form-group row d-flex justify-content-center">
+                            <button type="button" id="btn-xac-thuc" class="btn btn-primary">Xác thực</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-12 mt-md-0 mt-2">
+            <div class="card w-100 m-box-shadow-right-bottom">
+                <h5 class="card-header">Chú ý</h5>
+                <div class="card-body">
+                    <div class="#verify-ks-notice">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/Content/js/helper/enum.js"></script>
+    <script src="~/Content/js/helper/clientParameter.js"></script>
+    <script>
+        var verifyState = {
+            getData: function() {
+                _clientParameterHelper.getDataApi('' , CLIENT_PARAMETERS_TYPE.KHAO_SAT_SV, res => {
+                    const code = CLIENT_PARAMETERS_CODE.KTDB_NOTICE_VERIFY;
+                    $('#verify-ks-notice').html(_clientParameterHelper.getValueByCode(res, code));
+                });
+            },
+            init: function() {
+                verifyState.getData();
+            },
+        };
+        verifyState.init();
+    </script>
+    <script>
+        let formData = $('#form-data');
+        $('#btn-xac-thuc').click(() => {
+            if (formData.valid()) {
+                $('#loading-screen').show();
+                $.ajax({
+                    data: formData.serializeArray(),
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Home/Verification',
+                    timeout: 0,
+                    complete: () => { }
+                }).done(function (res) {
+                    $('#loading-screen').hide();
+                    if (res.statusCode === 200) {
+                        toastSuccess("Một email xác thực đã được gửi đến địa chỉ email của bạn");
+                    } else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch (error) {
+                            toastError('Có lỗi xảy ra');
+                        }
+                    }
+                    console.log(res);
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    $('#loading-screen').hide();
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            }
+        });
+    </script>
+}

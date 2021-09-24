@@ -22,7 +22,6 @@ namespace Nuce.CTSV
                 {
                     var strResponse = await studentResponse.Content.ReadAsStringAsync();
                     var student = JsonConvert.DeserializeObject<ApiModels.StudentModel>(strResponse);
-                    ViewState["student"] = student;
 
                     string thongBao = "";
 
@@ -39,11 +38,6 @@ namespace Nuce.CTSV
                     if (string.IsNullOrEmpty(student.HkttPhuong?.Trim()))
                     {
                         thongBao += $"{(thongBao != "" ? "," : "")} phường/xã";
-                    }
-
-                    if (string.IsNullOrEmpty(student.DiaChiCuThe?.Trim()))
-                    {
-                        thongBao += $"{(thongBao != "" ? "," : "")} địa chỉ tạm trú";
                     }
 
                     if (!string.IsNullOrEmpty(thongBao))

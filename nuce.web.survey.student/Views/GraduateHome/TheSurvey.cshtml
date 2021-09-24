@@ -1,0 +1,643 @@
+﻿@using nuce.web.survey.student.Common
+@using nuce.web.survey.student.Models.JsonData
+@using Newtonsoft.Json;
+@using System.IdentityModel.Tokens.Jwt;
+@using System.Security.Claims;
+@using nuce.web.shared
+@using System.Collections.Generic
+
+@model  List<QuestionJson>
+@{
+    ViewData["Title"] = "Bài khảo sát cựu sinh viên";
+}
+
+@{
+    var handler = new JwtSecurityTokenHandler();
+    var accessToken = Request.Cookies[UserParameters.JwtAccessToken];
+    var roles = new List<string>();
+    if (accessToken != null)
+    {
+
+        var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
+
+        //role
+        roles = jwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(r => r.Value).ToList();
+    }
+}
+
+@section Style {
+    <link rel="stylesheet" href="~/Content/css/star-rating.css" />
+    <style>
+        body {
+            counter-reset: title-question-counter;
+        }
+
+        .question-title {
+            counter-increment: title-question-counter;
+        }
+
+            .question-title:before {
+                content: counter(title-question-counter, upper-roman)". ";
+            }
+
+        .tag-child-inline > * {
+            display: inline;
+        }
+    </style>
+}
+
+@if (roles.Contains(RoleNames.KhaoThi_Survey_KhoaBan))
+{
+    @section Breadcrumb {
+        <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a class="m-text-blue" href="/survey/faculty">Khoa</a></li>
+        <li class="breadcrumb-item"><a class="m-text-blue" href="/survey/graduatethesurveystudent">Nhập bài khảo sát</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Bài làm khảo sát</li>
+    }
+}
+else
+{
+    @section Breadcrumb {
+        <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a class="m-text-blue" href="/graduatehome/index">Khảo sát</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Làm bài khảo sát</li>
+    }
+}
+
+@helper GenerateAnswerChildQuestion(AnswerJson answer)
+{
+    <div id="answerQuestion-@answer.AnswerChildQuestion.Code" style="display: none;">
+        <div class="form-group col-12 mb-0 pl-0 pr-0">
+            <label id="@answer.AnswerChildQuestion.Code" class="text-dark tag-child-inline mb-0">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.AnswerChildQuestion.Content)))</label>
+            @if (answer.AnswerChildQuestion.Image != null)
+            {
+                <div class="d-flex justify-content-center align-items-center">
+                    <img src="@answer.AnswerChildQuestion.Image" style="max-width: 200px; border-radius:5px;" />
+                </div>
+            }
+        </div>
+        <div class="form-row pl-2 pr-2">
+            @GenerateAnswer(answer.AnswerChildQuestion)
+            @if (answer.AnswerChildQuestion.Type == QuestionType.GQ && answer.AnswerChildQuestion.ChildQuestion != null)
+            {
+                <div class="col">
+                    <div class="form-group">
+                        @{
+                            var indexChild = 1;
+                        }
+                        @foreach (var questionChild in answer.AnswerChildQuestion.ChildQuestion)
+                        {
+                            <div class="form-group col-12 mb-0 pl-0 pr-0">
+                                <label id="@questionChild.Code" class="text-dark">@indexChild. @Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(questionChild.Content)))</label>
+                                @if (questionChild.Image != null)
+                                {
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <img src="@questionChild.Image" style="max-width: 200px; border-radius:5px;" />
+                                    </div>
+                                }
+                            </div>
+                            <div class="form-row pl-2 pr-2">
+                                @GenerateAnswer(questionChild)
+                            </div>
+                            indexChild++;
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@helper GenerateAnswer(QuestionJson question)
+{
+    bool displayLong = false;
+    if (question.Answers != null && (question.Answers.Count > 5 || question.Answers.Where(o => o.Content.Length > 20).Count() > 0))
+    {
+        displayLong = true;
+    }
+
+    if (question.Type == QuestionType.SC)
+    {
+        foreach (var answer in question.Answers)
+        {
+            if (displayLong)
+            {
+                <div class="col-12 col-md-6">
+                    <div class="d-flex">
+                        @* answerchildquestioncode để show hide câu hỏi con của đáp án *@
+                        <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
+                               @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "")
+                               @(answer.ShowQuestion != null ? $"showquestion={JsonConvert.SerializeObject(answer.ShowQuestion)}" : "")
+                               @(answer.HideQuestion != null ? $"hidequestion={JsonConvert.SerializeObject(answer.HideQuestion)}" : "") />
+                        <label class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col-6 col-md">
+                    <div class="d-flex">
+                        @* answerchildquestioncode để show hide câu hỏi con của đáp án *@
+                        <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
+                               @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "")
+                               @(answer.ShowQuestion != null ? $"showquestion={JsonConvert.SerializeObject(answer.ShowQuestion)}" : "")
+                               @(answer.HideQuestion != null ? $"hidequestion={JsonConvert.SerializeObject(answer.HideQuestion)}" : "") />
+                        <label class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+                    </div>
+                </div>
+            }
+        }
+    }
+    else if (question.Type == QuestionType.MC)
+    {
+        foreach (var answer in question.Answers)
+        {
+            if (displayLong)
+            {
+                <div class="col-12 col-md-6">
+                    <div class="d-flex">
+                        <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
+                               @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "") />
+                        <label class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col-6 col-md">
+                    <div class="d-flex">
+                        <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
+                               @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "") />
+                        <label class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+                    </div>
+                </div>
+            }
+        }
+    }
+    else if (question.Type == QuestionType.SA)
+    {
+        <div class="col">
+            <div class="form-group">
+                <textarea class="form-control" style="min-height:100px;" questionCode="@question.Code" name="@question.Code"></textarea>
+            </div>
+        </div>
+    }
+    else if (question.Type == QuestionType.CityC)
+    {
+        <div class="col">
+            <div class="form-group">
+                <select class="form-control lua-chon-tinh-thanh col-12 col-md-3" questionCode="@question.Code" name="@question.Code">
+                </select>
+            </div>
+        </div>
+    }
+    else if (question.Type == QuestionType.StarRating)
+    {
+        <div class="col">
+            <div class="d-flex justify-content-center">
+                <div class="rating">
+                    <input questionCode="@question.Code" id="rating5" type="radio" name="rating" numstar="5" hidden>
+                    <label class="fas fa-star" for="rating5"></label>
+
+                    <input questionCode="@question.Code" id="rating4" type="radio" name="rating" numstar="4" hidden>
+                    <label class="fas fa-star" for="rating4"></label>
+
+                    <input questionCode="@question.Code" id="rating3" type="radio" name="rating" numstar="3" hidden>
+                    <label class="fas fa-star" for="rating3"></label>
+
+                    <input questionCode="@question.Code" id="rating2" type="radio" name="rating" numstar="2" hidden>
+                    <label class="fas fa-star" for="rating2"></label>
+
+                    <input questionCode="@question.Code" id="rating1" type="radio" name="rating" numstar="1" hidden>
+                    <label class="fas fa-star" for="rating1"></label>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h3 class="text-center text-dark">NỘI DUNG KHẢO SÁT</h3>
+        </div>
+        @if (roles.Contains(RoleNames.KhaoThi_Survey_KhoaBan))
+        {
+            <div class="col-12">
+                <div class="d-flex justify-content-md-center justify-content-start">
+                    <label for="loaiHinh" class="col-4 col-md-2 d-flex align-items-center my-0"><span>Loại hình thu thập</span></label>
+                    <div class="col-8 col-md-4">
+                        <select class="form-control form-control-sm" name="loaiHinh" id="loai-hinh">
+                            <option value="Điện thoại">Điện thoại</option>
+                            <option value="Email">Email</option>
+                            <option value="Facebook">Facebook</option>
+                            <option value="Group lớp">Group lớp</option>
+                            <option value="Cán bộ lớp">Cán bộ lớp</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="row">
+        <div class="col-12">
+            @{
+                var index = 1;
+            }
+            @foreach (var question in Model)
+            {
+                <div id="div-q-@question.Code">
+                    <div class="form-group col-12 mb-0 pl-0 pr-0">
+                        @* Câu hỏi chỉ là tiêu đề *@
+                        @if (question.Type == QuestionType.T)
+                        {
+                            index--;
+                            <label id="@question.Code" class="text-dark w-100 tag-child-inline question-title font-weight-bold text-uppercase">
+                                @Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(question.Content)))
+                            </label>
+                        }
+                        else
+                        {
+                            <label id="@question.Code" class="text-dark pl-1 w-100 tag-child-inline">
+                                @index. @Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(question.Content)))
+                            </label>
+                        }
+                        @if (question.Image != null)
+                        {
+                            <div class="d-flex justify-content-center w-100 tag-child-inline align-items-center">
+                                <img src="@question.Image" style="max-width: 200px; border-radius:5px;" />
+                            </div>
+                        }
+                        @*@question.Type*@
+                    </div>
+                    <div class="form-row pl-2 pr-2 pl-2">
+                        @GenerateAnswer(question)
+                        @if (question.Type == QuestionType.GQ && question.ChildQuestion != null)
+                        {
+                            <div class="col">
+                                <div class="form-group">
+                                    @{
+                                        var indexChild = 1;
+                                    }
+                                    @foreach (var questionChild in question.ChildQuestion)
+                                    {
+                                        <div class="form-group col-12 mb-0 pl-0 pr-0">
+                                            <label id="@questionChild.Code" class="text-dark">@index.@indexChild. @Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(questionChild.Content)))</label>
+                                            @if (questionChild.Image != null)
+                                            {
+                                                <div class="d-flex justify-content-center align-items-center">
+                                                    <img src="@question.Image" style="max-width: 200px; border-radius:5px;" />
+                                                </div>
+                                            }
+                                        </div>
+                                        <div class="form-row pl-2 pr-2">
+                                            @GenerateAnswer(questionChild)
+                                        </div>
+                                        indexChild++;
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="form-row pl-3 pr-2">
+                        @* nếu tồn tại câu hỏi con của đáp án *@
+                        @foreach (var answer in question.Answers.Where(o => o.AnswerChildQuestion != null))
+                        {
+                            <div class="col">
+                                @GenerateAnswerChildQuestion(answer)
+                            </div>
+                        }
+                    </div>
+                </div>
+                index++;
+            }
+        </div>
+        <div class="col-12 d-flex justify-content-center mt-4">
+            <button id="submit-survey" class="btn btn-primary">Nộp</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-yes-no" tabindex="-1" role="dialog" aria-labelledby="modal-yes-no" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-yes-no-title">Nộp bài khảo sát</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-yes-no-content">
+                Xác nhận nộp bài khảo sát. <br />
+                Lưu ý: bài khảo sát đã nộp không thể chỉnh sửa lại
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
+                <button id="choose-yes" type="button" class="btn btn-primary">Có</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-alert" tabindex="-1" role="dialog" aria-labelledby="modal-yes-no" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thông báo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Bạn chưa hoàn thành bài khảo sát
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Tiếp tục</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/Content/js/tinh-thanh.js"></script>
+    <script>
+        $('.lua-chon-tinh-thanh').each(function () {
+            let seft = $(this);
+            TenTinhThanh.forEach(item => {
+                seft.append(`<option value="${item}">${item}</option>`);
+            });
+            seft.val(null);
+        });
+    </script>
+    @if (ViewData["SelectedAnswer"] != null)
+    {
+        <script>
+            let selectedAnswer = @Html.Raw(ViewData["SelectedAnswer"]);
+            selectedAnswer.forEach(element => {
+                if (element.IsAnswerChildQuestion === true && $(`input[type=checkbox][answerCode=${element.QuestionCode.split("_")[0]}]`).is(':checked')) {
+                    $(`#answerQuestion-${element.QuestionCode}`).show();
+                }
+                if (element.AnswerCode != undefined) {
+                    $(`input[type=radio][questionCode=${element.QuestionCode}][answerCode=${element.AnswerCode}]`).attr("checked", true);
+                } else if (element.AnswerCodes != undefined) {
+                    element.AnswerCodes.forEach(function (c) {
+                        $(`input[type=checkbox][questionCode=${element.QuestionCode}][answerCode=${c}]`).attr("checked", true);
+                    });
+                } else if (element.NumStart != undefined) {
+                    @* là câu hỏi star *@
+                    $(`input[type=radio][questionCode=${element.QuestionCode}][numstar=${element.NumStart}]`).attr('checked', true);
+                } else if (element.AnswerContent !== undefined && element.AnswerContent !== "") {
+                    $(`textarea[questionCode=${element.QuestionCode}]`).val(element.AnswerContent);
+                    $(`select[questionCode=${element.QuestionCode}]`).val(element.AnswerContent);
+                }
+            });
+        </script>
+    }
+    @if (Model.Count > 0)
+    {
+        <script>
+            $('input[type=radio]').each(function () {
+                let seft = $(this);
+                let proSeft = this;
+                function handle() {
+                    let data = { @Html.Raw(ViewData["studentCode"] != null ? $"studentCode:'{ViewData["studentCode"]}'," : "") theSurveyId: '@ViewData["TheSurveyId"]', questionCode: seft.attr('questionCode'), answerCode: seft.attr('answerCode'), numStar: seft.attr('numstar') };
+                    let isAnswerCodesAdd = proSeft.checked;
+                    if (proSeft.checked == true && seft.attr('answerchildquestioncode') != undefined) {
+                        $(`#answerQuestion-${seft.attr('answerchildquestioncode')}`).show();
+                    }
+                    else {
+                        $(`#answerQuestion-${seft.attr('answerchildquestioncode')}`).hide();
+                    }
+                    $.ajax({
+                        data: data,
+                        dataType: 'json',
+                        method: 'Post',
+                        url: '/GraduateHome/AutoSave',
+                        timeout: 0,
+                        complete: () => {}
+                    }).done(function (res) {
+                        console.log('radio');
+                        console.log(res);
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        $('#loading-screen').hide();
+                        console.log(textStatus + ': ' + errorThrown);
+                        console.log(jqXHR);
+                    });
+                }
+                seft.click(handle);
+            });
+
+            $('input[type=checkbox]').each(function () {
+                let seft = $(this);
+                let proSeft = this;
+                function handle() {
+                    let isAnswerCodesAdd = proSeft.checked;
+                    if (proSeft.checked == true && seft.attr('answerchildquestioncode') != undefined) {
+                        $(`#answerQuestion-${seft.attr('answerchildquestioncode')}`).show();
+                    }
+                    else {
+                        $(`#answerQuestion-${seft.attr('answerchildquestioncode')}`).hide();
+                    }
+                    $.ajax({
+                        data: { @Html.Raw(ViewData["studentCode"] != null ? $"studentCode:'{ViewData["studentCode"]}'," : "") theSurveyId: '@ViewData["TheSurveyId"]', questionCode: seft.attr('questionCode'), answerCodeInMulSelect: seft.attr('answerCode'), isAnswerCodesAdd },
+                        dataType: 'json',
+                        method: 'Post',
+                        url: '/GraduateHome/AutoSave',
+                        timeout: 0,
+                        complete: () => { }
+                    }).done(function (res) {
+                        console.log('checkbox');
+                        console.log(res);
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        console.log(textStatus + ': ' + errorThrown);
+                        console.log(jqXHR);
+                    });
+                }
+                seft.click(handle);
+            });
+
+            $('textarea').each(function () {
+                let seft = $(this);
+                seft.keyup(
+                    debounce(function () {
+                        $.ajax({
+                            data: { @Html.Raw(ViewData["studentCode"] != null ? $"studentCode:'{ViewData["studentCode"]}'," : "") theSurveyId: '@ViewData["TheSurveyId"]', questionCode: seft.attr('questionCode'), answerContent: seft.val() },
+                            dataType: 'json',
+                            method: 'Post',
+                            url: '/GraduateHome/AutoSave',
+                            timeout: 0,
+                            complete: () => { }
+                        }).done(function (res) {
+                            console.log('textarea');
+                            console.log(res);
+                        }).fail(function (jqXHR, textStatus, errorThrown) {
+                            console.log(textStatus + ': ' + errorThrown);
+                            console.log(jqXHR);
+                        });
+                    }, 1500)
+                );
+            });
+
+            $('.lua-chon-tinh-thanh').each(function () {
+                let seft = $(this);
+                seft.change(function () {
+                    $.ajax({
+                        data: { @Html.Raw(ViewData["studentCode"] != null ? $"studentCode:'{ViewData["studentCode"]}'," : "") theSurveyId: '@ViewData["TheSurveyId"]', questionCode: seft.attr('questionCode'), answerContent: seft.val() },
+                        dataType: 'json',
+                        method: 'Post',
+                        url: '/GraduateHome/AutoSave',
+                        timeout: 0,
+                        complete: () => { }
+                    }).done(function (res) {
+                        console.log('tinhthanh');
+                        console.log(res);
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        console.log(textStatus + ': ' + errorThrown);
+                        console.log(jqXHR);
+                    });
+                });
+            });
+
+            $('#choose-yes').click(() => {
+                $('#modal-yes-no').modal('hide');
+                $('#loading-screen').show();
+                $.ajax({
+                    data: {
+                        @Html.Raw(ViewData["studentCode"] != null ? $"studentCode:'{ViewData["studentCode"]}'," : "") theSurveyId: '@ViewData["TheSurveyId"]'
+                        @if(roles.Contains(RoleNames.KhaoThi_Survey_KhoaBan))
+                        {
+                            @:,loaiHinh: $('#loai-hinh').val()
+                        }
+                    },
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/GraduateHome/TheSurveySubmit',
+                    timeout: 0,
+                    complete: () => {}
+                }).done(function (res) {
+                    $('#loading-screen').hide();
+                    if (res.statusCode === 200) {
+                        @if(roles.Contains(RoleNames.KhaoThi_Survey_KhoaBan))
+                        {
+                            @:location.href = '/survey/graduatethesurveystudent';
+                        }
+                        else
+                        {
+                            @:location.href = '/graduatehome';
+                        }
+                    }
+                    else {
+                        console.log(res);
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        }
+                        catch {
+                            toastError("Có lỗi xảy ra");
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    $('#loading-screen').hide();
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+
+            let str = '@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(o => new { o.Code, o.Type }).ToList()))';
+            function checkRequired() {
+                let questions = JSON.parse(str);
+                let hasChecked = false;
+                for (let i = 0; i < questions.length; i++) {
+                    @* Nếu không visible thì bỏ qua *@
+                    if (!$(`#div-q-${questions[i].Code}`).is(":visible")) {
+                        continue;
+                    }
+
+                    if (questions[i].Type === "@QuestionType.SC" || questions[i].Type === "@QuestionType.MC" || questions[i].Type === "@QuestionType.StarRating") {
+                        hasChecked = false;
+                        $(`input[questionCode="${questions[i].Code}"]`).each(function () {
+                            if (this.checked) {
+                                hasChecked = true;
+                            }
+                        });
+                        if (hasChecked === false) {
+                            document.getElementById(`${questions[i].Code}`).scrollIntoView();
+                            console.log('chua lam cau ' + questions[i].Code);
+                            return false;
+                        }
+                    }
+
+                    if (questions[i].Type === "@QuestionType.CityC") {
+                        hasChecked = true;
+                        $(`select[questionCode="${questions[i].Code}"]`).each(function () {
+                            if ($(this).val() == null) {
+                                document.getElementById(`${questions[i].Code}`).scrollIntoView();
+                                console.log('chua lam cau tinh thanh ' + questions[i].Code);
+                                hasChecked = false;
+                            }
+                        });
+                        if (hasChecked === false) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+
+            $('#submit-survey').click(function () {
+                if (checkRequired()) {
+                    $('#modal-yes-no').modal('show');
+                } else {
+                    $('#modal-alert').modal('show');
+                }
+            });
+
+            $('input[showquestion]').each(function () {
+                let seft = $(this);
+                let proSeft = this;
+                let showQuestions = JSON.parse(seft.attr('showquestion'));
+
+                if (proSeft.checked == false) {
+                    showQuestions.forEach(item => {
+                        $('#' + 'div-q-' + item).hide();
+                    });
+                }
+                seft.click(() => {
+                    showQuestions.forEach(item => {
+                        $('#' + 'div-q-' + item).show();
+                    });
+                });
+            });
+
+            $('input[hidequestion]').each(function () {
+                let seft = $(this);
+                let proSeft = this;
+                let hideQuestions = JSON.parse(seft.attr('hidequestion'));
+                if (proSeft.checked == false) {
+                    hideQuestions.forEach(item => {
+                        $('#' + 'div-q-' + item).show();
+                    });
+                }
+                seft.click(() => {
+                    hideQuestions.forEach(item => {
+                        $('#' + 'div-q-' + item).hide();
+                    });
+                });
+            });
+        </script>
+    }
+    @if (roles.Contains(RoleNames.KhaoThi_Survey_KhoaBan))
+    {
+        <script>
+            if ($.cookie("loaiHinh") != undefined) {
+                $('#loai-hinh').val($.cookie("loaiHinh"));
+            }
+
+            $('#loai-hinh').change(() => {
+                let loaiHinh = $('#loai-hinh').val();
+                $.cookie("loaiHinh", loaiHinh, { expires: 3 });
+            });
+        </script>
+    }
+}
+

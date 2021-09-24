@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Nuce.CTSV {
-    
-    
-    public partial class MuonHocBaGoc_YeuCauMoi {
-        
+namespace Nuce.CTSV
+{
+
+
+    public partial class MuonHocBaGoc_YeuCauMoi
+    {
+
         /// <summary>
         /// divThongBao control.
         /// </summary>
@@ -20,25 +22,16 @@ namespace Nuce.CTSV {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divThongBao;
-        
+
         /// <summary>
-        /// txtLyDoXacNhan control.
+        /// divBtnContainer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtLyDoXacNhan;
-        
-        /// <summary>
-        /// txtNgayTra control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtNgayTra;
-        
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divBtnContainer;
+
         /// <summary>
         /// btnCapNhat control.
         /// </summary>
@@ -47,7 +40,7 @@ namespace Nuce.CTSV {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnCapNhat;
-        
+
         /// <summary>
         /// divThongBaoCapNhat control.
         /// </summary>
@@ -56,7 +49,7 @@ namespace Nuce.CTSV {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divThongBaoCapNhat;
-        
+
         /// <summary>
         /// spScript control.
         /// </summary>

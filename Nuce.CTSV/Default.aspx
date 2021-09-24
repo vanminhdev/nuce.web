@@ -10,6 +10,14 @@
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <!-- Begin Page Content -->
     <div class="container service-categories-wrp news-wrp">
+        <div class="main-color font-weight-bold mb-3">
+            Xem thêm tin tức tại 
+            <a href="http://ctsv.nuce.edu.vn" target="_blank">trang web</a> hoặc
+            <a href="https://www.facebook.com/Ph%C3%B2ng-C%C3%B4ng-t%C3%A1c-Ch%C3%ADnh-tr%E1%BB%8B-v%C3%A0-Qu%E1%BA%A3n-l%C3%BD-sinh-vi%C3%AAn-NUCE-113567187012488/?modal=admin_todo_tour" target="_blank">
+                fan page
+            </a>
+            của <span>Phòng Công tác Chính trị và Quản lý Sinh viên</span>
+        </div>
         <div class="row font-13-sm new-item-wrp mb-3">
             <div class="col-12 col-md-6">Thông báo:</div>
             <div class="col-12 col-md-6" id="divThongBaoSinhVien" runat="server"></div>
@@ -27,87 +35,5 @@
             <div class="col-12 col-md-6" id="divHocBong" runat="server"></div>
         </div>
     </div>
-      <%--  <!-- DataTales Example -->
-        <div class="card shadow mb-4">
-            <div class="card-body">
-                <div class="card mb-3">
-                    <div class="card-header">
-                        Thông báo sinh viên
-                   
-                        <div class="d-inline-block float-right">
-                            <button class="btn btn-primary">
-                                <i class="fas fa-sync"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body" id="divThongBaoSinhVien" runat="server">
-                        <blockquote class="blockquote mb-0">
-                            <div style="font-size: 1rem;">
-                                <i class="fas fa-exclamation"></i>
-                                <a href="#">Thông báo kiểm tra 1 - 22-07-2020</a>
-                            </div>
-                               <div style="font-size: 1rem;">
-                                <i class="fas fa-exclamation"></i>
-                                <a href="#">Thông báo kiểm tra 2 - 22-07-2020</a>
-                            </div>
-                        </blockquote>
-                    </div>
-                </div>
-                <div class="card mb-3">
-                    <div class="card-header">
-                        Văn bản biểu mẫu
-                   
-                        <div class="d-inline-block float-right">
-                            <button class="btn btn-primary">
-                                <i class="fas fa-sync"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body" id="divVanBan" runat="server">
-                        <blockquote class="blockquote mb-0">
-                            <div style="font-size: 1rem;">
-                                <i class="fas fa-check"></i>
-                                <a href="#">Quy chế miễn giảm học phí và hỗ trợ thực tập - 31-07-2020</a>
-                            </div>
-
-                        </blockquote>
-                    </div>
-                </div>
-                <div class="card mb-3">
-                    <div class="card-header">
-                        Tuyển dụng
-                   
-                        <div class="d-inline-block float-right">
-                            <button class="btn btn-primary">
-                                <i class="fas fa-sync"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body" id="divTuyenDung" runat="server">
-                        <blockquote class="blockquote mb-0">
-                        </blockquote>
-                    </div>
-                </div>
-                <div class="card mb-3">
-                    <div class="card-header">
-                        Học bổng
-                   
-                        <div class="d-inline-block float-right">
-                            <button class="btn btn-primary">
-                                <i class="fas fa-sync"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body"  id="divHocBong" runat="server">
-                        <blockquote class="blockquote mb-0">
-                   
-                        </blockquote>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>--%>
-    <!-- /.container-fluid -->
-
-
+    <!-- End Page Content -->
 </asp:Content>

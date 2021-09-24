@@ -1,0 +1,74 @@
+﻿@using nuce.web.survey.student.Common;
+@using nuce.web.survey.student.Models;
+@{
+    ViewData["Title"] = "Khảo sát đánh giá chất lượng giảng dạy";
+}
+
+@section Breadcrumb {
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Danh sách bài khảo sát hoạt động giảng dạy</li>
+}
+
+<div class="container">
+    @if (ViewData["Message"] != null)
+    {
+        <h1 class="text-center">@ViewData["Message"]</h1>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12">
+                <h2 class="text-center text-dark mb-3">Danh sách bài khảo sát hoạt động giảng dạy</h2>
+            </div>
+            <div class="col-12 mt-3">
+                <table class="table m-table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="text-center">STT</th>
+                            <th class="text-center">Môn học</th>
+                            <th class="text-center">Giảng viên</th>
+                            <th class="text-center"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-thesurvey">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        let content = @Html.Raw(ViewData["TheSurvey"]);
+        let tableContent = $('#table-thesurvey')
+        let htmlStr = '';
+        if (content.length === 0) {
+            htmlStr = '<tr><td class="text-center" colspan="4"> Chưa có bài khảo sát </td></tr>';
+        } else {
+            let stt = 0;
+            for (let element of content) {
+                //lớp không có môn học, chưa phát đúng loại bài khảo sát
+                if (element.subjectName === "" || element.status === @((int)SurveyStudentStatus.HaveNot)) {
+                    continue;
+                }
+                htmlStr += `
+                    <tr>
+                        <td class="text-center">${stt+=1}</td>
+                        <td>${element.subjectName}</td>
+                        <td>${element.lecturerName}</td>`;
+                htmlStr += `<td class="text-center">`;
+                if (element.status === @((int)SurveyStudentStatus.DoNot)) {
+                    htmlStr += `<a href="/home/thesurvey?theSurveyId=${element.baiKhaoSatId}&classRoomCode=${element.classRoomCode}&nhhk=${element.nhhk}">Thực hiện</a>`;
+                } else if (element.status === @((int)SurveyStudentStatus.Doing)) {
+                    htmlStr += `<a href="/home/thesurvey?theSurveyId=${element.baiKhaoSatId}&classRoomCode=${element.classRoomCode}&nhhk=${element.nhhk}">Tiếp tục</a>`;
+                } else if (element.status === @((int)SurveyStudentStatus.Done)) {
+                    htmlStr += `Đã hoàn thành`;
+                }
+                htmlStr += `</td>`;
+                htmlStr += `</tr>`;
+            }
+        }
+        tableContent.html(htmlStr);
+    </script>
+}

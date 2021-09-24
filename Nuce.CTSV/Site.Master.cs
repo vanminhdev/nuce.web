@@ -2,6 +2,7 @@
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
+using Nuce.CTSV;
 
 namespace Nuce.CTSV
 {
@@ -27,7 +28,7 @@ namespace Nuce.CTSV
                 nuce.web.model.SinhVien SinhVien = (nuce.web.model.SinhVien)Session[Utils.session_sinhvien];
                 divLargeMssv.InnerHtml = divMobileMssv.InnerHtml = $"ID: {SinhVien.MaSV}";
                 divLargeUsername.InnerHtml = divMobileUsername.InnerHtml = SinhVien.Ho;
-                avatar.Src = SinhVien.IMG;
+                //avatar.Src = SinhVien.IMG;
 
                 string URL = Request.RawUrl.ToUpper();
                 upateActiveMenu(linkDichVuSV, URL.Contains("DICHVU"));

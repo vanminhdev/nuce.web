@@ -1,0 +1,102 @@
+﻿@model nuce.web.survey.student.Models.SurveyResultModel
+
+@{
+    ViewData["Title"] = "Kết quả khảo sát hoạt động giảng dạy";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Breadcrumb {
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+    @if (!string.IsNullOrEmpty(Model.FacultyCode))
+    {
+        <li class="breadcrumb-item"><a class="m-text-blue" href="/survey/faculty">Khoa</a></li>
+        <li class="breadcrumb-item"><a class="m-text-blue" href="/surveyresult/faculty">Kết quả khảo sát HĐGD</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Bộ môn</li>
+    }
+    else if (!string.IsNullOrEmpty(Model.DepartmentCode))
+    {
+        <li class="breadcrumb-item"><a class="m-text-blue" href="/surveyresult/department?code=@Model.DepartmentCode&facultyCode=@Model.FacultyCode">Kết quả khảo sát HĐGD</a></li>
+    }
+}
+@* Tên bộ môn *@
+<h5 class="text-center mb-3 m-text-blue">
+    <span>
+        @ViewData["departmentName"]
+    </span>
+</h5>
+
+<div class="row">
+    <div class="col-12">
+        <table id="department-survey-result-datatable"
+               class="table th-border-none">
+            <thead>
+                <tr>
+                    <td>Giảng viên</td>
+                    <td>Số sv tham gia khảo sát</td>
+                    <td>Số sv được khảo sát</td>
+                    <td>Số phiếu thu về</td>
+                    <td>Số phiếu ks phát ra</td>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/content/js/jquery.dataTables.min.js"></script>
+    <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/content/js/dataTables.config.js"></script>
+    <script>
+        var facultyResultState = {
+            userTable: function() {
+                return $('#department-survey-result-datatable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ordering: false,
+                    lengthChange: false,
+                    stateSave: true,
+                    language: dataTableConfig.language,
+                    ajax: {
+                        url: `GetDepartmentResult?code=@Model.DepartmentCode`,
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        type: 'post',
+                        data: function (d) {
+                            return JSON.stringify(d);
+                        },
+                    },
+                    columns: [
+                        {
+                            data: 'name',
+                            mRender: function(data, type, row) {
+                                if (row.IsTotal) {
+                                    return "Tổng cộng";
+                                }
+                                return `<a href="/surveyresult/lecturer?code=${row.LecturerCode}&facultyCode=@Model.FacultyCode&departmentCode=@Model.DepartmentCode">${row.LecturerName || ''}</a>`;
+                            },
+                        },
+                        {
+                            data: 'SoSvThamGiaKhaoSat',
+                        },
+                        {
+                            data: 'SoSvDuocKhaoSat',
+                        },
+                        {
+                            data: 'SoPhieuThuVe',
+                        },
+                        {
+                            data: 'SoPhieuPhatRa',
+                        },
+                    ],
+                });
+            },
+            init: function() {
+                facultyResultState.userTable();
+                $('#department-survey-result-datatable_filter').hide();
+                $('#department-survey-result-datatable_paginate').hide();
+                $('#department-survey-result-datatable_info').hide();
+            },
+        };
+        facultyResultState.init();
+    </script>
+}

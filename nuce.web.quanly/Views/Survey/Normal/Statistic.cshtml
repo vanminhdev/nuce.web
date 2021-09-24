@@ -1,0 +1,323 @@
+﻿@using nuce.web.quanly.Common
+@{
+    ViewData["Title"] = "Thống kê";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style {
+    <link rel="stylesheet" href="~/content/css/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="~/content/css/dataTables.bootstrap4.min.css" />
+    <style>
+        .m-mw-100 {
+            max-width: 100px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 d-flex justify-content-end">
+            @if ((bool)ViewData["isExistReportTotalNormalSurvey"])
+            {
+                <button class="btn btn-success mr-2" id="download-export">
+                    <i class="fas fa-file-download"></i> File kết xuất lần cuối
+                </button>
+            }
+            <button class="btn btn-success mr-2" id="btn-export">
+                <i class="fas fa-file-export"></i> Kết xuất báo cáo
+            </button>
+            <button class="btn btn-primary" id="btn-statistic-survey">
+                <i class="fas fa-chart-pie"></i>
+                Thống kê
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table id="id-datatable" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center">Đợt khảo sát</th>
+                        <th class="text-center">Bài khảo sát</th>
+                        <th class="text-center">Mã lớp</th>
+                        <th class="text-center">NHHK</th>
+                        <th class="text-center">Mã giảng viên</th>
+                        <th class="text-center">Mã câu hỏi</th>
+                        <th class="text-center">Mã đáp án</th>
+                        <th class="text-center">Số lượng</th>
+                        <th class="text-center">Nội dung</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg auto-clear-form-on-open" id="modal-start-report" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thống kê khảo sát</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form id="form-data-start-report" class="auto-validate">
+                        <div class="form-group row">
+                            <label class="col-3 col-form-label">Đợt khảo sát <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <select class="form-control selectpicker custom-boostrap-select" name="surveyRoundId" id="dotKhaoSat" required title="Chọn đợt khảo sát">
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
+                <button type="button" class="btn btn-primary" id="start-report">Bắt đầu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg auto-clear-form-on-open" id="modal-export-report" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Kết xuất báo cáo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form id="form-data-export-report" class="auto-validate">
+                        <div class="form-group row">
+                            <label class="col-3 col-form-label">Đợt khảo sát <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <select class="form-control selectpicker custom-boostrap-select" multiple name="surveyRoundIds" id="cacDotKhaoSat" required title="Chọn đợt khảo sát">
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
+                <button type="button" class="btn btn-primary" id="start-export">Bắt đầu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/Content/js/bootstrap-select.min.js"></script>
+    <script src="~/content/js/jquery.dataTables.min.js"></script>
+    <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/content/js/dataTables.config.js"></script>
+    <script>
+        let surveyRounds = JSON.parse('@Html.Raw(ViewData["SurveyRoundClosedOrEnd"])');
+        let dotKhaoSats = $('#dotKhaoSat');
+        surveyRounds.forEach(e => {
+            dotKhaoSats.append(`<option value="${e.id}">${e.name} (từ ${getDateString(e.fromDate)} đến ${getDateString(e.endDate)})</option>`);
+        });
+        dotKhaoSats.selectpicker('refresh');
+
+        @*Các đợt khảo sát để export*@
+        let cacDotKhaoSat = $('#cacDotKhaoSat');
+        surveyRounds.forEach(e => {
+            cacDotKhaoSat.append(`<option value="${e.id}">${e.name} (từ ${getDateString(e.fromDate)} đến ${getDateString(e.endDate)})</option>`);
+        });
+        cacDotKhaoSat.selectpicker('refresh');
+
+        let btnReportTotalNormal = $('#btn-statistic-survey');
+        let tableReportNomalStatus = @Html.Raw(ViewData["TableReportNormalStatus"]);
+        if (tableReportNomalStatus.status === @((int)TableTaskStatus.Done)) {
+            if (!tableReportNomalStatus.isSuccess) {
+                toastWarning('Có lỗi xảy ra khi thống kê');
+            } else {
+                toastSuccess('Thống kê thành công');
+            }
+        }
+        else if (tableReportNomalStatus.status === @((int)TableTaskStatus.Doing)) {
+            btnReportTotalNormal.prop('disabled', true);
+            btnReportTotalNormal.html('<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang thống kê');
+        }
+        console.log('thống kê ', tableReportNomalStatus);
+
+        btnReportTotalNormal.click(() => {
+            $('#modal-start-report').modal('show');
+        });
+
+        $('#start-report').click(function () {
+            if ($('#form-data-start-report').valid()) {
+                $.ajax({
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/ReportTotalNormalSurvey',
+                    data: { surveyRoundId: $('#dotKhaoSat').val() },
+                    timeout: 0,
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        btnReportTotalNormal.prop('disabled', true);
+                        btnReportTotalNormal.html('<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang thống kê');
+                        toastSuccess('Bắt đầu thống kê');
+                        $('#modal-start-report').modal('hide');
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            }
+        });
+    </script>
+    <script>
+        var table = $('#id-datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ordering: false,
+            lengthChange: false,
+            stateSave: false,
+            pageLength: 20,
+            language: dataTableConfig.language,
+            columnDefs: [
+                {
+                    targets: [ 7 ],
+                    className: 'text-center'
+                },
+                {
+                    targets: [8],
+                    className: 'm-mw-100'
+                },
+            ],
+            ajax: {
+                url: '/Survey/GetRawReportTotalNormalSurvey',
+                dataType: 'json',
+                contentType: 'application/json',
+                type: "POST",
+                data: function (d) {
+                    return JSON.stringify(d);
+                },
+            },
+            columns: [
+                {
+                    data: "surveyRoundName"
+                },
+                {
+                    data: "theSurveyName"
+                },
+                {
+                    data: "classRoomCode"
+                },
+                {
+                    data: "nhhk"
+                },
+                {
+                    data: "lecturerCode"
+                },
+                {
+                    data: "questionCode"
+                },
+                {
+                    data: "answerCode"
+                },
+                {
+                    data: "total"
+                },
+                {
+                    data: null,
+                    name: "content",
+                    mRender: function (data, type, row) {
+                        if (data.content != null) {
+                            return `<span title="${data.content}">${data.content}</span>`;
+                        }
+                        return '';
+                    }
+                }
+            ]
+        });
+        $('#id-datatable_filter').hide();
+        $("#btn-search").click(() => {
+            //table
+            //    .column(0).search($("#name-search").val())
+            //    .draw();
+        });
+        document.getElementById("footer").scrollIntoView();
+    </script>
+    <script>
+        let btnExport = $('#btn-export');
+        let exportReportTotalNormalSurvey = @Html.Raw(ViewData["ExportReportTotalNormalStatus"]);
+        if (exportReportTotalNormalSurvey.status === @((int)TableTaskStatus.Done)) {
+            if (!exportReportTotalNormalSurvey.isSuccess) {
+                toastWarning('Có lỗi xảy ra khi kết xuất');
+            } else {
+                toastSuccess('Kết xuất thành công');
+            }
+        }
+        else if (exportReportTotalNormalSurvey.status === @((int)TableTaskStatus.Doing)) {
+            btnExport.prop('disabled', true);
+            btnExport.html('<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang kết xuất');
+        }
+        console.log('kết xuất ', exportReportTotalNormalSurvey);
+
+        btnExport.click(() => {
+            $('#modal-export-report').modal('show');
+        });
+
+        $('#start-export').click(() => {
+            let form = $('#form-data-export-report');
+            if (form.valid()) {
+                $.ajax({
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/ExportReportTotalNormalSurvey',
+                    data: form.serializeArray(),
+                    timeout: 0,
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        btnExport.prop('disabled', true);
+                        btnExport.html('<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang kết xuất');
+
+                        toastSuccess('Bắt đầu kết xuất');
+                        $('#modal-export-report').modal('hide');
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            }
+        });
+
+        $('#download-export').click(() => {
+            window.open('/Survey/DownloadReportTotalNormalSurvey', '_blank');
+        });
+    </script>
+}
+
+

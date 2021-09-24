@@ -182,6 +182,140 @@ namespace Nuce.CTSV.ApiModels
         public string MaXacNhan { get; set; }
         public string KyLuat { get; set; }
     }
+    public class VeXeBusModel
+    {
+        public long Id { get; set; }
+        public int StudentId { get; set; }
+        public string StudentCode { get; set; }
+        public string StudentName { get; set; }
+        public int? Status { get; set; }
+        public string LyDo { get; set; }
+        public string PhanHoi { get; set; }
+        public bool? Deleted { get; set; }
+        public int? CreatedBy { get; set; }
+        public int? LastModifiedBy { get; set; }
+        public int? DeletedBy { get; set; }
+        public DateTime? CreatedTime { get; set; }
+        public DateTime? DeletedTime { get; set; }
+        public DateTime? LastModifiedTime { get; set; }
+        public DateTime? NgayGui { get; set; }
+        public DateTime? NgayHenTuNgay { get; set; }
+        public DateTime? NgayHenDenNgay { get; set; }
+        public string MaXacNhan { get; set; }
+        public int? TuyenType { get; set; }
+        public string TuyenCode { get; set; }
+        public string TuyenName { get; set; }
+        public string NoiNhanThe { get; set; }
+    }
+
+    public class DotDangKyChoOModel
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime TuNgay { get; set; }
+        public DateTime DenNgay { get; set; }
+    }
+
+    public class DangKyChoOModel
+    {
+        public long Id { get; set; }
+        public int StudentId { get; set; }
+        public string StudentCode { get; set; }
+        public string StudentName { get; set; }
+        public int? Status { get; set; }
+        public string LyDo { get; set; }
+        public string PhanHoi { get; set; }
+        public bool? Deleted { get; set; }
+        public int? CreatedBy { get; set; }
+        public int? LastModifiedBy { get; set; }
+        public int? DeletedBy { get; set; }
+        public DateTime? CreatedTime { get; set; }
+        public DateTime? DeletedTime { get; set; }
+        public DateTime? LastModifiedTime { get; set; }
+        public DateTime? NgayGui { get; set; }
+        public DateTime? NgayHenTuNgay { get; set; }
+        public DateTime? NgayHenDenNgay { get; set; }
+        public string MaXacNhan { get; set; }
+        public string NhuCauNhaO { get; set; }
+        public string DoiTuongUuTienNhaO { get; set; }
+    }
+
+    public class XinMienGiamHocPhiModel
+    {
+        public long Id { get; set; }
+        public int StudentId { get; set; }
+        public string StudentCode { get; set; }
+        public string StudentName { get; set; }
+        public int? Status { get; set; }
+        public string LyDo { get; set; }
+        public string PhanHoi { get; set; }
+        public bool? Deleted { get; set; }
+        public int? CreatedBy { get; set; }
+        public int? LastModifiedBy { get; set; }
+        public int? DeletedBy { get; set; }
+        public DateTime? CreatedTime { get; set; }
+        public DateTime? DeletedTime { get; set; }
+        public DateTime? LastModifiedTime { get; set; }
+        public DateTime? NgayGui { get; set; }
+        public DateTime? NgayHenTuNgay { get; set; }
+        public DateTime? NgayHenDenNgay { get; set; }
+        public string MaXacNhan { get; set; }
+        public string DoiTuongHuong { get; set; }
+        public long DotDangKy { get; set; }
+    }
+
+    public class DeNghiHoTroChiPhiHocTapModel
+    {
+        public long Id { get; set; }
+        public int StudentId { get; set; }
+        public string StudentCode { get; set; }
+        public string StudentName { get; set; }
+        public int? Status { get; set; }
+        public string LyDo { get; set; }
+        public string PhanHoi { get; set; }
+        public bool? Deleted { get; set; }
+        public int? CreatedBy { get; set; }
+        public int? LastModifiedBy { get; set; }
+        public int? DeletedBy { get; set; }
+        public DateTime? CreatedTime { get; set; }
+        public DateTime? DeletedTime { get; set; }
+        public DateTime? LastModifiedTime { get; set; }
+        public DateTime? NgayGui { get; set; }
+        public DateTime? NgayHenTuNgay { get; set; }
+        public DateTime? NgayHenDenNgay { get; set; }
+        public string MaXacNhan { get; set; }
+        public string DoiTuongHuong { get; set; }
+        public long DotDangKy { get; set; }
+    }
+
+    public class MuonHocBaGocModel
+    {
+        public long Id { get; set; }
+        public int StudentId { get; set; }
+        public string StudentCode { get; set; }
+        public string StudentName { get; set; }
+        public int? Status { get; set; }
+        public string LyDo { get; set; }
+        public string PhanHoi { get; set; }
+        public bool? Deleted { get; set; }
+        public int? CreatedBy { get; set; }
+        public int? LastModifiedBy { get; set; }
+        public int? DeletedBy { get; set; }
+        public DateTime? CreatedTime { get; set; }
+        public DateTime? DeletedTime { get; set; }
+        public DateTime? LastModifiedTime { get; set; }
+        public DateTime? NgayGui { get; set; }
+        public DateTime? NgayHenTuNgay { get; set; }
+        public DateTime? NgayHenDenNgay { get; set; }
+        public string MaXacNhan { get; set; }
+        public string ThoiGianMuon { get; set; }
+        public DateTime? NgayTraDuKien { get; set; }
+        public DateTime? NgayMuon { get; set; }
+        public string Description { get; set; }
+        public string Notice { get; set; }
+    }
+
     public class AddDichVuModel
     {
         public int type { get; set; }
@@ -194,6 +328,17 @@ namespace Nuce.CTSV.ApiModels
         public string veViec { get; set; }
         public string maXacNhan { get; set; }
         public string phanHoi { get; set; }
+        public int veBusTuyenType { get; set; }
+        public string veBusTuyenCode { get; set; }
+        public string veBusTuyenName { get; set; }
+        public string veBusNoiNhanThe { get; set; }
+        public string thoiGianMuon { get; set; }
+        public bool notSendEmail { get; set; }
+        public string sdt { get; set; }
+        public string nhuCauNhaO { get; set; }
+        public string doiTuongUuTienNhaO { get; set; }
+        public string doiTuongHuongMienGiam { get; set; }
+        public string doiTuongDeNghiHoTro { get; set; }
     }
     public class ThiHsgModel
     {
@@ -292,6 +437,13 @@ namespace Nuce.CTSV.ApiModels
         public object Data { get; set; }
         public HttpStatusCode StatusCode { get; set; }
     }
+    public class UploadFileModel
+    {
+        public string FileName { get; set; }
+        public string Key { get; set; }
+        public byte[] Content { get; set; }
+        public string ContentType { get; set; }
+    }
     #endregion
 
     #region api
@@ -306,6 +458,8 @@ namespace Nuce.CTSV.ApiModels
         public static string GetFullStudent = "api/Student/full-student";
         public static string GetAllowUpdateStudent = "api/Student/allow-update-student";
         public static string GetTinTuc = "api/News/get-news-items";
+        public static string UploadStudentImage = "api/Student/upload-avatar";
+        public static string GetStudentAva = "api/student/avatar/";
     }
     #endregion
     #region ma dich vu
@@ -318,6 +472,16 @@ namespace Nuce.CTSV.ApiModels
         MuonHocBaGoc = 5,
         VayVonNganHang = 6,
         ThueNha = 7,
+        VeXeBus = 8,
+        DangKyChoO = 9,
+        MienGiamHocPhi = 10,
+        DeNghiHoTroChiPhiHocTap = 11
+    }
+
+    public enum DichVuXeBusLoaiTuyen
+    {
+        MotTuyen = 1,
+        LienTuyen = 2
     }
     #endregion
 }

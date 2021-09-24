@@ -1,0 +1,137 @@
+﻿@using nuce.web.quanly.Models;
+
+@{
+    ViewBag.Title = "Cập nhật tham số";
+    Layout = "";
+}
+
+<div class="container">
+    <div class="col-12 text-right">
+        <button class="btn btn-outline-success"
+                id="btn-update"
+                onclick="editParameterState.onUpdateParams()">
+            Lưu
+        </button>
+    </div>
+    <div class="col-lg-12">
+        <div class="row mt-2">
+            <div class="col-12">
+                <table data-page-length='25' class="table">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 10%">
+                                TT
+                            </th>
+                            <th class="text-center" style="width: 20%">
+                                Tên tham số
+                            </th>
+                            <th class="text-center">
+                                Giá trị
+                            </th>
+                            <th class="text-center">
+                                Trạng thái
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ 
+                            List<ClientParameterModel> model = (List<ClientParameterModel>)Model;
+                            if (ViewData.ContainsKey("code") && !string.IsNullOrEmpty(ViewData["code"]?.ToString()))
+                            {
+                                model = model.Where(param => param.code == ViewData["code"]?.ToString())
+                                            .ToList();
+                            }
+                            int i = 0;
+                            foreach (var item in model)
+                            {
+                                i++;
+                                <tr>
+                                    <td class="text-center m-table-vertical-middle">@i</td>
+                                    <td class="m-table-vertical-middle">
+                                        @item.code
+                                    </td>
+                                    <td>
+                                        @{
+                                            if ((bool)ViewData["richText"])
+                                            {
+                                                <textarea id="@(i-1)-value"></textarea>
+                                            }
+                                            else
+                                            {
+                                                <textarea onchange="editParameterState.changeInput(@i, this, 'value')"
+                                                          class="form-control">@item.value</textarea>
+                                            }
+                                        }
+                                    </td>
+                                    <td class="text-center m-table-vertical-middle">
+                                        @{ 
+                                            var isChecked = item.status == 1;
+                                        }
+                                        <input type="checkbox" class="cursor-pointer" checked="@isChecked"
+                                               onchange="editParameterState.changeCheckbox(@i, this, 'status')">
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@*@section Scripts {*@
+    <script>
+        var editParameterState = {
+            dataList: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(model)),
+            changeInput: function(index, event, field) {
+                editParameterState.dataList[index - 1][field] = event.value;
+            },
+            changeCheckbox: function(index, event, field) {
+                editParameterState.dataList[index - 1][field] = event.checked ? 1 : 0;
+            },
+            onUpdateParams: function() {
+                const data = editParameterState.dataList.map((item, idx) => {
+                    let newItem = {
+                        id: item.id,
+                        value: item.value,
+                        status: item.status,
+                    };
+                    if ('@((bool)ViewData["richText"])' === 'True') {
+                        newItem.value = CKEDITOR.instances[`${idx}-value`].getData();
+                    }
+                    return newItem;
+                });
+
+                editParameterState.callApiUpdate(JSON.stringify(data));
+            },
+            callApiUpdate: function(data) {
+                $('#loading-screen').show();
+                $.ajax({
+                    type: 'POST',
+                    url: `@Url.Action("UpdateClientParameter", "FrontendManager")`,
+                    data,
+                    contentType: 'application/json',
+                }).done(res => {
+                    if (res.StatusCode == 200) {
+                        toastSuccess('Lưu thành công');
+                    } else {
+                        toastError(res.Message || 'Lỗi hệ thống');
+                    }
+                    $('#loading-screen').hide();
+                }).fail(err => {
+                    toastError('Lỗi hệ thống');
+                    $('#loading-screen').hide();
+                });
+            },
+            init: function() {
+                if ('@((bool)ViewData["richText"])' === 'True') {
+                    for(let i = 0; i < editParameterState.dataList.length; i+=1) {
+                        CKEDITOR.replace(`${i}-value`);
+                        $(`#${i}-value`).val(editParameterState.dataList[i].value);
+                    }
+                }                
+            },
+        };
+        editParameterState.init();
+    </script>
+@*}*@

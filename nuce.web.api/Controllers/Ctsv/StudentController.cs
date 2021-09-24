@@ -1,12 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using nuce.web.api.Models.Ctsv;
 using nuce.web.api.Services.Ctsv.Interfaces;
+using nuce.web.api.ViewModel;
+using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Ctsv;
 
 namespace nuce.web.api.Controllers.Ctsv
@@ -17,11 +19,18 @@ namespace nuce.web.api.Controllers.Ctsv
     public class StudentController : ControllerBase
     {
         private readonly IStudentService _studentService;
-        public StudentController(IStudentService _studentService)
+        private readonly ILogger<StudentController> _logger;
+        public StudentController(IStudentService _studentService, ILogger<StudentController> _logger)
         {
             this._studentService = _studentService;
+            this._logger = _logger;
         }
-
+        /// <summary>
+        /// Thông tin sv
+        /// 
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
         [Route("{code}")]
         [HttpGet]
         public IActionResult GetStudent(string code)
@@ -41,6 +50,22 @@ namespace nuce.web.api.Controllers.Ctsv
         public IActionResult GetAllowUpdateStudent(string code)
         {
             return Ok(_studentService.GetStudentByCodeAllowUpdate(code));
+        }
+
+        [AllowAnonymous]
+        [Route("avatar/{code}")]
+        [HttpGet]
+        public async Task<IActionResult> GetImage(string code, [FromQuery] int? width, [FromQuery] int? height)
+        {
+            try
+            {
+                var result = await _studentService.GetStudentAvatar(code, width, height);
+                return File(result, "image/jpg");
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex);
+            }
         }
 
         [Route("basic-update")]
@@ -65,6 +90,39 @@ namespace nuce.web.api.Controllers.Ctsv
                 return BadRequest(result);
             }
             return Ok();
+        }
+
+        [Route("upload-avatar/{studentCode}")]
+        [HttpPost]
+        public async Task<IActionResult> UploadAvatar([FromForm] IFormFile file, string studentCode)
+        {
+            try
+            {
+                string imgPath = await _studentService.UpdateStudentImage(file, studentCode);
+                return Ok(imgPath);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { Message = ex.Message, Data = ex });
+            }
+        }
+
+        [Route("search-students")]
+        [HttpPost]
+        public async Task<IActionResult> SearchStudents([FromBody] DataTableRequest request)
+        {
+            string searchText = request.Search.Value;
+            try
+            {
+                var rs = await _studentService.FindStudent(searchText, request.Start, request.Length);
+                rs.Draw = ++request.Draw;
+
+                return Ok(rs);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { Data = ex, Message = "Lỗi hệ thống khi tìm kiếm sinh viên" });
+            }
         }
     }
 }

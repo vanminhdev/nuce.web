@@ -1,0 +1,706 @@
+﻿@using nuce.web.quanly.Common
+@{
+    ViewData["Title"] = "Đợt khảo sát sinh viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style {
+    <link rel="stylesheet" href="~/content/css/dataTables.bootstrap4.min.css" />
+    <link rel="stylesheet" href="~/content/css/bootstrap-select.min.css" />
+}
+
+<div class="container">
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="form-row d-flex justify-content-end">
+                <div class="col-12 col-md-2 mb-2">
+                    <input class="form-control form-control" id="name-search" type="text" placeholder="Tìm theo tên" />
+                </div>
+                <div class="col-12 col-md-3 mb-2 d-flex flex-row">
+                    <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
+                        <i class="fas fa-redo"></i>
+                    </div>
+                    <div class="w-75">
+                        <button id="btn-search" class="btn btn-secondary w-100">Tìm kiếm</button>
+                    </div>
+                </div>
+                <div class="col-12 col-md-2 mb-2">
+                    <button class="btn btn-primary w-100" onclick="createClick()">Thêm đợt khảo sát</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table id="id-datatable" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center">Tên</th>
+                        <th class="text-center">Từ ngày</th>
+                        <th class="text-center">Đến ngày</th>
+                        <th class="text-center" style="max-width:88px">Trạng thái</th>
+                        <th class="text-center" style="max-width:88px">Bài khảo sát</th>
+                        <th class="text-center" style="min-width:250px"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg auto-clear-form-on-open" id="modal-input" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-title">Thêm đợt khảo sát</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form id="form-data" class="auto-validate">
+                        <input name="id" hidden />
+                        <div class="form-group row">
+                            <label class="col-3 col-form-label">Tên đợt khảo sát <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <input type="text" class="form-control" name="name" id="name" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3 col-form-label">Từ ngày <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <input type="datetime-local" class="form-control" name="fromDate" id="fromDate" required data-rule-dateLessThanOrEqual="#endDate" data-rule-dateGreaterThanNow="true">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3 col-form-label">Đến ngày <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <input type="datetime-local" class="form-control" name="endDate" id="endDate" required data-rule-dateGreaterThanOrEqual="#fromDate" data-rule-dateGreaterThanNow="true">
+                            </div>
+                        </div>
+                        @*<div class="form-group row">
+                            <label class="col-3 col-form-label">Mô tả</label>
+                            <div class="col-9">
+                                <textarea type="text" class="form-control" name="description" id="description"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3 col-form-label">Ghi chú</label>
+                            <div class="col-9">
+                                <textarea type="text" class="form-control" name="note" id="note"></textarea>
+                            </div>
+                        </div>*@
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
+                <button type="button" class="btn btn-primary" id="save-changes" type-handle="create">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg auto-clear-form-on-open" id="modal-giahan" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Gia hạn thêm ngày kết thúc</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form id="form-giahan" class="auto-validate">
+                        <div class="form-group row">
+                            <label class="col-3 col-form-label">Đến ngày <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <input type="datetime-local" class="form-control" id="endDateAdd" required data-rule-dateGreaterThanNow="true">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
+                <button type="button" class="btn btn-primary" id="save-changes-giahan" type-handle="create">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-yes-no" tabindex="-1" role="dialog" aria-labelledby="modal-yes-no" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-yes-no-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-yes-no-content">
+                ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
+                <button id="choose-yes" type="button" class="btn btn-primary">Có</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg auto-clear-form-on-open" id="modal-thong-ke" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg mt-0" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thống kê tạm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="border-bottom-width: 1px; width: 1px;">Mã khoa</th>
+                                <th class="text-center" style="border-bottom-width: 1px;">Tên khoa</th>
+                                <th class="text-center" style="border-bottom-width: 1px;">Tổng số sv</th>
+                                <th class="text-center" style="border-bottom-width: 1px;">Số sv đã làm bài</th>
+                                <th class="text-center" style="border-bottom-width: 1px;">Số sv chưa làm bài</th>
+                                <th class="text-center" style="border-bottom-width: 1px; min-width: 100px">Tỷ lệ tham gia ks</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-thong-ke-tam">
+                            <tr>
+                                
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                <button id="btn-gui-mail-nhac" type="button" class="btn btn-info" hidden>Gửi mail nhắc nhở</button>
+                <button id="btn-preview-mail-nhac" type="button" class="btn btn-info">Preview mail nhắc nhở</button>
+                <button id="btn-thong-ke-lai" type="button" data-dismiss="modal" class="btn btn-primary">Thống kê lại</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg auto-clear-form-on-open" id="modal-preview" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg mt-0" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-dark">Preview mail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-dark">
+                <div class="container-fluid" id="content-email">
+                    
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/Content/js/bootstrap-select.min.js"></script>
+    <script src="~/content/js/jquery.dataTables.min.js"></script>
+    <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/content/js/dataTables.config.js"></script>
+    <script>
+        let tempReportNomalStatus = @Html.Raw(ViewData["TempDataNormalSurvey"]);
+        let dangThongKe = false;
+        if (tempReportNomalStatus.status === @((int)TableTaskStatus.Done)) {
+            if (!tempReportNomalStatus.isSuccess) {
+                toastWarning('Có lỗi xảy ra khi thống kê tạm');
+            } else {
+                toastSuccess('Thống kê tạm thành công');
+            }
+        }
+        else if (tempReportNomalStatus.status === @((int)TableTaskStatus.Doing)) {
+            dangThongKe = true;
+        }
+
+        if (tempReportNomalStatus.status !== @((int)TableTaskStatus.Doing)) {
+            let message = JSON.parse(tempReportNomalStatus.message);
+            let str = "";
+            let sumTotalDaLam = 0;
+            let sumTotalChuaLam = 0;
+            let sumTotalSinhVien = 0;
+            if (message != null) {
+                message.TongHopKhoa.forEach(item => {
+                    str += `<tr class="text-dark">`;
+                    str += `<td class="text-center">${item.FacultyCode}</td>`;
+                    str += `<td>${item.FacultyName}</td>`;
+                    str += `<td class="text-center">${item.TotalSinhVien}</td>`;
+                    str += `<td class="text-center">${item.TotalDaLam}</td>`;
+                    sumTotalDaLam += +item.TotalDaLam;
+                    str += `<td class="text-center">${item.TotalChuaLam}</td>`;
+                    sumTotalChuaLam += +item.TotalChuaLam;
+                    sumTotalSinhVien += +item.TotalSinhVien;
+                    str += `<td class="text-center">${item.Percent}%</td>`;
+                    str += `</tr>`;
+                });
+                str += `<tr class="text-dark">`;
+                str += `<td class="text-center" colspan="2">Toàn trường</td>`;
+                str += `<td class="text-center">${sumTotalSinhVien}</td>`;
+                str += `<td class="text-center">${sumTotalDaLam}</td>`;
+                str += `<td class="text-center">${sumTotalChuaLam}</td>`;
+                str += `<td class="text-center">${message.ChiemTiLe}%</td>`;
+                str += `</tr>`;
+            }
+            $('#tbody-thong-ke-tam').html(str);
+        }
+        console.log('t.kê tạm ', tempReportNomalStatus);
+    </script>
+    <script>
+        var table = $('#id-datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ordering: false,
+            lengthChange: false,
+            stateSave: false,
+            pageLength: 20,
+            language: dataTableConfig.language,
+            columnDefs: [
+                {
+                    targets: [ 1, 2, 3, 4, 5 ],
+                    className: 'text-center'
+                }
+            ],
+            ajax: {
+                url: '/Survey/GetAllSurveyRound',
+                dataType: 'json',
+                contentType: 'application/json',
+                type: "POST",
+                complete: function () {
+                    if (dangThongKe) {
+                        $('button[title="Thống kê tạm"]').prop('disabled', true);
+                        $('button[title="Thống kê tạm"]').html('<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang t.kê');
+                    }
+                },
+                data: function (d) {
+                    return JSON.stringify(d);
+                },
+            },
+            columns: [
+                {
+                    data: "name"
+                },
+                {
+                    data: null,
+                    name: "fromDate",
+                    mRender: function (data, type, row) {
+                        return getDateTimeStringFromServerType(data.fromDate);
+                    }
+                },
+                {
+                    data: null,
+                    name: "endDate",
+                    mRender: function (data, type, row) {
+                        return getDateTimeStringFromServerType(data.endDate);
+                    }
+                },
+                {
+                    data: null,
+                    name: "status",
+                    mRender: function (data, type, row) {
+                        let regex = /(\d+)/g;
+                        let fromDate = new Date(+data.fromDate.match(regex)[0]);
+                        let endDate = new Date(+data.endDate.match(regex)[0]);
+                        let currentDate = new Date();
+
+                        if (currentDate < fromDate) {
+                            return '<span class="badge badge-pill badge-primary">Mới</span>';
+                        } else if (currentDate >= fromDate && currentDate < endDate && (data.status == @((int)SurveyRoundStatus.Opened) || data.status == @((int)SurveyRoundStatus.New))) {
+                            return '<span class="badge badge-pill badge-success">Mở</span>';
+                        } else if (currentDate >= fromDate && currentDate < endDate && data.status == @((int)SurveyRoundStatus.Closed)) {
+                            return '<span class="badge badge-pill badge-secondary">Đóng tạm</span>';
+                        } else if (currentDate > endDate && data.status != @((int)SurveyRoundStatus.End)) {
+                            return '<span class="badge badge-pill badge-secondary">Đóng</span>';
+                        } else {
+                            return '<span class="badge badge-pill badge-secondary">Kết thúc</span>';
+                        }
+                    }
+                },
+                {
+                    data: null,
+                    mRender: function (data, type, row) {
+                        let regex = /(\d+)/g;
+                        let fromDate = new Date(+data.fromDate.match(regex)[0]);
+                        let endDate = new Date(+data.endDate.match(regex)[0]);
+                        let currentDate = new Date();
+                        if (currentDate > endDate && data.status == @((int)SurveyRoundStatus.End)) {
+                            return '';
+                        }
+                        return `<a href='/survey/TheSurvey?surveyRoundId=${data.id}'>Danh sách<a/>`;
+                    }
+                },
+                {
+                    data: null,
+                    mRender: function (data, type, row) {
+                        let html = '';
+                        let regex = /(\d+)/g;
+                        let fromDate = new Date(+data.fromDate.match(regex)[0]);
+                        let endDate = new Date(+data.endDate.match(regex)[0]);
+                        let currentDate = new Date();
+
+                        if (currentDate < fromDate) {
+                            html += `<button class="btn btn btn-outline-success btn-sm ml-1 mr-1" onclick="updateClick('${data.id}')">Sửa</button>`;
+                            html += `<button class="btn btn btn-outline-danger btn-sm ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
+                        } else if (currentDate >= fromDate && currentDate < endDate && (data.status == @((int)SurveyRoundStatus.Opened) || data.status == @((int)SurveyRoundStatus.New))) {
+                            html += `<button class="btn btn btn-outline-warning btn-sm ml-1 mr-1" onclick="closeClick('${data.id}')">Đóng tạm</button>`;
+                            html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="addEndDateClick('${data.id}')">Gia hạn</button>`;
+                            html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê tạm" onclick="xemThongKeTam('${data.id}', this)">T.kê tạm</button>`;
+                            html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê danh sách sinh viên có tham gia ks không" onclick="dsSVThamGia('${data.id}')">Sv tham gia</button>`;
+                        } else if (currentDate >= fromDate && currentDate < endDate && data.status == @((int)SurveyRoundStatus.Closed)) {
+                            html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="openClick('${data.id}')">Mở lại</button>`;
+                            html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="addEndDateClick('${data.id}')">Gia hạn</button>`;
+                            html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê tạm" onclick="xemThongKeTam('${data.id}', this)">T.kê tạm</button>`;
+                            html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê danh sách sinh viên có tham gia ks không" onclick="dsSVThamGia('${data.id}')">Sv tham gia</button>`;
+                        } else if (currentDate > endDate && data.status != @((int)SurveyRoundStatus.End)) {
+                            html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" onclick="addEndDateClick('${data.id}')">Gia hạn</button>`;
+                            html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê tạm" onclick="xemThongKeTam('${data.id}', this)">T.kê tạm</button>`;
+                            html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê danh sách sinh viên có tham gia ks không" onclick="dsSVThamGia('${data.id}')">Sv tham gia</button>`;
+                        } else if (currentDate > endDate && data.status == @((int)SurveyRoundStatus.End)) {
+                            html += `<button class="btn btn btn-outline-danger btn-sm ml-1 mr-1" onclick="deleteClick('${data.id}')">Xoá</button>`;
+                            html += `<button class="btn btn btn-outline-info btn-sm ml-1 mr-1" title="Thống kê danh sách sinh viên có tham gia ks không" onclick="dsSVThamGia('${data.id}')">Sv tham gia</button>`;
+                        }
+                        return html;
+                    }
+                }
+            ]
+        });
+        $('#id-datatable_filter').hide();
+        $("#btn-search").click(() => {
+            table
+                .column(0).search($("#name-search").val())
+                .draw();
+        });
+        document.getElementById("footer").scrollIntoView();
+
+        let saveChanges = $('#save-changes');
+        saveChanges.click(function () {
+            let form = $('#form-data');
+            if (form.valid()) {
+                let url;
+                if (saveChanges.attr('type-handle') === 'create') {
+                    url = '/Survey/CreateSurveyRound';
+                } else if (saveChanges.attr('type-handle') === 'update') {
+                    url = '/Survey/UpdateSurveyRound';
+                }
+                $.ajax({
+                    data: getFormData('#form-data'),
+                    dataType: 'json',
+                    method: 'Post',
+                    url: url,
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        toastSuccess('Lưu thành công');
+                        table.ajax.reload();
+                        $('#modal-input').modal('hide');
+                    } else if (res.statusCode === 409) {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastWarning(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    } else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            }
+        });
+
+        function createClick() {
+            $('#modal-input').modal('show');
+            $('#modal-title').html('Thêm đợt khảo sát');
+            saveChanges.attr('type-handle', 'create');
+        }
+
+        function updateClick(id) {
+            $('#modal-input').modal('show');
+            $('#modal-title').html('Cập nhật đợt khảo sát');
+            saveChanges.attr('type-handle', 'update');
+            $.ajax({
+                dataType: 'json',
+                method: 'Get',
+                url: `/Survey/GetSurveyRoundById?id=${id}`,
+                timeout: 0,
+                complete: () => { }
+            }).done(function (res) {
+                if (res.statusCode === 200) {
+                    if (res.content != "") {
+                        let content = JSON.parse(res.content);
+                        fillFormData('#form-data', content);
+                    }
+                }
+                else {
+                    console.log(res);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus + ': ' + errorThrown);
+                console.log(jqXHR);
+            });
+        }
+
+        function closeClick(id) {
+            $('#modal-yes-no-title').html('Xác nhận đóng');
+            $('#modal-yes-no-content').html('Đóng đợt khảo sát ?');
+            $('#modal-yes-no').modal('show');
+            $('#choose-yes').off();
+            $('#choose-yes').click(function () {
+                $.ajax({
+                    data: { id },
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/CloseSurveyRound',
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        toastSuccess('Đóng thành công');
+                        table.ajax.reload();
+                        $('#modal-yes-no').modal('hide');
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+        }
+
+        function openClick(id) {
+            $('#modal-yes-no-title').html('Xác nhận mở');
+            $('#modal-yes-no-content').html('Mở đợt khảo sát ?');
+            $('#modal-yes-no').modal('show');
+            $('#choose-yes').off();
+            $('#choose-yes').click(function () {
+                $.ajax({
+                    data: { id },
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/OpenSurveyRound',
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        toastSuccess('Mở thành công');
+                        table.ajax.reload();
+                        $('#modal-yes-no').modal('hide');
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+        }
+
+        function deleteClick(id) {
+            $('#modal-yes-no-title').html('Xác nhận xoá');
+            $('#modal-yes-no-content').html('Xoá đợt khảo sát ?');
+            $('#modal-yes-no').modal('show');
+            $('#choose-yes').off();
+            $('#choose-yes').click(function () {
+                $.ajax({
+                    data: { id },
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/DeleteSurveyRound',
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        toastSuccess('Xoá thành công');
+                        table.ajax.reload();
+                        $('#modal-yes-no').modal('hide');
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+        }
+
+        function addEndDateClick(id) {
+            $('#modal-giahan').modal('show');
+            $('#save-changes-giahan').off();
+            let form = $('#form-giahan');
+            $('#save-changes-giahan').click(function () {
+                if (form.valid()) {
+                    $.ajax({
+                        data: { id, endDate: $('#endDateAdd').val() },
+                        dataType: 'json',
+                        method: 'Post',
+                        url: '/Survey/AddEndDateSurveyRound',
+                        complete: () => { }
+                    }).done(function (res) {
+                        if (res.statusCode === 200) {
+                            toastSuccess('Gia hạn thành công');
+                            table.ajax.reload();
+                            $('#modal-giahan').modal('hide');
+                        }
+                        else {
+                            try {
+                                let content = JSON.parse(res.content);
+                                toastError(content.message);
+                            } catch {
+                                toastError('Có lỗi xảy ra');
+                            }
+                            console.log(res);
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        console.log(textStatus + ': ' + errorThrown);
+                        console.log(jqXHR);
+                    });
+                }
+            });
+        }
+    </script>
+    <script>
+        function xemThongKeTam(id, context) {
+            let seft = $(context);
+            if (!seft.is(":disabled")) {
+                $('#modal-thong-ke').modal('show');
+            }
+
+            $('#btn-thong-ke-lai').off();
+            $('#btn-thong-ke-lai').click(() => {
+                $.ajax({
+                    dataType: 'json',
+                    method: 'Get',
+                    url: `/Survey/GetTempDataNormalSurvey?id=${id}`,
+                    timeout: 0,
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        seft.prop('disabled', true);
+                        seft.html('<i class="fa fa-spinner rotation" aria-hidden="true"></i> Đang t.kê');
+                        toastSuccess("Đang thống kê tạm");
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        }
+                        catch {
+                            console.log(res);
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    seft.prop('disabled', false);
+                    seft.html('T.kê tạm');
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+
+            $('#btn-gui-mail-nhac').off();
+            $('#btn-gui-mail-nhac').click(() => {
+                $.ajax({
+                    dataType: 'json',
+                    method: 'Get',
+                    url: `/Survey/SendUrgingEmail`,
+                    timeout: 0,
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        toastSuccess("Gửi mail thành công");
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        }
+                        catch {
+                            console.log(res);
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+
+            $('#btn-preview-mail-nhac').off();
+            $('#btn-preview-mail-nhac').click(() => {
+                $('#modal-preview').modal('show');
+                $.ajax({
+                    dataType: 'json',
+                    method: 'Get',
+                    url: `/Survey/PreviewUrgingEmail`,
+                    timeout: 0,
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        $('#content-email').html(res.content);
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        }
+                        catch {
+                            console.log(res);
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+        }
+    </script>
+    <script>
+        function dsSVThamGia(id) {
+            window.open(`/Survey/ExportStudentDidSurvey?surveyRoundId=${id}`, '_blank');
+        }
+    </script>
+}

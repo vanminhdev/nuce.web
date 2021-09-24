@@ -8,11 +8,11 @@
             color: #fff;
         }
     </style>
-    <!-- TEST -->
-    <div class="row justify-content-center">
+    <div class="row justify-content-center" style="position: relative">
+        <div id="overlay"></div>
         <div class="col-12">
             <div class="main-name font-20-sm font-32-md font-42 text-light">
-            hệ thống quản lý thông tin sinh viên
+                hệ thống đăng ký thủ tục hành chính sinh viên online
             </div>
         </div>
         <div id="login-container" class="col-12 col-md-6">
@@ -20,9 +20,9 @@
                 href="/Extent/LoginWithGoogle"
                 style="display: inline-block"
                 class="btn background-main-color w-100 text-light font-14-sm font-18 login-google-btn">
-                <i class="fab fa-google-f fa-fw"></i>Login with
-                                Google
-                              </a>
+                <i class="fab fa-google-f fa-fw"></i>
+                    Đăng nhập qua email @nuce.edu.vn
+            </a>
             <div class="row extra-part text-light">
             <div class="col-5 pr-0"><hr class="extra-line" /></div>
             <div class="col-2 pl-0 pr-0 text-center font-18">Hoặc</div>
@@ -64,26 +64,60 @@
                 type="button"
                 Text="Đăng nhập" OnClick="btnDangNhap_Click" />
         </div>
+        <!-- MODAL THONG BAO-->
+        <div
+        class="modal fade"
+        id="myModalThongBao"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">Thông báo</h5>
+                    <button
+                        class="close"
+                        type="button"
+                        data-dismiss="modal"
+                        aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="divThongBaoCapNhat" runat="server">
+                    
+                </div>
+                <div class="modal-footer">
+                    <button
+                        class="btn btn-secondary"
+                        type="button"
+                        data-dismiss="modal">
+                        Thoát
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-    <!-- END TEST  -->
-    <%--<div class="form-group">
-        <asp:TextBox runat="server" ID="txtMaDangNhap" placeholder="Tên đăng nhập"></asp:TextBox>
-    </div>--%>
-    <%--<div class="form-group">
-        <asp:TextBox runat="server" ID="txtMatKhau" TextMode="Password" placeholder="Mật khẩu"></asp:TextBox>
-    </div>--%>
-    <%--<asp:Button CssClass="btn btn-primary btn-user btn-block" 
-                runat="server" 
-                ID="btnDangNhap" 
-                Text="Đăng nhập" OnClick="btnDangNhap_Click" />--%>
+        <!-- TOAST -->
+        <%--<div aria-live="polite" aria-atomic="true" 
+            class="d-flex justify-content-center align-items-center custom-toast">
+          <!-- Then put toasts within -->
+          <div class="toast" role="alert" 
+              aria-live="assertive" aria-atomic="true"
+              data-autohide="false">
+            <div class="toast-header">
+              <strong class="mr-auto">Thông báo</strong>
+              <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="toast-body" id="divThongBaoCapNhat" runat="server">
+              Hello, world! This is a toast message.
+            </div>
+          </div>
+        </div>--%>
+    </div>
     <hr />
-    <%--<a
-        href="/Extent/LoginWithGoogle"
-        class="btn btn-facebook btn-user btn-block">
-        <i class="fab fa-google-f fa-fw"></i>Login with
-                        Google
-                      </a>--%>
-
     <span runat="server" id="spAlert"></span>
     <script>
         $(document).ready(function () {
@@ -91,7 +125,11 @@
             $("#MainContent_txtMaDangNhap").addClass("form-control-user");
             $("#MainContent_txtMatKhau").addClass("form-control");
             $("#MainContent_txtMatKhau").addClass("form-control-user");
-
+            $('<%= spAlert.ClientID %>').html('');
+            
+            /*if(($("#myModalThongBao").data('bs.modal') || {})._isShown) {
+                $('#myModalThongBao').hide();
+            }*/
         });
     </script>
 </asp:Content>

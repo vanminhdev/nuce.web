@@ -1,0 +1,356 @@
+﻿@using nuce.web.quanly.Common
+@{
+    ViewData["Title"] = "Bài khảo sát cựu sinh viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style {
+    <link rel="stylesheet" href="~/content/css/dataTables.bootstrap4.min.css" />
+    <link rel="stylesheet" href="~/content/css/bootstrap-select.min.css" />
+}
+
+<div class="container">
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="form-row d-flex justify-content-end">
+                @*<div class="col-12 col-md mb-2">
+                    <input class="form-control form-control" id="name-search" type="text" placeholder="Tìm theo tên" />
+                </div>
+                <div class="col-12 col-md mb-2 d-flex flex-row">
+                    <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
+                        <i class="fas fa-redo"></i>
+                    </div>
+                    <div class="w-75">
+                        <button id="btn-search" class="btn btn-secondary w-100">Tìm kiếm</button>
+                    </div>
+                </div>*@
+                <div class="col-12 col-md-2 mb-2">
+                    <button class="btn btn-primary w-100" onclick="createClick()">Thêm bài khảo sát</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table id="id-datatable" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center" style="min-width:290px">Phiếu ks chọn</th>
+                        <th class="text-center">Mô tả</th>
+                        @*<th class="text-center">Ghi chú</th>*@
+                        <th class="text-center" width="1px">Trạng thái</th>
+                        <th class="text-center" style="min-width:190px"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg auto-clear-form-on-open" id="modal-input" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-title">Thêm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form id="form-data" class="auto-validate">
+                        <input name="id" hidden />
+                        <div class="form-group row">
+                            <label class="col-3 col-form-label">Chọn phiếu ks<span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <select class="form-control selectpicker custom-boostrap-select" name="deThiId" id="deThiId" required title="Chọn phiếu khảo sát">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3 col-form-label">Mô tả</label>
+                            <div class="col-9">
+                                <textarea type="text" class="form-control" name="description" id="description"></textarea>
+                            </div>
+                        </div>
+                        @*<div class="form-group row">
+                            <label class="col-3 col-form-label">Ghi chú</label>
+                            <div class="col-9">
+                                <textarea type="text" class="form-control" name="note" id="note"></textarea>
+                            </div>
+                        </div>*@
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
+                <button type="button" class="btn btn-primary" id="save-changes" type-handle="create">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-yes-no" tabindex="-1" role="dialog" aria-labelledby="modal-yes-no" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-yes-no-title">Xác nhận</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-yes-no-content">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
+                <button id="choose-yes" type="button" class="btn btn-primary">Có</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/Content/js/bootstrap-select.min.js"></script>
+    <script src="~/content/js/jquery.dataTables.min.js"></script>
+    <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/content/js/dataTables.config.js"></script>
+    <script>
+        let examQuestions = JSON.parse('@Html.Raw(ViewData["ExamQuestions"])');
+        let deThis = $('#deThiId');
+        examQuestions.forEach(e => {
+            deThis.append(`<option value="${e.id}">${e.name}</option >`);
+        });
+        deThis.selectpicker('refresh');
+
+        let tableTheSurveyStudentStatus = @ViewData["TableTheSurveyStudentStatus"];
+        console.log('table the survey student status', tableTheSurveyStudentStatus);
+
+        var table = $('#id-datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ordering: false,
+            lengthChange: false,
+            stateSave: false,
+            pageLength: 20,
+            language: dataTableConfig.language,
+            columnDefs: [
+                {
+                    targets: [2],
+                    className: 'text-center'
+                }
+            ],
+            ajax: {
+                url: '/Survey/GetAllUndergraduateTheSurvey',
+                dataType: 'json',
+                contentType: 'application/json',
+                type: "POST",
+                data: function (d) {
+                    return JSON.stringify(d);
+                },
+            },
+            columns: [
+                {
+                    data: "name"
+                },
+                {
+                    data: "description"
+                },
+                //{
+                //    data: "note"
+                //},
+                {
+                    data: null,
+                    name: "status",
+                    mRender: function (data, type, row) {
+                        if (data.status === @((int)TheSurveyStatus.New)) {
+                            return '<span class="badge badge-pill badge-success">Mới thêm</span>';
+                        } else if (data.status === @((int)TheSurveyStatus.Deactive)) {
+                            return '<span class="badge badge-pill badge-secondary" title="Bài khảo sát này đã được bỏ và thay bằng bài khảo sát mới">Đã bỏ</span>';
+                        } else if (data.status === @((int)TheSurveyStatus.Published)) {
+                            return '<span class="badge badge-pill badge-primary">Đã phát bài</span>';
+                        } else {
+                            return data.status;
+                        }
+                    }
+                },
+                {
+                    data: null,
+                    mRender: function (data, type, row) {
+                        let html = '';
+                        if (data.status === @((int)TheSurveyStatus.New)) {
+                            html += `<button class="btn btn btn-outline-success btn-sm ml-1 mr-1" title="bài khảo sát chưa phát sẽ có thể chọn lại phiếu khảo sát" onclick="updateClick('${data.id}')">Sửa</button>`;
+                            if (tableTheSurveyStudentStatus !== @((int)TableTaskStatus.Doing)) {
+                                html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1"
+                                            title="Bài khảo sát sẽ phát cho từng sinh viên, với trường hợp sinh viên chưa làm bài khảo sát sẽ được phát bài khảo sát mới này thay cho bài khảo sát cũ"
+                                            onclick="publishClick('${data.id}')">Phát bài</button>`;
+                            } else {
+                                html += `<button class="btn btn btn-outline-secondary btn-sm ml-1 mr-1" disabled title="Bảng đang làm việc thử lại sau">Phát bài</button>`;
+                            }
+                            html += `<button class="btn btn btn-outline-danger ml-1 mr-1 btn-sm" title="bài khảo sát chưa phát sẽ có thể xoá" onclick="deleteClick('${data.id}')">Xoá</button>`;
+                        } else if (data.status === @((int)TheSurveyStatus.Published)) {
+                            //đã xuất bản
+                            if (tableTheSurveyStudentStatus !== @((int)TableTaskStatus.Doing)) {
+                                html += `<button class="btn btn btn-outline-primary btn-sm ml-1 mr-1" 
+                                        title="Bài khảo sát sẽ phát cho từng sinh viên, với trường hợp sinh viên chưa làm bài khảo sát sẽ được phát bài khảo sát mới này thay cho bài khảo sát cũ" onclick="publishClick('${data.id}')">Phát bài</button>`;
+                            } else {
+                                html += `<button class="btn btn btn-outline-secondary btn-sm ml-1 mr-1" disabled title="Bảng đang làm việc thử lại sau">Phát bài</button>`;
+                            }
+                        }
+                        if (data.status === @((int)TheSurveyStatus.Deactive)) {
+                            html += `<button class="btn btn btn-outline-danger ml-1 mr-1 btn-sm" onclick="deleteClick('${data.id}')">Xoá</button>`;
+                        }
+                        return html;
+                    }
+                }
+            ]
+        });
+        $('#id-datatable_filter').hide();
+        $("#btn-search").click(() => {
+            //table
+            //    .column(0).search($("#name-search").val())
+            //    .draw();
+        });
+        document.getElementById("footer").scrollIntoView();
+
+        let saveChanges = $('#save-changes');
+        saveChanges.click(function () {
+            let form = $('#form-data');
+            if (form.valid()) {
+                let url;
+                if (saveChanges.attr('type-handle') === 'create') {
+                    url = '/Survey/CreateUndergraduateTheSurvey';
+                } else if (saveChanges.attr('type-handle') === 'update') {
+                    url = '/Survey/UpdateUndergraduateTheSurvey';
+                }
+                $.ajax({
+                    data: getFormData('#form-data'),
+                    dataType: 'json',
+                    method: 'Post',
+                    url: url,
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        toastSuccess('Lưu thành công');
+                        table.ajax.reload();
+                        $('#modal-input').modal('hide');
+                    }
+                    else if (res.statusCode === 409) {
+                        let content = JSON.parse(res.content);
+                        toastWarning(content.detailMessage);
+                    }
+                    else {
+                        toastError('Có lỗi xảy ra');
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            }
+        });
+
+        function createClick() {
+            $('#modal-input').modal('show');
+            $('#modal-title').html('Thêm bài khảo sát');
+            saveChanges.attr('type-handle', 'create');
+        }
+
+        function updateClick(id) {
+            $('#modal-input').modal('show');
+            $('#modal-title').html('Cập nhật bài khảo sát');
+            saveChanges.attr('type-handle', 'update');
+            $.ajax({
+                dataType: 'json',
+                method: 'Get',
+                url: `/Survey/GetUndergraduateTheSurveyById?id=${id}`,
+                timeout: 0,
+                complete: () => { }
+            }).done(function (res) {
+                if (res.statusCode === 200) {
+                    if (res.content != "") {
+                        let content = JSON.parse(res.content);
+                        fillFormData('#form-data', content);
+                    }
+                }
+                else {
+                    console.log(res);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus + ': ' + errorThrown);
+                console.log(jqXHR);
+            });
+        }
+
+        function publishClick(id) {
+            $('#modal-yes-no-content').html('Phát bài khảo sát ?');
+            $('#modal-yes-no').modal('show');
+            $('#choose-yes').off("click");
+            $('#choose-yes').click(() => {
+                $('#loading-screen').show();
+                $.ajax({
+                    data: { id },
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/GenerateUndergraduateTheSurveyStudent',
+                    complete: () => { }
+                }).done(function (res) {
+                    $('#loading-screen').hide();
+                    if (res.statusCode === 200) {
+                        $('#modal-yes-no').modal('hide');
+                        toastSuccess('Phát bài thành công');
+                        table.ajax.reload();
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    $('#loading-screen').hide();
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+        }
+
+        function deleteClick(id) {
+            $('#modal-yes-no-content').html('Xoá bài khảo sát ?');
+            $('#modal-yes-no').modal('show');
+            $('#choose-yes').off("click");
+            $('#choose-yes').click(() => {
+                $.ajax({
+                    data: { id },
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/DeleteUndergraduateTheSurvey',
+                    complete: () => { }
+                }).done(function (res) {
+                    if (res.statusCode === 200) {
+                        $('#modal-yes-no').modal('hide');
+                        toastSuccess('Xoá thành công');
+                        table.ajax.reload();
+                        $('#modal-yes-no').modal('hide');
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            });
+        }
+    </script>
+}

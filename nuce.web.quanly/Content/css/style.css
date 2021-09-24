@@ -11,6 +11,10 @@ body {
   overflow-x: hidden;
 }
 
+html {
+  overflow-x: unset;
+}
+
 #footer {
   bottom: 0;
   background-image: url("../images/footer-background.png");
@@ -95,9 +99,6 @@ body {
   border-top: 2px solid #ffffff;
 }
 
-.input-group {
-  margin-bottom: 20px;
-}
 
 .custom-input {
   border: 1px solid #ffffff;
@@ -172,9 +173,8 @@ body {
 }
 
 .menu-item {
-  border: 1px solid #2d3e99;
-  padding: 16px 0px;
-
+  /*padding: 16px 0px;*/
+  /*border: 1px solid #2d3e99;*/
   text-transform: uppercase;
   font-weight: 600;
 }
@@ -338,7 +338,7 @@ body {
   border-bottom: 1.5px solid #c4c4c4;
 }
 
-.custom-file-input:lang(en) ~ .custom-file-label::after {
+.custom-file-input:lang(en)~.custom-file-label::after {
   display: none;
 }
 
@@ -382,6 +382,12 @@ body {
   padding: 4px 16px;
 }
 
+.info-badge {
+    background: #2d3e99;
+    border-radius: 7px;
+    padding: 4px 16px;
+}
+
 .print-btn {
   background-color: #2d3e99;
   border-radius: 5px;
@@ -392,7 +398,14 @@ body {
   border-bottom: 2px solid #e6e6e6;
 }
 
-.pagination > li > a {
+.custom-pagination {
+  display: flex;
+  padding-left: 0;
+  list-style: none;
+  border-radius: .25rem;
+}
+
+.custom-pagination>li>a {
   font-size: 14px;
   border-radius: 50% !important;
   margin: 0 5px;
@@ -401,12 +414,12 @@ body {
   text-decoration: none;
 }
 
-.pagination .active {
+.custom-pagination .active {
   background-color: #2d3e99;
   color: white;
 }
 
-.pagination > li > a:hover {
+.custom-pagination>li>a:hover {
   cursor: pointer;
   background-color: #2d3e99;
   color: white;

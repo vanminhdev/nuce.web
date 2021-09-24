@@ -10,5 +10,6 @@ namespace nuce.web.api.Models.Survey
         public string Name { get; set; }
         public string NoiDungDeThi { get; set; }
         public string DapAn { get; set; }
+        public int Status { get; set; }
     }
 }

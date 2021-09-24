@@ -1,0 +1,109 @@
+﻿
+@{
+    Layout = null;
+}
+
+<div id="img-mgmt-container" class="row">
+
+</div>
+
+<!-- Upload Img Modal -->
+<div class="modal fade" id="upload-img-modal" tabindex="-1" role="dialog" 
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thêm danh mục</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="custom-file">
+                            <input id="file" type="file" class="m-input-file-no-tooltip"
+                                   onchange="imageMgmtState.onChangeFileUpload(this)" />
+                        </div>
+                        <div class="font-10-sm mt-2 sub-upload-file">
+                            Dung lượng < 2 MB. Định dạng hỗ trợ: jpg, jpeg, png, gif
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <img id="img-preview"
+                             src="/style/public/images/person1.png"
+                             alt=""
+                             class="w-100" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Thoát</button>
+                <button type="button" class="btn btn-primary" onclick="imageMgmtState.onUploadImg()">Cập nhật</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Content/js/common/fileHelper.js"></script>
+<script>
+    var imageMgmtState = {
+        data: {
+            imgCode: '',
+        },
+        onClickImage: function(imgCode = '') {
+            imageMgmtState.data.imgCode = imgCode;
+            _fileHelper.loadImageOnLink(`${API_URL}/api/UserFile/image/${imgCode}`, 'img-preview');
+        },
+        onChangeFileUpload: function(e) {
+             _fileHelper.loadImageOnChangeInput(e, 'img-preview');
+        },
+        onUploadImg: function() {
+            const file = document.getElementById('file').files[0];
+            if (!file) return;
+            imageMgmtState.callApiUploadImg(imageMgmtState.data.imgCode, file);
+        },
+        callApiUploadImg: function(filecode = '', file) {
+            var formData = new FormData();
+            // Attach file
+            formData.append(file.type, file); 
+            $('#loading-screen').show();
+            $.ajax({
+                url: `/frontendmanager/uploadimage?imgCode=${filecode}`,
+                data: formData,
+                type: 'POST',
+                contentType: false,
+                processData: false,
+            })
+            .done(res => {
+                toastSuccess('Cập nhật thành công');
+            })
+            .fail(err => {
+                toastError(err.Message || 'Lỗi hệ thống');
+            })
+            .always(() => {
+                $('#loading-screen').hide();
+            });
+        },
+        init: function() {
+            var role = '@TempData["type"]';
+            if (!(role in IMAGE_MGMT)) {
+                return;
+            }
+            let strHtml = '';
+            Object.keys(IMAGE_MGMT[role]).forEach(key => {
+                const imgConf = IMAGE_MGMT[role][key];
+                strHtml += `<div class="col-lg-3 col-md-4 col-12 mb-2 cursor-pointer"
+                                data-toggle="modal" data-target="#upload-img-modal"
+                                onclick="imageMgmtState.onClickImage('${imgConf.code}')">
+                                <img class="img-fluid img-thumbnail w-100"
+                                    src="${API_URL}/api/UserFile/image/${imgConf.code}">
+                                <p class="text-center font-italic">${imgConf.label}</p>
+                            </div>`;
+            });
+
+            $(`#img-mgmt-container`).html(strHtml);
+        },
+    };
+    imageMgmtState.init();
+</script>

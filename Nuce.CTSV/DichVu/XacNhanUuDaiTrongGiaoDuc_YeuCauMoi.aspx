@@ -30,16 +30,16 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <script src='https://www.google.com/recaptcha/api.js'></script>
-    <div class="col-sm-12">
+    <div class="col-sm-12 my-4">
         <div style="padding-top: 5px; text-align: center; font-weight: bold; color: red;" runat="server" id="divThongBao"></div>
     </div>
     <div class="col-12">
         <div class="row justify-content-end">
             <div class="col-sm-12">
-                <div class="form-group">
+<%--                <div class="form-group">
                     <label class="font-14-sm fw-600 font-18" for="KyLuat">Kỷ luật:</label>
                     <asp:TextBox ID="txtKyLuat" runat="server" class="form-control" placeholder="Không (ghi rõ mức độ kỷ luật nếu có)"></asp:TextBox>
-                </div>
+                </div>--%>
                 <div class='g-recaptcha' data-sitekey='6Lf3Lc8ZAAAAANyHCgqSpM_NDwBTJQZIsEnUQJ1s'></div>
                 <div class="form-group">
                     <div style="display: none;">

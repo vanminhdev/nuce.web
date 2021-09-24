@@ -1,0 +1,101 @@
+﻿@model nuce.web.quanly.Models.AnswerCreateOfQuestion
+@{
+    ViewData["Title"] = "Thêm câu trả lời";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<form method="post" class="container">
+    <a class="update-btn text-light p-2" style="text-decoration: none;" href="/survey/undergraduateanswer?questionId=@Model.QuestionId">← Quay lại danh sách đáp án</a>
+
+    <div class="fw-700 text-uppercase font-15-sm font-25 mb-2 mt-3">
+        Thêm đáp án của câu hỏi
+    </div>
+    <h3 class="font-15-sm font-25 mb-2 mt-3">
+        @Html.Raw(HttpUtility.UrlDecode(Model.QuestionContent))
+    </h3>
+
+    @if (ViewData["UpdateSuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @ViewData["UpdateSuccessMessage"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    @if (ViewData["UpdateErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @ViewData["UpdateErrorMessage"]
+            <hr>
+            <p class="mb-0">@ViewData["UpdateErrorMessageDetail"]</p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    <div class="row font-13-sm font-16">
+        @Html.TextBoxFor(m => m.QuestionId, new { @type = "hidden" })
+        @Html.TextBoxFor(m => m.AnswerBind.cauHoiCode, new { @type = "hidden" })
+        @Html.TextBoxFor(m => m.QuestionContent, new { @type = "hidden" })
+        @Html.TextBoxFor(m => m.AnswerBind.cauHoiId, new { @type = "hidden" })
+        @Html.TextBoxFor(m => m.AnswerBind.cauHoiId, new { @type = "hidden" })
+        @*<div class="col-12 form-group">
+            <div class="row mr-0 ml-0 align-items-center">
+                <div class="font-14-sm fw-600 col-12 col-md-2 pr-0 pl-0">
+                    Mã
+                </div>
+                <div class="col-12 col-md-10">
+                    @Html.TextBoxFor(m => m.AnswerBind.code, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.AnswerBind.code, "", new { @class = "form-text text-danger" })
+                </div>
+            </div>
+        </div>*@
+        <div class="col-12 form-group">
+            <div class="row mr-0 ml-0">
+                <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
+                    Nội dung
+                </div>
+                <div class="col-12 col-md-10">
+                    @Html.TextAreaFor(m => m.AnswerBind.content, new { @id = "content", @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.AnswerBind.content, "", new { @class = "form-text text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 form-group">
+            <div class="row mr-0 ml-0">
+                <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
+                    Thứ tự
+                </div>
+                <div class=" col-12 col-md-10">
+                    @Html.TextBoxFor(m => m.AnswerBind.order, new { @class = "form-control", @type = "number" })
+                    @Html.ValidationMessageFor(m => m.AnswerBind.order, "", new { @class = "form-text text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 form-group d-flex justify-content-center">
+            <button type="submit" formaction="/Survey/CreateUndergraduateAnswerSubmit" class="btn btn-primary mt-2">
+                Thêm
+            </button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @*<script type="text/javascript" src="~/content/js/tiny_mce/tiny_mce.js"></script>
+        <script type="text/javascript" language="javascript">
+            tinyMCE.init({
+                mode: "textareas",
+                encoding: 'xml'
+            });
+        </script>*@
+    @*<script src="https://cdn.tiny.cloud/1/7kx0ud503sqh7se57iao9whndipt7k0wu0j9y2381lnywnis/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: '#content',
+            encoding: 'xml'
+        });
+    </script>*@
+}

@@ -1,0 +1,366 @@
+﻿@using Newtonsoft.Json
+@using nuce.web.quanly.Common
+@model nuce.web.quanly.Models.QuestionDetail
+@{
+    ViewData["Title"] = "Chi tiết câu hỏi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style {
+    <link rel="stylesheet" href="~/content/css/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="~/content/css/dataTables.bootstrap4.min.css" />
+    <style>
+        .padding-1 div:not(:first-child) {
+            margin-top: 10px;
+        }
+    </style>
+}
+
+<form id="form-data" class="container mt-2 auto-validate">
+    <a class="update-btn text-light p-2" style="text-decoration: none;" href="/survey/undergraduatequestion">← Quay lại danh sách</a>
+
+    <div class="fw-700 text-uppercase font-15-sm font-25 mb-2 mt-3 text-dark">
+        Cập nhật câu hỏi
+    </div>
+
+    <div class="row font-13-sm font-16">
+        @Html.TextBoxFor(m => m.id, new { @type = "hidden", @required = true })
+        <div class="col-12 form-group">
+            <div class="row mr-0 ml-0 align-items-center">
+                <div class="font-14-sm fw-600 col-12 col-md-2 pr-0 pl-0">
+                    Mã
+                </div>
+                <div class="col-12 col-md-10">
+                    @Html.TextBoxFor(m => m.code, new { @class = "form-control", disabled = "true" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 form-group">
+            <div class="row mr-0 ml-0">
+                <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
+                    Nội dung
+                </div>
+                <div class="col-12 col-md-10">
+                    <textarea class="form-control" cols="20" id="content" name="content" required>@Html.Raw(Model.content)</textarea>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 form-group">
+            <div class="row mr-0 ml-0">
+                <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
+                    Loại câu hỏi
+                </div>
+                <div class=" col-12 col-md-10">
+                    @Html.TextBoxFor(m => m.type, new { @type = "hidden", @required = true })
+                    @Html.DropDownListFor(m => m.type, new SelectList(nuce.web.quanly.Common.Definitions.UndergraduateQuestionType, "Key", "Value", "type"),
+                        new { @class = "selectpicker form-control custom-boostrap-select", title = "Chọn loại câu hỏi" })
+                    @Html.ValidationMessageFor(m => m.type, "", new { @class = "form-text text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="col-12 form-group">
+            <div class="row mr-0 ml-0">
+                <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
+                    Thứ tự
+                </div>
+                <div class=" col-12 col-md-10">
+                    @Html.TextBoxFor(m => m.order, new { @class = "form-control", @type = "number" })
+                    @Html.ValidationMessageFor(m => m.order, "", new { @class = "form-text text-danger" })
+                </div>
+            </div>
+        </div>
+
+        @if (Model.parentCode == null && Model.type == QuestionType.GQ)
+        {
+            <div class="col-12 form-group">
+                <div class="row mr-0 ml-0">
+                    <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
+                        Câu hỏi con
+                    </div>
+                    <div class="col-10 col-md-9">
+                        @if (Model.questionChilds != null)
+                        {
+                            <div id="display-childs" class="h-100 padding-1">
+                                @foreach (var item in Model.questionChilds)
+                                {
+                                    <div class="d-flex align-items-center border rounded">
+                                        <p class="m-0 ml-1">@item.code</p>
+                                        <p class="m-0 ml-1 p-1 pl-2 pr-2">@Html.Raw(item.content)</p>
+                                        <button class="ml-auto close pl-1 pr-1" onclick="removeChildQuestion(this, '@item.code')" type="button">
+                                            <span>&times;</span>
+                                        </button>
+                                    </div>
+                                }
+                            </div>
+
+                            <div id="input-childs">
+                                @{
+                                    int indexChild = 0;
+                                }
+                                @foreach (var item in Model.questionChilds)
+                                {
+                                    <input name="questionChildCodes[@indexChild]" value="@item.code" hidden />
+                                    indexChild++;
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div id="display-childs" class="h-100 padding-1">
+                            </div>
+
+                            <div id="input-childs">
+                            </div>
+                        }
+                    </div>
+                    <div class="col-2 col-md-1 d-flex justify-content-end">
+                        <div>
+                            <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#modal-input">Thêm</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (Model.parentCode != null)
+        {
+            <div class="col-12 form-group">
+                <div class="row mr-0 ml-0">
+                    <div class="font-14-sm fw-600 col-12 pr-0 pl-0 col-md-2">
+                        Câu hỏi cha
+                    </div>
+                    <div class=" col-12 col-md-10">
+                        <input class="form-group" value="@Model.parentCode" disabled />
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="col-12 form-group d-flex justify-content-center">
+            <button id="btn-submit" type="button" class="btn btn-primary">
+                cập nhật
+            </button>
+        </div>
+    </div>
+</form>
+
+<div class="modal fade bd-example-modal-lg auto-clear-form-on-open" id="modal-input" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document" style="min-width:1000px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-title">Thêm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="form-row">
+                                <div class="col-12 col-md mb-2">
+                                    <input class="form-control form-control" id="ma-cauhoi" type="text" placeholder="Tìm theo mã" />
+                                </div>
+                                <div class="col-6 col-md mb-2">
+                                    <input class="form-control form-control" id="noidung" type="text" placeholder="Tìm theo nội dung" />
+                                </div>
+                                <div class="col-6 col-md mb-2">
+                                    @Html.DropDownList("type", new SelectList(Definitions.QuestionType, "Key", "Value"),
+                                        new { @id = "loai", @class = "selectpicker form-control custom-boostrap-select", title = "Tìm theo loại câu hỏi" })
+                                </div>
+                                <div class="col-12 col-md mb-2 d-flex flex-row">
+                                    <div class="w-25 d-flex justify-content-center align-items-center clear-input" title="Nhập lại">
+                                        <i class="fas fa-redo"></i>
+                                    </div>
+                                    <div class="w-75">
+                                        <button id="btn-search" class="btn btn-secondary w-100">Tìm kiếm</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table id="id-datatable" class="table table-bordered w-100">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" width="1px">STT</th>
+                                        <th class="text-center" width="1px">Mã</th>
+                                        <th class="text-center" width="1px">Mã Cha</th>
+                                        <th class="text-center">Nội dung</th>
+                                        <th class="text-center" style="min-width:120px">Loại</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/content/js/bootstrap-select.min.js"></script>
+    <script src="~/content/js/jquery.dataTables.min.js"></script>
+    <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/content/js/dataTables.config.js"></script>
+    @if (Model.questionChilds != null)
+    {
+        <script>
+            let childQuestionCode = @Html.Raw(JsonConvert.SerializeObject(Model.questionChilds.Select(o => o.code).ToList()));
+        </script>
+    }
+    else
+    {
+        <script>
+            let childQuestionCode = [];
+        </script>
+    }
+    <script>
+        function genInput(codes) {
+            let str = ``;
+            codes.forEach((item, index) => {
+                str += `<input name="questionChildCodes[${index}]" value="${item}" hidden />`;
+            });
+            $('#input-childs').html(str);
+        }
+
+        function addItem(seft, code, content) {
+            $(seft).remove();
+            $('#display-childs').append(`
+                        <div class="d-flex align-items-center border rounded">
+                            <p class="m-0 ml-1">${code}</p>
+                            <p class="m-0 ml-1 p-1 pl-2 pr-2">${content}</p>
+                            <button class="ml-auto close pl-1 pr-1" onclick="removeChildQuestion(this, '${code}'" type="button">
+                                <span>&times;</span>
+                            </button>
+                        </div>
+                    `);
+            childQuestionCode.push(code);
+            genInput(childQuestionCode);
+        }
+        function removeChildQuestion(seft, code) {
+            $(seft).parent()[0].remove();
+            childQuestionCode.splice(childQuestionCode.indexOf(code), 1);
+            genInput(childQuestionCode);
+        }
+    </script>
+    <script>
+        var table = $('#id-datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ordering: false,
+            lengthChange: false,
+            stateSave: false,
+            pageLength: 10,
+            language: dataTableConfig.language,
+            columnDefs: [
+                {
+                    targets: [4],
+                    className: 'position-relative'
+                },
+                {
+                    targets: [0,1,2,4],
+                    className: 'text-center'
+                }
+            ],
+            ajax: {
+                url: '/Survey/GetAllUndergraduateQuestion',
+                dataType: 'json',
+                contentType: 'application/json',
+                type: "POST",
+                data: function (d) {
+                    return JSON.stringify(d);
+                },
+                complete: () => {
+                    autoValidate();
+                }
+            },
+            columns: [
+                {
+                    data: null
+                },
+                {
+                    data: "code"
+                },
+                {
+                    data: null,
+                    name: "parentCode",
+                    mRender: function (data, type, row) {
+                        if (data.parentCode != null) {
+                            return data.parentCode;
+                        } else {
+                            return '-'
+                        }
+                    }
+                },
+                {
+                    data: "content"
+                },
+                {
+                    data: null,
+                    name: "type",
+                    mRender: function (data, type, row) {
+                        let questionType = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(Definitions.QuestionType.ToList()))');
+                        let result = questionType.find(element => element.Key == data.type);
+                        return result.Value;
+                    }
+                },
+                {
+                    data: null,
+                    mRender: function (data, type, row) {
+                        if (childQuestionCode.includes(data.code) || data.code === '@Model.code' || data.type === '@(QuestionType.T)' || data.parentCode != null
+                            || data.type === '@(QuestionType.GQ)' || data.type === '@(QuestionType.CityC)' || data.type === '@(QuestionType.StarRating)' ) {
+                            return '';
+                        }
+                        return `<button class="btn btn-outline-primary" onclick="addItem(this,'${data.code}', '${data.content}')">Thêm</button>`;
+                    }
+                }
+            ]
+        });
+        table.on('draw.dt', function () {
+            var PageInfo = $('#id-datatable').DataTable().page.info();
+            table.column(0, { page: 'current' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1 + PageInfo.start;
+            });
+        });
+        $('#id-datatable_filter').hide();
+        $("#btn-search").click(() => {
+            table
+                .column(1).search($("#ma-cauhoi").val())
+                .column(3).search($("#noidung").val())
+                .column(4).search($("#loai").val())
+                .draw();
+        });
+    </script>
+    <script>
+        $('#btn-submit').click(() => {
+            if ($('#form-data').valid()) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/Survey/UpdateUndergraduateQuestion',
+                    data: $('#form-data').serializeArray(),
+                    dataType: 'json'
+                }).done(res => {
+                    if (res.statusCode === 200) {
+                        toastSuccess('Cập nhật thành công');
+                    } else {
+                        toastError('Cập nhật thất bại');
+                    }
+                    console.log(res);
+                }).fail(err => {
+                    console.log(err);
+                });
+            }
+        });
+    </script>
+    @*<script src="https://cdn.tiny.cloud/1/7kx0ud503sqh7se57iao9whndipt7k0wu0j9y2381lnywnis/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+        <script>
+            tinymce.init({
+                selector: '#content',
+                encoding: 'xml'
+            });
+        </script>*@
+}

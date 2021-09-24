@@ -18,65 +18,63 @@
                 <span class="list-inline-item mt-2 h6" style="text-align: center; font-weight: bold; color: red;" runat="server" id="divThongBao"></span>
             </div>
         </div>
-        <div class="row">
-        <%--<div class="row">
+        <div class="row" style="display: none;">
             <div class="col-12 col-md-6">
-            <div class="row">
-                <div class="col-6">
-                <div class="font-14-sm font-weight-bold mb-2">
-                Ảnh đại diện <span class="sub-color">*</span>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="font-14-sm font-weight-bold mb-2">
+                        Ảnh đại diện <span class="sub-color">*</span>
+                        </div>
+                    <div class="custom-file">
+                        <asp:FileUpload ID="fileAvatar" runat="server"
+                                        type="file"
+                                        CssClass="custom-file-input" />
+                        <label
+                            for="<%= fileAvatar.ClientID %>"
+                            class="custom-file-label text-truncate text-center"
+                        >
+                            <img
+                            src="/style/public/images/icons/upload.png"
+                            alt="upload-icon"
+                            class="mr-1"
+                            />
+                            Choose file</label
+                        >
+                    </div>
+                    <div class="font-10-sm mt-2 sub-upload-file">
+                        Dung lượng < 1MB. Định dạng hỗ trợ: jpg, jpeg, png, gift
+                    </div>
                 </div>
-                <div class="custom-file">
-                <input
-                    id="input-file"
-                    type="file"
-                    class="custom-file-input"
-                />
-                <label
-                    for="input-file"
-                    class="custom-file-label text-truncate text-center"
-                >
-                    <img
-                    src="../../public/images/icons/upload.png"
-                    alt="upload-icon"
-                    class="mr-1"
-                    />
-                    Choose file</label
-                >
-                </div>
-                <div class="font-10-sm mt-2 sub-upload-file">
-                Dung lượng < 1MB. Định dạng hỗ trợ: jpg, jpeg, png, gift
+                    <div class="col-6">
+                        <img
+                            id="imgAvaPreview"
+                            src="/style/public/images/person1.png"
+                            alt=""
+                            class="upload-user-avatar"
+                        />
+                    </div>
                 </div>
             </div>
-                <div class="col-6">
-                    <img
-                    src="../../public/images/person1.png"
-                    alt=""
-                    class="upload-user-avatar"
-                    />
-                </div>
-            </div>
-        </div>--%>
         </div>
         <div class="row mt-3">
-        <div class="col-12 col-md-6">
-            <div class="form-group">
-                <div class="fw-700 font-14-sm">
-                    Email <span class="sub-color">*</span>
-                </div>
-                <asp:TextBox ID="txtEmail" runat="server" class="form-control mt-3" name="subject"></asp:TextBox>
-            </div>
-        </div>
-        <div class="col-12 col-md-6">
-            <div class="form-group">
+            <div class="col-12 col-md-6">
                 <div class="form-group">
                     <div class="fw-700 font-14-sm">
-                        Điện thoại <span class="sub-color">*</span>
+                        Email <span class="sub-color">*</span>
                     </div>
-                    <asp:TextBox ID="txtMobile" runat="server" class="form-control mt-3" name="subject"></asp:TextBox>
+                    <asp:TextBox ID="txtEmail" runat="server" class="form-control mt-3" name="subject"></asp:TextBox>
                 </div>
             </div>
-        </div>
+            <div class="col-12 col-md-6">
+                <div class="form-group">
+                    <div class="form-group">
+                        <div class="fw-700 font-14-sm">
+                            Điện thoại <span class="sub-color">*</span>
+                        </div>
+                        <asp:TextBox ID="txtMobile" runat="server" class="form-control mt-3" name="subject"></asp:TextBox>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row mt-3">
             <div class="col-12 col-md-6">
@@ -146,6 +144,15 @@
                     </div>
                     <asp:TextBox ID="txtDiaChiCuThe" runat="server" 
                                 class="form-control mt-3" name="subject" placeholder="Địa chỉ..."></asp:TextBox>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12 col-md-12">
+                <div class="form-group">
+                    <div class="fw-700 font-14-sm">
+                        <span class="sub-color">Hộ khẩu thường trú:</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -278,6 +285,14 @@
                 return ret.join("&").replace(/%20/g, "+");
             }
         })(jQuery);
+        var init = function() {
+            const elFile = document.getElementById('<%= fileAvatar.ClientID %>');
+            elFile.addEventListener('change', function() {
+                CapNhatHoSo.onChangeFileUpload();
+            });
+
+            $("#imgAvaPreview").attr('src', '<%= m_SinhVien.IMG %>?<%= DateTime.Now.ToFileTime() %>');
+        };
         var CapNhatHoSo = {
             hienthithongbao: function () {
                 $('#myModal').modal('show');
@@ -289,8 +304,20 @@
             update: function () {
                 document.getElementById("<%=btnCapNhat.ClientID %>").click();
             },
+            onChangeFileUpload: function() {
+                const elFile = document.getElementById('<%= fileAvatar.ClientID %>');
+                if (!elFile) return;
+                
+                const file = elFile.files[0];
+                console.log(elFile, file, elFile.files);
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $("#imgAvaPreview").attr('src', e.target.result);
+                }; 
+                reader.readAsDataURL(file);
+            },
             showFormUpdate: function () {
-                // alert('hi hi');
                 $('#logoutModal').modal('show');
             },
             initSelectForm: function(tinhValue = '', quanValue = '', phuongValue = '') {
@@ -351,6 +378,7 @@
                 $(`#<%= slPhuong.ClientID %>`).html(phuongOptions);
             },
         };
+        init();
     </script>
     <span id="spScript" runat="server"></span>
 </asp:Content>

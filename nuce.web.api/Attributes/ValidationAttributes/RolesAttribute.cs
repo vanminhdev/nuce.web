@@ -1,4 +1,5 @@
 ﻿using nuce.web.api.Common;
+using nuce.web.api.Models.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,11 +8,16 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Attributes.ValidationAttributes
 {
+    /// <summary>
+    /// Không được bỏ trống và lựa chọn hợp lệ
+    /// </summary>
     public class RolesAttribute : ValidationAttribute
     {
-        public override bool IsValid(object value)
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            var rolesCheck = Definitions.Roles.Keys.ToList();
+            NuceCoreIdentityContext context = (NuceCoreIdentityContext)validationContext.GetService(typeof(NuceCoreIdentityContext));
+
+            var rolesCheck = context.Roles.Select(r => r.Id);
             var roles = value as List<string>;
             if(roles != null && roles.Count > 0)
             {
@@ -19,12 +25,12 @@ namespace nuce.web.api.Attributes.ValidationAttributes
                 {
                     if(!rolesCheck.Any(r => r == role))
                     {
-                        return false;
+                        return new ValidationResult("Role không chính xác");
                     }
                 }
-                return true;
+                return ValidationResult.Success;
             }
-            return false;
+            return new ValidationResult("Role không chính xác");
         }
     }
 }

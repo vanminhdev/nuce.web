@@ -60,15 +60,6 @@ namespace Nuce.CTSV
         protected global::System.Web.UI.WebControls.ContentPlaceHolder Banner;
 
         /// <summary>
-        /// avatar control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlImage avatar;
-
-        /// <summary>
         /// divMobileUsername control.
         /// </summary>
         /// <remarks>
@@ -114,15 +105,6 @@ namespace Nuce.CTSV
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divLargeUsername;
 
         /// <summary>
-        /// btnLargeCapNhatHoSo control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlButton btnLargeCapNhatHoSo;
-
-        /// <summary>
         /// divLargeMssv control.
         /// </summary>
         /// <remarks>
@@ -130,6 +112,15 @@ namespace Nuce.CTSV
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divLargeMssv;
+
+        /// <summary>
+        /// btnLargeCapNhatHoSo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlButton btnLargeCapNhatHoSo;
 
         /// <summary>
         /// BreadCrum control.

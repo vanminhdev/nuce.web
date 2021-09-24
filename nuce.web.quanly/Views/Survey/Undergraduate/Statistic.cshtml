@@ -1,0 +1,325 @@
+﻿@using nuce.web.quanly.Common
+@{
+    ViewData["Title"] = "Thống kê khảo sát trước tốt nghiệp";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style {
+    <link rel="stylesheet" href="~/content/css/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="~/content/css/dataTables.bootstrap4.min.css" />
+    <style>
+        .m-mw-100 {
+            max-width: 100px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 d-flex justify-content-end">
+            <button class="btn btn-success mr-2" id="btn-export">
+                <i class="fas fa-file-export"></i> Kết xuất báo cáo
+            </button>
+            @*<button class="btn btn-primary" id="btn-statistic-survey">
+                <i class="fas fa-chart-pie"></i>
+                Thống kê
+            </button>*@
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table id="id-datatable" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center">Đợt khảo sát</th>
+                        <th class="text-center">Bài khảo sát</th>
+                        <th class="text-center">Chuyên ngành</th>
+                        <th class="text-center">Mã câu hỏi</th>
+                        <th class="text-center">Mã đáp án</th>
+                        <th class="text-center">Số lượng</th>
+                        <th class="text-center">Nội dung</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg auto-clear-form-on-open" id="modal-start-report" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thống kê khảo sát</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form id="form-data-start-report" class="auto-validate">
+                        <div class="form-group row">
+                            <label class="col-3 col-form-label">Đợt khảo sát <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <select class="form-control selectpicker custom-boostrap-select" name="surveyRoundId" id="dotKhaoSat" required title="Chọn đợt khảo sát">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label title="Mấu phiếu khảo sát" class="col-3 col-form-label">Bài khảo sát <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <select class="form-control selectpicker custom-boostrap-select" name="theSurveyId" id="baikhaosat" required title="Chọn bài khảo sát">
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
+                <button type="button" class="btn btn-primary" id="start-report">Bắt đầu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg auto-clear-form-on-open" id="modal-export-report" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Kết xuất báo cáo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form id="form-data-export-report" class="auto-validate">
+                        <div class="form-group row">
+                            <label class="col-3 col-form-label">Đợt khảo sát <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <select class="form-control selectpicker custom-boostrap-select" name="surveyRoundId" id="dotkhaosat-ketxuat" required title="Chọn đợt khảo sát">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label title="Mấu phiếu khảo sát" class="col-3 col-form-label">Bài khảo sát <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <select class="form-control selectpicker custom-boostrap-select" name="theSurveyId" id="baikhaosat-ketxuat" required title="Chọn bài khảo sát">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row" title="Khoảng thời gian làm bài khảo sát">
+                            <label class="col-3 col-form-label">Từ ngày <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <input type="date" class="form-control" name="fromDate" id="fromDate" required data-rule-dateLessThanOrEqual="#toDate">
+                            </div>
+                        </div>
+                        <div class="form-group row" title="Khoảng thời gian làm bài khảo sát">
+                            <label class="col-3 col-form-label">Đến ngày <span class="text-danger">*</span></label>
+                            <div class="col-9">
+                                <input type="date" class="form-control" name="toDate" id="toDate" required data-rule-dateGreaterThanOrEqual="#fromDate">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ</button>
+                <button type="button" class="btn btn-primary" id="start-export">Bắt đầu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/Content/js/bootstrap-select.min.js"></script>
+    <script src="~/content/js/jquery.dataTables.min.js"></script>
+    <script src="~/content/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/content/js/dataTables.config.js"></script>
+    <script>
+        let surveyRounds = JSON.parse('@Html.Raw(ViewData["SurveyRoundClosedOrEnd"])');
+        let dotKhaoSats = $('#dotKhaoSat');
+        surveyRounds.forEach(e => {
+            dotKhaoSats.append(`<option value="${e.id}">${e.name} (từ ${getDateString(e.fromDate)} đến ${getDateString(e.endDate)})</option>`);
+        });
+        dotKhaoSats.selectpicker('refresh');
+
+        @*Các đợt khảo sát để export*@
+        let cacDotKhaoSat = $('#dotkhaosat-ketxuat');
+        surveyRounds.forEach(e => {
+            cacDotKhaoSat.append(`<option value="${e.id}">${e.name} (từ ${getDateString(e.fromDate)} đến ${getDateString(e.endDate)})</option>`);
+        });
+        cacDotKhaoSat.selectpicker('refresh');
+
+        let baiKhaoSats = JSON.parse('@Html.Raw(ViewData["TheSurveys"])');
+        let baiKhaoSatselect = $('#baikhaosat');
+        baiKhaoSats.forEach(e => {
+            baiKhaoSatselect.append(`<option title="${e.name}" value="${e.id}">${e.name}
+                (${e.status == @((int)TheSurveyStatus.Deactive) ? "Đã bỏ" : e.status == @((int)TheSurveyStatus.Published) ? "Đang phát" : e.status })
+                (${e.description})
+            </option>`);
+        });
+        baiKhaoSatselect.selectpicker('refresh');
+
+        let baiKhaoSatKetXuat = $('#baikhaosat-ketxuat');
+        baiKhaoSats.forEach(e => {
+            baiKhaoSatKetXuat.append(`<option title="${e.name}" value="${e.id}">${e.name}
+                (${e.status == @((int)TheSurveyStatus.Deactive) ? "Đã bỏ" : e.status == @((int)TheSurveyStatus.Published) ? "Đang phát" : e.status })
+                (${e.description})
+            </option>`);
+        });
+        baiKhaoSatKetXuat.selectpicker('refresh');
+
+        let btnReportTotalNormal = $('#btn-statistic-survey');
+        btnReportTotalNormal.click(() => {
+            $('#modal-start-report').modal('show');
+        });
+
+        $('#start-report').click(function () {
+            if ($('#form-data-start-report').valid()) {
+                $('#loading-screen').show();
+                $.ajax({
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/ReportTotalUndergraduateSurvey',
+                    data: $('#form-data-start-report').serializeArray(),
+                    timeout: 0,
+                    complete: () => { }
+                }).done(function (res) {
+                    $('#loading-screen').hide();
+                    if (res.statusCode === 200) {
+                        toastSuccess('Thống kê thành công');
+                        $('#id-datatable').DataTable().ajax.reload();
+                        $('#modal-start-report').modal('hide');
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    $('#loading-screen').hide();
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            }
+        });
+    </script>
+    <script>
+        var table = $('#id-datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ordering: false,
+            lengthChange: false,
+            stateSave: false,
+            pageLength: 20,
+            language: dataTableConfig.language,
+            columnDefs: [
+                {
+                    targets: [4],
+                    className: 'text-center'
+                },
+                {
+                    targets: [5],
+                    className: 'm-mw-100'
+                },
+            ],
+            ajax: {
+                url: '/Survey/GetRawReportTotalUndergraduateSurvey',
+                dataType: 'json',
+                contentType: 'application/json',
+                type: "POST",
+                data: function (d) {
+                    return JSON.stringify(d);
+                },
+            },
+            columns: [
+                {
+                    data: "surveyRoundName"
+                },
+                {
+                    data: "theSurveyName"
+                },
+                {
+                    data: "chuyenNganh"
+                },
+                {
+                    data: "questionCode"
+                },
+                {
+                    data: "answerCode"
+                },
+                {
+                    data: "total"
+                },
+                {
+                    data: null,
+                    name: "content",
+                    mRender: function (data, type, row) {
+                        if (data.content != null) {
+                            console.log(data.content);
+                        }
+                        return '';
+                    }
+                }
+            ]
+        });
+        $('#id-datatable_filter').hide();
+        $("#btn-search").click(() => {
+            //table
+            //    .column(0).search($("#name-search").val())
+            //    .draw();
+        });
+        document.getElementById("footer").scrollIntoView();
+    </script>
+    <script>
+        let btnExport = $('#btn-export');
+
+        btnExport.click(() => {
+            $('#modal-export-report').modal('show');
+        });
+
+        $('#start-export').click(() => {
+            let form = $('#form-data-export-report');
+            if (form.valid()) {
+                $('#loading-screen').show();
+                $.ajax({
+                    dataType: 'json',
+                    method: 'Post',
+                    url: '/Survey/ExportReportTotalUndergraduateSurvey',
+                    data: form.serializeArray(),
+                    timeout: 0,
+                    complete: () => { }
+                }).done(function (res) {
+                    $('#loading-screen').hide();
+                    if (res.statusCode === 200) {
+                        $('#modal-export-report').modal('hide');
+                        window.open(res.content.url, "_blank");
+                    }
+                    else {
+                        try {
+                            let content = JSON.parse(res.content);
+                            toastError(content.message);
+                        } catch {
+                            toastError('Có lỗi xảy ra');
+                        }
+                        console.log(res);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    $('#loading-screen').hide();
+                    console.log(textStatus + ': ' + errorThrown);
+                    console.log(jqXHR);
+                });
+            }
+        });
+    </script>
+}
+
+

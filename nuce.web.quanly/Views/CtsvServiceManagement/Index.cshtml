@@ -1,0 +1,165 @@
+﻿@using nuce.web.quanly.Models
+
+@{
+    ViewBag.Title = "Quản lý dịch vụ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    @@media only screen and (min-width: 1025px) {
+        .service-categories-wrp {
+            margin-top: 0;
+        }
+    }
+
+    .overflow-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+
+<div class="container-fluid service-categories-wrp">
+    <div class="row mb-2">
+        <div class="col-12 text-right">
+            <button type="button" class="btn btn-success"
+                    onclick="onExportExcel()">
+                Excel
+            </button>
+        </div>
+    </div>
+    <div class="row text-center">
+        <div class="col-12 col-md-6 col-xl-3">
+            Tổng số: <span class="main-color">@(Model[-1].tongSo)</span>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3">
+            Mới gửi: <span class="main-color">@(Model[-1].moiGui)</span>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3">
+            Đang xử lý: <span class="main-color">@(Model[-1].dangXuLy)</span>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3">
+            Đã xử lý xong: <span class="main-color">@(Model[-1].daXuLy)</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <hr class="w-100 line mt-2 mb-2" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer">
+            @Html.Partial("~/Views/CtsvServiceManagement/Partials/_PartialServiceOverview.cshtml", new PartialServiceManagementModel
+            {
+                detail = (ServiceManagementModel)Model[1],
+                id = 1,
+                image = "giay-xac-nhan.jpg"
+            })
+        </div>
+        <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer">
+            @Html.Partial("~/Views/CtsvServiceManagement/Partials/_PartialServiceOverview.cshtml", new PartialServiceManagementModel
+            {
+                detail = (ServiceManagementModel)Model[8],
+                id = 8,
+                image = "dich-vu-ho-tro.jpg"
+            })
+        </div>
+        <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer">
+            @Html.Partial("~/Views/CtsvServiceManagement/Partials/_PartialServiceOverview.cshtml", new PartialServiceManagementModel
+            {
+                detail = (ServiceManagementModel)Model[6],
+                id = 6,
+                image = "VAY_VON.jpg"
+            })
+        </div>
+        <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer">
+            @Html.Partial("~/Views/CtsvServiceManagement/Partials/_PartialServiceOverview.cshtml", new PartialServiceManagementModel
+            {
+                detail = (ServiceManagementModel)Model[4],
+                id = 4,
+                image = "Uu-dai-giao-duc-Max-Quality.jpg"
+            })
+        </div>
+        <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer">
+            @Html.Partial("~/Views/CtsvServiceManagement/Partials/_PartialServiceOverview.cshtml", new PartialServiceManagementModel
+            {
+                detail = (ServiceManagementModel)Model[7],
+                id = 7,
+                image = "KTX.jpg"
+            })
+        </div>
+        <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer">
+            @Html.Partial("~/Views/CtsvServiceManagement/Partials/_PartialServiceOverview.cshtml", new PartialServiceManagementModel
+            {
+                detail = (ServiceManagementModel)Model[2],
+                id = 2,
+                image = "service2.png"
+            })
+        </div>
+        <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer">
+            @Html.Partial("~/Views/CtsvServiceManagement/Partials/_PartialServiceOverview.cshtml", new PartialServiceManagementModel
+            {
+                detail = (ServiceManagementModel)Model[3],
+                id = 3,
+                image = "the-sinh-vien-Max-Quality.jpg"
+            })
+        </div>
+        <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer">
+            @Html.Partial("~/Views/CtsvServiceManagement/Partials/_PartialServiceOverview.cshtml", new PartialServiceManagementModel
+            {
+                detail = (ServiceManagementModel)Model[5],
+                id = 5,
+                image = "muon-hoc-ba-Max-Quality.jpg"
+            })
+        </div>
+        <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer">
+            @Html.Partial("~/Views/CtsvServiceManagement/Partials/_PartialServiceOverview.cshtml", new PartialServiceManagementModel
+            {
+                detail = (ServiceManagementModel)Model[9],
+                id = 9,
+                image = "dang_ky_cho_o.jpg"
+            })
+        </div>
+        <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer">
+            @Html.Partial("~/Views/CtsvServiceManagement/Partials/_PartialServiceOverview.cshtml", new PartialServiceManagementModel
+            {
+                detail = (ServiceManagementModel)Model[10],
+                id = 10,
+                image = "don-xin-mien-giam-hoc-phi.jpg"
+            })
+        </div>
+        <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer">
+            @Html.Partial("~/Views/CtsvServiceManagement/Partials/_PartialServiceOverview.cshtml", new PartialServiceManagementModel
+            {
+                detail = (ServiceManagementModel)Model[11],
+                id = 11,
+                image = "de-nghi-ho-tro-chi-phi-hoc-tap.jpg"
+            })
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var onExportExcel = function() {
+            callApiExport({
+                ExportType: 'excel-ov',
+            }, 'xlsx')
+        };
+
+        var callApiExport = function(data, format) {
+            $.ajax({
+                type: 'POST',
+                url: `@Url.Action("ExportFile", "CtsvServiceManagement")`,
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function(res) {
+                    window.location = `/CtsvServiceManagement/DownloadFile?id=${res.fileId}&format=${format}`;
+                },
+            }).done(res => {
+            }).fail(res => {
+            });
+        };
+    </script>
+}
