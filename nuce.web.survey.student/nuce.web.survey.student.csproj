@@ -148,6 +148,7 @@
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\GraduateHomeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\KhaoSatController.cs" />
     <Compile Include="Controllers\NewsController.cs" />
     <Compile Include="Controllers\SurveyController.cs" />
     <Compile Include="Controllers\SurveyResultController.cs" />
@@ -2709,7 +2710,7 @@
     <Content Include="Views\Error\UnderConstruction.cshtml" />
     <Content Include="Views\Survey\Faculty\UndergraduateStudent.cshtml" />
     <Content Include="Views\Account\ChangePassword.cshtml" />
-    <Content Include="Views\Default\KhaoSatNhapHoc.cshtml" />
+    <Content Include="Views\KhaoSat\KhaoSatNhapHoc.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
