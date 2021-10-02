@@ -375,7 +375,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             int rowCauHoi = 2;
             int rowDapAn = 3;
             int col = 1;
-            var facultys = eduContext.AsAcademyFaculty.ToList();
+            var facultys = eduContext.AsAcademyFaculty.OrderBy(o => o.Order).ToList();
 
             var tongToanTruong = new Dictionary<int, float>();
             foreach (var f in facultys)
@@ -664,20 +664,21 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                         }
                         else if (cauhoi.Type == QuestionType.SA)
                         {
-                            //wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {++index}: {cauhoi.Content}";
-                            //wsLyThuyet.Column(col).Width = 48;
-                            //var ketqua = reportTotalLyThuyet.FirstOrDefault(o => lerturerCodes.Contains(o.LecturerCode) && o.QuestionCode == cauhoi.Code);
-                            //if(ketqua != null && ketqua.Content != null)
-                            //{
-                            //    var str = "";
-                            //    var listStr = JsonSerializer.Deserialize<List<string>>(ketqua.Content);
-                            //    listStr.ForEach(s =>
-                            //    {
-                            //        str += $"{s};";
-                            //    });
-                            //    wsLyThuyet.Cells[row, col].Value = str;
-                            //}
-                            //col++;
+                            wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {++index}: {cauhoi.Content}";
+                            wsLyThuyet.Column(col).Width = 48;
+                            wsLyThuyet.Row(row).Height = 15;
+                            var ketqua = reportTotalLyThuyet.FirstOrDefault(o => lerturerCodes.Contains(o.LecturerCode) && o.QuestionCode == cauhoi.Code);
+                            if (ketqua != null && ketqua.Content != null)
+                            {
+                                var str = "";
+                                var listStr = JsonSerializer.Deserialize<List<string>>(ketqua.Content);
+                                listStr.ForEach(s =>
+                                {
+                                    str += $"- {s}\n";
+                                });
+                                wsLyThuyet.Cells[row, col].Value = str;
+                            }
+                            col++;
                         }
                         else if (cauhoi.Type == QuestionType.GQ)
                         {
@@ -854,21 +855,22 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                     var colEnd = col - 1;
                                     wsLyThuyet.Cells[rowCauHoi, colStart, rowCauHoi, colEnd].Merge = true;
                                 }
-                                if (cauhoicon.Type == QuestionType.SA)
+                                if (cauhoicon.Type == QuestionType.SA) // xuất câu hỏi trả lời ngắn
                                 {
-                                    //wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {index}.{++indexChild}: {cauhoicon.Content}";
-                                    //wsLyThuyet.Column(col).Width = 48;
-                                    //var ketqua = reportTotalLyThuyet.FirstOrDefault(o => lerturerCodes.Contains(o.LecturerCode) && o.QuestionCode == cauhoicon.Code);
-                                    //if (ketqua != null && ketqua.Content != null)
-                                    //{
-                                    //    var str = "";
-                                    //    var listStr = JsonSerializer.Deserialize<List<string>>(ketqua.Content);
-                                    //    listStr.ForEach(s =>
-                                    //    {
-                                    //        str += $"{s};";
-                                    //    });
-                                    //    wsLyThuyet.Cells[row, col].Value = str;
-                                    //}
+                                    wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {index}.{++indexChild}: {cauhoicon.Content}";
+                                    wsLyThuyet.Column(col).Width = 48;
+                                    wsLyThuyet.Row(row).Height = 15;
+                                    var ketqua = reportTotalLyThuyet.FirstOrDefault(o => lerturerCodes.Contains(o.LecturerCode) && o.QuestionCode == cauhoicon.Code);
+                                    if (ketqua != null && ketqua.Content != null)
+                                    {
+                                        var str = "";
+                                        var listStr = JsonSerializer.Deserialize<List<string>>(ketqua.Content);
+                                        listStr.ForEach(s =>
+                                        {
+                                            str += $"- {s}\n";
+                                        });
+                                        wsLyThuyet.Cells[row, col].Value = str;
+                                    }
                                 }
                                 col++;
                             }
