@@ -666,16 +666,25 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                         {
                             wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {++index}: {cauhoi.Content}";
                             wsLyThuyet.Column(col).Width = 48;
-                            wsLyThuyet.Row(row).Height = 15;
+                            wsLyThuyet.Row(row).Height = 30;
                             var ketqua = reportTotalLyThuyet.FirstOrDefault(o => lerturerCodes.Contains(o.LecturerCode) && o.QuestionCode == cauhoi.Code);
                             if (ketqua != null && ketqua.Content != null)
                             {
                                 var str = "";
                                 var listStr = JsonSerializer.Deserialize<List<string>>(ketqua.Content);
-                                listStr.ForEach(s =>
+                                var tenGV = "";
+                                var tempGV = eduContext.AsAcademyLecturer.FirstOrDefault(l => l.Code == ketqua.LecturerCode);
+                                if (tempGV != null)
                                 {
-                                    str += $"- {s}\n";
-                                });
+                                    tenGV = tempGV.FullName;
+                                }
+                                str += $"- {ketqua.LecturerCode}-{tenGV} - lớp {ketqua.ClassRoomCode} :\n";
+                                foreach (var s in listStr)
+                                {
+                                    if (string.IsNullOrWhiteSpace(s))
+                                        continue;
+                                    str += $"\t+ {s}\n";
+                                }
                                 wsLyThuyet.Cells[row, col].Value = str;
                             }
                             col++;
@@ -859,16 +868,25 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                 {
                                     wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {index}.{++indexChild}: {cauhoicon.Content}";
                                     wsLyThuyet.Column(col).Width = 48;
-                                    wsLyThuyet.Row(row).Height = 15;
+                                    wsLyThuyet.Row(row).Height = 30;
                                     var ketqua = reportTotalLyThuyet.FirstOrDefault(o => lerturerCodes.Contains(o.LecturerCode) && o.QuestionCode == cauhoicon.Code);
                                     if (ketqua != null && ketqua.Content != null)
                                     {
                                         var str = "";
                                         var listStr = JsonSerializer.Deserialize<List<string>>(ketqua.Content);
-                                        listStr.ForEach(s =>
+                                        var tenGV = "";
+                                        var tempGV = eduContext.AsAcademyLecturer.FirstOrDefault(l => l.Code == ketqua.LecturerCode);
+                                        if (tempGV != null)
                                         {
-                                            str += $"- {s}\n";
-                                        });
+                                            tenGV = tempGV.FullName;
+                                        }
+                                        str += $"- {ketqua.LecturerCode}-{tenGV} - lớp {ketqua.ClassRoomCode} :\n";
+                                        foreach(var s in listStr)
+                                        {
+                                            if (string.IsNullOrWhiteSpace(s))
+                                                continue;
+                                            str += $"\t+ {s}\n";
+                                        }
                                         wsLyThuyet.Cells[row, col].Value = str;
                                     }
                                 }
