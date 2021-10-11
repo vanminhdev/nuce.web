@@ -79,6 +79,7 @@ namespace Nuce.CTSV.ApiModels
         public string GioiTinh { get; set; }
         public string EmailNhaTruong { get; set; }
         public bool? DaXacThucEmailNhaTruong { get; set; }
+        public string BaoTinDiaChiNhanChuyenPhatNhanh { get; set; }
     }
     public class StudentBasicUpdateModel
     {
@@ -397,6 +398,7 @@ namespace Nuce.CTSV.ApiModels
         public string PhuongXa { get; set; }
         public string QuanHuyen { get; set; }
         public string TinhThanhPho { get; set; }
+        public string DiaChiNhanChuyenPhatNhanh { get; set; }
     }
     public class TinTucModel
     {

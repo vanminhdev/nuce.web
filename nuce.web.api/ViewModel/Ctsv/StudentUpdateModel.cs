@@ -12,6 +12,7 @@ namespace nuce.web.api.ViewModel.Ctsv
         public string Mobile { get; set; }
         public string DiaChiBaotin { get; set; }
         public string DiaChiNguoiNhanBaotin { get; set; }
+        public string DiaChiNhanChuyenPhatNhanh { get; set; }
         public string MobileBaoTin { get; set; }
         public string EmailBaoTin { get; set; }
         public string HoTenBaoTin { get; set; }

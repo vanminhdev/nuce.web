@@ -125,6 +125,15 @@
                         class="form-control mt-3" name="subject" placeholder="Số điện thoại..."></asp:TextBox>
                 </div>
             </div>
+            <div class="col-12 col-md-6">
+                <div class="form-group">
+                    <div class="fw-700 font-14-sm">
+                        Địa chỉ chuyển phát nhanh
+                    </div>
+                    <asp:TextBox ID="txtBaoTin_DiaChiChuyenPhatNhanh" runat="server" 
+                        class="form-control mt-3" name="subject" placeholder="Địa chỉ chuyển phát nhanh..."></asp:TextBox>
+                </div>
+            </div>
         </div>
         <div class="row mt-3">
             <div class="col-12 col-md-6">

@@ -15,13 +15,13 @@
     <div class="col-6">
         <div class="row">
             <div class="col-12 col-md-5 fw-700">Họ và Tên:</div>
-            <div id="hovaten" runat="server" class="col-12 col-md-7 text-uppercase">phạm minh khôi</div>
+            <div id="hovaten" runat="server" class="col-12 col-md-7 text-uppercase"></div>
         </div>
     </div>
     <div class="col-6">
         <div class="row">
             <div class="col-12 col-md-5 fw-700">Số điện thoại:</div>
-            <div runat="server" id="sdt" class="col-12 col-md-7">0912987567</div>
+            <div runat="server" id="sdt" class="col-12 col-md-7"></div>
         </div>
     </div>
     </div>
@@ -29,13 +29,13 @@
     <div class="col-6">
         <div class="row">
         <div class="col-12 col-md-5 fw-700">Tài khoản:</div>
-        <div runat="server" id="masv" class="col-12 col-md-7 text-uppercase">125960</div>
+        <div runat="server" id="masv" class="col-12 col-md-7 text-uppercase"></div>
         </div>
     </div>
     <div class="col-6">
         <div class="row">
         <div class="col-12 col-md-5 fw-700">Email:</div>
-        <div runat="server" id="mail" class="col-12 col-md-7">namthanhbk@gmail.com</div>
+        <div runat="server" id="mail" class="col-12 col-md-7"></div>
         </div>
     </div>
     </div>
@@ -43,13 +43,13 @@
     <div class="col-6">
         <div class="row">
             <div class="col-12 col-md-5 fw-700">Năm sinh:</div>
-            <div runat="server" id="namsinhsv" class="col-12 col-md-7">22-06-1995</div>
+            <div runat="server" id="namsinhsv" class="col-12 col-md-7"></div>
         </div>
     </div>
     <div class="col-6">
         <div class="row">
             <div class="col-12 col-md-5 fw-700">Số CMT:</div>
-            <div runat="server" id="socmnd" class="col-12 col-md-7">123456789012</div>
+            <div runat="server" id="socmnd" class="col-12 col-md-7"></div>
         </div>
     </div>
     </div>
@@ -58,14 +58,14 @@
         <div class="row">
         <div class="col-12 col-md-5 fw-700">Nơi sinh:</div>
         <div class="col-12 col-md-7" runat="server" id="noisinhsv">
-            Xã Hoằng Vinh-Huyện Hoằng Hóa-Tỉnh Thanh Hóa
+            
         </div>
         </div>
     </div>
     <div class="col-6">
         <div class="row">
         <div class="col-12 col-md-5 fw-700">Dân tộc:</div>
-        <div runat="server" id="dantocsv" class="col-12 col-md-7">Kinh</div>
+        <div runat="server" id="dantocsv" class="col-12 col-md-7"></div>
         </div>
     </div>
     </div>
@@ -73,13 +73,13 @@
     <div class="col-6">
         <div class="row">
             <div class="col-12 col-md-5 fw-700">Nơi cấp:</div>
-            <div runat="server" id="cmndnoicap" class="col-12 col-md-7">Cục quản cư dân Quốc gia</div>
+            <div runat="server" id="cmndnoicap" class="col-12 col-md-7"></div>
         </div>
     </div>
     <div class="col-6">
         <div class="row">
             <div class="col-12 col-md-5 fw-700">Ngày Cấp:</div>
-            <div runat="server" id="cmndngaycap" class="col-12 col-md-7">22/07/2016</div>
+            <div runat="server" id="cmndngaycap" class="col-12 col-md-7"></div>
         </div>
     </div>
     </div>
@@ -87,13 +87,13 @@
     <div class="col-6">
         <div class="row">
             <div class="col-12 col-md-5 fw-700">Tôn giáo:</div>
-            <div runat="server" id="tongiaosv" class="col-12 col-md-7">Không</div>
+            <div runat="server" id="tongiaosv" class="col-12 col-md-7"></div>
         </div>
     </div>
     <div class="col-6">
         <div class="row">
         <div class="col-12 col-md-5 fw-700">Ngày vào đoàn:</div>
-        <div runat="server" id="ngayvaodoansv" class="col-12 col-md-7">22/07/2016</div>
+        <div runat="server" id="ngayvaodoansv" class="col-12 col-md-7"></div>
         </div>
     </div>
     </div>
@@ -107,7 +107,7 @@
     <div class="col-6">
         <div class="row">
             <div class="col-12 col-md-5 fw-700">Ngày vào đảng:</div>
-            <div runat="server" id="ngayvaodangsv" class="col-12 col-md-7">22/07/2016</div>
+            <div runat="server" id="ngayvaodangsv" class="col-12 col-md-7"></div>
         </div>
     </div>
     </div>
@@ -115,7 +115,7 @@
     <div class="col-6">
         <div class="row">
             <div class="col-12 col-md-5 fw-700">Số nhà:</div>
-            <div id="hktt_sonhasv" runat="server" class="col-12 col-md-7">12</div>
+            <div id="hktt_sonhasv" runat="server" class="col-12 col-md-7"></div>
         </div>
     </div>
     <div class="col-6">
@@ -123,7 +123,7 @@
         <div class="col-12 col-md-5 fw-700">
             Tốt nghiệp THPT (BTVH) năm:
         </div>
-        <div runat="server" id="namtotnghiepthptsv" class="col-12 col-md-7">2013</div>
+        <div runat="server" id="namtotnghiepthptsv" class="col-12 col-md-7"></div>
         </div>
     </div>
     </div>
@@ -131,7 +131,7 @@
     <div class="col-6">
         <div class="row">
         <div class="col-12 col-md-5 fw-700">Phố / Thôn:</div>
-        <div id="hktt_phothonsv" runat="server" class="col-12 col-md-7">Vọng</div>
+        <div id="hktt_phothonsv" runat="server" class="col-12 col-md-7"></div>
         </div>
     </div>
     <div class="col-6">
@@ -139,7 +139,7 @@
             <div class="col-12 col-md-5 fw-700">
                 Điểm thi PTTH Quốc gia:
             </div>
-            <div runat="server" id="diemthithptqgsv"  class="col-12 col-md-7">20</div>
+            <div runat="server" id="diemthithptqgsv"  class="col-12 col-md-7"></div>
         </div>
     </div>
     </div>
@@ -147,7 +147,7 @@
     <div class="col-6">
         <div class="row">
             <div class="col-12 col-md-5 fw-700">Phường / Xã:</div>
-            <div runat="server" id="hktt_phuongxasv" class="col-12 col-md-7">Đồng Tâm</div>
+            <div runat="server" id="hktt_phuongxasv" class="col-12 col-md-7"></div>
         </div>
     </div>
     <div class="col-6">
@@ -155,7 +155,7 @@
             <div class="col-12 col-md-5 fw-700">
                 Hộ khẩu thường trú thuộc khu vực:
             </div>
-            <div runat="server" id="hktttkvsv" class="col-12 col-md-7">2NT</div>
+            <div runat="server" id="hktttkvsv" class="col-12 col-md-7"></div>
         </div>
     </div>
     </div>
@@ -163,7 +163,7 @@
         <div class="col-6">
             <div class="row">
                 <div class="col-12 col-md-5 fw-700">Quận / Huyện:</div>
-                <div runat="server" id="hktt_quanhuyensv" class="col-12 col-md-7">Hai Bà Trưng</div>
+                <div runat="server" id="hktt_quanhuyensv" class="col-12 col-md-7"></div>
             </div>
         </div>
         <div class="col-6">
@@ -177,7 +177,7 @@
         <div class="col-6">
             <div class="row">
                 <div class="col-12 col-md-5 fw-700">Tỉnh / Thành phố:</div>
-                <div runat="server" id="hktt_thanhphosv" class="col-12 col-md-7">Hai Bà Trưng</div>
+                <div runat="server" id="hktt_thanhphosv" class="col-12 col-md-7"></div>
             </div>
         </div>
         <div class="col-6">
@@ -197,7 +197,7 @@
         <div class="col-6">
             <div class="row">
                 <div class="col-12 col-md-5 fw-700">Địa chỉ nơi ở cụ thể:</div>
-                <div runat="server" id="diachicuthesv" class="col-12 col-md-7">Phòng 101</div>
+                <div runat="server" id="diachicuthesv" class="col-12 col-md-7"></div>
             </div>
         </div>
     </div>
@@ -209,15 +209,15 @@
         <div class="col-6 col-md-3">
             <div class="row" id="qtht_thoigian" runat="server">
                 <div class="col-12 fw-700">Thời gian</div>
-                <div class="col-12">t1/2014 đến t3/2016</div>
-                <div class="col-12">t4/2016 đến t10/2020</div>
+                <%--<div class="col-12">t1/2014 đến t3/2016</div>
+                <div class="col-12">t4/2016 đến t10/2020</div>--%>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="row" id="qtht_truong" runat="server">
                 <div class="col-12 fw-700">Trường</div>
-                <div class="col-12">Giao Thủy</div>
-                <div class="col-12">Thành phố Nam Định</div>
+                <%--<div class="col-12">Giao Thủy</div>
+                <div class="col-12">Thành phố Nam Định</div>--%>
             </div>
         </div>
         <div class="col-6 col-md-3">
@@ -241,15 +241,15 @@
     <div class="row font-13-sm font-16 mb-3 display-lg mt-2">
         <div class="col-3" id="hsg_capthi" runat="server">
             <div class="fw-700">Cấp thi:</div>
-            <div class=" ">Cấp 1</div>
+            <%--<div class=" ">Cấp 1</div>--%>
         </div>
         <div class="col-3" id="hsg_monthi" runat="server">
             <div class="fw-700">Môn thi:</div>
-            <div class=" ">Toán</div>
+            <%--<div class=" ">Toán</div>--%>
         </div>
         <div class="col-3" id="hsg_giai" runat="server">
             <div class="fw-700">Đạt giải:</div>
-            <div class=" ">Nhì</div>
+            <%--<div class=" ">Nhì</div>--%>
         </div>
     </div>
 
@@ -273,21 +273,27 @@
         <div class="col-6">
             <div class="row mb-3">
                 <div class="col-12 col-md-5 fw-700">Nơi ở hiện tại:</div>
-                <div class="col-12 col-md-7">Nam Định</div>
+                <div class="col-12 col-md-7" id="baotindiachi" runat="server">Nam Định</div>
             </div>
             <div class="row mb-3">
                 <div class="col-12 col-md-5 fw-700">Họ tên người nhận:</div>
-                <div runat="server" id="baotinhovatensv" class="col-12 col-md-7 text-uppercase">phạm văn a</div>
+                <div runat="server" id="baotinhovatensv" class="col-12 col-md-7 text-uppercase"></div>
             </div>
             <div class="row mb-3">
                 <div class="col-12 col-md-5 fw-700">Địa chỉ người nhận:</div>
-                <div runat="server" id="baotindiachinguoinhansv" class="col-12 col-md-7">Không</div>
+                <div runat="server" id="baotindiachinguoinhansv" class="col-12 col-md-7"></div>
             </div>
             <div class="row mb-3">
                 <div class="col-12 col-md-5 fw-700">
                     Số điện thoại người nhận:
                 </div>
-                <div runat="server" id="baotinsodienthoainguoinhansv" class="col-12 col-md-7">Không</div>
+                <div runat="server" id="baotinsodienthoainguoinhansv" class="col-12 col-md-7"></div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12 col-md-5 fw-700">
+                    Địa chỉ nhận chuyển phát nhanh:
+                </div>
+                <div runat="server" id="baotindiachichuyenphatnhanh" class="col-12 col-md-7"></div>
             </div>
         </div>
     </div>

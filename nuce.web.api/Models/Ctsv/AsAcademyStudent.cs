@@ -53,5 +53,6 @@ namespace nuce.web.api.Models.Ctsv
         public string GioiTinh { get; set; }
         public string EmailNhaTruong { get; set; }
         public bool? DaXacThucEmailNhaTruong { get; set; }
+        public string BaoTinDiaChiNhanChuyenPhatNhanh { get; set; }
     }
 }

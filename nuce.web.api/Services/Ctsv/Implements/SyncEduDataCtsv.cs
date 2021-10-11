@@ -227,7 +227,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     temp = item.GetElementsByTagName("noisinh");
                     var noisinh = temp.Count > 0 ? temp[0].InnerText : null;
 
-                    var emailEdu = EmailSV1.Contains(".edu.") ? EmailSV1 : EmailSV2;
+                    string emailEdu = null;
+                    if ((EmailSV1 ?? "").Contains(".edu."))
+                    {
+                        emailEdu = EmailSV1;
+                    } else if ((EmailSV2 ?? "").Contains(".edu."))
+                    {
+                        emailEdu = EmailSV2;
+                    }
 
                     long lopId = -1;
                     var lop = await _eduDataContext.AsAcademyClass.FirstOrDefaultAsync(f => f.Code == Malop);
@@ -248,7 +255,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                             DateOfBirth = NgaySinh,
                             BirthPlace = noisinh,
                             Email = EmailSV1 ?? EmailSV2 ?? null,
-                            EmailNhaTruong = emailEdu ?? null,
+                            EmailNhaTruong = emailEdu,
                             Mobile = TelSV1 ?? TelSV2 ?? null,
                             KeyAuthorize = Guid.NewGuid(),
                             Status = 1,
@@ -264,7 +271,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         sinhVien.DateOfBirth = NgaySinh;
                         sinhVien.BirthPlace = noisinh;
                         sinhVien.Email = EmailSV1 ?? EmailSV2 ?? null;
-                        sinhVien.EmailNhaTruong = emailEdu ?? null;
+                        sinhVien.EmailNhaTruong = !string.IsNullOrEmpty(emailEdu) ? emailEdu : sinhVien.EmailNhaTruong;
                         sinhVien.Mobile = TelSV1 ?? TelSV2 ?? null;
                         sinhVien.Status = 1;
                         sinhVien.DaXacThucEmailNhaTruong = true;

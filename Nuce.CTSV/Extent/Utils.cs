@@ -521,5 +521,11 @@ namespace Nuce.CTSV
         private static string API_URI = ConfigurationManager.AppSettings["DEV"];
         public static bool Enabled = API_URI == "1";
     }
+
+    public static class UpdateDiaChiChuyenPhatNhanh
+    {
+        private static string UPDATE_DIA_CHI_CHUYEN_PHAT_NHANH = ConfigurationManager.AppSettings["UPDATE_DIA_CHI_CHUYEN_PHAT_NHANH"];
+        public static bool Enabled = UPDATE_DIA_CHI_CHUYEN_PHAT_NHANH == "1";
+    }
 }
 

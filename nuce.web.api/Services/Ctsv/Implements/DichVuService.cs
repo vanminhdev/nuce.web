@@ -1419,6 +1419,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 initHeaderCell(ws, firstRow, ++i, "Ngày ký");
                 initHeaderCell(ws, firstRow, ++i, "Tháng ký");
                 initHeaderCell(ws, firstRow, ++i, "Năm ký");
+                initHeaderCell(ws, firstRow, ++i, "Địa chỉ nhận chuyển phát nhanh");
 
                 ws.Row(firstRow).Height = 32;
 
@@ -1442,6 +1443,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string tenKhoa = yeuCau.Faculty?.Name ?? "";
                     string mobile = yeuCau.Student.Mobile ?? "";
                     string diaChiBaoTin = yeuCau.Student.BaoTinDiaChiNguoiNhan ?? "";
+                    string diaChiChuyenPhatNhanh = yeuCau.Student.BaoTinDiaChiNhanChuyenPhatNhanh ?? "";
 
                     string lyDo = yeuCau.YeuCauDichVu.LyDo ?? "";
                     DateTime now = DateTime.Now;
@@ -1465,6 +1467,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(now.Day);
                     ws.Cell(row, ++col).SetValue(now.Month);
                     ws.Cell(row, ++col).SetValue(now.Year);
+                    ws.Cell(row, ++col).SetValue(diaChiChuyenPhatNhanh);
                 }
                 for (int j = 0; j < col; j++)
                 {
@@ -1532,6 +1535,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 initHeaderCell(ws, firstRow, ++i, "Ngày ký");
                 initHeaderCell(ws, firstRow, ++i, "Tháng ký");
                 initHeaderCell(ws, firstRow, ++i, "Năm ký");
+                initHeaderCell(ws, firstRow, ++i, "Địa chỉ nhận chuyển phát nhanh");
 
                 ws.Row(firstRow).Height = 32;
 
@@ -1555,6 +1559,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string tenKhoa = yeuCau.Faculty?.Name ?? "";
                     string mobile = yeuCau.Student.Mobile ?? "";
                     string diaChiBaoTin = yeuCau.Student.BaoTinDiaChiNguoiNhan ?? "";
+                    string diaChiChuyenPhatNhanh = yeuCau.Student.BaoTinDiaChiNhanChuyenPhatNhanh ?? "";
 
                     string kyLuat = yeuCau.YeuCauDichVu.KyLuat ?? "Không";
                     string namThu = getNamThu(nienKhoa);
@@ -1590,6 +1595,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(now.Day);
                     ws.Cell(row, ++col).SetValue(now.Month);
                     ws.Cell(row, ++col).SetValue(now.Year);
+                    ws.Cell(row, ++col).SetValue(diaChiChuyenPhatNhanh);
                 }
                 for (int j = 0; j < col; j++)
                 {
@@ -1649,6 +1655,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 initHeaderCell(ws, firstRow, ++i, "Số điện thoại");
                 initHeaderCell(ws, firstRow, ++i, "Email");
                 initHeaderCell(ws, firstRow, ++i, "Địa chỉ người nhận");
+                initHeaderCell(ws, firstRow, ++i, "Địa chỉ nhận chuyển phát nhanh");
 
 
                 ws.Row(firstRow).Height = 32;
@@ -1676,6 +1683,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string tenKhoa = yeuCau.Faculty?.Name ?? "";
                     string mobile = yeuCau.Student.Mobile ?? "";
                     string diaChiBaoTin = yeuCau.Student.BaoTinDiaChiNguoiNhan ?? "";
+                    string diaChiNhanChuyenPhatNhanh = yeuCau.Student.BaoTinDiaChiNhanChuyenPhatNhanh ?? "";
+
                     string gioiTinh = yeuCau.Student.GioiTinh ?? "";
                     gioiTinh = getGender(gioiTinh);
                     string cmtNoiCap = yeuCau.Student.CmtNoiCap ?? "";
@@ -1710,6 +1719,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(soDienThoai);
                     ws.Cell(row, ++col).SetValue(email);
                     ws.Cell(row, ++col).SetValue(diaChiBaoTin);
+                    ws.Cell(row, ++col).SetValue(diaChiNhanChuyenPhatNhanh);
                 }
                 for (int j = 0; j < col; j++)
                 {
@@ -1767,6 +1777,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 initHeaderCell(ws, firstRow, ++i, "Ngày ký");
                 initHeaderCell(ws, firstRow, ++i, "Tháng ký");
                 initHeaderCell(ws, firstRow, ++i, "Năm ký");
+                initHeaderCell(ws, firstRow, ++i, "Địa chỉ nhận chuyển phát nhanh");
 
                 ws.Row(firstRow).Height = 32;
 
@@ -1798,6 +1809,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string diaChiBaoTin = yeuCau.Student.BaoTinDiaChiNguoiNhan ?? "";
                     string nganhHoc = yeuCau.Academics?.Name ?? "";
                     string doiTuongUuTien = yeuCau.Student.DoiTuongUuTien ?? "";
+                    string diaChiNhanChuyenPhatNhanh = yeuCau.Student.BaoTinDiaChiNhanChuyenPhatNhanh ?? "";
                     DateTime now = DateTime.Now;
                     int row = j + 2;
 
@@ -1824,6 +1836,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(now.Day);
                     ws.Cell(row, ++col).SetValue(now.Month);
                     ws.Cell(row, ++col).SetValue(now.Year);
+                    ws.Cell(row, ++col).SetValue(diaChiNhanChuyenPhatNhanh);
                 }
                 for (int j = 0; j < col; j++)
                 {
@@ -1877,6 +1890,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 initHeaderCell(ws, firstRow, ++i, "Tháng ký");
                 initHeaderCell(ws, firstRow, ++i, "Năm ký");
 
+                initHeaderCell(ws, firstRow, ++i, "Địa chỉ nhận chuyển phát nhanh");
+
                 ws.Row(firstRow).Height = 32;
 
                 int colNum = i;
@@ -1902,6 +1917,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string lienTuyen = (DichVuXeBusLoaiTuyen)yeuCau.YeuCauDichVu.TuyenType == DichVuXeBusLoaiTuyen.LienTuyen ? "x" : "";
                     string soTuyen = yeuCau.YeuCauDichVu.TuyenCode;
                     string noiNhanThe = yeuCau.YeuCauDichVu.NoiNhanThe;
+                    string diaChiNhanChuyenPhatNhanh = yeuCau.Student.BaoTinDiaChiNhanChuyenPhatNhanh ?? "";
                     DateTime now = DateTime.Now;
                     int row = j + 2;
 
@@ -1927,6 +1943,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(now.Day);
                     ws.Cell(row, ++col).SetValue(now.Month);
                     ws.Cell(row, ++col).SetValue(now.Year);
+
+                    ws.Cell(row, ++col).SetValue(diaChiNhanChuyenPhatNhanh);
                 }
                 for (int j = 0; j < col; j++)
                 {

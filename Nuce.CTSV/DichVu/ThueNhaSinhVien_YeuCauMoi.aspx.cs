@@ -42,6 +42,11 @@ namespace Nuce.CTSV
                         thongBao += $"{(thongBao != "" ? "," : "")} phường/xã";
                     }
 
+                    if (string.IsNullOrEmpty(student.BaoTinDiaChiNhanChuyenPhatNhanh?.Trim()))
+                    {
+                        thongBao += $"{(thongBao != "" ? "," : "")} địa chỉ nhận chuyển phát nhanh";
+                    }
+
                     if (!string.IsNullOrEmpty(thongBao))
                     {
                         divBtnContainer.Visible = false;
