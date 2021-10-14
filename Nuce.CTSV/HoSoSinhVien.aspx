@@ -291,7 +291,7 @@
             </div>
             <div class="row mb-3">
                 <div class="col-12 col-md-5 fw-700">
-                    Địa chỉ nhận chuyển phát nhanh:
+                    Địa chỉ đăng ký nhận chuyển phát nhanh:
                 </div>
                 <div runat="server" id="baotindiachichuyenphatnhanh" class="col-12 col-md-7"></div>
             </div>

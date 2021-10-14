@@ -42,18 +42,18 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
         {
             var result = await _context.AsAcademyStudent
                         .Join(_context.AsAcademyClass,
-                                student => student.ClassId,
-                                aClass => aClass.Id,
+                                student => student.ClassCode,
+                                aClass => aClass.Code,
                                 (student, aClass) => new { student, aClass })
                         .GroupJoin(_context.AsAcademyFaculty.AsNoTracking(),
-                           tmp => tmp.aClass.FacultyId,
-                           faculty => faculty.Id,
+                           tmp => tmp.aClass.FacultyCode,
+                           faculty => faculty.Code,
                            (tmp, faculty) => new { tmp, faculty }
                          )
                         .SelectMany(left => left.faculty.DefaultIfEmpty(), (left, f) => new { left.tmp.student, left.tmp.aClass, f })
                         .GroupJoin(_context.AsAcademyAcademics.AsNoTracking(),
-                                tmp => tmp.aClass.AcademicsId,
-                                academic => academic.Id,
+                                tmp => tmp.aClass.AcademicsCode,
+                                academic => academic.Code,
                                 (tmp, academic) => new
                                 {
                                     Student = tmp.student,

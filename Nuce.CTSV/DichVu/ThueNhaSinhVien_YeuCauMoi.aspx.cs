@@ -18,6 +18,7 @@ namespace Nuce.CTSV
         {
             if (!IsPostBack)
             {
+                divBtnContainer.Visible = false;
                 var studentResponse = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, $"{ApiModels.ApiEndPoint.GetStudentInfo}/{m_SinhVien.MaSV}", "");
                 if (studentResponse.IsSuccessStatusCode)
                 {
@@ -54,6 +55,7 @@ namespace Nuce.CTSV
                         return;
                     }
 
+                    divBtnContainer.Visible = true;
                     frmCmnd.Visible = string.IsNullOrEmpty(student.Cmt?.Trim());
                     frmNgayCap.Visible = student.CmtNgayCap == null;
                     frmNoiCap.Visible = string.IsNullOrEmpty(student.CmtNoiCap);

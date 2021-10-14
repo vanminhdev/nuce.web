@@ -87,20 +87,20 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
             var result =  (await _context.Set<Entity>().AsNoTracking().ToListAsync())
                         .Where(e => ids.Contains((long)getValue(e, "Id")))
                         .Join(_context.AsAcademyStudent.AsNoTracking(),
-                                e => getValueString(e, "StudentId"),
-                                student => student.Id.ToString(),
+                                e => getValueString(e, "StudentCode"),
+                                student => student.Code,
                                 (entity, student) => new { entity, student })
                         .Join(_context.AsAcademyClass.AsNoTracking(),
-                                tmp => tmp.student.ClassId,
-                                aClass => aClass.Id,
+                                tmp => tmp.student.ClassCode,
+                                aClass => aClass.Code,
                                 (tmp, aClass) => new { tmp.student, tmp.entity, aClass })
                         .Join(_context.AsAcademyFaculty.AsNoTracking(),
-                               tmp => tmp.aClass.FacultyId,
-                               faculty => faculty.Id,
+                               tmp => tmp.aClass.FacultyCode,
+                               faculty => faculty.Code,
                                (tmp, faculty) => new { tmp.entity, tmp.student, tmp.aClass, faculty })
                         .Join(_context.AsAcademyAcademics.AsNoTracking(),
-                                tmp => tmp.aClass.AcademicsId,
-                                academic => academic.Id,
+                                tmp => tmp.aClass.AcademicsCode,
+                                academic => academic.Code,
                                 (tmp, academic) => new YeuCauDichVuStudentModel<Entity>
                                 {
                                     Year = year,

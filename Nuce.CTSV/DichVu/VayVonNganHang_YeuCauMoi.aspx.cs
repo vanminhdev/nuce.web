@@ -16,6 +16,7 @@ namespace Nuce.CTSV
         {
             if (!IsPostBack)
             {
+                divBtnContainer.Visible = false;
                 var studentResponse = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, $"{ApiModels.ApiEndPoint.GetStudentInfo}/{m_SinhVien.MaSV}", "");
                 if (studentResponse.IsSuccessStatusCode)
                 {
@@ -50,6 +51,9 @@ namespace Nuce.CTSV
                         divBtnContainer.Visible = false;
                         divThongBao.InnerHtml = $"Yêu cầu cập nhật<a href=\"/capnhathoso.aspx\">{thongBao}</a>";
                         return;
+                    } else
+                    {
+                        divBtnContainer.Visible = true;
                     }
 
                     frmCmnd.Visible = string.IsNullOrEmpty(student.Cmt?.Trim());
