@@ -27,6 +27,7 @@ namespace Nuce.CTSV.ApiModels
         public DateTime? NgayHenTuNgay { get; set; }
         public DateTime? NgayHenDenNgay { get; set; }
         public string MaXacNhan { get; set; }
+        public bool? ChuyenPhatNhanh { get; set; }
     }
     [Serializable]
     public class StudentModel
@@ -137,6 +138,7 @@ namespace Nuce.CTSV.ApiModels
         public DateTime? NgayHenTuNgay { get; set; }
         public DateTime? NgayHenDenNgay { get; set; }
         public string MaXacNhan { get; set; }
+        public bool? ChuyenPhatNhanh { get; set; }
     }
     public class VayVonModel
     {
@@ -160,6 +162,7 @@ namespace Nuce.CTSV.ApiModels
         public string MaXacNhan { get; set; }
         public string ThuocDien { get; set; }
         public string ThuocDoiTuong { get; set; }
+        public bool? ChuyenPhatNhanh { get; set; }
     }
     public class UuDaiModel
     {
@@ -182,6 +185,7 @@ namespace Nuce.CTSV.ApiModels
         public DateTime? NgayHenDenNgay { get; set; }
         public string MaXacNhan { get; set; }
         public string KyLuat { get; set; }
+        public bool? ChuyenPhatNhanh { get; set; }
     }
     public class VeXeBusModel
     {
@@ -207,6 +211,7 @@ namespace Nuce.CTSV.ApiModels
         public string TuyenCode { get; set; }
         public string TuyenName { get; set; }
         public string NoiNhanThe { get; set; }
+        public bool? ChuyenPhatNhanh { get; set; }
     }
 
     public class DotDangKyChoOModel

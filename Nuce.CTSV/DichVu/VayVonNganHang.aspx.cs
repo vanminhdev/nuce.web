@@ -53,6 +53,8 @@ namespace Nuce.CTSV
                         var ID = vayVon.Id;
                         DateTime dtNgayHenBatDau = vayVon.NgayHenTuNgay ?? DateTime.Now;
                         DateTime dtNgayHenDenNgay = vayVon.NgayHenDenNgay ?? DateTime.Now.AddDays(7);
+
+                        string ThongBaoChuyenPhatNhanh = UpdateDiaChiChuyenPhatNhanh.Enabled && (vayVon.ChuyenPhatNhanh ?? false) ? UpdateDiaChiChuyenPhatNhanh.NoiDungThongBao : "";
                         //dtThuocDien dt.Rows[i]["ThuocDoiTuong"].ToString()
                         string dtThuocDien = "";
                         string dtThuocDoiTuong = "";
@@ -85,7 +87,7 @@ namespace Nuce.CTSV
                                 //  strContent += string.Format("<td></td>");
                                 break;
                             case 4:
-                                strContent += $"<td><div>Thuộc diện: {dtThuocDien}</br>Thuộc đối tượng: {dtThuocDoiTuong}</div>";
+                                strContent += $"<td><div>Thuộc diện: {dtThuocDien}</br>Thuộc đối tượng: {dtThuocDoiTuong}</div>{ThongBaoChuyenPhatNhanh}";
                                 strContent += $"<div style='color:blue;'>* Ngày hẹn: Từ <b>{dtNgayHenBatDau.Hour}</b> giờ - <b>{dtNgayHenBatDau.Minute} </b> phút - Ngày <b>{dtNgayHenBatDau.ToString("dd/MM/yyyy")}</b> </br>";
                                 strContent += $"Đến <b>{dtNgayHenDenNgay.Hour}</b> giờ - <b>{dtNgayHenDenNgay.Minute} </b> phút - Ngày <b>{dtNgayHenDenNgay.ToString("dd/MM/yyyy")}</b></div></td>";
                                 strContent += string.Format("<td style='color:red;text-align:center;'>Đã xử lý và có lịch hẹn</td>");

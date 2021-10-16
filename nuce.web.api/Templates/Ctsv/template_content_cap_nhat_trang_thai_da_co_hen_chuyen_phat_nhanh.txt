@@ -1,0 +1,2 @@
+<div style='padding:5px;'>Đã gửi cho Bưu điện theo địa chỉ đăng ký nhận chuyển phát nhanh của sinh viên</div>
+<div style='padding:5px;'><i>Chú ý: <b>Sinh viên kiểm tra lại thông tin của mình trên giấy tờ khi nhận để điều chỉnh kịp thời nếu có thay đổi.</b></i></div>

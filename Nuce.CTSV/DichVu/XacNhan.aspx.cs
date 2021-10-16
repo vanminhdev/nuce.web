@@ -43,6 +43,9 @@ namespace Nuce.CTSV
                         
                         DateTime dtNgayHenBatDau = xacNhan.NgayHenTuNgay ?? DateTime.Now;
                         DateTime dtNgayHenDenNgay = xacNhan.NgayHenDenNgay ?? DateTime.Now.AddDays(7);
+
+                        string ThongBaoChuyenPhatNhanh = UpdateDiaChiChuyenPhatNhanh.Enabled && (xacNhan.ChuyenPhatNhanh ?? false) ? UpdateDiaChiChuyenPhatNhanh.NoiDungThongBao : "";
+
                         switch (status)
                         {
                             case 1:
@@ -58,8 +61,8 @@ namespace Nuce.CTSV
                                 strContent += string.Format("<td style='color:darkgreen;text-align:center;'>Đã tiếp nhận và đang xử lý</td>");
                                 break;
                             case 4:
-                                strContent += string.Format(@"<td><div>{6}</div><div style='color:blue;'>* Ngày hẹn: Từ <b>{0}</b> giờ - <b>{1} </b> phút - Ngày <b>{2:dd/MM/yyyy}</b> </br>Đến <b>
-                                    {3}</b> giờ - <b>{4} </b> phút - Ngày <b>{5:dd/MM/yyyy}</b></div></td>", dtNgayHenBatDau.Hour, dtNgayHenBatDau.Minute, dtNgayHenBatDau,dtNgayHenDenNgay.Hour, dtNgayHenDenNgay.Minute, dtNgayHenDenNgay, xacNhan.LyDo);
+                                strContent += string.Format(@"<td><div>{6}</div>{7}<div style='color:blue;'>* Ngày hẹn: Từ <b>{0}</b> giờ - <b>{1} </b> phút - Ngày <b>{2:dd/MM/yyyy}</b> </br>Đến <b>
+                                    {3}</b> giờ - <b>{4} </b> phút - Ngày <b>{5:dd/MM/yyyy}</b></div></td>", dtNgayHenBatDau.Hour, dtNgayHenBatDau.Minute, dtNgayHenBatDau,dtNgayHenDenNgay.Hour, dtNgayHenDenNgay.Minute, dtNgayHenDenNgay, xacNhan.LyDo, ThongBaoChuyenPhatNhanh);
                                 strContent += string.Format("<td style='color:red;text-align:center;'>Đã xử lý và có lịch hẹn</td>");
                                 break;
                             case 5:

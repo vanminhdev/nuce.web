@@ -20,7 +20,7 @@ namespace Nuce.CTSV
 
                     string thongBao = "";
 
-                    if (string.IsNullOrEmpty(student.BaoTinDiaChiNhanChuyenPhatNhanh?.Trim()))
+                    if (UpdateDiaChiChuyenPhatNhanh.Enabled && string.IsNullOrEmpty(student.BaoTinDiaChiNhanChuyenPhatNhanh?.Trim()))
                     {
                         thongBao += " địa chỉ nhận chuyển phát nhanh";
                     }

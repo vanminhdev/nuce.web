@@ -21,5 +21,6 @@ namespace nuce.web.api.ViewModel.Ctsv
         /// Tên template trong thư mục "Templates/Ctsv" thay vì template mặc định
         /// </summary>
         public string TemplateName { get; set; }
+        public bool ChuyenPhatNhanh { get; set; }
     }
 }

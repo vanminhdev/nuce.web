@@ -37,6 +37,7 @@ using OXInline = DocumentFormat.OpenXml.Drawing.Wordprocessing.Inline;
 using System.Drawing;
 using nuce.web.api.Helper;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.Configuration;
 
 namespace nuce.web.api.Services.Ctsv.Implements
 {
@@ -67,6 +68,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
         private readonly ILogService _logService;
         private readonly IPathProvider _pathProvider;
         private readonly ILogger<DichVuService> _logger;
+        private readonly IConfiguration _configuration;
 
         public DichVuService(IXacNhanRepository _xacNhanRepository, IGioiThieuRepository _gioiThieuRepository,
             IUuDaiGiaoDucRepository _uuDaiRepository, IVayVonRepository _vayVonRepository,
@@ -78,7 +80,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
             ICapLaiTheRepository _capLaiTheRepository, IMuonHocBaRepository _muonHocBaRepository,
             IDangKyChoORepository _dangKyChoORepository, IDotDangKyChoORepository _dotDangKyChoORepository,
             IXinMienGiamHocPhiRepository _xinMienGiamHocPhiRepository, IDotXinMienGiamHocPhiRepository _dotXinMienGiamHocPhiRepository,
-            IDeNghiHoTroChiPhiRepository _deNghiHoTroChiPhiRepository, IDotDeNghiHoTroChiPhiRepository _dotDeNghiHoTroChiPhiRepository
+            IDeNghiHoTroChiPhiRepository _deNghiHoTroChiPhiRepository, IDotDeNghiHoTroChiPhiRepository _dotDeNghiHoTroChiPhiRepository,
+            IConfiguration _configuration
         )
         {
             this._xacNhanRepository = _xacNhanRepository;
@@ -106,6 +109,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             this._emailService = _emailService;
             this._logService = _logService;
             this._logger = _logger;
+            this._configuration = _configuration;
         }
         #endregion
         /// <summary>
@@ -996,6 +1000,9 @@ namespace nuce.web.api.Services.Ctsv.Implements
             AsAcademyStudent student = null;
             DateTime? ngayTao = DateTime.Now;
             string templateMail = null;
+
+            bool isUsechuyenPhatNhanh = _configuration.GetValue<string>("IsUseDiaChiChuyenPhatNhanh") == "1";
+            bool chuyenPhatNhanh = false;
             #region dich vu
             switch (loaiDichVu)
             {
@@ -1005,8 +1012,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     xacNhan.NgayHenTuNgay = model.NgayHenBatDau;
                     xacNhan.NgayHenDenNgay = model.NgayHenKetThuc;
                     xacNhan.PhanHoi = model.PhanHoi;
+                    xacNhan.ChuyenPhatNhanh = isUsechuyenPhatNhanh;
                     ngayTao = xacNhan.CreatedTime;
 
+                    chuyenPhatNhanh = isUsechuyenPhatNhanh;
                     student = _studentRepository.FindByCode(xacNhan.StudentCode);
                     break;
                 case DichVu.GioiThieu:
@@ -1058,8 +1067,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     thueNha.NgayHenTuNgay = model.NgayHenBatDau;
                     thueNha.NgayHenDenNgay = model.NgayHenKetThuc;
                     thueNha.PhanHoi = model.PhanHoi;
+                    thueNha.ChuyenPhatNhanh = isUsechuyenPhatNhanh;
                     ngayTao = thueNha.CreatedTime;
 
+                    chuyenPhatNhanh = isUsechuyenPhatNhanh;
                     student = _studentRepository.FindByCode(thueNha.StudentCode);
                     break;
                 case DichVu.UuDaiGiaoDuc:
@@ -1068,8 +1079,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     uuDai.PhanHoi = model.PhanHoi;
                     uuDai.NgayHenTuNgay = model.NgayHenBatDau;
                     uuDai.NgayHenDenNgay = model.NgayHenKetThuc;
+                    uuDai.ChuyenPhatNhanh = isUsechuyenPhatNhanh;
                     ngayTao = uuDai.CreatedTime;
 
+                    chuyenPhatNhanh = isUsechuyenPhatNhanh;
                     student = _studentRepository.FindByCode(uuDai.StudentCode);
                     break;
                 case DichVu.VayVonNganHang:
@@ -1078,8 +1091,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     vayVon.PhanHoi = model.PhanHoi;
                     vayVon.NgayHenTuNgay = model.NgayHenBatDau;
                     vayVon.NgayHenDenNgay = model.NgayHenKetThuc;
+                    vayVon.ChuyenPhatNhanh = isUsechuyenPhatNhanh;
                     ngayTao = vayVon.CreatedTime;
 
+                    chuyenPhatNhanh = isUsechuyenPhatNhanh;
                     student = _studentRepository.FindByCode(vayVon.StudentCode);
                     break;
                 case DichVu.VeBus:
@@ -1088,8 +1103,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     veBus.PhanHoi = model.PhanHoi;
                     veBus.NgayHenTuNgay = model.NgayHenBatDau;
                     veBus.NgayHenDenNgay = model.NgayHenKetThuc;
+                    veBus.ChuyenPhatNhanh = isUsechuyenPhatNhanh;
                     ngayTao = veBus.CreatedTime;
 
+                    chuyenPhatNhanh = isUsechuyenPhatNhanh;
                     student = _studentRepository.FindByCode(veBus.StudentCode);
                     break;
                 case DichVu.XinMienGiamHocPhi:
@@ -1123,6 +1140,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 var trangThai = TrangThaiYeuCauDictionary[model.Status];
                 string tinNhanTitle = $"Thông báo về việc {trangThai} {dichVu.TenDichVu}";
                 string tinNhanCode = $"{dichVu.TinNhanCode}_CHUYENTRANGTHAI_{model.Status}";
+
                 TinNhanModel tinNhan = new TinNhanModel
                 {
                     StudentCode = student.Code,
@@ -1136,6 +1154,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     NgayHen = model.NgayHenBatDau,
                     NgayTao = ngayTao,
                     TemplateName = templateMail,
+                    ChuyenPhatNhanh = chuyenPhatNhanh,
                 };
                 var sendEmailRs = new ResponseBody();
                 if (model.Status == (int)TrangThaiYeuCau.HoanThanh)
