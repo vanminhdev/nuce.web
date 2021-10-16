@@ -246,7 +246,7 @@ namespace nuce.web.api
             services.AddScoped<IAsEduSurveyUndergraduateBaiKhaoSatSinhVienService, AsEduSurveyUndergraduateBaiKhaoSatSinhVienService>();
             services.AddScoped<IAsEduSurveyUndergraduateReportTotalService, AsEduSurveyUndergraduateReportTotalService>();
 
-            services.AddScoped<ISurveyResultService, SurveyResultService>();
+            services.AddScoped<SurveyResultService>();
 
             services.AddScoped<SurveyStatisticBackgroundTask>();
             #endregion

@@ -43,7 +43,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             _statusService = statusService;
         }
 
-        #region thống kê sinh viên thường
+        #region thống kê khảo sát thường
         #region thống kê dữ liệu thô
         private void ReportTotalNormalSurveyBG(Guid surveyRoundId)
         {
@@ -75,7 +75,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 //đợt khảo sát chưa kết thúc
                 if (!(surveyRound.Status == (int)SurveyRoundStatus.Closed || surveyRound.Status == (int)SurveyRoundStatus.End || DateTime.Now >= surveyRound.EndDate))
                 {
-                    throw new HandleException.InvalidInputDataException("Đợt khảo sát chưa đóng hoặc chưa kết thúc");
+                    throw new InvalidInputDataException("Đợt khảo sát chưa đóng hoặc chưa kết thúc");
                 }
 
                 //do chỉ có một bài ks nên lấy id của bài ks đó
@@ -392,6 +392,12 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 var tongSoPhieuPhatRa = 0;
                 var tongSoGiangVienCanKs = 0;
                 var tongSoGiangVienDaDuocKs = 0;
+
+                //các biến lấy tổng mới
+                //var soLopMonHocCanKhaoSat = 0;
+                //var soGiangVienCanKhaoSat = 0;
+                //var soLopMonHocDaDuocKhaoSat = 0;
+                //var soGiangVienDaDuocKhaoSat = 0;
 
                 //tính ra dòng tổng của khoa
                 var rowTotal = row + departments.Count();

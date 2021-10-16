@@ -16,7 +16,9 @@ using nuce.web.api.ViewModel.Survey.Undergraduate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Mail;
 using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
@@ -394,32 +396,29 @@ namespace nuce.web.api.Services.Survey.Implements
             return false;
         }
 
+
         public async Task SendEmailVerify(string email, string url)
         {
-            HttpClient client = new HttpClient();
-            var strContent = JsonSerializer.Serialize(new {
-                emails = new[] { 
-                    new { 
-                        email,
-                        data = new {
-                            url
-                        }
-                    }   
-                },
-                template = 25,
-                subject = "Xác thực hoàn thành bài khảo sát",
-                email_identifier = "emails",
-                datetime = DateTime.Now.ToString("dd-MM-yyyy hh:mm"),
-                send_later_email = 0,
-                timezone = 7
-            });
-            var content = new StringContent(strContent, Encoding.UTF8, MediaTypeNames.Application.Json);
-            var response = await client.PostAsync(_configuration.GetValue<string>("ApiSendEmail"), content);
-            if (!response.IsSuccessStatusCode)
+            var smtpClient = new SmtpClient("email-smtp.us-west-2.amazonaws.com", 587);
+            smtpClient.Credentials = new System.Net.NetworkCredential("AKIAWESSCXYR7UIMNAUU", "BBi5kRo2EK9W35QKyzXy6DUnUxDBQyudGWwCbf2tURWZ");
+            smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+            smtpClient.EnableSsl = true;
+            MailMessage mail = new MailMessage();
+
+            //Setting From , To and CC
+            mail.From = new MailAddress("ctsv.hotro@nuce.edu.vn", "Phòng Khảo thí và Đảm bảo chất lượng giáo dục");
+            mail.To.Add(new MailAddress(email));
+            mail.Body = $"Bạn vui lòng click vào đường link sau: <br/> {url}";
+            mail.Subject = "Xác thực hoàn thành bài khảo sát";
+            mail.IsBodyHtml = true;
+            try
             {
-                var test = await response.Content.ReadAsStringAsync();
-                _logger.LogError(test);
-                throw new SendEmailException(await response.Content.ReadAsStringAsync());
+                smtpClient.Send(mail);
+            }
+            catch (SmtpException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw new SendEmailException(ex.Message);
             }
         }
     }

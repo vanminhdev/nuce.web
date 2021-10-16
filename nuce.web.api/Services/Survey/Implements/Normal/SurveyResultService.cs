@@ -16,7 +16,7 @@ using Microsoft.Extensions.Logging;
 
 namespace nuce.web.api.Services.Survey.Implements
 {
-    public class SurveyResultService : ISurveyResultService
+    public class SurveyResultService
     {
         private readonly ILogger<SurveyResultService> _logger;
         private readonly SurveyContext _surveyContext;

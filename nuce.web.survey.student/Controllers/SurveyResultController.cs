@@ -49,6 +49,7 @@ namespace nuce.web.survey.student.Controllers
             };
             return View("Faculty", model);
         }
+
         /// <summary>
         /// View Kết quả bộ môn
         /// Chú ý thứ tự Role Authorize: Role đầu dùng để điều hướng sang đúng loại login nếu chưa có token
@@ -68,6 +69,7 @@ namespace nuce.web.survey.student.Controllers
 
             return View("Department", model);
         }
+
         /// <summary>
         /// View kết quả giảng viên
         /// Chú ý thứ tự Role Authorize: Role đầu dùng để điều hướng sang đúng loại login nếu chưa có token
@@ -215,6 +217,7 @@ namespace nuce.web.survey.student.Controllers
                 }
             );
         }
+        
         /// <summary>
         /// Call api lấy kết quả bộ môn
         /// </summary>
