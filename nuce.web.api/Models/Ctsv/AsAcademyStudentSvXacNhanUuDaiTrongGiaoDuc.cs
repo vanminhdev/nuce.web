@@ -24,5 +24,6 @@ namespace nuce.web.api.Models.Ctsv
         public DateTime? NgayHenDenNgay { get; set; }
         public string MaXacNhan { get; set; }
         public string KyLuat { get; set; }
+        public bool? ChuyenPhatNhanh { get; set; }
     }
 }

@@ -408,6 +408,10 @@ namespace nuce.web.api.Models.Ctsv
                 entity.Property(e => e.UpdatedDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.BaoTinDiaChiNhanChuyenPhatNhanh)
+                    .HasColumnName("BaoTin_DiaChiNhanChuyenPhatNhanh")
+                    .HasMaxLength(500);
             });
 
             modelBuilder.Entity<AsAcademyStudentGiaDinh>(entity =>

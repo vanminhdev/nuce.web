@@ -74,6 +74,7 @@ namespace Nuce.CTSV
                     datunglamcanbolop.InnerHtml = (student.DaTungLamCanBoLop ?? false) ? "Có" : "Không";
                     dathamgiadoituyenthihsg.InnerHtml = (student.DaThamGiaDoiTuyenThiHsg ?? false) ? "Có" : "Không";
                     //baotindiachi.InnerHtml = BaoTin_DiaChi;
+                    baotindiachi.InnerHtml = (student.BaoTinDiaChi ?? "").Trim();
                     baotindiachinguoinhansv.InnerHtml = (student.BaoTinDiaChiNguoiNhan ?? "").Trim();
                     baotinhovatensv.InnerHtml = (student.BaoTinHoVaTen ?? "").Trim();
                     baotinsodienthoainguoinhansv.InnerHtml = (student.BaoTinSoDienThoai ?? "").Trim();
@@ -81,6 +82,7 @@ namespace Nuce.CTSV
                     sdt.InnerHtml = (student.Mobile ?? "").Trim();
                     coonoitrukhongsv.InnerHtml = (student.LaNoiTru ?? false) ? "Có" : "Không";
                     diachicuthesv.InnerHtml = (student.DiaChiCuThe ?? "").Trim();
+                    baotindiachichuyenphatnhanh.InnerHtml = (student.BaoTinDiaChiNhanChuyenPhatNhanh ?? "").Trim();
                     //if (!File1.Trim().Equals(""))
                     //{
                     //    imgAnh.Src = File1;

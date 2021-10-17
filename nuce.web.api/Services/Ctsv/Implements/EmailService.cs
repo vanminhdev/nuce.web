@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using nuce.web.api.Models.Ctsv;
 using nuce.web.api.Repositories.Ctsv.Interfaces;
 using nuce.web.api.Services.Core.Interfaces;
@@ -93,12 +94,13 @@ namespace nuce.web.api.Services.Ctsv.Implements
                                                 .Replace("[ten_dich_vu]", model.TenDichVu)
                                                 .Replace("[ngay_tao_gio_tao]", model.NgayTao?.ToString("dd/MM/yyyy HH:mm"));
             string henGapContent = "";
+            string filePathDaCoHen = model.ChuyenPhatNhanh ? "Templates/Ctsv/template_content_cap_nhat_trang_thai_da_co_hen_chuyen_phat_nhanh.txt" : "Templates/Ctsv/template_content_cap_nhat_trang_thai_da_co_hen.txt";
             if (henGap)
             {
-                dir = _pathProvider.MapPath("Templates/Ctsv/template_content_cap_nhat_trang_thai_da_co_hen.txt");
+                dir = _pathProvider.MapPath(filePathDaCoHen);
                 if (!File.Exists(dir))
                 {
-                    return new ResponseBody { Message = "Template có hẹn không tồn tại", StatusCode = System.Net.HttpStatusCode.NotFound };
+                    return new ResponseBody { Message = $"Template có hẹn không tồn tại: {filePathDaCoHen}", StatusCode = System.Net.HttpStatusCode.NotFound };
                 }
                 templateContent = await File.ReadAllTextAsync(dir);
                 henGapContent = templateContent.Replace("[gio_hen]", model.NgayHen?.Hour.ToString())

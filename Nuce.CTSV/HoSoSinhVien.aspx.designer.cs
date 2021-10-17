@@ -312,6 +312,15 @@ namespace Nuce.CTSV
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divGiaDinh;
 
         /// <summary>
+        /// baotindiachi control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl baotindiachi;
+
+        /// <summary>
         /// baotinhovatensv control.
         /// </summary>
         /// <remarks>
@@ -337,5 +346,14 @@ namespace Nuce.CTSV
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl baotinsodienthoainguoinhansv;
+
+        /// <summary>
+        /// baotindiachichuyenphatnhanh control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl baotindiachichuyenphatnhanh;
     }
 }

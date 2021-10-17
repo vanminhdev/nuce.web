@@ -292,6 +292,8 @@ namespace nuce.web.api
             services.AddScoped<INewsService, NewsService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IParameterService, ParameterService>();
+
+            services.AddScoped<ISyncEduDataCtsv, SyncEduDataCtsv>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             #endregion
 

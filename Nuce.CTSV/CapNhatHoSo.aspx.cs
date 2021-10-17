@@ -45,6 +45,7 @@ namespace Nuce.CTSV
                     string BaoTin_Email = (student.BaoTinEmail ?? "").Trim();
                     bool LaNoiTru = student.LaNoiTru ?? false;
                     string DiaChiCuThe = (student.DiaChiCuThe ?? "").Trim();
+                    string DiaChiChuyenPhatnhanh = (student.BaoTinDiaChiNhanChuyenPhatNhanh ?? "").Trim();
 
                     txtEmail.Text = Email;
                     txtMobile.Text = Mobile;
@@ -55,6 +56,7 @@ namespace Nuce.CTSV
                     txtBaoTin_Email.Text = BaoTin_Email;
                     chkLaNoiTru.Checked = LaNoiTru;
                     txtDiaChiCuThe.Text = DiaChiCuThe;
+                    txtBaoTin_DiaChiChuyenPhatNhanh.Text = DiaChiChuyenPhatnhanh;
 
                     spScript.InnerHtml = string.Format($"<script>CapNhatHoSo.initSelectForm('{(student.HkttTinh ?? "").Trim()}', '{(student.HkttQuan ?? "").Trim()}', '{(student.HkttPhuong ?? "").Trim()}');</script>");
                 }
@@ -83,6 +85,7 @@ namespace Nuce.CTSV
                 DiaChiBaotin = txtBaoTin_DiaChi.Text.Trim(),
                 HoTenBaoTin = txtBaoTin_HoVaTen.Text.Trim(),
                 DiaChiNguoiNhanBaotin = txtBaoTin_DiaChiNguoiNhan.Text.Trim(),
+                DiaChiNhanChuyenPhatNhanh = txtBaoTin_DiaChiChuyenPhatNhanh.Text.Trim(),
                 MobileBaoTin = txtBaoTin_SoDienThoai.Text.Trim(),
                 EmailBaoTin = txtBaoTin_Email.Text.Trim(),
                 DiaChiCuThe = txtDiaChiCuThe.Text.Trim(),

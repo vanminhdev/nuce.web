@@ -159,6 +159,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 currentStudent.Mobile = student.Mobile;
                 currentStudent.Email = student.Email;
                 currentStudent.EmailNhaTruong = student.EmailNhaTruong;
+                currentStudent.BaoTinDiaChiNhanChuyenPhatNhanh = student.BaoTinDiaChiNhanChuyenPhatNhanh;
                 _logger.LogInformation("save change");
                 _studentRepository.Update(currentStudent);
                 await _unitOfWork.SaveAsync();
@@ -206,6 +207,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 student.HkttPhuong = basicStudent.PhuongXa.Trim();
                 student.HkttQuan = basicStudent.QuanHuyen.Trim();
                 student.HkttTinh = basicStudent.TinhThanhPho.Trim();
+
+                student.BaoTinDiaChiNhanChuyenPhatNhanh = basicStudent.DiaChiNhanChuyenPhatNhanh;
                 _studentRepository.Update(student);
                 await _unitOfWork.SaveAsync();
             }

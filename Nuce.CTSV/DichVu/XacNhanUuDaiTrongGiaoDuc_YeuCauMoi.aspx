@@ -48,7 +48,7 @@
                     <%--<button type="button" id="btnModalUpdate" class="btn btn-primary mt-2" data-toggle="modal" data-target="#myModalUpdate">Gửi yêu cầu</button>--%>
                 </div>
             </div>
-            <div class="col-12 col-md-3 mt-4">
+            <div class="col-12 col-md-3 mt-4"  runat="server" id="divBtnContainer">
                 <button type="button" 
                         id="btnModalUpdate" 
                         class="confirm-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2"

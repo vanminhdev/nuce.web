@@ -27,5 +27,6 @@ namespace nuce.web.api.Models.Ctsv
         public string TuyenCode { get; set; }
         public string TuyenName { get; set; }
         public string NoiNhanThe { get; set; }
+        public bool? ChuyenPhatNhanh { get; set; }
     }
 }
