@@ -84,13 +84,19 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
             var year = _context.AsAcademyYear.AsNoTracking().AsEnumerable()
                             .OrderByDescending(yr => yr.Id)
                             .FirstOrDefault(yr => (yr.Enabled ?? false) || (yr.IsCurrent ?? false));
-            var result =  (await _context.Set<Entity>().AsNoTracking().ToListAsync())
+            //var test = (await _context.Set<Entity>().AsNoTracking().ToListAsync())
+            //            .Where(e => ids.Contains((long)getValue(e, "Id")))
+            //            .Join(_context.AsAcademyStudent.AsNoTracking(),
+            //                    e => getValueString(e, "StudentCode"),
+            //                    student => student.Code.ToLower(),
+            //                    (entity, student) => new { entity, student })
+            //            .ToList();
+            var result = (await _context.Set<Entity>().AsNoTracking().ToListAsync())
                         .Where(e => ids.Contains((long)getValue(e, "Id")))
                         .Join(_context.AsAcademyStudent.AsNoTracking(),
                                 e => getValueString(e, "StudentCode"),
-                                student => student.Code,
-                                (entity, student) => new { entity, student })
-                        .Join(_context.AsAcademyClass.AsNoTracking(),
+                                student => student.Code.ToLower(),
+                                (entity, student) => new { entity, student }).Join(_context.AsAcademyClass.AsNoTracking(),
                                 tmp => tmp.student.ClassCode,
                                 aClass => aClass.Code,
                                 (tmp, aClass) => new { tmp.student, tmp.entity, aClass })
