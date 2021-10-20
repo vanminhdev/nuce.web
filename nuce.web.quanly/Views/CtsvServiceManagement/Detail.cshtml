@@ -106,6 +106,19 @@
                     </button>
                 </div>
             }
+            else if ((int)ViewData["id"] == 12)
+            {
+                <div class="col-sm-4" style="text-align: right">
+                    <button type="button" class="btn btn-primary"
+                            onclick="danhSachDotDangKy()">
+                        Đợt đề nghị hỗ trợ học tập
+                    </button>
+                    <button type="button" class="btn btn-success"
+                            onclick="onExportExcelDotDangKy()">
+                        Excel
+                    </button>
+                </div>
+            }
             else
             {
                 <div class="col-sm-4" style="text-align: right">
@@ -402,6 +415,10 @@
                 name: 'đề nghị hỗ trợ chi phí học tập',
                 key: 'DE_NGHI_HO_TRO_CHI_PHI',
             },
+            12: {
+                name: 'đề nghị hỗ trợ học tập',
+                key: 'DE_NGHI_HO_TRO_HOC_TAP',
+            },
         };
         var templateStatus = {
             2: 'text-warning',
@@ -683,7 +700,7 @@
             const mainContentSection = getMainContentSection(dichVu);
 
             let noteSection = '';
-            if (serviceType == 9 || serviceType == 10 || serviceType == 11) { //dịch vụ là đăng ký chỗ ở, xin miễn học phí, đề nghị hỗ trợ chi phí thì k cần show
+            if ([9, 10, 11, 12].includes(serviceType)) { //dịch vụ là đăng ký chỗ ở, xin miễn học phí, đề nghị hỗ trợ chi phí thì k cần show
                 noteSection = '';
             } else if ([4, 6].includes(statusCode)) {
                 noteSection += `<div class="fw-700 mb-3 mt-3" style="color:blue;">
@@ -977,6 +994,8 @@
             }
             else if (serviceType == 11) {
                 window.location = `/CtsvServiceManagement/DotDeNghiHoTroChiPhi`;
+            } else if (serviceType == 12) {
+                window.location = `/CtsvServiceManagement/DotHoTroHocTap`;
             }
         }
 

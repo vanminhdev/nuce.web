@@ -199,4 +199,14 @@ namespace nuce.web.api.ViewModel.Ctsv
         [Required(ErrorMessage = "Đến ngày không được để trống")]
         public DateTime? DenNgay { get; set; }
     }
+
+    public class AddDotHoTroHocTap
+    {
+        [Required(ErrorMessage = "Tên không được để trống")]
+        public string Name { get; set; }
+        [Required(ErrorMessage = "Từ ngày không được để trống")]
+        public DateTime? TuNgay { get; set; }
+        [Required(ErrorMessage = "Đến ngày không được để trống")]
+        public DateTime? DenNgay { get; set; }
+    }
 }

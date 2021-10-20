@@ -427,5 +427,62 @@ namespace nuce.web.quanly.Controllers
             return await HandleApiResponseUpdate(response);
         }
         #endregion
+
+        #region đợt hỗ trợ học tập
+        [HttpGet]
+        public ActionResult DotHoTroHocTap()
+        {
+            return View("DotHoTroHocTap");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetAllDotHoTroHocTap(DataTableRequest request)
+        {
+            string api = "api/DichVu/admin/ho-tro-hoc-tap/get-all";
+            var stringContent = base.MakeContent(request);
+            var response = await base.MakeRequestAuthorizedAsync("post", api, stringContent);
+            return await base.HandleResponseAsync(response,
+                action200Async: async res =>
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var data = JsonConvert.DeserializeObject<DataTableResponse<DotDangKyChoOModel>>(jsonString);
+                    return Json(new
+                    {
+                        draw = data.Draw,
+                        recordsTotal = data.RecordsTotal,
+                        recordsFiltered = data.RecordsFiltered,
+                        data = data.Data
+                    });
+                }
+            );
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AddDotHoTroHocTap(AddDotDangKyChoOModel model)
+        {
+            string api = "api/dichVu/admin/ho-tro-hoc-tap/add";
+            var stringContent = base.MakeContent(model);
+            var response = await base.MakeRequestAuthorizedAsync("post", api, stringContent);
+
+            return await HandleApiResponseUpdate(response);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UpdateDotHoTroHocTap(int id, AddDotDangKyChoOModel model)
+        {
+            string api = $"api/dichVu/admin/ho-tro-hoc-tap/update?id={id}";
+            var stringContent = base.MakeContent(model);
+            var response = await base.MakeRequestAuthorizedAsync("put", api, stringContent);
+            return await HandleApiResponseUpdate(response);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> DeleteDotHoTroHocTap(int id)
+        {
+            string api = $"api/dichVu/admin/ho-tro-hoc-tap/delete?id={id}";
+            var response = await base.MakeRequestAuthorizedAsync("delete", api);
+            return await HandleApiResponseUpdate(response);
+        }
+        #endregion
     }
 }

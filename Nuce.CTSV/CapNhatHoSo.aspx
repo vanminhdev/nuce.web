@@ -138,6 +138,73 @@
         <div class="row mt-3">
             <div class="col-12 col-md-6">
                 <div class="form-group">
+                    <div class="fw-700 font-14-sm">
+                        Dân tộc
+                    </div>
+                    <select class="form-control" enableviewstate="true" runat="server" id="slDanToc">
+                        <option value="">---Chọn---</option>
+		                <option selected="selected" value="01">Kinh</option>
+		                <option value="02">Tày</option>
+		                <option value="03">Thái</option>
+		                <option value="04">Hoa</option>
+		                <option value="05">Khơ-me</option>
+		                <option value="06">Mường</option>
+		                <option value="07">Nùng</option>
+		                <option value="08">Hmông</option>
+		                <option value="09">Dao</option>
+		                <option value="10">Gia-rai</option>
+		                <option value="11">Ngái</option>
+		                <option value="12">Ê-đê</option>
+		                <option value="13">Ba-na</option>
+		                <option value="14">Xơ-đăng</option>
+		                <option value="15">Sán Chay</option>
+		                <option value="16">Cơ-ho</option>
+		                <option value="17">Chăm</option>
+		                <option value="18">Sán Dìu</option>
+		                <option value="19">Hrê</option>
+		                <option value="20">Mnông</option>
+		                <option value="21">Ra-glai</option>
+		                <option value="22">Xtiêng</option>
+		                <option value="23">Bru-Vân Kiều</option>
+		                <option value="24">Thổ</option>
+		                <option value="25">Giáy</option>
+		                <option value="26">Cơ-tu</option>
+		                <option value="27">Gié-Triêng</option>
+		                <option value="28">Mạ</option>
+		                <option value="29">Khơ-mú</option>
+		                <option value="30">Co</option>
+		                <option value="31">Ta-ôi</option>
+		                <option value="32">Chơ-ro</option>
+		                <option value="33">Kháng</option>
+		                <option value="34">Xinh-mun</option>
+		                <option value="35">Hà Nhì</option>
+		                <option value="36">Chu-ru</option>
+		                <option value="37">Lào</option>
+		                <option value="38">La Chi</option>
+		                <option value="39">La Ha</option>
+		                <option value="40">Phù Lá</option>
+		                <option value="41">La Hủ</option>
+		                <option value="42">Lự</option>
+		                <option value="43">Lô Lô</option>
+		                <option value="44">Chứt</option>
+		                <option value="45">Mảng</option>
+		                <option value="46">Pà Thẻn</option>
+		                <option value="47">Cơ Lao</option>
+		                <option value="48">Cống</option>
+		                <option value="49">Bố Y</option>
+		                <option value="50">Si La</option>
+		                <option value="51">Pu Péo</option>
+		                <option value="52">Brâu</option>
+		                <option value="53">Ơ Đu</option>
+		                <option value="54">Rơ-măm</option>
+		                <option value="55">Người nước ngoài</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12 col-md-6">
+                <div class="form-group">
                     <label class="cursor-pointer">
                         <asp:CheckBox ID="chkLaNoiTru" runat="server" class="mt-3" />
                         <span class="fw-700 font-14-sm">Có nơi ở cụ thể</span>

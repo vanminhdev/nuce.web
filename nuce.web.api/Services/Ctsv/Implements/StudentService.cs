@@ -160,6 +160,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 currentStudent.Email = student.Email;
                 currentStudent.EmailNhaTruong = student.EmailNhaTruong;
                 currentStudent.BaoTinDiaChiNhanChuyenPhatNhanh = student.BaoTinDiaChiNhanChuyenPhatNhanh;
+                currentStudent.DanToc = student.DanToc;
                 _logger.LogInformation("save change");
                 _studentRepository.Update(currentStudent);
                 await _unitOfWork.SaveAsync();
@@ -203,6 +204,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 student.BaoTinDiaChiNguoiNhan = basicStudent.DiaChiNguoiNhanBaotin.Trim();
                 student.LaNoiTru = basicStudent.CoNoiOCuThe;
                 student.DiaChiCuThe = basicStudent.DiaChiCuThe.Trim();
+                student.DanToc = basicStudent.DanToc.Trim();
 
                 student.HkttPhuong = basicStudent.PhuongXa.Trim();
                 student.HkttQuan = basicStudent.QuanHuyen.Trim();

@@ -161,6 +161,22 @@ namespace nuce.web.quanly.Models
         public DateTime DenNgay { get; set; }
     }
 
+    public class AddDotHoTroHocTapModel
+    {
+        public string Name { get; set; }
+        public DateTime? TuNgay { get; set; }
+        public DateTime? DenNgay { get; set; }
+    }
+
+    public class DotHoTroHocTapModel
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime TuNgay { get; set; }
+        public DateTime DenNgay { get; set; }
+    }
+
     public class AddDotXinMienGiamHocPhiModel
     {
         public string Name { get; set; }

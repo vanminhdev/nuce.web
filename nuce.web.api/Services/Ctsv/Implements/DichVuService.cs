@@ -58,6 +58,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
         private readonly IDotXinMienGiamHocPhiRepository _dotXinMienGiamHocPhiRepository;
         private readonly IDeNghiHoTroChiPhiRepository _deNghiHoTroChiPhiRepository;
         private readonly IDotDeNghiHoTroChiPhiRepository _dotDeNghiHoTroChiPhiRepository;
+        private readonly IHoTroHocTapRepository _hoTroHocTapRepository;
+        private readonly IDotHoTroHocTapRepository _dotHoTroHocTapRepository;
         private readonly ICapLaiTheRepository _capLaiTheRepository;
         private readonly IMuonHocBaRepository _muonHocBaRepository;
 
@@ -81,6 +83,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             IDangKyChoORepository _dangKyChoORepository, IDotDangKyChoORepository _dotDangKyChoORepository,
             IXinMienGiamHocPhiRepository _xinMienGiamHocPhiRepository, IDotXinMienGiamHocPhiRepository _dotXinMienGiamHocPhiRepository,
             IDeNghiHoTroChiPhiRepository _deNghiHoTroChiPhiRepository, IDotDeNghiHoTroChiPhiRepository _dotDeNghiHoTroChiPhiRepository,
+            IHoTroHocTapRepository _hoTroHocTapRepository, IDotHoTroHocTapRepository _dotHoTroHocTapRepository,
             IConfiguration _configuration
         )
         {
@@ -97,6 +100,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
             this._dotXinMienGiamHocPhiRepository = _dotXinMienGiamHocPhiRepository;
             this._deNghiHoTroChiPhiRepository = _deNghiHoTroChiPhiRepository;
             this._dotDeNghiHoTroChiPhiRepository = _dotDeNghiHoTroChiPhiRepository;
+            this._hoTroHocTapRepository = _hoTroHocTapRepository;
+            this._dotHoTroHocTapRepository = _dotHoTroHocTapRepository;
 
             this._loaiDichVuRepository = _loaiDichVuRepository;
             this._studentRepository = _studentRepository;
@@ -465,6 +470,27 @@ namespace nuce.web.api.Services.Ctsv.Implements
                             };
                             await _deNghiHoTroChiPhiRepository.AddDangKy(deNghi);
                             break;
+                        case DichVu.HoTroHocTap:
+                            var dot = await _dotHoTroHocTapRepository.GetDotActive();
+                            AsAcademyStudentSvDangKyHoTroHocTap dky = new AsAcademyStudentSvDangKyHoTroHocTap
+                            {
+                                PhanHoi = model.PhanHoi,
+                                CreatedTime = now,
+                                DeletedTime = now,
+                                LastModifiedTime = now,
+                                MaXacNhan = model.MaXacNhan,
+                                StudentId = studentID,
+                                StudentCode = currentStudent.Code,
+                                StudentName = currentStudent.FulName,
+                                Status = (int)TrangThaiYeuCau.DaGuiLenNhaTruong,
+                                Deleted = false,
+                                CreatedBy = studentID,
+                                LastModifiedBy = studentID,
+                                DeletedBy = -1,
+                                DotDangKy = dot.Id,
+                            };
+                            await _hoTroHocTapRepository.AddDangKyNhaO(dky);
+                            break;
                         default:
                             run = false;
                             break;
@@ -549,6 +575,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     return _xinMienGiamHocPhiRepository.GetAllDangKyChoO(studentId);
                 case DichVu.DeNghiHoTroChiPhiHocTap:
                     return _deNghiHoTroChiPhiRepository.GetAllDangKyChoO(studentId);
+                case DichVu.HoTroHocTap:
+                    return _hoTroHocTapRepository.GetAllDangKyChoO(studentId);
                 default:
                     break;
             }
@@ -741,6 +769,21 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         result.Add(item);
                     }
                     break;
+                case DichVu.HoTroHocTap:
+                    var dkyGetAll = await _hoTroHocTapRepository.GetAllForAdminDangKyChoO(model);
+                    var dkyList = dkyGetAll.FinalData;
+
+                    foreach (var yeuCau in dkyList)
+                    {
+                        var student = studentList.FirstOrDefault(s => s.Code == yeuCau.StudentCode);
+                        var item = new QuanLyDichVuDetailResponse()
+                        {
+                            Student = student,
+                            DichVu = yeuCau
+                        };
+                        result.Add(item);
+                    }
+                    break;
                 default:
                     break;
             }
@@ -777,7 +820,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 { (int)DichVu.VeBus, _veXeBusRepository.GetRequestInfo() },
                 { (int)DichVu.DangKyChoO, _dangKyChoORepository.GetRequestInfo() },
                 { (int)DichVu.XinMienGiamHocPhi, _xinMienGiamHocPhiRepository.GetRequestInfo() },
-                { (int)DichVu.DeNghiHoTroChiPhiHocTap, _deNghiHoTroChiPhiRepository.GetRequestInfo() }
+                { (int)DichVu.DeNghiHoTroChiPhiHocTap, _deNghiHoTroChiPhiRepository.GetRequestInfo() },
+                { (int)DichVu.HoTroHocTap, _hoTroHocTapRepository.GetRequestInfo() }
             };
 
             var SumDichVu = new AllTypeDichVuModel
@@ -1129,6 +1173,16 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
                     student = _studentRepository.FindByCode(deNghi.StudentCode);
                     break;
+                case DichVu.HoTroHocTap:
+                    var dky = await _hoTroHocTapRepository.FindByIdAsync(model.RequestID);
+                    dky.Status = model.Status;
+                    dky.PhanHoi = model.PhanHoi;
+                    dky.NgayHenTuNgay = model.NgayHenBatDau;
+                    dky.NgayHenDenNgay = model.NgayHenKetThuc;
+                    ngayTao = dky.CreatedTime;
+
+                    student = _studentRepository.FindByCode(dky.StudentCode);
+                    break;
                 default:
                     break;
             }
@@ -1306,6 +1360,33 @@ namespace nuce.web.api.Services.Ctsv.Implements
         }
         #endregion
 
+        #region Đợt hỗ trợ học tập (riêng)
+        public async Task<AsAcademyStudentSvDangKyHoTroHocTapDot> GetDotHoTroHocTapActive()
+        {
+            return await _dotHoTroHocTapRepository.GetDotActive();
+        }
+
+        public async Task<PaginationModel<AsAcademyStudentSvDangKyHoTroHocTapDot>> GetAllDotHoTroHocTap(int skip = 0, int take = 20)
+        {
+            return await _dotHoTroHocTapRepository.GetAll(skip, take);
+        }
+
+        public async Task AddDotHoTroHocTap(AddDotHoTroHocTap model)
+        {
+            await _dotHoTroHocTapRepository.Add(model);
+        }
+
+        public async Task UpdateDotHoTroHocTap(int id, AddDotHoTroHocTap model)
+        {
+            await _dotHoTroHocTapRepository.Update(id, model);
+        }
+
+        public async Task DeleteDotHoTroHocTap(int id)
+        {
+            await _dotHoTroHocTapRepository.Delete(id);
+        }
+        #endregion
+
         #region Export Excel
         public async Task<byte[]> ExportExcelOverviewAsync()
         {
@@ -1394,6 +1475,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     return await ExportExcelXinMienGiamHocPhi(dotDangKy);
                 case DichVu.DeNghiHoTroChiPhiHocTap:
                     return await ExportExcelDeNghiHoTroChiPhi(dotDangKy);
+                case DichVu.HoTroHocTap:
+                    return await ExportExcelHoTroHocTap(dotDangKy);
                 default:
                     break;
             }
@@ -2267,6 +2350,81 @@ namespace nuce.web.api.Services.Ctsv.Implements
             }
         }
 
+        /// <summary>
+        /// Mặc định lấy đợt đăng ký mới nhất
+        /// </summary>
+        /// <returns></returns>
+        private async Task<byte[]> ExportExcelHoTroHocTap(long dotDangKy)
+        {
+            var yeuCauList = (await _hoTroHocTapRepository.GetAllYeuCauDichVuTheoDot(dotDangKy)).ToList();
+
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                var style = XLWorkbook.DefaultStyle;
+                var ws = wb.Worksheets.Add("Sheet1");
+                ws.Style.Font.SetFontSize(12);
+                ws.Style.Font.SetFontName("Times New Roman");
+
+                int i = 0;
+                int firstRow = 1;
+                #region title
+                initHeaderCell(ws, firstRow, ++i, "STT");
+                initHeaderCell(ws, firstRow, ++i, "Dấu thời gian");
+                initHeaderCell(ws, firstRow, ++i, "Họ và tên");
+                initHeaderCell(ws, firstRow, ++i, "Mã số SV");
+                initHeaderCell(ws, firstRow, ++i, "Lớp");
+                initHeaderCell(ws, firstRow, ++i, "Khoa quản lý");
+                initHeaderCell(ws, firstRow, ++i, "Số điện thoại");
+                initHeaderCell(ws, firstRow, ++i, "Email");
+                initHeaderCell(ws, firstRow, ++i, "Địa chỉ người nhận");
+
+                ws.Row(firstRow).Height = 32;
+
+                int colNum = i;
+                #endregion
+                #region value
+                int recordLen = yeuCauList.Count;
+                int col = 0;
+                for (int j = 0; j < recordLen; j++)
+                {
+                    var yeuCau = yeuCauList[j];
+                    DateTime ngaySinh = convertStudentDateOfBirth(yeuCau.Student.DateOfBirth);
+                    string studentCode = yeuCau.YeuCauDichVu.StudentCode ?? "";
+                    string studentName = yeuCau.YeuCauDichVu.StudentName ?? "";
+                    string email = yeuCau.Student.EmailNhaTruong ?? "";
+                    string phuong = yeuCau.Student.HkttPhuong ?? "";
+                    string quan = yeuCau.Student.HkttQuan ?? "";
+                    string tinh = yeuCau.Student.HkttTinh ?? "";
+                    string classCode = yeuCau.Student.ClassCode ?? "";
+                    string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
+                    string tenKhoa = yeuCau.Faculty?.Name ?? "";
+                    string mobile = yeuCau.Student.Mobile ?? "";
+                    string dauThoiGian = yeuCau.YeuCauDichVu.CreatedTime?.ToString("dd/MM/yyyy HH:MM:ss") ?? "";
+                    string sdt = yeuCau.Student.Mobile;
+                    string diaChiBaoTin = yeuCau.Student.BaoTinDiaChiNguoiNhan ?? "";
+                    int row = j + 2;
+
+                    col = 0;
+                    ws.Cell(row, ++col).SetValue(j + 1);
+                    ws.Cell(row, ++col).SetValue(dauThoiGian);
+                    ws.Cell(row, ++col).SetValue(studentName);
+                    ws.Cell(row, ++col).SetValue(studentCode);
+                    ws.Cell(row, ++col).SetValue(classCode);
+                    ws.Cell(row, ++col).SetValue(tenKhoa);
+                    ws.Cell(row, ++col).SetValue(sdt);
+                    ws.Cell(row, ++col).SetValue(email);
+                    ws.Cell(row, ++col).SetValue(diaChiBaoTin);
+                }
+                for (int j = 0; j < col; j++)
+                {
+                    ws.Column(j + 1).AdjustToContents();
+                }
+                #endregion
+                string file = _pathProvider.MapPath($"Templates/Ctsv/vayvon_{Guid.NewGuid().ToString()}.xlsx");
+                wb.SaveAs(file);
+                return await FileToByteAsync(file);
+            }
+        }
 
         private async Task<byte[]> ExportExcelGioiThieu(List<DichVuExport> dichVuList)
         {
@@ -2633,6 +2791,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     return await ExportWordXinMienGiamHP(id);
                 case DichVu.DeNghiHoTroChiPhiHocTap:
                     return await ExportWordDeNghiHoTroChiPhiHocTap(id);
+                case DichVu.HoTroHocTap:
+                    return await ExportWordHoTroHocTap(id);
                 default:
                     break;
             }
@@ -4271,13 +4431,24 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     var textList = mainPart.Document.Descendants<Text>().ToList();
                     foreach (var text in textList)
                     {
+                        string hktt = "";
+                        hktt += string.IsNullOrEmpty(studentInfo.Student?.HkttSoNha) ? "" : $"{studentInfo.Student?.HkttSoNha}";
+                        hktt += string.IsNullOrEmpty(studentInfo.Student?.HkttPho) ? "" : $"{(hktt != "" ? "," : "")} {studentInfo.Student?.HkttPho}";
+                        hktt += string.IsNullOrEmpty(studentInfo.Student?.HkttPhuong) ? "" : $"{(hktt != "" ? "," : "")} {studentInfo.Student?.HkttPhuong}";
+                        hktt += string.IsNullOrEmpty(studentInfo.Student?.HkttQuan) ? "" : $"{(hktt != "" ? "," : "")} {studentInfo.Student?.HkttQuan}";
+                        hktt += string.IsNullOrEmpty(studentInfo.Student?.HkttTinh) ? "" : $"{(hktt != "" ? "," : "")} {studentInfo.Student?.HkttTinh}";
+
                         replaceTextTemplate(text, "<ten_sv>", studentInfo.Student.FulName.ToUpper());
                         replaceTextTemplate(text, "<ten_nguoi_ky>", studentInfo.Student.FulName);
                         replaceTextTemplate(text, "<ma_sv>", studentInfo.Student.Code);
                         replaceTextTemplate(text, "<lop>", studentInfo.Student.ClassCode);
-                        replaceTextTemplate(text, "<khoa>", studentInfo.Faculty?.Name);
+                        replaceTextTemplate(text, "<khoa_ban>", studentInfo.Faculty?.Name);
+                        replaceTextTemplate(text, "<khoa>", studentInfo.AcademyClass.SchoolYear);
                         replaceTextTemplate(text, "<ngay_sinh>", ngaySinh.ToString("dd/MM/yyyy"));
                         replaceTextTemplate(text, "<so_dt>", mienGiamHP.Sdt);
+                        replaceTextTemplate(text, "<hktt>", hktt);
+                        replaceTextTemplate(text, "<dan_toc>", studentInfo.Student.DanToc);
+                        replaceTextTemplate(text, "<email>", studentInfo.Student.EmailNhaTruong);
 
                         string option1 = "";
                         string option2 = "";
@@ -4365,13 +4536,24 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     var textList = mainPart.Document.Descendants<Text>().ToList();
                     foreach (var text in textList)
                     {
+                        string hktt = "";
+                        hktt += string.IsNullOrEmpty(studentInfo.Student?.HkttSoNha) ? "" : $"{studentInfo.Student?.HkttSoNha}";
+                        hktt += string.IsNullOrEmpty(studentInfo.Student?.HkttPho) ? "" : $"{(hktt != "" ? "," : "")} {studentInfo.Student?.HkttPho}";
+                        hktt += string.IsNullOrEmpty(studentInfo.Student?.HkttPhuong) ? "" : $"{(hktt != "" ? "," : "")} {studentInfo.Student?.HkttPhuong}";
+                        hktt += string.IsNullOrEmpty(studentInfo.Student?.HkttQuan) ? "" : $"{(hktt != "" ? "," : "")} {studentInfo.Student?.HkttQuan}";
+                        hktt += string.IsNullOrEmpty(studentInfo.Student?.HkttTinh) ? "" : $"{(hktt != "" ? "," : "")} {studentInfo.Student?.HkttTinh}";
+
                         replaceTextTemplate(text, "<ten_sv>", studentInfo.Student.FulName.ToUpper());
                         replaceTextTemplate(text, "<ten_nguoi_ky>", studentInfo.Student.FulName);
                         replaceTextTemplate(text, "<ma_sv>", studentInfo.Student.Code);
                         replaceTextTemplate(text, "<lop>", studentInfo.Student.ClassCode);
-                        replaceTextTemplate(text, "<khoa>", studentInfo.Faculty?.Name);
+                        replaceTextTemplate(text, "<khoa_ban>", studentInfo.Faculty?.Name);
+                        replaceTextTemplate(text, "<khoa>", studentInfo.AcademyClass.SchoolYear);
+                        replaceTextTemplate(text, "<hktt>", hktt);
+                        replaceTextTemplate(text, "<dan_toc>", studentInfo.Student.DanToc);
                         replaceTextTemplate(text, "<ngay_sinh>", ngaySinh.ToString("dd/MM/yyyy"));
                         replaceTextTemplate(text, "<so_dt>", deNghi.Sdt);
+                        replaceTextTemplate(text, "<email>", studentInfo.Student.EmailNhaTruong);
 
                         string option1 = "";
                         string option2 = "";
@@ -4388,6 +4570,70 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
                         replaceTextTemplate(text, "<option1>", option1);
                         replaceTextTemplate(text, "<option2>", option2);
+                    }
+                    #endregion
+                    mainPart.Document.Save();
+                }
+                await File.WriteAllBytesAsync(destination, templateStream.ToArray());
+            }
+            return new ExportFileOutputModel { document = null, filePath = destination };
+        }
+
+        private async Task<ExportFileOutputModel> ExportWordHoTroHocTap(int id)
+        {
+            var deNghi = await _hoTroHocTapRepository.FindByIdAsync(id);
+            if (deNghi == null)
+            {
+                throw new Exception("Yêu cầu không tồn tại");
+            }
+            var studentInfo = await _studentRepository.GetStudentDichVuInfoAsync(deNghi.StudentCode);
+            if (studentInfo == null)
+            {
+                throw new Exception("Sinh viên không tồn tại");
+            }
+
+            var paramSet = _thamSoDichVuService.GetParameters(DichVu.VeBus)
+                                .ToDictionary(x => x.Name, x => x.Value);
+
+            string ChucDanhNguoiKy = paramSet.ContainsKey("ChucDanhNguoiKy") ? paramSet["ChucDanhNguoiKy"] : "";
+            string TenNguoiKy = paramSet.ContainsKey("TenNguoiKy") ? paramSet["TenNguoiKy"] : "";
+
+            string filePath = _pathProvider.MapPath($"Templates/Ctsv/don_de_nghi_ho_tro_hoc_tap.docx");
+            string destination = _pathProvider.MapPath($"Templates/Ctsv/de-nghi-ho-tro-hoc-tap-{DateTime.Now.ToFileTime()}.docx");
+
+            var ngaySinh = convertStudentDateOfBirth(studentInfo.Student.DateOfBirth);
+
+            byte[] templateBytes = await File.ReadAllBytesAsync(filePath);
+            using (MemoryStream templateStream = new MemoryStream())
+            {
+                templateStream.Write(templateBytes, 0, templateBytes.Length);
+                using (WordprocessingDocument doc = WordprocessingDocument.Open(templateStream, true))
+                {
+                    doc.ChangeDocumentType(WordprocessingDocumentType.Document);
+                    var mainPart = doc.MainDocumentPart;
+                    #region handle text
+                    var textList = mainPart.Document.Descendants<Text>().ToList();
+                    foreach (var text in textList)
+                    {
+                        string hktt = "";
+                        hktt += string.IsNullOrEmpty(studentInfo.Student?.HkttSoNha) ? "" : $"{studentInfo.Student?.HkttSoNha}";
+                        hktt += string.IsNullOrEmpty(studentInfo.Student?.HkttPho) ? "" : $"{(hktt != "" ? "," : "")} {studentInfo.Student?.HkttPho}";
+                        hktt += string.IsNullOrEmpty(studentInfo.Student?.HkttPhuong) ? "" : $"{(hktt != "" ? "," : "")} {studentInfo.Student?.HkttPhuong}";
+                        hktt += string.IsNullOrEmpty(studentInfo.Student?.HkttQuan) ? "" : $"{(hktt != "" ? "," : "")} {studentInfo.Student?.HkttQuan}";
+                        hktt += string.IsNullOrEmpty(studentInfo.Student?.HkttTinh) ? "" : $"{(hktt != "" ? "," : "")} {studentInfo.Student?.HkttTinh}";
+
+
+                        replaceTextTemplate(text, "<ten_sv>", studentInfo.Student.FulName.ToUpper());
+                        replaceTextTemplate(text, "<ten_nguoi_ky>", studentInfo.Student.FulName);
+                        replaceTextTemplate(text, "<ma_sv>", studentInfo.Student.Code);
+                        replaceTextTemplate(text, "<lop>", studentInfo.Student.ClassCode);
+                        replaceTextTemplate(text, "<khoa_ban>", studentInfo.Faculty?.Name);
+                        replaceTextTemplate(text, "<khoa>", studentInfo.AcademyClass.SchoolYear);
+                        replaceTextTemplate(text, "<hktt>", hktt);
+                        replaceTextTemplate(text, "<dan_toc>", studentInfo.Student.DanToc);
+                        replaceTextTemplate(text, "<ngay_sinh>", ngaySinh.ToString("dd/MM/yyyy"));
+                        replaceTextTemplate(text, "<so_dt>", studentInfo.Student.Mobile);
+                        replaceTextTemplate(text, "<email>", studentInfo.Student.EmailNhaTruong);
                     }
                     #endregion
                     mainPart.Document.Save();

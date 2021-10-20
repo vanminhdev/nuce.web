@@ -105,6 +105,15 @@ namespace Nuce.CTSV
         protected global::System.Web.UI.WebControls.TextBox txtBaoTin_DiaChiChuyenPhatNhanh;
 
         /// <summary>
+        /// slDanToc control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlSelect slDanToc;
+
+        /// <summary>
         /// chkLaNoiTru control.
         /// </summary>
         /// <remarks>

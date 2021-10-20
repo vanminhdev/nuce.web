@@ -24,8 +24,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <Use64BitIISExpress>
-    </Use64BitIISExpress>
+    <Use64BitIISExpress>false</Use64BitIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -145,6 +144,8 @@
   <ItemGroup>
     <Content Include="CapNhatHoSoDayDu.aspx" />
     <Content Include="Default1.aspx" />
+    <Content Include="DichVu\HoTroHocTap.aspx" />
+    <Content Include="DichVu\HoTroHocTap_YeuCauMoi.aspx" />
     <Content Include="DichVu\DeNghiHoTroChiPhiHocTap.aspx" />
     <Content Include="DichVu\MienGiamHocPhi.aspx" />
     <Content Include="DichVu\DeNghiHoTroChiPhiHocTap_YeuCauMoi.aspx" />
@@ -2399,6 +2400,20 @@
     </Compile>
     <Compile Include="Default1.aspx.designer.cs">
       <DependentUpon>Default1.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="DichVu\HoTroHocTap.aspx.cs">
+      <DependentUpon>HoTroHocTap.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DichVu\HoTroHocTap.aspx.designer.cs">
+      <DependentUpon>HoTroHocTap.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="DichVu\HoTroHocTap_YeuCauMoi.aspx.cs">
+      <DependentUpon>HoTroHocTap_YeuCauMoi.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DichVu\HoTroHocTap_YeuCauMoi.aspx.designer.cs">
+      <DependentUpon>HoTroHocTap_YeuCauMoi.aspx</DependentUpon>
     </Compile>
     <Compile Include="DichVu\DeNghiHoTroChiPhiHocTap.aspx.cs">
       <DependentUpon>DeNghiHoTroChiPhiHocTap.aspx</DependentUpon>

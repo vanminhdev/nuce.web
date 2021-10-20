@@ -136,6 +136,14 @@
                 image = "de-nghi-ho-tro-chi-phi-hoc-tap.jpg"
             })
         </div>
+        <div class="col-12 col-md-6 col-xl-4 p-1 service-avatar-wrp cursor-pointer">
+            @Html.Partial("~/Views/CtsvServiceManagement/Partials/_PartialServiceOverview.cshtml", new PartialServiceManagementModel
+            {
+                detail = (ServiceManagementModel)Model[12],
+                id = 12,
+                image = "de-nghi-ho-tro-chi-phi-hoc-tap.jpg"
+            })
+        </div>
     </div>
 </div>
 

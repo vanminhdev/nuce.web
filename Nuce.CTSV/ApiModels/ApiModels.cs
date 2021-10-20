@@ -247,6 +247,29 @@ namespace Nuce.CTSV.ApiModels
         public string DoiTuongUuTienNhaO { get; set; }
     }
 
+    public class HoTroHocTapModel
+    {
+        public long Id { get; set; }
+        public int StudentId { get; set; }
+        public string StudentCode { get; set; }
+        public string StudentName { get; set; }
+        public int? Status { get; set; }
+        public string LyDo { get; set; }
+        public string PhanHoi { get; set; }
+        public bool? Deleted { get; set; }
+        public int? CreatedBy { get; set; }
+        public int? LastModifiedBy { get; set; }
+        public int? DeletedBy { get; set; }
+        public DateTime? CreatedTime { get; set; }
+        public DateTime? DeletedTime { get; set; }
+        public DateTime? LastModifiedTime { get; set; }
+        public DateTime? NgayGui { get; set; }
+        public DateTime? NgayHenTuNgay { get; set; }
+        public DateTime? NgayHenDenNgay { get; set; }
+        public string MaXacNhan { get; set; }
+        public long DotDangKy { get; set; }
+    }
+
     public class XinMienGiamHocPhiModel
     {
         public long Id { get; set; }
@@ -391,6 +414,7 @@ namespace Nuce.CTSV.ApiModels
     }
     public class CapNhatHoSoModel
     {
+        public string DanToc { get; set; }
         public string Email { get; set; }
         public string Mobile { get; set; }
         public string DiaChiBaotin { get; set; }
@@ -482,7 +506,8 @@ namespace Nuce.CTSV.ApiModels
         VeXeBus = 8,
         DangKyChoO = 9,
         MienGiamHocPhi = 10,
-        DeNghiHoTroChiPhiHocTap = 11
+        DeNghiHoTroChiPhiHocTap = 11,
+        HoTroHocTap = 12,
     }
 
     public enum DichVuXeBusLoaiTuyen

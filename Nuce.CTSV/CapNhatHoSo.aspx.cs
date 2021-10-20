@@ -46,6 +46,7 @@ namespace Nuce.CTSV
                     bool LaNoiTru = student.LaNoiTru ?? false;
                     string DiaChiCuThe = (student.DiaChiCuThe ?? "").Trim();
                     string DiaChiChuyenPhatnhanh = (student.BaoTinDiaChiNhanChuyenPhatNhanh ?? "").Trim();
+                    string DanToc = (student.DanToc ?? "").Trim();
 
                     txtEmail.Text = Email;
                     txtMobile.Text = Mobile;
@@ -57,6 +58,8 @@ namespace Nuce.CTSV
                     chkLaNoiTru.Checked = LaNoiTru;
                     txtDiaChiCuThe.Text = DiaChiCuThe;
                     txtBaoTin_DiaChiChuyenPhatNhanh.Text = DiaChiChuyenPhatnhanh;
+                    var dantocIndex = slDanToc.Items.IndexOf(slDanToc.Items.FindByText(DanToc));
+                    slDanToc.SelectedIndex = dantocIndex;
 
                     spScript.InnerHtml = string.Format($"<script>CapNhatHoSo.initSelectForm('{(student.HkttTinh ?? "").Trim()}', '{(student.HkttQuan ?? "").Trim()}', '{(student.HkttPhuong ?? "").Trim()}');</script>");
                 }
@@ -78,8 +81,15 @@ namespace Nuce.CTSV
                 return;
             }
 
+            if (string.IsNullOrEmpty(slDanToc.Items[slDanToc.SelectedIndex].Value?.Trim()))
+            {
+                divThongBao.InnerText = "Chưa lựa chọn Dân tộc";
+                return;
+            }
+
             CapNhatHoSoModel model = new CapNhatHoSoModel
             {
+                DanToc = slDanToc.Items[slDanToc.SelectedIndex].Text.Trim() ?? "",
                 Email = Email,
                 Mobile = Mobile,
                 DiaChiBaotin = txtBaoTin_DiaChi.Text.Trim(),

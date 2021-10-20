@@ -71,5 +71,17 @@ namespace nuce.web.api.Services.Ctsv.Interfaces
         public Task UpdateDotDeNghiHoTroChiPhi(int id, AddDotDeNghiHoTroChiPhi model);
         public Task DeleteDotDeNghiHoTroChiPhi(int id);
         #endregion
+
+        #region đề nghị hỗ trợ học tập
+        /// <summary>
+        /// Lấy đợt đang active nếu không có trả về -1
+        /// </summary>
+        /// <returns></returns>
+        public Task<AsAcademyStudentSvDangKyHoTroHocTapDot> GetDotHoTroHocTapActive();
+        public Task<PaginationModel<AsAcademyStudentSvDangKyHoTroHocTapDot>> GetAllDotHoTroHocTap(int skip = 0, int pageSize = 20);
+        public Task AddDotHoTroHocTap(AddDotHoTroHocTap model);
+        public Task UpdateDotHoTroHocTap(int id, AddDotHoTroHocTap model);
+        public Task DeleteDotHoTroHocTap(int id);
+        #endregion
     }
 }

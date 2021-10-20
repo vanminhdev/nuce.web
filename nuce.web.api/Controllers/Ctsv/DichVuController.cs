@@ -242,6 +242,11 @@ namespace nuce.web.api.Controllers.Ctsv
                 var dotDangKy = await _dichVuService.GetDotDeNghiHoTroChiPhiActive();
                 result = await _dichVuService.ExportExcelAsync(model.DichVuType, model.DichVuList, dotDangKy.Id);
             }
+            else if (model.DichVuType == Common.Ctsv.DichVu.HoTroHocTap)
+            {
+                var dotDangKy = await _dichVuService.GetDotHoTroHocTapActive();
+                result = await _dichVuService.ExportExcelAsync(model.DichVuType, model.DichVuList, dotDangKy.Id);
+            }
             else
             {
                 result = await _dichVuService.ExportExcelAsync(model.DichVuType, model.DichVuList);
@@ -456,6 +461,75 @@ namespace nuce.web.api.Controllers.Ctsv
             try
             {
                 await _dichVuService.DeleteDotDeNghiHoTroChiPhi(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { StatusCode = HttpStatusCode.BadRequest, Message = ex.Message, Data = ex });
+            }
+        }
+        #endregion
+
+        #region đợt hỗ trợ học tập
+        [Authorize(Roles = "P_CTSV")]
+        [HttpPost]
+        [Route("admin/ho-tro-hoc-tap/get-all")]
+        public async Task<IActionResult> GetAllDotHoTroHocTap([FromBody] DataTableRequest request)
+        {
+            var skip = request.Start;
+            var take = request.Length;
+            var result = await _dichVuService.GetAllDotHoTroHocTap(skip, take);
+            return Ok(
+                new DataTableResponse<AsAcademyStudentSvDangKyHoTroHocTapDot>
+                {
+                    Draw = ++request.Draw,
+                    RecordsTotal = result.RecordsTotal,
+                    RecordsFiltered = result.RecordsFiltered,
+                    Data = result.Data
+                }
+            );
+        }
+
+        [Authorize(Roles = "P_CTSV")]
+        [HttpPost]
+        [Route("admin/ho-tro-hoc-tap/add")]
+        public async Task<IActionResult> AddDotHoTroHocTap([FromBody] AddDotHoTroHocTap model)
+        {
+            try
+            {
+                await _dichVuService.AddDotHoTroHocTap(model);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { StatusCode = HttpStatusCode.BadRequest, Message = ex.Message, Data = ex });
+            }
+        }
+
+        [Authorize(Roles = "P_CTSV")]
+        [HttpPut]
+        [Route("admin/ho-tro-hoc-tap/update")]
+        public async Task<IActionResult> UpdateDotHoTroHocTap(int id, [FromBody] AddDotHoTroHocTap model)
+        {
+            try
+            {
+                await _dichVuService.UpdateDotHoTroHocTap(id, model);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseBody { StatusCode = HttpStatusCode.BadRequest, Message = ex.Message, Data = ex });
+            }
+        }
+
+        [Authorize(Roles = "P_CTSV")]
+        [HttpDelete]
+        [Route("admin/ho-tro-hoc-tap/delete")]
+        public async Task<IActionResult> DeleteDotHoTroHocTap(int id)
+        {
+            try
+            {
+                await _dichVuService.DeleteDotHoTroHocTap(id);
                 return Ok();
             }
             catch (Exception ex)
