@@ -44,11 +44,9 @@
                 <asp:RadioButtonList ID="radioDoiTuong"
                     runat="server"
                     RepeatDirection="Vertical">
-                    <asp:ListItem Value="DAN_TOC_HO_NGHEO" Selected="True">&nbsp;Bản thân là người dân tộc thiểu số thuộc hộ nghèo
-                        <br/><span class="font-italic font-13">(Kèm theo bản sao công chứng Giấy khai sinh, Hộ khẩu thường trú, Giấy xác nhận dân tộc( nếu có) và Giấy chứng nhận hộ nghèo do UBND  xã cấp)</span>
+                    <asp:ListItem Value="DAN_TOC_HO_NGHEO" Selected="True">&nbsp;Sinh viên là người dân tộc thiểu số thuộc hộ nghèo
                     </asp:ListItem>
-                    <asp:ListItem Value="DAN_TOC_HO_CAN_NGHEO">&nbsp;Bản thân là người dân tộc thiểu số thuộc hộ cận nghèo
-                        <br/><span class="font-italic font-13">(Kèm theo bản sao công chứng Giấy khai sinh, Hộ khẩu thường trú, Giấy xác nhận dân tộc( nếu có)  và Giấy chứng nhận hộ cận nghèo do UBND  xã cấp)</span>
+                    <asp:ListItem Value="DAN_TOC_HO_CAN_NGHEO">&nbsp;Sinh viên là người dân tộc thiểu số thuộc hộ cận nghèo
                     </asp:ListItem>
                 </asp:RadioButtonList>
             </div>

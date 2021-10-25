@@ -42,7 +42,7 @@ namespace Nuce.CTSV
 
                     if (!string.IsNullOrEmpty(thongBao))
                     {
-                        divThongBao.InnerHtml = $"Yêu cầu cập nhật<a href=\"/capnhathoso.aspx\">{thongBao}</a>";
+                        divThongBao.InnerHtml = $"Yêu cầu cập nhật<a href=\"/capnhathoso.aspx?dantoc=1\">{thongBao}</a>";
                     }
                     else
                     {
