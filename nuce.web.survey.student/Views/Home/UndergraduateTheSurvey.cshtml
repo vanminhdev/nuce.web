@@ -43,9 +43,9 @@
             counter-increment: title-question-counter;
         }
 
-            .question-title:before {
-                content: counter(title-question-counter, upper-roman)". ";
-            }
+        .question-title:before {
+            content: counter(title-question-counter, upper-roman)". ";
+        }
 
         .tag-child-inline > * {
             display: inline;
@@ -120,11 +120,11 @@
                 <div class="col-12 col-md-6">
                     <div class="d-flex">
                         @* answerchildquestioncode để show hide câu hỏi con của đáp án *@
-                        <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
+                        <input id="@answer.Code" class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
                                @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "")
                                @(answer.ShowQuestion != null ? $"showquestion={JsonConvert.SerializeObject(answer.ShowQuestion)}" : "")
                                @(answer.HideQuestion != null ? $"hidequestion={JsonConvert.SerializeObject(answer.HideQuestion)}" : "") />
-                        <label class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+                        <label for="@answer.Code" class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
                     </div>
                 </div>
             }
@@ -133,11 +133,11 @@
                 <div class="col-6 col-md">
                     <div class="d-flex">
                         @* answerchildquestioncode để show hide câu hỏi con của đáp án *@
-                        <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
+                        <input id="@answer.Code" class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
                                @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "")
                                @(answer.ShowQuestion != null ? $"showquestion={JsonConvert.SerializeObject(answer.ShowQuestion)}" : "")
                                @(answer.HideQuestion != null ? $"hidequestion={JsonConvert.SerializeObject(answer.HideQuestion)}" : "") />
-                        <label class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+                        <label for="@answer.Code" class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
                     </div>
                 </div>
             }
@@ -151,9 +151,9 @@
             {
                 <div class="col-12 col-md-6">
                     <div class="d-flex">
-                        <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
+                        <input id="@answer.Code" class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
                                @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "") />
-                        <label class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+                        <label for="@answer.Code" class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
                     </div>
                 </div>
             }
@@ -161,9 +161,9 @@
             {
                 <div class="col-6 col-md">
                     <div class="d-flex">
-                        <input class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
+                        <input id="@answer.Code" class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
                                @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "") />
-                        <label class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
+                        <label for="@answer.Code" class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
                     </div>
                 </div>
             }

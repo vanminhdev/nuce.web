@@ -56,7 +56,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             var filter = new GraduateStudentFilter();
             if (request.Columns != null)
             {
-                filter.Masv = request.Columns.FirstOrDefault(c => c.Data == "masv" || c.Name == "masv")?.Search.Value ?? null;
+                filter.Masv = request.Columns.FirstOrDefault(c => c.Data == "exMasv" || c.Name == "exMasv")?.Search.Value ?? null;
                 filter.LopQL = request.Columns.FirstOrDefault(c => c.Data == "lopqd" || c.Name == "lopqd")?.Search.Value ?? null;
             }
             var skip = request.Start;

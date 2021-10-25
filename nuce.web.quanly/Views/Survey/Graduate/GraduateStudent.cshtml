@@ -35,7 +35,7 @@
                 <div class="col-12 col-md mb-2 d-flex align-items-start justify-content-md-end justify-content-center">
                     <div class="d-flex">
                         <button class="btn btn-success mx-2 btn-sm" id="tranfer-student">Lấy danh sách</button>
-                        @*<button class="btn btn-info mr-2 btn-sm" id="download-student">Tải xuống danh sách</button>*@
+                        <button class="btn btn-info mr-2 btn-sm" id="download-student">Tải xuống danh sách</button>
                         @*<button class="btn btn-primary mr-2 btn-sm" id="upload">Tải lên danh sách</button>*@
                         @*<button class="btn btn-danger btn-sm" id="delete-all">Xoá toàn bộ</button>*@
                     </div>
@@ -316,7 +316,7 @@
         $('#id-datatable_filter').hide();
         $("#btn-search").click(() => {
             table
-                .column(2).search($("#masv-search").val())
+                .column(1).search($("#masv-search").val())
                 .draw();
         });
         document.getElementById("footer").scrollIntoView();
@@ -357,6 +357,41 @@
                 });
             }
         });
+
+
+        $('#download-student').click(() => {
+            $('#modal-download').modal('show');
+        });
+
+        $('#btn-download-student').click(() => {
+            $('#loading-screen').show();
+            $.ajax({
+                data: $('#form-download-student').serializeArray(),
+                dataType: 'json',
+                method: 'Get',
+                url: '/Survey/DownloadListStudent',
+            }).done(function (res) {
+                $('#modal-download').modal('hide');
+                $('#loading-screen').hide();
+                if (res.statusCode === 200) {
+                    window.open(res.content.url, "_blank");
+                }
+                else {
+                    try {
+                        let content = JSON.parse(res.content);
+                        toastError(content.message);
+                    } catch {
+                        toastError('Có lỗi xảy ra');
+                    }
+                    console.log(res);
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                $('#loading-screen').hide();
+                console.log(textStatus + ': ' + errorThrown);
+                console.log(jqXHR);
+            });
+        });
+
 
         let modalUpload = $('#modal-upload');
         $('#upload').click(function () {

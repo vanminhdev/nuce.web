@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Helper;
+using nuce.web.api.Models.EduData;
 using nuce.web.api.Models.Status;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Models.Survey.JsonData;
@@ -25,10 +26,11 @@ namespace nuce.web.api.Services.Survey.Implements
     class AsEduSurveyGraduateStudentService : IAsEduSurveyGraduateStudentService
     {
         private readonly SurveyContext _context;
-
-        public AsEduSurveyGraduateStudentService(SurveyContext context)
+        private readonly EduDataContext _eduContext;
+        public AsEduSurveyGraduateStudentService(SurveyContext context, EduDataContext eduContext)
         {
             _context = context;
+            _eduContext = eduContext;
         }
 
         public async Task<PaginationModel<GraduateStudent>> GetAll(GraduateStudentFilter filter, int skip = 0, int take = 20)
@@ -197,11 +199,10 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException("Không tồn tại đợt khảo sát");
             }
 
-            //lấy ds từ trước tốt nghiệp sang
+            //lấy ds từ trước tốt nghiệp sang không cần biết
             var query = _context.AsEduSurveyUndergraduateStudent
                 .Where(o => o.Ngayraqd != null)
-                .Where(o => filter.FromDate <= o.Ngayraqd && filter.ToDate >= o.Ngayraqd)
-                .Join(_context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien.Where(o => o.Status == (int)SurveyStudentStatus.Done), o => o.ExMasv, o => o.StudentCode, (sv, baikssv) => sv);
+                .Where(o => filter.FromDate <= o.Ngayraqd && filter.ToDate >= o.Ngayraqd);
 
             if (filter.HeTotNghieps != null)
             {
@@ -218,6 +219,21 @@ namespace nuce.web.api.Services.Survey.Implements
                 {
                     graStu = new AsEduSurveyGraduateStudent();
                     PropertyCopier<AsEduSurveyUndergraduateStudent, AsEduSurveyGraduateStudent>.Copy(underStu, graStu, PropertyCopierOption.AllowLowerCase, "DotKhaoSatId", "Type", "Status");
+
+                    if (string.IsNullOrEmpty(graStu.Email))
+                    {
+                        var stu = await _eduContext.AsAcademyStudent.FirstOrDefaultAsync(s => s.Code == graStu.ExMasv);
+                        if (stu != null)
+                        {
+                            graStu.Email = stu.Email;
+
+                            if (!string.IsNullOrEmpty(stu.Mobile) && string.IsNullOrEmpty(graStu.Mobile))
+                            {
+                                graStu.Mobile = stu.Mobile;
+                            }
+                        }
+                    }
+                    
                     graStu.Psw = StringHelper.ConvertToLatin(graStu.Tensinhvien).Replace(" ", "").ToLower();
                     graStu.DotKhaoSatId = surveyRoundId;
                     graStu.Type = 1;
@@ -227,6 +243,22 @@ namespace nuce.web.api.Services.Survey.Implements
                 else
                 {
                     PropertyCopier<AsEduSurveyUndergraduateStudent, AsEduSurveyGraduateStudent>.Copy(underStu, graStu, PropertyCopierOption.AllowLowerCase, "DotKhaoSatId", "Type", "Status");
+                    graStu.Psw = StringHelper.ConvertToLatin(graStu.Tensinhvien).Replace(" ", "").ToLower();
+                    graStu.DotKhaoSatId = surveyRoundId;  //update đợt khảo sát
+
+                    if (string.IsNullOrEmpty(graStu.Email))
+                    {
+                        var stu = await _eduContext.AsAcademyStudent.FirstOrDefaultAsync(s => s.Code == graStu.ExMasv);
+                        if (stu != null)
+                        {
+                            graStu.Email = stu.Email;
+
+                            if (!string.IsNullOrEmpty(stu.Mobile) && string.IsNullOrEmpty(graStu.Mobile))
+                            {
+                                graStu.Mobile = stu.Mobile;
+                            }
+                        }
+                    }
                 }                    
             }
             _context.SaveChanges();
