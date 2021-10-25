@@ -472,6 +472,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                             break;
                         case DichVu.HoTroHocTap:
                             var dot = await _dotHoTroHocTapRepository.GetDotActive();
+                            if (string.IsNullOrEmpty(currentStudent.DanToc))
+                            {
+                                throw new Exception($"Sinh viên chưa cập nhật dân tộc");
+                            }
+                            if (!DanTocHoTroHocTap.All.Contains(StringHelper.ConvertToLatin(currentStudent.DanToc.ToLower())))
+                            {
+                                throw new Exception($"Dân tộc {currentStudent.DanToc} không được đăng ký dịch vụ hỗ trợ học tập");
+                            }
                             AsAcademyStudentSvDangKyHoTroHocTap dky = new AsAcademyStudentSvDangKyHoTroHocTap
                             {
                                 PhanHoi = model.PhanHoi,
