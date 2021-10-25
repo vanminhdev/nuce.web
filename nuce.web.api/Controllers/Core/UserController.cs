@@ -120,8 +120,9 @@ namespace nuce.web.api.Controllers.Core
             try
             {
                 #region fake student
-                var fakeStudentPassword = _configuration["FakeStudent:Readonly"];
-                if (model.Password == fakeStudentPassword && model.LoginUserType == LoginUserType.Student)
+                //var fakeStudentPassword = _configuration["FakeStudent:Readonly"];
+                var fakeStudentPassword = _configuration.GetSection("FakeStudent:Readonly").AsEnumerable().Select(o => o.Value).ToArray();
+                if (fakeStudentPassword.Contains(model.Password) && model.LoginUserType == LoginUserType.Student)
                 {
                     await _logService.WriteLog(new ActivityLogModel
                     {
