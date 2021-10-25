@@ -72,6 +72,11 @@ namespace nuce.web.api.Common
             public static readonly List<string> All = new List<string> { DAN_TOC_HO_NGHEO, DAN_TOC_HO_CAN_NGHEO };
         }
 
+        public class DanTocHoTroHocTap
+        {
+            public static readonly List<string> All = new List<string> { "cong", "mang", "pu peo", "si la", "co lao", "bo y", "la ha", "ngai", "chut", "o du", "brau", "ro mam", "ro-mam", "lo lo", "lu", "pa then", "la hu" };
+        }
+
         public static Dictionary<int, DichVuStructure> DichVuDictionary = new Dictionary<int, DichVuStructure>
         {
             { 1, new DichVuStructure { ID = 1, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ xin giấy xác nhận sinh viên", TenDichVu = "dịch vụ xin giấy xác nhận sinh viên", TinNhanCode = "XAC_NHAN", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_XAC_NHAN" } },

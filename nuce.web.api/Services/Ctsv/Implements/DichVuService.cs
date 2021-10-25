@@ -472,6 +472,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                             break;
                         case DichVu.HoTroHocTap:
                             var dot = await _dotHoTroHocTapRepository.GetDotActive();
+                            if (string.IsNullOrEmpty(currentStudent.DanToc))
+                            {
+                                throw new Exception($"Sinh viên chưa cập nhật dân tộc");
+                            }
+                            if (!DanTocHoTroHocTap.All.Contains(StringHelper.ConvertToLatin(currentStudent.DanToc.ToLower())))
+                            {
+                                throw new Exception($"Dân tộc {currentStudent.DanToc} không được đăng ký dịch vụ hỗ trợ học tập");
+                            }
                             AsAcademyStudentSvDangKyHoTroHocTap dky = new AsAcademyStudentSvDangKyHoTroHocTap
                             {
                                 PhanHoi = model.PhanHoi,
@@ -2376,6 +2384,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 initHeaderCell(ws, firstRow, ++i, "Khoa quản lý");
                 initHeaderCell(ws, firstRow, ++i, "Số điện thoại");
                 initHeaderCell(ws, firstRow, ++i, "Email");
+                initHeaderCell(ws, firstRow, ++i, "Đối tượng");
                 initHeaderCell(ws, firstRow, ++i, "Địa chỉ người nhận");
 
                 ws.Row(firstRow).Height = 32;
@@ -2392,15 +2401,11 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string studentCode = yeuCau.YeuCauDichVu.StudentCode ?? "";
                     string studentName = yeuCau.YeuCauDichVu.StudentName ?? "";
                     string email = yeuCau.Student.EmailNhaTruong ?? "";
-                    string phuong = yeuCau.Student.HkttPhuong ?? "";
-                    string quan = yeuCau.Student.HkttQuan ?? "";
-                    string tinh = yeuCau.Student.HkttTinh ?? "";
                     string classCode = yeuCau.Student.ClassCode ?? "";
-                    string nienKhoa = yeuCau.AcademyClass.SchoolYear ?? "";
                     string tenKhoa = yeuCau.Faculty?.Name ?? "";
-                    string mobile = yeuCau.Student.Mobile ?? "";
                     string dauThoiGian = yeuCau.YeuCauDichVu.CreatedTime?.ToString("dd/MM/yyyy HH:MM:ss") ?? "";
                     string sdt = yeuCau.Student.Mobile;
+                    string doiTuong = yeuCau.Student.DanToc;
                     string diaChiBaoTin = yeuCau.Student.BaoTinDiaChiNguoiNhan ?? "";
                     int row = j + 2;
 
@@ -2413,6 +2418,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(tenKhoa);
                     ws.Cell(row, ++col).SetValue(sdt);
                     ws.Cell(row, ++col).SetValue(email);
+                    ws.Cell(row, ++col).SetValue(doiTuong);
                     ws.Cell(row, ++col).SetValue(diaChiBaoTin);
                 }
                 for (int j = 0; j < col; j++)

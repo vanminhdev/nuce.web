@@ -40,11 +40,6 @@ namespace Nuce.CTSV
                         thongBao += $"{(thongBao != "" ? "," : "")} dân tộc";
                     }
 
-                    if (UpdateDiaChiChuyenPhatNhanh.Enabled && string.IsNullOrEmpty(student.BaoTinDiaChiNhanChuyenPhatNhanh?.Trim()))
-                    {
-                        thongBao += $"{(thongBao != "" ? "," : "")} địa chỉ nhận chuyển phát nhanh";
-                    }
-
                     if (!string.IsNullOrEmpty(thongBao))
                     {
                         divThongBao.InnerHtml = $"Yêu cầu cập nhật<a href=\"/capnhathoso.aspx\">{thongBao}</a>";

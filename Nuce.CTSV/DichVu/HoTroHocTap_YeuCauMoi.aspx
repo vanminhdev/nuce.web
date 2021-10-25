@@ -35,7 +35,7 @@
         <div class="row justify-content-end">
         <div class="col-12">
             <div class="main-color text-uppercase font-15-sm fw-600 font-25 service-title">
-                đăng ký chỗ ở
+                đề nghị hỗ trợ học tập
             </div>
             <div class='g-recaptcha' data-sitekey='6Lf3Lc8ZAAAAANyHCgqSpM_NDwBTJQZIsEnUQJ1s'></div>
             <%--<div class="form-group">
