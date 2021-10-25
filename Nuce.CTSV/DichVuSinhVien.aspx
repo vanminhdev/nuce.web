@@ -172,7 +172,7 @@
                     href="/dichvu/hotrohoctap.aspx"
                     class="row justify-content-center">
                     <img
-                        src="/Data/icons/de-nghi-ho-tro-chi-phi-hoc-tap.jpg"
+                        src="/Data/icons/ho-tro-hoc-tap.jpg"
                         alt="service"
                         class="service-avatar col-10"/>
                     <div

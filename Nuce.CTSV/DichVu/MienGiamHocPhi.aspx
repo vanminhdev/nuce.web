@@ -92,7 +92,7 @@
             </div>
         </div>
         <div class="col-12 text-danger font-18 font-italic mb-4">
-            Lưu ý: Những đối tượng (con thương binh, con bệnh binh, con liệt sĩ, con của người bị tai nạn lao động, mồ côi cả cha lẫn mẹ, sinh viên bị khuyết tật, ...) đã hoàn tất thủ tục hồ sơ miễn giảm học phí khi nhập học sẽ không phải nộp lại hồ sơ theo từng năm học.
+            Lưu ý: Sinh viên đã nộp hồ sơ trong khóa học (trừ đối tượng thuộc hộ nghèo, hộ cận nghèo) chỉ cần đăng ký trực tuyến đơn đề nghị miễn giảm học phí, hỗ trợ chi phí học tập, hỗ trợ học tập.
         </div>
         <div class="col-12">
             <div
