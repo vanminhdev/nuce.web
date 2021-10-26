@@ -65,6 +65,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
             var querySkip = svdotks
                 .OrderByDescending(sv => sv.dotks.FromDate)
+                .ThenByDescending(sv => sv.sv.Ngayraqd)
                 .ThenBy(o => o.sv.Makhoa)
                 .ThenBy(o => o.sv.Masv)
                 .Skip(skip).Take(take);
