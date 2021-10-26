@@ -37,9 +37,6 @@
             <div class="main-color text-uppercase font-15-sm fw-600 font-25 service-title">
                 Đơn xin miễn giảm học phí
             </div>
-            <div class="text-danger font-16 font-italic mb-4">
-                Lưu ý: Những đối tượng (con thương binh, con bệnh binh, con liệt sĩ, con của người bị tai nạn lao động, mồ côi cả cha lẫn mẹ, sinh viên bị khuyết tật, ...) đã hoàn tất thủ tục hồ sơ miễn giảm học phí khi nhập học sẽ không phải nộp lại hồ sơ theo từng năm học.
-            </div>
             <div class="font-14-sm fw-600 font-18 mb-3">
                 Sinh viên thuộc đối tượng được hưởng chính sách miễn, giảm học phí (tích vào ô dưới đây):
             </div>
@@ -47,30 +44,19 @@
                 <asp:RadioButtonList ID="radioDoiTuong"
                     runat="server"
                     RepeatDirection="Vertical">
-                    <asp:ListItem Value="CO_CONG_CACH_MANG" Selected="True">&nbsp;Là con của người có công với cách mạng được hưởng ưu đãi
-                        <br/><span class="font-italic font-13">(Kèm theo Bản sao giấy khai sinh; Bản sao công chứng thẻ Thương bệnh binh của bố/mẹ; Giấy xác nhận của Sở, Phòng lao động thương binh và xã hội)</span>
+                    <asp:ListItem Value="CO_CONG_CACH_MANG" Selected="True">&nbsp;Các đối tượng theo quy định tại Pháp lệnh Ưu đãi người có công với cách mạng nếu đang theo học tại các cơ sở giáo dục thuộc hệ thống giáo dục quốc dân.
                     </asp:ListItem>
-                    <asp:ListItem Value="SV_VAN_BANG_1">&nbsp;Là sinh viên học đại học văn bằng thứ nhất từ 16 tuổi đến 22 tuổi thuộc một trong các trường hợp quy định tại
-                        Khoản 1 Điều 5 Nghị định số 136/2013/NĐ-CP ngày 21/10/2013 của Chính phủ quy định chính sách trợ giúp xã hội
-                        <br/><span class="font-italic font-13">(Kèm theo Bản sao giấy khai sinh; Giấy xác nhận đối tượng hưởng trợ cấp của UBND cấp phường, xã cấp; Bản sao Quyết định về việc hưởng trợ cấp xã hội của UBND cấp quận, huyện)</span>
+                    <asp:ListItem Value="SV_VAN_BANG_1">&nbsp;Sinh viên từ 16 đến 22 tuổi không có nguồn nuôi dưỡng đang học đại học văn bằng thứ nhất thuộc đối tượng hưởng trợ cấp xã hội hàng tháng theo quy định tại khoản 1 và 2 Điều 5 Nghị định số 20/2021/NĐ-CP ngày 15/3/2021 của Chính phủ.
                     </asp:ListItem>
-                    <asp:ListItem Value="TAN_TAT_KHO_KHAN_KINH_TE">&nbsp;Bản thân bị khuyết tật, tàn tật có khó khăn về kinh tế
-                        <br/><span class="font-italic font-13">(Kèm theo Bản sao giấy khai sinh; Giấy giám định y khoa và Kết luận của Hội đồng xét duyệt trợ cấp xã hội cấp xã; Giấy chứng nhận hộ nghèo hoặc hộ cận nghèo của UBND cấp xã cấp)</span>
+                    <asp:ListItem Value="TAN_TAT_KHO_KHAN_KINH_TE">&nbsp;Sinh viên khuyết tật
                     </asp:ListItem>
-                    <asp:ListItem Value="DAN_TOC_HO_NGHEO">&nbsp;Bản thân là người dân tộc thiểu số thuộc hộ nghèo, hộ cận nghèo
-                        <br/><span class="font-italic font-13">(Kèm theo Bản sao giấy khai sinh; Bản sao sổ khẩu thường trú; Giấy chứng nhận dân tộc (nếu có); Giấy chứng nhận hộ nghèo hoặc hộ cận nghèo do UBND cấp xã cấp)</span>
+                    <asp:ListItem Value="DAN_TOC_HO_NGHEO">&nbspSinh viên người dân tộc thiểu số có cha hoặc mẹ hoặc cả cha và mẹ hoặc ông bà (trong trường hợp ở với ông bà) thuộc hộ nghèo và hộ cận nghèo theo quy định của Thủ tướng Chính phủ.
                     </asp:ListItem>
-                    <asp:ListItem Value="DAN_TOC_IT_NGUOI_VUNG_KHO_KHAN">&nbsp;Bản thân là người dân tộc thiểu số rất ít người và ở vùng có điều kiện
-                        kinh tế - xã hội khó khăn hoặc đặc biệt khó khăn
-                        <br/><span class="font-italic font-13">(Kèm theo Bản sao giấy khai sinh; Giấy chứng nhận dân tộc (nếu có); Bản sao sổ khẩu thường trú; Giấy chứng nhận dân tộc thiểu số rất ít người, ở vùng có điều kiện kinh tế - xã hội khó khăn và đặc biệt khó khăn của Ủy ban dân tộc Cấp tỉnh cấp)</span>
+                    <asp:ListItem Value="DAN_TOC_IT_NGUOI_VUNG_KHO_KHAN">&nbsp;Sinh viên là người dân tộc thiểu số rất ít người (Cống, Mảng, Pu Péo, Si La, Cờ Lao, Bố Y, La Ha, Ngái, Chứt, Ơ Đu, Brâu, Rơ Măm, Lô Tô, Lự, Pà Thẻn, La Hủ) ở vùng có điều kiện kinh tế - xã hội khó khăn hoặc đặc biệt khó khăn
                     </asp:ListItem>
-                    <asp:ListItem Value="DAN_TOC_VUNG_KHO_KHAN">&nbsp;Bản thân là người dân tộc thiểu số và ở vùng có điều kiện
-                        kinh tế - xã hội đặc biệt khó khăn
-                        <br/><span class="font-italic font-13">(Kèm theo Bản sao giấy khai sinh; Giấy chứng nhận dân tộc (nếu có); Bản sao sổ khẩu thường trú; Giấy chứng nhận dân tộc thiểu số ở vùng có điều kiện kinh tế - xã hội đặc biệt khó khăn của Ủy ban dân tộc Cấp tỉnh cấp)</span>
+                    <asp:ListItem Value="DAN_TOC_VUNG_KHO_KHAN">&nbsp;Sinh viên hệ cử tuyển
                     </asp:ListItem>
-                    <asp:ListItem Value="CHA_ME_TAI_NAN_DUOC_TRO_CAP">&nbsp;Là con của cán bộ, công nhân, viên chức mà cha hoặc mẹ bị tai nạn lao động
-                        hoặc mắc bệnh nghề nghiệp được hưởng trợ cấp thường xuyên
-                        <br/><span class="font-italic font-13">(Kèm theo Bản sao giấy khai sinh;Bản sao Quyết định của cơ quan cha, mẹ bị tai nạn lao động; Bản sao Sổ hưởng trợ cấp hàng tháng do tổ chức bảo hiểm xã hội cấp do tai nạn lao động của cha, mẹ)</span>
+                    <asp:ListItem Value="CHA_ME_TAI_NAN_DUOC_TRO_CAP">&nbsp;Sinh viên thuộc các đối tượng của chương trình, đề án được miễn giảm học phí theo quy định của Chính phủ.
                     </asp:ListItem>
                 </asp:RadioButtonList>
             </div>

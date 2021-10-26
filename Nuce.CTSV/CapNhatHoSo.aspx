@@ -138,7 +138,7 @@
         <div class="row mt-3">
             <div class="col-12 col-md-6">
                 <div class="form-group">
-                    <div class="fw-700 font-14-sm">
+                    <div class="fw-700 font-14-sm" id="labelDanToc">
                         Dân tộc
                     </div>
                     <select class="form-control" enableviewstate="true" runat="server" id="slDanToc">
@@ -366,6 +366,13 @@
             elFile.addEventListener('change', function() {
                 CapNhatHoSo.onChangeFileUpload();
             });
+
+            var urlSearchParams = new URLSearchParams(window.location.search);
+            var params = Object.fromEntries(urlSearchParams.entries());
+
+            if (params?.dantoc && params?.dantoc == 1) {
+                $(`#labelDanToc`).addClass('text-danger');
+            }
 
             $("#imgAvaPreview").attr('src', '<%= m_SinhVien.IMG %>?<%= DateTime.Now.ToFileTime() %>');
         };
