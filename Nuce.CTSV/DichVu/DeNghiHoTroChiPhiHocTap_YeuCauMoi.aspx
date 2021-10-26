@@ -52,7 +52,11 @@
             </div>
             <div class="form-group">
                 <div class="font-14">
-                    Ghi chú: Sinh viên là người dân tộc thiểu số thuộc hộ nghèo, hộ cận nghèo theo quy định của Thủ tướng Chính phủ thuộc đối tượng: cử tuyển, các đối tượng chính sách được xét tuyển, đào tạo theo địa chỉ, đào tạo liên thông, văn bằng hai và học đại học, cao đẳng sau khi hoàn thành chương trình dự bị đại học sẽ không thuộc diện được hỗ trợ chi phí học tập
+                    Ghi chú: Sinh viên là người dân tộc thiểu số thuộc hộ nghèo, hộ cận nghèo theo quy định
+                        của Nhà nước hiện đang học đại học hệ chính quy tại trường Đại học Xây dựng Hà Nội.
+                        Quy định không áp dụng đối với sinh viên: Cử tuyển, các đối tượng chính sách được xét
+                        tuyển, đào tạo theo địa chỉ, đào tạo liên thông, văn bằng hai và học đại học sau khi hoàn
+                        thành chương trình dự bị đại học.
                 </div>
             </div>
             <div class="font-14-sm fw-600 font-18 mb-3">
