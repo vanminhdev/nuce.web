@@ -6,9 +6,9 @@ using Microsoft.Extensions.Logging;
 using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
-using nuce.web.api.Services.Status.Interfaces;
+using nuce.web.api.Services.Status.Implements;
 using nuce.web.api.Services.Survey.BackgroundTasks;
-using nuce.web.api.Services.Survey.Interfaces;
+using nuce.web.api.Services.Survey.Implements;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey.Normal.Statistic;
 using nuce.web.shared;
@@ -25,12 +25,12 @@ namespace nuce.web.api.Controllers.Survey.Normal
     public class StatisticController : ControllerBase
     {
         private readonly ILogger<StatisticController> _logger;
-        private readonly IAsEduSurveyReportTotalService _asEduSurveyReportTotalService;
+        private readonly AsEduSurveyReportTotalService _asEduSurveyReportTotalService;
         private readonly SurveyStatisticBackgroundTask _surveyStatisticBackgroundTask;
-        private readonly IStatusService _statusService;
+        private readonly StatusService _statusService;
 
-        public StatisticController(ILogger<StatisticController> logger, IAsEduSurveyReportTotalService asEduSurveyReportTotalService, 
-            IStatusService statusService, SurveyStatisticBackgroundTask surveyStatisticBackgroundTask)
+        public StatisticController(ILogger<StatisticController> logger, AsEduSurveyReportTotalService asEduSurveyReportTotalService, 
+            StatusService statusService, SurveyStatisticBackgroundTask surveyStatisticBackgroundTask)
         {
             _logger = logger;
             _asEduSurveyReportTotalService = asEduSurveyReportTotalService;

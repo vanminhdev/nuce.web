@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
-using nuce.web.api.Services.Survey.Interfaces;
+using nuce.web.api.Services.Survey.Implements;
 using nuce.web.api.ViewModel.Survey;
 using nuce.web.shared;
 
@@ -24,9 +24,9 @@ namespace nuce.web.api.Controllers.Survey.Normal
     public class AnswerController : ControllerBase
     {
         private readonly ILogger<AnswerController> _logger;
-        private readonly IAsEduSurveyDapAnService _dapAnService;
+        private readonly AsEduSurveyDapAnService _dapAnService;
 
-        public AnswerController(ILogger<AnswerController> logger, IAsEduSurveyDapAnService asEduSurveyDapAnService)
+        public AnswerController(ILogger<AnswerController> logger, AsEduSurveyDapAnService asEduSurveyDapAnService)
         {
             _logger = logger;
             _dapAnService = asEduSurveyDapAnService;

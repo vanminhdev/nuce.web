@@ -1228,6 +1228,33 @@ namespace nuce.web.quanly.Controllers
             }
         }
 
+        [HttpGet]
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Graduate)]
+        public async Task<ActionResult> DownloadListGraudateStudent(Guid? surveyRoundId)
+        {
+            var response = await base.MakeRequestAuthorizedAsync("Get", $"/api/GraduateStudent/DownloadListStudent?surveyRoundId={surveyRoundId}");
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                using (Stream streamToReadFrom = await response.Content.ReadAsStreamAsync())
+                {
+                    using (MemoryStream memoryStream = new MemoryStream())
+                    {
+                        await streamToReadFrom.CopyToAsync(memoryStream);
+                        memoryStream.ToArray();
+                        var guid = Guid.NewGuid();
+                        TempData[guid.ToString()] = new FileDownload()
+                        {
+                            FileName = "danh_sach_sinh_vien.xlsx",
+                            ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                            Data = memoryStream.ToArray()
+                        };
+                        return Json(new { statusCode = response.StatusCode, content = new { url = $"/survey/downloadexport?fileGuid={guid}" } }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+            }
+            return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
+        }
+
         [HttpPost]
         [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Undergraduate)]
         public async Task<ActionResult> DeleteGraduateStudent(string mssv)

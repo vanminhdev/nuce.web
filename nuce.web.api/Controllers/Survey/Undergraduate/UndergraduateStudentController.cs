@@ -11,7 +11,7 @@ using nuce.web.api.Helper;
 using nuce.web.api.Models.Core;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Services.Core.Interfaces;
-using nuce.web.api.Services.Survey.Interfaces;
+using nuce.web.api.Services.Survey.Implements;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey.Undergraduate;
 using nuce.web.shared;
@@ -39,14 +39,14 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
         private readonly IPathProvider _pathProvider;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUserService _userService;
-        private readonly IAsEduSurveyUndergraduateStudentService _asEduSurveyUndergraduateStudentService;
+        private readonly AsEduSurveyUndergraduateStudentService _asEduSurveyUndergraduateStudentService;
 
         public UndergraduateStudentController(ILogger<UndergraduateStudentController> logger, IPathProvider pathProvider,
             UserManager<ApplicationUser> userManager,
             IConfiguration configuration,
             IHttpContextAccessor httpContextAccessor,
             IUserService userService,
-            IAsEduSurveyUndergraduateStudentService asEduSurveyUndergraduateStudentService)
+            AsEduSurveyUndergraduateStudentService asEduSurveyUndergraduateStudentService)
         {
             _logger = logger;
             _userManager = userManager;

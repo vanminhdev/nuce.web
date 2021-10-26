@@ -58,6 +58,7 @@
     <Folder Include="Resources\Ctsv\" />
     <Folder Include="Resources\Survey\" />
     <Folder Include="Services\EduData\Base\" />
+    <Folder Include="Services\Survey\Interfaces\" />
     <Folder Include="ViewModel\EduData\ViewSync\" />
   </ItemGroup>
 

@@ -9,9 +9,9 @@ using nuce.web.api.Models.Status;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Models.Survey.JsonData;
 using nuce.web.api.Services.Background;
-using nuce.web.api.Services.Status.Interfaces;
+using nuce.web.api.Services.Status.Implements;
 using nuce.web.api.Services.Survey.Base;
-using nuce.web.api.Services.Survey.Interfaces;
+
 using nuce.web.api.ViewModel.Survey.Normal.Statistic;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
@@ -31,11 +31,11 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
         private readonly ILogger<SurveyStatisticBackgroundTask> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly BackgroundTaskWorkder _backgroundTaskWorker;
-        private readonly IStatusService _statusService;
+        private readonly StatusService _statusService;
 
         public SurveyStatisticBackgroundTask(ILogger<SurveyStatisticBackgroundTask> logger,
             IServiceScopeFactory scopeFactory, BackgroundTaskWorkder backgroundTaskWorker,
-             IStatusService statusService)
+             StatusService statusService)
         {
             _logger = logger;
             _scopeFactory = scopeFactory;

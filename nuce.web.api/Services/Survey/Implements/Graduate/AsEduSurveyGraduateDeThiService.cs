@@ -4,7 +4,7 @@ using nuce.web.api.HandleException;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Models.Survey.JsonData;
 using nuce.web.api.Repositories.Ctsv.Implements;
-using nuce.web.api.Services.Survey.Interfaces;
+
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey;
 using System;
@@ -16,7 +16,7 @@ using System.Web;
 
 namespace nuce.web.api.Services.Survey.Implements
 {
-    class AsEduSurveyGraduateDeThiService : IAsEduSurveyGraduateDeThiService
+    public class AsEduSurveyGraduateDeThiService
     {
         private readonly SurveyContext _surveyContext;
 
@@ -145,14 +145,14 @@ namespace nuce.web.api.Services.Survey.Implements
             _surveyContext.SaveChanges();
 
             var questions = _surveyContext.AsEduSurveyGraduateCauTrucDe
-                .Join(_surveyContext.AsEduSurveyGraduateCauHoi, examStructure => examStructure.CauHoiId, question => question.Id,
+                .Join(_surveyContext.AsEduSurveyGraduateCauHoi.Where(ch => ch.Status == (int)QuestionStatus.Active), examStructure => examStructure.CauHoiId, question => question.Id,
                 (examStructure, question) => new { examStructure, question })
                 .Where(result => result.examStructure.DeThiId == generateExam.ExamQuestionId.Value)
                 .OrderBy(result => result.examStructure.Order)
                 .Select(result => new { payload = result.question, result.examStructure.Order });
 
             var questionAnswerJoin = await questions
-                .GroupJoin(_surveyContext.AsEduSurveyGraduateDapAn, question => question.payload.Id, answer => answer.CauHoiId, (questionOrder, answer) => new { questionOrder, answer })
+                .GroupJoin(_surveyContext.AsEduSurveyGraduateDapAn.Where(da => da.Status == (int)AnswerStatus.Active), question => question.payload.Id, answer => answer.CauHoiId, (questionOrder, answer) => new { questionOrder, answer })
                 .SelectMany(o => o.answer.DefaultIfEmpty(), (r, answer) => new { r.questionOrder, answer })
                 .ToListAsync();
 

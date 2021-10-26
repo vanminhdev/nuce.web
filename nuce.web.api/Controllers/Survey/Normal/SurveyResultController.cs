@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.api.Services.Survey.Implements;
-using nuce.web.api.Services.Survey.Interfaces;
+
 using nuce.web.shared;
 
 namespace nuce.web.api.Controllers.Survey.Normal

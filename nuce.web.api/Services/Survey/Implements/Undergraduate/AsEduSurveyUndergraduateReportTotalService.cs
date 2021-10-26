@@ -6,7 +6,7 @@ using nuce.web.api.Models.EduData;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Models.Survey.JsonData;
 using nuce.web.api.Services.Survey.Base;
-using nuce.web.api.Services.Survey.Interfaces;
+
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey.Undergraduate.Statistic;
 using OfficeOpenXml;
@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.Survey.Implements.Undergraduate
 {
-    public class AsEduSurveyUndergraduateReportTotalService : ThongKeServiceBase, IAsEduSurveyUndergraduateReportTotalService
+    public class AsEduSurveyUndergraduateReportTotalService : ThongKeServiceBase
     {
         private readonly ILogger<AsEduSurveyUndergraduateReportTotalService> _logger;
         private readonly SurveyContext _context;

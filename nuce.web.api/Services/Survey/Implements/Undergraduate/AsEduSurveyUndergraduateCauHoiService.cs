@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Models.Survey;
-using nuce.web.api.Services.Survey.Interfaces;
+
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey;
 using System;
@@ -14,7 +14,7 @@ using System.Web;
 
 namespace nuce.web.api.Services.Survey.Implements
 {
-    class AsEduSurveyUndergraduateCauHoiService : IAsEduSurveyUndergraduateCauHoiService
+    public class AsEduSurveyUndergraduateCauHoiService
     {
         private readonly SurveyContext _surveyContext;
 

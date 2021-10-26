@@ -13,7 +13,7 @@ using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Models.Survey;
-using nuce.web.api.Services.Survey.Interfaces;
+using nuce.web.api.Services.Survey.Implements;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey;
 using nuce.web.shared;
@@ -26,9 +26,9 @@ namespace nuce.web.api.Controllers.Survey.Normal
     public class QuestionController : ControllerBase
     {
         private readonly ILogger<QuestionController> _logger;
-        private readonly IAsEduSurveyCauHoiService _cauHoiService;
+        private readonly AsEduSurveyCauHoiService _cauHoiService;
 
-        public QuestionController(ILogger<QuestionController> logger, IAsEduSurveyCauHoiService asEduSurveyCauHoiService)
+        public QuestionController(ILogger<QuestionController> logger, AsEduSurveyCauHoiService asEduSurveyCauHoiService)
         {
             _logger = logger;
             _cauHoiService = asEduSurveyCauHoiService;

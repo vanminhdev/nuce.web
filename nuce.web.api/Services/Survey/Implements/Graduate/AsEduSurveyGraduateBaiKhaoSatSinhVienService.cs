@@ -6,7 +6,7 @@ using nuce.web.api.Models.Status;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Models.Survey.JsonData;
 using nuce.web.api.Services.Survey.Base;
-using nuce.web.api.Services.Survey.Interfaces;
+
 using nuce.web.api.ViewModel.Survey;
 using nuce.web.api.ViewModel.Survey.Graduate;
 using System;
@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.Survey.Implements
 {
-    class AsEduSurveyGraduateBaiKhaoSatSinhVienService : BaiKhaoSatSinhVienServiceBase, IAsEduSurveyGraduateBaiKhaoSatSinhVienService
+    public class AsEduSurveyGraduateBaiKhaoSatSinhVienService : BaiKhaoSatSinhVienServiceBase
     {
         private readonly SurveyContext _context;
         private readonly StatusContext _statusContext;

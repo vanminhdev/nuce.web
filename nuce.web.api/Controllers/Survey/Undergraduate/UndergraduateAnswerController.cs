@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
-using nuce.web.api.Services.Survey.Interfaces;
+using nuce.web.api.Services.Survey.Implements;
 using nuce.web.api.ViewModel.Survey;
 using nuce.web.shared;
 
@@ -24,9 +24,9 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
     public class UndergraduateAnswerController : ControllerBase
     {
         private readonly ILogger<UndergraduateAnswerController> _logger;
-        private readonly IAsEduSurveyUndergraduateDapAnService _dapAnService;
+        private readonly AsEduSurveyUndergraduateDapAnService _dapAnService;
 
-        public UndergraduateAnswerController(ILogger<UndergraduateAnswerController> logger, IAsEduSurveyUndergraduateDapAnService dapAnService)
+        public UndergraduateAnswerController(ILogger<UndergraduateAnswerController> logger, AsEduSurveyUndergraduateDapAnService dapAnService)
         {
             _logger = logger;
             _dapAnService = dapAnService;

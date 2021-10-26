@@ -5,8 +5,7 @@ using nuce.web.api.HandleException;
 using nuce.web.api.Models.Status;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Models.Survey.JsonData;
-using nuce.web.api.Services.Status.Interfaces;
-using nuce.web.api.Services.Survey.Interfaces;
+
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey.Undergraduate;
 using OfficeOpenXml;
@@ -21,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.Survey.Implements
 {
-    class AsEduSurveyUndergraduateStudentService : IAsEduSurveyUndergraduateStudentService
+    public class AsEduSurveyUndergraduateStudentService
     {
         private readonly SurveyContext _context;
 

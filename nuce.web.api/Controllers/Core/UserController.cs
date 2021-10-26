@@ -21,11 +21,12 @@ using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Core;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
-using nuce.web.api.Services.Survey.Interfaces;
+
 using System.Collections.Generic;
 using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.shared;
 using nuce.web.api.Services.EduData.Interfaces;
+using nuce.web.api.Services.Survey.Implements;
 
 namespace nuce.web.api.Controllers.Core
 {
@@ -40,13 +41,13 @@ namespace nuce.web.api.Controllers.Core
         private readonly IUserService _userService;
         private readonly IConfiguration _configuration;
         private readonly ILogService _logService;
-        private readonly IAsEduSurveyGraduateStudentService _asEduSurveyGraduateStudentService;
-        private readonly IAsEduSurveyUndergraduateStudentService _asEduSurveyUndergraduateStudentService;
+        private readonly AsEduSurveyGraduateStudentService _asEduSurveyGraduateStudentService;
+        private readonly AsEduSurveyUndergraduateStudentService _asEduSurveyUndergraduateStudentService;
         private readonly IStudentEduDataService _studentEduDataService;
 
         public UserController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, NuceCoreIdentityContext identityContext,
             ILogger<UserController> logger, IUserService userService, IConfiguration configuration, ILogService logService, 
-            IAsEduSurveyGraduateStudentService asEduSurveyGraduateStudentService, IAsEduSurveyUndergraduateStudentService asEduSurveyUndergraduateStudentService,
+            AsEduSurveyGraduateStudentService asEduSurveyGraduateStudentService, AsEduSurveyUndergraduateStudentService asEduSurveyUndergraduateStudentService,
             IStudentEduDataService studentEduDataService)
         {
             _userManager = userManager;

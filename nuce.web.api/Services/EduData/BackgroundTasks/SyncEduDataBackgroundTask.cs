@@ -9,7 +9,7 @@ using nuce.web.api.Models.EduData;
 using nuce.web.api.Models.Status;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Services.Background;
-using nuce.web.api.Services.Status.Interfaces;
+using nuce.web.api.Services.Status.Implements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,11 +25,11 @@ namespace nuce.web.api.Services.EduData.BackgroundTasks
         private readonly ILogger<SyncEduDataBackgroundTask> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly BackgroundTaskWorkder _backgroundTaskWorker;
-        private readonly IStatusService _statusService;
+        private readonly StatusService _statusService;
 
         public SyncEduDataBackgroundTask(ILogger<SyncEduDataBackgroundTask> logger,
             IServiceScopeFactory scopeFactory, BackgroundTaskWorkder backgroundTaskWorker,
-            IStatusService statusService)
+            StatusService statusService)
         {
             _logger = logger;
             _scopeFactory = scopeFactory;
