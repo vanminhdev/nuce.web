@@ -3,11 +3,11 @@ using Microsoft.Extensions.Logging;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Helper;
+using nuce.web.api.Models.EduData;
 using nuce.web.api.Models.Status;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Models.Survey.JsonData;
-using nuce.web.api.Services.Status.Interfaces;
-using nuce.web.api.Services.Survey.Interfaces;
+
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey.Graduate;
 using OfficeOpenXml;
@@ -22,13 +22,14 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.Survey.Implements
 {
-    class AsEduSurveyGraduateStudentService : IAsEduSurveyGraduateStudentService
+    public class AsEduSurveyGraduateStudentService
     {
         private readonly SurveyContext _context;
-
-        public AsEduSurveyGraduateStudentService(SurveyContext context)
+        private readonly EduDataContext _eduContext;
+        public AsEduSurveyGraduateStudentService(SurveyContext context, EduDataContext eduContext)
         {
             _context = context;
+            _eduContext = eduContext;
         }
 
         public async Task<PaginationModel<GraduateStudent>> GetAll(GraduateStudentFilter filter, int skip = 0, int take = 20)
@@ -60,12 +61,16 @@ namespace nuce.web.api.Services.Survey.Implements
 
             var recordsFiltered = dssv.Count();
 
-            var querySkip = dssv
+            var svdotks = dssv.Join(_context.AsEduSurveyGraduateSurveyRound, sv => sv.DotKhaoSatId, dot => dot.Id, (sv, dotks) => new { sv, dotks });
+
+            var querySkip = svdotks
+                .OrderByDescending(sv => sv.dotks.FromDate)
+                .ThenByDescending(sv => sv.sv.Ngayraqd)
+                .ThenBy(o => o.sv.Makhoa)
+                .ThenBy(o => o.sv.Masv)
                 .Skip(skip).Take(take);
 
-            var svdotks = querySkip.Join(_context.AsEduSurveyGraduateSurveyRound, o => o.DotKhaoSatId, o => o.Id, (sv, dotks) => new { sv, dotks });
-
-            var leftJoin = svdotks.GroupJoin(_context.AsEduSurveyGraduateBaiKhaoSatSinhVien, o => o.sv.ExMasv, o => o.StudentCode, (svdotks, baikssv) => new { svdotks, baikssv })
+            var leftJoin = querySkip.GroupJoin(_context.AsEduSurveyGraduateBaiKhaoSatSinhVien, o => o.sv.ExMasv, o => o.StudentCode, (svdotks, baikssv) => new { svdotks, baikssv })
                 .SelectMany(o => o.baikssv.DefaultIfEmpty(), (r, baikssv) => new { r.svdotks.sv, r.svdotks.dotks, baikssv });
 
             var data = await leftJoin
@@ -197,17 +202,16 @@ namespace nuce.web.api.Services.Survey.Implements
                 throw new RecordNotFoundException("Không tồn tại đợt khảo sát");
             }
 
-            //lấy ds từ trước tốt nghiệp sang
+            //lấy ds từ trước tốt nghiệp sang không cần biết
             var query = _context.AsEduSurveyUndergraduateStudent
                 .Where(o => o.Ngayraqd != null)
-                .Where(o => filter.FromDate <= o.Ngayraqd && filter.ToDate >= o.Ngayraqd)
-                .Join(_context.AsEduSurveyUndergraduateBaiKhaoSatSinhVien.Where(o => o.Status == (int)SurveyStudentStatus.Done), o => o.ExMasv, o => o.StudentCode, (sv, baikssv) => sv);
+                .Where(o => filter.FromDate <= o.Ngayraqd && filter.ToDate >= o.Ngayraqd);
 
-            if (filter.HeTotNghieps != null)
-            {
-                filter.HeTotNghieps.ForEach(h => h = h.ToLower());
-                query = query.Where(o => o.Hedaotao != null && filter.HeTotNghieps.Contains(o.Hedaotao.ToLower()));
-            }
+            //if (filter.HeTotNghieps != null)
+            //{
+            //    filter.HeTotNghieps.ForEach(h => h = h.ToLower());
+            //    query = query.Where(o => o.Hedaotao != null && filter.HeTotNghieps.Contains(o.Hedaotao.ToLower()));
+            //}
 
             var underStudents = await query.ToListAsync();
 
@@ -218,6 +222,21 @@ namespace nuce.web.api.Services.Survey.Implements
                 {
                     graStu = new AsEduSurveyGraduateStudent();
                     PropertyCopier<AsEduSurveyUndergraduateStudent, AsEduSurveyGraduateStudent>.Copy(underStu, graStu, PropertyCopierOption.AllowLowerCase, "DotKhaoSatId", "Type", "Status");
+
+                    if (string.IsNullOrEmpty(graStu.Email))
+                    {
+                        var stu = await _eduContext.AsAcademyStudent.FirstOrDefaultAsync(s => s.Code == graStu.ExMasv);
+                        if (stu != null)
+                        {
+                            graStu.Email = stu.Email;
+
+                            if (!string.IsNullOrEmpty(stu.Mobile) && string.IsNullOrEmpty(graStu.Mobile))
+                            {
+                                graStu.Mobile = stu.Mobile;
+                            }
+                        }
+                    }
+                    
                     graStu.Psw = StringHelper.ConvertToLatin(graStu.Tensinhvien).Replace(" ", "").ToLower();
                     graStu.DotKhaoSatId = surveyRoundId;
                     graStu.Type = 1;
@@ -227,6 +246,22 @@ namespace nuce.web.api.Services.Survey.Implements
                 else
                 {
                     PropertyCopier<AsEduSurveyUndergraduateStudent, AsEduSurveyGraduateStudent>.Copy(underStu, graStu, PropertyCopierOption.AllowLowerCase, "DotKhaoSatId", "Type", "Status");
+                    graStu.Psw = StringHelper.ConvertToLatin(graStu.Tensinhvien).Replace(" ", "").ToLower();
+                    graStu.DotKhaoSatId = surveyRoundId;  //update đợt khảo sát
+
+                    if (string.IsNullOrEmpty(graStu.Email))
+                    {
+                        var stu = await _eduContext.AsAcademyStudent.FirstOrDefaultAsync(s => s.Code == graStu.ExMasv);
+                        if (stu != null)
+                        {
+                            graStu.Email = stu.Email;
+
+                            if (!string.IsNullOrEmpty(stu.Mobile) && string.IsNullOrEmpty(graStu.Mobile))
+                            {
+                                graStu.Mobile = stu.Mobile;
+                            }
+                        }
+                    }
                 }                    
             }
             _context.SaveChanges();
@@ -248,10 +283,10 @@ namespace nuce.web.api.Services.Survey.Implements
             worksheet.Row(1).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
             worksheet.Row(1).Style.VerticalAlignment = ExcelVerticalAlignment.Center;
 
-            worksheet.Cells[1, 1, 1, 14].Style.Border.Top.Style = ExcelBorderStyle.Thin;
-            worksheet.Cells[1, 1, 1, 14].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-            worksheet.Cells[1, 1, 1, 14].Style.Border.Left.Style = ExcelBorderStyle.Thin;
-            worksheet.Cells[1, 1, 1, 14].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[1, 1, 1, 16].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[1, 1, 1, 16].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[1, 1, 1, 16].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[1, 1, 1, 16].Style.Border.Right.Style = ExcelBorderStyle.Thin;
 
             worksheet.Row(1).Height = 53.25;
             worksheet.Row(1).Style.Font.Bold = true;
@@ -270,6 +305,8 @@ namespace nuce.web.api.Services.Survey.Implements
             worksheet.Column(12).Width = 15.38;
             worksheet.Column(13).Width = 68.86;
             worksheet.Column(14).Width = 19.75;
+            worksheet.Column(15).Width = 30;
+            worksheet.Column(16).Width = 41;
 
             worksheet.Cells["A1"].Value = "STT";
             worksheet.Cells["B1"].Value = "Mã SV";
@@ -285,6 +322,8 @@ namespace nuce.web.api.Services.Survey.Implements
             worksheet.Cells["L1"].Value = "Mã Khoa";
             worksheet.Cells["M1"].Value = "Số quyết định và ngày ra quyết định tốt nghiệp";
             worksheet.Cells["N1"].Value = "Ngày ra quyết định";
+            worksheet.Cells["O1"].Value = "Số điện thoại";
+            worksheet.Cells["P1"].Value = "Email";
 
             worksheet.Column(2).Style.Numberformat.Format = "@";
             worksheet.Column(5).Style.Numberformat.Format = "dd-MM-yy";
@@ -313,6 +352,8 @@ namespace nuce.web.api.Services.Survey.Implements
                 worksheet.Cells[$"L{row}"].Value = student.Makhoa;
                 worksheet.Cells[$"M{row}"].Value = student.Soqdtn;
                 worksheet.Cells[$"N{row}"].Value = student.Ngayraqd?.ToString("dd-MM-yyyy");
+                worksheet.Cells[$"O{row}"].Value = student.Mobile;
+                worksheet.Cells[$"P{row}"].Value = student.Email;
                 row++;
             }
 

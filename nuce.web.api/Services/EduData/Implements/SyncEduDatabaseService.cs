@@ -9,7 +9,7 @@ using nuce.web.api.Models.EduData;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Services.EduData.Interfaces;
 using nuce.web.api.Services.Status.Implements;
-using nuce.web.api.Services.Status.Interfaces;
+using nuce.web.api.Services.Status.Implements;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.EduData;
 using System;
@@ -28,9 +28,9 @@ namespace nuce.web.api.Services.EduData.Implements
     {
         private readonly EduDataContext _eduDataContext;
         private readonly ServiceSoapClient srvc = new ServiceSoapClient(EndpointConfiguration.ServiceSoap12);
-        private readonly IStatusService _statusService;
+        private readonly StatusService _statusService;
 
-        public SyncEduDatabaseService(EduDataContext eduDataContext, IStatusService statusService)
+        public SyncEduDatabaseService(EduDataContext eduDataContext, StatusService statusService)
         {
             _eduDataContext = eduDataContext;
             _statusService = statusService;

@@ -7,7 +7,7 @@ using nuce.web.api.Models.EduData;
 using nuce.web.api.Models.Status;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Services.Background;
-using nuce.web.api.Services.Survey.Interfaces;
+using nuce.web.api.Services.Survey.Implements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +17,12 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
     public class BaiKhaoSatSinhVienBackgroundTask
     {
         private readonly ILogger<BaiKhaoSatSinhVienBackgroundTask> _logger;
-        private readonly IAsEduSurveyBaiKhaoSatSinhVienService _asEduSurveyBaiKhaoSatSinhVienService;
+        private readonly AsEduSurveyBaiKhaoSatSinhVienService _asEduSurveyBaiKhaoSatSinhVienService;
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly BackgroundTaskWorkder _backgroundTaskWorker;
 
         public BaiKhaoSatSinhVienBackgroundTask(ILogger<BaiKhaoSatSinhVienBackgroundTask> logger,
-            IAsEduSurveyBaiKhaoSatSinhVienService asEduSurveyBaiKhaoSatSinhVienService,
+            AsEduSurveyBaiKhaoSatSinhVienService asEduSurveyBaiKhaoSatSinhVienService,
             IServiceScopeFactory scopeFactory, BackgroundTaskWorkder backgroundTaskWorker)
         {
             _logger = logger;

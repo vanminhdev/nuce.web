@@ -28,12 +28,11 @@ using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.Services.Ctsv.Implements;
 using nuce.web.api.Services.Ctsv.Interfaces;
 using nuce.web.api.Services.Survey.Implements;
-using nuce.web.api.Services.Survey.Interfaces;
+
 using nuce.web.api.Services.EduData.Implements;
 using nuce.web.api.Services.EduData.Interfaces;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using nuce.web.api.Models.Status;
-using nuce.web.api.Services.Status.Interfaces;
 using nuce.web.api.Services.Status.Implements;
 using System.Net;
 using nuce.web.api.Services.Background;
@@ -218,33 +217,33 @@ namespace nuce.web.api
             services.AddScoped<IInitializeService, InitializeService>();
             #endregion
             #region config survey service
-            services.AddScoped<IStatusService, StatusService>();
-            services.AddScoped<IAsEduSurveyCauHoiService, AsEduSurveyCauHoiService>();
-            services.AddScoped<IAsEduSurveyDapAnService, AsEduSurveyDapAnService>();
-            services.AddScoped<IAsEduSurveyDeThiService, AsEduSurveyDeThiService>();
-            services.AddScoped<IAsEduSurveyDotKhaoSatService, AsEduSurveyDotKhaoSatService>();
-            services.AddScoped<IAsEduSurveyBaiKhaoSatService, AsEduSurveyBaiKhaoSatService>();
-            services.AddScoped<IAsEduSurveyBaiKhaoSatSinhVienService, AsEduSurveyBaiKhaoSatSinhVienService>();
+            services.AddScoped<StatusService>();
+            services.AddScoped<AsEduSurveyCauHoiService>();
+            services.AddScoped<AsEduSurveyDapAnService>();
+            services.AddScoped<AsEduSurveyDeThiService>();
+            services.AddScoped<AsEduSurveyDotKhaoSatService>();
+            services.AddScoped<AsEduSurveyBaiKhaoSatService>();
+            services.AddScoped<AsEduSurveyBaiKhaoSatSinhVienService>();
             services.AddScoped<BaiKhaoSatSinhVienBackgroundTask>();
-            services.AddScoped<IAsEduSurveyReportTotalService, AsEduSurveyReportTotalService>();
+            services.AddScoped<AsEduSurveyReportTotalService>();
 
-            services.AddScoped<IAsEduSurveyGraduateCauHoiService, AsEduSurveyGraduateCauHoiService>();
-            services.AddScoped<IAsEduSurveyGraduateDapAnService, AsEduSurveyGraduateDapAnService>();
-            services.AddScoped<IAsEduSurveyGraduateDeThiService, AsEduSurveyGraduateDeThiService>();
-            services.AddScoped<IAsEduSurveyGraduateStudentService, AsEduSurveyGraduateStudentService>();
-            services.AddScoped<IAsEduSurveyGraduateDotKhaoSatService, AsEduSurveyGraduateDotKhaoSatService>();
-            services.AddScoped<IAsEduSurveyGraduateBaiKhaoSatService, AsEduSurveyGraduateBaiKhaoSatService>();
-            services.AddScoped<IAsEduSurveyGraduateBaiKhaoSatSinhVienService, AsEduSurveyGraduateBaiKhaoSatSinhVienService>();
-            services.AddScoped<IAsEduSurveyGraduateReportTotalService, AsEduSurveyGraduateReportTotalService>();
+            services.AddScoped<AsEduSurveyGraduateCauHoiService>();
+            services.AddScoped<AsEduSurveyGraduateDapAnService>();
+            services.AddScoped<AsEduSurveyGraduateDeThiService>();
+            services.AddScoped<AsEduSurveyGraduateStudentService>();
+            services.AddScoped<AsEduSurveyGraduateDotKhaoSatService>();
+            services.AddScoped<AsEduSurveyGraduateBaiKhaoSatService>();
+            services.AddScoped<AsEduSurveyGraduateBaiKhaoSatSinhVienService>();
+            services.AddScoped<AsEduSurveyGraduateReportTotalService>();
 
-            services.AddScoped<IAsEduSurveyUndergraduateCauHoiService, AsEduSurveyUndergraduateCauHoiService>();
-            services.AddScoped<IAsEduSurveyUndergraduateDapAnService, AsEduSurveyUndergraduateDapAnService>();
-            services.AddScoped<IAsEduSurveyUndergraduateDeThiService, AsEduSurveyUndergraudateDeThiService>();
-            services.AddScoped<IAsEduSurveyUndergraduateStudentService, AsEduSurveyUndergraduateStudentService>();
-            services.AddScoped<IAsEduSurveyUndergraduateDotKhaoSatService, AsEduSurveyUndergraduateDotKhaoSatService>();
-            services.AddScoped<IAsEduSurveyUndergraduateBaiKhaoSatService, AsEduSurveyUndergraduateBaiKhaoSatService>();
-            services.AddScoped<IAsEduSurveyUndergraduateBaiKhaoSatSinhVienService, AsEduSurveyUndergraduateBaiKhaoSatSinhVienService>();
-            services.AddScoped<IAsEduSurveyUndergraduateReportTotalService, AsEduSurveyUndergraduateReportTotalService>();
+            services.AddScoped<AsEduSurveyUndergraduateCauHoiService>();
+            services.AddScoped<AsEduSurveyUndergraduateDapAnService>();
+            services.AddScoped<AsEduSurveyUndergraduateDeThiService>();
+            services.AddScoped<AsEduSurveyUndergraduateStudentService>();
+            services.AddScoped<AsEduSurveyUndergraduateDotKhaoSatService>();
+            services.AddScoped<AsEduSurveyUndergraduateBaiKhaoSatService>();
+            services.AddScoped<AsEduSurveyUndergraduateBaiKhaoSatSinhVienService>();
+            services.AddScoped<AsEduSurveyUndergraduateReportTotalService>();
 
             services.AddScoped<SurveyResultService>();
 

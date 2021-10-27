@@ -8,8 +8,7 @@ using nuce.web.api.Models.Status;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Models.Survey.JsonData;
 using nuce.web.api.Services.Core.Interfaces;
-using nuce.web.api.Services.Status.Interfaces;
-using nuce.web.api.Services.Survey.Interfaces;
+using nuce.web.api.Services.Status.Implements;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey.Normal.Statistic;
 using OfficeOpenXml;
@@ -26,16 +25,16 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.Survey.Implements
 {
-    class AsEduSurveyReportTotalService : IAsEduSurveyReportTotalService
+    public class AsEduSurveyReportTotalService
     {
         private readonly ILogger<AsEduSurveyReportTotalService> _logger;
         private readonly SurveyContext _context;
         private readonly EduDataContext _eduContext;
-        private readonly IStatusService _statusService;
+        private readonly StatusService _statusService;
         private readonly IConfiguration _configuration;
         private readonly IPathProvider _pathProvider;
 
-        public AsEduSurveyReportTotalService(ILogger<AsEduSurveyReportTotalService> logger, SurveyContext context, EduDataContext eduContext, IStatusService statusService, IConfiguration configuration, IPathProvider pathProvider)
+        public AsEduSurveyReportTotalService(ILogger<AsEduSurveyReportTotalService> logger, SurveyContext context, EduDataContext eduContext, StatusService statusService, IConfiguration configuration, IPathProvider pathProvider)
         {
             _logger = logger;
             _context = context;

@@ -14,9 +14,9 @@ using nuce.web.api.Models.Status;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Services.Background;
 using nuce.web.api.Services.Core.Interfaces;
-using nuce.web.api.Services.Status.Interfaces;
+using nuce.web.api.Services.Status.Implements;
 using nuce.web.api.Services.Survey.BackgroundTasks;
-using nuce.web.api.Services.Survey.Interfaces;
+using nuce.web.api.Services.Survey.Implements;
 using nuce.web.api.ViewModel.Survey;
 using nuce.web.shared;
 using System;
@@ -36,13 +36,13 @@ namespace nuce.web.api.Controllers.Survey.Normal
     public class TheSurveyStudentController : ControllerBase
     {
         private readonly ILogger<TheSurveyStudentController> _logger;
-        private readonly IAsEduSurveyBaiKhaoSatSinhVienService _asEduSurveyBaiKhaoSatSinhVienService;
-        private readonly IStatusService _statusService;
+        private readonly AsEduSurveyBaiKhaoSatSinhVienService _asEduSurveyBaiKhaoSatSinhVienService;
+        private readonly StatusService _statusService;
         private readonly IUserService _userService;
         private readonly BaiKhaoSatSinhVienBackgroundTask _baiKhaoSatSinhVienBackgroundTask;
 
-        public TheSurveyStudentController(ILogger<TheSurveyStudentController> logger, IAsEduSurveyBaiKhaoSatSinhVienService asEduSurveyBaiKhaoSatSinhVienService, 
-            IUserService userService, IStatusService statusService,
+        public TheSurveyStudentController(ILogger<TheSurveyStudentController> logger, AsEduSurveyBaiKhaoSatSinhVienService asEduSurveyBaiKhaoSatSinhVienService, 
+            IUserService userService, StatusService statusService,
              BaiKhaoSatSinhVienBackgroundTask baiKhaoSatSinhVienBackgroundTask)
         {
             _logger = logger;

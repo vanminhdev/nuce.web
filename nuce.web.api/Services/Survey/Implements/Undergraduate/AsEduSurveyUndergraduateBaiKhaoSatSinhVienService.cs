@@ -10,7 +10,7 @@ using nuce.web.api.Models.Survey;
 using nuce.web.api.Models.Survey.JsonData;
 using nuce.web.api.Services.Shared;
 using nuce.web.api.Services.Survey.Base;
-using nuce.web.api.Services.Survey.Interfaces;
+
 using nuce.web.api.ViewModel.Survey;
 using nuce.web.api.ViewModel.Survey.Undergraduate;
 using System;
@@ -26,7 +26,7 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.Survey.Implements
 {
-    class AsEduSurveyUndergraduateBaiKhaoSatSinhVienService : BaiKhaoSatSinhVienServiceBase, IAsEduSurveyUndergraduateBaiKhaoSatSinhVienService
+    public class AsEduSurveyUndergraduateBaiKhaoSatSinhVienService : BaiKhaoSatSinhVienServiceBase
     {
         private readonly ILogger<AsEduSurveyUndergraduateBaiKhaoSatSinhVienService> _logger;
         private readonly SurveyContext _context;

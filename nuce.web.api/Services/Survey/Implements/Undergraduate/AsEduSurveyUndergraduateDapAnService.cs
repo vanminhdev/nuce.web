@@ -2,7 +2,7 @@
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Models.Survey;
-using nuce.web.api.Services.Survey.Interfaces;
+
 using nuce.web.api.ViewModel.Survey;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ using System.Web;
 
 namespace nuce.web.api.Services.Survey.Implements
 {
-    class AsEduSurveyUndergraduateDapAnService : IAsEduSurveyUndergraduateDapAnService
+    public class AsEduSurveyUndergraduateDapAnService
     {
         private readonly SurveyContext _surveyContext;
 

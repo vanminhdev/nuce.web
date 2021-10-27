@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.api.HandleException;
 using nuce.web.api.Models.Survey;
-using nuce.web.api.Services.Survey.Interfaces;
+using nuce.web.api.Services.Survey.Implements;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey;
 using nuce.web.shared;
@@ -24,9 +24,9 @@ namespace nuce.web.api.Controllers.Survey.Normal
     public class TheSurveyController : ControllerBase
     {
         private readonly ILogger<TheSurveyController> _logger;
-        private readonly IAsEduSurveyBaiKhaoSatService _asEduSurveyBaiKhaoSatService;
+        private readonly AsEduSurveyBaiKhaoSatService _asEduSurveyBaiKhaoSatService;
 
-        public TheSurveyController(ILogger<TheSurveyController> logger, IAsEduSurveyBaiKhaoSatService asEduSurveyBaiKhaoSatService)
+        public TheSurveyController(ILogger<TheSurveyController> logger, AsEduSurveyBaiKhaoSatService asEduSurveyBaiKhaoSatService)
         {
             _logger = logger;
             _asEduSurveyBaiKhaoSatService = asEduSurveyBaiKhaoSatService;

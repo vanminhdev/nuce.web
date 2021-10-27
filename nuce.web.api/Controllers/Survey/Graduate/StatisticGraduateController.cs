@@ -6,9 +6,9 @@ using Microsoft.Extensions.Logging;
 using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
-using nuce.web.api.Services.Status.Interfaces;
+using nuce.web.api.Services.Status.Implements;
 using nuce.web.api.Services.Survey.BackgroundTasks;
-using nuce.web.api.Services.Survey.Interfaces;
+using nuce.web.api.Services.Survey.Implements.Graduate;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey.Undergraduate.Statistic;
 using nuce.web.shared;
@@ -25,11 +25,11 @@ namespace nuce.web.api.Controllers.Survey.Graduate
     public class StatisticGraduateController : ControllerBase
     {
         private readonly ILogger<StatisticGraduateController> _logger;
-        private readonly IAsEduSurveyGraduateReportTotalService _reportTotalService;
-        private readonly IStatusService _statusService;
+        private readonly AsEduSurveyGraduateReportTotalService _reportTotalService;
+        private readonly StatusService _statusService;
 
-        public StatisticGraduateController(ILogger<StatisticGraduateController> logger, IAsEduSurveyGraduateReportTotalService reportTotalService, 
-            IStatusService statusService)
+        public StatisticGraduateController(ILogger<StatisticGraduateController> logger, AsEduSurveyGraduateReportTotalService reportTotalService, 
+            StatusService statusService)
         {
             _logger = logger;
             _reportTotalService = reportTotalService;

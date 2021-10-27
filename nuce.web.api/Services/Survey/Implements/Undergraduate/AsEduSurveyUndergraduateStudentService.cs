@@ -5,8 +5,7 @@ using nuce.web.api.HandleException;
 using nuce.web.api.Models.Status;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Models.Survey.JsonData;
-using nuce.web.api.Services.Status.Interfaces;
-using nuce.web.api.Services.Survey.Interfaces;
+
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey.Undergraduate;
 using OfficeOpenXml;
@@ -21,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.Survey.Implements
 {
-    class AsEduSurveyUndergraduateStudentService : IAsEduSurveyUndergraduateStudentService
+    public class AsEduSurveyUndergraduateStudentService
     {
         private readonly SurveyContext _context;
 
@@ -245,6 +244,8 @@ namespace nuce.web.api.Services.Survey.Implements
             worksheet.Column(12).Width = 15.38;
             worksheet.Column(13).Width = 68.86;
             worksheet.Column(14).Width = 19.75;
+            worksheet.Column(15).Width = 24.71;
+            worksheet.Column(16).Width = 40;
 
             worksheet.Cells["A1"].Value = "STT";
             worksheet.Cells["B1"].Value = "Mã SV";
@@ -260,6 +261,8 @@ namespace nuce.web.api.Services.Survey.Implements
             worksheet.Cells["L1"].Value = "Mã Khoa";
             worksheet.Cells["M1"].Value = "Số quyết định và ngày ra quyết định tốt nghiệp";
             worksheet.Cells["N1"].Value = "Ngày ra quyết định";
+            worksheet.Cells["O1"].Value = "Số điện thoại";
+            worksheet.Cells["P1"].Value = "Email";
 
             worksheet.Column(2).Style.Numberformat.Format = "@";
             worksheet.Column(5).Style.Numberformat.Format = "dd-MM-yy";
@@ -278,7 +281,7 @@ namespace nuce.web.api.Services.Survey.Implements
                 query = query.Where(o => o.Ngayraqd <= toDate.Value);
             }
 
-            var students = await query.ToListAsync();
+            var students = await query.OrderBy(o => o.Ngayraqd).ToListAsync();
 
             int row = 2;
             int stt = 1;
@@ -298,6 +301,8 @@ namespace nuce.web.api.Services.Survey.Implements
                 worksheet.Cells[$"L{row}"].Value = student.Makhoa;
                 worksheet.Cells[$"M{row}"].Value = student.Soqdtn;
                 worksheet.Cells[$"N{row}"].Value = student.Ngayraqd?.ToString("dd-MM-yyyy");
+                worksheet.Cells[$"O{row}"].Value = student.Mobile;
+                worksheet.Cells[$"P{row}"].Value = student.Email;
                 row++;
             }
 

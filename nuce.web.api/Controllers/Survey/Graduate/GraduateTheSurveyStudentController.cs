@@ -7,7 +7,7 @@ using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Services.Core.Interfaces;
-using nuce.web.api.Services.Survey.Interfaces;
+using nuce.web.api.Services.Survey.Implements;
 using nuce.web.api.ViewModel.Survey;
 using nuce.web.shared;
 using System;
@@ -23,13 +23,13 @@ namespace nuce.web.api.Controllers.Survey.Graduate
     public class GraduateTheSurveyStudentController : ControllerBase
     {
         private readonly ILogger<GraduateTheSurveyStudentController> _logger;
-        private readonly IAsEduSurveyGraduateBaiKhaoSatSinhVienService _asEduSurveyGraduateBaiKhaoSatSinhVienService;
-        private readonly IAsEduSurveyGraduateDotKhaoSatService _asEduSurveyGraduateDotKhaoSatService;
+        private readonly AsEduSurveyGraduateBaiKhaoSatSinhVienService _asEduSurveyGraduateBaiKhaoSatSinhVienService;
+        private readonly AsEduSurveyGraduateDotKhaoSatService _asEduSurveyGraduateDotKhaoSatService;
         private readonly IUserService _userService;
 
         public GraduateTheSurveyStudentController(ILogger<GraduateTheSurveyStudentController> logger, IUserService userService,
-            IAsEduSurveyGraduateDotKhaoSatService asEduSurveyGraduateDotKhaoSatService,
-            IAsEduSurveyGraduateBaiKhaoSatSinhVienService asEduSurveyGraduateBaiKhaoSatSinhVienService)
+            AsEduSurveyGraduateDotKhaoSatService asEduSurveyGraduateDotKhaoSatService,
+            AsEduSurveyGraduateBaiKhaoSatSinhVienService asEduSurveyGraduateBaiKhaoSatSinhVienService)
         {
             _logger = logger;
             _userService = userService;

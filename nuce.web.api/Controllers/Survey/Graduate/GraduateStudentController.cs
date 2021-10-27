@@ -9,7 +9,7 @@ using nuce.web.api.HandleException;
 using nuce.web.api.Helper;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Services.Core.Interfaces;
-using nuce.web.api.Services.Survey.Interfaces;
+using nuce.web.api.Services.Survey.Implements;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey.Graduate;
 using nuce.web.shared;
@@ -34,13 +34,13 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         private readonly ILogger<GraduateStudentController> _logger;
         private readonly IConfiguration _configuration;
         private readonly IPathProvider _pathProvider;
-        private readonly IAsEduSurveyGraduateStudentService _asEduSurveyGraduateStudentService;
-        private readonly IAsEduSurveyGraduateDotKhaoSatService _asEduSurveyGraduateDotKhaoSatService;
+        private readonly AsEduSurveyGraduateStudentService _asEduSurveyGraduateStudentService;
+        private readonly AsEduSurveyGraduateDotKhaoSatService _asEduSurveyGraduateDotKhaoSatService;
 
         public GraduateStudentController(ILogger<GraduateStudentController> logger, IPathProvider pathProvider, 
             IConfiguration configuration,
-            IAsEduSurveyGraduateDotKhaoSatService asEduSurveyGraduateDotKhaoSatService,
-            IAsEduSurveyGraduateStudentService asEduSurveyGraduateStudentService)
+            AsEduSurveyGraduateDotKhaoSatService asEduSurveyGraduateDotKhaoSatService,
+            AsEduSurveyGraduateStudentService asEduSurveyGraduateStudentService)
         {
             _logger = logger;
             _pathProvider = pathProvider;
@@ -56,7 +56,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
             var filter = new GraduateStudentFilter();
             if (request.Columns != null)
             {
-                filter.Masv = request.Columns.FirstOrDefault(c => c.Data == "masv" || c.Name == "masv")?.Search.Value ?? null;
+                filter.Masv = request.Columns.FirstOrDefault(c => c.Data == "exMasv" || c.Name == "exMasv")?.Search.Value ?? null;
                 filter.LopQL = request.Columns.FirstOrDefault(c => c.Data == "lopqd" || c.Name == "lopqd")?.Search.Value ?? null;
             }
             var skip = request.Start;

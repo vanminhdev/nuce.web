@@ -2,7 +2,7 @@
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Models.Survey;
-using nuce.web.api.Services.Survey.Interfaces;
+
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey;
 using System;
@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.Survey.Implements
 {
-    class AsEduSurveyDotKhaoSatService : IAsEduSurveyDotKhaoSatService
+    public class AsEduSurveyDotKhaoSatService
     {
         private readonly SurveyContext _context;
 

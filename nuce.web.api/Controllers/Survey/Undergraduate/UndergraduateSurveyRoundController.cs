@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.api.HandleException;
 using nuce.web.api.Models.Survey;
-using nuce.web.api.Services.Survey.Interfaces;
+using nuce.web.api.Services.Survey.Implements;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey.Undergraduate;
 using nuce.web.shared;
@@ -24,9 +24,9 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
     public class UndergraduateSurveyRoundController : ControllerBase
     {
         private readonly ILogger<UndergraduateSurveyRoundController> _logger;
-        private readonly IAsEduSurveyUndergraduateDotKhaoSatService _asEduSurveyUndergraduateDotKhaoSatService;
+        private readonly AsEduSurveyUndergraduateDotKhaoSatService _asEduSurveyUndergraduateDotKhaoSatService;
 
-        public UndergraduateSurveyRoundController(ILogger<UndergraduateSurveyRoundController> logger, IAsEduSurveyUndergraduateDotKhaoSatService asEduSurveyUndergraduateDotKhaoSatService)
+        public UndergraduateSurveyRoundController(ILogger<UndergraduateSurveyRoundController> logger, AsEduSurveyUndergraduateDotKhaoSatService asEduSurveyUndergraduateDotKhaoSatService)
         {
             _logger = logger;
             _asEduSurveyUndergraduateDotKhaoSatService = asEduSurveyUndergraduateDotKhaoSatService;

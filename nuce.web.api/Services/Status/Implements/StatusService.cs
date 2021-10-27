@@ -2,7 +2,6 @@
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
 using nuce.web.api.Models.Status;
-using nuce.web.api.Services.Status.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.Status.Implements
 {
-    class StatusService : IStatusService
+    public class StatusService
     {
         private readonly StatusContext _context;
 
