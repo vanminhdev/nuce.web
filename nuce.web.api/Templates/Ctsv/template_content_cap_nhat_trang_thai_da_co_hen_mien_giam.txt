@@ -1,0 +1,2 @@
+<div style='padding:5px;'>Anh/chị vui lòng qua phòng CTCT&QLSV từ <b>[gio_hen]</b> giờ <b>[phut_hen]</b> phút ngày [ngay_hen] để hoàn tất dịch vụ.</div>
+<div style='padding:5px;'><i>Chú ý: <b>Sinh viên nộp các giấy tờ theo đối tượng đăng ký trên đơn về Phòng Công tác Chính trị và Quản lý sinh viên; thời hạn trên Thông báo.</b></i></div>

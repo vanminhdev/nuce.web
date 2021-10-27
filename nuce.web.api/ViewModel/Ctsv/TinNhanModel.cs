@@ -21,6 +21,13 @@ namespace nuce.web.api.ViewModel.Ctsv
         /// Tên template trong thư mục "Templates/Ctsv" thay vì template mặc định
         /// </summary>
         public string TemplateName { get; set; }
+        /// <summary>
+        /// Tên template Đã có hẹn trong thư mục "Templates/Ctsv" thay vì template Đã có hẹn mặc định
+        /// </summary>
+        public string TemplateNameDaCoHen { get; set; }
+        /// <summary>
+        /// Nếu true thì sẽ dùng template Đã có hẹn chuyển phát nhanh, không xét theo TemplateNameDaCoHen
+        /// </summary>
         public bool ChuyenPhatNhanh { get; set; }
     }
 }
