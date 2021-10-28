@@ -4510,6 +4510,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         string option5 = "";
                         string option6 = "";
                         string option7 = "";
+                        string option8 = "";
+                        string option9 = "";
 
                         switch (mienGiamHP.DoiTuongHuong)
                         {
@@ -4534,6 +4536,12 @@ namespace nuce.web.api.Services.Ctsv.Implements
                             case DoiTuongXinMienGiamHocPhi.CHA_ME_TAI_NAN_DUOC_TRO_CAP:
                                 option7 = "x";
                                 break;
+                            case DoiTuongXinMienGiamHocPhi.KHU_VUC_III:
+                                option8 = "x";
+                                break;
+                            case DoiTuongXinMienGiamHocPhi.CON_CAN_BO_DUOC_TRO_CAP_THUONG_XUYEN:
+                                option9 = "x";
+                                break;
                         }
 
                         replaceTextTemplate(text, "<option1>", option1);
@@ -4543,6 +4551,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         replaceTextTemplate(text, "<option5>", option5);
                         replaceTextTemplate(text, "<option6>", option6);
                         replaceTextTemplate(text, "<option7>", option7);
+                        replaceTextTemplate(text, "<option8>", option8);
+                        replaceTextTemplate(text, "<option9>", option9);
                     }
                     #endregion
                     mainPart.Document.Save();

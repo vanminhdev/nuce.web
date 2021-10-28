@@ -61,8 +61,10 @@ namespace nuce.web.api.Common
             public const string DAN_TOC_IT_NGUOI_VUNG_KHO_KHAN = "DAN_TOC_IT_NGUOI_VUNG_KHO_KHAN";
             public const string DAN_TOC_VUNG_KHO_KHAN = "DAN_TOC_VUNG_KHO_KHAN";
             public const string CHA_ME_TAI_NAN_DUOC_TRO_CAP = "CHA_ME_TAI_NAN_DUOC_TRO_CAP";
+            public const string KHU_VUC_III = "KHU_VUC_III";
+            public const string CON_CAN_BO_DUOC_TRO_CAP_THUONG_XUYEN = "CON_CAN_BO_DUOC_TRO_CAP_THUONG_XUYEN";
             public static readonly List<string> All = new List<string> { CO_CONG_CACH_MANG, SV_VAN_BANG_1, TAN_TAT_KHO_KHAN_KINH_TE,
-                DAN_TOC_HO_NGHEO, DAN_TOC_IT_NGUOI_VUNG_KHO_KHAN, DAN_TOC_VUNG_KHO_KHAN, CHA_ME_TAI_NAN_DUOC_TRO_CAP };
+                DAN_TOC_HO_NGHEO, DAN_TOC_IT_NGUOI_VUNG_KHO_KHAN, DAN_TOC_VUNG_KHO_KHAN, CHA_ME_TAI_NAN_DUOC_TRO_CAP, KHU_VUC_III, CON_CAN_BO_DUOC_TRO_CAP_THUONG_XUYEN };
         }
 
         public class DoiTuongDeNghiHoTroChiPhi

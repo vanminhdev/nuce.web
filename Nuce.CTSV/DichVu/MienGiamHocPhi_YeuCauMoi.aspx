@@ -58,6 +58,10 @@
                     </asp:ListItem>
                     <asp:ListItem Value="CHA_ME_TAI_NAN_DUOC_TRO_CAP">&nbsp;Sinh viên thuộc các đối tượng của chương trình, đề án được miễn giảm học phí theo quy định của Chính phủ.
                     </asp:ListItem>
+                    <asp:ListItem Value="KHU_VUC_III">&nbsp;Sinh viên là người dân tộc thiểu số (ngoài đối tượng dân tộc thiểu số rất ít người) ở thôn/bản đặc biệt khó khăn, xã khu vực III vùng dân tộc và miền núi, xã đặc biệt khó khăn vùng bãi ngang ven biển hải đảo theo quy định của cơ quan có thẩm quyền.
+                    </asp:ListItem>
+                    <asp:ListItem Value="CON_CAN_BO_DUOC_TRO_CAP_THUONG_XUYEN">&nbsp;Sinh viên là con cán bộ, công chức, viên chức, công nhân mà cha hoặc mẹ bị tai nạn lao động hoặc mắc bệnh nghề nghiệp được hưởng trợ cấp thường xuyên.
+                    </asp:ListItem>
                 </asp:RadioButtonList>
             </div>
             <div class="font-14-sm fw-600 font-18 mb-3">
