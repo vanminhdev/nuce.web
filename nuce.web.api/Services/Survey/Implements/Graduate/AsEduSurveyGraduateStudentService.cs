@@ -332,6 +332,8 @@ namespace nuce.web.api.Services.Survey.Implements
 
             var students = await _context.AsEduSurveyGraduateStudent
                 .Where(o => o.DotKhaoSatId == surveyRoundId)
+                .OrderBy(o => o.Makhoa)
+                .OrderBy(o => o.ExMasv)
                 .ToListAsync();
 
             int row = 2;
