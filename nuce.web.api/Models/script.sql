@@ -1,4 +1,4 @@
-alter table [AS_Academy_Faculty]
+﻿alter table [AS_Academy_Faculty]
 add [Order] int null
 go
 
@@ -55,3 +55,12 @@ set [Order] = 17 where Code = 'TC'
 
 update [AS_Academy_Faculty]
 set [Order] = 18 where Code = '*'
+
+
+--cập nhật lại ngành chuyên ngành trong bảng bài làm của sinh viên trước tốt nghiệp
+
+update AS_Edu_Survey_Undergraduate_BaiKhaoSat_SinhVien
+set Nganh = (select tennganh from AS_Edu_Survey_Undergraduate_Student where AS_Edu_Survey_Undergraduate_BaiKhaoSat_SinhVien.StudentCode = AS_Edu_Survey_Undergraduate_Student.ex_masv)
+
+update AS_Edu_Survey_Undergraduate_BaiKhaoSat_SinhVien
+set ChuyenNganh = (select tenchnga from AS_Edu_Survey_Undergraduate_Student where AS_Edu_Survey_Undergraduate_BaiKhaoSat_SinhVien.StudentCode = AS_Edu_Survey_Undergraduate_Student.ex_masv)
