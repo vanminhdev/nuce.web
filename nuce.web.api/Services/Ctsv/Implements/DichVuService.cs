@@ -436,6 +436,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                                 Sdt = model.Sdt
                             };
                             await _xinMienGiamHocPhiRepository.AddDangKy(xinMien);
+                            await _unitOfWork.SaveAsync();
+                            await UpdateRequestStatus(new UpdateRequestStatusModel
+                            {
+                                AutoUpdateNgayHen = true,
+                                Status = 4,
+                                Type = (int)DichVu.XinMienGiamHocPhi,
+                                RequestID = (int)xinMien.Id,
+                            });
                             break;
                         case DichVu.DeNghiHoTroChiPhiHocTap:
                             if (!DoiTuongDeNghiHoTroChiPhi.All.Contains(model.DoiTuongDeNghiHoTro))
@@ -469,6 +477,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                                 Sdt = model.Sdt
                             };
                             await _deNghiHoTroChiPhiRepository.AddDangKy(deNghi);
+                            await _unitOfWork.SaveAsync();
+                            await UpdateRequestStatus(new UpdateRequestStatusModel
+                            {
+                                AutoUpdateNgayHen = true,
+                                Status = 4,
+                                Type = (int)DichVu.DeNghiHoTroChiPhiHocTap,
+                                RequestID = (int)deNghi.Id,
+                            });
                             break;
                         case DichVu.HoTroHocTap:
                             var dot = await _dotHoTroHocTapRepository.GetDotActive();
@@ -498,6 +514,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
                                 DotDangKy = dot.Id,
                             };
                             await _hoTroHocTapRepository.AddDangKyNhaO(dky);
+                            await _unitOfWork.SaveAsync();
+                            await UpdateRequestStatus(new UpdateRequestStatusModel
+                            {
+                                AutoUpdateNgayHen = true,
+                                Status = 4,
+                                Type = (int)DichVu.HoTroHocTap,
+                                RequestID = (int)dky.Id,
+                            });
                             break;
                         default:
                             run = false;
@@ -1052,6 +1076,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             AsAcademyStudent student = null;
             DateTime? ngayTao = DateTime.Now;
             string templateMail = null;
+            string templateMailDaCoHen = null;
 
             bool isUsechuyenPhatNhanh = _configuration.GetValue<string>("IsUseDiaChiChuyenPhatNhanh") == "1";
             bool chuyenPhatNhanh = false;
@@ -1162,6 +1187,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     student = _studentRepository.FindByCode(veBus.StudentCode);
                     break;
                 case DichVu.XinMienGiamHocPhi:
+                    templateMailDaCoHen = "template_content_cap_nhat_trang_thai_da_co_hen_mien_giam.txt";
+
                     var xinMienGiam = await _xinMienGiamHocPhiRepository.FindByIdAsync(model.RequestID);
                     xinMienGiam.Status = model.Status;
                     xinMienGiam.PhanHoi = model.PhanHoi;
@@ -1169,9 +1196,16 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     xinMienGiam.NgayHenDenNgay = model.NgayHenKetThuc;
                     ngayTao = xinMienGiam.CreatedTime;
 
+                    if (xinMienGiam.Status == (int)TrangThaiYeuCau.HoanThanh)
+                    {
+                        templateMailDaCoHen = null;
+                    }
+
                     student = _studentRepository.FindByCode(xinMienGiam.StudentCode);
                     break;
                 case DichVu.DeNghiHoTroChiPhiHocTap:
+                    templateMailDaCoHen = "template_content_cap_nhat_trang_thai_da_co_hen_mien_giam.txt";
+
                     var deNghi = await _deNghiHoTroChiPhiRepository.FindByIdAsync(model.RequestID);
                     deNghi.Status = model.Status;
                     deNghi.PhanHoi = model.PhanHoi;
@@ -1179,15 +1213,27 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     deNghi.NgayHenDenNgay = model.NgayHenKetThuc;
                     ngayTao = deNghi.CreatedTime;
 
+                    if (deNghi.Status == (int)TrangThaiYeuCau.HoanThanh)
+                    {
+                        templateMailDaCoHen = null;
+                    }
+
                     student = _studentRepository.FindByCode(deNghi.StudentCode);
                     break;
                 case DichVu.HoTroHocTap:
+                    templateMailDaCoHen = "template_content_cap_nhat_trang_thai_da_co_hen_mien_giam.txt";
+
                     var dky = await _hoTroHocTapRepository.FindByIdAsync(model.RequestID);
                     dky.Status = model.Status;
                     dky.PhanHoi = model.PhanHoi;
                     dky.NgayHenTuNgay = model.NgayHenBatDau;
                     dky.NgayHenDenNgay = model.NgayHenKetThuc;
                     ngayTao = dky.CreatedTime;
+
+                    if (dky.Status == (int)TrangThaiYeuCau.HoanThanh)
+                    {
+                        templateMailDaCoHen = null;
+                    }
 
                     student = _studentRepository.FindByCode(dky.StudentCode);
                     break;
@@ -1216,6 +1262,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     NgayHen = model.NgayHenBatDau,
                     NgayTao = ngayTao,
                     TemplateName = templateMail,
+                    TemplateNameDaCoHen = templateMailDaCoHen,
                     ChuyenPhatNhanh = chuyenPhatNhanh,
                 };
                 var sendEmailRs = new ResponseBody();

@@ -94,9 +94,17 @@ namespace nuce.web.api.Services.Ctsv.Implements
                                                 .Replace("[ten_dich_vu]", model.TenDichVu)
                                                 .Replace("[ngay_tao_gio_tao]", model.NgayTao?.ToString("dd/MM/yyyy HH:mm"));
             string henGapContent = "";
-            string filePathDaCoHen = model.ChuyenPhatNhanh ? "Templates/Ctsv/template_content_cap_nhat_trang_thai_da_co_hen_chuyen_phat_nhanh.txt" : "Templates/Ctsv/template_content_cap_nhat_trang_thai_da_co_hen.txt";
             if (henGap)
             {
+                string filePathDaCoHen = "Templates/Ctsv/template_content_cap_nhat_trang_thai_da_co_hen.txt";
+                if (!string.IsNullOrEmpty(model.TemplateNameDaCoHen))
+                {
+                    filePathDaCoHen = $"Templates/Ctsv/{model.TemplateNameDaCoHen}";
+                }
+                if (model.ChuyenPhatNhanh)
+                {
+                    filePathDaCoHen = "Templates/Ctsv/template_content_cap_nhat_trang_thai_da_co_hen_chuyen_phat_nhanh.txt";
+                }
                 dir = _pathProvider.MapPath(filePathDaCoHen);
                 if (!File.Exists(dir))
                 {
