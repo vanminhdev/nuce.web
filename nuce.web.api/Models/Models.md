@@ -34,3 +34,13 @@
 3. xem database diagram
 	-lỗi dbo
 		use [YourDatabaseName] EXEC sp_changedbowner 'sa'
+
+4. cập nhật câu hỏi, đáp án (cẩn thận với thao này)
+	cập nhật câu hỏi -> cập phật lại cấu trúc (bấm lưu cấu trúc) -> cập nhật bài khảo sát 
+	(bằng cách xóa bài khảo sát bằng sql, xóa những bài khảo sát sinh viên rồi vào phát lại): lúc này bài khảo sát mới được update ra thật cho sinh viên
+	
+	--xóa bài khảo sát
+	delete as_edu_survey_baikhaosat where id = ...
+	--xóa bài khảo sát sinh viên
+	delte as_edu_survey_baikhaosat_sinhvien where baikhaosatid = ... lấy id bên trên ném xuống
+	--vào giao diện tạo lại bài khảo sát mới rồi phát bài

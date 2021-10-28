@@ -207,11 +207,11 @@ namespace nuce.web.api.Services.Survey.Implements
                 .Where(o => o.Ngayraqd != null)
                 .Where(o => filter.FromDate <= o.Ngayraqd && filter.ToDate >= o.Ngayraqd);
 
-            //if (filter.HeTotNghieps != null)
-            //{
-            //    filter.HeTotNghieps.ForEach(h => h = h.ToLower());
-            //    query = query.Where(o => o.Hedaotao != null && filter.HeTotNghieps.Contains(o.Hedaotao.ToLower()));
-            //}
+            if (filter.HeTotNghieps != null)
+            {
+                filter.HeTotNghieps.ForEach(h => h = h.ToLower());
+                query = query.Where(o => o.Hedaotao != null && filter.HeTotNghieps.Contains(o.Hedaotao.ToLower()));
+            }
 
             var underStudents = await query.ToListAsync();
 
@@ -283,10 +283,10 @@ namespace nuce.web.api.Services.Survey.Implements
             worksheet.Row(1).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
             worksheet.Row(1).Style.VerticalAlignment = ExcelVerticalAlignment.Center;
 
-            worksheet.Cells[1, 1, 1, 16].Style.Border.Top.Style = ExcelBorderStyle.Thin;
-            worksheet.Cells[1, 1, 1, 16].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-            worksheet.Cells[1, 1, 1, 16].Style.Border.Left.Style = ExcelBorderStyle.Thin;
-            worksheet.Cells[1, 1, 1, 16].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[1, 1, 1, 15].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[1, 1, 1, 15].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[1, 1, 1, 15].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            worksheet.Cells[1, 1, 1, 15].Style.Border.Right.Style = ExcelBorderStyle.Thin;
 
             worksheet.Row(1).Height = 53.25;
             worksheet.Row(1).Style.Font.Bold = true;
@@ -296,42 +296,42 @@ namespace nuce.web.api.Services.Survey.Implements
             worksheet.Column(3).Width = 29.38;
             worksheet.Column(4).Width = 17.75;
             worksheet.Column(5).Width = 16;
-            worksheet.Column(6).Width = 11.75;
+            worksheet.Column(6).Width = 50;
             worksheet.Column(7).Width = 9.75;
-            worksheet.Column(8).Width = 16.25;
-            worksheet.Column(9).Width = 33.57;
+            worksheet.Column(8).Width = 24;
+            worksheet.Column(9).Width = 15;
             worksheet.Column(10).Width = 41.86;
-            worksheet.Column(11).Width = 22.5;
-            worksheet.Column(12).Width = 15.38;
-            worksheet.Column(13).Width = 68.86;
-            worksheet.Column(14).Width = 19.75;
+            worksheet.Column(11).Width = 43;
+            worksheet.Column(12).Width = 15;
+            worksheet.Column(13).Width = 15;
+            worksheet.Column(14).Width = 30;
             worksheet.Column(15).Width = 30;
-            worksheet.Column(16).Width = 41;
 
             worksheet.Cells["A1"].Value = "STT";
             worksheet.Cells["B1"].Value = "Mã SV";
             worksheet.Cells["C1"].Value = "Họ và Tên";
-            worksheet.Cells["D1"].Value = "Lớp";
+            worksheet.Cells["D1"].Value = "Giới tính";
             worksheet.Cells["E1"].Value = "Ngày sinh";
-            worksheet.Cells["F1"].Value = "Giới";
+            worksheet.Cells["F1"].Value = "Số quyết định tốt nghiệp";
             worksheet.Cells["G1"].Value = "TBCHT";
             worksheet.Cells["H1"].Value = "Xếp loại tốt nghiệp";
-            worksheet.Cells["I1"].Value = "Tên ngành";
-            worksheet.Cells["J1"].Value = "Tên chuyên ngành";
-            worksheet.Cells["K1"].Value = "Hệ tốt nghiệp";
+            worksheet.Cells["I1"].Value = "Lớp QL";
+
+            worksheet.Cells["J1"].Value = "Tên ngành";
+            worksheet.Cells["K1"].Value = "Tên chuyên ngành";
             worksheet.Cells["L1"].Value = "Mã Khoa";
-            worksheet.Cells["M1"].Value = "Số quyết định và ngày ra quyết định tốt nghiệp";
-            worksheet.Cells["N1"].Value = "Ngày ra quyết định";
+            worksheet.Cells["M1"].Value = "Hệ tốt nghiệp";
+            worksheet.Cells["N1"].Value = "Email";
             worksheet.Cells["O1"].Value = "Số điện thoại";
-            worksheet.Cells["P1"].Value = "Email";
 
             worksheet.Column(2).Style.Numberformat.Format = "@";
             worksheet.Column(5).Style.Numberformat.Format = "dd-MM-yy";
             worksheet.Column(7).Style.Numberformat.Format = "0.0";
-            worksheet.Column(14).Style.Numberformat.Format = "dd-MM-yy";
 
             var students = await _context.AsEduSurveyGraduateStudent
                 .Where(o => o.DotKhaoSatId == surveyRoundId)
+                .OrderBy(o => o.Makhoa)
+                .ThenBy(o => o.Malop)
                 .ToListAsync();
 
             int row = 2;
@@ -341,19 +341,20 @@ namespace nuce.web.api.Services.Survey.Implements
                 worksheet.Cells[$"A{row}"].Value = stt++;
                 worksheet.Cells[$"B{row}"].Value = student.ExMasv;
                 worksheet.Cells[$"C{row}"].Value = student.Tensinhvien;
-                worksheet.Cells[$"D{row}"].Value = student.Lopqd;
+                worksheet.Cells[$"D{row}"].Value = student.Gioitinh;
                 worksheet.Cells[$"E{row}"].Value = student.Ngaysinh?.ToString("dd-MM-yyyy");
-                worksheet.Cells[$"F{row}"].Value = student.Gioitinh;
+                worksheet.Cells[$"F{row}"].Value = student.Soqdtn;
                 worksheet.Cells[$"G{row}"].Value = student.Tbcht;
                 worksheet.Cells[$"H{row}"].Value = student.Xeploai;
-                worksheet.Cells[$"I{row}"].Value = student.Tennganh;
-                worksheet.Cells[$"J{row}"].Value = student.Tenchnga;
-                worksheet.Cells[$"K{row}"].Value = student.Hedaotao;
+                worksheet.Cells[$"I{row}"].Value = student.Lopqd;
+
+                worksheet.Cells[$"J{row}"].Value = student.Tennganh;
+                worksheet.Cells[$"K{row}"].Value = student.Tenchnga;
                 worksheet.Cells[$"L{row}"].Value = student.Makhoa;
-                worksheet.Cells[$"M{row}"].Value = student.Soqdtn;
-                worksheet.Cells[$"N{row}"].Value = student.Ngayraqd?.ToString("dd-MM-yyyy");
+                worksheet.Cells[$"M{row}"].Value = student.Hedaotao;
+                
+                worksheet.Cells[$"N{row}"].Value = student.Email;
                 worksheet.Cells[$"O{row}"].Value = student.Mobile;
-                worksheet.Cells[$"P{row}"].Value = student.Email;
                 row++;
             }
 

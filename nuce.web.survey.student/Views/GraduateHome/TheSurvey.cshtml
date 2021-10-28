@@ -120,58 +120,39 @@ else
     {
         foreach (var answer in question.Answers)
         {
+            string classDiv = "col-6 col-md";
             if (displayLong)
             {
-                <div class="col-12 col-md-6">
-                    <div class="d-flex">
-                        @* answerchildquestioncode để show hide câu hỏi con của đáp án *@
-                        <input id="@answer.Code" class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
-                               @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "")
-                               @(answer.ShowQuestion != null ? $"showquestion={JsonConvert.SerializeObject(answer.ShowQuestion)}" : "")
-                               @(answer.HideQuestion != null ? $"hidequestion={JsonConvert.SerializeObject(answer.HideQuestion)}" : "") />
-                        <label for="@answer.Code" class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
-                    </div>
-                </div>
+                classDiv = "col-12 col-md-6";
             }
-            else
-            {
-                <div class="col-6 col-md">
-                    <div class="d-flex">
-                        @* answerchildquestioncode để show hide câu hỏi con của đáp án *@
-                        <input id="@answer.Code" class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
-                               @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "")
-                               @(answer.ShowQuestion != null ? $"showquestion={JsonConvert.SerializeObject(answer.ShowQuestion)}" : "")
-                               @(answer.HideQuestion != null ? $"hidequestion={JsonConvert.SerializeObject(answer.HideQuestion)}" : "") />
-                        <label for="@answer.Code" class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
-                    </div>
+            <div class="@classDiv">
+                <div class="d-flex">
+                    @* answerchildquestioncode để show hide câu hỏi con của đáp án *@
+                    <input id="@answer.Code" class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="radio" name="@question.Code"
+                           @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "")
+                           @(answer.ShowQuestion != null ? $"showquestion={JsonConvert.SerializeObject(answer.ShowQuestion)}" : "")
+                           @(answer.HideQuestion != null ? $"hidequestion={JsonConvert.SerializeObject(answer.HideQuestion)}" : "") />
+                    <label for="@answer.Code" class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
                 </div>
-            }
+            </div>
         }
     }
     else if (question.Type == QuestionType.MC)
     {
         foreach (var answer in question.Answers)
         {
+            string classDiv = "col-6 col-md";
             if (displayLong)
             {
-                <div class="col-12 col-md-6">
-                    <div class="d-flex">
-                        <input id="@answer.Code" class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
-                               @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "") />
-                        <label for="@answer.Code" class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
-                    </div>
-                </div>
+                classDiv = "col-12 col-md-6";
             }
-            else
-            {
-                <div class="col-6 col-md">
-                    <div class="d-flex">
-                        <input id="@answer.Code" class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
-                               @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "") />
-                        <label for="@answer.Code" class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
-                    </div>
+            <div class="@classDiv">
+                <div class="d-flex">
+                    <input id="@answer.Code" class="mt-1" questionCode="@question.Code" answerCode="@answer.Code" type="checkbox" name="@question.Code"
+                           @(answer.AnswerChildQuestion != null ? $"answerchildquestioncode={answer.AnswerChildQuestion.Code}" : "") />
+                    <label for="@answer.Code" class="text-dark ml-1">@Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(answer.Content)))</label>
                 </div>
-            }
+            </div>
         }
     }
     else if (question.Type == QuestionType.SA)
@@ -247,7 +228,7 @@ else
             @foreach (var question in Model)
             {
                 <div id="div-q-@question.Code">
-                    <div class="form-group col-12 mb-0 pl-0 pr-0">
+                    <div class="form-group col-12 mb-2 pl-0 pr-0">
                         @* Câu hỏi chỉ là tiêu đề *@
                         @if (question.Type == QuestionType.T)
                         {
@@ -258,9 +239,17 @@ else
                         }
                         else
                         {
-                            <label id="@question.Code" class="text-dark pl-1 w-100 tag-child-inline">
+                            <label id="@question.Code" class="text-dark pl-1 w-100 tag-child-inline mb-1">
                                 @index. @Html.Raw(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(question.Content)))
                             </label>
+                            if (question.Type == QuestionType.SC)
+                            {
+                                <span class="ml-1"><i>(Chọn 1 phương án)</i></span>
+                            }
+                            else if (question.Type == QuestionType.MC)
+                            {
+                                <span class="ml-1"><i>(Chọn nhiều phương án)</i></span>
+                            }
                         }
                         @if (question.Image != null)
                         {
@@ -308,19 +297,19 @@ else
                             </div>
                         }
                     </div>
-                    @if (question.Code == "00003")
-                    {
-                        <div>
-                            <ul style="list-style-type: circle; font-style: italic;">
-                                <li>
-                                    <small>Khi bạn "Có việc làm" và "Đang tiếp tục học" thì chọn phương án "Có việc làm"</small>
-                                </li>
-                                <li>
-                                    <small>Khi bạn "Đang tiếp tục học" và "Không có việc làm" thì chọn phương án "Đang tiếp tục học"</small>
-                                </li>
-                            </ul>
-                        </div>
-                    }
+                    @*@if (question.Code == "00003")
+                        {
+                            <div>
+                                <ul style="list-style-type: circle; font-style: italic;">
+                                    <li>
+                                        <small>Nếu bạn đồng thời "Có việc làm" và "Đang tiếp tục học" thì chọn phương án "Có việc làm"</small>
+                                    </li>
+                                    <li>
+                                        <small>Nếu bạn đồng thời "Đang tiếp tục học" và "Không có việc làm" thì chọn phương án "Đang tiếp tục học"</small>
+                                    </li>
+                                </ul>
+                            </div>
+                        }*@
                 </div>
                 index++;
             }
