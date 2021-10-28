@@ -51,25 +51,31 @@ namespace Nuce.CTSV
                         switch(dkChoO.DoiTuongHuong)
                         {
                             case "CO_CONG_CACH_MANG":
-                                doiTuong = "Là con của người có công với cách mạng được hưởng ưu đãi";
+                                doiTuong = "Các đối tượng theo quy định tại Pháp lệnh Ưu đãi người có công với cách mạng nếu đang theo học tại các cơ sở giáo dục thuộc hệ thống giáo dục quốc dân.";
                                 break;
                             case "SV_VAN_BANG_1":
-                                doiTuong = "Là sinh viên học đại học văn bằng thứ nhất từ 16 tuổi đến 22 tuổi thuộc một trong các trường hợp quy định tại Khoản 1 Điều 5 Nghị định số 136/2013/NĐ-CP ngày 21/10/2013 của Chính phủ quy định chính sách trợ giúp xã hội";
+                                doiTuong = "Sinh viên từ 16 đến 22 tuổi không có nguồn nuôi dưỡng đang học đại học văn bằng thứ nhất thuộc đối tượng hưởng trợ cấp xã hội hàng tháng theo quy định tại khoản 1 và 2 Điều 5 Nghị định số 20/2021/NĐ-CP ngày 15/3/2021 của Chính phủ.";
                                 break;
                             case "TAN_TAT_KHO_KHAN_KINH_TE":
-                                doiTuong = "Bản thân bị khuyết tật, tàn tật có khó khăn về kinh tế";
+                                doiTuong = "Sinh viên khuyết tật";
                                 break;
                             case "DAN_TOC_HO_NGHEO":
-                                doiTuong = "Bản thân là người dân tộc thiểu số thuộc hộ nghèo, hộ cận nghèo";
+                                doiTuong = "Sinh viên người dân tộc thiểu số có cha hoặc mẹ hoặc cả cha và mẹ hoặc ông bà (trong trường hợp ở với ông bà) thuộc hộ nghèo và hộ cận nghèo theo quy định của Thủ tướng Chính phủ.";
                                 break;
                             case "DAN_TOC_IT_NGUOI_VUNG_KHO_KHAN":
-                                doiTuong = "Bản thân là người dân tộc thiểu số rất ít người và ở vùng có điều kiện kinh tế - xã hội khó khăn hoặc đặc biệt khó khăn";
+                                doiTuong = "Sinh viên là người dân tộc thiểu số rất ít người (Cống, Mảng, Pu Péo, Si La, Cờ Lao, Bố Y, La Ha, Ngái, Chứt, Ơ Đu, Brâu, Rơ Măm, Lô Tô, Lự, Pà Thẻn, La Hủ) ở vùng có điều kiện kinh tế - xã hội khó khăn hoặc đặc biệt khó khăn";
                                 break;
                             case "DAN_TOC_VUNG_KHO_KHAN":
-                                doiTuong = "Bản thân là người dân tộc thiểu số và ở vùng có điều kiện kinh tế - xã hội đặc biệt khó khăn";
+                                doiTuong = "Sinh viên hệ cử tuyển";
                                 break;
                             case "CHA_ME_TAI_NAN_DUOC_TRO_CAP":
-                                doiTuong = "Là con của cán bộ, công nhân, viên chức mà cha hoặc mẹ bị tai nạn lao động hoặc mắc bệnh nghề nghiệp được hưởng trợ cấp thường xuyên";
+                                doiTuong = "Sinh viên thuộc các đối tượng của chương trình, đề án được miễn giảm học phí theo quy định của Chính phủ.";
+                                break;
+                            case "KHU_VUC_III":
+                                doiTuong = "Sinh viên là người dân tộc thiểu số (ngoài đối tượng dân tộc thiểu số rất ít người) ở thôn/bản đặc biệt khó khăn, xã khu vực III vùng dân tộc và miền núi, xã đặc biệt khó khăn vùng bãi ngang ven biển hải đảo theo quy định của cơ quan có thẩm quyền.";
+                                break;
+                            case "CON_CAN_BO_DUOC_TRO_CAP_THUONG_XUYEN":
+                                doiTuong = "Sinh viên là con cán bộ, công chức, viên chức, công nhân mà cha hoặc mẹ bị tai nạn lao động hoặc mắc bệnh nghề nghiệp được hưởng trợ cấp thường xuyên.";
                                 break;
                             default:
                                 break;

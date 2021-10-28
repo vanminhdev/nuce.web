@@ -50,7 +50,7 @@
                     </asp:ListItem>
                     <asp:ListItem Value="TAN_TAT_KHO_KHAN_KINH_TE">&nbsp;Sinh viên khuyết tật
                     </asp:ListItem>
-                    <asp:ListItem Value="DAN_TOC_HO_NGHEO">&nbspSinh viên người dân tộc thiểu số có cha hoặc mẹ hoặc cả cha và mẹ hoặc ông bà (trong trường hợp ở với ông bà) thuộc hộ nghèo và hộ cận nghèo theo quy định của Thủ tướng Chính phủ.
+                    <asp:ListItem Value="DAN_TOC_HO_NGHEO">&nbsp;Sinh viên người dân tộc thiểu số có cha hoặc mẹ hoặc cả cha và mẹ hoặc ông bà (trong trường hợp ở với ông bà) thuộc hộ nghèo và hộ cận nghèo theo quy định của Thủ tướng Chính phủ.
                     </asp:ListItem>
                     <asp:ListItem Value="DAN_TOC_IT_NGUOI_VUNG_KHO_KHAN">&nbsp;Sinh viên là người dân tộc thiểu số rất ít người (Cống, Mảng, Pu Péo, Si La, Cờ Lao, Bố Y, La Ha, Ngái, Chứt, Ơ Đu, Brâu, Rơ Măm, Lô Tô, Lự, Pà Thẻn, La Hủ) ở vùng có điều kiện kinh tế - xã hội khó khăn hoặc đặc biệt khó khăn
                     </asp:ListItem>
