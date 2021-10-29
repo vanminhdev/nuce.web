@@ -1117,6 +1117,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     break;
                 case DichVu.MuonHocBaGoc:
                     templateMail = "template_mail_cap_nhat_trang_thai_dich_vu_muon_hoc_ba.txt";
+                    templateMailDaCoHen = "template_content_cap_nhat_trang_thai_da_co_hen_muon_hoc_ba.txt";
 
                     var muonHocBa = await _muonHocBaRepository.FindByIdAsync(model.RequestID);
                     muonHocBa.Status = model.Status;
@@ -1130,6 +1131,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     {
                         muonHocBa.NgayTra = DateTime.Now;
                         templateMail = "";
+                        templateMailDaCoHen = null;
                     }
 
 
