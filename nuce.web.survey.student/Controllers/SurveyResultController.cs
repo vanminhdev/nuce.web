@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using nuce.web.shared;
+using nuce.web.shared.Common;
 using nuce.web.shared.Models.Survey;
 using nuce.web.survey.student.Attributes.ActionFilter;
 using nuce.web.survey.student.Common;
@@ -33,6 +34,7 @@ namespace nuce.web.survey.student.Controllers
                LoginUserType = loginType
             });
         }
+
         /// <summary>
         /// View Kết quả khoa ban
         /// Chú ý thứ tự Role Authorize: Role đầu dùng để điều hướng sang đúng loại login nếu chưa có token
@@ -59,14 +61,12 @@ namespace nuce.web.survey.student.Controllers
         /// <returns></returns>
         [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Department, RoleNames.KhaoThi_Survey_KhoaBan)]
         [HttpGet]
-        public ActionResult Department(string code, string facultyCode)
+        public ActionResult Department(string code)
         {
             var model = new SurveyResultModel
             {
-                DepartmentCode = code ?? base.GetCurrentUsername(),
-                FacultyCode = facultyCode,
+                DepartmentCode = code,
             };
-
             return View("Department", model);
         }
 
@@ -142,21 +142,19 @@ namespace nuce.web.survey.student.Controllers
             }
 
             var target = "/surveyresult/lecturer";
-            switch (login.LoginUserType)
-            {
-                case 2:
-                    target = $"/surveyresult/faculty?code={login.Username}";
-                    break;
-                case 3:
-                    target = $"/surveyresult/department?code={login.Username}&facultyCode=";
-                    break;
-                case 4:
-                    target = $"/surveyresult/lecturer?code={login.Username}&facultyCode=&departmentCode=";
-                    break;
-                default:
-                    break;
-            }
 
+            if (login.LoginUserType == (int)LoginType.Faculty)
+            {
+                target = $"/surveyresult/faculty?code={login.Username}";
+            }
+            else if (login.LoginUserType == (int)LoginType.Department)
+            {
+                target = $"/surveyresult/department?code={login.Username}&facultyCode=";
+            }
+            else if (login.LoginUserType == (int)LoginType.Lecturer)
+            {
+                target = $"/surveyresult/lecturer?code={login.Username}&facultyCode=&departmentCode=";
+            }
 
             switch (response.StatusCode)
             {
@@ -191,6 +189,7 @@ namespace nuce.web.survey.student.Controllers
             }
             return View("login", new LoginModel());
         }
+
         /// <summary>
         /// Call api lấy kết quả khoa
         /// </summary>
@@ -234,7 +233,6 @@ namespace nuce.web.survey.student.Controllers
                 action200Async: async res =>
                 {
                     var data = await base.DeserializeResponseAsync<DepartmentResultModel>(response.Content);
-                    ViewData["facultyname"] = data.FacultyName;
                     ViewData["departmentName"] = data.DepartmentName;
                     return Json(new
                     {

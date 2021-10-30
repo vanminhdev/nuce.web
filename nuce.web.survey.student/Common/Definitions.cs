@@ -6,13 +6,6 @@ using System.Threading.Tasks;
 
 namespace nuce.web.survey.student.Common
 {
-    //public class RoleNames
-    //{
-    //    public static string UndergraduateStudent = "UndergraduateStudent";
-    //    public static string GraduateStudent = "GraduateStudent";
-    //    public static string Student = "Student";
-    //}
-
     public class QuestionType
     {
         /// <summary>

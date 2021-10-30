@@ -10,6 +10,7 @@ using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.Services.Survey.Implements;
 using nuce.web.api.ViewModel.Survey;
 using nuce.web.shared;
+using nuce.web.shared.Common;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

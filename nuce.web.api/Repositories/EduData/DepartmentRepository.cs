@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using nuce.web.api.Models.EduData;
-using nuce.web.api.Repositories.EduData.Interfaces;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace nuce.web.api.Repositories.EduData.Implements
+namespace nuce.web.api.Repositories.EduData
 {
-    public class DepartmentRepository : IDepartmentRepository
+    public class DepartmentRepository
     {
         private readonly EduDataContext _context;
         public DepartmentRepository(EduDataContext _context)
