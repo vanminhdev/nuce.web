@@ -129,10 +129,17 @@ namespace nuce.web.api.Services.Ctsv.Implements
             {
                 throw new Exception("Sinh viên không tồn tại trong hệ thống");
             }
-
             if (!(currentStudent.DaXacThucEmailNhaTruong ?? false))
             {
                 throw new Exception("Chưa xác thực email nhà trường");
+            }
+            if (string.IsNullOrEmpty(currentStudent.EmailNhaTruong))
+            {
+                throw new Exception("Sinh viên chưa có email nhà trường");
+            }
+            if (string.IsNullOrEmpty(currentStudent.Email))
+            {
+                throw new Exception("Sinh viên chưa có email");
             }
 
             int studentID = Convert.ToInt32(currentStudent.Id);
