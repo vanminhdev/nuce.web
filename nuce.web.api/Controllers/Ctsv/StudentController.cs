@@ -33,9 +33,9 @@ namespace nuce.web.api.Controllers.Ctsv
         /// <returns></returns>
         [Route("{code}")]
         [HttpGet]
-        public IActionResult GetStudent(string code)
+        public async Task<IActionResult> GetStudent(string code)
         {
-            return Ok(_studentService.GetStudentByCode(code));
+            return Ok(await _studentService.GetStudentByCode(code));
         }
 
         [Route("full-student/{code}")]

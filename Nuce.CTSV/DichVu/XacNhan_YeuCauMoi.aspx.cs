@@ -53,6 +53,8 @@ namespace Nuce.CTSV
                     {
                         divBtnContainer.Visible = true;
                     }
+                    string hetHanCk = student.IsHetHanChinhKhoa ? "true" : "false";
+                    spScript.InnerHtml = string.Format($"<script>xacnhan_yeucaumoi.initLyDo({hetHanCk});</script>");
                 }
             }
         }

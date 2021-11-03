@@ -42,17 +42,17 @@
                 <select
                     class="form-control mt-3"
                     id="slLyDo" name="slLyDo" onchange="xacnhan_yeucaumoi.setValueLyDo(this);">
-                    <option value="Xin đăng ký tạm trú, tạm vắng">1. Xin đăng ký tạm trú, tạm vắng</option>
-                    <option value="Xin tạm hoãn nghĩa vụ quân sự">2. Xin tạm hoãn nghĩa vụ quân sự</option>
-                    <option value="Xin tạm hoãn nghĩa vụ quân sự (đối với SV hết hạn chính khóa)">3. Xin tạm hoãn nghĩa vụ quân sự (đối với SV hết hạn chính khóa)</option>
-                    <option value="Xin xác nhận để người nhà thi vào bộ đội, công an.">4. Xin xác nhận để người nhà thi vào bộ đội, công an</option>
-                    <option value="Xin xác nhận để người nhà kết hôn với người trong  lực lượng vũ trang: bộ đội, công an">5. Xin xác nhận để người nhà kết hôn với người trong  lực lượng vũ trang: bộ đội, công an</option>
-                    <option value="Xin xác nhận để thuê nhà ở sinh viên tại làng sinh viên Hacinco">6. Xin xác nhận để thuê nhà ở sinh viên tại làng sinh viên Hacinco</option>
-                    <option value="Xin xác nhận để làm hồ sơ đi du học">7. Xin xác nhận để làm hồ sơ đi du học</option>
-                    <option value="Xác nhận để làm visa đi du lịch nước ngoài">8. Xác nhận để làm visa đi du lịch nước ngoài</option>
-                    <option value="Xác nhận để được hưởng học bổng khuyến học ở địa phương">9. Xác nhận để được hưởng học bổng khuyến học ở địa phương</option>
-	                <option value="Xin miễn giảm thuế thu nhập cá nhân cho người thân">10. Xin miễn giảm thuế thu nhập cá nhân cho người thân</option>
-                    <option value="-1">11. Khác</option>
+                    <option value="Xin đăng ký tạm trú, tạm vắng">Xin đăng ký tạm trú, tạm vắng</option>
+                    <option value="Xin tạm hoãn nghĩa vụ quân sự">Xin tạm hoãn nghĩa vụ quân sự</option>
+                    <option value="Xin tạm hoãn nghĩa vụ quân sự (đối với SV hết hạn chính khóa)">Xin tạm hoãn nghĩa vụ quân sự (đối với SV hết hạn chính khóa)</option>
+                    <option value="Xin xác nhận để người nhà thi vào bộ đội, công an.">Xin xác nhận để người nhà thi vào bộ đội, công an</option>
+                    <option value="Xin xác nhận để người nhà kết hôn với người trong  lực lượng vũ trang: bộ đội, công an">Xin xác nhận để người nhà kết hôn với người trong  lực lượng vũ trang: bộ đội, công an</option>
+                    <option value="Xin xác nhận để thuê nhà ở sinh viên tại làng sinh viên Hacinco">Xin xác nhận để thuê nhà ở sinh viên tại làng sinh viên Hacinco</option>
+                    <option value="Xin xác nhận để làm hồ sơ đi du học">Xin xác nhận để làm hồ sơ đi du học</option>
+                    <option value="Xác nhận để làm visa đi du lịch nước ngoài">Xác nhận để làm visa đi du lịch nước ngoài</option>
+                    <option value="Xác nhận để được hưởng học bổng khuyến học ở địa phương">Xác nhận để được hưởng học bổng khuyến học ở địa phương</option>
+	                <option value="Xin miễn giảm thuế thu nhập cá nhân cho người thân">Xin miễn giảm thuế thu nhập cá nhân cho người thân</option>
+                    <option value="-1">Khác</option>
                 </select>
             </div>
             <div class="form-group mt-3" id="frmXacNhan" style="display:none;">
@@ -174,7 +174,12 @@
                     $("#frmXacNhan").hide();
                     $("#" + "<%=txtLyDoXacNhan.ClientID %>").val(obj.value);
                 }
-            }
+            },
+            initLyDo: function(hetHanChinhKhoa) {
+                const indexRemoveHoanNghiaVu = hetHanChinhKhoa ? 1 : 2;
+                console.log('adfadfadf');
+                $(`#slLyDo option:eq(${indexRemoveHoanNghiaVu})`).remove();
+            },
         };
         $(document).ready(function () {
             

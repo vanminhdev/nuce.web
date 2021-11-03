@@ -76,10 +76,80 @@ namespace nuce.web.api.Services.Ctsv.Implements
         /// </summary>
         /// <param name="studentCode"></param>
         /// <returns></returns>
-        public AsAcademyStudent GetStudentByCode(string studentCode)
+        public async Task<StudentExtend> GetStudentByCode(string studentCode)
         {
-            var student = _studentRepository.FindByCode(studentCode);
-            return student;
+            var info = await _studentRepository.GetStudentDichVuInfoAsync(studentCode);
+            var nienKhoa = info.AcademyClass.SchoolYear;
+            bool hetHanChinhKhoa = false;
+            string namRaTruong = "";
+            if (!string.IsNullOrEmpty(nienKhoa) && nienKhoa.Contains("-"))
+            {
+                string[] strNamhocs = nienKhoa.Split(new char[] { '-' });
+                if (!string.IsNullOrEmpty(strNamhocs[1]))
+                {
+                    namRaTruong = strNamhocs[1].Trim();
+                }
+            }
+            int namCuoi;
+            if (int.TryParse(namRaTruong, out namCuoi) && namCuoi < DateTime.Now.Year && 8 < DateTime.Now.Month)
+            {
+                hetHanChinhKhoa = true;
+            }
+
+            var result = new StudentExtend
+            {
+                BaoTinDiaChi = info.Student.BaoTinDiaChi,
+                BaoTinDiaChiNguoiNhan = info.Student.BaoTinDiaChiNguoiNhan,
+                BaoTinDiaChiNhanChuyenPhatNhanh = info.Student.BaoTinDiaChiNhanChuyenPhatNhanh,
+                BaoTinEmail = info.Student.BaoTinEmail,
+                BaoTinHoVaTen = info.Student.BaoTinHoVaTen,
+                BaoTinSoDienThoai = info.Student.BaoTinSoDienThoai,
+                BirthPlace = info.Student.BirthPlace,
+                ClassCode = info.Student.ClassCode,
+                ClassId = info.Student.ClassId,
+                Cmt = info.Student.Cmt,
+                CmtNgayCap = info.Student.CmtNgayCap,
+                CmtNoiCap = info.Student.CmtNoiCap,
+                Code = info.Student.Code,
+                CreatedDate = info.Student.CreatedDate,
+                DanToc = info.Student.DanToc,
+                DateOfBirth = info.Student.DateOfBirth,
+                DaThamGiaDoiTuyenThiHsg = info.Student.DaThamGiaDoiTuyenThiHsg,
+                DaTungLamCanBoDoan = info.Student.DaTungLamCanBoDoan,
+                DaTungLamCanBoLop = info.Student.DaTungLamCanBoLop,
+                DaXacThucEmailNhaTruong = info.Student.DaXacThucEmailNhaTruong,
+                DiaChiCuThe = info.Student.DiaChiCuThe,
+                DiemThiPtth = info.Student.DiemThiPtth,
+                DoiTuongUuTien = info.Student.DoiTuongUuTien,
+                Email = info.Student.Email,
+                Email1 = info.Student.Email1,
+                EmailNhaTruong = info.Student.EmailNhaTruong,
+                File1 = info.Student.File1,
+                File2 = info.Student.File2,
+                File3 = info.Student.File3,
+                FulName = info.Student.FulName,
+                GioiTinh = info.Student.GioiTinh,
+                HkttPho = info.Student.HkttPho,
+                HkttPhuong = info.Student.HkttPhuong,
+                HkttQuan = info.Student.HkttQuan,
+                HkttSoNha = info.Student.HkttSoNha,
+                HkttTinh = info.Student.HkttTinh,
+                Id = info.Student.Id,
+                KeyAuthorize = info.Student.KeyAuthorize,
+                KhuVucHktt = info.Student.KhuVucHktt,
+                LaNoiTru = info.Student.LaNoiTru,
+                Mobile = info.Student.Mobile,
+                Mobile1 = info.Student.Mobile1,
+                NamTotNghiepPtth = info.Student.NamTotNghiepPtth,
+                NgaySinh = info.Student.NgaySinh,
+                NgayVaoDang = info.Student.NgayVaoDang,
+                NgayVaoDoan = info.Student.NgayVaoDoan,
+                Status = info.Student.Status,
+                TonGiao = info.Student.TonGiao,
+                UpdatedDate = info.Student.UpdatedDate,
+                IsHetHanChinhKhoa = hetHanChinhKhoa,
+            };
+            return result;
         }
 
         public async Task<byte[]> GetStudentAvatar(string code, int? width, int? height)
@@ -100,11 +170,11 @@ namespace nuce.web.api.Services.Ctsv.Implements
             return result;
         }
 
-        public StudentAllowUpdateModel GetStudentByCodeAllowUpdate(string studentCode)
+        public async Task<StudentAllowUpdateModel> GetStudentByCodeAllowUpdate(string studentCode)
         {
             return new StudentAllowUpdateModel
             {
-                Student = GetStudentByCode(studentCode),
+                Student = await GetStudentByCode(studentCode),
                 Enabled = _paramService.isCapNhatHoSo(),
             };
         }
