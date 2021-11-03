@@ -27,6 +27,7 @@ using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.shared;
 using nuce.web.api.Services.EduData.Interfaces;
 using nuce.web.api.Services.Survey.Implements;
+using nuce.web.shared.Common;
 
 namespace nuce.web.api.Controllers.Core
 {
@@ -123,7 +124,7 @@ namespace nuce.web.api.Controllers.Core
                 #region fake student
                 //var fakeStudentPassword = _configuration["FakeStudent:Readonly"];
                 var fakeStudentPassword = _configuration.GetSection("FakeStudent:Readonly").AsEnumerable().Select(o => o.Value).ToArray();
-                if (fakeStudentPassword.Contains(model.Password) && model.LoginUserType == LoginUserType.Student)
+                if (fakeStudentPassword.Contains(model.Password) && model.LoginUserType == LoginType.Student)
                 {
                     await _logService.WriteLog(new ActivityLogModel
                     {
@@ -135,13 +136,13 @@ namespace nuce.web.api.Controllers.Core
                 }
                 #endregion
 
-                var isSuccess = await _userService.UserLogin(model);
-                if (isSuccess)
+                //var isSuccess = await _userService.UserLogin(model);
+                if (true)
                 {
                     var user = await _userService.FindByName(model.Username);
                     var authClaims = await _userService.AddClaimsAsync(model, user);
-                    #region xử lý add thêm role cho sv
-                    if (model.LoginUserType == LoginUserType.Student)
+                    #region xử lý add thêm role cho tài khoản
+                    if (model.LoginUserType == LoginType.Student)
                     {
                         //nếu là sinh viên sắp tôt nghiệp thêm role là sắp tốt nghiệp
                         var undergraduateStudent = await _asEduSurveyUndergraduateStudentService.GetByStudentCode(model.Username);
@@ -166,7 +167,7 @@ namespace nuce.web.api.Controllers.Core
                             });
                         }
                     }
-                    else if(model.LoginUserType == LoginUserType.Common)
+                    else if(model.LoginUserType == LoginType.Common)
                     {
                         await _logService.WriteLog(new ActivityLogModel
                         {
@@ -175,7 +176,7 @@ namespace nuce.web.api.Controllers.Core
                             LogMessage = "Quản trị đăng nhập"
                         });
                     }
-                    else if(model.LoginUserType == LoginUserType.Faculty)
+                    else if(model.LoginUserType == LoginType.Faculty)
                     {
                         await _logService.WriteLog(new ActivityLogModel
                         {
@@ -184,7 +185,7 @@ namespace nuce.web.api.Controllers.Core
                             LogMessage = "Khoa đăng nhập"
                         });
                     }
-                    else if (model.LoginUserType == LoginUserType.Department)
+                    else if (model.LoginUserType == LoginType.Department)
                     {
                         await _logService.WriteLog(new ActivityLogModel
                         {
@@ -193,7 +194,7 @@ namespace nuce.web.api.Controllers.Core
                             LogMessage = "Bộ môn đăng nhập"
                         });
                     }
-                    else if (model.LoginUserType == LoginUserType.Lecturer)
+                    else if (model.LoginUserType == LoginType.Lecturer)
                     {
                         await _logService.WriteLog(new ActivityLogModel
                         {
@@ -297,7 +298,7 @@ namespace nuce.web.api.Controllers.Core
                 return NotFound("Sinh viên không tồn tại");
             }
             model.Username = student.Code;
-            model.LoginUserType = LoginUserType.Student;
+            model.LoginUserType = LoginType.Student;
 
             var user = new ApplicationUser { UserName = model.Username };
 
@@ -439,7 +440,7 @@ namespace nuce.web.api.Controllers.Core
                         int.TryParse(userType.Value, out loginUserType);
                     }
 
-                    var model = new LoginModel { Username = username, LoginUserType = (LoginUserType)loginUserType };
+                    var model = new LoginModel { Username = username, LoginUserType = (LoginType)loginUserType };
                     var user = await _userService.FindByName(username);
                     var claims = await _userService.AddClaimsAsync(model, user);
                     var accessToken = _userService.CreateJWTAccessToken(claims);

@@ -11,14 +11,15 @@ using nuce.web.api.HandleException;
 using nuce.web.api.Models.Core;
 using nuce.web.api.Models.Ctsv;
 using nuce.web.api.Repositories.Ctsv.Interfaces;
-using nuce.web.api.Repositories.EduData.Implements;
-using nuce.web.api.Repositories.EduData.Interfaces;
+using nuce.web.api.Repositories.EduData;
+
 using nuce.web.api.Services.Core.Interfaces;
 using nuce.web.api.Services.EduData.Interfaces;
 using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
 using nuce.web.shared;
+using nuce.web.shared.Common;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -40,9 +41,9 @@ namespace nuce.web.api.Services.Core.Implements
         private readonly HttpContext _httpContext;
         private readonly IStudentRepository _studentRepository;
         private readonly NuceCoreIdentityContext _identityContext;
-        private readonly ILecturerRepository _lecturerRepository;
-        private readonly IDepartmentRepository   _departmentRepository;
-        private readonly IFacultyRepository _facultyRepository;
+        private readonly LecturerRepository _lecturerRepository;
+        private readonly DepartmentRepository   _departmentRepository;
+        private readonly FacultyRepository _facultyRepository;
         private readonly IStudentEduDataService _studentEduDataService;
         private readonly ILogger<UserService> _logger;
 
@@ -53,9 +54,9 @@ namespace nuce.web.api.Services.Core.Implements
                 IHttpContextAccessor httpContextAccessor,
                 IStudentRepository _studentRepository,
                 NuceCoreIdentityContext nuceCoreIdentityContext,
-                ILecturerRepository _lecturerRepository,
-                IDepartmentRepository _departmentRepository,
-                IFacultyRepository _facultyRepository,
+                LecturerRepository _lecturerRepository,
+                DepartmentRepository _departmentRepository,
+                FacultyRepository _facultyRepository,
                 IStudentEduDataService _studentEduDataService
         )
         {
@@ -82,7 +83,7 @@ namespace nuce.web.api.Services.Core.Implements
                     new Claim(UserParameters.UserType, model.LoginUserType.ToString())
             };
 
-            if (model.LoginUserType == LoginUserType.Student)
+            if (model.LoginUserType == LoginType.Student)
             {
                 // Role: SV
                 // MÃ: SV
@@ -96,12 +97,19 @@ namespace nuce.web.api.Services.Core.Implements
                 authClaims.Add(new Claim(ClaimTypes.GivenName, name ?? ""));
                 authClaims.Add(new Claim(UserParameters.UserCode, username));
             }
-            else if (model.LoginUserType == LoginUserType.Lecturer)
+            else if (model.LoginUserType == LoginType.Lecturer)
             {
                 authClaims.Add(new Claim(ClaimTypes.Role, RoleNames.KhaoThi_Survey_GiangVien));
                 string givenName = (await _lecturerRepository.FindByCode(username))?.FullName ?? user.UserName;
                 authClaims.Add(new Claim(ClaimTypes.GivenName, givenName));
                 authClaims.Add(new Claim(UserParameters.UserCode, username));
+
+                string departmentIsManaged = _lecturerRepository.GetDepartmentCodeIsManaged(username);
+                if (!string.IsNullOrEmpty(departmentIsManaged))
+                {
+                    authClaims.Add(new Claim(ClaimTypes.Role, RoleNames.KhaoThi_Survey_Department)); //gv có quyền là phòng ban
+                    authClaims.Add(new Claim(ClaimTypesExtend.DepartmentCodeIsManaged, departmentIsManaged));
+                }
             }
             else
             {
@@ -112,7 +120,7 @@ namespace nuce.web.api.Services.Core.Implements
                 }
             }
             #region gán tên cho tài khoản của khoa & bộ môn
-            if (model.LoginUserType == LoginUserType.Faculty)
+            if (model.LoginUserType == LoginType.Faculty)
             {
                 if (user.ExCode == null)
                 {
@@ -127,7 +135,7 @@ namespace nuce.web.api.Services.Core.Implements
                 authClaims.Add(new Claim(ClaimTypes.GivenName, givenName));
                 authClaims.Add(new Claim(UserParameters.UserCode, user.ExCode));
             }
-            else if (model.LoginUserType == LoginUserType.Department)
+            else if (model.LoginUserType == LoginType.Department)
             {
                 if (user.ExCode == null)
                 {

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using nuce.web.shared;
-using nuce.web.survey.student.Common;
+using nuce.web.shared.Common;
 using nuce.web.survey.student.Models;
 using System;
 using System.Collections.Generic;
@@ -24,7 +24,7 @@ namespace nuce.web.survey.student.Controllers
         {
             ViewData["target"] = target;
             return View(new LoginModel() {
-                LoginUserType = 1
+                LoginUserType = (int)LoginType.Student
             });
         }
 
@@ -95,12 +95,12 @@ namespace nuce.web.survey.student.Controllers
                 {
                     return View("LoginUndergraduate", new LoginModel()
                     {
-                        LoginUserType = 1
+                        LoginUserType = (int)LoginType.Student
                     });
                 }
                 return View("login", new LoginModel()
                 {
-                    LoginUserType = 1
+                    LoginUserType = (int)LoginType.Student
                 });
             }
 
@@ -120,6 +120,7 @@ namespace nuce.web.survey.student.Controllers
             var refreshToken = responseCookies.FirstOrDefault(c => c.Name == UserParameters.JwtRefreshToken);
 
             var roles = new List<string>();
+            string departmentCodeIsManaged = null;
             if (accessToken != null)
             {
                 Response.Cookies[UserParameters.JwtAccessToken].Value = accessToken.Value;
@@ -129,6 +130,8 @@ namespace nuce.web.survey.student.Controllers
                 var handler = new JwtSecurityTokenHandler();
                 var jwtSecurityToken = handler.ReadJwtToken(accessToken.Value);
                 roles = jwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(r => r.Value).ToList();
+
+                departmentCodeIsManaged = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == ClaimTypesExtend.DepartmentCodeIsManaged)?.Value;
             }
 
             if (refreshToken != null)
@@ -137,7 +140,6 @@ namespace nuce.web.survey.student.Controllers
                 Response.Cookies[UserParameters.JwtRefreshToken].HttpOnly = true;
                 Response.Cookies[UserParameters.JwtRefreshToken].Expires = refreshToken.Expires;
             }
-
 
             switch (response.StatusCode)
             {
@@ -156,6 +158,11 @@ namespace nuce.web.survey.student.Controllers
                     }
                     else
                     {
+                        //đang target là giảng viên nhưng là trưởng bộ môn thì chuyển sang trang bộ môn
+                        if (!string.IsNullOrEmpty(departmentCodeIsManaged))
+                        {
+                            target = $"/surveyresult/department?code={departmentCodeIsManaged}";
+                        }
                         return Redirect(target);
                     }
                 case HttpStatusCode.NotFound:
@@ -191,12 +198,12 @@ namespace nuce.web.survey.student.Controllers
             {
                 return View("LoginUndergraduate", new LoginModel()
                 {
-                    LoginUserType = 1
+                    LoginUserType = (int)LoginType.Student
                 });
             }
             return View("login", new LoginModel()
             {
-                LoginUserType = 1
+                LoginUserType = (int)LoginType.Student
             });
         }
 
@@ -205,7 +212,7 @@ namespace nuce.web.survey.student.Controllers
         {
             ViewData["target"] = target;
             return View(new LoginModel() {
-                LoginUserType = 1
+                LoginUserType = (int)LoginType.Student
             });
         }
 
@@ -214,7 +221,7 @@ namespace nuce.web.survey.student.Controllers
         {
             ViewData["target"] = target;
             return View(new LoginModel() {
-                LoginUserType = 1
+                LoginUserType = (int)LoginType.Student
             });
         }
 
@@ -231,7 +238,7 @@ namespace nuce.web.survey.student.Controllers
             {
                 username = login.Username,
                 password = login.Password,
-                loginUserType = 1
+                LoginUserType = (int)LoginType.Student
             });
 
             var content = new StringContent(userNamePasswordJsonString, Encoding.UTF8, "application/json");

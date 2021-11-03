@@ -13,6 +13,7 @@ using nuce.web.api.Services.Survey.Implements;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.Survey.Graduate;
 using nuce.web.shared;
+using nuce.web.shared.Common;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;

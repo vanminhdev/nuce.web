@@ -39,12 +39,13 @@ using nuce.web.api.Services.Background;
 using nuce.web.api.Services.Survey.BackgroundTasks;
 using nuce.web.api.Services.Shared;
 using nuce.web.api.Services.EduData.BackgroundTasks;
-using nuce.web.api.Repositories.EduData.Interfaces;
-using nuce.web.api.Repositories.EduData.Implements;
+
+using nuce.web.api.Repositories.EduData;
 using nuce.web.api.Services.Survey.Implements.Undergraduate;
 using nuce.web.api.Services.Survey.Implements.Graduate;
 using nuce.web.api.Services.Hosted;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using nuce.web.shared.Common;
 
 namespace nuce.web.api
 {
@@ -256,9 +257,9 @@ namespace nuce.web.api
             services.AddScoped<SyncEduDataBackgroundTask>();
             #endregion
             #region edu data repo
-            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
-            services.AddScoped<IFacultyRepository, FacultyRepository>();
-            services.AddScoped<ILecturerRepository, LecturerRepository>();
+            services.AddScoped<DepartmentRepository>();
+            services.AddScoped<FacultyRepository>();
+            services.AddScoped<LecturerRepository>();
             #endregion
             #region ctsv service
             services.AddScoped<IXacNhanRepository, XacNhanRepository>();

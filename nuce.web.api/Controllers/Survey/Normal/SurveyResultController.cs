@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.api.Services.Survey.Implements;
 
@@ -16,9 +17,12 @@ namespace nuce.web.api.Controllers.Survey.Normal
     public class SurveyResultController : ControllerBase
     {
         private readonly SurveyResultService _surveyResultService;
-        public SurveyResultController(SurveyResultService _surveyResultService)
+        private readonly ILogger _logger;
+
+        public SurveyResultController(SurveyResultService surveyResultService, ILogger<SurveyResultController> logger)
         {
-            this._surveyResultService = _surveyResultService;
+            _surveyResultService = surveyResultService;
+            _logger = logger;
         }
 
         [Route("faculty/{code}")]
@@ -26,21 +30,42 @@ namespace nuce.web.api.Controllers.Survey.Normal
         [AppAuthorize(RoleNames.KhaoThi_Survey_KhoaBan)]
         public async Task<IActionResult> FacultyResultAsync(string code)
         {
-            return Ok(await _surveyResultService.FacultyResultAsync(code));
+            try
+            {
+                return Ok(await _surveyResultService.FacultyResultAsync(code));
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { e.Message });
+            }
         }
 
         [Route("department/{code}")]
         [HttpPost]
         public async Task<IActionResult> DepartmentResultAsync(string code)
         {
-            return Ok(await _surveyResultService.DepartmentResultAsync(code));
+            try
+            {
+                return Ok(await _surveyResultService.DepartmentResultAsync(code));
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { e.Message });
+            }
         }
 
         [Route("lecturer/{code}")]
         [HttpPost]
         public async Task<IActionResult> LecturerResultAsync(string code)
         {
-            return Ok(await _surveyResultService.LecturerResultAsync(code));
+            try
+            {
+                return Ok(await _surveyResultService.LecturerResultAsync(code));
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { e.Message });
+            }
         }
     }
 }

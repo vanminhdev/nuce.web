@@ -140,7 +140,6 @@
     <Compile Include="Attributes\ValidationAttributes\UsernameAttribute.cs" />
     <Compile Include="Common\Definitions.cs" />
     <Compile Include="Common\EnumStatus.cs" />
-    <Compile Include="Common\UserParameters.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\ContactController.cs" />

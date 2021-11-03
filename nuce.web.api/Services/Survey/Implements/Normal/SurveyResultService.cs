@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.ViewModel.Survey;
-using nuce.web.api.Repositories.EduData.Interfaces;
+
 using nuce.web.shared.Models.Survey;
 using nuce.web.api.Models.EduData;
 using nuce.web.api.Models.Survey.JsonData;
@@ -13,6 +13,7 @@ using nuce.web.api.Common;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using nuce.web.api.Repositories.EduData;
 
 namespace nuce.web.api.Services.Survey.Implements
 {
@@ -21,11 +22,11 @@ namespace nuce.web.api.Services.Survey.Implements
         private readonly ILogger<SurveyResultService> _logger;
         private readonly SurveyContext _surveyContext;
         private readonly EduDataContext _eduContext;
-        private readonly IFacultyRepository _facultyRepository;
-        private readonly IDepartmentRepository _departmentRepository;
-        private readonly ILecturerRepository _lecturerRepository;
-        public SurveyResultService(ILogger<SurveyResultService> _logger, SurveyContext _surveyContext, IFacultyRepository _facultyRepository, 
-                IDepartmentRepository _departmentRepository, ILecturerRepository _lecturerRepository,
+        private readonly FacultyRepository _facultyRepository;
+        private readonly DepartmentRepository _departmentRepository;
+        private readonly LecturerRepository _lecturerRepository;
+        public SurveyResultService(ILogger<SurveyResultService> _logger, SurveyContext _surveyContext, FacultyRepository _facultyRepository, 
+                DepartmentRepository _departmentRepository, LecturerRepository _lecturerRepository,
                 EduDataContext _eduContext)
         {
             this._logger = _logger;
@@ -114,17 +115,17 @@ namespace nuce.web.api.Services.Survey.Implements
         public async Task<DepartmentResultModel> DepartmentResultAsync(string code)
         {
             #region setup
-            var lastDotKhaoSat = _surveyContext.AsEduSurveyDotKhaoSat
+            var lastDotKhaoSat = _surveyContext.AsEduSurveyDotKhaoSat.AsNoTracking()
                 .OrderByDescending(dks => dks.EndDate)
                 .FirstOrDefault(dks => dks.Status != (int)SurveyRoundStatus.Deleted);
             if (lastDotKhaoSat == null)
             {
                 return null;
             }
-            var baiKhaoSats = await _surveyContext.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == lastDotKhaoSat.Id && o.Status != (int)TheSurveyStatus.Deleted).ToListAsync();
+            var baiKhaoSats = await _surveyContext.AsEduSurveyBaiKhaoSat.AsNoTracking().Where(o => o.DotKhaoSatId == lastDotKhaoSat.Id && o.Status != (int)TheSurveyStatus.Deleted).ToListAsync();
 
             var baiKhaoSatIds = baiKhaoSats.Select(o => o.Id).ToList();
-            var baiLamKhaoSatCacDotDangXet = await _surveyContext.AsEduSurveyBaiKhaoSatSinhVien.Where(o => baiKhaoSatIds.Contains(o.BaiKhaoSatId)).ToListAsync();
+            var baiLamKhaoSatCacDotDangXet = await _surveyContext.AsEduSurveyBaiKhaoSatSinhVien.AsNoTracking().Where(o => baiKhaoSatIds.Contains(o.BaiKhaoSatId)).ToListAsync();
             #endregion
 
             var department = await _departmentRepository.FindByCode(code);

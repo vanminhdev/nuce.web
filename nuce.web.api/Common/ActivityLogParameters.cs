@@ -5,18 +5,6 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Common
 {
-    public static class UserParameters
-    {
-        public static readonly string UserCode = "UserCode";
-        public static readonly string FullName = "FullName";
-        public static readonly string JwtAccessToken = "JWT-token";
-        public static readonly string JwtRefreshToken = "JWT-refresh-token";
-        public static readonly List<LoginUserType> LoginViaDaotao = new List<LoginUserType> { LoginUserType.Student, LoginUserType.Lecturer };
-        /// <summary>
-        /// Loại người dùng đăng nhập
-        /// </summary>
-        public static readonly string UserType = "UserType";
-    }
     public static class ActivityLogParameters
     {
         public static readonly string CODE_LOGIN = "LOGIN";
@@ -29,14 +17,4 @@ namespace nuce.web.api.Common
         public static readonly string CODE_DOWNLOAD_FILE_BACKUP = "CODE_DOWNLOAD_FILE_BACKUP";
         public static readonly string CODE_DELETE_FILE_BACKUP = "CODE_DELETE_FILE_BACKUP";
     }
-
-    public enum LoginUserType
-    {
-        Common = 0,
-        Student = 1,
-        Faculty = 2,
-        Department = 3,
-        Lecturer = 4
-    };
-
 }

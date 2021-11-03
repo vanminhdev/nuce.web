@@ -200,7 +200,7 @@ else
 <div class="container">
     <div class="row">
         <div class="col-12">
-            <h3 class="text-center text-dark">NỘI DUNG KHẢO SÁT</h3>
+            <h3 class="text-center text-dark">Khảo sát tình hình việc làm của sinh viên tốt nghiệp năm học 2019-2020</h3>
         </div>
         @if (roles.Contains(RoleNames.KhaoThi_Survey_KhoaBan))
         {
@@ -297,22 +297,19 @@ else
                             </div>
                         }
                     </div>
-                    @*@if (question.Code == "00003")
-                        {
-                            <div>
-                                <ul style="list-style-type: circle; font-style: italic;">
-                                    <li>
-                                        <small>Nếu bạn đồng thời "Có việc làm" và "Đang tiếp tục học" thì chọn phương án "Có việc làm"</small>
-                                    </li>
-                                    <li>
-                                        <small>Nếu bạn đồng thời "Đang tiếp tục học" và "Không có việc làm" thì chọn phương án "Đang tiếp tục học"</small>
-                                    </li>
-                                </ul>
-                            </div>
-                        }*@
                 </div>
                 index++;
             }
+            @*<div>
+                <div class="form-group col-12 mb-2 pl-0 pr-0">
+                    <label id="" class="text-dark pl-1 w-100 tag-child-inline mb-1">
+                        @index. Anh/chị vui lòng cập nhật số thẻ căn cước/CMTND
+                    </label>
+                </div>
+                <div class="form-row pl-2 pr-2 pl-2">
+                   
+                </div>
+            </div>*@
         </div>
         <div class="col-12 d-flex justify-content-center mt-4">
             <button id="submit-survey" class="btn btn-primary">Nộp</button>
