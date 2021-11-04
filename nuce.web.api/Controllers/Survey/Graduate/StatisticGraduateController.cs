@@ -37,7 +37,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpGet]
-        [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
+        [AppAuthorize(RoleNames.GraduateStudent)]
         public async Task<IActionResult> GetTempDataGraduateSurvey([Required] Guid? surveyRoundId)
         {
             try
@@ -62,7 +62,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
         }
 
         [HttpGet]
-        [AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
+        [AppAuthorize(RoleNames.GraduateStudent)]
         public async Task<IActionResult> ExportReportTotalGraduateSurvey([Required] Guid? surveyRoundId)
         {
             try
