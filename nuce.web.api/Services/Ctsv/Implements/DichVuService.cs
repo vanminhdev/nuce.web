@@ -3505,7 +3505,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
             string namNhapHoc = getNamNhapHoc(NienKhoa);
             string namRaTruong = getNamRaTruong(NienKhoa);
 
+            int namNhapHocInt;
+            int namRaTruongInt;
             int soThangHoc = 60;
+            if (int.TryParse(namNhapHoc, out namNhapHocInt) && int.TryParse(namRaTruong, out namRaTruongInt))
+            {
+                soThangHoc = (namRaTruongInt - namNhapHocInt) * 12;
+            }
+            
             string lopLienThong = "LT";
             if (Class.Trim().StartsWith(lopLienThong))
             {

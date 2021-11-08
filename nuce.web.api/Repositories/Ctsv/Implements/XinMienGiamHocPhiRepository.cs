@@ -68,30 +68,30 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
                             .FirstOrDefault(yr => (yr.Enabled ?? false) || (yr.IsCurrent ?? false));
             var joinStudent = (await _context.Set<AsAcademyStudentSvXinMienGiamHocPhi>().AsNoTracking().Where(dk => dk.DotDangKy == dotDangKy).ToListAsync())
                         .Join(_context.AsAcademyStudent.AsNoTracking(),
-                                e => getValueString(e, "StudentId"),
-                                student => student.Id.ToString(),
+                                e => getValueString(e, "StudentCode"),
+                                student => student.Code.ToString(),
                                 (entity, student) => new { entity, student });
 #if DEBUG
             //var test1 = joinStudent.Count();
 #endif
             var joinClass = joinStudent
                         .Join(_context.AsAcademyClass.AsNoTracking(),
-                                tmp => tmp.student.ClassId,
-                                aClass => aClass.Id,
+                                tmp => tmp.student.ClassCode,
+                                aClass => aClass.Code,
                                 (tmp, aClass) => new { tmp.student, tmp.entity, aClass });
 #if DEBUG
             //var test2 = joinClass.Count();
 #endif
             var joinFaculty = joinClass.Join(_context.AsAcademyFaculty.AsNoTracking(),
-                               tmp => tmp.aClass.FacultyId,
-                               faculty => faculty.Id,
+                               tmp => tmp.aClass.FacultyCode,
+                               faculty => faculty.Code,
                                (tmp, faculty) => new { tmp.entity, tmp.student, tmp.aClass, faculty });
 #if DEBUG
             //var test3 = joinFaculty.Count();
 #endif
             var joinNganh = joinFaculty.GroupJoin(_context.AsAcademyAcademics.AsNoTracking(),
-                                tmp => tmp.aClass.AcademicsId,
-                                academic => academic.Id,
+                                tmp => tmp.aClass.AcademicsCode,
+                                academic => academic.Code,
                                 (tmp, academics) => new { tmp, academics });
 #if DEBUG
             var test4 = joinNganh.Count();
