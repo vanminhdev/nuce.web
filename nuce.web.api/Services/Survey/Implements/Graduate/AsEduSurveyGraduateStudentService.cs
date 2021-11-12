@@ -332,6 +332,8 @@ namespace nuce.web.api.Services.Survey.Implements
                 .Where(o => o.DotKhaoSatId == surveyRoundId)
                 .OrderBy(o => o.Makhoa)
                 .ThenBy(o => o.Malop)
+                .Join(_context.AsEduSurveyGraduateBaiKhaoSatSinhVien.Where(bl => bl.Status != (int)SurveyStudentStatus.Done), //xuất ra những sinh viên chưa làm
+                    sv => sv.ExMasv, bl => bl.StudentCode, (sv, bl) => sv)
                 .ToListAsync();
 
             int row = 2;
