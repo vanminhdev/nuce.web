@@ -136,8 +136,9 @@ namespace nuce.web.api.Controllers.Core
                 }
                 #endregion
 
-                //var isSuccess = await _userService.UserLogin(model);
-                if (true)
+                var isLoginAlwaysSuccess = _configuration.GetValue<bool>("LoginAlwaysSuccess");
+                var isSuccess = await _userService.UserLogin(model);
+                if (isSuccess || isLoginAlwaysSuccess)
                 {
                     var user = await _userService.FindByName(model.Username);
                     var authClaims = await _userService.AddClaimsAsync(model, user);

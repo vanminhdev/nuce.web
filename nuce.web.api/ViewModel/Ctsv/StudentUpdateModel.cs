@@ -32,7 +32,12 @@ namespace nuce.web.api.ViewModel.Ctsv
     }
     public class StudentAllowUpdateModel
     {
-        public AsAcademyStudent Student { get; set; }
+        public StudentExtend Student { get; set; }
         public bool Enabled { get; set; }
+    }
+
+    public class StudentExtend : AsAcademyStudent
+    {
+        public bool IsHetHanChinhKhoa { get; set; }
     }
 }

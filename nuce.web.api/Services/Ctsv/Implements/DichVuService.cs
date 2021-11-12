@@ -129,10 +129,17 @@ namespace nuce.web.api.Services.Ctsv.Implements
             {
                 throw new Exception("Sinh viên không tồn tại trong hệ thống");
             }
-
             if (!(currentStudent.DaXacThucEmailNhaTruong ?? false))
             {
                 throw new Exception("Chưa xác thực email nhà trường");
+            }
+            if (string.IsNullOrEmpty(currentStudent.EmailNhaTruong))
+            {
+                throw new Exception("Sinh viên chưa có email nhà trường");
+            }
+            if (string.IsNullOrEmpty(currentStudent.Email))
+            {
+                throw new Exception("Sinh viên chưa có email");
             }
 
             int studentID = Convert.ToInt32(currentStudent.Id);
@@ -1117,6 +1124,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     break;
                 case DichVu.MuonHocBaGoc:
                     templateMail = "template_mail_cap_nhat_trang_thai_dich_vu_muon_hoc_ba.txt";
+                    templateMailDaCoHen = "template_content_cap_nhat_trang_thai_da_co_hen_muon_hoc_ba.txt";
 
                     var muonHocBa = await _muonHocBaRepository.FindByIdAsync(model.RequestID);
                     muonHocBa.Status = model.Status;
@@ -1130,6 +1138,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     {
                         muonHocBa.NgayTra = DateTime.Now;
                         templateMail = "";
+                        templateMailDaCoHen = null;
                     }
 
 
@@ -3496,7 +3505,14 @@ namespace nuce.web.api.Services.Ctsv.Implements
             string namNhapHoc = getNamNhapHoc(NienKhoa);
             string namRaTruong = getNamRaTruong(NienKhoa);
 
+            int namNhapHocInt;
+            int namRaTruongInt;
             int soThangHoc = 60;
+            if (int.TryParse(namNhapHoc, out namNhapHocInt) && int.TryParse(namRaTruong, out namRaTruongInt))
+            {
+                soThangHoc = (namRaTruongInt - namNhapHocInt) * 12;
+            }
+            
             string lopLienThong = "LT";
             if (Class.Trim().StartsWith(lopLienThong))
             {
@@ -4510,6 +4526,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         string option5 = "";
                         string option6 = "";
                         string option7 = "";
+                        string option8 = "";
+                        string option9 = "";
 
                         switch (mienGiamHP.DoiTuongHuong)
                         {
@@ -4534,6 +4552,12 @@ namespace nuce.web.api.Services.Ctsv.Implements
                             case DoiTuongXinMienGiamHocPhi.CHA_ME_TAI_NAN_DUOC_TRO_CAP:
                                 option7 = "x";
                                 break;
+                            case DoiTuongXinMienGiamHocPhi.KHU_VUC_III:
+                                option8 = "x";
+                                break;
+                            case DoiTuongXinMienGiamHocPhi.CON_CAN_BO_DUOC_TRO_CAP_THUONG_XUYEN:
+                                option9 = "x";
+                                break;
                         }
 
                         replaceTextTemplate(text, "<option1>", option1);
@@ -4543,6 +4567,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         replaceTextTemplate(text, "<option5>", option5);
                         replaceTextTemplate(text, "<option6>", option6);
                         replaceTextTemplate(text, "<option7>", option7);
+                        replaceTextTemplate(text, "<option8>", option8);
+                        replaceTextTemplate(text, "<option9>", option9);
                     }
                     #endregion
                     mainPart.Document.Save();

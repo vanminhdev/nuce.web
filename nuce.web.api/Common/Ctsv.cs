@@ -61,8 +61,10 @@ namespace nuce.web.api.Common
             public const string DAN_TOC_IT_NGUOI_VUNG_KHO_KHAN = "DAN_TOC_IT_NGUOI_VUNG_KHO_KHAN";
             public const string DAN_TOC_VUNG_KHO_KHAN = "DAN_TOC_VUNG_KHO_KHAN";
             public const string CHA_ME_TAI_NAN_DUOC_TRO_CAP = "CHA_ME_TAI_NAN_DUOC_TRO_CAP";
+            public const string KHU_VUC_III = "KHU_VUC_III";
+            public const string CON_CAN_BO_DUOC_TRO_CAP_THUONG_XUYEN = "CON_CAN_BO_DUOC_TRO_CAP_THUONG_XUYEN";
             public static readonly List<string> All = new List<string> { CO_CONG_CACH_MANG, SV_VAN_BANG_1, TAN_TAT_KHO_KHAN_KINH_TE,
-                DAN_TOC_HO_NGHEO, DAN_TOC_IT_NGUOI_VUNG_KHO_KHAN, DAN_TOC_VUNG_KHO_KHAN, CHA_ME_TAI_NAN_DUOC_TRO_CAP };
+                DAN_TOC_HO_NGHEO, DAN_TOC_IT_NGUOI_VUNG_KHO_KHAN, DAN_TOC_VUNG_KHO_KHAN, CHA_ME_TAI_NAN_DUOC_TRO_CAP, KHU_VUC_III, CON_CAN_BO_DUOC_TRO_CAP_THUONG_XUYEN };
         }
 
         public class DoiTuongDeNghiHoTroChiPhi
@@ -88,16 +90,16 @@ namespace nuce.web.api.Common
             { 7, new DichVuStructure { ID = 7, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ thuê ký túc xá Pháp Vân - Tứ Hiệp", TenDichVu = "dịch vụ thuê ký túc xá Pháp Vân - Tứ Hiệp", TinNhanCode = "THUE_KTX", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_THUE_KTX" } },
             { 8, new DichVuStructure { ID = 8, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ làm vé tháng xe bus", TenDichVu = "dịch vụ làm vé tháng xe bus", TinNhanCode = "VE_XE_BUS", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_VE_XE_BUS" } },
             { 9, new DichVuStructure { ID = 9, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ đăng ký chỗ ở", TenDichVu = "dịch vụ đăng ký chỗ ở", TinNhanCode = "DANG_KY_CHO_O", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_DANG_KY_CHO_O" } },
-            { 10, new DichVuStructure { ID = 10, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ xin miễn giảm học phí", TenDichVu = "xin miễn giảm học phí", TinNhanCode = "XIN_MIEN_GIAM_HOC_PHI", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_XIN_MIEN_GIAM_HOC_PHI" } },
-            { 11, new DichVuStructure { ID = 11, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ đề nghị hỗ trợ chi phí học tập", TenDichVu = "đề nghị hỗ trợ chi phí học tập", TinNhanCode = "DE_NGHI_HO_TRO_CHI_PHI_HOC_TAP", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_DE_NGHI_HO_TRO_CHI_PHI_HOC_TAP" } },
-            { 12, new DichVuStructure { ID = 12, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ đề nghị hỗ trợ học tập", TenDichVu = "đề nghị hỗ trợ học tập", TinNhanCode = "DE_NGHI_HO_TRO_HOC_TAP", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_DE_NGHI_HO_TRO_HOC_TAP" } }
+            { 10, new DichVuStructure { ID = 10, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ xin miễn giảm học phí", TenDichVu = "dịch vụ xin miễn giảm học phí", TinNhanCode = "XIN_MIEN_GIAM_HOC_PHI", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_XIN_MIEN_GIAM_HOC_PHI" } },
+            { 11, new DichVuStructure { ID = 11, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ đề nghị hỗ trợ chi phí học tập", TenDichVu = "dịch vụ đề nghị hỗ trợ chi phí học tập", TinNhanCode = "DE_NGHI_HO_TRO_CHI_PHI_HOC_TAP", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_DE_NGHI_HO_TRO_CHI_PHI_HOC_TAP" } },
+            { 12, new DichVuStructure { ID = 12, TieuDeTinNhan = "Xác nhận yêu cầu dịch vụ đề nghị hỗ trợ học tập", TenDichVu = "dịch vụ đề nghị hỗ trợ học tập", TinNhanCode = "DE_NGHI_HO_TRO_HOC_TAP", LogCodeSendEmail = "GUI_MAIL_XAC_NHAN_DE_NGHI_HO_TRO_HOC_TAP" } }
         };
 
         public static Dictionary<int, string> TrangThaiYeuCauDictionary = new Dictionary<int, string>
         {
             { (int)TrangThaiYeuCau.DaGuiLenNhaTruong, "Đã gửi lên nhà trường" },
             { (int)TrangThaiYeuCau.DangXuLy, "Đã tiếp nhận và đang xử lý" },
-            { (int)TrangThaiYeuCau.DaXuLyVaCoLichHen, "Đã xử lý và có lịch hẹn" },
+            { (int)TrangThaiYeuCau.DaXuLyVaCoLichHen, "Đã xử lý" },
             { (int)TrangThaiYeuCau.TuChoi, "Từ chôi dịch vụ" },
             { (int)TrangThaiYeuCau.HoanThanh, "Hoàn thành" },
         };

@@ -50,13 +50,17 @@
                     </asp:ListItem>
                     <asp:ListItem Value="TAN_TAT_KHO_KHAN_KINH_TE">&nbsp;Sinh viên khuyết tật
                     </asp:ListItem>
-                    <asp:ListItem Value="DAN_TOC_HO_NGHEO">&nbspSinh viên người dân tộc thiểu số có cha hoặc mẹ hoặc cả cha và mẹ hoặc ông bà (trong trường hợp ở với ông bà) thuộc hộ nghèo và hộ cận nghèo theo quy định của Thủ tướng Chính phủ.
+                    <asp:ListItem Value="DAN_TOC_HO_NGHEO">&nbsp;Sinh viên người dân tộc thiểu số có cha hoặc mẹ hoặc cả cha và mẹ hoặc ông bà (trong trường hợp ở với ông bà) thuộc hộ nghèo và hộ cận nghèo theo quy định của Thủ tướng Chính phủ.
                     </asp:ListItem>
                     <asp:ListItem Value="DAN_TOC_IT_NGUOI_VUNG_KHO_KHAN">&nbsp;Sinh viên là người dân tộc thiểu số rất ít người (Cống, Mảng, Pu Péo, Si La, Cờ Lao, Bố Y, La Ha, Ngái, Chứt, Ơ Đu, Brâu, Rơ Măm, Lô Tô, Lự, Pà Thẻn, La Hủ) ở vùng có điều kiện kinh tế - xã hội khó khăn hoặc đặc biệt khó khăn
                     </asp:ListItem>
                     <asp:ListItem Value="DAN_TOC_VUNG_KHO_KHAN">&nbsp;Sinh viên hệ cử tuyển
                     </asp:ListItem>
                     <asp:ListItem Value="CHA_ME_TAI_NAN_DUOC_TRO_CAP">&nbsp;Sinh viên thuộc các đối tượng của chương trình, đề án được miễn giảm học phí theo quy định của Chính phủ.
+                    </asp:ListItem>
+                    <asp:ListItem Value="KHU_VUC_III">&nbsp;Sinh viên là người dân tộc thiểu số (ngoài đối tượng dân tộc thiểu số rất ít người) ở thôn/bản đặc biệt khó khăn, xã khu vực III vùng dân tộc và miền núi, xã đặc biệt khó khăn vùng bãi ngang ven biển hải đảo theo quy định của cơ quan có thẩm quyền.
+                    </asp:ListItem>
+                    <asp:ListItem Value="CON_CAN_BO_DUOC_TRO_CAP_THUONG_XUYEN">&nbsp;Sinh viên là con cán bộ, công chức, viên chức, công nhân mà cha hoặc mẹ bị tai nạn lao động hoặc mắc bệnh nghề nghiệp được hưởng trợ cấp thường xuyên.
                     </asp:ListItem>
                 </asp:RadioButtonList>
             </div>

@@ -81,6 +81,7 @@ namespace Nuce.CTSV.ApiModels
         public string EmailNhaTruong { get; set; }
         public bool? DaXacThucEmailNhaTruong { get; set; }
         public string BaoTinDiaChiNhanChuyenPhatNhanh { get; set; }
+        public bool IsHetHanChinhKhoa { get; set; }
     }
     public class StudentBasicUpdateModel
     {
