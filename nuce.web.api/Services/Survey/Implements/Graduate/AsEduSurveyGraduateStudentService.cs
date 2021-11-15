@@ -63,12 +63,25 @@ namespace nuce.web.api.Services.Survey.Implements
 
             var svdotks = dssv.Join(_context.AsEduSurveyGraduateSurveyRound, sv => sv.DotKhaoSatId, dot => dot.Id, (sv, dotks) => new { sv, dotks });
 
-            var querySkip = svdotks
+            var querySkip = svdotks;
+            if (filter.MaKhoa == null)
+            {
+                querySkip = svdotks
                 .OrderByDescending(sv => sv.dotks.FromDate)
                 .ThenByDescending(sv => sv.sv.Ngayraqd)
                 .ThenBy(o => o.sv.Makhoa)
                 .ThenBy(o => o.sv.Masv)
                 .Skip(skip).Take(take);
+            }
+            else //có mã khoa thì sắp xếp như này
+            {
+                querySkip = svdotks
+                    .OrderBy(o => o.sv.Tennganh)
+                    .ThenBy(o => o.sv.Tenchnga)
+                    .ThenBy(o => o.sv.Malop)
+                    .ThenBy(o => o.sv.Masv)
+                    .Skip(skip).Take(take);
+            }
 
             var leftJoin = querySkip.GroupJoin(_context.AsEduSurveyGraduateBaiKhaoSatSinhVien, o => o.sv.ExMasv, o => o.StudentCode, (svdotks, baikssv) => new { svdotks, baikssv })
                 .SelectMany(o => o.baikssv.DefaultIfEmpty(), (r, baikssv) => new { r.svdotks.sv, r.svdotks.dotks, baikssv });
