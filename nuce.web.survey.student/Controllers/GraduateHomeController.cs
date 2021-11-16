@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using nuce.web.shared;
+using nuce.web.shared.Models.Survey;
 using nuce.web.survey.student.Attributes.ActionFilter;
 using nuce.web.survey.student.Models;
 using nuce.web.survey.student.Models.JsonData;
@@ -76,10 +77,19 @@ namespace nuce.web.survey.student.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> TheSurveySubmit(string theSurveyId, string studentCode, string loaiHinh)
+        public async Task<ActionResult> TheSurveySubmit(SubmitBaiLam baiLam)
         {
-            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/GraduateTheSurveyStudent/SaveSelectedAnswer?theSurveyId={theSurveyId}&studentCode={studentCode}&loaiHinh={loaiHinh}");
+            var content = new StringContent(JsonConvert.SerializeObject(baiLam.baiLam), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/GraduateTheSurveyStudent/SaveSelectedAnswer?theSurveyId={baiLam.theSurveyId}&studentCode={baiLam.studentCode}&loaiHinh={baiLam.loaiHinh}", content);
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
+    }
+
+    public class SubmitBaiLam
+    {
+        public string theSurveyId { get; set; }
+        public string studentCode { get; set; }
+        public string loaiHinh { get; set; }
+        public List<AnswerSaveVM> baiLam { get; set; }
     }
 }

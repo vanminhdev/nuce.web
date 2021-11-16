@@ -11,6 +11,7 @@ using nuce.web.api.Services.Survey.Implements;
 using nuce.web.api.ViewModel.Survey;
 using nuce.web.shared;
 using nuce.web.shared.Common;
+using nuce.web.shared.Models.Survey;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -171,7 +172,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
 
         [HttpPut]
         [AppAuthorize(RoleNames.GraduateStudent, RoleNames.KhaoThi_Survey_KhoaBan)]
-        public async Task<IActionResult> SaveSelectedAnswer([Required] Guid? theSurveyId, string studentCode, string loaiHinh)
+        public async Task<IActionResult> SaveSelectedAnswer([Required] Guid? theSurveyId, string studentCode, string loaiHinh, [FromBody] List<AnswerSaveVM> data)
         {
             try
             {
@@ -195,7 +196,7 @@ namespace nuce.web.api.Controllers.Survey.Graduate
                     }
                 }
                 var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-                await _asEduSurveyGraduateBaiKhaoSatSinhVienService.SaveSelectedAnswer(theSurveyId.Value, curStudentCode, ip, loaiHinh);
+                await _asEduSurveyGraduateBaiKhaoSatSinhVienService.SaveSelectedAnswer(theSurveyId.Value, curStudentCode, ip, loaiHinh, data);
             }
             catch (InvalidInputDataException e)
             {
