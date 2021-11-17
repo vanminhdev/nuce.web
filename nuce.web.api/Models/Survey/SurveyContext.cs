@@ -68,11 +68,17 @@ namespace nuce.web.api.Models.Survey
             {
                 entity.ToTable("AS_Edu_Survey_BaiKhaoSat_SinhVien");
 
+                entity.HasIndex(e => e.BaiKhaoSatId)
+                    .HasName("IX_BaiKhaoSat_SinhVien_BaiKSId");
+
                 entity.HasIndex(e => new { e.BaiKhaoSatId, e.Status })
                     .HasName("index_baikhaosatsinhvien_baiks_trangthai");
 
                 entity.HasIndex(e => new { e.BaiKhaoSatId, e.LecturerCode, e.ClassRoomCode })
                     .HasName("index_baikhaosatsinhvien_baiks_giangvien_lop");
+
+                entity.HasIndex(e => new { e.BaiKhaoSatId, e.StudentCode, e.ClassRoomCode, e.Nhhk })
+                    .HasName("index_As_Edu_survey_baikhaosatsinhvien_them");
 
                 entity.HasIndex(e => new { e.BaiKhaoSatId, e.SubjectCode, e.LecturerCode, e.Status })
                     .HasName("IX_baikhaosatsinhvien_ThongKe_GiangVien");
@@ -80,7 +86,7 @@ namespace nuce.web.api.Models.Survey
                 entity.HasIndex(e => new { e.BaiKhaoSatId, e.SubjectCode, e.StudentCode, e.Status })
                     .HasName("IX_baikhaosatsinhvien_ThongKe_SinhVien");
 
-                entity.HasIndex(e => new { e.StudentCode, e.ClassRoomCode, e.Nhhk, e.Status })
+                entity.HasIndex(e => new { e.BaiKhaoSatId, e.StudentCode, e.ClassRoomCode, e.Nhhk, e.Status })
                     .HasName("index_As_Edu_survey_baikhaosatsinhvien");
 
                 entity.Property(e => e.Id)
@@ -689,6 +695,10 @@ namespace nuce.web.api.Models.Survey
 
                 entity.Property(e => e.AnswerCode).HasMaxLength(50);
 
+                entity.Property(e => e.ClassRoom)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.ClassRoomCode)
                     .IsRequired()
                     .HasMaxLength(50)
@@ -709,6 +719,10 @@ namespace nuce.web.api.Models.Survey
                 entity.Property(e => e.QuestionCode)
                     .IsRequired()
                     .HasMaxLength(50);
+
+                entity.Property(e => e.SubjectCode)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<AsEduSurveyUndergraduateBaiKhaoSat>(entity =>
@@ -734,10 +748,10 @@ namespace nuce.web.api.Models.Survey
             {
                 entity.ToTable("AS_Edu_Survey_Undergraduate_BaiKhaoSat_SinhVien");
 
-                entity.HasIndex(e => new { e.StudentCode, e.BaiKhaoSatId })
-                    .HasName("index_Undergraduate_BaiKhaoSat_SinhVien");
+                entity.HasIndex(e => e.StudentCode)
+                    .HasName("IX_Undergraduate_baiks_sinhvien_student_code");
 
-                entity.HasIndex(e => new { e.StudentCode, e.BaiKhaoSatId, e.Status })
+                entity.HasIndex(e => new { e.StudentCode, e.BaiKhaoSatId, e.Status, e.NgayGioNopBai })
                     .HasName("index_Undergraduate_BaiKhaoSat_SinhVien_TrangThai");
 
                 entity.Property(e => e.Id)
@@ -890,6 +904,18 @@ namespace nuce.web.api.Models.Survey
             modelBuilder.Entity<AsEduSurveyUndergraduateStudent>(entity =>
             {
                 entity.ToTable("AS_Edu_Survey_Undergraduate_Student");
+
+                entity.HasIndex(e => e.ExMasv)
+                    .HasName("IX_Undergraduate_Student_Ex_masv");
+
+                entity.HasIndex(e => e.Makhoa)
+                    .HasName("IX_Undergraduate_Student_MaKhoa");
+
+                entity.HasIndex(e => e.Masv)
+                    .HasName("IX_Undergraduate_Student_MaSV");
+
+                entity.HasIndex(e => e.Ngayraqd)
+                    .HasName("IX_Undergraduate_Student_ngayraqd");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")

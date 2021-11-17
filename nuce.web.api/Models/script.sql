@@ -64,3 +64,14 @@ set Nganh = (select tennganh from AS_Edu_Survey_Undergraduate_Student where AS_E
 
 update AS_Edu_Survey_Undergraduate_BaiKhaoSat_SinhVien
 set ChuyenNganh = (select tenchnga from AS_Edu_Survey_Undergraduate_Student where AS_Edu_Survey_Undergraduate_BaiKhaoSat_SinhVien.StudentCode = AS_Edu_Survey_Undergraduate_Student.ex_masv)
+
+
+--cập nhật lại bảng report total
+alter table AS_Edu_Survey_ReportTotal
+add SubjectCode varchar(50)
+
+alter table AS_Edu_Survey_ReportTotal
+add ClassRoom varchar(50)
+
+alter table AS_Edu_Survey_Undergraduate_BaiKhaoSat
+alter column [Status] INT not NULL

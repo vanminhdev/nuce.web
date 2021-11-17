@@ -15,5 +15,7 @@ namespace nuce.web.api.Models.Survey
         public string AnswerCode { get; set; }
         public int? Total { get; set; }
         public string Content { get; set; }
+        public string SubjectCode { get; set; }
+        public string ClassRoom { get; set; }
     }
 }
