@@ -1,4 +1,5 @@
 ﻿using nuce.web.api.Models.Survey.JsonData;
+using nuce.web.shared.Models.Survey;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace nuce.web.api.Services.Survey.Base
 {
     public class BaiKhaoSatSinhVienServiceBase
     {
+        [Obsolete]
         private List<string> AddOrRemoveAnswerCodes(List<string> list, string answerCodeInMulSelect, bool isAnswerCodesAdd)
         {
             if (isAnswerCodesAdd) //thêm
@@ -35,6 +37,7 @@ namespace nuce.web.api.Services.Survey.Base
             return list;
         }
 
+        [Obsolete]
         protected string AutoSaveBaiLam(List<SelectedAnswer> selectedAnswers, string questionCode, string answerCode, string answerCodeInMulSelect, string answerContent, 
             int? numStar, string city, bool isAnswerCodesAdd = true)
         {
@@ -101,6 +104,63 @@ namespace nuce.web.api.Services.Survey.Base
                 IgnoreNullValues = true
             };
             return JsonSerializer.Serialize(selectedAnswers, options);
+        }
+
+        protected string GenSaveBaiLam(List<AnswerSaveVM> list)
+        {
+            List<SelectedAnswer> selectedAnswers = new List<SelectedAnswer>();
+
+            foreach (var item in list)
+            {
+                var newSelectedAnswer = new SelectedAnswer
+                {
+                    QuestionCode = item.questionCode,
+                    AnswerCode = item.answerCode, //là câu chọn 1
+                    AnswerContent = item.answerContent
+                };
+
+                var alt = selectedAnswers.FirstOrDefault(q => q.QuestionCode == item.questionCode); //có rồi chuyển sang update
+                if (alt != null)
+                {
+                    newSelectedAnswer = alt;
+                }
+
+                if (item.questionCode.Split('_').Length == 2) //là câu hỏi con của đáp án
+                {
+                    newSelectedAnswer.IsAnswerChildQuestion = true;
+                }
+
+                if (item.answerCodeInMulSelect != null) // lựa chọn chọn nhiều
+                {
+                    if (newSelectedAnswer.AnswerCodes == null)
+                        newSelectedAnswer.AnswerCodes = new List<string>();
+
+                    if (!newSelectedAnswer.AnswerCodes.Any(ac => ac == item.answerCodeInMulSelect))
+                    {
+                        newSelectedAnswer.AnswerCodes.Add(item.answerCodeInMulSelect);
+                    }
+                }
+                else if (item.numStar != null)
+                {
+                    newSelectedAnswer.NumStart = item.numStar;
+                }
+                else if (item.city != null)
+                {
+                    newSelectedAnswer.City = item.city;
+                }
+
+                if (alt == null) //chưa có là thêm có rồi là update
+                {
+                    selectedAnswers.Add(newSelectedAnswer);
+                }
+            }
+
+            var options = new JsonSerializerOptions
+            {
+                IgnoreNullValues = true
+            };
+            return JsonSerializer.Serialize(selectedAnswers, options);
+
         }
     }
 }

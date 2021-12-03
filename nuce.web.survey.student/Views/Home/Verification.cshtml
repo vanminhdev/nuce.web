@@ -1,8 +1,8 @@
-﻿@using nuce.web.survey.student.Common
+﻿@using nuce.web.shared.Common
 
 @{
     var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
-    var accessToken = Request.Cookies[nuce.web.survey.student.Common.UserParameters.JwtAccessToken];
+    var accessToken = Request.Cookies[UserParameters.JwtAccessToken];
     var masv = "";
     var hoten = "";
     var roles = new List<string>();
@@ -96,13 +96,13 @@
     <script src="~/Content/js/helper/clientParameter.js"></script>
     <script>
         var verifyState = {
-            getData: function() {
-                _clientParameterHelper.getDataApi('' , CLIENT_PARAMETERS_TYPE.KHAO_SAT_SV, res => {
+            getData: function () {
+                _clientParameterHelper.getDataApi('', CLIENT_PARAMETERS_TYPE.KHAO_SAT_SV, res => {
                     const code = CLIENT_PARAMETERS_CODE.KTDB_NOTICE_VERIFY;
                     $('#verify-ks-notice').html(_clientParameterHelper.getValueByCode(res, code));
                 });
             },
-            init: function() {
+            init: function () {
                 verifyState.getData();
             },
         };

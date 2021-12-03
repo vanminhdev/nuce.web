@@ -9,6 +9,7 @@ using nuce.web.api.Services.Survey.Base;
 
 using nuce.web.api.ViewModel.Survey;
 using nuce.web.api.ViewModel.Survey.Graduate;
+using nuce.web.shared.Models.Survey;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -222,7 +223,7 @@ namespace nuce.web.api.Services.Survey.Implements
         /// </summary>
         /// <param name="task"></param>
         /// <returns></returns>
-        public async Task SaveSelectedAnswer(Guid theSurveyId, string studentCode, string ipAddress, string loaiHinh)
+        public async Task SaveSelectedAnswer(Guid theSurveyId, string studentCode, string ipAddress, string loaiHinh, List<AnswerSaveVM> data)
         {
             var surveyStudent = await _context.AsEduSurveyGraduateBaiKhaoSatSinhVien
                 .FirstOrDefaultAsync(o => o.BaiKhaoSatId == theSurveyId && o.StudentCode == studentCode);
@@ -239,6 +240,14 @@ namespace nuce.web.api.Services.Survey.Implements
             else if (surveyStudent.Status == (int)SurveyStudentStatus.Close)
             {
                 throw new RecordNotFoundException("Đợt khảo sát đã kết thúc");
+            }
+
+            //bài làm json
+            surveyStudent.BaiLam = base.GenSaveBaiLam(data);
+
+            if (string.IsNullOrWhiteSpace(surveyStudent.BaiLam))
+            {
+                throw new Exception("Chưa hoàn thành bài khảo sát");
             }
 
             //kiểm tra đủ số câu hỏi bắt buộc

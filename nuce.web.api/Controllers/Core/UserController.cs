@@ -434,14 +434,14 @@ namespace nuce.web.api.Controllers.Core
                 }
                 else
                 {
-                    var loginUserType = 0;
+                    LoginType loginUserType = 0;
                     var userType = jwtValidatedRefreshToken.Claims.FirstOrDefault(c => c.Type == UserParameters.UserType);
                     if(userType != null)
                     {
-                        int.TryParse(userType.Value, out loginUserType);
+                        Enum.TryParse(userType.Value, out loginUserType);
                     }
 
-                    var model = new LoginModel { Username = username, LoginUserType = (LoginType)loginUserType };
+                    var model = new LoginModel { Username = username, LoginUserType = loginUserType };
                     var user = await _userService.FindByName(username);
                     var claims = await _userService.AddClaimsAsync(model, user);
                     var accessToken = _userService.CreateJWTAccessToken(claims);

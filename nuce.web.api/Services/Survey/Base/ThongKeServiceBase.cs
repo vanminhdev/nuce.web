@@ -9,6 +9,11 @@ namespace nuce.web.api.Services.Survey.Base
 {
     public class ThongKeServiceBase
     {
+        /// <summary>
+        /// Tính toán câu trả lời
+        /// </summary>
+        /// <param name="selectedList"></param>
+        /// <returns></returns>
         protected List<AnswerSelectedReportTotal> AnswerSelectedReportTotal(List<SelectedAnswerExtend> selectedList)
         {
             var result = new List<AnswerSelectedReportTotal>();

@@ -3,6 +3,7 @@
 @using System.IdentityModel.Tokens.Jwt;
 @using System.Security.Claims;
 @using Newtonsoft.Json;
+@using nuce.web.shared.Common
 @model  List<QuestionJson>
 @{
     ViewData["Title"] = "Bài khảo sát";
@@ -49,9 +50,9 @@
             counter-increment: title-question-counter;
         }
 
-        .question-title:before {
-            content: counter(title-question-counter, upper-roman)". ";
-        }
+            .question-title:before {
+                content: counter(title-question-counter, upper-roman)". ";
+            }
 
         .tag-child-inline > * {
             display: inline;
