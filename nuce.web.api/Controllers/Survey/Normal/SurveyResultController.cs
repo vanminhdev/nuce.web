@@ -12,6 +12,9 @@ using nuce.web.shared;
 
 namespace nuce.web.api.Controllers.Survey.Normal
 {
+    /// <summary>
+    /// Kết quả khảo sát
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class SurveyResultController : ControllerBase

@@ -10,7 +10,9 @@ using nuce.web.api.ViewModel.Survey;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -254,7 +256,8 @@ namespace nuce.web.api.Services.Survey.Implements
             }
             var options = new JsonSerializerOptions
             {
-                IgnoreNullValues = true
+                IgnoreNullValues = true,
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
             };
             var jsonString = JsonSerializer.Serialize(QuestionJsonData, options);
             examQuestion.NoiDungDeThi = jsonString;

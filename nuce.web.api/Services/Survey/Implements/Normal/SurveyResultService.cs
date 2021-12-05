@@ -54,7 +54,7 @@ namespace nuce.web.api.Services.Survey.Implements
             var baiKhaoSats = _surveyContext.AsEduSurveyBaiKhaoSat.Where(o => o.DotKhaoSatId == lastDotKhaoSat.Id && o.Status != (int)TheSurveyStatus.Deleted).ToList();
             
             var baiKhaoSatIds = baiKhaoSats.Select(o => o.Id).ToList();
-            var baiLamKhaoSatCacDotDangXet = _surveyContext.AsEduSurveyBaiKhaoSatSinhVien.Where(o => baiKhaoSatIds.Contains(o.BaiKhaoSatId)).ToList();
+            var baiLamKhaoSatCacDotDangXet = _surveyContext.AsEduSurveyBaiKhaoSatSinhVien.Where(o => baiKhaoSatIds.Contains(o.BaiKhaoSatId));
             #endregion
 
             var departments = await _facultyRepository.GetDepartment(code).ToListAsync();
@@ -125,7 +125,7 @@ namespace nuce.web.api.Services.Survey.Implements
             var baiKhaoSats = await _surveyContext.AsEduSurveyBaiKhaoSat.AsNoTracking().Where(o => o.DotKhaoSatId == lastDotKhaoSat.Id && o.Status != (int)TheSurveyStatus.Deleted).ToListAsync();
 
             var baiKhaoSatIds = baiKhaoSats.Select(o => o.Id).ToList();
-            var baiLamKhaoSatCacDotDangXet = await _surveyContext.AsEduSurveyBaiKhaoSatSinhVien.AsNoTracking().Where(o => baiKhaoSatIds.Contains(o.BaiKhaoSatId)).ToListAsync();
+            var baiLamKhaoSatCacDotDangXet = _surveyContext.AsEduSurveyBaiKhaoSatSinhVien.AsNoTracking().Where(o => baiKhaoSatIds.Contains(o.BaiKhaoSatId));
             #endregion
 
             var department = await _departmentRepository.FindByCode(code);
@@ -266,7 +266,7 @@ namespace nuce.web.api.Services.Survey.Implements
         /// <param name="baiLamKhaoSatCacDotDangXet"></param>
         /// <param name="department"></param>
         /// <param name="loaiMon"></param>
-        private void CalculateDeparatmentResult(SurveyResultResponseModel Result, List<AsEduSurveyBaiKhaoSatSinhVien> baiLamKhaoSatCacDotDangXet, AsAcademyDepartment department)
+        private void CalculateDeparatmentResult(SurveyResultResponseModel Result, IQueryable<AsEduSurveyBaiKhaoSatSinhVien> baiLamKhaoSatCacDotDangXet, AsAcademyDepartment department)
         {
             var tmpLoaiMon = Enum.GetValues(typeof(TheSurveyType)).Cast<int>().ToList();
             var danhSachLoaiMonHoc = tmpLoaiMon.Cast<int?>().ToList();
@@ -278,8 +278,8 @@ namespace nuce.web.api.Services.Survey.Implements
 
             #region môn
             //các bài làm của môn lý thuyết của bộ môn đang xét
-            var baiLamKhaoSatLyThuyet = baiLamKhaoSatCacDotDangXet.ToList().Where(o => lerturerCodes.Contains(o.LecturerCode));
-            var baiLamKhaoSatLyThuyetHoanThanh = baiLamKhaoSatLyThuyet.ToList().Where(o => o.Status == (int)SurveyStudentStatus.Done)
+            var baiLamKhaoSatLyThuyet = baiLamKhaoSatCacDotDangXet.Where(o => lerturerCodes.Contains(o.LecturerCode));
+            var baiLamKhaoSatLyThuyetHoanThanh = baiLamKhaoSatLyThuyet.Where(o => o.Status == (int)SurveyStudentStatus.Done)
                                                         .Select(o => new { o.StudentCode, o.LecturerCode });
 
             var soPhieuPhatRa = baiLamKhaoSatLyThuyet.Count();
@@ -359,7 +359,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
                     if (sumTotal > 0)
                     {
-                        string dtbValue = ((double)dTB / sumTotal).ToString();
+                        string dtbValue = $"{(double)dTB / sumTotal:0.00}";
                         diemList[dtbKey] = dtbValue;
                     }
                     chiTietCauHoi.DanhSachDiem = diemList;
@@ -476,7 +476,7 @@ namespace nuce.web.api.Services.Survey.Implements
 
                             if (sumTotal > 0)
                             {
-                                string dtbValue = ((double)dTB / sumTotal).ToString();
+                                string dtbValue = $"{(double)dTB / sumTotal:0.00}";
                                 diemList[dtbKey] = dtbValue;
                             }
                             chiTietCauHoiCon.DanhSachDiem = diemList;
@@ -551,16 +551,21 @@ namespace nuce.web.api.Services.Survey.Implements
                 }
             }
 
+            int soBaiKhaoSat = _surveyContext.AsEduSurveyBaiKhaoSatSinhVien.Count(b => b.BaiKhaoSatId == baiKhaoSatId 
+                && b.LecturerCode == lecturer.Code && b.ClassRoomCode == maLop
+                && b.Status == (int)SurveyStudentStatus.Done);
+
             Result.ChiTietTungLopMonHoc.Add(new ChiTietLopMonHoc
             {
                 TenLop = tenLop,
                 TenMon = tenMon,
+                SoBaiKhaoSat = soBaiKhaoSat,
                 CauHoi = chiTietCauHoiList
             });
             #endregion
         }
         // subject <= classroom <= lecturer classroom <= lecturer
-        private async Task CalculateLecturerResult(SurveyResultResponseModel Result, AsAcademyLecturer lecturer, List<AsEduSurveyBaiKhaoSatSinhVien> baiLamKhaoSatCacDotDangXet)
+        private async Task CalculateLecturerResult(SurveyResultResponseModel Result, AsAcademyLecturer lecturer, IQueryable<AsEduSurveyBaiKhaoSatSinhVien> baiLamKhaoSatCacDotDangXet)
         {
             Result.LecturerCode = lecturer.Code;
             Result.LecturerName = lecturer.FullName;

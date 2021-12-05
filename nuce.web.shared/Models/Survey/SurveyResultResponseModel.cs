@@ -50,6 +50,7 @@ namespace nuce.web.shared.Models.Survey
     {
         public string TenLop { get; set; }
         public string TenMon { get; set; }
+        public int SoBaiKhaoSat { get; set; }
         public List<ChiTietCauHoi> CauHoi { get; set; }
     }
 

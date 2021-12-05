@@ -87,7 +87,11 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
 
                 _logger.LogInformation("report total normal is start.");
                 //surveyContext.Database.ExecuteSqlRaw($"TRUNCATE TABLE {TableNameTask.AsEduSurveyReportTotal}");
-                var baikshoanthanh = surveyContext.AsEduSurveyBaiKhaoSatSinhVien.AsNoTracking().Where(o => idbaikscuadotnays.Contains(o.BaiKhaoSatId)).Where(o => o.Status == (int)SurveyStudentStatus.Done);
+                var baikshoanthanh = surveyContext.AsEduSurveyBaiKhaoSatSinhVien.AsNoTracking()
+                    .Where(o => idbaikscuadotnays.Contains(o.BaiKhaoSatId))
+                    .Where(o => o.Status == (int)SurveyStudentStatus.Done);
+
+                var testSoBaiKs = baikshoanthanh.Count();
 
                 var tongBaiKsHoanThanh = baikshoanthanh.Count();
                 List<SelectedAnswerExtend> selectedAnswers;
@@ -116,6 +120,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                         {
                             continue;
                         }
+                        //giải chuỗi json bài làm của sinh viên
                         var json = JsonSerializer.Deserialize<List<SelectedAnswerExtend>>(bailam.BaiLam);
                         json.ForEach(o => o.TheSurveyId = bailam.BaiKhaoSatId);
                         selectedAnswers.AddRange(json);
@@ -136,7 +141,117 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                         classroom = baiLamDauTien.ClassRoomCode?.Replace(baiLamDauTien.SubjectCode ?? "", "");
                     }
 
-                    var total = AnswerSelectedReportTotal(selectedAnswers);
+                    //giải đề
+                    var deLyThuyetThucHanh = surveyContext.AsEduSurveyBaiKhaoSat.FirstOrDefault(o => o.Id == baiLamDauTien.BaiKhaoSatId);
+                    List<QuestionJson> QuestionJsonData = JsonSerializer.Deserialize<List<QuestionJson>>(deLyThuyetThucHanh.NoiDungDeThi);
+
+                    List<AnswerSelectedReportTotal> total = new List<AnswerSelectedReportTotal>();
+                    foreach (var question in QuestionJsonData.Where(q => q.Type == QuestionType.SC))
+                    {
+                        if (question.Answers == null)
+                            continue;
+
+                        int testSum = 0;
+                        foreach (var answer in question.Answers)
+                        {
+                            var countAnswer = selectedAnswers.Count(a => a.QuestionCode == question.Code && a.AnswerCode == answer.Code);
+                            testSum += countAnswer;
+
+                            if (countAnswer > 0)
+                            {
+                                total.Add(new Models.Survey.JsonData.AnswerSelectedReportTotal
+                                {
+                                    TheSurveyId = baiLamDauTien.BaiKhaoSatId,
+                                    QuestionCode = question.Code,
+                                    AnswerCode = answer.Code,
+                                    Total = countAnswer
+                                });
+                            }
+                        }
+
+                        if (testSum != 21)
+                        {
+
+                        }
+                    }
+
+                    foreach (var question in QuestionJsonData.Where(q => q.Type == QuestionType.MC))
+                    {
+                        if (question.Answers == null)
+                            continue;
+
+                        int testSum = 0;
+                        foreach (var answer in question.Answers)
+                        {
+                            var countAnswer = selectedAnswers.Count(a => a.QuestionCode == question.Code && a.AnswerCode == answer.Code);
+                            testSum += countAnswer;
+
+                            total.Add(new Models.Survey.JsonData.AnswerSelectedReportTotal
+                            {
+                                TheSurveyId = baiLamDauTien.BaiKhaoSatId,
+                                QuestionCode = question.Code,
+                                AnswerCode = answer.Code,
+                                Total = countAnswer
+                            });
+
+                            if (answer.AnswerChildQuestion != null)
+                            {
+                                var cauTraLoiCon = selectedAnswers.Where(a => a.QuestionCode == answer.AnswerChildQuestion.Code);
+
+                                List<string> strAllAnswerContent = new List<string>();
+
+                                foreach (var str in cauTraLoiCon)
+                                {
+                                    strAllAnswerContent.Add(str.AnswerContent);
+                                }
+
+                                total.Add(new AnswerSelectedReportTotal
+                                {
+                                    TheSurveyId = baiLamDauTien.BaiKhaoSatId,
+                                    QuestionCode = question.Code,
+                                    Content = JsonSerializer.Serialize(strAllAnswerContent)
+                                });
+
+                                if (cauTraLoiCon != null)
+                                {
+                                    total.Add(new Models.Survey.JsonData.AnswerSelectedReportTotal
+                                    {
+                                        TheSurveyId = baiLamDauTien.BaiKhaoSatId,
+                                        QuestionCode = answer.AnswerChildQuestion.Code,
+                                        Content = string.Join(";", strAllAnswerContent)
+                                    });
+                                }
+                            }
+                        }
+
+                        if (testSum != 21)
+                        {
+
+                        }
+                    }
+
+                    foreach (var questionGQ in QuestionJsonData.Where(q => q.Type == QuestionType.GQ))
+                    {
+                        foreach (var question in questionGQ.ChildQuestion.Where(q => q.Type == QuestionType.SA))
+                        {
+                            var cauTraText = selectedAnswers.Where(a => a.QuestionCode == question.Code);
+                            List<string> strAllAnswerContent = new List<string>();
+
+                            foreach (var str in cauTraText)
+                            {
+                                strAllAnswerContent.Add(str.AnswerContent);
+                            }
+
+                            total.Add(new AnswerSelectedReportTotal
+                            {
+                                TheSurveyId = baiLamDauTien.BaiKhaoSatId,
+                                QuestionCode = question.Code,
+                                Content = JsonSerializer.Serialize(strAllAnswerContent)
+                            });
+                        }
+                    }
+
+                    //total = AnswerSelectedReportTotal(selectedAnswers);
                     foreach (var item in total)
                     {
                         var thongkecuthe = surveyContext.AsEduSurveyReportTotal
