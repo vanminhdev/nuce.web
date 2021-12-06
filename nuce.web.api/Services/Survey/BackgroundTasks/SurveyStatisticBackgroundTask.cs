@@ -20,7 +20,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -205,11 +207,17 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                     strAllAnswerContent.Add(str.AnswerContent);
                                 }
 
+                                var options = new JsonSerializerOptions
+                                {
+                                    IgnoreNullValues = true,
+                                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
+                                };
+
                                 total.Add(new AnswerSelectedReportTotal
                                 {
                                     TheSurveyId = baiLamDauTien.BaiKhaoSatId,
                                     QuestionCode = question.Code,
-                                    Content = JsonSerializer.Serialize(strAllAnswerContent)
+                                    Content = JsonSerializer.Serialize(strAllAnswerContent, options)
                                 });
 
                                 if (cauTraLoiCon != null)
@@ -242,11 +250,19 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                 strAllAnswerContent.Add(str.AnswerContent);
                             }
 
+                            var options = new JsonSerializerOptions
+                            {
+                                IgnoreNullValues = true,
+                                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
+                            };
+
+                            string content = JsonSerializer.Serialize(strAllAnswerContent, options);
+
                             total.Add(new AnswerSelectedReportTotal
                             {
                                 TheSurveyId = baiLamDauTien.BaiKhaoSatId,
                                 QuestionCode = question.Code,
-                                Content = JsonSerializer.Serialize(strAllAnswerContent)
+                                Content = content
                             });
                         }
                     }
@@ -431,6 +447,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 //hoàn thành
                 status.Status = (int)TableTaskStatus.Done;
                 status.IsSuccess = true;
+
                 status.Message = JsonSerializer.Serialize(result);
                 statusContext.SaveChanges();
             }

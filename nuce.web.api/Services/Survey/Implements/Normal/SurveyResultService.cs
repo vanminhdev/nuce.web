@@ -14,6 +14,8 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using nuce.web.api.Repositories.EduData;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 
 namespace nuce.web.api.Services.Survey.Implements
 {
@@ -319,6 +321,11 @@ namespace nuce.web.api.Services.Survey.Implements
 
             var test = reportTotalCuThe.Count();
 
+            var options = new JsonSerializerOptions
+            {
+                IgnoreNullValues = true,
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
+            };
             List<ChiTietCauHoi> chiTietCauHoiList = new List<ChiTietCauHoi>();
             foreach (var cauhoi in deThiJson)
             {
@@ -418,7 +425,7 @@ namespace nuce.web.api.Services.Survey.Implements
                     if (ketqua != null && ketqua.Content != null)
                     {
                         var str = "";
-                        var listStr = JsonSerializer.Deserialize<List<string>>(ketqua.Content);
+                        var listStr = JsonSerializer.Deserialize<List<string>>(ketqua.Content, options);
                         listStr.ForEach(s =>
                         {
                             str += $"{s};";
@@ -527,7 +534,7 @@ namespace nuce.web.api.Services.Survey.Implements
                             if (ketqua != null && ketqua.Content != null)
                             {
                                 var str = "";
-                                var listStr = JsonSerializer.Deserialize<List<string>>(ketqua.Content);
+                                var listStr = JsonSerializer.Deserialize<List<string>>(ketqua.Content, options);
                                 listStr.ForEach(s =>
                                 {
                                     str += $"{s}; ";

@@ -134,6 +134,8 @@ namespace nuce.web.api.Services.Survey.Implements.Graduate
                 worksheet.Cells[row, col++].Value = svBaiLam.sv.Email;
                 worksheet.Cells[row, col++].Value = svBaiLam.bailam != null ? svBaiLam.bailam.LoaiHinh : "";
 
+                string cmnd = "";
+
                 List<SelectedAnswer> bailam = new List<SelectedAnswer>();
                 if(svBaiLam.bailam != null)
                 {
@@ -215,6 +217,11 @@ namespace nuce.web.api.Services.Survey.Implements.Graduate
                         if (selected != null)
                         {
                             worksheet.Cells[row, col].Value = selected.AnswerContent;
+
+                            if (cauhoi.Code == "00017")
+                            {
+                                cmnd = selected.AnswerContent;
+                            }
                         }
                         col++;
                     }
@@ -299,7 +306,7 @@ namespace nuce.web.api.Services.Survey.Implements.Graduate
 
                 worksheet.Cells[rowCauHoi, col].Value = "CCCD/CMND";
                 worksheet.Column(col).Width = 20;
-                worksheet.Cells[row, col++].Value = svBaiLam.sv.Cmnd;
+                worksheet.Cells[row, col++].Value = !string.IsNullOrWhiteSpace(cmnd) ? cmnd : svBaiLam.sv.Cmnd;
 
                 worksheet.Cells[rowCauHoi, col].Value = "Số quyết định tốt nghiệp";
                 worksheet.Column(col).Width = 44.57;

@@ -68,7 +68,7 @@
                             {
                                 <tr>
                                     <td class="font-weight-bold pl-1 question-title">
-                                        @cauhoi.OnlyTitle
+                                        @Html.Raw(cauhoi.OnlyTitle)
                                     </td>
                                 </tr>
                             }
@@ -76,7 +76,7 @@
                             {
                                 <tr>
                                     <td colspan="@cauhoi.DanhSachDiem.Count" class="pl-3" style="font-weight:500;">
-                                        @cauhoi.Content
+                                        @Html.Raw(HttpUtility.HtmlDecode(cauhoi.Content))
                                     </td>
                                 </tr>
                                 <tr>

@@ -3,7 +3,9 @@ using nuce.web.shared.Models.Survey;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.Survey.Base
@@ -157,10 +159,10 @@ namespace nuce.web.api.Services.Survey.Base
 
             var options = new JsonSerializerOptions
             {
-                IgnoreNullValues = true
+                IgnoreNullValues = true,
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
             };
             return JsonSerializer.Serialize(selectedAnswers, options);
-
         }
     }
 }
