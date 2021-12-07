@@ -185,7 +185,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                         int testSum = 0;
                         foreach (var answer in question.Answers)
                         {
-                            var countAnswer = selectedAnswers.Count(a => a.QuestionCode == question.Code && a.AnswerCode == answer.Code);
+                            var countAnswer = selectedAnswers.Count(a => a.QuestionCode == question.Code && a.AnswerCodes != null && a.AnswerCodes.Contains(answer.Code));
                             testSum += countAnswer;
 
                             total.Add(new Models.Survey.JsonData.AnswerSelectedReportTotal
@@ -272,7 +272,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                     {
                         var thongkecuthe = surveyContext.AsEduSurveyReportTotal
                             .FirstOrDefault(o => o.ClassRoomCode == classroomCode && o.Nhhk == nhhk && o.LecturerCode == lectureCode && o.TheSurveyId == item.TheSurveyId &&
-                            o.QuestionCode == item.QuestionCode && o.AnswerCode == o.AnswerCode);
+                            o.QuestionCode == item.QuestionCode && o.AnswerCode == item.AnswerCode);
                         if (thongkecuthe == null)
                         {
                             surveyContext.AsEduSurveyReportTotal.Add(new AsEduSurveyReportTotal

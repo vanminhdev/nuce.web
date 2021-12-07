@@ -557,7 +557,7 @@ namespace nuce.web.api.Services.Survey.Implements
                     });
                 }
             }
-
+            //baikshoanthanh.Where(o => o.ClassRoomCode == maLop && o.LecturerCode == lecturer.Code && o.Nhhk == nhhk).ToList();
             int soBaiKhaoSat = _surveyContext.AsEduSurveyBaiKhaoSatSinhVien.Count(b => b.BaiKhaoSatId == baiKhaoSatId 
                 && b.LecturerCode == lecturer.Code && b.ClassRoomCode == maLop
                 && b.Status == (int)SurveyStudentStatus.Done);

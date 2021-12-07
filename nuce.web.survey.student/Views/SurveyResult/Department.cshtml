@@ -32,7 +32,7 @@
             <thead>
                 <tr>
                     <td>Giảng viên</td>
-                    <td>Số sv tham gia khảo sát</td>
+                    @*<td>Số sv tham gia khảo sát</td>*@
                     <td>Số sv được khảo sát</td>
                     <td>Số phiếu thu về</td>
                     <td>Số phiếu ks phát ra</td>
@@ -75,9 +75,9 @@
                                 return `<a href="/surveyresult/lecturer?code=${row.LecturerCode}&facultyCode=@Model.FacultyCode&departmentCode=@Model.DepartmentCode">${row.LecturerName || ''}</a>`;
                             },
                         },
-                        {
-                            data: 'SoSvThamGiaKhaoSat',
-                        },
+                        //{
+                        //    data: 'SoSvThamGiaKhaoSat',
+                        //},
                         {
                             data: 'SoSvDuocKhaoSat',
                         },
