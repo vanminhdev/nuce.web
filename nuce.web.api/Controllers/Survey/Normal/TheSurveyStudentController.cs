@@ -19,6 +19,7 @@ using nuce.web.api.Services.Survey.BackgroundTasks;
 using nuce.web.api.Services.Survey.Implements;
 using nuce.web.api.ViewModel.Survey;
 using nuce.web.shared;
+using nuce.web.shared.Models.Survey;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -134,13 +135,14 @@ namespace nuce.web.api.Controllers.Survey.Normal
 
         [HttpPut]
         [AppAuthorize(RoleNames.Student)]
-        public async Task<IActionResult> SaveSelectedAnswer([Required(AllowEmptyStrings = false)] [NotContainWhiteSpace] string classRoomCode, [Required(AllowEmptyStrings = false)] string nhhk)
+        public async Task<IActionResult> SaveSelectedAnswer([Required(AllowEmptyStrings = false)] [NotContainWhiteSpace] string classRoomCode,
+            [Required(AllowEmptyStrings = false)] string nhhk, [FromBody] [Required] List<AnswerSaveVM> data)
         {
             try
             {
                 var studentCode = _userService.GetCurrentStudentCode();
                 var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-                await _asEduSurveyBaiKhaoSatSinhVienService.SaveSelectedAnswer(studentCode, classRoomCode, nhhk, ip);
+                await _asEduSurveyBaiKhaoSatSinhVienService.SaveSelectedAnswer(studentCode, classRoomCode, nhhk, ip, data);
             }
             catch (InvalidInputDataException e)
             {

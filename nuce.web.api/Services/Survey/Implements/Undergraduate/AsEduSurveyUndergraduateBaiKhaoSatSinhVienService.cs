@@ -13,6 +13,7 @@ using nuce.web.api.Services.Survey.Base;
 
 using nuce.web.api.ViewModel.Survey;
 using nuce.web.api.ViewModel.Survey.Undergraduate;
+using nuce.web.shared.Models.Survey;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -284,7 +285,7 @@ namespace nuce.web.api.Services.Survey.Implements
         /// </summary>
         /// <param name="task"></param>
         /// <returns></returns>
-        public async Task SaveSelectedAnswer(Guid theSurveyId, string studentCode, string ipAddress)
+        public async Task SaveSelectedAnswer(Guid theSurveyId, string studentCode, string ipAddress, List<AnswerSaveVM> data)
         {
             if (!await IsOpenSurveyRound(studentCode))
             {
@@ -319,11 +320,10 @@ namespace nuce.web.api.Services.Survey.Implements
             //những câu hỏi có đáp án làm show hide câu hỏi khác
             //var questionShowHide = questions.Where(o => (o.Type == QuestionType.SC || o.Type == QuestionType.MC) && o.Answers != null && o.Answers.FirstOrDefault(a => a.HideQuestion != null || a.ShowQuestion != null) != null).ToList();
 
-
             //foreach (var q in questions)
             //{
             //    //Câu hỏi ngắn không bắt buộc
-            //    if(q.Type == QuestionType.SC && answerSave.FirstOrDefault(o => o.QuestionCode == q.Code && o.AnswerCode != null) == null)
+            //    if (q.Type == QuestionType.SC && answerSave.FirstOrDefault(o => o.QuestionCode == q.Code && o.AnswerCode != null) == null)
             //    {
             //        throw new InvalidDataException("Chưa trả lời đủ số câu hỏi");
             //    }
@@ -336,6 +336,8 @@ namespace nuce.web.api.Services.Survey.Implements
             //        throw new InvalidDataException("Chưa trả lời đủ số câu hỏi");
             //    }
             //}
+
+            surveyStudent.BaiLam = base.GenSaveBaiLam(data);
 
             surveyStudent.NgayGioNopBai = DateTime.Now;
             surveyStudent.Status = (int)SurveyStudentStatus.RequestAuthorize;

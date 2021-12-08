@@ -16,4 +16,12 @@ namespace nuce.web.shared.Models.Survey
         public string city { get; set; }
         public bool isAnswerCodesAdd { get; set; } = true;
     }
+
+    public class SubmitBaiLam
+    {
+        public string theSurveyId { get; set; }
+        public string studentCode { get; set; }
+        public string loaiHinh { get; set; }
+        public List<AnswerSaveVM> baiLam { get; set; }
+    }
 }

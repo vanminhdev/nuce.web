@@ -14,6 +14,7 @@ using nuce.web.api.Services.Survey.Base;
 
 using nuce.web.api.ViewModel.Survey;
 using nuce.web.api.ViewModel.Survey.Normal.TheSurvey;
+using nuce.web.shared.Models.Survey;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -209,7 +210,7 @@ namespace nuce.web.api.Services.Survey.Implements
         /// </summary>
         /// <param name="task"></param>
         /// <returns></returns>
-        public async Task SaveSelectedAnswer(string studentCode, string classroomCode, string nhhk, string ipAddress)
+        public async Task SaveSelectedAnswer(string studentCode, string classroomCode, string nhhk, string ipAddress, List<AnswerSaveVM> data)
         {
             if (!await IsOpenSurveyRound())
             {
@@ -246,6 +247,8 @@ namespace nuce.web.api.Services.Survey.Implements
             //        throw new InvalidDataException("Chưa trả lời đủ số câu hỏi");
             //    }
             //}
+
+            surveyStudent.BaiLam = base.GenSaveBaiLam(data);
 
             surveyStudent.NgayGioNopBai = DateTime.Now;
             surveyStudent.Status = (int)SurveyStudentStatus.Done;

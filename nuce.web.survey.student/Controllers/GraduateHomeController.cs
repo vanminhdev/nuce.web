@@ -84,12 +84,4 @@ namespace nuce.web.survey.student.Controllers
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
     }
-
-    public class SubmitBaiLam
-    {
-        public string theSurveyId { get; set; }
-        public string studentCode { get; set; }
-        public string loaiHinh { get; set; }
-        public List<AnswerSaveVM> baiLam { get; set; }
-    }
 }

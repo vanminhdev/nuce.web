@@ -241,20 +241,20 @@
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label font-weight-bold">Email <span class="text-danger">*</span></label>
                         <div class="col-sm-9">
-                            <input type="text" name="email" class="form-control" required data-rule-email="true" data-rule-emailNotEdu="true">
+                            <input id="email" type="text" name="email" class="form-control" required data-rule-email="true" data-rule-emailNotEdu="true">
                             <small class="form-text text-muted">Email này dùng cho việc xác thực hoàn thành bài khảo sát. Lưu ý không sử dụng email có tên miền @@nuce.edu.vn (khuyên dùng @@gmail.com)</small>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label font-weight-bold">Số điện thoại <span class="text-danger">*</span></label>
                         <div class="col-sm-9">
-                            <input type="text" name="phone" class="form-control" required data-rule-phoneNumberMobile="true">
+                            <input id="sdt" type="text" name="phone" class="form-control" required data-rule-phoneNumberMobile="true">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label font-weight-bold">CMND/CCCD <span class="text-danger">*</span></label>
                         <div class="col-sm-9">
-                            <input type="text" name="cmnd" class="form-control" required data-rule-number="true" data-rule-minlength="9" data-rule-maxlength="12">
+                            <input id="cmnd" type="text" name="cmnd" class="form-control" required data-rule-number="true" data-rule-minlength="9" data-rule-maxlength="12">
                         </div>
                     </div>
                 </form>
@@ -445,114 +445,69 @@
     }
     @if (Model.Count > 0)
     {
-        <script>
-            $('input[type=radio]').each(function () {
-                let seft = $(this);
-                let proSeft = this;
-                function handle() {
-                    let data = { theSurveyId: '@ViewData["TheSurveyId"]', questionCode: seft.attr('questionCode'), answerCode: seft.attr('answerCode'), numStar: seft.attr('numstar') };
-                    let isAnswerCodesAdd = proSeft.checked;
-                    if (proSeft.checked == true && seft.attr('answerchildquestioncode') != undefined) {
-                        $(`#answerQuestion-${seft.attr('answerchildquestioncode')}`).show();
+<script>
+            const bailamState = {
+                data: [],
+                getData: () => {
+                    bailamState.data = [];
+                    $('input[type=radio]:checked:visible').each(function () {
+                        let seft = $(this);
+                        bailamState.data.push({ @Html.Raw(ViewData["studentCode"] != null ? $"studentCode:'{ViewData["studentCode"]}'," : "") theSurveyId: '@ViewData["TheSurveyId"]', questionCode: seft.attr('questionCode'), answerCode: seft.attr('answerCode') });
+                    });
+
+                    $('input[type=checkbox]:checked:visible').each(function () {
+                        let seft = $(this);
+                        bailamState.data.push({ @Html.Raw(ViewData["studentCode"] != null ? $"studentCode:'{ViewData["studentCode"]}'," : "") theSurveyId: '@ViewData["TheSurveyId"]', questionCode: seft.attr('questionCode'), answerCodeInMulSelect: seft.attr('answerCode')});
+                    });
+
+                    $('textarea:visible').each(function () {
+                        let seft = $(this);
+                        bailamState.data.push({ @Html.Raw(ViewData["studentCode"] != null ? $"studentCode:'{ViewData["studentCode"]}'," : "") theSurveyId: '@ViewData["TheSurveyId"]', questionCode: seft.attr('questionCode'), answerContent: seft.val() });
+                    });
+
+                    $('.lua-chon-tinh-thanh:visible').each(function () {
+                        let seft = $(this);
+                        bailamState.data.push({ @Html.Raw(ViewData["studentCode"] != null ? $"studentCode:'{ViewData["studentCode"]}'," : "") theSurveyId: '@ViewData["TheSurveyId"]', questionCode: seft.attr('questionCode'), answerContent: seft.val() });
+                    });
+
+                    return bailamState.data;
+                },
+                showChildQuestion: (seft) => {
+                    if ($(seft).is(":checked") && $(seft).attr('answerchildquestioncode') != undefined) {
+                        $(`#answerQuestion-${$(seft).attr('answerchildquestioncode')}`).show();
+                    } else {
+                        $(`#answerQuestion-${$(seft).attr('answerchildquestioncode')}`).hide();
                     }
-                    else {
-                        $(`#answerQuestion-${seft.attr('answerchildquestioncode')}`).hide();
-                    }
-                    $.ajax({
-                        data: data,
-                        dataType: 'json',
-                        method: 'Post',
-                        url: '/Home/UndergraduateAutoSave',
-                        timeout: 0,
-                        complete: () => {}
-                    }).done(function (res) {
-                        console.log('radio');
-                        console.log(res);
-                    }).fail(function (jqXHR, textStatus, errorThrown) {
-                        $('#loading-screen').hide();
-                        console.log(textStatus + ': ' + errorThrown);
-                        console.log(jqXHR);
+                },
+                init: () => {
+                    $('input[type=radio]').change((e) => {
+                        bailamState.showChildQuestion(e.currentTarget);
+                    });
+
+                    $('input[type=checkbox]').change((e) => {
+                        bailamState.showChildQuestion(e.currentTarget);
                     });
                 }
-                seft.change(handle);
-            });
+            };
 
-            $('input[type=checkbox]').each(function () {
-                let seft = $(this);
-                let proSeft = this;
-                function handle() {
-                    let isAnswerCodesAdd = proSeft.checked;
-                    if (proSeft.checked == true && seft.attr('answerchildquestioncode') != undefined) {
-                        $(`#answerQuestion-${seft.attr('answerchildquestioncode')}`).show();
-                    }
-                    else {
-                        $(`#answerQuestion-${seft.attr('answerchildquestioncode')}`).hide();
-                    }
-                    $.ajax({
-                        data: { theSurveyId: '@ViewData["TheSurveyId"]', questionCode: seft.attr('questionCode'), answerCodeInMulSelect: seft.attr('answerCode'), isAnswerCodesAdd },
-                        dataType: 'json',
-                        method: 'Post',
-                        url: '/Home/UndergraduateAutoSave',
-                        timeout: 0,
-                        complete: () => { }
-                    }).done(function (res) {
-                        console.log('checkbox');
-                        console.log(res);
-                    }).fail(function (jqXHR, textStatus, errorThrown) {
-                        console.log(textStatus + ': ' + errorThrown);
-                        console.log(jqXHR);
-                    });
-                }
-                seft.change(handle);
-            });
-
-            $('textarea').each(function () {
-                let seft = $(this);
-                seft.keyup(
-                    debounce(function () {
-                        $.ajax({
-                            data: { theSurveyId: '@ViewData["TheSurveyId"]', questionCode: seft.attr('questionCode'), answerContent: seft.val() },
-                            dataType: 'json',
-                            method: 'Post',
-                            url: '/Home/UndergraduateAutoSave',
-                            timeout: 0,
-                            complete: () => { }
-                        }).done(function (res) {
-                            console.log('textarea');
-                            console.log(res);
-                        }).fail(function (jqXHR, textStatus, errorThrown) {
-                            console.log(textStatus + ': ' + errorThrown);
-                            console.log(jqXHR);
-                        });
-                    }, 1500)
-                );
-            });
-
-            $('.lua-chon-tinh-thanh').each(function () {
-                let seft = $(this);
-                seft.change(function () {
-                    $.ajax({
-                        data: { theSurveyId: '@ViewData["TheSurveyId"]', questionCode: seft.attr('questionCode'), answerContent: seft.val() },
-                        dataType: 'json',
-                        method: 'Post',
-                        url: '/GraduateHome/AutoSave',
-                        timeout: 0,
-                        complete: () => { }
-                    }).done(function (res) {
-                        console.log('tinhthanh');
-                        console.log(res);
-                    }).fail(function (jqXHR, textStatus, errorThrown) {
-                        console.log(textStatus + ': ' + errorThrown);
-                        console.log(jqXHR);
-                    });
-                });
-            });
+            bailamState.init();
 
             $('#choose-yes').click(() => {
                 $('#modal-yes-no').modal('hide');
                 $('#loading-screen').show();
-                let data = $('#form-validate').serializeArray();
-                data.push({ name:"theSurveyId", value: '@ViewData["TheSurveyId"]' });
+                @*let data = $('#form-validate').serializeArray();
+                data.push({ name: "theSurveyId", value: '@ViewData["TheSurveyId"]' });
+                data.bailam = bailamState.getData();*@
+
+                let data = {
+                    email: $('#email').val(),
+                    phone: $('#sdt').val(),
+                    cmnd: $('#cmnd').val(),
+                    theSurveyId: '@ViewData["TheSurveyId"]',
+                    bailam: bailamState.getData()
+                }
+
+                console.log('data', data);
                 $.ajax({
                     data: data,
                     dataType: 'json',
@@ -635,40 +590,7 @@
                     $('#modal-alert').modal('show');
                 }
             });
-
-            $('input[showquestion]').each(function () {
-                let seft = $(this);
-                let proSeft = this;
-                let showQuestions = JSON.parse(seft.attr('showquestion'));
-
-                if (proSeft.checked == false) {
-                    showQuestions.forEach(item => {
-                        $('#' + 'div-q-' + item).hide();
-                    });
-                }
-                seft.change(() => {
-                    showQuestions.forEach(item => {
-                        $('#' + 'div-q-' + item).show();
-                    });
-                });
-            });
-
-            $('input[hidequestion]').each(function () {
-                let seft = $(this);
-                let proSeft = this;
-                let hideQuestions = JSON.parse(seft.attr('hidequestion'));
-                if (proSeft.checked == false) {
-                    hideQuestions.forEach(item => {
-                        $('#' + 'div-q-' + item).show();
-                    });
-                }
-                seft.change(() => {
-                    hideQuestions.forEach(item => {
-                        $('#' + 'div-q-' + item).hide();
-                    });
-                });
-            });
-        </script>
+</script>
     }
 }
 

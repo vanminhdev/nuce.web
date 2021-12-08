@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using nuce.web.survey.student.Models.Survey.Normal;
+using nuce.web.shared.Models.Survey;
 
 namespace nuce.web.survey.student.Controllers
 {
@@ -110,9 +111,10 @@ namespace nuce.web.survey.student.Controllers
 
         [HttpPost]
         [AuthorizeActionFilter(RoleNames.Student)]
-        public async Task<ActionResult> TheSurveySubmit(string classRoomCode, string nhhk)
+        public async Task<ActionResult> TheSurveySubmit(string classRoomCode, string nhhk, List<AnswerSaveVM> bailam)
         {
-            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/TheSurveyStudent/SaveSelectedAnswer?classRoomCode={classRoomCode}&nhhk={nhhk}");
+            var contentBaiLam = new StringContent(JsonConvert.SerializeObject(bailam), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/TheSurveyStudent/SaveSelectedAnswer?classRoomCode={classRoomCode}&nhhk={nhhk}", contentBaiLam);
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
         #endregion
@@ -159,7 +161,7 @@ namespace nuce.web.survey.student.Controllers
 
         [HttpPost]
         [AuthorizeActionFilter(RoleNames.UndergraduateStudent)]
-        public async Task<ActionResult> UndergraduateTheSurveySubmit(string theSurveyId, string email, string phone, string cmnd)
+        public async Task<ActionResult> UndergraduateTheSurveySubmit(string theSurveyId, string email, string phone, string cmnd, List<AnswerSaveVM> bailam)
         {
             var content = new StringContent(JsonConvert.SerializeObject(new { email, phone, cmnd }), Encoding.UTF8, "application/json");
             var resVeri = await base.MakeRequestAuthorizedAsync("Post", $"/api/UndergraduateTheSurveyStudent/Verification", content);
@@ -167,7 +169,8 @@ namespace nuce.web.survey.student.Controllers
             {
                 return Json(new { statusCode = resVeri.StatusCode, content = await resVeri.Content.ReadAsStringAsync() });
             }
-            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/UndergraduateTheSurveyStudent/SaveSelectedAnswer?theSurveyId={theSurveyId}");
+            var contentBaiLam = new StringContent(JsonConvert.SerializeObject(bailam), Encoding.UTF8, "application/json");
+            var response = await base.MakeRequestAuthorizedAsync("Put", $"/api/UndergraduateTheSurveyStudent/SaveSelectedAnswer?theSurveyId={theSurveyId}", contentBaiLam);
             return Json(new { statusCode = response.StatusCode, content = await response.Content.ReadAsStringAsync() }, JsonRequestBehavior.AllowGet);
         }
 

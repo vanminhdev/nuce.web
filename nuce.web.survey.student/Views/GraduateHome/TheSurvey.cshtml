@@ -400,6 +400,7 @@ else
             const bailamState = {
                 data: [],
                 getData: () => {
+                    bailamState.data = [];
                     $('input[type=radio]:checked:visible').each(function () {
                         let seft = $(this);
                         bailamState.data.push({ @Html.Raw(ViewData["studentCode"] != null ? $"studentCode:'{ViewData["studentCode"]}'," : "") theSurveyId: '@ViewData["TheSurveyId"]', questionCode: seft.attr('questionCode'), answerCode: seft.attr('answerCode') });
