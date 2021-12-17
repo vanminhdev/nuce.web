@@ -2905,7 +2905,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             string specialReason = "Xin tạm hoãn nghĩa vụ quân sự (đối với SV hết hạn chính khóa)";
             if (LyDoXacNhan == specialReason)
             {
-                LyDoXacNhan = "Xin tạm hoãn nghĩa vụ quân sự (Sinh viên thuộc đối tượng được gia hạn thời gian học tập tại trường theo quy định tại khoản 3 Điều 6 Quyết định số 43/2007/QĐBGDĐT ngày 15/8/2007 của Bộ trưởng Bộ Giáo dục & Đào tạo)";
+                LyDoXacNhan = "Xin tạm hoãn nghĩa vụ quân sự (Sinh viên thuộc đối tượng được gia hạn thời gian học tập tại trường theo quy định tại khoản 3 Điều 6 Quyết định số 43/2007/QĐ-BGDĐT ngày 15/8/2007 của Bộ trưởng Bộ Giáo dục & Đào tạo)";
             }
             else
             {
