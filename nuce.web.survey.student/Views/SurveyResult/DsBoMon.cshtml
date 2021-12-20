@@ -1,0 +1,41 @@
+﻿@using nuce.web.survey.student.Entities
+@model List<AS_Academy_Department>
+
+@{
+    ViewData["Title"] = "Danh sách bộ môn";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Breadcrumb {
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/survey/faculty">Khoa</a></li>
+    <li class="breadcrumb-item"><a class="m-text-blue" href="#">Kết quả khảo sát HĐGD</a></li>
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/surveyresult/dsdotkhaosat">Danh sách đợt khảo sát</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Danh sách bộ môn</li>
+}
+
+<div class="row">
+    <div class="col-12">
+        <table class="table th-border-none">
+            <thead>
+                <tr>
+                    <td width="1px">STT</td>
+                    <td>Bộ môn</td>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int i = 0;
+                }
+                @foreach (var item in Model)
+                {
+                    i++;
+                    <tr>
+                        <td>@i</td>
+                        <td><a href="/surveyresult/department?code=@item.Code&surveyRoundId=@ViewBag.SurveyRoundId">@item.Name</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

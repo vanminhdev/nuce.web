@@ -48,7 +48,7 @@ namespace nuce.web.api.Services.Survey.Implements
             #region setup
             var lastDotKhaoSat = _surveyContext.AsEduSurveyDotKhaoSat
                 .OrderByDescending(dks => dks.EndDate)
-                .FirstOrDefault(dks => dks.Status != (int)SurveyRoundStatus.Deleted);
+                .FirstOrDefault(dks => dks.Status != (int)SurveyRoundStatus.Closed);
             if (lastDotKhaoSat == null)
             {
                 return null;
@@ -119,7 +119,7 @@ namespace nuce.web.api.Services.Survey.Implements
             #region setup
             var lastDotKhaoSat = _surveyContext.AsEduSurveyDotKhaoSat.AsNoTracking()
                 .OrderByDescending(dks => dks.EndDate)
-                .FirstOrDefault(dks => dks.Status != (int)SurveyRoundStatus.Deleted);
+                .FirstOrDefault(dks => dks.Status != (int)SurveyRoundStatus.Closed);
             if (lastDotKhaoSat == null)
             {
                 return null;
@@ -259,6 +259,34 @@ namespace nuce.web.api.Services.Survey.Implements
             }
             return result;
         }
+
+
+        #region Thống kê kết quả lại theo kiểu mới
+        public void DanhSachMonHocTheoBoMon(string maBoMon, Guid dotKhaoSatId)
+        {
+            var dsMonHoc = _eduContext.AsAcademySubject.Where(s => s.DepartmentCode == maBoMon).ToList();
+
+            var dsCodeMonHoc = dsMonHoc.Select(m => m.Code).ToList();
+
+            #region setup
+            var baiKhaoSat = _surveyContext.AsEduSurveyBaiKhaoSat.AsNoTracking()
+                .FirstOrDefault(o => o.DotKhaoSatId == dotKhaoSatId && o.Status != (int)TheSurveyStatus.Deleted);
+
+            var baiLamKhaoSatCacDotDangXet = _surveyContext.AsEduSurveyBaiKhaoSatSinhVien.AsNoTracking().Where(o => o.BaiKhaoSatId == baiKhaoSat.Id);
+            #endregion
+
+            //danh sách môn học
+        }
+
+        public void DanhSachGiangVienTheoMonHoc(string maMon, Guid dotKhaoSatId)
+        {
+            var reportTotalQuery = _surveyContext.AsEduSurveyReportTotal.Where(r => r.SurveyRoundId == dotKhaoSatId);
+
+            var dsGiangVien = reportTotalQuery.Where(r => r.SubjectCode == maMon).ToList();
+
+        }
+        #endregion
+
 
         #region private
         /// <summary>

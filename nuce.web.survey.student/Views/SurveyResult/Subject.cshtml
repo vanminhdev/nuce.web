@@ -1,9 +1,9 @@
 ﻿@using nuce.web.survey.student.Models.SurveyResult
-@model List<KetQuaMonHocCuaBoMon>
+@model List<KetQuaGiangVienCuaMonHoc>
 
 @{
     ViewData["Title"] = "Kết quả khảo sát hoạt động giảng dạy";
-Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @section Breadcrumb {
@@ -11,10 +11,9 @@ Layout = "~/Views/Shared/_Layout.cshtml";
     <li class="breadcrumb-item"><a class="m-text-blue" href="/survey/faculty">Khoa</a></li>
     <li class="breadcrumb-item active" aria-current="page">Kết quả khảo sát HĐGD</li>
 }
-@* Tên bộ môn *@
 <h5 class="text-center mb-3 m-text-blue">
     <span>
-        @ViewData["departmentName"]
+        @ViewBag.SubjectCode - @ViewBag.SubjectName
     </span>
 </h5>
 
@@ -24,8 +23,9 @@ Layout = "~/Views/Shared/_Layout.cshtml";
                class="table th-border-none">
             <thead>
                 <tr>
-                    <td>Mã môn</td>
-                    <td>Tên môn học</td>
+                    <td>Mã giảng viên</td>
+                    <td>Tên giảng viên</td>
+                    <td>Mã lớp</td>
                     <td>Số phiếu phát ra</td>
                     <td>Số phiếu thu về</td>
                 </tr>
@@ -33,17 +33,14 @@ Layout = "~/Views/Shared/_Layout.cshtml";
             <tbody>
                 @foreach (var item in Model)
                 {
-                    if (item.SoSVHoc == 0)
-                    {
-                        continue;
-                    }
                     <tr>
                         <td>
-                            @item.Code
+                            @item.LecturerCode
                         </td>
                         <td>
-                            <a href="/surveyresult/subject?code=@item.Code&surveyRoundId=@ViewBag.SurveyRoundId">@item.Name</a>
+                            <a href="/surveyresult/subjectlecturer?lecturerCode=@item.LecturerCode&subjectCode=@ViewBag.SubjectCode&surveyRoundId=@ViewBag.SurveyRoundId">@item.LecturerName</a>
                         </td>
+                        <td>@item.MaLop</td>
                         <td>
                             @item.SoSVHoc
                         </td>

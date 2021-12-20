@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="0c9504b1dece4f9e942604ad16eb39f1" Name="Diagram1">
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Academy_Academics" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Academy_C_ClassRoom" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Academy_C_Lecturer_ClassRoom" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Academy_C_Student_ClassRoom" Width="1.5" PointX="0.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Academy_Class" Width="1.5" PointX="2.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Academy_ClassRoom" Width="1.5" PointX="4.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Academy_Department" Width="1.5" PointX="6.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Academy_Faculty" Width="1.5" PointX="6.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Academy_Lecturer" Width="1.5" PointX="8.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Academy_Lecturer_ClassRoom" Width="1.5" PointX="0.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Academy_Semester" Width="1.5" PointX="2.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Academy_Student" Width="1.5" PointX="8.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Academy_Student_ClassRoom" Width="1.5" PointX="4.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Academy_Subject" Width="1.5" PointX="6.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Academy_Subject_Extend" Width="1.5" PointX="8.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_QA_Week" Width="1.5" PointX="10.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_BaiKhaoSat" Width="1.5" PointX="10.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_BaiKhaoSat_SinhVien" Width="1.5" PointX="10.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_CauHoi" Width="1.5" PointX="0.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_CauTrucDe" Width="1.5" PointX="2.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_DapAn" Width="1.5" PointX="4.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_DeThi" Width="1.5" PointX="6.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_DotKhaoSat" Width="1.5" PointX="12.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Graduate_BaiKhaoSat" Width="1.5" PointX="12.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Graduate_BaiKhaoSat_SinhVien" Width="1.5" PointX="12.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Graduate_CauHoi" Width="1.5" PointX="12.75" PointY="13.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Graduate_CauTrucDe" Width="1.5" PointX="14.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Graduate_DapAn" Width="1.5" PointX="14.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Graduate_DeThi" Width="1.5" PointX="6.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Graduate_Student" Width="1.5" PointX="14.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Graduate_SurveyRound" Width="1.5" PointX="8.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_ReportTotal" Width="1.5" PointX="16.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Undergraduate_BaiKhaoSat" Width="1.5" PointX="2.75" PointY="16.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Undergraduate_BaiKhaoSat_SinhVien" Width="1.5" PointX="16.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Undergraduate_CauHoi" Width="1.5" PointX="16.75" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Undergraduate_CauTrucDe" Width="1.5" PointX="4.75" PointY="17.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Undergraduate_DapAn" Width="1.5" PointX="16.75" PointY="17.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Undergraduate_DeThi" Width="1.5" PointX="18.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Undergraduate_ReportTotal" Width="1.5" PointX="18.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Undergraduate_Student" Width="1.5" PointX="6.75" PointY="18.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Undergraduate_SurveyRound" Width="1.5" PointX="18.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NUCE_SURVEY_PUBLISHModel.AS_Status_Table_Task" Width="1.5" PointX="8.75" PointY="18.75" IsExpanded="true" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

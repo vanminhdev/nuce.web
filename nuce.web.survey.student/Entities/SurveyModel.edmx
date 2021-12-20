@@ -1,0 +1,2239 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="NUCE_SURVEY_PUBLISHModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AS_Academy_Academics">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SemesterID" Type="int" />
+          <Property Name="Code" Type="varchar" MaxLength="50" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="AS_Academy_C_ClassRoom">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SemesterID" Type="int" />
+          <Property Name="Code" Type="varchar" MaxLength="50" />
+          <Property Name="GroupCode" Type="varchar" MaxLength="50" />
+          <Property Name="ClassCode" Type="varchar" MaxLength="50" />
+          <Property Name="SubjectID" Type="bigint" />
+          <Property Name="SubjectCode" Type="varchar" MaxLength="50" />
+          <Property Name="ExamAttemptDate" Type="nvarchar" MaxLength="100" />
+          <Property Name="FromDate" Type="datetime" />
+          <Property Name="EndDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="AS_Academy_C_Lecturer_ClassRoom">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SemesterID" Type="int" />
+          <Property Name="ClassRoomID" Type="bigint" />
+          <Property Name="ClassRoomCode" Type="varchar" MaxLength="50" />
+          <Property Name="LecturerID" Type="bigint" />
+          <Property Name="LecturerCode" Type="varchar" MaxLength="50" />
+          <Property Name="Template" Type="int" />
+        </EntityType>
+        <EntityType Name="AS_Academy_C_Student_ClassRoom">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SemesterID" Type="int" />
+          <Property Name="ClassRoomID" Type="bigint" />
+          <Property Name="ClassRoomCode" Type="varchar" MaxLength="50" />
+          <Property Name="StudentID" Type="bigint" />
+          <Property Name="StudentCode" Type="varchar" MaxLength="50" />
+          <Property Name="Type" Type="int" />
+          <Property Name="Status" Type="int" />
+        </EntityType>
+        <EntityType Name="AS_Academy_Class">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="50" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" />
+          <Property Name="FacultyID" Type="bigint" />
+          <Property Name="FacultyCode" Type="varchar" MaxLength="50" />
+          <Property Name="AcademicsID" Type="bigint" />
+          <Property Name="AcademicsCode" Type="varchar" MaxLength="50" />
+          <Property Name="SchoolYear" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="AS_Academy_ClassRoom">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="50" />
+          <Property Name="ClassCode" Type="varchar" MaxLength="50" />
+          <Property Name="SubjectCode" Type="varchar" MaxLength="50" />
+          <Property Name="NHHK" Type="varchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="AS_Academy_Department">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SemesterID" Type="int" />
+          <Property Name="Code" Type="varchar" MaxLength="50" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" />
+          <Property Name="FacultyID" Type="bigint" />
+          <Property Name="FacultyCode" Type="varchar" MaxLength="50" />
+          <Property Name="ChefsDepartmentCode" Type="varchar" MaxLength="150" />
+        </EntityType>
+        <EntityType Name="AS_Academy_Faculty">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SemesterID" Type="int" />
+          <Property Name="Code" Type="varchar" MaxLength="50" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" />
+          <Property Name="c_Order" Type="int" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="100" />
+          <Property Name="Order" Type="int" />
+        </EntityType>
+        <EntityType Name="AS_Academy_Lecturer">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="FullName" Type="nvarchar" MaxLength="200" />
+          <Property Name="DepartmentID" Type="bigint" />
+          <Property Name="DepartmentCode" Type="varchar" MaxLength="50" />
+          <Property Name="DateOfBirth" Type="varchar" MaxLength="50" />
+          <Property Name="NameOrder" Type="nvarchar" MaxLength="30" />
+          <Property Name="Email" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="AS_Academy_Lecturer_ClassRoom">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ClassRoomCode" Type="varchar" MaxLength="50" />
+          <Property Name="LecturerCode" Type="varchar" MaxLength="50" />
+          <Property Name="NHHK" Type="varchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="AS_Academy_Semester">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="250" />
+          <Property Name="Status" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Academy_Student">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="FullName" Type="nvarchar" MaxLength="200" />
+          <Property Name="ClassID" Type="bigint" />
+          <Property Name="ClassCode" Type="varchar" MaxLength="50" />
+          <Property Name="DateOfBirth" Type="varchar" MaxLength="50" />
+          <Property Name="BirthPlace" Type="nvarchar" MaxLength="500" />
+          <Property Name="Email" Type="varchar" MaxLength="255" />
+          <Property Name="Mobile" Type="varchar" MaxLength="25" />
+          <Property Name="keyAuthorize" Type="uniqueidentifier" />
+          <Property Name="status" Type="int" />
+        </EntityType>
+        <EntityType Name="AS_Academy_Student_ClassRoom">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ClassRoomCode" Type="varchar" MaxLength="50" />
+          <Property Name="StudentCode" Type="varchar" MaxLength="50" />
+          <Property Name="NHHK" Type="varchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="AS_Academy_Subject">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SemesterID" Type="int" />
+          <Property Name="Code" Type="varchar" MaxLength="50" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" />
+          <Property Name="DepartmentID" Type="bigint" />
+          <Property Name="DepartmentCode" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="AS_Academy_Subject_Extend">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="50" />
+          <Property Name="Name" Type="nvarchar" MaxLength="300" />
+          <Property Name="Type" Type="int" />
+        </EntityType>
+        <EntityType Name="AS_Edu_QA_Week">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ClassRoomID" Type="bigint" Nullable="false" />
+          <Property Name="Count" Type="int" Nullable="false" />
+          <Property Name="Total" Type="int" Nullable="false" />
+          <Property Name="FromDate" Type="datetime" />
+          <Property Name="EndDate" Type="datetime" />
+          <Property Name="CreatedTime" Type="datetime" Nullable="false" />
+          <Property Name="UpdatedTime" Type="datetime" Nullable="false" />
+          <Property Name="Type" Type="int" Nullable="false" />
+          <Property Name="Status" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_BaiKhaoSat">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DotKhaoSatID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DeThiID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="NoiDungDeThi" Type="nvarchar(max)" />
+          <Property Name="DapAn" Type="nvarchar(max)" />
+          <Property Name="Description" Type="nvarchar" MaxLength="100" />
+          <Property Name="Note" Type="nvarchar" MaxLength="100" />
+          <Property Name="Type" Type="int" Nullable="false" />
+          <Property Name="Status" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_BaiKhaoSat_SinhVien">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="BaiKhaoSatID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="StudentID" Type="bigint" Nullable="false" />
+          <Property Name="StudentCode" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="LecturerCode" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="LecturerName" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="ClassRoomCode" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="SubjectCode" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="SubjectName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="SubjectType" Type="int" Nullable="false" />
+          <Property Name="DepartmentCode" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="NHHK" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="DeThi" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="BaiLam" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="NgayGioBatDau" Type="datetime" Nullable="false" />
+          <Property Name="NgayGioNopBai" Type="datetime" Nullable="false" />
+          <Property Name="Type" Type="int" Nullable="false" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="LogIP" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_CauHoi">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="BoCauHoiID" Type="int" Nullable="false" />
+          <Property Name="DoKhoID" Type="int" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="50" />
+          <Property Name="Content" Type="nvarchar(max)" />
+          <Property Name="Image" Type="nvarchar" MaxLength="250" />
+          <Property Name="Media_URL" Type="nvarchar" MaxLength="250" />
+          <Property Name="Media_Setting" Type="nvarchar" MaxLength="500" />
+          <Property Name="Mark" Type="float" />
+          <Property Name="MarkFail" Type="float" />
+          <Property Name="IsOption" Type="bit" />
+          <Property Name="PartId" Type="int" />
+          <Property Name="Explain" Type="nvarchar(max)" />
+          <Property Name="NoAnswerOnRow" Type="int" />
+          <Property Name="ExpiredDate" Type="datetime" />
+          <Property Name="TimeVisibleAnswer" Type="int" />
+          <Property Name="InsertedUser" Type="int" />
+          <Property Name="UpdatedUser" Type="int" />
+          <Property Name="InsertedDate" Type="datetime" Nullable="false" />
+          <Property Name="UpdatedDate" Type="datetime" Nullable="false" />
+          <Property Name="Order" Type="int" Nullable="false" />
+          <Property Name="Level" Type="int" Nullable="false" />
+          <Property Name="Type" Type="varchar" MaxLength="15" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="CheckImport" Type="nvarchar(max)" />
+          <Property Name="ParentCode" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_CauTrucDe">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DeThiID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="CauHoiID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Order" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_DapAn">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="CauHoiID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="CauHoiCode" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ChildQuestionId" Type="uniqueidentifier" />
+          <Property Name="Content" Type="nvarchar(max)" />
+          <Property Name="IsCheck" Type="bit" />
+          <Property Name="Matched" Type="uniqueidentifier" />
+          <Property Name="Matching" Type="nvarchar(max)" />
+          <Property Name="Mark" Type="float" />
+          <Property Name="MarkFail" Type="float" />
+          <Property Name="Order" Type="int" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="Explain" Type="nvarchar(max)" />
+          <Property Name="ShowQuestion" Type="nvarchar" MaxLength="2000" />
+          <Property Name="HideQuestion" Type="nvarchar" MaxLength="2000" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_DeThi">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="NoiDungDeThi" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="DapAn" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Status" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_DotKhaoSat">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="FromDate" Type="datetime" Nullable="false" />
+          <Property Name="EndDate" Type="datetime" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="100" />
+          <Property Name="Note" Type="nvarchar" MaxLength="100" />
+          <Property Name="Type" Type="int" Nullable="false" />
+          <Property Name="Status" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Graduate_BaiKhaoSat">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DotKhaoSatID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DeThiID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="NoiDungDeThi" Type="nvarchar(max)" />
+          <Property Name="DapAn" Type="nvarchar(max)" />
+          <Property Name="Description" Type="nvarchar" MaxLength="2000" />
+          <Property Name="Note" Type="nvarchar" MaxLength="2000" />
+          <Property Name="Status" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Graduate_BaiKhaoSat_SinhVien">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="BaiKhaoSatID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="StudentCode" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Nganh" Type="nvarchar" MaxLength="100" />
+          <Property Name="ChuyenNganh" Type="nvarchar" MaxLength="100" />
+          <Property Name="DeThi" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="BaiLam" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="NgayGioBatDau" Type="datetime" Nullable="false" />
+          <Property Name="NgayGioNopBai" Type="datetime" Nullable="false" />
+          <Property Name="LoaiHinh" Type="nvarchar" MaxLength="50" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="LogIP" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Graduate_CauHoi">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="BoCauHoiID" Type="int" Nullable="false" />
+          <Property Name="DoKhoID" Type="int" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="50" />
+          <Property Name="Content" Type="nvarchar(max)" />
+          <Property Name="Image" Type="nvarchar" MaxLength="250" />
+          <Property Name="Media_URL" Type="nvarchar" MaxLength="250" />
+          <Property Name="Media_Setting" Type="nvarchar" MaxLength="500" />
+          <Property Name="Mark" Type="float" />
+          <Property Name="MarkFail" Type="float" />
+          <Property Name="IsOption" Type="bit" />
+          <Property Name="PartId" Type="int" />
+          <Property Name="Explain" Type="nvarchar(max)" />
+          <Property Name="NoAnswerOnRow" Type="int" />
+          <Property Name="ExpiredDate" Type="datetime" />
+          <Property Name="TimeVisibleAnswer" Type="int" />
+          <Property Name="InsertedUser" Type="int" />
+          <Property Name="UpdatedUser" Type="int" />
+          <Property Name="InsertedDate" Type="datetime" Nullable="false" />
+          <Property Name="UpdatedDate" Type="datetime" Nullable="false" />
+          <Property Name="Order" Type="int" Nullable="false" />
+          <Property Name="Level" Type="int" Nullable="false" />
+          <Property Name="Type" Type="varchar" MaxLength="15" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="CheckImport" Type="nvarchar(max)" />
+          <Property Name="ParentCode" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Graduate_CauTrucDe">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DeThiID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="CauHoiID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Order" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Graduate_DapAn">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="CauHoiID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="CauHoiCode" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ChildQuestionId" Type="uniqueidentifier" />
+          <Property Name="Content" Type="nvarchar(max)" />
+          <Property Name="IsCheck" Type="bit" />
+          <Property Name="Matched" Type="uniqueidentifier" />
+          <Property Name="Matching" Type="nvarchar(max)" />
+          <Property Name="Mark" Type="float" />
+          <Property Name="MarkFail" Type="float" />
+          <Property Name="Order" Type="int" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="Explain" Type="nvarchar(max)" />
+          <Property Name="ShowQuestion" Type="nvarchar" MaxLength="2000" />
+          <Property Name="HideQuestion" Type="nvarchar" MaxLength="2000" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Graduate_DeThi">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="NoiDungDeThi" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="DapAn" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Status" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Graduate_Student">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="dottotnghiep" Type="nvarchar" MaxLength="100" />
+          <Property Name="sovaoso" Type="varchar" MaxLength="50" />
+          <Property Name="masv" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="cmnd" Type="varchar" MaxLength="12" />
+          <Property Name="noisiti" Type="nvarchar" MaxLength="200" />
+          <Property Name="tbcht" Type="varchar" MaxLength="10" />
+          <Property Name="xeploai" Type="nvarchar" MaxLength="50" />
+          <Property Name="soqdtn" Type="nvarchar" MaxLength="100" />
+          <Property Name="ngayraqd" Type="date" />
+          <Property Name="sohieuba" Type="varchar" MaxLength="20" />
+          <Property Name="tinh" Type="nvarchar" MaxLength="50" />
+          <Property Name="truong" Type="varchar" MaxLength="20" />
+          <Property Name="gioitinh" Type="nvarchar" MaxLength="20" />
+          <Property Name="ngaysinh" Type="date" />
+          <Property Name="tkhau" Type="nvarchar" MaxLength="100" />
+          <Property Name="lop12" Type="varchar" MaxLength="20" />
+          <Property Name="namtn" Type="varchar" MaxLength="20" />
+          <Property Name="sobaodanh" Type="varchar" MaxLength="20" />
+          <Property Name="tcong" Type="varchar" MaxLength="20" />
+          <Property Name="ghichu_thi" Type="nvarchar" MaxLength="200" />
+          <Property Name="lopqd" Type="varchar" MaxLength="20" />
+          <Property Name="k" Type="varchar" MaxLength="5" />
+          <Property Name="dtoc" Type="nvarchar" MaxLength="20" />
+          <Property Name="quoctich" Type="nvarchar" MaxLength="30" />
+          <Property Name="bangclc" Type="nvarchar" MaxLength="50" />
+          <Property Name="manganh" Type="varchar" MaxLength="50" />
+          <Property Name="tenchnga" Type="nvarchar" MaxLength="200" />
+          <Property Name="tennganh" Type="nvarchar" MaxLength="100" />
+          <Property Name="hedaotao" Type="nvarchar" MaxLength="50" />
+          <Property Name="khoahoc" Type="varchar" MaxLength="30" />
+          <Property Name="tensinhvien" Type="nvarchar" MaxLength="100" />
+          <Property Name="email" Type="varchar" MaxLength="100" />
+          <Property Name="email1" Type="varchar" MaxLength="100" />
+          <Property Name="email2" Type="varchar" MaxLength="100" />
+          <Property Name="mobile" Type="varchar" MaxLength="20" />
+          <Property Name="mobile1" Type="varchar" MaxLength="20" />
+          <Property Name="mobile2" Type="varchar" MaxLength="20" />
+          <Property Name="thongtinthem" Type="nvarchar" MaxLength="1000" />
+          <Property Name="thongtinthem1" Type="nvarchar" MaxLength="1000" />
+          <Property Name="DotKhaoSatId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="psw" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="checksum" Type="varchar" MaxLength="200" />
+          <Property Name="ex_masv" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="type" Type="int" Nullable="false" />
+          <Property Name="status" Type="int" Nullable="false" />
+          <Property Name="makhoa" Type="varchar" MaxLength="50" />
+          <Property Name="malop" Type="varchar" MaxLength="50" />
+          <Property Name="nguoiphatbang" Type="int" />
+          <Property Name="ghichuphatbang" Type="nvarchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Graduate_SurveyRound">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="FromDate" Type="datetime" Nullable="false" />
+          <Property Name="EndDate" Type="datetime" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="100" />
+          <Property Name="Note" Type="nvarchar" MaxLength="100" />
+          <Property Name="Status" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_ReportTotal">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="SurveyRoundId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="TheSurveyId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ClassRoomCode" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="NHHK" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="LecturerCode" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="QuestionCode" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="AnswerCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="Total" Type="int" />
+          <Property Name="Content" Type="nvarchar(max)" />
+          <Property Name="SubjectCode" Type="varchar" MaxLength="50" />
+          <Property Name="ClassRoom" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Undergraduate_BaiKhaoSat">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DeThiID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="2000" />
+          <Property Name="Note" Type="nvarchar" MaxLength="2000" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="NoiDungDeThi" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Undergraduate_BaiKhaoSat_SinhVien">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="BaiKhaoSatID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="StudentCode" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Nganh" Type="nvarchar" MaxLength="100" />
+          <Property Name="ChuyenNganh" Type="nvarchar" MaxLength="100" />
+          <Property Name="DeThi" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="BaiLam" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="NgayGioBatDau" Type="datetime" Nullable="false" />
+          <Property Name="NgayGioNopBai" Type="datetime" Nullable="false" />
+          <Property Name="Type" Type="int" Nullable="false" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="LogIP" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Undergraduate_CauHoi">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="BoCauHoiID" Type="int" Nullable="false" />
+          <Property Name="DoKhoID" Type="int" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="50" />
+          <Property Name="Content" Type="nvarchar(max)" />
+          <Property Name="Image" Type="nvarchar" MaxLength="250" />
+          <Property Name="Media_URL" Type="nvarchar" MaxLength="250" />
+          <Property Name="Media_Setting" Type="nvarchar" MaxLength="500" />
+          <Property Name="Mark" Type="float" />
+          <Property Name="MarkFail" Type="float" />
+          <Property Name="IsOption" Type="bit" />
+          <Property Name="PartId" Type="int" />
+          <Property Name="Explain" Type="nvarchar(max)" />
+          <Property Name="NoAnswerOnRow" Type="int" />
+          <Property Name="ExpiredDate" Type="datetime" />
+          <Property Name="TimeVisibleAnswer" Type="int" />
+          <Property Name="InsertedUser" Type="int" />
+          <Property Name="UpdatedUser" Type="int" />
+          <Property Name="InsertedDate" Type="datetime" Nullable="false" />
+          <Property Name="UpdatedDate" Type="datetime" Nullable="false" />
+          <Property Name="Order" Type="int" Nullable="false" />
+          <Property Name="Level" Type="int" Nullable="false" />
+          <Property Name="Type" Type="varchar" MaxLength="15" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="CheckImport" Type="nvarchar(max)" />
+          <Property Name="ParentCode" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Undergraduate_CauTrucDe">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DeThiID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="CauHoiID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Order" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Undergraduate_DapAn">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="CauHoiID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="CauHoiCode" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ChildQuestionId" Type="uniqueidentifier" />
+          <Property Name="Content" Type="nvarchar(max)" />
+          <Property Name="IsCheck" Type="bit" />
+          <Property Name="Matched" Type="uniqueidentifier" />
+          <Property Name="Matching" Type="nvarchar(max)" />
+          <Property Name="Mark" Type="float" />
+          <Property Name="MarkFail" Type="float" />
+          <Property Name="Order" Type="int" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="Explain" Type="nvarchar(max)" />
+          <Property Name="ShowQuestion" Type="nvarchar" MaxLength="2000" />
+          <Property Name="HideQuestion" Type="nvarchar" MaxLength="2000" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Undergraduate_DeThi">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="NoiDungDeThi" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="DapAn" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Status" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Undergraduate_ReportTotal">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="SurveyRoundId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="TheSurveyId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ChuyenNganh" Type="nvarchar" MaxLength="100" />
+          <Property Name="QuestionCode" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="AnswerCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="Total" Type="int" />
+          <Property Name="Content" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Undergraduate_Student">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="dottotnghiep" Type="nvarchar" MaxLength="100" />
+          <Property Name="sovaoso" Type="varchar" MaxLength="50" />
+          <Property Name="masv" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="cmnd" Type="varchar" MaxLength="12" />
+          <Property Name="noisiti" Type="nvarchar" MaxLength="200" />
+          <Property Name="tbcht" Type="varchar" MaxLength="10" />
+          <Property Name="xeploai" Type="nvarchar" MaxLength="50" />
+          <Property Name="soqdtn" Type="nvarchar" MaxLength="100" />
+          <Property Name="ngayraqd" Type="date" />
+          <Property Name="sohieuba" Type="varchar" MaxLength="20" />
+          <Property Name="tinh" Type="nvarchar" MaxLength="50" />
+          <Property Name="truong" Type="varchar" MaxLength="20" />
+          <Property Name="gioitinh" Type="nvarchar" MaxLength="20" />
+          <Property Name="ngaysinh" Type="date" />
+          <Property Name="tkhau" Type="nvarchar" MaxLength="100" />
+          <Property Name="lop12" Type="varchar" MaxLength="20" />
+          <Property Name="namtn" Type="varchar" MaxLength="20" />
+          <Property Name="sobaodanh" Type="varchar" MaxLength="20" />
+          <Property Name="tcong" Type="varchar" MaxLength="20" />
+          <Property Name="ghichu_thi" Type="nvarchar" MaxLength="200" />
+          <Property Name="lopqd" Type="varchar" MaxLength="20" />
+          <Property Name="k" Type="varchar" MaxLength="5" />
+          <Property Name="dtoc" Type="nvarchar" MaxLength="20" />
+          <Property Name="quoctich" Type="nvarchar" MaxLength="30" />
+          <Property Name="bangclc" Type="nvarchar" MaxLength="50" />
+          <Property Name="manganh" Type="varchar" MaxLength="50" />
+          <Property Name="tenchnga" Type="nvarchar" MaxLength="200" />
+          <Property Name="tennganh" Type="nvarchar" MaxLength="100" />
+          <Property Name="hedaotao" Type="nvarchar" MaxLength="50" />
+          <Property Name="khoahoc" Type="varchar" MaxLength="30" />
+          <Property Name="tensinhvien" Type="nvarchar" MaxLength="100" />
+          <Property Name="email" Type="varchar" MaxLength="100" />
+          <Property Name="email1" Type="varchar" MaxLength="100" />
+          <Property Name="email2" Type="varchar" MaxLength="100" />
+          <Property Name="mobile" Type="varchar" MaxLength="20" />
+          <Property Name="mobile1" Type="varchar" MaxLength="20" />
+          <Property Name="mobile2" Type="varchar" MaxLength="20" />
+          <Property Name="thongtinthem" Type="nvarchar" MaxLength="1000" />
+          <Property Name="thongtinthem1" Type="nvarchar" MaxLength="1000" />
+          <Property Name="DotKhaoSatId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="checksum" Type="varchar" MaxLength="200" />
+          <Property Name="ex_masv" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="type" Type="int" Nullable="false" />
+          <Property Name="status" Type="int" Nullable="false" />
+          <Property Name="makhoa" Type="varchar" MaxLength="50" />
+          <Property Name="malop" Type="varchar" MaxLength="50" />
+          <Property Name="keyAuthorize" Type="varchar" MaxLength="200" />
+          <Property Name="nguoiphatbang" Type="int" />
+          <Property Name="ghichuphatbang" Type="nvarchar" MaxLength="500" />
+          <Property Name="cn_order" Type="int" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Undergraduate_SurveyRound">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="FromDate" Type="datetime" />
+          <Property Name="EndDate" Type="datetime" />
+          <Property Name="Description" Type="nvarchar" MaxLength="100" />
+          <Property Name="Note" Type="nvarchar" MaxLength="100" />
+          <Property Name="Status" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Status_Table_Task">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="TableName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="IsSuccess" Type="bit" Nullable="false" />
+          <Property Name="Message" Type="nvarchar" MaxLength="4000" />
+        </EntityType>
+        <EntityContainer Name="NUCE_SURVEY_PUBLISHModelStoreContainer">
+          <EntitySet Name="AS_Academy_Academics" EntityType="Self.AS_Academy_Academics" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Academy_C_ClassRoom" EntityType="Self.AS_Academy_C_ClassRoom" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Academy_C_Lecturer_ClassRoom" EntityType="Self.AS_Academy_C_Lecturer_ClassRoom" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Academy_C_Student_ClassRoom" EntityType="Self.AS_Academy_C_Student_ClassRoom" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Academy_Class" EntityType="Self.AS_Academy_Class" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Academy_ClassRoom" EntityType="Self.AS_Academy_ClassRoom" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Academy_Department" EntityType="Self.AS_Academy_Department" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Academy_Faculty" EntityType="Self.AS_Academy_Faculty" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Academy_Lecturer" EntityType="Self.AS_Academy_Lecturer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Academy_Lecturer_ClassRoom" EntityType="Self.AS_Academy_Lecturer_ClassRoom" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Academy_Semester" EntityType="Self.AS_Academy_Semester" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Academy_Student" EntityType="Self.AS_Academy_Student" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Academy_Student_ClassRoom" EntityType="Self.AS_Academy_Student_ClassRoom" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Academy_Subject" EntityType="Self.AS_Academy_Subject" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Academy_Subject_Extend" EntityType="Self.AS_Academy_Subject_Extend" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_QA_Week" EntityType="Self.AS_Edu_QA_Week" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_BaiKhaoSat" EntityType="Self.AS_Edu_Survey_BaiKhaoSat" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_BaiKhaoSat_SinhVien" EntityType="Self.AS_Edu_Survey_BaiKhaoSat_SinhVien" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_CauHoi" EntityType="Self.AS_Edu_Survey_CauHoi" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_CauTrucDe" EntityType="Self.AS_Edu_Survey_CauTrucDe" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_DapAn" EntityType="Self.AS_Edu_Survey_DapAn" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_DeThi" EntityType="Self.AS_Edu_Survey_DeThi" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_DotKhaoSat" EntityType="Self.AS_Edu_Survey_DotKhaoSat" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_Graduate_BaiKhaoSat" EntityType="Self.AS_Edu_Survey_Graduate_BaiKhaoSat" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_Graduate_BaiKhaoSat_SinhVien" EntityType="Self.AS_Edu_Survey_Graduate_BaiKhaoSat_SinhVien" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_Graduate_CauHoi" EntityType="Self.AS_Edu_Survey_Graduate_CauHoi" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_Graduate_CauTrucDe" EntityType="Self.AS_Edu_Survey_Graduate_CauTrucDe" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_Graduate_DapAn" EntityType="Self.AS_Edu_Survey_Graduate_DapAn" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_Graduate_DeThi" EntityType="Self.AS_Edu_Survey_Graduate_DeThi" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_Graduate_Student" EntityType="Self.AS_Edu_Survey_Graduate_Student" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_Graduate_SurveyRound" EntityType="Self.AS_Edu_Survey_Graduate_SurveyRound" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_ReportTotal" EntityType="Self.AS_Edu_Survey_ReportTotal" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_Undergraduate_BaiKhaoSat" EntityType="Self.AS_Edu_Survey_Undergraduate_BaiKhaoSat" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_Undergraduate_BaiKhaoSat_SinhVien" EntityType="Self.AS_Edu_Survey_Undergraduate_BaiKhaoSat_SinhVien" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_Undergraduate_CauHoi" EntityType="Self.AS_Edu_Survey_Undergraduate_CauHoi" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_Undergraduate_CauTrucDe" EntityType="Self.AS_Edu_Survey_Undergraduate_CauTrucDe" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_Undergraduate_DapAn" EntityType="Self.AS_Edu_Survey_Undergraduate_DapAn" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_Undergraduate_DeThi" EntityType="Self.AS_Edu_Survey_Undergraduate_DeThi" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_Undergraduate_ReportTotal" EntityType="Self.AS_Edu_Survey_Undergraduate_ReportTotal" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_Undergraduate_Student" EntityType="Self.AS_Edu_Survey_Undergraduate_Student" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Edu_Survey_Undergraduate_SurveyRound" EntityType="Self.AS_Edu_Survey_Undergraduate_SurveyRound" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AS_Status_Table_Task" EntityType="Self.AS_Status_Table_Task" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="NUCE_SURVEY_PUBLISHModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="AS_Academy_Academics">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SemesterID" Type="Int32" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="AS_Academy_C_ClassRoom">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SemesterID" Type="Int32" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="GroupCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ClassCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SubjectID" Type="Int64" />
+          <Property Name="SubjectCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ExamAttemptDate" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="FromDate" Type="DateTime" Precision="3" />
+          <Property Name="EndDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="AS_Academy_C_Lecturer_ClassRoom">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SemesterID" Type="Int32" />
+          <Property Name="ClassRoomID" Type="Int64" />
+          <Property Name="ClassRoomCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="LecturerID" Type="Int64" />
+          <Property Name="LecturerCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Template" Type="Int32" />
+        </EntityType>
+        <EntityType Name="AS_Academy_C_Student_ClassRoom">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SemesterID" Type="Int32" />
+          <Property Name="ClassRoomID" Type="Int64" />
+          <Property Name="ClassRoomCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="StudentID" Type="Int64" />
+          <Property Name="StudentCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Type" Type="Int32" />
+          <Property Name="Status" Type="Int32" />
+        </EntityType>
+        <EntityType Name="AS_Academy_Class">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="FacultyID" Type="Int64" />
+          <Property Name="FacultyCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="AcademicsID" Type="Int64" />
+          <Property Name="AcademicsCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SchoolYear" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="AS_Academy_ClassRoom">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ClassCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SubjectCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="NHHK" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="AS_Academy_Department">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SemesterID" Type="Int32" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="FacultyID" Type="Int64" />
+          <Property Name="FacultyCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ChefsDepartmentCode" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="AS_Academy_Faculty">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SemesterID" Type="Int32" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="c_Order" Type="Int32" Nullable="false" />
+          <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Order" Type="Int32" />
+        </EntityType>
+        <EntityType Name="AS_Academy_Lecturer">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="FullName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="DepartmentID" Type="Int64" />
+          <Property Name="DepartmentCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateOfBirth" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="NameOrder" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="AS_Academy_Lecturer_ClassRoom">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ClassRoomCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="LecturerCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="NHHK" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="AS_Academy_Semester">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Academy_Student">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="FullName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ClassID" Type="Int64" />
+          <Property Name="ClassCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateOfBirth" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="BirthPlace" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Mobile" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Name="keyAuthorize" Type="Guid" />
+          <Property Name="status" Type="Int32" />
+        </EntityType>
+        <EntityType Name="AS_Academy_Student_ClassRoom">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ClassRoomCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="StudentCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="NHHK" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="AS_Academy_Subject">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SemesterID" Type="Int32" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="DepartmentID" Type="Int64" />
+          <Property Name="DepartmentCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="AS_Academy_Subject_Extend">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
+          <Property Name="Type" Type="Int32" />
+        </EntityType>
+        <EntityType Name="AS_Edu_QA_Week">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ClassRoomID" Type="Int64" Nullable="false" />
+          <Property Name="Count" Type="Int32" Nullable="false" />
+          <Property Name="Total" Type="Int32" Nullable="false" />
+          <Property Name="FromDate" Type="DateTime" Precision="3" />
+          <Property Name="EndDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UpdatedTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Type" Type="Int32" Nullable="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_BaiKhaoSat">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="DotKhaoSatID" Type="Guid" Nullable="false" />
+          <Property Name="DeThiID" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="NoiDungDeThi" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DapAn" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Note" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Type" Type="Int32" Nullable="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_BaiKhaoSat_SinhVien">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="BaiKhaoSatID" Type="Guid" Nullable="false" />
+          <Property Name="StudentID" Type="Int64" Nullable="false" />
+          <Property Name="StudentCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="LecturerCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="LecturerName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ClassRoomCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SubjectCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="SubjectName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="SubjectType" Type="Int32" Nullable="false" />
+          <Property Name="DepartmentCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="NHHK" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="DeThi" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="BaiLam" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="NgayGioBatDau" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="NgayGioNopBai" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Type" Type="Int32" Nullable="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="LogIP" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_CauHoi">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="BoCauHoiID" Type="Int32" Nullable="false" />
+          <Property Name="DoKhoID" Type="Int32" Nullable="false" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Image" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Media_URL" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Media_Setting" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Mark" Type="Double" />
+          <Property Name="MarkFail" Type="Double" />
+          <Property Name="IsOption" Type="Boolean" />
+          <Property Name="PartId" Type="Int32" />
+          <Property Name="Explain" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="NoAnswerOnRow" Type="Int32" />
+          <Property Name="ExpiredDate" Type="DateTime" Precision="3" />
+          <Property Name="TimeVisibleAnswer" Type="Int32" />
+          <Property Name="InsertedUser" Type="Int32" />
+          <Property Name="UpdatedUser" Type="Int32" />
+          <Property Name="InsertedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Order" Type="Int32" Nullable="false" />
+          <Property Name="Level" Type="Int32" Nullable="false" />
+          <Property Name="Type" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="CheckImport" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ParentCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_CauTrucDe">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="DeThiID" Type="Guid" Nullable="false" />
+          <Property Name="CauHoiID" Type="Guid" Nullable="false" />
+          <Property Name="Order" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_DapAn">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CauHoiID" Type="Guid" Nullable="false" />
+          <Property Name="CauHoiCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ChildQuestionId" Type="Guid" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsCheck" Type="Boolean" />
+          <Property Name="Matched" Type="Guid" />
+          <Property Name="Matching" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Mark" Type="Double" />
+          <Property Name="MarkFail" Type="Double" />
+          <Property Name="Order" Type="Int32" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="Explain" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ShowQuestion" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="HideQuestion" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_DeThi">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="NoiDungDeThi" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DapAn" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_DotKhaoSat">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FromDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Note" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Type" Type="Int32" Nullable="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Graduate_BaiKhaoSat">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="DotKhaoSatID" Type="Guid" Nullable="false" />
+          <Property Name="DeThiID" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="NoiDungDeThi" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DapAn" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="Note" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Graduate_BaiKhaoSat_SinhVien">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="BaiKhaoSatID" Type="Guid" Nullable="false" />
+          <Property Name="StudentCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Nganh" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ChuyenNganh" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="DeThi" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="BaiLam" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="NgayGioBatDau" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="NgayGioNopBai" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="LoaiHinh" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="LogIP" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Graduate_CauHoi">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="BoCauHoiID" Type="Int32" Nullable="false" />
+          <Property Name="DoKhoID" Type="Int32" Nullable="false" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Image" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Media_URL" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Media_Setting" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Mark" Type="Double" />
+          <Property Name="MarkFail" Type="Double" />
+          <Property Name="IsOption" Type="Boolean" />
+          <Property Name="PartId" Type="Int32" />
+          <Property Name="Explain" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="NoAnswerOnRow" Type="Int32" />
+          <Property Name="ExpiredDate" Type="DateTime" Precision="3" />
+          <Property Name="TimeVisibleAnswer" Type="Int32" />
+          <Property Name="InsertedUser" Type="Int32" />
+          <Property Name="UpdatedUser" Type="Int32" />
+          <Property Name="InsertedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Order" Type="Int32" Nullable="false" />
+          <Property Name="Level" Type="Int32" Nullable="false" />
+          <Property Name="Type" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="CheckImport" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ParentCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Graduate_CauTrucDe">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="DeThiID" Type="Guid" Nullable="false" />
+          <Property Name="CauHoiID" Type="Guid" Nullable="false" />
+          <Property Name="Order" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Graduate_DapAn">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CauHoiID" Type="Guid" Nullable="false" />
+          <Property Name="CauHoiCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ChildQuestionId" Type="Guid" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsCheck" Type="Boolean" />
+          <Property Name="Matched" Type="Guid" />
+          <Property Name="Matching" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Mark" Type="Double" />
+          <Property Name="MarkFail" Type="Double" />
+          <Property Name="Order" Type="Int32" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="Explain" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ShowQuestion" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="HideQuestion" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Graduate_DeThi">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="NoiDungDeThi" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DapAn" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Graduate_Student">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="dottotnghiep" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="sovaoso" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="masv" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="cmnd" Type="String" MaxLength="12" FixedLength="false" Unicode="false" />
+          <Property Name="noisiti" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="tbcht" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="xeploai" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="soqdtn" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ngayraqd" Type="DateTime" Precision="0" />
+          <Property Name="sohieuba" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="tinh" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="truong" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="gioitinh" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="ngaysinh" Type="DateTime" Precision="0" />
+          <Property Name="tkhau" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="lop12" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="namtn" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="sobaodanh" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="tcong" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="ghichu_thi" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="lopqd" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="k" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="dtoc" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="quoctich" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="bangclc" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="manganh" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="tenchnga" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="tennganh" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="hedaotao" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="khoahoc" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="tensinhvien" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="email1" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="email2" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="mobile" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="mobile1" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="mobile2" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="thongtinthem" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="thongtinthem1" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="DotKhaoSatId" Type="Guid" Nullable="false" />
+          <Property Name="psw" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="checksum" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="ex_masv" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="type" Type="Int32" Nullable="false" />
+          <Property Name="status" Type="Int32" Nullable="false" />
+          <Property Name="makhoa" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="malop" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="nguoiphatbang" Type="Int32" />
+          <Property Name="ghichuphatbang" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Graduate_SurveyRound">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FromDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Note" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_ReportTotal">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="SurveyRoundId" Type="Guid" Nullable="false" />
+          <Property Name="TheSurveyId" Type="Guid" Nullable="false" />
+          <Property Name="ClassRoomCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="NHHK" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="LecturerCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="QuestionCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="AnswerCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Total" Type="Int32" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SubjectCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ClassRoom" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Undergraduate_BaiKhaoSat">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="DeThiID" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="Note" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="NoiDungDeThi" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Undergraduate_BaiKhaoSat_SinhVien">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="BaiKhaoSatID" Type="Guid" Nullable="false" />
+          <Property Name="StudentCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Nganh" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ChuyenNganh" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="DeThi" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="BaiLam" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="NgayGioBatDau" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="NgayGioNopBai" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Type" Type="Int32" Nullable="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="LogIP" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Undergraduate_CauHoi">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="BoCauHoiID" Type="Int32" Nullable="false" />
+          <Property Name="DoKhoID" Type="Int32" Nullable="false" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Image" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Media_URL" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Media_Setting" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Mark" Type="Double" />
+          <Property Name="MarkFail" Type="Double" />
+          <Property Name="IsOption" Type="Boolean" />
+          <Property Name="PartId" Type="Int32" />
+          <Property Name="Explain" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="NoAnswerOnRow" Type="Int32" />
+          <Property Name="ExpiredDate" Type="DateTime" Precision="3" />
+          <Property Name="TimeVisibleAnswer" Type="Int32" />
+          <Property Name="InsertedUser" Type="Int32" />
+          <Property Name="UpdatedUser" Type="Int32" />
+          <Property Name="InsertedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UpdatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Order" Type="Int32" Nullable="false" />
+          <Property Name="Level" Type="Int32" Nullable="false" />
+          <Property Name="Type" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="CheckImport" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ParentCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Undergraduate_CauTrucDe">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="DeThiID" Type="Guid" Nullable="false" />
+          <Property Name="CauHoiID" Type="Guid" Nullable="false" />
+          <Property Name="Order" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Undergraduate_DapAn">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CauHoiID" Type="Guid" Nullable="false" />
+          <Property Name="CauHoiCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ChildQuestionId" Type="Guid" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsCheck" Type="Boolean" />
+          <Property Name="Matched" Type="Guid" />
+          <Property Name="Matching" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Mark" Type="Double" />
+          <Property Name="MarkFail" Type="Double" />
+          <Property Name="Order" Type="Int32" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="Explain" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ShowQuestion" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="HideQuestion" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Undergraduate_DeThi">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="NoiDungDeThi" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DapAn" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Undergraduate_ReportTotal">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="SurveyRoundId" Type="Guid" Nullable="false" />
+          <Property Name="TheSurveyId" Type="Guid" Nullable="false" />
+          <Property Name="ChuyenNganh" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="QuestionCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="AnswerCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Total" Type="Int32" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Undergraduate_Student">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="dottotnghiep" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="sovaoso" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="masv" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="cmnd" Type="String" MaxLength="12" FixedLength="false" Unicode="false" />
+          <Property Name="noisiti" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="tbcht" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="xeploai" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="soqdtn" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ngayraqd" Type="DateTime" Precision="0" />
+          <Property Name="sohieuba" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="tinh" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="truong" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="gioitinh" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="ngaysinh" Type="DateTime" Precision="0" />
+          <Property Name="tkhau" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="lop12" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="namtn" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="sobaodanh" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="tcong" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="ghichu_thi" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="lopqd" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="k" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="dtoc" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="quoctich" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="bangclc" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="manganh" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="tenchnga" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="tennganh" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="hedaotao" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="khoahoc" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="tensinhvien" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="email1" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="email2" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="mobile" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="mobile1" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="mobile2" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="thongtinthem" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="thongtinthem1" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="DotKhaoSatId" Type="Guid" Nullable="false" />
+          <Property Name="checksum" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="ex_masv" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="type" Type="Int32" Nullable="false" />
+          <Property Name="status" Type="Int32" Nullable="false" />
+          <Property Name="makhoa" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="malop" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="keyAuthorize" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="nguoiphatbang" Type="Int32" />
+          <Property Name="ghichuphatbang" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="cn_order" Type="Int32" />
+        </EntityType>
+        <EntityType Name="AS_Edu_Survey_Undergraduate_SurveyRound">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FromDate" Type="DateTime" Precision="3" />
+          <Property Name="EndDate" Type="DateTime" Precision="3" />
+          <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Note" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AS_Status_Table_Task">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="TableName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="IsSuccess" Type="Boolean" Nullable="false" />
+          <Property Name="Message" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityContainer Name="NUCE_SURVEY_PUBLISHEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AS_Academy_Academics" EntityType="Self.AS_Academy_Academics" />
+          <EntitySet Name="AS_Academy_C_ClassRoom" EntityType="Self.AS_Academy_C_ClassRoom" />
+          <EntitySet Name="AS_Academy_C_Lecturer_ClassRoom" EntityType="Self.AS_Academy_C_Lecturer_ClassRoom" />
+          <EntitySet Name="AS_Academy_C_Student_ClassRoom" EntityType="Self.AS_Academy_C_Student_ClassRoom" />
+          <EntitySet Name="AS_Academy_Class" EntityType="Self.AS_Academy_Class" />
+          <EntitySet Name="AS_Academy_ClassRoom" EntityType="Self.AS_Academy_ClassRoom" />
+          <EntitySet Name="AS_Academy_Department" EntityType="Self.AS_Academy_Department" />
+          <EntitySet Name="AS_Academy_Faculty" EntityType="Self.AS_Academy_Faculty" />
+          <EntitySet Name="AS_Academy_Lecturer" EntityType="Self.AS_Academy_Lecturer" />
+          <EntitySet Name="AS_Academy_Lecturer_ClassRoom" EntityType="Self.AS_Academy_Lecturer_ClassRoom" />
+          <EntitySet Name="AS_Academy_Semester" EntityType="Self.AS_Academy_Semester" />
+          <EntitySet Name="AS_Academy_Student" EntityType="Self.AS_Academy_Student" />
+          <EntitySet Name="AS_Academy_Student_ClassRoom" EntityType="Self.AS_Academy_Student_ClassRoom" />
+          <EntitySet Name="AS_Academy_Subject" EntityType="Self.AS_Academy_Subject" />
+          <EntitySet Name="AS_Academy_Subject_Extend" EntityType="Self.AS_Academy_Subject_Extend" />
+          <EntitySet Name="AS_Edu_QA_Week" EntityType="Self.AS_Edu_QA_Week" />
+          <EntitySet Name="AS_Edu_Survey_BaiKhaoSat" EntityType="Self.AS_Edu_Survey_BaiKhaoSat" />
+          <EntitySet Name="AS_Edu_Survey_BaiKhaoSat_SinhVien" EntityType="Self.AS_Edu_Survey_BaiKhaoSat_SinhVien" />
+          <EntitySet Name="AS_Edu_Survey_CauHoi" EntityType="Self.AS_Edu_Survey_CauHoi" />
+          <EntitySet Name="AS_Edu_Survey_CauTrucDe" EntityType="Self.AS_Edu_Survey_CauTrucDe" />
+          <EntitySet Name="AS_Edu_Survey_DapAn" EntityType="Self.AS_Edu_Survey_DapAn" />
+          <EntitySet Name="AS_Edu_Survey_DeThi" EntityType="Self.AS_Edu_Survey_DeThi" />
+          <EntitySet Name="AS_Edu_Survey_DotKhaoSat" EntityType="Self.AS_Edu_Survey_DotKhaoSat" />
+          <EntitySet Name="AS_Edu_Survey_Graduate_BaiKhaoSat" EntityType="Self.AS_Edu_Survey_Graduate_BaiKhaoSat" />
+          <EntitySet Name="AS_Edu_Survey_Graduate_BaiKhaoSat_SinhVien" EntityType="Self.AS_Edu_Survey_Graduate_BaiKhaoSat_SinhVien" />
+          <EntitySet Name="AS_Edu_Survey_Graduate_CauHoi" EntityType="Self.AS_Edu_Survey_Graduate_CauHoi" />
+          <EntitySet Name="AS_Edu_Survey_Graduate_CauTrucDe" EntityType="Self.AS_Edu_Survey_Graduate_CauTrucDe" />
+          <EntitySet Name="AS_Edu_Survey_Graduate_DapAn" EntityType="Self.AS_Edu_Survey_Graduate_DapAn" />
+          <EntitySet Name="AS_Edu_Survey_Graduate_DeThi" EntityType="Self.AS_Edu_Survey_Graduate_DeThi" />
+          <EntitySet Name="AS_Edu_Survey_Graduate_Student" EntityType="Self.AS_Edu_Survey_Graduate_Student" />
+          <EntitySet Name="AS_Edu_Survey_Graduate_SurveyRound" EntityType="Self.AS_Edu_Survey_Graduate_SurveyRound" />
+          <EntitySet Name="AS_Edu_Survey_ReportTotal" EntityType="Self.AS_Edu_Survey_ReportTotal" />
+          <EntitySet Name="AS_Edu_Survey_Undergraduate_BaiKhaoSat" EntityType="Self.AS_Edu_Survey_Undergraduate_BaiKhaoSat" />
+          <EntitySet Name="AS_Edu_Survey_Undergraduate_BaiKhaoSat_SinhVien" EntityType="Self.AS_Edu_Survey_Undergraduate_BaiKhaoSat_SinhVien" />
+          <EntitySet Name="AS_Edu_Survey_Undergraduate_CauHoi" EntityType="Self.AS_Edu_Survey_Undergraduate_CauHoi" />
+          <EntitySet Name="AS_Edu_Survey_Undergraduate_CauTrucDe" EntityType="Self.AS_Edu_Survey_Undergraduate_CauTrucDe" />
+          <EntitySet Name="AS_Edu_Survey_Undergraduate_DapAn" EntityType="Self.AS_Edu_Survey_Undergraduate_DapAn" />
+          <EntitySet Name="AS_Edu_Survey_Undergraduate_DeThi" EntityType="Self.AS_Edu_Survey_Undergraduate_DeThi" />
+          <EntitySet Name="AS_Edu_Survey_Undergraduate_ReportTotal" EntityType="Self.AS_Edu_Survey_Undergraduate_ReportTotal" />
+          <EntitySet Name="AS_Edu_Survey_Undergraduate_Student" EntityType="Self.AS_Edu_Survey_Undergraduate_Student" />
+          <EntitySet Name="AS_Edu_Survey_Undergraduate_SurveyRound" EntityType="Self.AS_Edu_Survey_Undergraduate_SurveyRound" />
+          <EntitySet Name="AS_Status_Table_Task" EntityType="Self.AS_Status_Table_Task" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="NUCE_SURVEY_PUBLISHModelStoreContainer" CdmEntityContainer="NUCE_SURVEY_PUBLISHEntities">
+          <EntitySetMapping Name="AS_Academy_Academics">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Academy_Academics">
+              <MappingFragment StoreEntitySet="AS_Academy_Academics">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="SemesterID" ColumnName="SemesterID" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Academy_C_ClassRoom">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Academy_C_ClassRoom">
+              <MappingFragment StoreEntitySet="AS_Academy_C_ClassRoom">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="SemesterID" ColumnName="SemesterID" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="GroupCode" ColumnName="GroupCode" />
+                <ScalarProperty Name="ClassCode" ColumnName="ClassCode" />
+                <ScalarProperty Name="SubjectID" ColumnName="SubjectID" />
+                <ScalarProperty Name="SubjectCode" ColumnName="SubjectCode" />
+                <ScalarProperty Name="ExamAttemptDate" ColumnName="ExamAttemptDate" />
+                <ScalarProperty Name="FromDate" ColumnName="FromDate" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Academy_C_Lecturer_ClassRoom">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Academy_C_Lecturer_ClassRoom">
+              <MappingFragment StoreEntitySet="AS_Academy_C_Lecturer_ClassRoom">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="SemesterID" ColumnName="SemesterID" />
+                <ScalarProperty Name="ClassRoomID" ColumnName="ClassRoomID" />
+                <ScalarProperty Name="ClassRoomCode" ColumnName="ClassRoomCode" />
+                <ScalarProperty Name="LecturerID" ColumnName="LecturerID" />
+                <ScalarProperty Name="LecturerCode" ColumnName="LecturerCode" />
+                <ScalarProperty Name="Template" ColumnName="Template" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Academy_C_Student_ClassRoom">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Academy_C_Student_ClassRoom">
+              <MappingFragment StoreEntitySet="AS_Academy_C_Student_ClassRoom">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="SemesterID" ColumnName="SemesterID" />
+                <ScalarProperty Name="ClassRoomID" ColumnName="ClassRoomID" />
+                <ScalarProperty Name="ClassRoomCode" ColumnName="ClassRoomCode" />
+                <ScalarProperty Name="StudentID" ColumnName="StudentID" />
+                <ScalarProperty Name="StudentCode" ColumnName="StudentCode" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Academy_Class">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Academy_Class">
+              <MappingFragment StoreEntitySet="AS_Academy_Class">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="FacultyID" ColumnName="FacultyID" />
+                <ScalarProperty Name="FacultyCode" ColumnName="FacultyCode" />
+                <ScalarProperty Name="AcademicsID" ColumnName="AcademicsID" />
+                <ScalarProperty Name="AcademicsCode" ColumnName="AcademicsCode" />
+                <ScalarProperty Name="SchoolYear" ColumnName="SchoolYear" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Academy_ClassRoom">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Academy_ClassRoom">
+              <MappingFragment StoreEntitySet="AS_Academy_ClassRoom">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="ClassCode" ColumnName="ClassCode" />
+                <ScalarProperty Name="SubjectCode" ColumnName="SubjectCode" />
+                <ScalarProperty Name="NHHK" ColumnName="NHHK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Academy_Department">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Academy_Department">
+              <MappingFragment StoreEntitySet="AS_Academy_Department">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="SemesterID" ColumnName="SemesterID" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="FacultyID" ColumnName="FacultyID" />
+                <ScalarProperty Name="FacultyCode" ColumnName="FacultyCode" />
+                <ScalarProperty Name="ChefsDepartmentCode" ColumnName="ChefsDepartmentCode" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Academy_Faculty">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Academy_Faculty">
+              <MappingFragment StoreEntitySet="AS_Academy_Faculty">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="SemesterID" ColumnName="SemesterID" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="c_Order" ColumnName="c_Order" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Order" ColumnName="Order" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Academy_Lecturer">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Academy_Lecturer">
+              <MappingFragment StoreEntitySet="AS_Academy_Lecturer">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="DepartmentID" ColumnName="DepartmentID" />
+                <ScalarProperty Name="DepartmentCode" ColumnName="DepartmentCode" />
+                <ScalarProperty Name="DateOfBirth" ColumnName="DateOfBirth" />
+                <ScalarProperty Name="NameOrder" ColumnName="NameOrder" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Academy_Lecturer_ClassRoom">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Academy_Lecturer_ClassRoom">
+              <MappingFragment StoreEntitySet="AS_Academy_Lecturer_ClassRoom">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ClassRoomCode" ColumnName="ClassRoomCode" />
+                <ScalarProperty Name="LecturerCode" ColumnName="LecturerCode" />
+                <ScalarProperty Name="NHHK" ColumnName="NHHK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Academy_Semester">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Academy_Semester">
+              <MappingFragment StoreEntitySet="AS_Academy_Semester">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Academy_Student">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Academy_Student">
+              <MappingFragment StoreEntitySet="AS_Academy_Student">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="ClassID" ColumnName="ClassID" />
+                <ScalarProperty Name="ClassCode" ColumnName="ClassCode" />
+                <ScalarProperty Name="DateOfBirth" ColumnName="DateOfBirth" />
+                <ScalarProperty Name="BirthPlace" ColumnName="BirthPlace" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Mobile" ColumnName="Mobile" />
+                <ScalarProperty Name="keyAuthorize" ColumnName="keyAuthorize" />
+                <ScalarProperty Name="status" ColumnName="status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Academy_Student_ClassRoom">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Academy_Student_ClassRoom">
+              <MappingFragment StoreEntitySet="AS_Academy_Student_ClassRoom">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ClassRoomCode" ColumnName="ClassRoomCode" />
+                <ScalarProperty Name="StudentCode" ColumnName="StudentCode" />
+                <ScalarProperty Name="NHHK" ColumnName="NHHK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Academy_Subject">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Academy_Subject">
+              <MappingFragment StoreEntitySet="AS_Academy_Subject">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="SemesterID" ColumnName="SemesterID" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="DepartmentID" ColumnName="DepartmentID" />
+                <ScalarProperty Name="DepartmentCode" ColumnName="DepartmentCode" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Academy_Subject_Extend">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Academy_Subject_Extend">
+              <MappingFragment StoreEntitySet="AS_Academy_Subject_Extend">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_QA_Week">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_QA_Week">
+              <MappingFragment StoreEntitySet="AS_Edu_QA_Week">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ClassRoomID" ColumnName="ClassRoomID" />
+                <ScalarProperty Name="Count" ColumnName="Count" />
+                <ScalarProperty Name="Total" ColumnName="Total" />
+                <ScalarProperty Name="FromDate" ColumnName="FromDate" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="CreatedTime" ColumnName="CreatedTime" />
+                <ScalarProperty Name="UpdatedTime" ColumnName="UpdatedTime" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_BaiKhaoSat">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_BaiKhaoSat">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_BaiKhaoSat">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="DotKhaoSatID" ColumnName="DotKhaoSatID" />
+                <ScalarProperty Name="DeThiID" ColumnName="DeThiID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="NoiDungDeThi" ColumnName="NoiDungDeThi" />
+                <ScalarProperty Name="DapAn" ColumnName="DapAn" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_BaiKhaoSat_SinhVien">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_BaiKhaoSat_SinhVien">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_BaiKhaoSat_SinhVien">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="BaiKhaoSatID" ColumnName="BaiKhaoSatID" />
+                <ScalarProperty Name="StudentID" ColumnName="StudentID" />
+                <ScalarProperty Name="StudentCode" ColumnName="StudentCode" />
+                <ScalarProperty Name="LecturerCode" ColumnName="LecturerCode" />
+                <ScalarProperty Name="LecturerName" ColumnName="LecturerName" />
+                <ScalarProperty Name="ClassRoomCode" ColumnName="ClassRoomCode" />
+                <ScalarProperty Name="SubjectCode" ColumnName="SubjectCode" />
+                <ScalarProperty Name="SubjectName" ColumnName="SubjectName" />
+                <ScalarProperty Name="SubjectType" ColumnName="SubjectType" />
+                <ScalarProperty Name="DepartmentCode" ColumnName="DepartmentCode" />
+                <ScalarProperty Name="NHHK" ColumnName="NHHK" />
+                <ScalarProperty Name="DeThi" ColumnName="DeThi" />
+                <ScalarProperty Name="BaiLam" ColumnName="BaiLam" />
+                <ScalarProperty Name="NgayGioBatDau" ColumnName="NgayGioBatDau" />
+                <ScalarProperty Name="NgayGioNopBai" ColumnName="NgayGioNopBai" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="LogIP" ColumnName="LogIP" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_CauHoi">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_CauHoi">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_CauHoi">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="BoCauHoiID" ColumnName="BoCauHoiID" />
+                <ScalarProperty Name="DoKhoID" ColumnName="DoKhoID" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="Image" ColumnName="Image" />
+                <ScalarProperty Name="Media_URL" ColumnName="Media_URL" />
+                <ScalarProperty Name="Media_Setting" ColumnName="Media_Setting" />
+                <ScalarProperty Name="Mark" ColumnName="Mark" />
+                <ScalarProperty Name="MarkFail" ColumnName="MarkFail" />
+                <ScalarProperty Name="IsOption" ColumnName="IsOption" />
+                <ScalarProperty Name="PartId" ColumnName="PartId" />
+                <ScalarProperty Name="Explain" ColumnName="Explain" />
+                <ScalarProperty Name="NoAnswerOnRow" ColumnName="NoAnswerOnRow" />
+                <ScalarProperty Name="ExpiredDate" ColumnName="ExpiredDate" />
+                <ScalarProperty Name="TimeVisibleAnswer" ColumnName="TimeVisibleAnswer" />
+                <ScalarProperty Name="InsertedUser" ColumnName="InsertedUser" />
+                <ScalarProperty Name="UpdatedUser" ColumnName="UpdatedUser" />
+                <ScalarProperty Name="InsertedDate" ColumnName="InsertedDate" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="Order" ColumnName="Order" />
+                <ScalarProperty Name="Level" ColumnName="Level" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="CheckImport" ColumnName="CheckImport" />
+                <ScalarProperty Name="ParentCode" ColumnName="ParentCode" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_CauTrucDe">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_CauTrucDe">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_CauTrucDe">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="DeThiID" ColumnName="DeThiID" />
+                <ScalarProperty Name="CauHoiID" ColumnName="CauHoiID" />
+                <ScalarProperty Name="Order" ColumnName="Order" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_DapAn">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_DapAn">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_DapAn">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="CauHoiID" ColumnName="CauHoiID" />
+                <ScalarProperty Name="CauHoiCode" ColumnName="CauHoiCode" />
+                <ScalarProperty Name="ChildQuestionId" ColumnName="ChildQuestionId" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="IsCheck" ColumnName="IsCheck" />
+                <ScalarProperty Name="Matched" ColumnName="Matched" />
+                <ScalarProperty Name="Matching" ColumnName="Matching" />
+                <ScalarProperty Name="Mark" ColumnName="Mark" />
+                <ScalarProperty Name="MarkFail" ColumnName="MarkFail" />
+                <ScalarProperty Name="Order" ColumnName="Order" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Explain" ColumnName="Explain" />
+                <ScalarProperty Name="ShowQuestion" ColumnName="ShowQuestion" />
+                <ScalarProperty Name="HideQuestion" ColumnName="HideQuestion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_DeThi">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_DeThi">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_DeThi">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="NoiDungDeThi" ColumnName="NoiDungDeThi" />
+                <ScalarProperty Name="DapAn" ColumnName="DapAn" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_DotKhaoSat">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_DotKhaoSat">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_DotKhaoSat">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="FromDate" ColumnName="FromDate" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_Graduate_BaiKhaoSat">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Graduate_BaiKhaoSat">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_Graduate_BaiKhaoSat">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="DotKhaoSatID" ColumnName="DotKhaoSatID" />
+                <ScalarProperty Name="DeThiID" ColumnName="DeThiID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="NoiDungDeThi" ColumnName="NoiDungDeThi" />
+                <ScalarProperty Name="DapAn" ColumnName="DapAn" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_Graduate_BaiKhaoSat_SinhVien">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Graduate_BaiKhaoSat_SinhVien">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_Graduate_BaiKhaoSat_SinhVien">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="BaiKhaoSatID" ColumnName="BaiKhaoSatID" />
+                <ScalarProperty Name="StudentCode" ColumnName="StudentCode" />
+                <ScalarProperty Name="Nganh" ColumnName="Nganh" />
+                <ScalarProperty Name="ChuyenNganh" ColumnName="ChuyenNganh" />
+                <ScalarProperty Name="DeThi" ColumnName="DeThi" />
+                <ScalarProperty Name="BaiLam" ColumnName="BaiLam" />
+                <ScalarProperty Name="NgayGioBatDau" ColumnName="NgayGioBatDau" />
+                <ScalarProperty Name="NgayGioNopBai" ColumnName="NgayGioNopBai" />
+                <ScalarProperty Name="LoaiHinh" ColumnName="LoaiHinh" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="LogIP" ColumnName="LogIP" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_Graduate_CauHoi">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Graduate_CauHoi">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_Graduate_CauHoi">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="BoCauHoiID" ColumnName="BoCauHoiID" />
+                <ScalarProperty Name="DoKhoID" ColumnName="DoKhoID" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="Image" ColumnName="Image" />
+                <ScalarProperty Name="Media_URL" ColumnName="Media_URL" />
+                <ScalarProperty Name="Media_Setting" ColumnName="Media_Setting" />
+                <ScalarProperty Name="Mark" ColumnName="Mark" />
+                <ScalarProperty Name="MarkFail" ColumnName="MarkFail" />
+                <ScalarProperty Name="IsOption" ColumnName="IsOption" />
+                <ScalarProperty Name="PartId" ColumnName="PartId" />
+                <ScalarProperty Name="Explain" ColumnName="Explain" />
+                <ScalarProperty Name="NoAnswerOnRow" ColumnName="NoAnswerOnRow" />
+                <ScalarProperty Name="ExpiredDate" ColumnName="ExpiredDate" />
+                <ScalarProperty Name="TimeVisibleAnswer" ColumnName="TimeVisibleAnswer" />
+                <ScalarProperty Name="InsertedUser" ColumnName="InsertedUser" />
+                <ScalarProperty Name="UpdatedUser" ColumnName="UpdatedUser" />
+                <ScalarProperty Name="InsertedDate" ColumnName="InsertedDate" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="Order" ColumnName="Order" />
+                <ScalarProperty Name="Level" ColumnName="Level" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="CheckImport" ColumnName="CheckImport" />
+                <ScalarProperty Name="ParentCode" ColumnName="ParentCode" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_Graduate_CauTrucDe">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Graduate_CauTrucDe">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_Graduate_CauTrucDe">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="DeThiID" ColumnName="DeThiID" />
+                <ScalarProperty Name="CauHoiID" ColumnName="CauHoiID" />
+                <ScalarProperty Name="Order" ColumnName="Order" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_Graduate_DapAn">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Graduate_DapAn">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_Graduate_DapAn">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="CauHoiID" ColumnName="CauHoiID" />
+                <ScalarProperty Name="CauHoiCode" ColumnName="CauHoiCode" />
+                <ScalarProperty Name="ChildQuestionId" ColumnName="ChildQuestionId" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="IsCheck" ColumnName="IsCheck" />
+                <ScalarProperty Name="Matched" ColumnName="Matched" />
+                <ScalarProperty Name="Matching" ColumnName="Matching" />
+                <ScalarProperty Name="Mark" ColumnName="Mark" />
+                <ScalarProperty Name="MarkFail" ColumnName="MarkFail" />
+                <ScalarProperty Name="Order" ColumnName="Order" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Explain" ColumnName="Explain" />
+                <ScalarProperty Name="ShowQuestion" ColumnName="ShowQuestion" />
+                <ScalarProperty Name="HideQuestion" ColumnName="HideQuestion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_Graduate_DeThi">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Graduate_DeThi">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_Graduate_DeThi">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="NoiDungDeThi" ColumnName="NoiDungDeThi" />
+                <ScalarProperty Name="DapAn" ColumnName="DapAn" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_Graduate_Student">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Graduate_Student">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_Graduate_Student">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="dottotnghiep" ColumnName="dottotnghiep" />
+                <ScalarProperty Name="sovaoso" ColumnName="sovaoso" />
+                <ScalarProperty Name="masv" ColumnName="masv" />
+                <ScalarProperty Name="cmnd" ColumnName="cmnd" />
+                <ScalarProperty Name="noisiti" ColumnName="noisiti" />
+                <ScalarProperty Name="tbcht" ColumnName="tbcht" />
+                <ScalarProperty Name="xeploai" ColumnName="xeploai" />
+                <ScalarProperty Name="soqdtn" ColumnName="soqdtn" />
+                <ScalarProperty Name="ngayraqd" ColumnName="ngayraqd" />
+                <ScalarProperty Name="sohieuba" ColumnName="sohieuba" />
+                <ScalarProperty Name="tinh" ColumnName="tinh" />
+                <ScalarProperty Name="truong" ColumnName="truong" />
+                <ScalarProperty Name="gioitinh" ColumnName="gioitinh" />
+                <ScalarProperty Name="ngaysinh" ColumnName="ngaysinh" />
+                <ScalarProperty Name="tkhau" ColumnName="tkhau" />
+                <ScalarProperty Name="lop12" ColumnName="lop12" />
+                <ScalarProperty Name="namtn" ColumnName="namtn" />
+                <ScalarProperty Name="sobaodanh" ColumnName="sobaodanh" />
+                <ScalarProperty Name="tcong" ColumnName="tcong" />
+                <ScalarProperty Name="ghichu_thi" ColumnName="ghichu_thi" />
+                <ScalarProperty Name="lopqd" ColumnName="lopqd" />
+                <ScalarProperty Name="k" ColumnName="k" />
+                <ScalarProperty Name="dtoc" ColumnName="dtoc" />
+                <ScalarProperty Name="quoctich" ColumnName="quoctich" />
+                <ScalarProperty Name="bangclc" ColumnName="bangclc" />
+                <ScalarProperty Name="manganh" ColumnName="manganh" />
+                <ScalarProperty Name="tenchnga" ColumnName="tenchnga" />
+                <ScalarProperty Name="tennganh" ColumnName="tennganh" />
+                <ScalarProperty Name="hedaotao" ColumnName="hedaotao" />
+                <ScalarProperty Name="khoahoc" ColumnName="khoahoc" />
+                <ScalarProperty Name="tensinhvien" ColumnName="tensinhvien" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="email1" ColumnName="email1" />
+                <ScalarProperty Name="email2" ColumnName="email2" />
+                <ScalarProperty Name="mobile" ColumnName="mobile" />
+                <ScalarProperty Name="mobile1" ColumnName="mobile1" />
+                <ScalarProperty Name="mobile2" ColumnName="mobile2" />
+                <ScalarProperty Name="thongtinthem" ColumnName="thongtinthem" />
+                <ScalarProperty Name="thongtinthem1" ColumnName="thongtinthem1" />
+                <ScalarProperty Name="DotKhaoSatId" ColumnName="DotKhaoSatId" />
+                <ScalarProperty Name="psw" ColumnName="psw" />
+                <ScalarProperty Name="checksum" ColumnName="checksum" />
+                <ScalarProperty Name="ex_masv" ColumnName="ex_masv" />
+                <ScalarProperty Name="type" ColumnName="type" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="makhoa" ColumnName="makhoa" />
+                <ScalarProperty Name="malop" ColumnName="malop" />
+                <ScalarProperty Name="nguoiphatbang" ColumnName="nguoiphatbang" />
+                <ScalarProperty Name="ghichuphatbang" ColumnName="ghichuphatbang" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_Graduate_SurveyRound">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Graduate_SurveyRound">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_Graduate_SurveyRound">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="FromDate" ColumnName="FromDate" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_ReportTotal">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_ReportTotal">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_ReportTotal">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="SurveyRoundId" ColumnName="SurveyRoundId" />
+                <ScalarProperty Name="TheSurveyId" ColumnName="TheSurveyId" />
+                <ScalarProperty Name="ClassRoomCode" ColumnName="ClassRoomCode" />
+                <ScalarProperty Name="NHHK" ColumnName="NHHK" />
+                <ScalarProperty Name="LecturerCode" ColumnName="LecturerCode" />
+                <ScalarProperty Name="QuestionCode" ColumnName="QuestionCode" />
+                <ScalarProperty Name="AnswerCode" ColumnName="AnswerCode" />
+                <ScalarProperty Name="Total" ColumnName="Total" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="SubjectCode" ColumnName="SubjectCode" />
+                <ScalarProperty Name="ClassRoom" ColumnName="ClassRoom" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_Undergraduate_BaiKhaoSat">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Undergraduate_BaiKhaoSat">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_Undergraduate_BaiKhaoSat">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="DeThiID" ColumnName="DeThiID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="NoiDungDeThi" ColumnName="NoiDungDeThi" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_Undergraduate_BaiKhaoSat_SinhVien">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Undergraduate_BaiKhaoSat_SinhVien">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_Undergraduate_BaiKhaoSat_SinhVien">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="BaiKhaoSatID" ColumnName="BaiKhaoSatID" />
+                <ScalarProperty Name="StudentCode" ColumnName="StudentCode" />
+                <ScalarProperty Name="Nganh" ColumnName="Nganh" />
+                <ScalarProperty Name="ChuyenNganh" ColumnName="ChuyenNganh" />
+                <ScalarProperty Name="DeThi" ColumnName="DeThi" />
+                <ScalarProperty Name="BaiLam" ColumnName="BaiLam" />
+                <ScalarProperty Name="NgayGioBatDau" ColumnName="NgayGioBatDau" />
+                <ScalarProperty Name="NgayGioNopBai" ColumnName="NgayGioNopBai" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="LogIP" ColumnName="LogIP" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_Undergraduate_CauHoi">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Undergraduate_CauHoi">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_Undergraduate_CauHoi">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="BoCauHoiID" ColumnName="BoCauHoiID" />
+                <ScalarProperty Name="DoKhoID" ColumnName="DoKhoID" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="Image" ColumnName="Image" />
+                <ScalarProperty Name="Media_URL" ColumnName="Media_URL" />
+                <ScalarProperty Name="Media_Setting" ColumnName="Media_Setting" />
+                <ScalarProperty Name="Mark" ColumnName="Mark" />
+                <ScalarProperty Name="MarkFail" ColumnName="MarkFail" />
+                <ScalarProperty Name="IsOption" ColumnName="IsOption" />
+                <ScalarProperty Name="PartId" ColumnName="PartId" />
+                <ScalarProperty Name="Explain" ColumnName="Explain" />
+                <ScalarProperty Name="NoAnswerOnRow" ColumnName="NoAnswerOnRow" />
+                <ScalarProperty Name="ExpiredDate" ColumnName="ExpiredDate" />
+                <ScalarProperty Name="TimeVisibleAnswer" ColumnName="TimeVisibleAnswer" />
+                <ScalarProperty Name="InsertedUser" ColumnName="InsertedUser" />
+                <ScalarProperty Name="UpdatedUser" ColumnName="UpdatedUser" />
+                <ScalarProperty Name="InsertedDate" ColumnName="InsertedDate" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="Order" ColumnName="Order" />
+                <ScalarProperty Name="Level" ColumnName="Level" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="CheckImport" ColumnName="CheckImport" />
+                <ScalarProperty Name="ParentCode" ColumnName="ParentCode" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_Undergraduate_CauTrucDe">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Undergraduate_CauTrucDe">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_Undergraduate_CauTrucDe">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="DeThiID" ColumnName="DeThiID" />
+                <ScalarProperty Name="CauHoiID" ColumnName="CauHoiID" />
+                <ScalarProperty Name="Order" ColumnName="Order" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_Undergraduate_DapAn">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Undergraduate_DapAn">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_Undergraduate_DapAn">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="CauHoiID" ColumnName="CauHoiID" />
+                <ScalarProperty Name="CauHoiCode" ColumnName="CauHoiCode" />
+                <ScalarProperty Name="ChildQuestionId" ColumnName="ChildQuestionId" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="IsCheck" ColumnName="IsCheck" />
+                <ScalarProperty Name="Matched" ColumnName="Matched" />
+                <ScalarProperty Name="Matching" ColumnName="Matching" />
+                <ScalarProperty Name="Mark" ColumnName="Mark" />
+                <ScalarProperty Name="MarkFail" ColumnName="MarkFail" />
+                <ScalarProperty Name="Order" ColumnName="Order" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Explain" ColumnName="Explain" />
+                <ScalarProperty Name="ShowQuestion" ColumnName="ShowQuestion" />
+                <ScalarProperty Name="HideQuestion" ColumnName="HideQuestion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_Undergraduate_DeThi">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Undergraduate_DeThi">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_Undergraduate_DeThi">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="NoiDungDeThi" ColumnName="NoiDungDeThi" />
+                <ScalarProperty Name="DapAn" ColumnName="DapAn" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_Undergraduate_ReportTotal">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Undergraduate_ReportTotal">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_Undergraduate_ReportTotal">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="SurveyRoundId" ColumnName="SurveyRoundId" />
+                <ScalarProperty Name="TheSurveyId" ColumnName="TheSurveyId" />
+                <ScalarProperty Name="ChuyenNganh" ColumnName="ChuyenNganh" />
+                <ScalarProperty Name="QuestionCode" ColumnName="QuestionCode" />
+                <ScalarProperty Name="AnswerCode" ColumnName="AnswerCode" />
+                <ScalarProperty Name="Total" ColumnName="Total" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_Undergraduate_Student">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Undergraduate_Student">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_Undergraduate_Student">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="dottotnghiep" ColumnName="dottotnghiep" />
+                <ScalarProperty Name="sovaoso" ColumnName="sovaoso" />
+                <ScalarProperty Name="masv" ColumnName="masv" />
+                <ScalarProperty Name="cmnd" ColumnName="cmnd" />
+                <ScalarProperty Name="noisiti" ColumnName="noisiti" />
+                <ScalarProperty Name="tbcht" ColumnName="tbcht" />
+                <ScalarProperty Name="xeploai" ColumnName="xeploai" />
+                <ScalarProperty Name="soqdtn" ColumnName="soqdtn" />
+                <ScalarProperty Name="ngayraqd" ColumnName="ngayraqd" />
+                <ScalarProperty Name="sohieuba" ColumnName="sohieuba" />
+                <ScalarProperty Name="tinh" ColumnName="tinh" />
+                <ScalarProperty Name="truong" ColumnName="truong" />
+                <ScalarProperty Name="gioitinh" ColumnName="gioitinh" />
+                <ScalarProperty Name="ngaysinh" ColumnName="ngaysinh" />
+                <ScalarProperty Name="tkhau" ColumnName="tkhau" />
+                <ScalarProperty Name="lop12" ColumnName="lop12" />
+                <ScalarProperty Name="namtn" ColumnName="namtn" />
+                <ScalarProperty Name="sobaodanh" ColumnName="sobaodanh" />
+                <ScalarProperty Name="tcong" ColumnName="tcong" />
+                <ScalarProperty Name="ghichu_thi" ColumnName="ghichu_thi" />
+                <ScalarProperty Name="lopqd" ColumnName="lopqd" />
+                <ScalarProperty Name="k" ColumnName="k" />
+                <ScalarProperty Name="dtoc" ColumnName="dtoc" />
+                <ScalarProperty Name="quoctich" ColumnName="quoctich" />
+                <ScalarProperty Name="bangclc" ColumnName="bangclc" />
+                <ScalarProperty Name="manganh" ColumnName="manganh" />
+                <ScalarProperty Name="tenchnga" ColumnName="tenchnga" />
+                <ScalarProperty Name="tennganh" ColumnName="tennganh" />
+                <ScalarProperty Name="hedaotao" ColumnName="hedaotao" />
+                <ScalarProperty Name="khoahoc" ColumnName="khoahoc" />
+                <ScalarProperty Name="tensinhvien" ColumnName="tensinhvien" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="email1" ColumnName="email1" />
+                <ScalarProperty Name="email2" ColumnName="email2" />
+                <ScalarProperty Name="mobile" ColumnName="mobile" />
+                <ScalarProperty Name="mobile1" ColumnName="mobile1" />
+                <ScalarProperty Name="mobile2" ColumnName="mobile2" />
+                <ScalarProperty Name="thongtinthem" ColumnName="thongtinthem" />
+                <ScalarProperty Name="thongtinthem1" ColumnName="thongtinthem1" />
+                <ScalarProperty Name="DotKhaoSatId" ColumnName="DotKhaoSatId" />
+                <ScalarProperty Name="checksum" ColumnName="checksum" />
+                <ScalarProperty Name="ex_masv" ColumnName="ex_masv" />
+                <ScalarProperty Name="type" ColumnName="type" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="makhoa" ColumnName="makhoa" />
+                <ScalarProperty Name="malop" ColumnName="malop" />
+                <ScalarProperty Name="keyAuthorize" ColumnName="keyAuthorize" />
+                <ScalarProperty Name="nguoiphatbang" ColumnName="nguoiphatbang" />
+                <ScalarProperty Name="ghichuphatbang" ColumnName="ghichuphatbang" />
+                <ScalarProperty Name="cn_order" ColumnName="cn_order" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Edu_Survey_Undergraduate_SurveyRound">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Edu_Survey_Undergraduate_SurveyRound">
+              <MappingFragment StoreEntitySet="AS_Edu_Survey_Undergraduate_SurveyRound">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="FromDate" ColumnName="FromDate" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AS_Status_Table_Task">
+            <EntityTypeMapping TypeName="NUCE_SURVEY_PUBLISHModel.AS_Status_Table_Task">
+              <MappingFragment StoreEntitySet="AS_Status_Table_Task">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="TableName" ColumnName="TableName" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="IsSuccess" ColumnName="IsSuccess" />
+                <ScalarProperty Name="Message" ColumnName="Message" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

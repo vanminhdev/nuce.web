@@ -1,0 +1,40 @@
+﻿@using nuce.web.survey.student.Entities
+@model List<AS_Edu_Survey_DotKhaoSat>
+
+@{
+    ViewData["Title"] = "Danh sách đợt khảo sát";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Breadcrumb {
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/survey/faculty">Khoa</a></li>
+    <li class="breadcrumb-item"><a class="m-text-blue" href="#">Kết quả khảo sát HĐGD</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Đợt khảo sát</li>
+}
+
+<div class="row">
+    <div class="col-12">
+        <table class="table th-border-none">
+            <thead>
+                <tr>
+                    <td width="1px">STT</td>
+                    <td>Đợt khảo sát</td>
+                </tr>
+            </thead>
+            <tbody>
+                @{ 
+                    int i = 0;
+                }
+                @foreach (var item in Model)
+                {
+                    i++;
+                    <tr>
+                        <td>@i</td>
+                        <td><a href="/surveyresult/dsbomon?surveyRoundId=@item.ID">@item.Name</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
