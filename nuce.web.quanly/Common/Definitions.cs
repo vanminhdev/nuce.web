@@ -31,7 +31,8 @@ namespace nuce.web.quanly.Common
             {"MC", "Nhiều lựa chọn" },
             {"SA", "Trả lời ngắn" },
             {"GQ", "Nhiều câu hỏi phụ" },
-            {"T",  "Tiêu đề"}
+            {"T",  "Tiêu đề"},
+            {"CityC", "Chọn tỉnh thành" }
         };
 
         public static Dictionary<string, string> UndergraduateQuestionType = new Dictionary<string, string>()

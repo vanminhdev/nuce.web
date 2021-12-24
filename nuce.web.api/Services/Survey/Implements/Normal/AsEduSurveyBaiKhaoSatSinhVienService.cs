@@ -94,10 +94,13 @@ namespace nuce.web.api.Services.Survey.Implements
 
             var surveyRound = await _context.AsEduSurveyDotKhaoSat.FirstOrDefaultAsync(o => o.Id == theSurvey.DotKhaoSatId);
             var classroom = await _eduContext.AsAcademyClassRoom.FirstOrDefaultAsync(o => o.Code == baiKSsv.ClassRoomCode);
+            var subject = await _eduContext.AsAcademySubject.FirstOrDefaultAsync(o => o.Code == baiKSsv.SubjectCode);
 
             var result = new TheSurveyContent
             {
-                ClassroomName = classroom?.ClassCode,
+                TenHocPhan = subject?.Name,
+                MaHocPhan = subject?.Code,
+                ClassroomName = baiKSsv.ClassRoomCode?.Replace(baiKSsv.SubjectCode, ""),
                 NHHK = baiKSsv.Nhhk,
                 LeturerName = baiKSsv.LecturerName,
                 SurveyRoundName = surveyRound?.Name,

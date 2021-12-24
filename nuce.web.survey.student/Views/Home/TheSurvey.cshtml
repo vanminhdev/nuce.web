@@ -114,6 +114,10 @@
 
     if (question.Type == QuestionType.SC)
     {
+        if (question.Answers == null)
+        {
+            return;
+        }
         foreach (var answer in question.Answers)
         {
             if (displayLong)
@@ -146,6 +150,10 @@
     }
     else if (question.Type == QuestionType.MC)
     {
+        if (question.Answers == null)
+        {
+            return;
+        }
         foreach (var answer in question.Answers)
         {
             if (displayLong)
@@ -207,7 +215,7 @@
     <div class="row">
         <div class="col-12">
             <p class="text-center text-dark m-fs-20 font-weight-bold">PHIẾU KHẢO SÁT Ý KIẾN PHẢN HỒI TỪ NGƯỜI HỌC VỀ HOẠT ĐỘNG GIẢNG DẠY CỦA GIẢNG VIÊN</p>
-            <p class="text-dark font-italic">Những thông tin do anh/chị cung cấp dưới đây sẽ được sử dụng trong việc cải tiến chương trình, không ngừng nâng cao chất lượng đào tạo của Trường ĐHXD. Nhà trường bảo mật các thông tin cá nhân và chỉ công bố kết quả thống kê</p>
+            <p class="text-dark font-italic">Những thông tin do anh/chị cung cấp dưới đây sẽ được sử dụng trong việc cải tiến chương trình, không ngừng nâng cao chất lượng đào tạo của Trường ĐHXDHN. Nhà trường bảo mật các thông tin cá nhân và chỉ công bố kết quả thống kê</p>
         </div>
     </div>
     <div class="row mb-2">
@@ -216,30 +224,46 @@
         </div>
         <div class="col-12 ml-2">
             <div class="row">
-                <div class="col-6 col-md-4">
+                @*<div class="col-6 col-md-4">
                     <span class="font-weight-bold">Học kỳ: </span>
                     @if (ViewData["NHHK"] != null)
                     {
                         var str = ViewData["NHHK"].ToString();
                         <span class="font-italic">@(str.Length > 1 ? str.Substring(str.Length - 1, 1) : "") - @(str.Length > 4 ? str.Substring(0, 4) : "")</span>
                     }
+                </div>*@
+                <div class="col-6 col-md-6">
+                    <span class="font-weight-bold">Tên học phần: </span>
+                    <span class="font-italic">@ViewData["TenHocPhan"]</span>
                 </div>
-                <div class="col-6 col-md-4">
-                    <span class="font-weight-bold">Đợt khảo sát: </span>
-                    <span class="font-italic">@ViewData["SurveyRoundName"]</span>
+                <div class="col-6 col-md-6">
+                    <span class="font-weight-bold">Mã học phần: </span>
+                    <span class="font-italic">@ViewData["MaHocPhan"]</span>
                 </div>
-                <div class="col-6 col-md-4">
-                    <span class="font-weight-bold">Lớp môn học: </span>
+                @*<div class="col-6 col-md-4">
+            <span class="font-weight-bold">Đợt khảo sát: </span>
+            <span class="font-italic">@ViewData["SurveyRoundName"]</span>
+        </div>*@
+                <div class="col-6 col-md-6">
+                    <span class="font-weight-bold">Mã lớp: </span>
                     <span class="font-italic">@ViewData["classRoomName"]</span>
                 </div>
-                <div class="col-6 col-md-4">
+                <div class="col-6 col-md-6">
                     <span class="font-weight-bold">Giảng viên: </span>
                     <span class="font-italic">@ViewData["LeturerName"]</span>
                 </div>
-                <div class="col-6 col-md-4">
-                    <span class="font-weight-bold">Sinh viên: </span>
-                    <span class="font-italic">@givenName (@username)</span>
+                <div class="col-6 col-md-6">
+                    <span class="font-weight-bold">Học kỳ: </span>
+                    <span class="font-italic">II</span>
                 </div>
+                <div class="col-6 col-md-6">
+                    <span class="font-weight-bold">Năm học: </span>
+                    <span class="font-italic">2020-2021</span>
+                </div>
+                @*<div class="col-6 col-md-6">
+            <span class="font-weight-bold">Sinh viên: </span>
+            <span class="font-italic">@givenName (@username)</span>
+        </div>*@
             </div>
         </div>
     </div>

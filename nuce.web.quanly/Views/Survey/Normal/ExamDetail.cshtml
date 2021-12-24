@@ -19,9 +19,9 @@
             counter-increment: title-question-counter;
         }
 
-            .question-title:before {
-                content: counter(title-question-counter, upper-roman)". ";
-            }
+        .question-title:before {
+            content: counter(title-question-counter, upper-roman)". ";
+        }
 
         .tag-child-inline > * {
             display: inline;
@@ -83,6 +83,11 @@
 
     if (question.Type == QuestionType.SC)
     {
+        if (question.Answers == null)
+        {
+            return;
+        }
+
         foreach (var answer in question.Answers)
         {
             if (displayLong)
@@ -115,6 +120,11 @@
     }
     else if (question.Type == QuestionType.MC)
     {
+        if (question.Answers == null)
+        {
+            return;
+        }
+
         foreach (var answer in question.Answers)
         {
             if (displayLong)
@@ -181,7 +191,7 @@
     <div class="row">
         <div class="col-12">
             <p class="text-center text-dark m-fs-20 font-weight-bold">PHIẾU KHẢO SÁT Ý KIẾN PHẢN HỒI TỪ NGƯỜI HỌC VỀ HOẠT ĐỘNG GIẢNG DẠY CỦA GIẢNG VIÊN</p>
-            <p class="text-dark font-italic">Những thông tin do anh/chị cung cấp dưới đây sẽ được sử dụng trong việc cải tiến chương trình, không ngừng nâng cao chất lượng đào tạo của Trường ĐHXD. Nhà trường bảo mật các thông tin cá nhân và chỉ công bố kết quả thống kê</p>
+            <p class="text-dark font-italic">Những thông tin do anh/chị cung cấp dưới đây sẽ được sử dụng trong việc cải tiến chương trình, không ngừng nâng cao chất lượng đào tạo của Trường ĐHXDHN. Nhà trường bảo mật các thông tin cá nhân và chỉ công bố kết quả thống kê</p>
         </div>
     </div>
     <div class="row mb-2">

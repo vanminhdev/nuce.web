@@ -83,6 +83,10 @@
 
     if (question.Type == QuestionType.SC)
     {
+        if (question.Answers == null)
+        {
+            return;
+        }
         foreach (var answer in question.Answers)
         {
             if (displayLong)
@@ -115,6 +119,10 @@
     }
     else if (question.Type == QuestionType.MC)
     {
+        if (question.Answers == null)
+        {
+            return;
+        }
         foreach (var answer in question.Answers)
         {
             if (displayLong)

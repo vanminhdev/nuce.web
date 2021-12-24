@@ -94,6 +94,9 @@ namespace nuce.web.survey.student.Controllers
                     ViewData["NHHK"] = theSurveyContent.NHHK;
                     ViewData["LeturerName"] = theSurveyContent.LeturerName;
                     ViewData["SurveyRoundName"] = theSurveyContent.SurveyRoundName;
+
+                    ViewData["TenHocPhan"] = theSurveyContent.TenHocPhan;
+                    ViewData["MaHocPhan"] = theSurveyContent.MaHocPhan;
                     return View(questions);
                 }
             );

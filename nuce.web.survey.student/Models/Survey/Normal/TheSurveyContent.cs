@@ -7,6 +7,8 @@ namespace nuce.web.survey.student.Models.Survey.Normal
 {
     public class TheSurveyContent
     {
+        public string TenHocPhan { get; set; }
+        public string MaHocPhan { get; set; }
         public string SurveyRoundName { get; set; }
         public string ClassroomName { get; set; }
         public string NHHK { get; set; }
