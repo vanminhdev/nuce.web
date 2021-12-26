@@ -214,6 +214,10 @@ namespace nuce.web.api.Controllers.Survey.Normal
             }
         }
 
+        /// <summary>
+        /// Phát bài ks
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         [AppAuthorize(RoleNames.KhaoThi_Survey_Normal)]
         public async Task<IActionResult> GenerateTheSurveyStudent([Required(AllowEmptyStrings = false)] Guid? surveyRoundId)

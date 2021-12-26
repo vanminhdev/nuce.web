@@ -114,7 +114,7 @@ namespace nuce.web.api.Common
         TheoreticalSubjects = 1,
 
         /// <summary>
-        /// Đề cho môn lý thuyết + thực hành
+        /// thực hành
         /// </summary>
         TheoreticalPracticalSubjects = 2,
 
@@ -126,7 +126,11 @@ namespace nuce.web.api.Common
         /// <summary>
         /// Đề cho môn đồ án
         /// </summary>
-        AssignmentSubjects = 4
+        AssignmentSubjects = 4,
+
+        ThucTapCongNhan = 5,
+        ThucTapCanBoKyThuat = 7,
+        DoAnTotNghiep = 6
     }
 
     /// <summary>

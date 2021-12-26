@@ -160,7 +160,6 @@ namespace nuce.web.api.Services.Survey.Base
             var options = new JsonSerializerOptions
             {
                 IgnoreNullValues = true,
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
             };
             return JsonSerializer.Serialize(selectedAnswers, options);
         }

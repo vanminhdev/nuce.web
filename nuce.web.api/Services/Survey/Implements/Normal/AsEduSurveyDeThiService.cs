@@ -257,7 +257,6 @@ namespace nuce.web.api.Services.Survey.Implements
             var options = new JsonSerializerOptions
             {
                 IgnoreNullValues = true,
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
             };
             var jsonString = JsonSerializer.Serialize(QuestionJsonData, options);
             examQuestion.NoiDungDeThi = jsonString;

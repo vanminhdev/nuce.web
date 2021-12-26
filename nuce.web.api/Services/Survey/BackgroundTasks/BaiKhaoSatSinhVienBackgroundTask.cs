@@ -61,7 +61,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                     throw new RecordNotFoundException("Không tìm thấy đợt khảo sát");
                 }
 
-                if (surveyRound.Status == (int)SurveyRoundStatus.End || DateTime.Now >= surveyRound.EndDate || surveyRound.Status == (int)SurveyRoundStatus.Closed)
+                if (surveyRound.Status == (int)SurveyRoundStatus.End || DateTime.Now >= surveyRound.EndDate || surveyRound.Status == (int)SurveyRoundStatus.End)
                 {
                     throw new InvalidInputDataException("Đợt khảo sát không còn hoạt động");
                 }
@@ -134,23 +134,33 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                             {
                                 //loại môn của môn đó
                                 subjectExtend = eduContext.AsAcademySubjectExtend.FirstOrDefault(o => o.Code == subject.Code);
-                                baiKhaoSatId = defaultTheSurveyTypeId; //mặc định
+                                baiKhaoSatId = defaultTheSurveyTypeId; //mặc định là bài lý thuyết
                                 chuaDungLoaiMon = false;
                                 if (subjectExtend != null && subjectExtend.Type != null)
                                 {
-                                    if (subjectExtend.Type == (int)TheSurveyType.TheoreticalSubjects)
+                                    if (subjectExtend.Type == (int)TheSurveyType.TheoreticalSubjects) //lý thuyết
                                     {
                                         baiKhaoSatId = theoreticalSubjects.Id;
                                     }
-                                    else if (subjectExtend.Type == (int)TheSurveyType.TheoreticalPracticalSubjects)
+                                    else if (subjectExtend.Type == (int)TheSurveyType.TheoreticalPracticalSubjects) //thực hành
                                     {
                                         baiKhaoSatId = theoreticalPracticalSubjects.Id;
                                     }
-                                    else if (subjectExtend.Type == (int)TheSurveyType.PracticalSubjects)
+                                    else if (subjectExtend.Type == (int)TheSurveyType.PracticalSubjects) //thực hành thí nghiệm thực tập
                                     {
                                         baiKhaoSatId = practicalSubjects.Id;
                                     }
-                                    else if (subjectExtend.Type == (int)TheSurveyType.AssignmentSubjects)
+                                    else if (subjectExtend.Type == (int)TheSurveyType.AssignmentSubjects) //đồ án
+                                    {
+                                        baiKhaoSatId = assignmentSubjects.Id;
+                                    }
+                                    //loại 5.1 = 7, và loại 5 gán bài loại 3
+                                    else if (subjectExtend.Type == (int)TheSurveyType.ThucTapCongNhan || subjectExtend.Type == (int)TheSurveyType.ThucTapCanBoKyThuat)
+                                    {
+                                        baiKhaoSatId = practicalSubjects.Id;
+                                    }
+                                    //loại 6 gán bài loại 4
+                                    else if (subjectExtend.Type == (int)TheSurveyType.DoAnTotNghiep)
                                     {
                                         baiKhaoSatId = assignmentSubjects.Id;
                                     }

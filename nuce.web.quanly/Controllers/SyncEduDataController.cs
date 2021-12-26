@@ -39,15 +39,15 @@ namespace nuce.web.quanly.Controllers
         {
             switch(action)
             {
-                case "SyncFaculty":
-                case "SyncDepartment":
-                case "SyncAcademics":
-                case "SyncSubject":
-                case "SyncClass":
-                case "SyncLecturer":
-                case "SyncStudent":
-                case "SyncLastClassRoom":
-                case "SyncLastLecturerClassRoom":
+                //case "SyncFaculty":
+                //case "SyncDepartment":
+                //case "SyncAcademics":
+                //case "SyncSubject":
+                //case "SyncClass":
+                //case "SyncLecturer":
+                //case "SyncStudent":
+                //case "SyncLastClassRoom":
+                //case "SyncLastLecturerClassRoom":
                 case "SyncCurrentClassRoom":
                 case "SyncCurrentLecturerClassRoom":
                 case "SyncCurrentStudentClassRoom":
