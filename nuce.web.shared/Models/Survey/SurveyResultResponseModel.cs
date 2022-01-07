@@ -43,15 +43,16 @@ namespace nuce.web.shared.Models.Survey
         public int SoGiangVienDaKhaoSat { get; set; }
         public int SoGiangVienCanLayYKien { get; set; }
         public bool IsTotal { get; set; }
-        public List<ChiTietLopMonHoc> ChiTietTungLopMonHoc { get; set; }
+        public List<ChiTietLopMonHoc> ChiTietTungLopMonHoc { get; set; } = new List<ChiTietLopMonHoc>();
     }
 
     public class ChiTietLopMonHoc
     {
+        public string TenGiangVien { get; set; }
         public string TenLop { get; set; }
         public string TenMon { get; set; }
         public int SoBaiKhaoSat { get; set; }
-        public List<ChiTietCauHoi> CauHoi { get; set; }
+        public List<ChiTietCauHoi> CauHoi { get; set; } = new List<ChiTietCauHoi>();
     }
 
     public class ChiTietCauHoi

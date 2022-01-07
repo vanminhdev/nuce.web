@@ -1,5 +1,5 @@
 ﻿@using nuce.web.survey.student.Models.SurveyResult
-@model List<KetQuaGiangVienCuaMonHoc>
+@model List<KetQuaLopMonHocCuaMonHoc>
 
 @{
     ViewData["Title"] = "Kết quả khảo sát hoạt động giảng dạy";
@@ -23,9 +23,7 @@
                class="table th-border-none">
             <thead>
                 <tr>
-                    <td>Mã giảng viên</td>
-                    <td>Tên giảng viên</td>
-                    <td>Mã lớp</td>
+                    <td>Lớp học phần</td>
                     <td>Số phiếu phát ra</td>
                     <td>Số phiếu thu về</td>
                 </tr>
@@ -35,12 +33,10 @@
                 {
                     <tr>
                         <td>
-                            @item.LecturerCode
+                            <a href="/surveyresult/subjectclassroom?classRoomCode=@item.MaLop&subjectCode=@ViewBag.SubjectCode&surveyRoundId=@ViewBag.SurveyRoundId">
+                                @(item.MaLop?.Replace(ViewBag.SubjectCode, ""))
+                            </a>
                         </td>
-                        <td>
-                            <a href="/surveyresult/subjectlecturer?lecturerCode=@item.LecturerCode&subjectCode=@ViewBag.SubjectCode&surveyRoundId=@ViewBag.SurveyRoundId">@item.LecturerName</a>
-                        </td>
-                        <td>@item.MaLop</td>
                         <td>
                             @item.SoSVHoc
                         </td>

@@ -7,6 +7,7 @@ using nuce.web.survey.student.Common;
 using nuce.web.survey.student.Entities;
 using nuce.web.survey.student.Models;
 using nuce.web.survey.student.Models.Base;
+using nuce.web.survey.student.Models.JsonData;
 using nuce.web.survey.student.Models.SurveyResult;
 using System;
 using System.Collections.Generic;
@@ -63,7 +64,7 @@ namespace nuce.web.survey.student.Controllers
 
         public ActionResult DsDotKhaoSat()
         {
-            var dotks = _surveyContext.AS_Edu_Survey_DotKhaoSat.Where(d => d.Status == (int)SurveyRoundStatus.End).ToList();
+            var dotks = _surveyContext.AS_Edu_Survey_DotKhaoSat.Where(d => d.Status == (int)SurveyRoundStatus.End || DateTime.Now >= d.EndDate).ToList();
             return View(dotks);
         }
 
@@ -122,12 +123,12 @@ namespace nuce.web.survey.student.Controllers
 
             var baiLamKhaoSatQuery = _surveyContext.AS_Edu_Survey_BaiKhaoSat_SinhVien.AsNoTracking().Where(o => o.BaiKhaoSatID == baiKhaoSat.ID);
 
-            var result = new List<KetQuaGiangVienCuaMonHoc>();
+            var result = new List<KetQuaLopMonHocCuaMonHoc>();
 
             var ketQuaKsQuery = _surveyContext.AS_Edu_Survey_ReportTotal.AsNoTracking().Where(d => d.SurveyRoundId == surveyRoundId);
 
-            var LecturerCodes = baiLamKhaoSatQuery.Where(o => !string.IsNullOrEmpty(o.LecturerCode) && o.SubjectCode == code)
-                .Select(o => new { o.LecturerCode, o.ClassRoomCode }).Distinct().ToList();
+            var classRoomCodes = baiLamKhaoSatQuery.Where(o => o.SubjectCode == code)
+                .Select(o => o.ClassRoomCode).Distinct().ToList();
 
             var subject = _surveyContext.AS_Academy_Subject.FirstOrDefault(o => o.Code == code);
 
@@ -136,19 +137,314 @@ namespace nuce.web.survey.student.Controllers
 
             ViewBag.SurveyRoundId = surveyRoundId;
 
-            foreach (var gvLop in LecturerCodes)
+            foreach (var classRoomCode in classRoomCodes)
             {
-                var gv = _surveyContext.AS_Academy_Lecturer.FirstOrDefault(o => o.Code == gvLop.LecturerCode);
-
-                result.Add(new KetQuaGiangVienCuaMonHoc
+                result.Add(new KetQuaLopMonHocCuaMonHoc
                 {
-                    LecturerCode = gvLop.LecturerCode,
-                    LecturerName = gv?.FullName ?? "",
-                    MaLop = gvLop.ClassRoomCode,
-                    SoSVHoc = baiLamKhaoSatQuery.Where(o => o.LecturerCode == gvLop.LecturerCode && o.ClassRoomCode == gvLop.ClassRoomCode && o.SubjectCode == code).Count(),
-                    SoSVLamKhaoSat = baiLamKhaoSatQuery.Where(o => o.LecturerCode == gvLop.LecturerCode && o.ClassRoomCode == gvLop.ClassRoomCode && o.SubjectCode == code && o.Status == (int)shared.Common.SurveyStudentStatus.Done).Count(),
+                    MaLop = classRoomCode,
+                    SoSVHoc = baiLamKhaoSatQuery.Where(o => o.ClassRoomCode == classRoomCode && o.SubjectCode == code).Count(),
+                    SoSVLamKhaoSat = baiLamKhaoSatQuery.Where(o => o.ClassRoomCode == classRoomCode && o.SubjectCode == code && o.Status == (int)shared.Common.SurveyStudentStatus.Done).Count(),
                 });
             }
+            return View(result);
+        }
+
+        private ChiTietLopMonHoc CalculateDetailResult(AS_Academy_Lecturer lecturer, List<QuestionJson> deThiJson,
+            Guid baiKhaoSatId, string tenLop, string tenMon, string maLop)
+        {
+            #region tổng hợp dữ liệu thống kê thô
+
+            string saCode = QuestionType.SA;
+
+            var reportTotalCuThe = _surveyContext.AS_Edu_Survey_ReportTotal.AsNoTracking().Where(o => o.TheSurveyId == baiKhaoSatId);
+            var index = 0;
+
+            var test = reportTotalCuThe.Count();
+
+            List<ChiTietCauHoi> chiTietCauHoiList = new List<ChiTietCauHoi>();
+            foreach (var cauhoi in deThiJson)
+            {
+                var chiTietCauHoi = new ChiTietCauHoi();
+                if (cauhoi.Type == QuestionType.SC)
+                {
+                    chiTietCauHoi.Content = $"Câu {++index}: {cauhoi.Content}";
+                    Dictionary<string, string> diemList = new Dictionary<string, string>();
+
+                    var dTB = 0;
+                    var sumTotal = 0;
+                    var diem = 0;
+                    foreach (var dapan in cauhoi.Answers)
+                    {
+                        diem++;
+                        string diemKey = dapan.Content;
+                        diemList.Add(diemKey, "0");
+
+                        var ketqua = reportTotalCuThe.FirstOrDefault(o => o.LecturerCode == lecturer.Code &&
+                                                                                o.ClassRoomCode == maLop &&
+                                                                                o.QuestionCode == cauhoi.Code &&
+                                                                                o.AnswerCode == dapan.Code);
+                        if (ketqua != null)
+                        {
+                            var total = ketqua.Total != null ? ketqua.Total.Value : 0;
+                            sumTotal += total;
+
+                            dTB += diem * total;
+                            diemList[diemKey] = total.ToString();
+                        }
+                        else
+                        {
+                            diemList[diemKey] = "0";
+                        }
+                    }
+                    string dtbKey = "đTB";
+                    diemList.Add(dtbKey, "0");
+
+                    if (sumTotal > 0)
+                    {
+                        string dtbValue = $"{(double)dTB / sumTotal:0.00}";
+                        diemList[dtbKey] = dtbValue;
+                    }
+                    chiTietCauHoi.DanhSachDiem = diemList;
+                    chiTietCauHoiList.Add(chiTietCauHoi);
+                }
+                else if (cauhoi.Type == QuestionType.MC)
+                {
+                    chiTietCauHoi.Content = $"Câu {++index}: {cauhoi.Content}";
+                    Dictionary<string, string> diemList = new Dictionary<string, string>();
+
+                    foreach (var dapan in cauhoi.Answers)
+                    {
+                        //wsLyThuyet.Cells[rowDapAn, col].Value = dapan.Content;
+                        string dapAnKey = dapan.Content;
+                        string dapAnValue = "";
+                        var ketqua = reportTotalCuThe.FirstOrDefault(o => o.LecturerCode == lecturer.Code &&
+                                                                                o.ClassRoomCode == maLop &&
+                                                                                o.QuestionCode == cauhoi.Code &&
+                                                                                o.AnswerCode == dapan.Code);
+                        if (ketqua != null)
+                        {
+                            var total = ketqua.Total != null ? ketqua.Total.Value : 0;
+                            dapAnValue = total.ToString();
+                        }
+                        else
+                        {
+                            dapAnValue = "0";
+                        }
+
+                        //câu hỏi con của đáp án
+                        if (dapan.AnswerChildQuestion != null)
+                        {
+                            var questionChildCode = $"{dapan.Code}_{dapan.AnswerChildQuestion.Code}";
+                            var ketquaCon = reportTotalCuThe.FirstOrDefault(o => o.LecturerCode == lecturer.Code &&
+                                                                                o.ClassRoomCode == maLop &&
+                                                                                o.QuestionCode == questionChildCode &&
+                                                                                o.AnswerCode == dapan.Code);
+                            dapAnValue = ketquaCon?.Content ?? "";
+                        }
+
+                        if (!string.IsNullOrEmpty(dapAnKey))
+                        {
+                            diemList.Add(dapAnKey, dapAnValue);
+                        }
+                    }
+                    chiTietCauHoi.DanhSachDiem = diemList;
+                    chiTietCauHoiList.Add(chiTietCauHoi);
+                }
+                else if (cauhoi.Type == QuestionType.SA)
+                {
+                    chiTietCauHoi.Content = $"Câu {++index}: {cauhoi.Content}";
+                    Dictionary<string, string> diemList = new Dictionary<string, string>();
+
+                    var ketqua = reportTotalCuThe.FirstOrDefault(o => o.LecturerCode == lecturer.Code &&
+                                                                        o.ClassRoomCode == maLop &&
+                                                                        o.QuestionCode == cauhoi.Code);
+                    if (ketqua != null && ketqua.Content != null)
+                    {
+                        var str = "";
+                        var listStr = JsonConvert.DeserializeObject<List<string>>(ketqua.Content);
+                        listStr.ForEach(s =>
+                        {
+                            if (!string.IsNullOrWhiteSpace(s))
+                                str += $"{s};";
+                        });
+                        diemList.Add(saCode, str);
+                    }
+                    chiTietCauHoi.DanhSachDiem = diemList;
+                    chiTietCauHoiList.Add(chiTietCauHoi);
+                }
+                else if (cauhoi.Type == QuestionType.GQ)
+                {
+                    index++;
+                    var indexChild = 0;
+                    chiTietCauHoiList.Add(new ChiTietCauHoi
+                    {
+                        Content = $"Câu {index}: {cauhoi.Content}"
+                    });
+                    foreach (var cauhoicon in cauhoi.ChildQuestion)
+                    {
+                        var chiTietCauHoiCon = new ChiTietCauHoi();
+                        Dictionary<string, string> diemList = new Dictionary<string, string>();
+                        if (cauhoicon.Type == QuestionType.SC)
+                        {
+                            chiTietCauHoiCon.Content = $"   Câu {index}.{++indexChild}: {cauhoicon.Content}";
+
+                            var dTB = 0;
+                            var sumTotal = 0;
+                            var diem = 0;
+                            //var colTotal = col + cauhoicon.Answers.Count();
+                            foreach (var dapan in cauhoicon.Answers)
+                            {
+                                diem++;
+                                string diemKey = diem.ToString();
+                                diemList.Add(diemKey, "0");
+
+                                var ketqua = reportTotalCuThe.FirstOrDefault(o => o.LecturerCode == lecturer.Code &&
+                                                                                        o.ClassRoomCode == maLop &&
+                                                                                        o.QuestionCode == cauhoicon.Code &&
+                                                                                        o.AnswerCode == dapan.Code);
+                                if (ketqua != null)
+                                {
+                                    var total = ketqua.Total != null ? ketqua.Total.Value : 0;
+                                    diemList[diemKey] = total.ToString();
+
+                                    sumTotal += total;
+                                    dTB += diem * total;
+                                }
+                                else
+                                {
+                                    diemList[diemKey] = "0";
+                                }
+                            }
+                            string dtbKey = "đTB";
+                            diemList.Add(dtbKey, "0");
+
+                            if (sumTotal > 0)
+                            {
+                                string dtbValue = $"{(double)dTB / sumTotal:0.00}";
+                                diemList[dtbKey] = dtbValue;
+                            }
+                            chiTietCauHoiCon.DanhSachDiem = diemList;
+                            chiTietCauHoiList.Add(chiTietCauHoiCon);
+                        }
+                        else if (cauhoicon.Type == QuestionType.MC)
+                        {
+                            chiTietCauHoiCon.Content = $"   Câu {++index}: {cauhoicon.Content}";
+
+                            foreach (var dapan in cauhoicon.Answers)
+                            {
+                                string dapanKey = dapan.Content;
+                                string dapAnValue = "";
+                                var ketqua = reportTotalCuThe.FirstOrDefault(o => o.LecturerCode == lecturer.Code &&
+                                                                                o.ClassRoomCode == maLop &&
+                                                                                o.QuestionCode == cauhoicon.Code &&
+                                                                                o.AnswerCode == dapan.Code);
+                                if (ketqua != null)
+                                {
+                                    var total = ketqua.Total != null ? ketqua.Total.Value : 0;
+                                    dapAnValue = total.ToString();
+                                }
+                                else
+                                {
+                                    dapAnValue = "0";
+                                }
+
+                                //câu hỏi con của đáp án
+                                if (dapan.AnswerChildQuestion != null)
+                                {
+                                    var ketquaCon = reportTotalCuThe.FirstOrDefault(o => o.LecturerCode == lecturer.Code &&
+                                                                                        o.ClassRoomCode == maLop &&
+                                                                                        o.QuestionCode == $"{dapan.Code}_{dapan.AnswerChildQuestion.Code}" &&
+                                                                                        o.AnswerCode == dapan.Code);
+                                    dapAnValue = ketquaCon?.Content ?? "";
+                                }
+                            }
+                            chiTietCauHoiCon.DanhSachDiem = diemList;
+                            chiTietCauHoiList.Add(chiTietCauHoiCon);
+                        }
+                        if (cauhoicon.Type == QuestionType.SA)
+                        {
+                            chiTietCauHoiCon.Content = $"   Câu {index}.{++indexChild}: {cauhoicon.Content}";
+
+                            var ketqua = reportTotalCuThe.FirstOrDefault(o => o.LecturerCode == lecturer.Code &&
+                                                                              o.ClassRoomCode == maLop &&
+                                                                              o.QuestionCode == cauhoicon.Code);
+                            if (ketqua != null && ketqua.Content != null)
+                            {
+                                var str = "";
+                                var listStr = JsonConvert.DeserializeObject<List<string>>(ketqua.Content);
+                                listStr.ForEach(s =>
+                                {
+                                    if (!string.IsNullOrWhiteSpace(s))
+                                        str += $"{s}; ";
+                                });
+                                diemList.Add(saCode, str);
+                            }
+
+                            chiTietCauHoiCon.DanhSachDiem = diemList;
+                            chiTietCauHoiList.Add(chiTietCauHoiCon);
+                        }
+                    }
+                    //chiTietCauHoi.Content = "group choice";
+                    //chiTietCauHoiList.Add(chiTietCauHoi);
+                }
+                else if (cauhoi.Type == QuestionType.T)
+                {
+                    chiTietCauHoiList.Add(new ChiTietCauHoi
+                    {
+                        OnlyTitle = cauhoi.Content
+                    });
+                }
+            }
+            ////baikshoanthanh.Where(o => o.ClassRoomCode == maLop && o.LecturerCode == lecturer.Code && o.Nhhk == nhhk).ToList();
+            //int soBaiKhaoSat = _surveyContext.AsEduSurveyBaiKhaoSatSinhVien.Count(b => b.BaiKhaoSatId == baiKhaoSatId
+            //    && b.LecturerCode == lecturer.Code && b.ClassRoomCode == maLop
+            //    && b.Status == (int)shared.Common.SurveyStudentStatus.Done);
+
+
+            return new ChiTietLopMonHoc
+            {
+                TenGiangVien = lecturer.FullName,
+                TenLop = tenLop,
+                TenMon = tenMon,
+                //SoBaiKhaoSat = soBaiKhaoSat,
+                CauHoi = chiTietCauHoiList
+            };
+            #endregion
+        }
+
+        [AuthorizeActionFilter(RoleNames.KhaoThi_Survey_Department, RoleNames.KhaoThi_Survey_KhoaBan, RoleNames.KhaoThi_Survey_GiangVien)]
+        [HttpGet]
+        public ActionResult SubjectClassRoom(string classRoomCode, string subjectCode, Guid surveyRoundId)
+        {
+            var baiKhaoSat = _surveyContext.AS_Edu_Survey_BaiKhaoSat.AsNoTracking()
+                .FirstOrDefault(o => o.DotKhaoSatID == surveyRoundId && o.Status != (int)TheSurveyStatus.Deleted);
+
+            var baiLamKhaoSatQuery = _surveyContext.AS_Edu_Survey_BaiKhaoSat_SinhVien.AsNoTracking().Where(o => o.BaiKhaoSatID == baiKhaoSat.ID);
+
+            var ketQuaKsQuery = _surveyContext.AS_Edu_Survey_ReportTotal.AsNoTracking()
+                .Where(d => d.ClassRoomCode == classRoomCode && d.SubjectCode == subjectCode && d.SurveyRoundId == surveyRoundId);
+
+            var subject = _surveyContext.AS_Academy_Subject.FirstOrDefault(o => o.Code == subjectCode);
+
+            ViewBag.SubjectCode = subjectCode;
+            ViewBag.SubjectName = subject?.Name ?? "";
+            ViewBag.SurveyRoundId = surveyRoundId;
+
+            var result = new ChiTietLopMonHoc();
+            var first = ketQuaKsQuery.FirstOrDefault();
+            if (first == null)
+            {
+                return View(result);
+            }
+
+            var lecturer = _surveyContext.AS_Academy_Lecturer.FirstOrDefault(l => l.Code == first.LecturerCode);
+            if (lecturer == null)
+            {
+                return View(result);
+            }
+
+            var deKhaoSat = JsonConvert.DeserializeObject<List<QuestionJson>>(baiKhaoSat.NoiDungDeThi);
+            result = CalculateDetailResult(lecturer, deKhaoSat, baiKhaoSat.ID, first.ClassRoom, subject.Name, first.ClassRoomCode);
             return View(result);
         }
 
