@@ -4488,6 +4488,11 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
             var ngaySinh = convertStudentDateOfBirth(studentInfo.Student.DateOfBirth);
 
+            var now = DateTime.Now;
+            var ngayKy = now.Day;
+            var thangKy = now.Month;
+            var namKy = now.Year;
+
             byte[] templateBytes = await File.ReadAllBytesAsync(filePath);
             using (MemoryStream templateStream = new MemoryStream())
             {
@@ -4518,6 +4523,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         replaceTextTemplate(text, "<hktt>", hktt);
                         replaceTextTemplate(text, "<dan_toc>", studentInfo.Student.DanToc);
                         replaceTextTemplate(text, "<email>", studentInfo.Student.EmailNhaTruong);
+
+                        replaceTextTemplate(text, "<ngay_ky>", ngayKy.ToString());
+                        replaceTextTemplate(text, "<thang_ky>", thangKy.ToString());
+                        replaceTextTemplate(text, "<nam_ky>", namKy.ToString());
 
                         string doiTuong = "";
 

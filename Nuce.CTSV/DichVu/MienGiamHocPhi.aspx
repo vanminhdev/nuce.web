@@ -80,9 +80,10 @@
     <div class="container-fluid">
         <div class="col-12">
             <div class="row justify-content-end">
-                <div class="col-12 col-md-3">
+                <div class="col-12 col-md-3 d-flex justify-content-end">
+                    <asp:Button ID="btnDownloadForm" runat="server" OnClick="btnDownloadForm_Click" CssClass="btn btn-danger text-light text-uppercase font-14-sm pt-2 pb-2 mr-2" Text="Tải quy định" />
                     <button
-                        class="confirm-btn text-light w-100 text-uppercase font-14-sm pt-2 pb-2 mb-4"
+                        class="btn btn-primary text-light text-uppercase font-14-sm pt-2 pb-2"
                         type="button"
                         onclick="MienGiamHocPhi.ThemMoi();"
                         >

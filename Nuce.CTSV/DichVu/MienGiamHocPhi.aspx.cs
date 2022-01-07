@@ -129,7 +129,28 @@ namespace Nuce.CTSV
                 }
             }
         }
+
+        protected void btnDownloadForm_Click(object sender, EventArgs e)
+        {
+            System.Web.HttpResponse response = System.Web.HttpContext.Current.Response;
+            response.ClearContent();
+            response.Clear();
+            response.ContentType = "text/plain";
+            response.AddHeader("Content-Disposition","attachment; filename=myfile.pdf;");
+            response.TransmitFile(Server.MapPath("~/Data/files/ho_tro_chi_phi_hoc_tap.pdf"));
+            response.Flush();
+            response.End();
+            //string api = $"/api/DichVu/export-word/muon-hoc-ba/{m_SinhVien.MaSV}";
+            //var res = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, api, "");
+            //byte[] content = await res.Content.ReadAsByteArrayAsync();
+            //Response.ContentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            //Response.AddHeader("Content-Disposition", "attachment; filename=myfile.docx");
+            //Response.BinaryWrite(content);
+            //Response.Flush();
+            //Response.End();
+        }
     }
 
-    
+
+
 }
