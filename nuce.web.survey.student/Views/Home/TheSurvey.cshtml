@@ -554,7 +554,40 @@
                     $('#modal-alert').modal('show');
                 }
             });
-</script>
+
+            $('input[showquestion]').each(function () {
+                let seft = $(this);
+                let proSeft = this;
+                let showQuestions = JSON.parse(seft.attr('showquestion'));
+
+                if (proSeft.checked == false) {
+                    showQuestions.forEach(item => {
+                        $('#' + 'div-q-' + item).hide();
+                    });
+                }
+                seft.click(() => {
+                    showQuestions.forEach(item => {
+                        $('#' + 'div-q-' + item).show();
+                    });
+                });
+            });
+
+            $('input[hidequestion]').each(function () {
+                let seft = $(this);
+                let proSeft = this;
+                let hideQuestions = JSON.parse(seft.attr('hidequestion'));
+                if (proSeft.checked == false) {
+                    hideQuestions.forEach(item => {
+                        $('#' + 'div-q-' + item).show();
+                    });
+                }
+                seft.click(() => {
+                    hideQuestions.forEach(item => {
+                        $('#' + 'div-q-' + item).hide();
+                    });
+                });
+            });
+        </script>
     }
 }
 

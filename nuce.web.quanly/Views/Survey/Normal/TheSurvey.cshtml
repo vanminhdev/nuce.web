@@ -77,10 +77,10 @@
                             <label class="col-3 col-form-label">Loại <span class="text-danger">*</span></label>
                             <div class="col-9">
                                 <select class="form-control selectpicker custom-boostrap-select" name="type" id="type" data-rule-onlyAcceptListValue="1,2,3,4,5">
-                                    <option value="1">Môn lý thuyết</option>
-                                    <option value="2">Môn thực hành, thí nghiệm và thực tập</option>
-                                    <option value="3">Môn môn lý thuyết + thực hành</option>
-                                    <option value="4">Môn đồ án</option>
+                                    <option value="@((int)TheSurveyType.TheoreticalSubjects)">Môn lý thuyết</option>
+                                    <option value="@((int)TheSurveyType.TheoreticalPracticalSubjects)">Môn môn lý thuyết + thực hành</option>
+                                    <option value="@((int)TheSurveyType.PracticalSubjects)">Môn thực hành, thí nghiệm và thực tập</option>
+                                    <option value="@((int)TheSurveyType.AssignmentSubjects)">Môn đồ án</option>
                                 </select>
                             </div>
                         </div>

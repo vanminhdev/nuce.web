@@ -22,4 +22,11 @@ namespace nuce.web.survey.student.Models.SurveyResult
         public int SoSVHoc { get; set; }
         public int SoSVLamKhaoSat { get; set; }
     }
+
+    public class KetQuaLopMonHocCuaMonHoc
+    {
+        public string MaLop { get; set; }
+        public int SoSVHoc { get; set; }
+        public int SoSVLamKhaoSat { get; set; }
+    }
 }

@@ -1,0 +1,96 @@
+﻿@using nuce.web.shared.Models.Survey
+@model ChiTietLopMonHoc
+
+@{
+    ViewData["Title"] = "Kết quả khảo sát hoạt động giảng dạy";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Breadcrumb {
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/default">Trang chủ</a></li>
+    <li class="breadcrumb-item"><a class="m-text-blue" href="/survey/faculty">Khoa</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Kết quả khảo sát HĐGD</li>
+}
+
+@section Style{
+    <style>
+        .table-list table:not(:first-child) tr:first-child td {
+            border-top: none;
+        }
+
+        body {
+            counter-reset: title-question-counter;
+        }
+
+        .question-title {
+            counter-increment: title-question-counter;
+        }
+
+        .question-title:before {
+            content: counter(title-question-counter, upper-roman)". ";
+        }
+    </style>
+}
+
+<h5 class="text-center mb-3 m-text-blue">
+    <span>
+        @ViewBag.SubjectCode - @ViewBag.SubjectName
+    </span>
+</h5>
+
+<div class="row">
+    <div class="col-12">
+        <h5 class="my-3 m-text-blue">@Model.TenLop - @Model.TenGiangVien</h5>
+            <div class="table-list">
+                @foreach (var cauhoi in Model.CauHoi)
+                {
+                    <table class="table th-border-none mb-0">
+                        <tbody>
+                            @if (cauhoi.OnlyTitle != null)
+                            {
+                                <tr>
+                                    <td class="font-weight-bold pl-1 question-title">
+                                        @Html.Raw(cauhoi.OnlyTitle)
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="@cauhoi.DanhSachDiem.Count" class="pl-3" style="font-weight:500;">
+                                        @Html.Raw(HttpUtility.HtmlDecode(cauhoi.Content))
+                                    </td>
+                                </tr>
+                                <tr>
+                                    @foreach (var dapan in cauhoi.DanhSachDiem.Keys)
+                                    {
+                                        if (dapan != "SA")
+                                        {
+                                            <td class="text-center">@Html.Raw(dapan)</td>
+                                        }
+                                    }
+                                </tr>
+                                <tr>
+                                    @foreach (var ketQua in cauhoi.DanhSachDiem.Values)
+                                    {
+                                        if (cauhoi.DanhSachDiem.Keys.Contains("SA"))
+                                        {
+                                            <td class="pl-5">@ketQua</td>
+                                        }
+                                        else
+                                        {
+                                            <td class="text-center">@ketQua</td>
+                                        }
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+    </div>
+</div>
+
+@section Scripts {
+
+}

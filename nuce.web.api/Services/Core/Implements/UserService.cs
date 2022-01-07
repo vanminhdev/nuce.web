@@ -198,16 +198,16 @@ namespace nuce.web.api.Services.Core.Implements
             {
                 bool isSuccess = false;
                 bool checkCallServiceSoap = false;
-                ServiceSoapClient srvc = new ServiceSoapClient(EndpointConfiguration.ServiceSoap12); //lấy trên đào tạo
-                try
-                {
-                    isSuccess = await srvc.authenAsync(model.Username, model.Password) == 1;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "khong goi duoc service soap");
-                    checkCallServiceSoap = true;
-                }
+                //ServiceSoapClient srvc = new ServiceSoapClient(EndpointConfiguration.ServiceSoap12); //lấy trên đào tạo
+                //try
+                //{
+                //    isSuccess = await srvc.authenAsync(model.Username, model.Password) == 1;
+                //}
+                //catch (Exception ex)
+                //{
+                //    _logger.LogError(ex, "khong goi duoc service soap");
+                //    checkCallServiceSoap = true;
+                //}
 
                 if (!isSuccess) //lấy trong local
                 {
