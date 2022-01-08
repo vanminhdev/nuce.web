@@ -81,7 +81,6 @@
         <div class="col-12">
             <div class="row justify-content-end">
                 <div class="col-12 col-md-3 d-flex justify-content-end">
-                    <asp:Button ID="btnDownloadForm" runat="server" OnClick="btnDownloadForm_Click" CssClass="btn btn-danger text-light text-uppercase font-14-sm pt-2 pb-2 mr-2" Text="Tải quy định" />
                     <button
                         class="btn btn-primary text-light text-uppercase font-14-sm pt-2 pb-2"
                         type="button"
@@ -92,8 +91,11 @@
                 </div>
             </div>
         </div>
-        <div class="col-12 text-danger font-18 font-italic mb-4">
+        <div class="col-12 text-danger font-18 font-italic mb-2">
             Lưu ý: Sinh viên đã nộp hồ sơ trong khóa học (trừ đối tượng thuộc hộ nghèo, hộ cận nghèo) chỉ cần đăng ký trực tuyến đơn đề nghị miễn giảm học phí, hỗ trợ chi phí học tập, hỗ trợ học tập.
+        </div>
+        <div class="col-12 text-danger font-18 mb-4">
+            <asp:LinkButton ID="btnLinkDownloadForm" runat="server" OnClick="btnDownloadForm_Click" CssClass="btn btn-danger text-light text-uppercase font-14-sm pt-2 pb-2" Text="<i class='fa fa-download'></i> Tải quy định về miễn, giảm, hỗ trợ chi phí học tập, hỗ trợ học tập"/>
         </div>
         <div class="col-12">
             <div
