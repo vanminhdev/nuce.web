@@ -129,7 +129,7 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
             model.SearchText = model.SearchText?.Trim()?.ToLower();
 
             var beforeFilteredData = (await _context.AsAcademyStudentSvDeNghiHoTroChiPhiHocTap.AsNoTracking().ToListAsync())
-                                        .Where(item => item.DotDangKy == dotActiveId && item.Status > 1 && (item.Deleted == null || !item.Deleted.Value));
+                                        .Where(item => item.Status > 1 && (item.Deleted == null || !item.Deleted.Value));
 
             var finalData = beforeFilteredData
                         .Where(item => (
