@@ -251,8 +251,8 @@ namespace nuce.web.api
             services.AddScoped<SurveyStatisticBackgroundTask>();
             #endregion
             #region sync edu database service
-            services.AddScoped<ISyncEduDatabaseService, SyncEduDatabaseService>();
-            services.AddScoped<IStudentEduDataService, StudentEduDataService>();
+            services.AddScoped<SyncEduDatabaseService>();
+            services.AddScoped<StudentEduDataService>();
 
             services.AddScoped<SyncEduDataBackgroundTask>();
             #endregion

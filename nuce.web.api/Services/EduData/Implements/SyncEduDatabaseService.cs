@@ -5,10 +5,8 @@ using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
-using nuce.web.api.Models.EduData;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Services.EduData.Interfaces;
-using nuce.web.api.Services.Status.Implements;
 using nuce.web.api.Services.Status.Implements;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.EduData;
@@ -20,19 +18,18 @@ using System.Transactions;
 using System.Xml;
 using System.Xml.Linq;
 using static EduWebService.ServiceSoapClient;
-using AsAcademyStudent = nuce.web.api.Models.EduData.AsAcademyStudent;
 
 namespace nuce.web.api.Services.EduData.Implements
 {
-    public class SyncEduDatabaseService : ISyncEduDatabaseService
+    public class SyncEduDatabaseService
     {
-        private readonly EduDataContext _eduDataContext;
+        private readonly SurveyContext _surveyContext;
         private readonly ServiceSoapClient srvc = new ServiceSoapClient(EndpointConfiguration.ServiceSoap12);
         private readonly StatusService _statusService;
 
-        public SyncEduDatabaseService(EduDataContext eduDataContext, StatusService statusService)
+        public SyncEduDatabaseService(SurveyContext eduDataContext, StatusService statusService)
         {
-            _eduDataContext = eduDataContext;
+            _surveyContext = eduDataContext;
             _statusService = statusService;
         }
 
@@ -40,7 +37,7 @@ namespace nuce.web.api.Services.EduData.Implements
         private async Task<int> GetCurrentSemesterId()
         {
             var semesterId = -1;
-            var semester = await _eduDataContext.AsAcademySemester.FirstOrDefaultAsync(s => s.Status == (int)SemesterStatus.IsCurrent);
+            var semester = await _surveyContext.AsAcademySemester.FirstOrDefaultAsync(s => s.Status == (int)SemesterStatus.IsCurrent);
             if (semester != null)
             {
                 semesterId = semester.Id;
@@ -51,7 +48,7 @@ namespace nuce.web.api.Services.EduData.Implements
         private async Task<int> GetLastSemesterId()
         {
             var semesterId = -1;
-            var semester = await _eduDataContext.AsAcademySemester.FirstOrDefaultAsync(s => s.Status == (int)SemesterStatus.IsLast);
+            var semester = await _surveyContext.AsAcademySemester.FirstOrDefaultAsync(s => s.Status == (int)SemesterStatus.IsLast);
             if (semester != null)
             {
                 semesterId = semester.Id;
@@ -63,7 +60,7 @@ namespace nuce.web.api.Services.EduData.Implements
         #region đồng bộ cơ bản
         public async Task SyncAcademics()
         {
-            var transaction = _eduDataContext.Database.BeginTransaction();
+            var transaction = _surveyContext.Database.BeginTransaction();
             try
             {
                 var result = await srvc.getNganhAsync();
@@ -78,10 +75,10 @@ namespace nuce.web.api.Services.EduData.Implements
                     temp = item.GetElementsByTagName("loainganh");
                     var loainganh = temp.Count > 0 ? temp[0].InnerText : null;
 
-                    var nganh = await _eduDataContext.AsAcademyAcademics.FirstOrDefaultAsync(a => a.Code == maNganh);
+                    var nganh = await _surveyContext.AsAcademyAcademics.FirstOrDefaultAsync(a => a.Code == maNganh);
                     if(nganh == null)
                     {
-                        _eduDataContext.AsAcademyAcademics.Add(new AsAcademyAcademics
+                        _surveyContext.AsAcademyAcademics.Add(new AsAcademyAcademics
                         {
                             SemesterId = await GetCurrentSemesterId(),
                             Code = maNganh,
@@ -95,7 +92,7 @@ namespace nuce.web.api.Services.EduData.Implements
                         nganh.Name = tenNg;
                     }
                 }
-                await _eduDataContext.SaveChangesAsync();
+                await _surveyContext.SaveChangesAsync();
                 transaction.Commit();
             }
             catch (DbUpdateException e)
@@ -112,7 +109,7 @@ namespace nuce.web.api.Services.EduData.Implements
         }
         public async Task SyncClass()
         {
-            var transaction = _eduDataContext.Database.BeginTransaction();
+            var transaction = _surveyContext.Database.BeginTransaction();
             try
             {
                 var result = await srvc.getLopAsync();
@@ -132,23 +129,23 @@ namespace nuce.web.api.Services.EduData.Implements
                     var NienKhoa = temp.Count > 0 ? temp[0].InnerText : null;
 
                     var khoaId = -1;
-                    var khoa = await _eduDataContext.AsAcademyFaculty.FirstOrDefaultAsync(f => f.Code == MaKH);
+                    var khoa = await _surveyContext.AsAcademyFaculty.FirstOrDefaultAsync(f => f.Code == MaKH);
                     if(khoa != null)
                     {
                         khoaId = khoa.Id;
                     }
 
                     var nganhId = -1;
-                    var nganh = await _eduDataContext.AsAcademyAcademics.FirstOrDefaultAsync(a => a.Code == MaNg);
+                    var nganh = await _surveyContext.AsAcademyAcademics.FirstOrDefaultAsync(a => a.Code == MaNg);
                     if (nganh != null)
                     {
                         nganhId = nganh.Id;
                     }
 
-                    var lop = await _eduDataContext.AsAcademyClass.FirstOrDefaultAsync(a => a.Code == MaLop);
+                    var lop = await _surveyContext.AsAcademyClass.FirstOrDefaultAsync(a => a.Code == MaLop);
                     if (lop == null)
                     {
-                        _eduDataContext.AsAcademyClass.Add(new AsAcademyClass
+                        _surveyContext.AsAcademyClass.Add(new AsAcademyClass
                         {
                             Code = MaLop,
                             Name = TenLop,
@@ -170,7 +167,7 @@ namespace nuce.web.api.Services.EduData.Implements
                         lop.SchoolYear = NienKhoa;
                     }
                 }
-                await _eduDataContext.SaveChangesAsync();
+                await _surveyContext.SaveChangesAsync();
                 transaction.Commit();
             }
             catch (DbUpdateException e)
@@ -188,7 +185,7 @@ namespace nuce.web.api.Services.EduData.Implements
 
         public async Task SyncDepartment()
         {
-            var transaction = _eduDataContext.Database.BeginTransaction();
+            var transaction = _surveyContext.Database.BeginTransaction();
             try
             {
                 var result = await srvc.getBoMonAsync();
@@ -200,16 +197,16 @@ namespace nuce.web.api.Services.EduData.Implements
                     var tenBM = item.ChildNodes[2].InnerText;
                     var truongBM = item.ChildNodes[3].InnerText;
 
-                    var khoa = await _eduDataContext.AsAcademyFaculty.FirstOrDefaultAsync(f => f.Code == maKH);
+                    var khoa = await _surveyContext.AsAcademyFaculty.FirstOrDefaultAsync(f => f.Code == maKH);
                     if(khoa == null)
                     {
                         throw new RecordNotFoundException("Không tìm thấy khoa có mã " + maKH);
                     }
 
-                    var boMon = await _eduDataContext.AsAcademyDepartment.FirstOrDefaultAsync(a => a.Code == maBM);
+                    var boMon = await _surveyContext.AsAcademyDepartment.FirstOrDefaultAsync(a => a.Code == maBM);
                     if (boMon == null)
                     {
-                        _eduDataContext.AsAcademyDepartment.Add(new AsAcademyDepartment
+                        _surveyContext.AsAcademyDepartment.Add(new AsAcademyDepartment
                         {
                             SemesterId = await GetCurrentSemesterId(),
                             Code = maBM,
@@ -229,7 +226,7 @@ namespace nuce.web.api.Services.EduData.Implements
                         boMon.ChefsDepartmentCode = truongBM;
                     }
                 }
-                await _eduDataContext.SaveChangesAsync();
+                await _surveyContext.SaveChangesAsync();
                 transaction.Commit();
             }
             catch (RecordNotFoundException e)
@@ -252,7 +249,7 @@ namespace nuce.web.api.Services.EduData.Implements
 
         public async Task SyncFaculty()
         {
-            var transaction = _eduDataContext.Database.BeginTransaction();
+            var transaction = _surveyContext.Database.BeginTransaction();
             try
             {
                 var result = await srvc.getKhoaAsync();
@@ -266,10 +263,10 @@ namespace nuce.web.api.Services.EduData.Implements
                     var maKH = item.ChildNodes[0].InnerText;
                     var tenKhoa = item.ChildNodes[1].InnerText;
 
-                    var khoa = await _eduDataContext.AsAcademyFaculty.FirstOrDefaultAsync(a => a.Code == maKH);
+                    var khoa = await _surveyContext.AsAcademyFaculty.FirstOrDefaultAsync(a => a.Code == maKH);
                     if (khoa == null)
                     {
-                        _eduDataContext.AsAcademyFaculty.Add(new AsAcademyFaculty
+                        _surveyContext.AsAcademyFaculty.Add(new AsAcademyFaculty
                         {
                             Code = maKH,
                             Name = tenKhoa,
@@ -285,7 +282,7 @@ namespace nuce.web.api.Services.EduData.Implements
                         khoa.COrder = order + 1;
                     }
                 }
-                await _eduDataContext.SaveChangesAsync();
+                await _surveyContext.SaveChangesAsync();
                 transaction.Commit();
             }
             catch (DbUpdateException e)
@@ -303,7 +300,7 @@ namespace nuce.web.api.Services.EduData.Implements
 
         public async Task SyncLecturer()
         {
-            var transaction = _eduDataContext.Database.BeginTransaction();
+            var transaction = _surveyContext.Database.BeginTransaction();
             try
             {
                 var result = await srvc.getAllCanBoAsync();
@@ -333,16 +330,16 @@ namespace nuce.web.api.Services.EduData.Implements
                     var IsNhanVien = temp.Count > 0 ? temp[0].InnerText : null;
 
                     var boMonId = -1;
-                    var boMon = await _eduDataContext.AsAcademyDepartment.FirstOrDefaultAsync(f => f.Code == MaBM);
+                    var boMon = await _surveyContext.AsAcademyDepartment.FirstOrDefaultAsync(f => f.Code == MaBM);
                     if (boMon != null)
                     {
                         boMonId = boMon.Id;
                     }
 
-                    var canBo = await _eduDataContext.AsAcademyLecturer.FirstOrDefaultAsync(a => a.Code == MaCB);
+                    var canBo = await _surveyContext.AsAcademyLecturer.FirstOrDefaultAsync(a => a.Code == MaCB);
                     if (canBo == null)
                     {
-                        _eduDataContext.AsAcademyLecturer.Add(new AsAcademyLecturer
+                        _surveyContext.AsAcademyLecturer.Add(new AsAcademyLecturer
                         {
                             Code = MaCB,
                             FullName = TenCB,
@@ -364,7 +361,7 @@ namespace nuce.web.api.Services.EduData.Implements
                         canBo.Email = EmailCB1 ?? EmailCB2 ?? null;
                     }
                 }
-                await _eduDataContext.SaveChangesAsync();
+                await _surveyContext.SaveChangesAsync();
                 transaction.Commit();
             }
             catch (DbUpdateException e)
@@ -382,7 +379,7 @@ namespace nuce.web.api.Services.EduData.Implements
 
         public async Task SyncStudent()
         {
-            var transaction = _eduDataContext.Database.BeginTransaction();
+            var transaction = _surveyContext.Database.BeginTransaction();
             try
             {
                 var result = await srvc.getSinhVienAsync();
@@ -410,16 +407,16 @@ namespace nuce.web.api.Services.EduData.Implements
                     var noisinh = temp.Count > 0 ? temp[0].InnerText : null;
 
                     long lopId = -1;
-                    var lop = await _eduDataContext.AsAcademyClass.FirstOrDefaultAsync(f => f.Code == Malop);
+                    var lop = await _surveyContext.AsAcademyClass.FirstOrDefaultAsync(f => f.Code == Malop);
                     if (lop != null)
                     {
                         lopId = lop.Id;
                     }
 
-                    var sinhVien = await _eduDataContext.AsAcademyStudent.FirstOrDefaultAsync(a => a.Code == MaSV);
+                    var sinhVien = await _surveyContext.AsAcademyStudent.FirstOrDefaultAsync(a => a.Code == MaSV);
                     if (sinhVien == null)
                     {
-                        _eduDataContext.AsAcademyStudent.Add(new AsAcademyStudent
+                        _surveyContext.AsAcademyStudent.Add(new AsAcademyStudent
                         {
                             Code = MaSV,
                             FullName = HoTenSV,
@@ -446,7 +443,7 @@ namespace nuce.web.api.Services.EduData.Implements
                         sinhVien.Status = 1;
                     }
                 }
-                await _eduDataContext.SaveChangesAsync();
+                await _surveyContext.SaveChangesAsync();
                 transaction.Commit();
             }
             catch (DbUpdateException e)
@@ -464,7 +461,7 @@ namespace nuce.web.api.Services.EduData.Implements
 
         public async Task SyncSubject()
         {
-            var transaction = _eduDataContext.Database.BeginTransaction();
+            var transaction = _surveyContext.Database.BeginTransaction();
             try
             {
                 var result = await srvc.getMonHocAsync();
@@ -486,16 +483,16 @@ namespace nuce.web.api.Services.EduData.Implements
                     int.TryParse(strLoaiMonHoc, out loaiMonHoc);
 
                     var boMonId = -1;
-                    var boMon = await _eduDataContext.AsAcademyDepartment.FirstOrDefaultAsync(d => d.Code == MaBM);
+                    var boMon = await _surveyContext.AsAcademyDepartment.FirstOrDefaultAsync(d => d.Code == MaBM);
                     if (boMon != null)
                     {
                         boMonId = boMon.Id;
                     }
 
-                    var monHoc = await _eduDataContext.AsAcademySubject.FirstOrDefaultAsync(f => f.Code == MaMH);
+                    var monHoc = await _surveyContext.AsAcademySubject.FirstOrDefaultAsync(f => f.Code == MaMH);
                     if (monHoc == null) // thêm vào nếu chưa có
                     {
-                        _eduDataContext.AsAcademySubject.Add(new AsAcademySubject
+                        _surveyContext.AsAcademySubject.Add(new AsAcademySubject
                         {
                             SemesterId = await GetCurrentSemesterId(),
                             Code = MaMH,
@@ -513,11 +510,11 @@ namespace nuce.web.api.Services.EduData.Implements
                         monHoc.DepartmentCode = MaBM;
                     }
                     #region Subject Extend
-                    var monHocExtend = await _eduDataContext.AsAcademySubjectExtend
+                    var monHocExtend = await _surveyContext.AsAcademySubjectExtend
                                             .FirstOrDefaultAsync(f => f.Code == MaMH);
                     if (monHocExtend == null) // thêm vào nếu chưa có
                     {
-                        _eduDataContext.AsAcademySubjectExtend.Add(new AsAcademySubjectExtend
+                        _surveyContext.AsAcademySubjectExtend.Add(new AsAcademySubjectExtend
                         {
                             Code = MaMH,
                             Name = TenMH,
@@ -531,7 +528,7 @@ namespace nuce.web.api.Services.EduData.Implements
                     }
                     #endregion
                 }
-                await _eduDataContext.SaveChangesAsync();
+                await _surveyContext.SaveChangesAsync();
                 transaction.Commit();
             }
             catch (DbUpdateException e)
@@ -649,7 +646,7 @@ namespace nuce.web.api.Services.EduData.Implements
         //}
         public async Task SyncLastClassRoom()
         {
-            var transaction = _eduDataContext.Database.BeginTransaction();
+            var transaction = _surveyContext.Database.BeginTransaction();
             try
             {
                 //nếu không truncate table class room nên khi đồng bộ dữ liệu mới dữ liệu cũ nếu không có code trùng thì k bị ảnh hưởng
@@ -670,10 +667,10 @@ namespace nuce.web.api.Services.EduData.Implements
                     var MaMon = splitMaDK?[0];
                     var MaLop = splitMaDK?[splitMaDK.Count - 1];
 
-                    var lopHocPhan = await _eduDataContext.AsAcademyClassRoom.FirstOrDefaultAsync(o => o.Code == strMaDK && o.Nhhk == NHHK);
+                    var lopHocPhan = await _surveyContext.AsAcademyClassRoom.FirstOrDefaultAsync(o => o.Code == strMaDK && o.Nhhk == NHHK);
                     if (lopHocPhan == null) // thêm vào nếu chưa có
                     {
-                        _eduDataContext.AsAcademyClassRoom.Add(new AsAcademyClassRoom
+                        _surveyContext.AsAcademyClassRoom.Add(new AsAcademyClassRoom
                         {
                             Code = strMaDK,
                             ClassCode = MaLop,
@@ -687,7 +684,7 @@ namespace nuce.web.api.Services.EduData.Implements
                         lopHocPhan.SubjectCode = MaMon;
                     }
                 }
-                await _eduDataContext.SaveChangesAsync();
+                await _surveyContext.SaveChangesAsync();
                 transaction.Commit();
             }
             catch (DbUpdateException e)
@@ -880,7 +877,7 @@ namespace nuce.web.api.Services.EduData.Implements
 
         public async Task SyncLastLecturerClassRoom()
         {
-            var transaction = _eduDataContext.Database.BeginTransaction();
+            var transaction = _surveyContext.Database.BeginTransaction();
             try
             {
                 var result = await srvc.getMaDKCanBoTkb1Async();
@@ -1015,12 +1012,12 @@ namespace nuce.web.api.Services.EduData.Implements
                 #region chèn vào csdl
                 foreach (var item in resultDistinct)
                 {
-                    var lecturerClassRoom = await _eduDataContext.AsAcademyLecturerClassRoom
+                    var lecturerClassRoom = await _surveyContext.AsAcademyLecturerClassRoom
                                 .FirstOrDefaultAsync(o => o.ClassRoomCode == item.MaDK && o.Nhhk == item.NHHK);
 
                     if (lecturerClassRoom == null)
                     {
-                        _eduDataContext.AsAcademyLecturerClassRoom.Add(new AsAcademyLecturerClassRoom
+                        _surveyContext.AsAcademyLecturerClassRoom.Add(new AsAcademyLecturerClassRoom
                         {
                             ClassRoomCode = item.MaDK,
                             LecturerCode = item.MaCB,
@@ -1034,7 +1031,7 @@ namespace nuce.web.api.Services.EduData.Implements
                 }
                 #endregion
 
-                await _eduDataContext.SaveChangesAsync();
+                await _surveyContext.SaveChangesAsync();
                 transaction.Commit();
             }
             catch (DbUpdateException e)
@@ -1055,7 +1052,7 @@ namespace nuce.web.api.Services.EduData.Implements
         #region đồng bộ kỳ hiện tại
         public async Task SyncCurrentClassRoom()
         {
-            var transaction = _eduDataContext.Database.BeginTransaction();
+            var transaction = _surveyContext.Database.BeginTransaction();
             try
             {
                 //_eduDataContext.Database.ExecuteSqlRaw("TRUNCATE TABLE AS_Academy_C_ClassRoom");
@@ -1076,13 +1073,13 @@ namespace nuce.web.api.Services.EduData.Implements
                     nodeFoundByTagName = item.GetElementsByTagName("Malop");
                     string ExamAttemptDate = nodeFoundByTagName.Count > 0 ? nodeFoundByTagName[0].InnerText.Trim() : null;
 
-                    var monHoc = await _eduDataContext.AsAcademySubject.FirstOrDefaultAsync(f => f.Code == MaMH);
+                    var monHoc = await _surveyContext.AsAcademySubject.FirstOrDefaultAsync(f => f.Code == MaMH);
                     monHocId = monHoc != null ? monHoc.Id : -1;
 
-                    var lopHocPhan = await _eduDataContext.AsAcademyCClassRoom.FirstOrDefaultAsync(f => f.Code == MaDK);
+                    var lopHocPhan = await _surveyContext.AsAcademyCClassRoom.FirstOrDefaultAsync(f => f.Code == MaDK);
                     if (lopHocPhan == null) // thêm vào nếu chưa có
                     {
-                        _eduDataContext.AsAcademyCClassRoom.Add(new AsAcademyCClassRoom
+                        _surveyContext.AsAcademyCClassRoom.Add(new AsAcademyCClassRoom
                         {
                             SemesterId = await GetCurrentSemesterId(),
                             Code = MaDK,
@@ -1103,7 +1100,7 @@ namespace nuce.web.api.Services.EduData.Implements
                         lopHocPhan.ExamAttemptDate = ExamAttemptDate;
                     }
                 }
-                await _eduDataContext.SaveChangesAsync();
+                await _surveyContext.SaveChangesAsync();
                 transaction.Commit();
             }
             catch (DbUpdateException e)
@@ -1121,7 +1118,7 @@ namespace nuce.web.api.Services.EduData.Implements
 
         public async Task SyncCurrentLecturerClassRoom()
         {
-            var transaction = _eduDataContext.Database.BeginTransaction();
+            var transaction = _surveyContext.Database.BeginTransaction();
             try
             {
                 var result = await srvc.getAllTKB1JoinToDkAsync();
@@ -1227,8 +1224,8 @@ namespace nuce.web.api.Services.EduData.Implements
                     var strMaCB = item.MaCB;
                     if (!string.IsNullOrWhiteSpace(strMaDK) && !string.IsNullOrWhiteSpace(strMaCB))
                     {
-                        var lop = await _eduDataContext.AsAcademyCClassRoom.FirstOrDefaultAsync(c => c.Code == strMaDK);
-                        var canBo = await _eduDataContext.AsAcademyLecturer.FirstOrDefaultAsync(c => c.Code == strMaCB);
+                        var lop = await _surveyContext.AsAcademyCClassRoom.FirstOrDefaultAsync(c => c.Code == strMaDK);
+                        var canBo = await _surveyContext.AsAcademyLecturer.FirstOrDefaultAsync(c => c.Code == strMaCB);
 
                         if (lop != null && canBo != null)
                         {
@@ -1236,15 +1233,15 @@ namespace nuce.web.api.Services.EduData.Implements
                             canBoId = canBo.Id;
 
                             //xoá lớp học phần có mã đăng ký cụ thể vd 010211LOP21
-                            var listLecturerClassRoom = await _eduDataContext.AsAcademyCLecturerClassRoom.Where(lc => lc.ClassRoomCode == strMaDK).ToListAsync();
-                            _eduDataContext.AsAcademyCLecturerClassRoom.RemoveRange(listLecturerClassRoom);
+                            var listLecturerClassRoom = await _surveyContext.AsAcademyCLecturerClassRoom.Where(lc => lc.ClassRoomCode == strMaDK).ToListAsync();
+                            _surveyContext.AsAcademyCLecturerClassRoom.RemoveRange(listLecturerClassRoom);
 
-                            var cLecturerClassRoom = await _eduDataContext.AsAcademyCLecturerClassRoom
+                            var cLecturerClassRoom = await _surveyContext.AsAcademyCLecturerClassRoom
                                 .FirstOrDefaultAsync(o => o.LecturerCode == strMaCB && o.ClassRoomCode == strMaDK);
 
                             if (cLecturerClassRoom == null)
                             {
-                                _eduDataContext.AsAcademyCLecturerClassRoom.Add(new AsAcademyCLecturerClassRoom
+                                _surveyContext.AsAcademyCLecturerClassRoom.Add(new AsAcademyCLecturerClassRoom
                                 {
                                     SemesterId = await GetCurrentSemesterId(),
                                     ClassRoomId = lopId,
@@ -1266,7 +1263,7 @@ namespace nuce.web.api.Services.EduData.Implements
                 }
                 #endregion
 
-                await _eduDataContext.SaveChangesAsync();
+                await _surveyContext.SaveChangesAsync();
                 transaction.Commit();
             }
             catch (DbUpdateException e)
@@ -1294,7 +1291,7 @@ namespace nuce.web.api.Services.EduData.Implements
                 XmlNodeList temp = null;
                 while (true)
                 {
-                    transaction = _eduDataContext.Database.BeginTransaction();
+                    transaction = _surveyContext.Database.BeginTransaction();
                     var result = await srvc.getKQDKKyHienTaiAsync((page - 1) * pageSize, pageSize);
                     listData = result.Any1.GetElementsByTagName("dataKQDK");
                     if (listData.Count > 0)
@@ -1307,18 +1304,18 @@ namespace nuce.web.api.Services.EduData.Implements
                             temp = item.GetElementsByTagName("MaDK");
                             string strMaDK = temp.Count > 0 ? temp[0].InnerText.Trim().Replace(" ", "") : null;
 
-                            var classRoom = await _eduDataContext.AsAcademyCClassRoom.FirstOrDefaultAsync(c => c.Code == strMaDK);
+                            var classRoom = await _surveyContext.AsAcademyCClassRoom.FirstOrDefaultAsync(c => c.Code == strMaDK);
                             var classRoomId = classRoom != null ? classRoom.Id : -1;
 
-                            var student = await _eduDataContext.AsAcademyStudent.FirstOrDefaultAsync(c => c.Code == strMaSV);
+                            var student = await _surveyContext.AsAcademyStudent.FirstOrDefaultAsync(c => c.Code == strMaSV);
                             var studentId = student != null ? student.Id : -1;
 
-                            var studentClassRoom = await _eduDataContext.AsAcademyCStudentClassRoom
+                            var studentClassRoom = await _surveyContext.AsAcademyCStudentClassRoom
                                 .FirstOrDefaultAsync(sc => sc.StudentCode == strMaSV && sc.ClassRoomId == classRoomId);
 
                             if (studentClassRoom == null)
                             {
-                                _eduDataContext.AsAcademyCStudentClassRoom.Add(new AsAcademyCStudentClassRoom
+                                _surveyContext.AsAcademyCStudentClassRoom.Add(new AsAcademyCStudentClassRoom
                                 {
                                     ClassRoomId = classRoomId,
                                     ClassRoomCode = strMaDK,
@@ -1329,7 +1326,7 @@ namespace nuce.web.api.Services.EduData.Implements
                             }
                         }
                         page++;
-                        await _eduDataContext.SaveChangesAsync();
+                        await _surveyContext.SaveChangesAsync();
                         transaction.Commit();
                     }
                     else
@@ -1354,7 +1351,7 @@ namespace nuce.web.api.Services.EduData.Implements
         
         public async Task<string> SyncUpdateFromDateEndDateCurrentClassRoom()
         {
-            var transaction = _eduDataContext.Database.BeginTransaction();
+            var transaction = _surveyContext.Database.BeginTransaction();
             var message = "";
             try
             {
@@ -1389,7 +1386,7 @@ namespace nuce.web.api.Services.EduData.Implements
                     DateTime CFromDate = new DateTime(2026, 12, 30);
                     DateTime CEndDate = new DateTime(2006, 12, 30);
 
-                    var CurrClassRoom = await _eduDataContext.AsAcademyCClassRoom.FirstOrDefaultAsync(cc => cc.Code == MaDK);
+                    var CurrClassRoom = await _surveyContext.AsAcademyCClassRoom.FirstOrDefaultAsync(cc => cc.Code == MaDK);
                     if (CurrClassRoom != null)
                     {
                         CFromDate = CurrClassRoom.FromDate ?? NgayBD;
@@ -1404,7 +1401,7 @@ namespace nuce.web.api.Services.EduData.Implements
                     CurrClassRoom.FromDate = CFromDate;
                     CurrClassRoom.EndDate = CEndDate;
                 }
-                await _eduDataContext.SaveChangesAsync();
+                await _surveyContext.SaveChangesAsync();
                 transaction.Commit();
             }
             catch (DbUpdateException e)
@@ -1423,12 +1420,12 @@ namespace nuce.web.api.Services.EduData.Implements
 
         public async Task<string> SyncQAWeek()
         {
-            var transaction = _eduDataContext.Database.BeginTransaction();
+            var transaction = _surveyContext.Database.BeginTransaction();
             var message = "";
             try
             {
                 //_eduDataContext.Database.ExecuteSqlRaw("TRUNCATE TABLE AS_Edu_QA_Week");
-                var listCurrClassRoom = await _eduDataContext.AsAcademyCClassRoom.Where(cc => cc.FromDate != null).ToListAsync();
+                var listCurrClassRoom = await _surveyContext.AsAcademyCClassRoom.Where(cc => cc.FromDate != null).ToListAsync();
                 foreach(var currClassRoom in listCurrClassRoom)
                 {
                     var iId = currClassRoom.Id;
@@ -1443,7 +1440,7 @@ namespace nuce.web.api.Services.EduData.Implements
                     }
                 }
 
-                await _eduDataContext.SaveChangesAsync();
+                await _surveyContext.SaveChangesAsync();
                 transaction.Commit();
             }
             catch (DbUpdateException e)
@@ -1464,8 +1461,8 @@ namespace nuce.web.api.Services.EduData.Implements
         #region xem kỳ hiện tại
         public async Task<PaginationModel<AsAcademyCClassRoom>> GetCurrentClassRoom(ClassRoomFilter filter, int skip = 0, int take = 20)
         {
-            _eduDataContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            IQueryable<AsAcademyCClassRoom> query = _eduDataContext.AsAcademyCClassRoom;
+            _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            IQueryable<AsAcademyCClassRoom> query = _surveyContext.AsAcademyCClassRoom;
             var recordsTotal = query.Count();
 
             if (!string.IsNullOrWhiteSpace(filter.Code))
@@ -1499,8 +1496,8 @@ namespace nuce.web.api.Services.EduData.Implements
 
         public async Task<PaginationModel<AsAcademyCLecturerClassRoom>> GetCurrentLecturerClassRoom(LecturerClassRoomFilter filter, int skip = 0, int take = 20)
         {
-            _eduDataContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            IQueryable<AsAcademyCLecturerClassRoom> query = _eduDataContext.AsAcademyCLecturerClassRoom;
+            _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            IQueryable<AsAcademyCLecturerClassRoom> query = _surveyContext.AsAcademyCLecturerClassRoom;
             var recordsTotal = query.Count();
 
             if (!string.IsNullOrWhiteSpace(filter.ClassRoomCode))
@@ -1530,8 +1527,8 @@ namespace nuce.web.api.Services.EduData.Implements
 
         public async Task<PaginationModel<AsAcademyCStudentClassRoom>> GetCurrentStudentClassRoom(StudentClassRoomFilter filter, int skip = 0, int take = 20)
         {
-            _eduDataContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            IQueryable<AsAcademyCStudentClassRoom> query = _eduDataContext.AsAcademyCStudentClassRoom;
+            _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            IQueryable<AsAcademyCStudentClassRoom> query = _surveyContext.AsAcademyCStudentClassRoom;
             var recordsTotal = query.Count();
 
             if (!string.IsNullOrWhiteSpace(filter.StudentCode))
@@ -1559,8 +1556,8 @@ namespace nuce.web.api.Services.EduData.Implements
         #region xem kỳ trước
         public async Task<PaginationModel<AsAcademyClassRoom>> GetLastClassRoom(ClassRoomFilter filter, int skip = 0, int take = 20)
         {
-            _eduDataContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            IQueryable<AsAcademyClassRoom> query = _eduDataContext.AsAcademyClassRoom;
+            _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            IQueryable<AsAcademyClassRoom> query = _surveyContext.AsAcademyClassRoom;
             var recordsTotal = query.Count();
 
             if (!string.IsNullOrWhiteSpace(filter.Code))
@@ -1594,8 +1591,8 @@ namespace nuce.web.api.Services.EduData.Implements
 
         public async Task<PaginationModel<AsAcademyLecturerClassRoom>> GetLastLecturerClassRoom(LecturerClassRoomFilter filter, int skip = 0, int take = 20)
         {
-            _eduDataContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            if(await _eduDataContext.AsAcademyLecturerClassRoom.CountAsync() == 0)
+            _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            if(await _surveyContext.AsAcademyLecturerClassRoom.CountAsync() == 0)
             {
                 return new PaginationModel<AsAcademyLecturerClassRoom>
                 {
@@ -1605,7 +1602,7 @@ namespace nuce.web.api.Services.EduData.Implements
                 };
             }
 
-            IQueryable<AsAcademyLecturerClassRoom> query = _eduDataContext.AsAcademyLecturerClassRoom;
+            IQueryable<AsAcademyLecturerClassRoom> query = _surveyContext.AsAcademyLecturerClassRoom;
 
             var recordsTotal = await query.CountAsync();
 
@@ -1650,8 +1647,8 @@ namespace nuce.web.api.Services.EduData.Implements
 
         public async Task<PaginationModel<AsAcademyStudentClassRoom>> GetLastStudentClassRoom(StudentClassRoomFilter filter, int skip = 0, int take = 20)
         {
-            _eduDataContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            IQueryable<AsAcademyStudentClassRoom> query = _eduDataContext.AsAcademyStudentClassRoom;
+            _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            IQueryable<AsAcademyStudentClassRoom> query = _surveyContext.AsAcademyStudentClassRoom;
             var recordsTotal = await query.CountAsync();
 
             if (!string.IsNullOrWhiteSpace(filter.StudentCode))
@@ -1679,20 +1676,20 @@ namespace nuce.web.api.Services.EduData.Implements
         #region xem cơ bản
         public async Task<List<AsAcademyFaculty>> GetAllFaculties()
         {
-            _eduDataContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            return await _eduDataContext.AsAcademyFaculty.ToListAsync();
+            _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            return await _surveyContext.AsAcademyFaculty.ToListAsync();
         }
 
         public async Task<List<AsAcademyDepartment>> GetAllDepartments()
         {
-            _eduDataContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            return await _eduDataContext.AsAcademyDepartment.ToListAsync();
+            _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            return await _surveyContext.AsAcademyDepartment.ToListAsync();
         }
 
         public async Task<PaginationModel<AsAcademyAcademics>> GetAcademics(AcademicsFilter filter, int skip = 0, int take = 20)
         {
-            _eduDataContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            IQueryable<AsAcademyAcademics> query = _eduDataContext.AsAcademyAcademics;
+            _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            IQueryable<AsAcademyAcademics> query = _surveyContext.AsAcademyAcademics;
             var recordsTotal = query.Count();
 
             if (!string.IsNullOrWhiteSpace(filter.Code))
@@ -1723,8 +1720,8 @@ namespace nuce.web.api.Services.EduData.Implements
 
         public async Task<PaginationModel<AsAcademySubject>> GetSubject(SubjectFilter filter, int skip = 0, int take = 20)
         {
-            _eduDataContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            IQueryable<AsAcademySubject> query = _eduDataContext.AsAcademySubject;
+            _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            IQueryable<AsAcademySubject> query = _surveyContext.AsAcademySubject;
             var recordsTotal = query.Count();
 
             if (!string.IsNullOrWhiteSpace(filter.Code))
@@ -1758,8 +1755,8 @@ namespace nuce.web.api.Services.EduData.Implements
 
         public async Task<PaginationModel<AsAcademyClass>> GetClass(ClassFilter filter, int skip, int take)
         {
-            _eduDataContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            IQueryable<AsAcademyClass> query = _eduDataContext.AsAcademyClass;
+            _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            IQueryable<AsAcademyClass> query = _surveyContext.AsAcademyClass;
             var recordsTotal = query.Count();
 
             if (!string.IsNullOrWhiteSpace(filter.Code))
@@ -1789,8 +1786,8 @@ namespace nuce.web.api.Services.EduData.Implements
 
         public async Task<PaginationModel<AsAcademyLecturer>> GetLecturer(LecturerFilter filter, int skip, int take)
         {
-            _eduDataContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            IQueryable<AsAcademyLecturer> query = _eduDataContext.AsAcademyLecturer;
+            _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            IQueryable<AsAcademyLecturer> query = _surveyContext.AsAcademyLecturer;
             var recordsTotal = query.Count();
 
             if (!string.IsNullOrWhiteSpace(filter.Code))
@@ -1824,8 +1821,8 @@ namespace nuce.web.api.Services.EduData.Implements
 
         public async Task<PaginationModel<AsAcademyStudent>> GetStudent(StudentFilter filter, int skip, int take)
         {
-            _eduDataContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            IQueryable<AsAcademyStudent> query = _eduDataContext.AsAcademyStudent;
+            _surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            IQueryable<AsAcademyStudent> query = _surveyContext.AsAcademyStudent;
             var recordsTotal = await query.CountAsync();
 
             if (!string.IsNullOrWhiteSpace(filter.Code))
@@ -1860,11 +1857,11 @@ namespace nuce.web.api.Services.EduData.Implements
 
         public async Task TruncateTable(string tableName)
         {
-            var transaction = _eduDataContext.Database.BeginTransaction();
+            var transaction = _surveyContext.Database.BeginTransaction();
             try
             {
-                _eduDataContext.Database.ExecuteSqlRaw($"TRUNCATE TABLE {tableName}");
-                await _eduDataContext.SaveChangesAsync();
+                _surveyContext.Database.ExecuteSqlRaw($"TRUNCATE TABLE {tableName}");
+                await _surveyContext.SaveChangesAsync();
                 transaction.Commit();
             }
             catch (DbUpdateException e)

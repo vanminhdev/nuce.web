@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
-using nuce.web.api.Models.EduData;
 using nuce.web.api.Models.Status;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Services.Background;
@@ -34,7 +33,6 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
         private void GenerateTheSurveyStudentBG(Guid surveyRoundId)
         {
             var scope = _scopeFactory.CreateScope();
-            var eduContext = scope.ServiceProvider.GetRequiredService<EduDataContext>();
             var surveyContext = scope.ServiceProvider.GetRequiredService<SurveyContext>();
             var statusContext = scope.ServiceProvider.GetRequiredService<StatusContext>();
 
@@ -93,7 +91,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
 
                 _logger.LogInformation("Generate BaiKhaoSat_SinhVien is start.");
 
-                var query = eduContext.AsAcademyStudentClassRoom.OrderBy(o => o.Id);
+                var query = surveyContext.AsAcademyStudentClassRoom.OrderBy(o => o.Id);
                 var numStudent = query.Count();
                 var skip = 0;
                 var take = 1000;
@@ -115,25 +113,25 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                     studentClassrooms = query.Skip(skip).Take(take).ToList();
                     foreach (var sc in studentClassrooms)
                     {
-                        lectureClassroom = eduContext.AsAcademyLecturerClassRoom.FirstOrDefault(o => o.ClassRoomCode == sc.ClassRoomCode);
+                        lectureClassroom = surveyContext.AsAcademyLecturerClassRoom.FirstOrDefault(o => o.ClassRoomCode == sc.ClassRoomCode);
                         if (lectureClassroom != null)
                         {
-                            lecturer = eduContext.AsAcademyLecturer.FirstOrDefault(o => o.Code == lectureClassroom.LecturerCode);
+                            lecturer = surveyContext.AsAcademyLecturer.FirstOrDefault(o => o.Code == lectureClassroom.LecturerCode);
                         }
                         else
                         {
                             lecturer = null;
                         }
 
-                        classroom = eduContext.AsAcademyClassRoom.FirstOrDefault(o => o.Code == sc.ClassRoomCode);
+                        classroom = surveyContext.AsAcademyClassRoom.FirstOrDefault(o => o.Code == sc.ClassRoomCode);
                         if (classroom != null)
                         {
                             //lớp có môn học là gì
-                            subject = eduContext.AsAcademySubject.FirstOrDefault(o => o.Code == classroom.SubjectCode);
+                            subject = surveyContext.AsAcademySubject.FirstOrDefault(o => o.Code == classroom.SubjectCode);
                             if (subject != null)
                             {
                                 //loại môn của môn đó
-                                subjectExtend = eduContext.AsAcademySubjectExtend.FirstOrDefault(o => o.Code == subject.Code);
+                                subjectExtend = surveyContext.AsAcademySubjectExtend.FirstOrDefault(o => o.Code == subject.Code);
                                 baiKhaoSatId = defaultTheSurveyTypeId; //mặc định là bài lý thuyết
                                 chuaDungLoaiMon = false;
                                 if (subjectExtend != null && subjectExtend.Type != null)

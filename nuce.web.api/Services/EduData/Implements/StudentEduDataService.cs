@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.EduData.Implements
 {
-    public class StudentEduDataService : IStudentEduDataService
+    public class StudentEduDataService
     {
         private readonly EduDataContext _eduDataContext;
         public StudentEduDataService(EduDataContext _eduDataContext)

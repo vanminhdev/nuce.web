@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
-using nuce.web.api.Models.EduData;
 using nuce.web.api.Models.Status;
 using nuce.web.api.Models.Survey;
 using nuce.web.api.Services.Background;
@@ -40,7 +39,7 @@ namespace nuce.web.api.Services.EduData.BackgroundTasks
         private async Task SyncLastStudentClassroomBG(CancellationToken token)
         {
             var scope = _scopeFactory.CreateScope();
-            using var eduDataContext = scope.ServiceProvider.GetRequiredService<EduDataContext>();
+            using var surveyContext = scope.ServiceProvider.GetRequiredService<SurveyContext>();
             using var statusContext = scope.ServiceProvider.GetRequiredService<StatusContext>();
             ServiceSoapClient srvc = new ServiceSoapClient(EndpointConfiguration.ServiceSoap12);
             var status = statusContext.AsStatusTableTask.FirstOrDefault(o => o.TableName == TableNameTask.AsAcademyStudentClassRoom);
@@ -65,11 +64,11 @@ namespace nuce.web.api.Services.EduData.BackgroundTasks
 
                 _logger.LogInformation("sync last student classroom is start.");
                 //eduDataContext.Database.ExecuteSqlRaw($"TRUNCATE TABLE As_Academy_Student_ClassRoom");
-                var semester = await eduDataContext.AsAcademySemester.FirstOrDefaultAsync(o => o.Status == (int)SemesterStatus.IsLast);
+                var semester = await surveyContext.AsAcademySemester.FirstOrDefaultAsync(o => o.Status == (int)SemesterStatus.IsLast);
                 var countTrungLap = 0;
                 while (true)
                 {
-                    transaction = eduDataContext.Database.BeginTransaction();
+                    transaction = surveyContext.Database.BeginTransaction();
                     var result = await srvc.getKQDKKyTruocAsync((page - 1) * pageSize, pageSize);
                     listData = result.Any1.GetElementsByTagName("dataKQDK");
                     if (listData.Count > 0)
@@ -84,12 +83,12 @@ namespace nuce.web.api.Services.EduData.BackgroundTasks
                             temp = item.GetElementsByTagName("NHHK");
                             var NHHK = temp.Count > 0 ? temp[0].InnerText.Trim() : null;
 
-                            var studentClassRoom = await eduDataContext.AsAcademyStudentClassRoom
+                            var studentClassRoom = await surveyContext.AsAcademyStudentClassRoom
                                 .FirstOrDefaultAsync(sc => sc.StudentCode == strMaSV && sc.ClassRoomCode == strMaDK && sc.Nhhk == NHHK);
 
                             if (studentClassRoom == null) //chưa có thì thêm
                             {
-                                eduDataContext.AsAcademyStudentClassRoom.Add(new AsAcademyStudentClassRoom
+                                surveyContext.AsAcademyStudentClassRoom.Add(new AsAcademyStudentClassRoom
                                 {
                                     ClassRoomCode = strMaDK,
                                     StudentCode = strMaSV,
@@ -103,7 +102,7 @@ namespace nuce.web.api.Services.EduData.BackgroundTasks
                             }
                         }
                         page++;
-                        await eduDataContext.SaveChangesAsync();
+                        await surveyContext.SaveChangesAsync();
                         transaction.Commit();
                     }
                     else

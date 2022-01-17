@@ -27,11 +27,11 @@ namespace nuce.web.api.Services.Hosted
         {
             _logger.LogInformation("Starting TableTaskHostedService in Startup");
 
-            //var scope = _scopeFactory.CreateScope();
-            //var statusContext = scope.ServiceProvider.GetRequiredService<StatusContext>();
-            //var tableTasks = statusContext.AsStatusTableTask.Where(o => o.Status == (int)TableTaskStatus.Doing).ToList();
-            //tableTasks.ForEach(t => t.Status = (int)TableTaskStatus.DoNot);
-            //statusContext.SaveChanges();
+            var scope = _scopeFactory.CreateScope();
+            var statusContext = scope.ServiceProvider.GetRequiredService<StatusContext>();
+            var tableTasks = statusContext.AsStatusTableTask.Where(o => o.Status == (int)TableTaskStatus.Doing).ToList();
+            tableTasks.ForEach(t => t.Status = (int)TableTaskStatus.DoNot);
+            statusContext.SaveChanges();
 
             return Task.CompletedTask;
         }

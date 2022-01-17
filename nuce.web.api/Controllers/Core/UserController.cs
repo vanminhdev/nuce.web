@@ -28,6 +28,7 @@ using nuce.web.shared;
 using nuce.web.api.Services.EduData.Interfaces;
 using nuce.web.api.Services.Survey.Implements;
 using nuce.web.shared.Common;
+using nuce.web.api.Services.EduData.Implements;
 
 namespace nuce.web.api.Controllers.Core
 {
@@ -44,12 +45,12 @@ namespace nuce.web.api.Controllers.Core
         private readonly ILogService _logService;
         private readonly AsEduSurveyGraduateStudentService _asEduSurveyGraduateStudentService;
         private readonly AsEduSurveyUndergraduateStudentService _asEduSurveyUndergraduateStudentService;
-        private readonly IStudentEduDataService _studentEduDataService;
+        private readonly StudentEduDataService _studentEduDataService;
 
         public UserController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, NuceCoreIdentityContext identityContext,
             ILogger<UserController> logger, IUserService userService, IConfiguration configuration, ILogService logService, 
             AsEduSurveyGraduateStudentService asEduSurveyGraduateStudentService, AsEduSurveyUndergraduateStudentService asEduSurveyUndergraduateStudentService,
-            IStudentEduDataService studentEduDataService)
+            StudentEduDataService studentEduDataService)
         {
             _userManager = userManager;
             _roleManager = roleManager;

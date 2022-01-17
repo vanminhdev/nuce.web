@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using nuce.web.api.Models.EduData;
-
+using nuce.web.api.Models.Survey;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +9,8 @@ namespace nuce.web.api.Repositories.EduData
 {
     public class DepartmentRepository
     {
-        private readonly EduDataContext _context;
-        public DepartmentRepository(EduDataContext _context)
+        private readonly SurveyContext _context;
+        public DepartmentRepository(SurveyContext _context)
         {
             this._context = _context;
         }
