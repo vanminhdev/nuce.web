@@ -226,11 +226,6 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                 }
                             }
                         }
-
-                        if (testSum != 21)
-                        {
-
-                        }
                     }
 
                     foreach (var questionGQ in QuestionJsonData.Where(q => q.Type == QuestionType.GQ))
@@ -501,9 +496,8 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             worksheet.Row(3).Height = 30;
 
             worksheet.Column(1).Width = 6.26;
-            worksheet.Column(1).Width = 46.86;
-            worksheet.Column(2).Width = 46;
-            worksheet.Column(3).Width = 30;
+            worksheet.Column(2).Width = 46.86;
+            worksheet.Column(3).Width = 46;
             worksheet.Column(4).Width = 9;
             worksheet.Column(5).Width = 30;
             worksheet.Column(6).Width = 30;
@@ -1219,17 +1213,19 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
 
                     #endregion
                     col = 1;
-                    wsLyThuyet.Row(row).Style.Fill.PatternType = ExcelFillStyle.Solid;
-                    wsLyThuyet.Row(row).Style.Fill.BackgroundColor.SetColor(Color.FromArgb(255, 255, 0));
-                    //hiện tổng bộ môn
-
-                    foreach (var item in soLuaChonBoMon)
+                    if (soLuaChonBoMon.Count() > 0)
                     {
-                        wsLyThuyet.Cells[row, item.Key].Value = item.Value;
-                        wsLyThuyet.Cells[row, item.Key].Style.Numberformat.Format = "0.00";
-                    }
+                        wsLyThuyet.Row(row).Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        wsLyThuyet.Row(row).Style.Fill.BackgroundColor.SetColor(Color.FromArgb(255, 255, 0));
 
-                    row++;
+                        //hiện tổng bộ môn
+                        foreach (var item in soLuaChonBoMon)
+                        {
+                            wsLyThuyet.Cells[row, item.Key].Value = item.Value;
+                            wsLyThuyet.Cells[row, item.Key].Style.Numberformat.Format = "0.00";
+                        }
+                        row++;
+                    }
                     #region thống kê câu hỏi mở 
                     var questionSA = deLyThuyet.Where(q => q.Type == QuestionType.GQ)
                         .Select(q => new {
@@ -1309,26 +1305,21 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                     }
                     #endregion
                 }
-
-                #region tổng số
                 col = 1;
-                wsLyThuyet.Row(row).Style.Fill.PatternType = ExcelFillStyle.Solid;
-                wsLyThuyet.Row(row).Style.Fill.BackgroundColor.SetColor(Color.FromArgb(91, 155, 213));
-                wsLyThuyet.Cells[row, col++].Value = $"{faculty.Name}({faculty.Code})";
 
-                foreach(var item in soLuaChonKhoa)
+                if (soLuaChonKhoa.Count() > 0)
                 {
-                    wsLyThuyet.Cells[row, item.Key].Value = item.Value;
-                    wsLyThuyet.Cells[row, item.Key].Style.Numberformat.Format = "0.00";
-                }
-                row++;
-                #endregion
+                    wsLyThuyet.Row(row).Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    wsLyThuyet.Row(row).Style.Fill.BackgroundColor.SetColor(Color.FromArgb(91, 155, 213));
+                    wsLyThuyet.Cells[row, col++].Value = $"{faculty.Name}({faculty.Code})";
 
-                //test++;
-                //if (test == 3)
-                //{
-                //    break;
-                //}
+                    foreach (var item in soLuaChonKhoa)
+                    {
+                        wsLyThuyet.Cells[row, item.Key].Value = item.Value;
+                        wsLyThuyet.Cells[row, item.Key].Style.Numberformat.Format = "0.00";
+                    }
+                    row++;
+                }
             }
             col = 1;
             wsLyThuyet.Row(row).Style.Fill.PatternType = ExcelFillStyle.Solid;
@@ -1344,6 +1335,12 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             wsLyThuyet.Cells[1, 1, row, wsLyThuyet.Dimension.Columns].Style.Border.Left.Style = ExcelBorderStyle.Thin;
             wsLyThuyet.Cells[1, 1, row, wsLyThuyet.Dimension.Columns].Style.Border.Right.Style = ExcelBorderStyle.Thin;
             wsLyThuyet.Cells[1, 1, row, wsLyThuyet.Dimension.Columns].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+
+
+            wsHoiMo.Cells[1, 1, row, wsHoiMo.Dimension.Columns].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+            wsHoiMo.Cells[1, 1, row, wsHoiMo.Dimension.Columns].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            wsHoiMo.Cells[1, 1, row, wsHoiMo.Dimension.Columns].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+            wsHoiMo.Cells[1, 1, row, wsHoiMo.Dimension.Columns].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
         }
 
         private void ExportReportTotalNormalSurveyBG(List<Guid> surveyRoundIds)
