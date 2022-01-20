@@ -11,9 +11,9 @@ using Microsoft.Extensions.Logging;
 using nuce.web.api.Attributes.ValidationAttributes;
 using nuce.web.api.Common;
 using nuce.web.api.HandleException;
-using nuce.web.api.Models.EduData;
+using nuce.web.api.Models.Survey;
 using nuce.web.api.Services.EduData.BackgroundTasks;
-using nuce.web.api.Services.EduData.Interfaces;
+using nuce.web.api.Services.EduData.Implements;
 using nuce.web.api.Services.Status.Implements;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.EduData;
@@ -27,11 +27,11 @@ namespace nuce.web.api.Controllers.EduData
     public class SyncEduDataController : ControllerBase
     {
         private readonly ILogger<SyncEduDataController> _logger;
-        private readonly ISyncEduDatabaseService _syncEduDatabaseService;
+        private readonly SyncEduDatabaseService _syncEduDatabaseService;
         private readonly SyncEduDataBackgroundTask _syncEduDataBackgroundTask;
         private readonly StatusService _statusService;
 
-        public SyncEduDataController(ILogger<SyncEduDataController> logger, ISyncEduDatabaseService syncEduDatabaseService, SyncEduDataBackgroundTask syncEduDataBackgroundTask, StatusService statusService)
+        public SyncEduDataController(ILogger<SyncEduDataController> logger, SyncEduDatabaseService syncEduDatabaseService, SyncEduDataBackgroundTask syncEduDataBackgroundTask, StatusService statusService)
         {
             _logger = logger;
             _syncEduDatabaseService = syncEduDatabaseService;

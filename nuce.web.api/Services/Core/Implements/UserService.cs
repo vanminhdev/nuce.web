@@ -14,6 +14,7 @@ using nuce.web.api.Repositories.Ctsv.Interfaces;
 using nuce.web.api.Repositories.EduData;
 
 using nuce.web.api.Services.Core.Interfaces;
+using nuce.web.api.Services.EduData.Implements;
 using nuce.web.api.Services.EduData.Interfaces;
 using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Base;
@@ -44,7 +45,7 @@ namespace nuce.web.api.Services.Core.Implements
         private readonly LecturerRepository _lecturerRepository;
         private readonly DepartmentRepository   _departmentRepository;
         private readonly FacultyRepository _facultyRepository;
-        private readonly IStudentEduDataService _studentEduDataService;
+        private readonly StudentEduDataService _studentEduDataService;
         private readonly ILogger<UserService> _logger;
 
         public UserService(
@@ -57,7 +58,7 @@ namespace nuce.web.api.Services.Core.Implements
                 LecturerRepository _lecturerRepository,
                 DepartmentRepository _departmentRepository,
                 FacultyRepository _facultyRepository,
-                IStudentEduDataService _studentEduDataService
+                StudentEduDataService _studentEduDataService
         )
         {
             _logger = logger;

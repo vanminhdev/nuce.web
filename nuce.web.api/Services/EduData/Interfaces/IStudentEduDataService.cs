@@ -6,8 +6,4 @@ using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.EduData.Interfaces
 {
-    public interface IStudentEduDataService
-    {
-        public AsAcademyStudent FindByCode(string code);
-    }
 }

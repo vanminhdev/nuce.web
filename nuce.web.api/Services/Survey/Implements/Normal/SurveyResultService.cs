@@ -4,10 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using nuce.web.api.Models.Survey;
-using nuce.web.api.ViewModel.Survey;
-
 using nuce.web.shared.Models.Survey;
-using nuce.web.api.Models.EduData;
 using nuce.web.api.Models.Survey.JsonData;
 using nuce.web.api.Common;
 using System.Text.Json;
@@ -23,20 +20,17 @@ namespace nuce.web.api.Services.Survey.Implements
     {
         private readonly ILogger<SurveyResultService> _logger;
         private readonly SurveyContext _surveyContext;
-        private readonly EduDataContext _eduContext;
         private readonly FacultyRepository _facultyRepository;
         private readonly DepartmentRepository _departmentRepository;
         private readonly LecturerRepository _lecturerRepository;
         public SurveyResultService(ILogger<SurveyResultService> _logger, SurveyContext _surveyContext, FacultyRepository _facultyRepository, 
-                DepartmentRepository _departmentRepository, LecturerRepository _lecturerRepository,
-                EduDataContext _eduContext)
+                DepartmentRepository _departmentRepository, LecturerRepository _lecturerRepository)
         {
             this._logger = _logger;
             this._surveyContext = _surveyContext;
             this._facultyRepository = _facultyRepository;
             this._departmentRepository = _departmentRepository;
             this._lecturerRepository = _lecturerRepository;
-            this._eduContext = _eduContext;
         }
         /// <summary>
         /// Kết quả khoa ban
@@ -238,12 +232,12 @@ namespace nuce.web.api.Services.Survey.Implements
             {
                 var tenLop = "";
                 var tenMon = "";
-                var lopMonHoc = _eduContext.AsAcademyClassRoom.FirstOrDefault(o => o.Code == c.ClassRoomCode);
+                var lopMonHoc = _surveyContext.AsAcademyClassRoom.FirstOrDefault(o => o.Code == c.ClassRoomCode);
                 if (lopMonHoc != null)
                 {
                     tenLop = lopMonHoc.ClassCode;
 
-                    var monHoc = _eduContext.AsAcademySubject.FirstOrDefault(o => o.Code == lopMonHoc.SubjectCode);
+                    var monHoc = _surveyContext.AsAcademySubject.FirstOrDefault(o => o.Code == lopMonHoc.SubjectCode);
                     if (monHoc != null)
                     {
                         tenMon = monHoc.Name;
@@ -264,7 +258,7 @@ namespace nuce.web.api.Services.Survey.Implements
         #region Thống kê kết quả lại theo kiểu mới
         public void DanhSachMonHocTheoBoMon(string maBoMon, Guid dotKhaoSatId)
         {
-            var dsMonHoc = _eduContext.AsAcademySubject.Where(s => s.DepartmentCode == maBoMon).ToList();
+            var dsMonHoc = _surveyContext.AsAcademySubject.Where(s => s.DepartmentCode == maBoMon).ToList();
 
             var dsCodeMonHoc = dsMonHoc.Select(m => m.Code).ToList();
 
@@ -304,7 +298,7 @@ namespace nuce.web.api.Services.Survey.Implements
             Result.DepartmentCode = department.Code;
 
             //giảng viên của bộ môn
-            var lerturerCodes = _eduContext.AsAcademyLecturer.Where(o => o.DepartmentCode == department.Code).Select(o => o.Code).ToList();
+            var lerturerCodes = _surveyContext.AsAcademyLecturer.Where(o => o.DepartmentCode == department.Code).Select(o => o.Code).ToList();
 
             #region môn
             //các bài làm của môn lý thuyết của bộ môn đang xét
