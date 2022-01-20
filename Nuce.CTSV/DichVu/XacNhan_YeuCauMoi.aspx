@@ -177,7 +177,6 @@
             },
             initLyDo: function(hetHanChinhKhoa) {
                 const indexRemoveHoanNghiaVu = hetHanChinhKhoa ? 1 : 2;
-                console.log('adfadfadf');
                 $(`#slLyDo option:eq(${indexRemoveHoanNghiaVu})`).remove();
             },
         };

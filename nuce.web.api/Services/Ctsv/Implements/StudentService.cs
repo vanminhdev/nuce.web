@@ -91,7 +91,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 }
             }
             int namCuoi;
-            if (int.TryParse(namRaTruong, out namCuoi) && namCuoi <= DateTime.Now.Year && 8 < DateTime.Now.Month)
+            if (int.TryParse(namRaTruong, out namCuoi) && (namCuoi < DateTime.Now.Year || (namCuoi == DateTime.Now.Year && 8 < DateTime.Now.Month)))
             {
                 hetHanChinhKhoa = true;
             }
