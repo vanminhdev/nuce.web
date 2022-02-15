@@ -4488,6 +4488,11 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
             var ngaySinh = convertStudentDateOfBirth(studentInfo.Student.DateOfBirth);
 
+            var now = DateTime.Now;
+            var ngayKy = now.Day;
+            var thangKy = now.Month;
+            var namKy = now.Year;
+
             byte[] templateBytes = await File.ReadAllBytesAsync(filePath);
             using (MemoryStream templateStream = new MemoryStream())
             {
@@ -4519,56 +4524,43 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         replaceTextTemplate(text, "<dan_toc>", studentInfo.Student.DanToc);
                         replaceTextTemplate(text, "<email>", studentInfo.Student.EmailNhaTruong);
 
-                        string option1 = "";
-                        string option2 = "";
-                        string option3 = "";
-                        string option4 = "";
-                        string option5 = "";
-                        string option6 = "";
-                        string option7 = "";
-                        string option8 = "";
-                        string option9 = "";
+                        replaceTextTemplate(text, "<ngay_ky>", ngayKy.ToString());
+                        replaceTextTemplate(text, "<thang_ky>", thangKy.ToString());
+                        replaceTextTemplate(text, "<nam_ky>", namKy.ToString());
+
+                        string doiTuong = "";
 
                         switch (mienGiamHP.DoiTuongHuong)
                         {
                             case DoiTuongXinMienGiamHocPhi.CO_CONG_CACH_MANG:
-                                option1 = "x";
+                                doiTuong = "Các đối tượng theo quy định tại Pháp lệnh Ưu đãi người có công với cách mạng nếu đang theo học tại các cơ sở giáo dục thuộc hệ thống giáo dục quốc dân.";
                                 break;
                             case DoiTuongXinMienGiamHocPhi.SV_VAN_BANG_1:
-                                option2 = "x";
+                                doiTuong = "Sinh viên từ 16 đến 22 tuổi không có nguồn nuôi dưỡng đang học đại học văn bằng thứ nhất thuộc đối tượng hưởng trợ cấp xã hội hàng tháng theo quy định tại khoản 1 và 2 Điều 5 Nghị định số 20/2021/NĐ-CP ngày 15/3/2021 của Chính phủ.";
                                 break;
                             case DoiTuongXinMienGiamHocPhi.TAN_TAT_KHO_KHAN_KINH_TE:
-                                option3 = "x";
+                                doiTuong = "Sinh viên khuyết tật";
                                 break;
                             case DoiTuongXinMienGiamHocPhi.DAN_TOC_HO_NGHEO:
-                                option4 = "x";
+                                doiTuong = "Sinh viên thuộc dân tộc thiểu số";
                                 break;
                             case DoiTuongXinMienGiamHocPhi.DAN_TOC_IT_NGUOI_VUNG_KHO_KHAN:
-                                option5 = "x";
+                                doiTuong = "Sinh viên thuộc dân tộc thiểu số rất ít người";
                                 break;
                             case DoiTuongXinMienGiamHocPhi.DAN_TOC_VUNG_KHO_KHAN:
-                                option6 = "x";
+                                doiTuong = "Sinh viên hệ cử tuyển";
                                 break;
                             case DoiTuongXinMienGiamHocPhi.CHA_ME_TAI_NAN_DUOC_TRO_CAP:
-                                option7 = "x";
+                                doiTuong = "Sinh viên thuộc các đối tượng của chương trình, đề án được miễn giảm học phí theo quy định của Chính phủ.";
                                 break;
                             case DoiTuongXinMienGiamHocPhi.KHU_VUC_III:
-                                option8 = "x";
+                                doiTuong = "Sinh viên là người dân tộc thiểu số thuộc khu vực III";
                                 break;
                             case DoiTuongXinMienGiamHocPhi.CON_CAN_BO_DUOC_TRO_CAP_THUONG_XUYEN:
-                                option9 = "x";
+                                doiTuong = "Con cán bộ, công chức, viên chức, công nhân mà cha hoặc mẹ bị tai nạn lao động hoặc mắc bệnh nghề nghiệp được hưởng trợ cấp thường xuyên";
                                 break;
                         }
-
-                        replaceTextTemplate(text, "<option1>", option1);
-                        replaceTextTemplate(text, "<option2>", option2);
-                        replaceTextTemplate(text, "<option3>", option3);
-                        replaceTextTemplate(text, "<option4>", option4);
-                        replaceTextTemplate(text, "<option5>", option5);
-                        replaceTextTemplate(text, "<option6>", option6);
-                        replaceTextTemplate(text, "<option7>", option7);
-                        replaceTextTemplate(text, "<option8>", option8);
-                        replaceTextTemplate(text, "<option9>", option9);
+                        replaceTextTemplate(text, "<doi_tuong>", doiTuong);
                     }
                     #endregion
                     mainPart.Document.Save();

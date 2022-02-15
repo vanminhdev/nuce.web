@@ -66,11 +66,13 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
             var year = _context.AsAcademyYear.AsNoTracking().AsEnumerable()
                             .OrderByDescending(yr => yr.Id)
                             .FirstOrDefault(yr => (yr.Enabled ?? false) || (yr.IsCurrent ?? false));
-            var joinStudent = (await _context.Set<AsAcademyStudentSvDeNghiHoTroChiPhiHocTap>().AsNoTracking().Where(dk => dk.DotDangKy == dotDangKy).ToListAsync())
-                        .Join(_context.AsAcademyStudent.AsNoTracking(),
-                                e => getValueString(e, "StudentCode"),
-                                student => student.Code.ToString(),
-                                (entity, student) => new { entity, student });
+            var joinStudent = (await _context.Set<AsAcademyStudentSvDeNghiHoTroChiPhiHocTap>().AsNoTracking()
+                            //.Where(dk => dk.DotDangKy == dotDangKy)
+                            .ToListAsync())
+                            .Join(_context.AsAcademyStudent.AsNoTracking(),
+                                    e => getValueString(e, "StudentCode"),
+                                    student => student.Code.ToString(),
+                                    (entity, student) => new { entity, student });
 #if DEBUG
             //var test1 = joinStudent.Count();
 #endif
@@ -127,7 +129,7 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
             model.SearchText = model.SearchText?.Trim()?.ToLower();
 
             var beforeFilteredData = (await _context.AsAcademyStudentSvDeNghiHoTroChiPhiHocTap.AsNoTracking().ToListAsync())
-                                        .Where(item => item.DotDangKy == dotActiveId && item.Status > 1 && (item.Deleted == null || !item.Deleted.Value));
+                                        .Where(item => item.Status > 1 && (item.Deleted == null || !item.Deleted.Value));
 
             var finalData = beforeFilteredData
                         .Where(item => (
