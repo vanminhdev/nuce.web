@@ -1,5 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using nuce.web.api.Common;
@@ -23,7 +22,6 @@ using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace nuce.web.api.Services.Survey.BackgroundTasks
@@ -563,7 +561,9 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             int rowCauHoi = 2;
             int rowDapAn = 3;
             int col = 1;
-            var facultys = surveyContext.AsAcademyFaculty.OrderBy(o => o.Order).ToList();
+            var facultys = surveyContext.AsAcademyFaculty.
+                            OrderBy(o => o.Order).ToList();
+                            //.Where(o => o.Code == "KM");
 
             //row col câu trả lời ngắn
             int rowSA = 2;
@@ -603,10 +603,17 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
 
                     var maMonHocs = monHocs.Select(o => o.subject.Code).ToList(); //lấy mã môn
 
-                    var maLopMonHocs = surveyContext.AsEduSurveyReportTotal.Where(o => maMonHocs.Contains(o.SubjectCode))
-                        .OrderBy(o => o.SubjectCode) //sắp xếp theo mã môn học tăng dần
-                        .Select(o => new { o.ClassRoomCode, o.LecturerCode, o.SubjectCode })
-                        .Distinct();
+                    var maLopMonHocs = surveyContext.AsAcademyClassRoom
+                        .Join(surveyContext.AsAcademyLecturerClassRoom, classroom => classroom.Code, lectureclassroom => lectureclassroom.ClassRoomCode,
+                            (classRoom, lecturerClassRoom) => new
+                            {
+                                classRoom,
+                                lecturerClassRoom,
+                            })
+                        .Where(o => maMonHocs.Contains(o.classRoom.SubjectCode))
+                        .OrderBy(o => o.classRoom.SubjectCode) //sắp xếp theo mã môn học tăng dần
+                        .Select(o => new { ClassRoomCode = o.classRoom.Code, o.lecturerClassRoom.LecturerCode, o.classRoom.SubjectCode })
+                        .Distinct().ToList();
 
                     #region thống kê
                     //tính ra dòng tổng của khoa
@@ -615,14 +622,25 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                     int stt = 1;
 
                     //thống kê theo lớp môn học của bộ môn
-                    foreach (var lopMonHoc in maLopMonHocs)
+                    for (int indexMonHoc = 0; indexMonHoc < maLopMonHocs.Count; indexMonHoc++)
                     {
+                        var lopMonHoc = maLopMonHocs[indexMonHoc];
+
+                        var reportTotalLopMonQuery = reportTotalLoaiMonQuery.Where(o => o.ClassRoomCode == lopMonHoc.ClassRoomCode).ToList();
+                        var firstRowReport = reportTotalLopMonQuery.FirstOrDefault(o => !string.IsNullOrEmpty(o.LecturerCode));
+
+                        var baiLamKhaoSats = baiLamKhaoSatCacDotDangXet.Where(o => o.ClassRoomCode == lopMonHoc.ClassRoomCode);
+
+                        if (baiLamKhaoSats.Count() == 0 || baiLamKhaoSats == null)
+                        {
+                            continue;
+                        }
+
                         col = 1;
                         wsLyThuyet.Cells[row, col++].Value = stt++;
 
                         #region đếm số lượng
                         //các bài làm của lớp môn đang xét
-                        var baiLamKhaoSats = baiLamKhaoSatCacDotDangXet.Where(o => o.ClassRoomCode == lopMonHoc.ClassRoomCode);
                         var baiLamKhaoSatHoanThanhs = baiLamKhaoSats.Where(o => o.Status == (int)SurveyStudentStatus.Done);
 
                         var soPhieuPhatRa = baiLamKhaoSats.Count();
@@ -641,9 +659,6 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                         }
 
                         wsLyThuyet.Cells[row, col++].Value = tenMonHoc;
-
-                        var reportTotalLopMonQuery = reportTotalLoaiMonQuery.Where(o => o.ClassRoomCode == lopMonHoc.ClassRoomCode);
-                        var firstRowReport = reportTotalLopMonQuery.FirstOrDefault(o => !string.IsNullOrEmpty(o.LecturerCode));
 
                         string maGiangVien = "";
                         string tenGiangVien = "";
@@ -1355,12 +1370,12 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             var status = statusContext.AsStatusTableTask.FirstOrDefault(o => o.TableName == TableNameTask.ExportReportTotalNormalSurvey);
             if (status == null)
             {
-                throw new RecordNotFoundException("Không tìm thấy bản ghi cập nhật trạng thái");
+                //throw new RecordNotFoundException("Không tìm thấy bản ghi cập nhật trạng thái");
             }
             //bảng đang làm việc
             if (status.Status == (int)TableTaskStatus.Doing)
             {
-                throw new TableBusyException("Đang thống kê, thao tác bị huỷ");
+                //throw new TableBusyException("Đang thống kê, thao tác bị huỷ");
             }
             status.Status = (int)TableTaskStatus.Doing;
             statusContext.SaveChanges();
