@@ -544,7 +544,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             worksheet.Cells["E1"].Value = "Lớp môn học";
         }
 
-        private void ThongKeTungLoaiBaiKS(ExcelWorksheet wsLyThuyet, ExcelWorksheet wsHoiMo, SurveyContext surveyContext, List<AsEduSurveyBaiKhaoSat> baiKhaoSats,
+        private void ThongKeTungLoaiBaiKS(ExcelWorksheet wsLyThuyet, SurveyContext surveyContext, List<AsEduSurveyBaiKhaoSat> baiKhaoSats,
             List<QuestionJson> deLyThuyet, int loaiMon)
         {
             surveyContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.TrackAll;
@@ -978,260 +978,257 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                             {
                                 index++;
                                 var indexChild = 0;
+
                                 foreach (var cauhoicon in cauhoi.ChildQuestion)
                                 {
-                                    if (cauhoicon.Type == QuestionType.SC)
-                                    {
-                                        var colStart = col;
-                                        wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {index}.{++indexChild}: {cauhoicon.Content}";
-                                        var dTB = 0;
-                                        var sumTotal = 0;
-                                        var diem = 0;
-                                        var colTotal = col + cauhoicon.Answers.Count();
-                                        foreach (var dapan in cauhoicon.Answers)
-                                        {
-                                            diem++;
+                                    #region comment
+                                    //if (cauhoicon.Type == QuestionType.SC)
+                                    //{
+                                    //    var colStart = col;
+                                    //    wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {index}.{++indexChild}: {cauhoicon.Content}";
+                                    //    var dTB = 0;
+                                    //    var sumTotal = 0;
+                                    //    var diem = 0;
+                                    //    var colTotal = col + cauhoicon.Answers.Count();
+                                    //    foreach (var dapan in cauhoicon.Answers)
+                                    //    {
+                                    //        diem++;
 
-                                            //tổng hợp bộ môn
-                                            if (!soLuaChonBoMon.ContainsKey(col))
-                                            {
-                                                soLuaChonBoMon.Add(col, 0);
-                                            }
+                                    //        //tổng hợp bộ môn
+                                    //        if (!soLuaChonBoMon.ContainsKey(col))
+                                    //        {
+                                    //            soLuaChonBoMon.Add(col, 0);
+                                    //        }
 
-                                            //tổng hợp khoa
-                                            if (!soLuaChonKhoa.ContainsKey(col))
-                                            {
-                                                soLuaChonKhoa.Add(col, 0);
-                                            }
+                                    //        //tổng hợp khoa
+                                    //        if (!soLuaChonKhoa.ContainsKey(col))
+                                    //        {
+                                    //            soLuaChonKhoa.Add(col, 0);
+                                    //        }
 
-                                            //tổng toàn trường
-                                            if (!soLuaChonToanTruong.ContainsKey(col))
-                                            {
-                                                soLuaChonToanTruong.Add(col, 0);
-                                            }
+                                    //        //tổng toàn trường
+                                    //        if (!soLuaChonToanTruong.ContainsKey(col))
+                                    //        {
+                                    //            soLuaChonToanTruong.Add(col, 0);
+                                    //        }
 
-                                            wsLyThuyet.Cells[rowDapAn, col].Value = dapan.Content;
-                                            var ketqua = reportTotalLopMonQuery.FirstOrDefault(o => o.QuestionCode == cauhoicon.Code && o.AnswerCode == dapan.Code);
-                                            if (ketqua != null)
-                                            {
-                                                var total = ketqua.Total != null ? ketqua.Total.Value : 0;
-                                                wsLyThuyet.Cells[row, col].Value = total;
-                                                sumTotal += total;
+                                    //        wsLyThuyet.Cells[rowDapAn, col].Value = dapan.Content;
+                                    //        var ketqua = reportTotalLopMonQuery.FirstOrDefault(o => o.QuestionCode == cauhoicon.Code && o.AnswerCode == dapan.Code);
+                                    //        if (ketqua != null)
+                                    //        {
+                                    //            var total = ketqua.Total != null ? ketqua.Total.Value : 0;
+                                    //            wsLyThuyet.Cells[row, col].Value = total;
+                                    //            sumTotal += total;
 
-                                                //tổng hợp bộ môn
-                                                soLuaChonBoMon[col] += total;
+                                    //            //tổng hợp bộ môn
+                                    //            soLuaChonBoMon[col] += total;
 
-                                                //tổng hợp khoa
-                                                soLuaChonKhoa[col] += total;
+                                    //            //tổng hợp khoa
+                                    //            soLuaChonKhoa[col] += total;
 
-                                                //tổng toàn trường
-                                                soLuaChonToanTruong[col] += total;
+                                    //            //tổng toàn trường
+                                    //            soLuaChonToanTruong[col] += total;
 
-                                                dTB += diem * total;
-                                            }
-                                            else
-                                            {
-                                                wsLyThuyet.Cells[row, col].Value = 0;
-                                            }
-                                            col++;
-                                        }
-                                        wsLyThuyet.Cells[rowDapAn, col].Value = "đTB";
+                                    //            dTB += diem * total;
+                                    //        }
+                                    //        else
+                                    //        {
+                                    //            wsLyThuyet.Cells[row, col].Value = 0;
+                                    //        }
+                                    //        col++;
+                                    //    }
+                                    //    wsLyThuyet.Cells[rowDapAn, col].Value = "đTB";
 
-                                        if (sumTotal > 0)
-                                        {
-                                            wsLyThuyet.Cells[row, col].Value = (double)dTB / sumTotal;
-                                        }
-                                        else
-                                        {
-                                            wsLyThuyet.Cells[row, col].Value = 0;
-                                        }
+                                    //    if (sumTotal > 0)
+                                    //    {
+                                    //        wsLyThuyet.Cells[row, col].Value = (double)dTB / sumTotal;
+                                    //    }
+                                    //    else
+                                    //    {
+                                    //        wsLyThuyet.Cells[row, col].Value = 0;
+                                    //    }
 
-                                        //tổng hợp toàn trường
-                                        float nhanDiemToanTruong = 0, nhanDiemKhoa = 0, nhanDiemBoMon = 0;
-                                        float sumSoLuaChonToanTruong = 0, sumSoLuaChonKhoa = 0, sumSoLuaChonBoMon = 0;
-                                        int totalDiem = (colTotal) - (colTotal - cauhoicon.Answers.Count);
-                                        for (int i = colTotal - 1; i >= colTotal - cauhoicon.Answers.Count; i--)
-                                        {
-                                            sumSoLuaChonBoMon += soLuaChonBoMon[i];
-                                            nhanDiemBoMon += soLuaChonBoMon[i] * totalDiem;
+                                    //    //tổng hợp toàn trường
+                                    //    float nhanDiemToanTruong = 0, nhanDiemKhoa = 0, nhanDiemBoMon = 0;
+                                    //    float sumSoLuaChonToanTruong = 0, sumSoLuaChonKhoa = 0, sumSoLuaChonBoMon = 0;
+                                    //    int totalDiem = (colTotal) - (colTotal - cauhoicon.Answers.Count);
+                                    //    for (int i = colTotal - 1; i >= colTotal - cauhoicon.Answers.Count; i--)
+                                    //    {
+                                    //        sumSoLuaChonBoMon += soLuaChonBoMon[i];
+                                    //        nhanDiemBoMon += soLuaChonBoMon[i] * totalDiem;
 
-                                            sumSoLuaChonKhoa += soLuaChonKhoa[i];
-                                            nhanDiemKhoa += soLuaChonKhoa[i] * totalDiem;
+                                    //        sumSoLuaChonKhoa += soLuaChonKhoa[i];
+                                    //        nhanDiemKhoa += soLuaChonKhoa[i] * totalDiem;
 
-                                            sumSoLuaChonToanTruong += soLuaChonToanTruong[i];
-                                            nhanDiemToanTruong += soLuaChonToanTruong[i] * totalDiem;
-                                            totalDiem--;
-                                        }
+                                    //        sumSoLuaChonToanTruong += soLuaChonToanTruong[i];
+                                    //        nhanDiemToanTruong += soLuaChonToanTruong[i] * totalDiem;
+                                    //        totalDiem--;
+                                    //    }
 
-                                        //tổng hợp tb bộ môn
-                                        if (sumSoLuaChonBoMon > 0)
-                                        {
-                                            if (soLuaChonBoMon.ContainsKey(colTotal))
-                                            {
-                                                soLuaChonBoMon[colTotal] = (float)nhanDiemBoMon / sumSoLuaChonBoMon;
-                                            }
-                                            else
-                                            {
-                                                soLuaChonBoMon.Add(colTotal, (float)nhanDiemBoMon / sumSoLuaChonBoMon);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (soLuaChonBoMon.ContainsKey(colTotal))
-                                            {
-                                                soLuaChonBoMon[colTotal] = 0;
-                                            }
-                                            else
-                                            {
-                                                soLuaChonBoMon.Add(colTotal, 0);
-                                            }
-                                        }
+                                    //    //tổng hợp tb bộ môn
+                                    //    if (sumSoLuaChonBoMon > 0)
+                                    //    {
+                                    //        if (soLuaChonBoMon.ContainsKey(colTotal))
+                                    //        {
+                                    //            soLuaChonBoMon[colTotal] = (float)nhanDiemBoMon / sumSoLuaChonBoMon;
+                                    //        }
+                                    //        else
+                                    //        {
+                                    //            soLuaChonBoMon.Add(colTotal, (float)nhanDiemBoMon / sumSoLuaChonBoMon);
+                                    //        }
+                                    //    }
+                                    //    else
+                                    //    {
+                                    //        if (soLuaChonBoMon.ContainsKey(colTotal))
+                                    //        {
+                                    //            soLuaChonBoMon[colTotal] = 0;
+                                    //        }
+                                    //        else
+                                    //        {
+                                    //            soLuaChonBoMon.Add(colTotal, 0);
+                                    //        }
+                                    //    }
 
-                                        //tổng hợp tb khoa
-                                        if (sumSoLuaChonKhoa > 0)
-                                        {
-                                            if (soLuaChonKhoa.ContainsKey(colTotal))
-                                            {
-                                                soLuaChonKhoa[colTotal] = (float)nhanDiemKhoa / sumSoLuaChonKhoa;
-                                            }
-                                            else
-                                            {
-                                                soLuaChonKhoa.Add(colTotal, (float)nhanDiemKhoa / sumSoLuaChonKhoa);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (soLuaChonKhoa.ContainsKey(colTotal))
-                                            {
-                                                soLuaChonKhoa[colTotal] = 0;
-                                            }
-                                            else
-                                            {
-                                                soLuaChonKhoa.Add(colTotal, 0);
-                                            }
-                                        }
+                                    //    //tổng hợp tb khoa
+                                    //    if (sumSoLuaChonKhoa > 0)
+                                    //    {
+                                    //        if (soLuaChonKhoa.ContainsKey(colTotal))
+                                    //        {
+                                    //            soLuaChonKhoa[colTotal] = (float)nhanDiemKhoa / sumSoLuaChonKhoa;
+                                    //        }
+                                    //        else
+                                    //        {
+                                    //            soLuaChonKhoa.Add(colTotal, (float)nhanDiemKhoa / sumSoLuaChonKhoa);
+                                    //        }
+                                    //    }
+                                    //    else
+                                    //    {
+                                    //        if (soLuaChonKhoa.ContainsKey(colTotal))
+                                    //        {
+                                    //            soLuaChonKhoa[colTotal] = 0;
+                                    //        }
+                                    //        else
+                                    //        {
+                                    //            soLuaChonKhoa.Add(colTotal, 0);
+                                    //        }
+                                    //    }
 
-                                        //tổng tb toàn trường
-                                        if (sumSoLuaChonToanTruong > 0)
-                                        {
-                                            if (soLuaChonToanTruong.ContainsKey(colTotal))
-                                            {
-                                                soLuaChonToanTruong[colTotal] = (float)nhanDiemToanTruong / sumSoLuaChonToanTruong;
-                                            }
-                                            else
-                                            {
-                                                soLuaChonToanTruong.Add(colTotal, (float)nhanDiemToanTruong / sumSoLuaChonToanTruong);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (soLuaChonToanTruong.ContainsKey(colTotal))
-                                            {
-                                                soLuaChonToanTruong[colTotal] = 0;
-                                            }
-                                            else
-                                            {
-                                                soLuaChonToanTruong.Add(colTotal, 0);
-                                            }
-                                        }
+                                    //    //tổng tb toàn trường
+                                    //    if (sumSoLuaChonToanTruong > 0)
+                                    //    {
+                                    //        if (soLuaChonToanTruong.ContainsKey(colTotal))
+                                    //        {
+                                    //            soLuaChonToanTruong[colTotal] = (float)nhanDiemToanTruong / sumSoLuaChonToanTruong;
+                                    //        }
+                                    //        else
+                                    //        {
+                                    //            soLuaChonToanTruong.Add(colTotal, (float)nhanDiemToanTruong / sumSoLuaChonToanTruong);
+                                    //        }
+                                    //    }
+                                    //    else
+                                    //    {
+                                    //        if (soLuaChonToanTruong.ContainsKey(colTotal))
+                                    //        {
+                                    //            soLuaChonToanTruong[colTotal] = 0;
+                                    //        }
+                                    //        else
+                                    //        {
+                                    //            soLuaChonToanTruong.Add(colTotal, 0);
+                                    //        }
+                                    //    }
 
-                                        var colEnd = col++;
-                                        wsLyThuyet.Cells[rowCauHoi, colStart, rowCauHoi, colEnd].Merge = true;
-                                    }
-                                    else if (cauhoicon.Type == QuestionType.MC)
-                                    {
-                                        var colStart = col;
-                                        wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {++index}: {cauhoicon.Content}";
-                                        wsLyThuyet.Cells[rowCauHoi, col].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                        wsLyThuyet.Cells[rowCauHoi, col].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(255, 255, 0));
-                                        foreach (var dapan in cauhoicon.Answers)
-                                        {
-                                            //tổng hợp bộ môn
-                                            if (!soLuaChonBoMon.ContainsKey(col))
-                                            {
-                                                soLuaChonBoMon.Add(col, 0);
-                                            }
+                                    //    var colEnd = col++;
+                                    //    wsLyThuyet.Cells[rowCauHoi, colStart, rowCauHoi, colEnd].Merge = true;
+                                    //}
+                                    //else if (cauhoicon.Type == QuestionType.MC)
+                                    //{
+                                    //    var colStart = col;
+                                    //    wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {++index}: {cauhoicon.Content}";
+                                    //    wsLyThuyet.Cells[rowCauHoi, col].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                    //    wsLyThuyet.Cells[rowCauHoi, col].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(255, 255, 0));
+                                    //    foreach (var dapan in cauhoicon.Answers)
+                                    //    {
+                                    //        //tổng hợp bộ môn
+                                    //        if (!soLuaChonBoMon.ContainsKey(col))
+                                    //        {
+                                    //            soLuaChonBoMon.Add(col, 0);
+                                    //        }
 
-                                            //tổng hợp khoa
-                                            if (!soLuaChonKhoa.ContainsKey(col))
-                                            {
-                                                soLuaChonKhoa.Add(col, 0);
-                                            }
+                                    //        //tổng hợp khoa
+                                    //        if (!soLuaChonKhoa.ContainsKey(col))
+                                    //        {
+                                    //            soLuaChonKhoa.Add(col, 0);
+                                    //        }
 
-                                            //tổng toàn trường
-                                            if (!soLuaChonToanTruong.ContainsKey(col))
-                                            {
-                                                soLuaChonToanTruong.Add(col, 0);
-                                            }
+                                    //        //tổng toàn trường
+                                    //        if (!soLuaChonToanTruong.ContainsKey(col))
+                                    //        {
+                                    //            soLuaChonToanTruong.Add(col, 0);
+                                    //        }
 
-                                            wsLyThuyet.Cells[rowDapAn, col].Value = dapan.Content;
-                                            var ketqua = reportTotalLopMonQuery.FirstOrDefault(o => o.QuestionCode == cauhoicon.Code && o.AnswerCode == dapan.Code);
-                                            if (ketqua != null)
-                                            {
-                                                var total = ketqua.Total != null ? ketqua.Total.Value : 0;
-                                                wsLyThuyet.Cells[row, col].Value = total;
+                                    //        wsLyThuyet.Cells[rowDapAn, col].Value = dapan.Content;
+                                    //        var ketqua = reportTotalLopMonQuery.FirstOrDefault(o => o.QuestionCode == cauhoicon.Code && o.AnswerCode == dapan.Code);
+                                    //        if (ketqua != null)
+                                    //        {
+                                    //            var total = ketqua.Total != null ? ketqua.Total.Value : 0;
+                                    //            wsLyThuyet.Cells[row, col].Value = total;
 
-                                                //tổng hợp bộ môn
-                                                soLuaChonBoMon[col] += total;
+                                    //            //tổng hợp bộ môn
+                                    //            soLuaChonBoMon[col] += total;
 
-                                                //tổng hợp khoa
-                                                soLuaChonKhoa[col] += total;
+                                    //            //tổng hợp khoa
+                                    //            soLuaChonKhoa[col] += total;
 
-                                                //tổng toàn trường
-                                                soLuaChonToanTruong[col] += total;
-                                            }
-                                            else
-                                            {
-                                                wsLyThuyet.Cells[row, col].Value = 0;
-                                            }
+                                    //            //tổng toàn trường
+                                    //            soLuaChonToanTruong[col] += total;
+                                    //        }
+                                    //        else
+                                    //        {
+                                    //            wsLyThuyet.Cells[row, col].Value = 0;
+                                    //        }
 
-                                            //câu hỏi con của đáp án
-                                            if (dapan.AnswerChildQuestion != null)
-                                            {
-                                                col++;
-                                                wsLyThuyet.Cells[rowDapAn, col].Value = dapan.AnswerChildQuestion.Content;
-                                                var ketquaCon = reportTotalLopMonQuery.FirstOrDefault(o => o.QuestionCode == $"{dapan.Code}_{dapan.AnswerChildQuestion.Code}" && o.AnswerCode == dapan.Code);
-                                                wsLyThuyet.Cells[row, col].Value = ketquaCon?.Content ?? "";
-                                            }
-                                            col++;
-                                        }
-                                        var colEnd = col - 1;
-                                        wsLyThuyet.Cells[rowCauHoi, colStart, rowCauHoi, colEnd].Merge = true;
-                                    }
+                                    //        //câu hỏi con của đáp án
+                                    //        if (dapan.AnswerChildQuestion != null)
+                                    //        {
+                                    //            col++;
+                                    //            wsLyThuyet.Cells[rowDapAn, col].Value = dapan.AnswerChildQuestion.Content;
+                                    //            var ketquaCon = reportTotalLopMonQuery.FirstOrDefault(o => o.QuestionCode == $"{dapan.Code}_{dapan.AnswerChildQuestion.Code}" && o.AnswerCode == dapan.Code);
+                                    //            wsLyThuyet.Cells[row, col].Value = ketquaCon?.Content ?? "";
+                                    //        }
+                                    //        col++;
+                                    //    }
+                                    //    var colEnd = col - 1;
+                                    //    wsLyThuyet.Cells[rowCauHoi, colStart, rowCauHoi, colEnd].Merge = true;
+                                    //}
+                                    #endregion comment
                                     if (cauhoicon.Type == QuestionType.SA) // xuất câu hỏi trả lời ngắn
                                     {
-                                        //wsLyThuyet.Cells[rowCauHoi, col].Value = $"Câu {index}.{++indexChild}: {cauhoicon.Content}";
-                                        //wsLyThuyet.Column(col).Width = 48;
-                                        //wsLyThuyet.Row(row).Height = 30;
-                                        //var ketqua = reportTotalLopMonQuery.FirstOrDefault(o => o.QuestionCode == cauhoicon.Code);
-                                        //if (ketqua != null && ketqua.Content != null)
-                                        //{
-                                        //    var str = "";
-                                        //    var listStr = JsonSerializer.Deserialize<List<string>>(ketqua.Content);
-                                        //    var tenGV = "";
-                                        //    var tempGV = eduContext.AsAcademyLecturer.FirstOrDefault(l => l.Code == ketqua.LecturerCode);
-                                        //    if (tempGV != null)
-                                        //    {
-                                        //        tenGV = tempGV.FullName;
-                                        //    }
-                                        //    str += $"- {ketqua.LecturerCode}-{tenGV} - lớp {ketqua.ClassRoomCode} :\n";
-                                        //    foreach(var s in listStr)
-                                        //    {
-                                        //        if (string.IsNullOrWhiteSpace(s))
-                                        //            continue;
-                                        //        str += $"\t+ {s}\n";
-                                        //    }
-                                        //    wsLyThuyet.Cells[row, col].Value = str;
-                                        //}
+                                        wsLyThuyet.Cells[rowCauHoi, col].Value = $"{cauhoi.Content}: {cauhoicon.Content}";
+                                        wsLyThuyet.Column(col).Width = 48;
+                                        wsLyThuyet.Row(row).Height = 30;
+
+                                        var bailam = reportTotalLopMonQuery.FirstOrDefault(o => o.QuestionCode == cauhoicon.Code);
+                                        if (bailam != null)
+                                        {
+                                            var str = "";
+                                            var listStr = JsonSerializer.Deserialize<List<string>>(bailam.Content);
+                                            foreach (var s in listStr)
+                                            {
+                                                if (string.IsNullOrWhiteSpace(s))
+                                                    continue;
+                                                str += $"{s};";
+                                            }
+                                            wsLyThuyet.Cells[row, col].Value = str;
+                                        }
                                     }
                                     col++;
                                 }
                             }
                         }
-
                         row++;
                     }
 
+                    
                     #endregion
                     col = 1;
                     wsLyThuyet.Row(row).Style.Fill.PatternType = ExcelFillStyle.Solid;
@@ -1246,82 +1243,83 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
 
                     row++;
                     #region thống kê câu hỏi mở 
-                    var questionSA = deLyThuyet.Where(q => q.Type == QuestionType.GQ)
-                        .Select(q => new {
-                            q.Content,
-                            ChildQuestion = q.ChildQuestion.Where(c => c.Type == QuestionType.SA) 
-                        })
-                        .SelectMany(o => o.ChildQuestion, (container, child) => new {
-                            child.Code, Content = container.Content + " - " + child.Content
-                        });
-                    var questionSACode = questionSA.Select(q => q.Code).ToList();
+                    //var questionSA = deLyThuyet.Where(q => q.Type == QuestionType.GQ)
+                    //    .Select(q => new {
+                    //        q.Content,
+                    //        ChildQuestion = q.ChildQuestion.Where(c => c.Type == QuestionType.SA) 
+                    //    })
+                    //    .SelectMany(o => o.ChildQuestion, (container, child) => new {
+                    //        child.Code, Content = container.Content + " - " + child.Content
+                    //    });
+                    //var questionSACode = questionSA.Select(q => q.Code).ToList();
 
-                    //hiện nội dung câu hỏi
-                    int colCauHoi = 6; //bắt đầu cột câu hỏi
-                    foreach(var q in questionSA)
-                    {
-                        wsHoiMo.Cells[1, colCauHoi++].Value = q.Content;
-                    }
+                    
+                    ////hiện nội dung câu hỏi
+                    //int colCauHoi = 6; //bắt đầu cột câu hỏi
+                    //foreach(var q in questionSA)
+                    //{
+                    //    wsHoiMo.Cells[1, colCauHoi++].Value = q.Content;
+                    //}
 
-                    //lăp qua từng giảng viên
-                    foreach (var lecturer in lecturers)
-                    {
-                        //lọc ra câu hỏi mở group theo lớp môn học
-                        var totalSA = reportTotalLoaiMonQuery.Where(t => t.LecturerCode == lecturer.Code)
-                            .Where(t => questionSACode.Contains(t.QuestionCode))
-                            .AsEnumerable()
-                            .GroupBy(g => new { g.ClassRoomCode, g.Nhhk, g.SubjectCode, g.ClassRoom })
-                            .Select(g => new { g.Key, baiLam = g.Select(q => new { q.QuestionCode, q.Content }) })
-                            .ToList();
+                    ////lăp qua từng giảng viên
+                    //foreach (var lecturer in lecturers)
+                    //{
+                    //    //lọc ra câu hỏi mở group theo lớp môn học
+                    //    var totalSA = reportTotalLoaiMonQuery.Where(t => t.LecturerCode == lecturer.Code)
+                    //        .Where(t => questionSACode.Contains(t.QuestionCode))
+                    //        .AsEnumerable()
+                    //        .GroupBy(g => new { g.ClassRoomCode, g.Nhhk, g.SubjectCode, g.ClassRoom })
+                    //        .Select(g => new { g.Key, baiLam = g.Select(q => new { q.QuestionCode, q.Content }) })
+                    //        .ToList();
 
-                        string subjectName = null;
-                        string classroom = null;
+                    //    string subjectName = null;
+                    //    string classroom = null;
 
-                        if (totalSA.Count == 0)
-                        {
-                            continue;
-                        }
+                    //    if (totalSA.Count == 0)
+                    //    {
+                    //        continue;
+                    //    }
 
-                        //theo lớp môn học
-                        foreach (var item in totalSA)
-                        {
-                            colSA = 1; //reset về đầu
-                            wsHoiMo.Cells[rowSA, colSA++].Value = faculty.Name;
-                            wsHoiMo.Cells[rowSA, colSA++].Value = department.Name;
-                            wsHoiMo.Cells[rowSA, colSA++].Value = lecturer.FullName;
+                    //    //theo lớp môn học
+                    //    foreach (var item in totalSA)
+                    //    {
+                    //        colSA = 1; //reset về đầu
+                    //        wsHoiMo.Cells[rowSA, colSA++].Value = faculty.Name;
+                    //        wsHoiMo.Cells[rowSA, colSA++].Value = department.Name;
+                    //        wsHoiMo.Cells[rowSA, colSA++].Value = lecturer.FullName;
 
-                            var subject = surveyContext.AsAcademySubject.FirstOrDefault(a => a.Code == item.Key.SubjectCode);
-                            if (subject != null)
-                            {
-                                subjectName = subject.Name;
-                            }
-                            classroom = item.Key.ClassRoom;
+                    //        var subject = surveyContext.AsAcademySubject.FirstOrDefault(a => a.Code == item.Key.SubjectCode);
+                    //        if (subject != null)
+                    //        {
+                    //            subjectName = subject.Name;
+                    //        }
+                    //        classroom = item.Key.ClassRoom;
 
-                            wsHoiMo.Cells[rowSA, colSA++].Value = subjectName;
-                            wsHoiMo.Cells[rowSA, colSA++].Value = classroom;
+                    //        wsHoiMo.Cells[rowSA, colSA++].Value = subjectName;
+                    //        wsHoiMo.Cells[rowSA, colSA++].Value = classroom;
 
-                            //lặp qua từng câu hỏi
-                            foreach (var q in questionSACode)
-                            {
-                                var bailam = item.baiLam.FirstOrDefault(o => o.QuestionCode == q);
-                                if (bailam != null)
-                                {
-                                    var str = "";
-                                    var listStr = JsonSerializer.Deserialize<List<string>>(bailam.Content);
-                                    foreach (var s in listStr)
-                                    {
-                                        if (string.IsNullOrWhiteSpace(s))
-                                            continue;
-                                        str += $"{s};";
-                                    }
-                                    wsHoiMo.Cells[rowSA, colSA].Value = str;
-                                }
-                                colSA++;
-                            }
-                        }
+                    //        //lặp qua từng câu hỏi
+                    //        foreach (var q in questionSACode)
+                    //        {
+                    //            var bailam = item.baiLam.FirstOrDefault(o => o.QuestionCode == q);
+                    //            if (bailam != null)
+                    //            {
+                    //                var str = "";
+                    //                var listStr = JsonSerializer.Deserialize<List<string>>(bailam.Content);
+                    //                foreach (var s in listStr)
+                    //                {
+                    //                    if (string.IsNullOrWhiteSpace(s))
+                    //                        continue;
+                    //                    str += $"{s};";
+                    //                }
+                    //                wsHoiMo.Cells[rowSA, colSA].Value = str;
+                    //            }
+                    //            colSA++;
+                    //        }
+                    //    }
                         
-                        rowSA++;
-                    }
+                    //    rowSA++;
+                    //}
                     #endregion
                 }
 
@@ -1370,12 +1368,12 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             var status = statusContext.AsStatusTableTask.FirstOrDefault(o => o.TableName == TableNameTask.ExportReportTotalNormalSurvey);
             if (status == null)
             {
-                //throw new RecordNotFoundException("Không tìm thấy bản ghi cập nhật trạng thái");
+                throw new RecordNotFoundException("Không tìm thấy bản ghi cập nhật trạng thái");
             }
             //bảng đang làm việc
             if (status.Status == (int)TableTaskStatus.Doing)
             {
-                //throw new TableBusyException("Đang thống kê, thao tác bị huỷ");
+                throw new TableBusyException("Đang thống kê, thao tác bị huỷ");
             }
             status.Status = (int)TableTaskStatus.Doing;
             statusContext.SaveChanges();
@@ -1418,27 +1416,27 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 var wsDoAn = excel.Workbook.Worksheets.Add("Đồ án");
                 StyleExcelExport(wsDoAn);
 
-                var wsHoiMoLT = excel.Workbook.Worksheets.Add("Câu hỏi mở Lý thuyết");
-                StyleShortAnswerExcelExport(wsHoiMoLT);
+                //var wsHoiMoLT = excel.Workbook.Worksheets.Add("Câu hỏi mở Lý thuyết");
+                //StyleShortAnswerExcelExport(wsHoiMoLT);
 
-                var wsHoiMoLTTH = excel.Workbook.Worksheets.Add("Câu hỏi mở Lý thuyết thực hành");
-                StyleShortAnswerExcelExport(wsHoiMoLTTH);
+                //var wsHoiMoLTTH = excel.Workbook.Worksheets.Add("Câu hỏi mở Lý thuyết thực hành");
+                //StyleShortAnswerExcelExport(wsHoiMoLTTH);
 
-                var wsHoiMoTH = excel.Workbook.Worksheets.Add("Câu hỏi mở Thực hành");
-                StyleShortAnswerExcelExport(wsHoiMoTH);
+                //var wsHoiMoTH = excel.Workbook.Worksheets.Add("Câu hỏi mở Thực hành");
+                //StyleShortAnswerExcelExport(wsHoiMoTH);
 
-                var wsHoiMoDA = excel.Workbook.Worksheets.Add("Câu hỏi mở Đồ án");
-                StyleShortAnswerExcelExport(wsHoiMoDA);
+                //var wsHoiMoDA = excel.Workbook.Worksheets.Add("Câu hỏi mở Đồ án");
+                //StyleShortAnswerExcelExport(wsHoiMoDA);
                 #endregion
 
                 #region kết xuất
                 _logger.LogInformation($"Bat dau ket xuat");
                 //tổng hợp chung
 
-                ThongKeTungLoaiBaiKS(wsLyThuyet, wsHoiMoLT, surveyContext, baiKhaoSats, deLyThuyet, (int)TheSurveyType.TheoreticalSubjects);
-                ThongKeTungLoaiBaiKS(wsLyThuyetThucHanh, wsHoiMoLTTH, surveyContext, baiKhaoSats, deLyThuyetThucHanh, (int)TheSurveyType.TheoreticalPracticalSubjects);
-                ThongKeTungLoaiBaiKS(wsThucHanh, wsHoiMoTH, surveyContext, baiKhaoSats, deThucHanhThiNghiem, (int)TheSurveyType.PracticalSubjects);
-                ThongKeTungLoaiBaiKS(wsDoAn, wsHoiMoDA, surveyContext, baiKhaoSats, deDoAn, (int)TheSurveyType.AssignmentSubjects);
+                ThongKeTungLoaiBaiKS(wsLyThuyet, surveyContext, baiKhaoSats, deLyThuyet, (int)TheSurveyType.TheoreticalSubjects);
+                ThongKeTungLoaiBaiKS(wsLyThuyetThucHanh, surveyContext, baiKhaoSats, deLyThuyetThucHanh, (int)TheSurveyType.TheoreticalPracticalSubjects);
+                ThongKeTungLoaiBaiKS(wsThucHanh, surveyContext, baiKhaoSats, deThucHanhThiNghiem, (int)TheSurveyType.PracticalSubjects);
+                ThongKeTungLoaiBaiKS(wsDoAn, surveyContext, baiKhaoSats, deDoAn, (int)TheSurveyType.AssignmentSubjects);
                 _logger.LogInformation($"ket xuat hoan thanh");
                 #endregion
 
