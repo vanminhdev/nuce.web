@@ -1062,11 +1062,11 @@ namespace nuce.web.api.Services.Ctsv.Implements
             {
                 if (earlierThanFriday)
                 {
-                    rslt = DateTime.Parse(string.Format("{0}/{1}/{2} 10:00:00 AM", DateTime.Now.AddDays(1).Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day));
+                    rslt = DateTime.Parse(string.Format("{0}/{1}/{2} 10:00:00 AM", date?.AddDays(1).Year, date?.AddDays(1).Month, date?.AddDays(1).Day));
                 }
                 else
                 {
-                    rslt = DateTime.Parse(string.Format("{0}/{1}/{2} 10:00:00 AM", DateTime.Now.AddDays(8 - dayOfWeek).Year, DateTime.Now.AddDays(8 - dayOfWeek).Month, DateTime.Now.AddDays(8 - dayOfWeek).Day));
+                    rslt = DateTime.Parse(string.Format("{0}/{1}/{2} 10:00:00 AM", date?.AddDays(8 - dayOfWeek).Year, date?.AddDays(8 - dayOfWeek).Month, date?.AddDays(8 - dayOfWeek).Day));
                 }
             }
             else
@@ -1074,11 +1074,11 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 //Cap nhat vào buổi chiều
                 if (earlierThanFriday)
                 {
-                    rslt = DateTime.Parse(string.Format("{0}/{1}/{2} 4:00:00 PM", DateTime.Now.AddDays(1).Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day));
+                    rslt = DateTime.Parse(string.Format("{0}/{1}/{2} 4:00:00 PM", date?.AddDays(1).Year, date?.AddDays(1).Month, date?.AddDays(1).Day));
                 }
                 else
                 {
-                    rslt = DateTime.Parse(string.Format("{0}/{1}/{2} 10:00:00 AM", DateTime.Now.AddDays(8 - dayOfWeek).Year, DateTime.Now.AddDays(8 - dayOfWeek).Month, DateTime.Now.AddDays(8 - dayOfWeek).Day));
+                    rslt = DateTime.Parse(string.Format("{0}/{1}/{2} 10:00:00 AM", date?.AddDays(8 - dayOfWeek).Year, date?.AddDays(8 - dayOfWeek).Month, date?.AddDays(8 - dayOfWeek).Day));
                 }
             }
 
