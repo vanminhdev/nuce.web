@@ -1017,9 +1017,6 @@ namespace nuce.web.api.Services.Ctsv.Implements
         private GetUpdateStatusNgayHenModel getUpdateStatusNgayHen(UpdateRequestStatusModel model)
         {
             DateTime now = DateTime.Now;
-            var dayOfWeek = (int)now.DayOfWeek;
-            bool earlierThanFriday = now.DayOfWeek < DayOfWeek.Friday;
-            bool isMorning = now.Hour <= 13;
             bool daXuLyCoLichHen = (TrangThaiYeuCau)model.Status == TrangThaiYeuCau.DaXuLyVaCoLichHen;
 
             DateTime? fromDate = null;
@@ -1048,32 +1045,44 @@ namespace nuce.web.api.Services.Ctsv.Implements
             }
             else if (daXuLyCoLichHen && model.AutoUpdateNgayHen)
             {
-                if (isMorning)
+                fromDate = getDateInWeekDay(DateTime.Now);
+                toDate = getDateInWeekDay(fromDate?.AddMonths(1));
+            }
+            return new GetUpdateStatusNgayHenModel { NgayHenBatDau = fromDate, NgayHenKetThuc = toDate };
+        }
+
+        private DateTime getDateInWeekDay(DateTime? date)
+        {
+            DateTime rslt;
+            var dayOfWeek = (int)date?.DayOfWeek;
+            bool earlierThanFriday = date?.DayOfWeek < DayOfWeek.Friday;
+            bool isMorning = date?.Hour <= 13;
+
+            if (isMorning)
+            {
+                if (earlierThanFriday)
                 {
-                    if (earlierThanFriday)
-                    {
-                        fromDate = DateTime.Parse(string.Format("{0}/{1}/{2} 10:00:00 AM", DateTime.Now.AddDays(1).Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day));
-                    }
-                    else
-                    {
-                        fromDate = DateTime.Parse(string.Format("{0}/{1}/{2} 10:00:00 AM", DateTime.Now.AddDays(8 - dayOfWeek).Year, DateTime.Now.AddDays(8 - dayOfWeek).Month, DateTime.Now.AddDays(8 - dayOfWeek).Day));
-                    }
+                    rslt = DateTime.Parse(string.Format("{0}/{1}/{2} 10:00:00 AM", DateTime.Now.AddDays(1).Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day));
                 }
                 else
                 {
-                    //Cap nhat vào buổi chiều
-                    if (earlierThanFriday)
-                    {
-                        fromDate = DateTime.Parse(string.Format("{0}/{1}/{2} 4:00:00 PM", DateTime.Now.AddDays(1).Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day));
-                    }
-                    else
-                    {
-                        fromDate = DateTime.Parse(string.Format("{0}/{1}/{2} 10:00:00 AM", DateTime.Now.AddDays(8 - dayOfWeek).Year, DateTime.Now.AddDays(8 - dayOfWeek).Month, DateTime.Now.AddDays(8 - dayOfWeek).Day));
-                    }
+                    rslt = DateTime.Parse(string.Format("{0}/{1}/{2} 10:00:00 AM", DateTime.Now.AddDays(8 - dayOfWeek).Year, DateTime.Now.AddDays(8 - dayOfWeek).Month, DateTime.Now.AddDays(8 - dayOfWeek).Day));
                 }
-                toDate = fromDate?.AddMonths(1);
             }
-            return new GetUpdateStatusNgayHenModel { NgayHenBatDau = fromDate, NgayHenKetThuc = toDate };
+            else
+            {
+                //Cap nhat vào buổi chiều
+                if (earlierThanFriday)
+                {
+                    rslt = DateTime.Parse(string.Format("{0}/{1}/{2} 4:00:00 PM", DateTime.Now.AddDays(1).Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day));
+                }
+                else
+                {
+                    rslt = DateTime.Parse(string.Format("{0}/{1}/{2} 10:00:00 AM", DateTime.Now.AddDays(8 - dayOfWeek).Year, DateTime.Now.AddDays(8 - dayOfWeek).Month, DateTime.Now.AddDays(8 - dayOfWeek).Day));
+                }
+            }
+
+            return rslt;
         }
 
         private async Task<bool> updateStatusAsync(DichVu loaiDichVu, UpdateRequestStatusModel model)
