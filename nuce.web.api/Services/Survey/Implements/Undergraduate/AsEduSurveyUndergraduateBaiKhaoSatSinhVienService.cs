@@ -401,8 +401,8 @@ namespace nuce.web.api.Services.Survey.Implements
 
         public async Task SendEmailVerify(string email, string url)
         {
-            var smtpClient = new SmtpClient("email-smtp.us-west-2.amazonaws.com", 587);
-            smtpClient.Credentials = new System.Net.NetworkCredential("AKIAWESSCXYR7UIMNAUU", "BBi5kRo2EK9W35QKyzXy6DUnUxDBQyudGWwCbf2tURWZ");
+            var smtpClient = new SmtpClient("smtp.gmail.com", 587);
+            smtpClient.Credentials = new System.Net.NetworkCredential("ctsv.hotro@mgail.com", "Ctsv123456");
             smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
             smtpClient.EnableSsl = true;
             MailMessage mail = new MailMessage();
@@ -422,6 +422,27 @@ namespace nuce.web.api.Services.Survey.Implements
                 _logger.LogError(ex, ex.Message);
                 throw new SendEmailException(ex.Message);
             }
+            //var smtpClient = new SmtpClient("email-smtp.us-west-2.amazonaws.com", 587);
+            //smtpClient.Credentials = new System.Net.NetworkCredential("AKIAWESSCXYR7UIMNAUU", "BBi5kRo2EK9W35QKyzXy6DUnUxDBQyudGWwCbf2tURWZ");
+            //smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+            //smtpClient.EnableSsl = true;
+            //MailMessage mail = new MailMessage();
+
+            ////Setting From , To and CC
+            //mail.From = new MailAddress("ctsv.hotro@nuce.edu.vn", "Phòng Khảo thí và Đảm bảo chất lượng giáo dục");
+            //mail.To.Add(new MailAddress(email));
+            //mail.Body = $"Bạn vui lòng click vào đường link sau: <br/> {url}";
+            //mail.Subject = "Xác thực hoàn thành bài khảo sát";
+            //mail.IsBodyHtml = true;
+            //try
+            //{
+            //    smtpClient.Send(mail);
+            //}
+            //catch (SmtpException ex)
+            //{
+            //    _logger.LogError(ex, ex.Message);
+            //    throw new SendEmailException(ex.Message);
+            //}
         }
     }
 }

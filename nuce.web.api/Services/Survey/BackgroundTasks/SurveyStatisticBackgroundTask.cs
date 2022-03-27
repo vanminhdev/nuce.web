@@ -170,6 +170,32 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                         }
                     }
 
+                    foreach (var question in QuestionJsonData.Where(q => q.Type == QuestionType.SA))
+                    {
+                        var cauTraText = selectedAnswers.Where(a => a.QuestionCode == question.Code);
+                        List<string> strAllAnswerContent = new List<string>();
+
+                        foreach (var str in cauTraText)
+                        {
+                            strAllAnswerContent.Add(str.AnswerContent);
+                        }
+
+                        var options = new JsonSerializerOptions
+                        {
+                            IgnoreNullValues = true,
+                            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
+                        };
+
+                        string content = JsonSerializer.Serialize(strAllAnswerContent, options);
+
+                        total.Add(new AnswerSelectedReportTotal
+                        {
+                            TheSurveyId = baiLamDauTien.BaiKhaoSatId,
+                            QuestionCode = question.Code,
+                            Content = content
+                        });
+                    }
+
                     foreach (var question in QuestionJsonData.Where(q => q.Type == QuestionType.MC))
                     {
                         if (question.Answers == null)
@@ -571,7 +597,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
 
             var baiKhaoSatLyThuyetIds = baiKhaoSats.Where(o => o.Type == loaiMon).Select(o => o.Id).ToList();
             //lọc theo bài khảo sát
-            var reportTotalLoaiMonQuery = surveyContext.AsEduSurveyReportTotal.Where(o => baiKhaoSatLyThuyetIds.Contains(o.TheSurveyId));
+            var reportTotalLoaiMonQuery = surveyContext.AsEduSurveyReportTotal.Where(o => baiKhaoSatLyThuyetIds.Contains(o.TheSurveyId)).ToList();
 
             //int test = 0;
 
@@ -963,12 +989,13 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                                     {
                                         tenGV = tempGV.FullName;
                                     }
-                                    str += $"- {ketqua.LecturerCode}-{tenGV} - lớp {ketqua.ClassRoomCode} :\n";
+                                    //str += $"- {ketqua.LecturerCode}-{tenGV} - lớp {ketqua.ClassRoomCode} :\n";
                                     foreach (var s in listStr)
                                     {
                                         if (string.IsNullOrWhiteSpace(s))
                                             continue;
-                                        str += $"\t+ {s}\n";
+                                        //str += $"\t+ {s}\n";
+                                        str += $"{s};";
                                     }
                                     wsLyThuyet.Cells[row, col].Value = str;
                                 }
