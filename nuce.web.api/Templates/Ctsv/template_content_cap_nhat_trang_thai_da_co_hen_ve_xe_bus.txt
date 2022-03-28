@@ -1,0 +1,9 @@
+<div style='padding:5px;'>Anh/chị vui lòng qua phòng CTCT&QLSV từ <b>[gio_hen]</b> giờ <b>[phut_hen]</b> phút ngày [ngay_hen] để hoàn tất dịch vụ.</div>
+<div style='padding:5px;'>
+<i>Chú ý: 
+<br />
+<b>-    Sinh viên khi lên lấy giấy mang theo 2 ảnh 3x4 dán vào “Bản đăng ký làm vé tháng xe buýt”.</b>
+<b>-	Sinh viên kiểm tra lại thông tin để có sự điều chỉnh nếu có thay đổi.</b>
+<b>-	Mang “Bản đăng ký làm vé tháng xe buýt” sang phòng Văn thư – tầng 1, nhà A1 để đóng dấu.</b>
+</i>
+</div>
