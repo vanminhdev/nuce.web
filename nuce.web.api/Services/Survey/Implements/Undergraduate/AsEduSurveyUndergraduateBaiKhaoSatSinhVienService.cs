@@ -402,7 +402,7 @@ namespace nuce.web.api.Services.Survey.Implements
         public async Task SendEmailVerify(string email, string url)
         {
             var smtpClient = new SmtpClient("smtp.gmail.com", 587);
-            smtpClient.Credentials = new System.Net.NetworkCredential("ctsv.hotro@mgail.com", "Ctsv123456");
+            smtpClient.Credentials = new System.Net.NetworkCredential("ctsv.hotro@nuce.edu.vn", "Ctsv123456");
             smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
             smtpClient.EnableSsl = true;
             MailMessage mail = new MailMessage();
