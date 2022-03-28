@@ -1193,7 +1193,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     student = _studentRepository.FindByCode(vayVon.StudentCode);
                     break;
                 case DichVu.VeBus:
-                    templateMail = "template_content_cap_nhat_trang_thai_da_co_hen_ve_xe_bus.txt";
+                    templateMailDaCoHen = "template_content_cap_nhat_trang_thai_da_co_hen_ve_xe_bus.txt";
 
                     var veBus = await _veXeBusRepository.FindByIdAsync(model.RequestID);
                     veBus.Status = model.Status;
