@@ -25,5 +25,6 @@ namespace nuce.web.api.Models.Ctsv
         public string MaXacNhan { get; set; }
         public string KyLuat { get; set; }
         public bool? ChuyenPhatNhanh { get; set; }
+        public int? MauSo { get; set; }
     }
 }

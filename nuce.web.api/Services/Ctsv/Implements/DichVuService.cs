@@ -275,6 +275,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                             {
                                 KyLuat = model.KyLuat,
                                 PhanHoi = model.PhanHoi,
+                                MauSo = model.MauSo,
                                 CreatedTime = now,
                                 DeletedTime = now,
                                 Status = requestStatus,
@@ -844,23 +845,23 @@ namespace nuce.web.api.Services.Ctsv.Implements
         /// Lấy thông tin tổng quát về các yêu cầu dịch vụ
         /// </summary>
         /// <returns></returns>
-        public Dictionary<int, AllTypeDichVuModel> GetAllLoaiDichVuInfo()
+        public Dictionary<int, AllTypeDichVuModel> GetAllLoaiDichVuInfo(DateTime? start, DateTime? end)
         {
             var allDichVu = _loaiDichVuRepository.GetAllInUse();
             var quantityDictionary = new Dictionary<int, AllTypeDichVuModel>
             {
-                { (int)DichVu.XacNhan, _xacNhanRepository.GetRequestInfo() },
-                { (int)DichVu.GioiThieu, _gioiThieuRepository.GetRequestInfo() },
-                { (int)DichVu.ThueNha, _thueNhaRepository.GetRequestInfo() },
-                { (int)DichVu.CapLaiThe, _capLaiTheRepository.GetRequestInfo() },
-                { (int)DichVu.MuonHocBaGoc, _muonHocBaRepository.GetRequestInfo() },
-                { (int)DichVu.UuDaiGiaoDuc, _uuDaiRepository.GetRequestInfo() },
-                { (int)DichVu.VayVonNganHang, _vayVonRepository.GetRequestInfo() },
-                { (int)DichVu.VeBus, _veXeBusRepository.GetRequestInfo() },
-                { (int)DichVu.DangKyChoO, _dangKyChoORepository.GetRequestInfo() },
-                { (int)DichVu.XinMienGiamHocPhi, _xinMienGiamHocPhiRepository.GetRequestInfo() },
-                { (int)DichVu.DeNghiHoTroChiPhiHocTap, _deNghiHoTroChiPhiRepository.GetRequestInfo() },
-                { (int)DichVu.HoTroHocTap, _hoTroHocTapRepository.GetRequestInfo() }
+                { (int)DichVu.XacNhan, _xacNhanRepository.GetRequestInfo(start, end) },
+                { (int)DichVu.GioiThieu, _gioiThieuRepository.GetRequestInfo(start, end) },
+                { (int)DichVu.ThueNha, _thueNhaRepository.GetRequestInfo(start, end) },
+                { (int)DichVu.CapLaiThe, _capLaiTheRepository.GetRequestInfo(start, end) },
+                { (int)DichVu.MuonHocBaGoc, _muonHocBaRepository.GetRequestInfo(start, end) },
+                { (int)DichVu.UuDaiGiaoDuc, _uuDaiRepository.GetRequestInfo(start, end) },
+                { (int)DichVu.VayVonNganHang, _vayVonRepository.GetRequestInfo(start, end) },
+                { (int)DichVu.VeBus, _veXeBusRepository.GetRequestInfo(start, end) },
+                { (int)DichVu.DangKyChoO, _dangKyChoORepository.GetRequestInfo(start, end) },
+                { (int)DichVu.XinMienGiamHocPhi, _xinMienGiamHocPhiRepository.GetRequestInfo(start, end) },
+                { (int)DichVu.DeNghiHoTroChiPhiHocTap, _deNghiHoTroChiPhiRepository.GetRequestInfo(start, end) },
+                { (int)DichVu.HoTroHocTap, _hoTroHocTapRepository.GetRequestInfo(start, end) }
             };
 
             var SumDichVu = new AllTypeDichVuModel
@@ -1463,9 +1464,9 @@ namespace nuce.web.api.Services.Ctsv.Implements
         #endregion
 
         #region Export Excel
-        public async Task<byte[]> ExportExcelOverviewAsync()
+        public async Task<byte[]> ExportExcelOverviewAsync(DateTime? start, DateTime? end)
         {
-            var data = GetAllLoaiDichVuInfo();
+            var data = GetAllLoaiDichVuInfo(start, end);
 
             using (XLWorkbook wb = new XLWorkbook())
             {
@@ -2853,7 +2854,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 case DichVu.MuonHocBaGoc:
                     return await ExportWordMuonHocBaGoc(id);
                 case DichVu.UuDaiGiaoDuc:
-                    return await ExportWordUuDai(id);
+                    return await ExportWordUuDaiCommon(id);
                 case DichVu.VayVonNganHang:
                     return await ExportWordVayVon(id);
                 case DichVu.ThueNha:
@@ -3374,7 +3375,17 @@ namespace nuce.web.api.Services.Ctsv.Implements
             return new ExportFileOutputModel { document = document, filePath = filePath };
         }
 
-        private async Task<ExportFileOutputModel> ExportWordUuDai(int id)
+        private async Task<ExportFileOutputModel> ExportWordUuDaiCommon(int id)
+        {
+            var uudai = await _uuDaiRepository.FindByIdAsync(id);
+            if (uudai.MauSo == 2)
+            {
+                return await ExportWordUuDaiMau2(id);
+            }
+            return await ExportWordUuDaiMau1(id);
+        }
+
+        private async Task<ExportFileOutputModel> ExportWordUuDaiMau1(int id)
         {
             var uuDai = await _uuDaiRepository.FindByIdAsync(id);
             if (uuDai == null)
@@ -3443,6 +3454,97 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         replaceTextTemplate(text, "<nien_khoa>", NienKhoa);
                         replaceTextTemplate(text, "<tgkh>", thoiGianKhoaHoc);
                         replaceTextTemplate(text, "<hinh_thuc>", HinhThuc);
+                        replaceTextTemplate(text, "<ngay>", ngayKy);
+                        replaceTextTemplate(text, "<thang>", thangKy);
+                        replaceTextTemplate(text, "<nam>", namKy);
+                        replaceTextTemplate(text, "<chuc_danh_nguoi_ky>", ChucDanhNguoiKy);
+                        replaceTextTemplate(text, "<ten_nguoi_ky>", TenNguoiKy);
+                    }
+                    #endregion
+                    mainPart.Document.Save();
+                }
+                await File.WriteAllBytesAsync(destination, templateStream.ToArray());
+            }
+
+            return new ExportFileOutputModel { document = null, filePath = destination };
+        }
+
+        private async Task<ExportFileOutputModel> ExportWordUuDaiMau2(int id)
+        {
+            var uuDai = await _uuDaiRepository.FindByIdAsync(id);
+            if (uuDai == null)
+            {
+                throw new Exception("Yêu cầu không tồn tại");
+            }
+            var studentInfo = await _studentRepository.GetStudentDichVuInfoAsync(uuDai.StudentCode);
+            if (studentInfo == null)
+            {
+                throw new Exception("Sinh viên không tồn tại");
+            }
+
+            var paramSet = _thamSoDichVuService.GetParameters(DichVu.UuDaiGiaoDuc)
+                                .ToDictionary(x => x.Name, x => x.Value);
+
+            string ChucDanhNguoiKy = paramSet["ChucDanhNguoiKy"];
+            string TenNguoiKy = paramSet["TenNguoiKy"];
+
+            string desChucDanhNguoiKy = ChucDanhNguoiKy.Replace("\r", "_").Replace("\n", "_");
+            string desTenNguoiKy = TenNguoiKy.Replace("\r", "_").Replace("\n", "_");
+
+            DateTime? CmtNgayCap = studentInfo.Student.CmtNgayCap;
+            string cmt = studentInfo.Student.Cmt ?? "";
+            string cmtNoiCap = studentInfo.Student.CmtNoiCap ?? "";
+            string cmtNgayCap = CmtNgayCap == null ? "" : CmtNgayCap?.ToString("dd/MM/yyyy");
+
+            string HKTT_SoNha = studentInfo.Student.HkttSoNha ?? "";
+            string HKTT_Pho = studentInfo.Student.HkttPho ?? "";
+            string HKTT_Phuong = studentInfo.Student.HkttPhuong ?? "";
+            string HKTT_Quan = studentInfo.Student.HkttQuan ?? "";
+            string HKTT_Tinh = studentInfo.Student.HkttTinh ?? "";
+            string MaSV = studentInfo.Student.Code.ToString();
+            string HoVaTen = studentInfo.Student.FulName;
+            string Class = studentInfo.Student.ClassCode ?? "";
+            string TenKhoa = studentInfo.Faculty?.Name ?? "";
+            string NienKhoa = studentInfo.AcademyClass.SchoolYear;
+            string DiaChiCuThe = studentInfo.Student.DiaChiCuThe ?? "";
+            string NamHocHienTai = string.Format("{0} - {1}", DateTime.Now.Year, DateTime.Now.Year + 1);
+            string thoiGianKhoaHoc = getThoiGianKhoaHoc(NienKhoa);
+            string HinhThuc = isLienThong(Class) ? "Liên thông" : "Chính qui";
+            var NamThu = getNamThu(NienKhoa);
+
+            string filePath = _pathProvider.MapPath($"Templates/Ctsv/giay_uu_dai_mau_so_2.docx");
+            string destination = _pathProvider.MapPath($"Templates/Ctsv/uudai_{studentInfo.Student.Code}_{DateTime.Now.ToFileTime()}.docx");
+
+            var now = DateTime.Now;
+
+            var ngayKy = now.ToString("dd");
+            var thangKy = now.Month.ToString();
+            var namKy = now.Year.ToString();
+
+            byte[] templateBytes = await File.ReadAllBytesAsync(filePath);
+            using (MemoryStream templateStream = new MemoryStream())
+            {
+                templateStream.Write(templateBytes, 0, templateBytes.Length);
+                using (WordprocessingDocument doc = WordprocessingDocument.Open(templateStream, true))
+                {
+                    doc.ChangeDocumentType(WordprocessingDocumentType.Document);
+                    var mainPart = doc.MainDocumentPart;
+                    #region handle text
+                    var textList = mainPart.Document.Descendants<Text>().ToList();
+                    foreach (var text in textList)
+                    {
+                        replaceTextTemplate(text, "<ho_ten>", studentInfo.Student.FulName);
+                        replaceTextTemplate(text, "<nam_thu>", NamThu);
+                        replaceTextTemplate(text, "<nam_hoc>", NamHocHienTai);
+                        replaceTextTemplate(text, "<mssv>", MaSV);
+                        replaceTextTemplate(text, "<ma_lop>", Class);
+                        replaceTextTemplate(text, "<khoa>", TenKhoa);
+                        replaceTextTemplate(text, "<nien_khoa>", NienKhoa);
+                        replaceTextTemplate(text, "<tgkh>", thoiGianKhoaHoc);
+                        replaceTextTemplate(text, "<hinh_thuc>", HinhThuc);
+                        replaceTextTemplate(text, "<cmnd>", cmt);
+                        replaceTextTemplate(text, "<ngay_cap>", cmtNgayCap);
+                        replaceTextTemplate(text, "<noi_cap>", cmtNoiCap);
                         replaceTextTemplate(text, "<ngay>", ngayKy);
                         replaceTextTemplate(text, "<thang>", thangKy);
                         replaceTextTemplate(text, "<nam>", namKy);
@@ -4725,6 +4827,29 @@ namespace nuce.web.api.Services.Ctsv.Implements
             return new ExportFileOutputModel { document = null, filePath = destination };
         }
 
+        #endregion
+
+        #region Export Word Uu dai Sample
+        public async Task<byte[]> ExportWordUudaiSampleAsync(int mauSo)
+        {
+            try
+            {
+                string filePath = _pathProvider.MapPath($"Templates/Ctsv/giay_uu_dai_mau_so_1_sv_xem.docx");
+                if (mauSo == 2)
+                {
+                    filePath = _pathProvider.MapPath($"Templates/Ctsv/giay_uu_dai_mau_so_2_sv_xem.docx");
+                }
+
+                var resutlt = await File.ReadAllBytesAsync(filePath);
+
+                return resutlt;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Có lỗi: ", ex.Message, " |||| \n", ex.ToString());
+                throw ex;
+            }
+        }
         #endregion
 
         #region Helper

@@ -119,9 +119,12 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
             return result;
         }
 
-        public AllTypeDichVuModel GetRequestInfo()
+        public AllTypeDichVuModel GetRequestInfo(DateTime? start, DateTime? end)
         {
-            var allRequest = _context.Set<Entity>().AsNoTracking().ToList().Where(r => getValue(r, "Status") != null);
+            var allRequest = _context.Set<Entity>().AsNoTracking().ToList()
+                            .Where(r => getValue(r, "Status") != null && 
+                                        (end == null || Convert.ToDateTime(getValue(r, "CreatedTime")) <= end) &&
+                                        (start == null || start <= Convert.ToDateTime(getValue(r, "CreatedTime"))));
             var result = new AllTypeDichVuModel
             {
                 TongSo = 0,

@@ -20,12 +20,23 @@
 </style>
 
 <div class="container-fluid service-categories-wrp">
-    <div class="row mb-2">
-        <div class="col-12 text-right">
+    <div class="row mb-3">
+        <div class="col-4">
+            <input type="text" class="form-control" id="txtNgayBatDau" autocomplete="off" placeholder="Ngày bắt đầu tìm kiếm">
+        </div>
+        <div class="col-4">
+            <input type="text" class="form-control" id="txtNgayKetThuc" autocomplete="off" placeholder="Ngày kết thúc tìm kiếm">
+        </div>
+        <div class="col-4 text-right">
             <button type="button" class="btn btn-success"
                     onclick="onExportExcel()">
                 Excel
             </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <hr class="w-100 line mt-2 mb-2" />
         </div>
     </div>
     <div class="row text-center">
@@ -148,10 +159,40 @@
 </div>
 
 @section Scripts {
+    <link href="~/content/css/bootstrap-datepicker3.min.css" rel="stylesheet" />
+    <script src="~/content/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/content/js/bootstrap-datepicker.vi.min.js"></script>
+
     <script>
-        var onExportExcel = function() {
+        var initDatepicker = function () {
+            var date_input_ngaybatdau = $('#txtNgayBatDau'); //our date input has the name "date"
+            var date_input_ngayketthuc = $('#txtNgayKetThuc'); //our date input has the name "date"
+
+            var options = {
+                format: 'dd/mm/yyyy',
+                todayHighlight: true,
+                autoclose: true,
+            };
+            date_input_ngaybatdau.datepicker(options);
+            date_input_ngayketthuc.datepicker(options);
+        }
+
+        var onExportExcel = function () {
+            var start = $("#txtNgayBatDau").val() || null;
+            var end = $("#txtNgayKetThuc").val() || null;
+
+            if (start) {
+                start = start.split('/').reverse().join('/');
+            }
+
+            if (end) {
+                end = end.split('/').reverse().join('/');
+            }
+
             callApiExport({
                 ExportType: 'excel-ov',
+                Start: start,
+                End: end,
             }, 'xlsx')
         };
 
@@ -169,5 +210,8 @@
             }).fail(res => {
             });
         };
+
+        initDatepicker();
+
     </script>
 }

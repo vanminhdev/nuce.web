@@ -65,6 +65,11 @@ namespace nuce.web.api.ViewModel.Ctsv
         /// đề nghị hỗ trợ chi phí học tập
         /// </summary>
         public string DoiTuongDeNghiHoTro { get; set; }
+
+        /// <summary>
+        /// chon mau in uu dai giao duc
+        /// </summary>
+        public int MauSo { get; set; }
     }
 
     public class AllTypeDichVuModel
@@ -130,6 +135,8 @@ namespace nuce.web.api.ViewModel.Ctsv
     {
         public List<DichVuExport> DichVuList { get; set; }
         public DichVu DichVuType { get; set; }
+        public DateTime? Start { get; set; }
+        public DateTime? End { get; set; }
     }
 
     public class DichVuExport

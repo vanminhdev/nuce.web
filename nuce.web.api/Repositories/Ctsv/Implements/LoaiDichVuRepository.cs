@@ -15,6 +15,7 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
         {
             this._context = _context;
         }
+
         public List<AsAcademyStudentSvLoaiDichVu> GetAllInUse()
         {
             return _context.AsAcademyStudentSvLoaiDichVu.AsNoTracking()

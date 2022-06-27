@@ -369,6 +369,7 @@ namespace Nuce.CTSV.ApiModels
         public string doiTuongUuTienNhaO { get; set; }
         public string doiTuongHuongMienGiam { get; set; }
         public string doiTuongDeNghiHoTro { get; set; }
+        public int mauSo { get; set; }
     }
     public class ThiHsgModel
     {

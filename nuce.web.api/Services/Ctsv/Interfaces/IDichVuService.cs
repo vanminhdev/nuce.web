@@ -16,7 +16,7 @@ namespace nuce.web.api.Services.Ctsv.Interfaces
     {
         public IQueryable GetAllByStudent(int dichVuType);
         public Task AddDichVu(DichVuModel model);
-        public Dictionary<int, AllTypeDichVuModel> GetAllLoaiDichVuInfo();
+        public Dictionary<int, AllTypeDichVuModel> GetAllLoaiDichVuInfo(DateTime? start, DateTime? end);
         public Task<DataTableResponse<QuanLyDichVuDetailResponse>> GetRequestForAdmin(QuanLyDichVuDetailModel model);
         public Task UpdateMultiRequestToFourStatus(UpdateRequestStatusModel model);
         public Task UpdateRequestStatus(UpdateRequestStatusModel model);
@@ -30,11 +30,12 @@ namespace nuce.web.api.Services.Ctsv.Interfaces
         /// <param name="dotDangKyNhaO">Chỉ dùng cho dịch vụ đăng ký nhà ở</param>
         /// <returns></returns>
         public Task<byte[]> ExportExcelAsync(DichVu loaiDichVu, List<DichVuExport> dichVuList, long dotDangKyNhaO = 0);
-        public Task<byte[]> ExportExcelOverviewAsync();
+        public Task<byte[]> ExportExcelOverviewAsync(DateTime? start, DateTime? end);
         public Task UpdateThamSoDichVu(Dictionary<long, string> thamSoDictionary);
         public Task<DataTableResponse<AsAcademyStudentSvThietLapThamSoDichVu>> GetThamSoByDichVu(int loaiDichVu);
         public Task UpdatePartialInfoMuonHocBa(UpdateRequestStatusMuonHocBaGocModel model);
         public Task<byte[]> ExportWordMuonHocBaAsync(string studentCode);
+        public Task<byte[]> ExportWordUudaiSampleAsync(int mauSo);
 
         #region đăng ký chỗ ở
         /// <summary>

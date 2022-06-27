@@ -130,7 +130,7 @@ namespace nuce.web.quanly.Controllers
                 return null;
             }
             string api = ExportApiSet[model.ExportType];
-            var body = new { model.DichVuList, model.DichVuType };
+            var body = new { model.DichVuList, model.DichVuType, model.Start, model.End };
             var stringContent = base.MakeContent(body);
             var response = await base.MakeRequestAuthorizedAsync("post", api, stringContent);
 

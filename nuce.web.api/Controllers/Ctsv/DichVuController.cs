@@ -43,9 +43,9 @@ namespace nuce.web.api.Controllers.Ctsv
         [Authorize(Roles = "P_CTSV")]
         [Route("all-type-info")]
         [HttpGet]
-        public IActionResult GetAllLoaiDichVuInfo()
+        public IActionResult GetAllLoaiDichVuInfo(DateTime? start, DateTime? end)
         {
-            return Ok(_dichVuService.GetAllLoaiDichVuInfo());
+            return Ok(_dichVuService.GetAllLoaiDichVuInfo(start, end));
         }
 
         [Route("add")]
@@ -73,6 +73,15 @@ namespace nuce.web.api.Controllers.Ctsv
         public async Task<FileStreamResult> ExportWordMuonHocBa(string studentCode)
         {
             var result = await _dichVuService.ExportWordMuonHocBaAsync(studentCode);
+            return new FileStreamResult(new MemoryStream(result), "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        }
+
+        [AllowAnonymous]
+        [Route("export-word/uu-dai/{mauSo}")]
+        [HttpGet]
+        public async Task<FileStreamResult> ExportWordUuDaiSample(int mauSo)
+        {
+            var result = await _dichVuService.ExportWordUudaiSampleAsync(mauSo);
             return new FileStreamResult(new MemoryStream(result), "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
         }
 
@@ -257,9 +266,9 @@ namespace nuce.web.api.Controllers.Ctsv
         [Authorize(Roles = "P_CTSV")]
         [Route("admin/export-excel-overview")]
         [HttpPost]
-        public async Task<FileStreamResult> ExportExcel()
+        public async Task<FileStreamResult> ExportExcelOverView([FromBody] ExportModel model)
         {
-            var result = await _dichVuService.ExportExcelOverviewAsync();
+            var result = await _dichVuService.ExportExcelOverviewAsync(model.Start, model.End);
             return new FileStreamResult(new MemoryStream(result), "application/octet-stream");
         }
 

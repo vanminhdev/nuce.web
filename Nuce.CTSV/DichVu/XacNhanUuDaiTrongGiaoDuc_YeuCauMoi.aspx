@@ -40,6 +40,22 @@
                     <label class="font-14-sm fw-600 font-18" for="KyLuat">Kỷ luật:</label>
                     <asp:TextBox ID="txtKyLuat" runat="server" class="form-control" placeholder="Không (ghi rõ mức độ kỷ luật nếu có)"></asp:TextBox>
                 </div>--%>
+                <div class="form-group">
+                    <div class="d-flex flex-row font-14-sm fw-600 font-18 justify-content-between align-items-center">
+                        <span>Chọn mẫu xác nhận</span>
+                        <asp:Button ID="btnDownloadForm" runat="server" OnClick="btnDownloadForm_Click" 
+                        CssClass="btn btn-secondary text-light text-uppercase font-14-sm pt-2 pb-2 mr-2" Text="Mẫu in" />
+                    </div>
+                    <select
+                        class="form-control mt-3"
+                        id="slLyDo" name="slLyDo" onchange="xacnhanuudaitronggiaoduc.setValueMau(this);">
+                        <option value="1">Mẫu số 1</option>
+                        <option value="2">Mẫu số 2</option>
+                    </select>
+                </div>
+                <div class="form-group mt-3" id="frmMauSo" style="display:none;">
+                    <asp:TextBox ID="txtMauSo" runat="server" class="form-control" TextMode="MultiLine" placeholder="Bạn hãy nhập lý do khác" Text="1"></asp:TextBox>
+                </div>
                 <div class='g-recaptcha' data-sitekey='6Lf3Lc8ZAAAAANyHCgqSpM_NDwBTJQZIsEnUQJ1s'></div>
                 <div class="form-group">
                     <div style="display: none;">
@@ -149,7 +165,11 @@
             },
             vedanhsach: function () {   
                 window.location.href = "/dichvu/XacNhanUuDaiTrongGiaoDuc";
-            }
+            },
+            setValueMau: function (obj) {
+                $("#frmMauSo").hide();
+                $("#" + "<%=txtMauSo.ClientID %>").val(obj.value);
+            },
         };
     </script>
     <span runat="server" id="spScript"></span>

@@ -100,7 +100,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 .GroupBy(o => new { o.LecturerCode, o.ClassRoomCode, o.BaiKhaoSatId, o.Nhhk })
                 .Select(r => new { r.Key.LecturerCode, r.Key.ClassRoomCode, r.Key.BaiKhaoSatId, r.Key.Nhhk })
                 .ToList();
-
+                
                 var totalLectureClassroom = groupLopGiangVien.Count();
                 var count = 0;
                 foreach (var lectureClassroom in groupLopGiangVien)
@@ -597,7 +597,8 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
 
             var baiKhaoSatLyThuyetIds = baiKhaoSats.Where(o => o.Type == loaiMon).Select(o => o.Id).ToList();
             //lọc theo bài khảo sát
-            var reportTotalLoaiMonQuery = surveyContext.AsEduSurveyReportTotal.Where(o => baiKhaoSatLyThuyetIds.Contains(o.TheSurveyId)).ToList();
+            var reportTotalLoaiMonVanilla = surveyContext.AsEduSurveyReportTotal.Where(o => baiKhaoSatLyThuyetIds.Contains(o.TheSurveyId));
+            var reportTotalLoaiMonQuery = reportTotalLoaiMonVanilla.ToList();
 
             //int test = 0;
 
@@ -629,16 +630,10 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
 
                     var maMonHocs = monHocs.Select(o => o.subject.Code).ToList(); //lấy mã môn
 
-                    var maLopMonHocs = surveyContext.AsAcademyClassRoom
-                        .Join(surveyContext.AsAcademyLecturerClassRoom, classroom => classroom.Code, lectureclassroom => lectureclassroom.ClassRoomCode,
-                            (classRoom, lecturerClassRoom) => new
-                            {
-                                classRoom,
-                                lecturerClassRoom,
-                            })
-                        .Where(o => maMonHocs.Contains(o.classRoom.SubjectCode))
-                        .OrderBy(o => o.classRoom.SubjectCode) //sắp xếp theo mã môn học tăng dần
-                        .Select(o => new { ClassRoomCode = o.classRoom.Code, o.lecturerClassRoom.LecturerCode, o.classRoom.SubjectCode })
+                    var maLopMonHocs = reportTotalLoaiMonVanilla
+                        .Where(o => maMonHocs.Contains(o.SubjectCode))
+                        .OrderBy(o => o.SubjectCode) //sắp xếp theo mã môn học tăng dần
+                        .Select(o => new { ClassRoomCode = o.ClassRoomCode, o.LecturerCode, o.SubjectCode })
                         .Distinct().ToList();
 
                     #region thống kê
@@ -1393,17 +1388,17 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             var statusContext = scope.ServiceProvider.GetRequiredService<StatusContext>();
 
             var status = statusContext.AsStatusTableTask.FirstOrDefault(o => o.TableName == TableNameTask.ExportReportTotalNormalSurvey);
-            if (status == null)
-            {
-                throw new RecordNotFoundException("Không tìm thấy bản ghi cập nhật trạng thái");
-            }
-            //bảng đang làm việc
-            if (status.Status == (int)TableTaskStatus.Doing)
-            {
-                throw new TableBusyException("Đang thống kê, thao tác bị huỷ");
-            }
-            status.Status = (int)TableTaskStatus.Doing;
-            statusContext.SaveChanges();
+            //if (status == null)
+            //{
+            //    throw new RecordNotFoundException("Không tìm thấy bản ghi cập nhật trạng thái");
+            //}
+            ////bảng đang làm việc
+            //if (status.Status == (int)TableTaskStatus.Doing)
+            //{
+            //    throw new TableBusyException("Đang thống kê, thao tác bị huỷ");
+            //}
+            //status.Status = (int)TableTaskStatus.Doing;
+            //statusContext.SaveChanges();
 
             try
             {
@@ -1460,10 +1455,10 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
                 _logger.LogInformation($"Bat dau ket xuat");
                 //tổng hợp chung
 
-                ThongKeTungLoaiBaiKS(wsLyThuyet, surveyContext, baiKhaoSats, deLyThuyet, (int)TheSurveyType.TheoreticalSubjects);
-                ThongKeTungLoaiBaiKS(wsLyThuyetThucHanh, surveyContext, baiKhaoSats, deLyThuyetThucHanh, (int)TheSurveyType.TheoreticalPracticalSubjects);
+                //ThongKeTungLoaiBaiKS(wsLyThuyet, surveyContext, baiKhaoSats, deLyThuyet, (int)TheSurveyType.TheoreticalSubjects);
+                //ThongKeTungLoaiBaiKS(wsLyThuyetThucHanh, surveyContext, baiKhaoSats, deLyThuyetThucHanh, (int)TheSurveyType.TheoretkicalPracticalSubjects);
                 ThongKeTungLoaiBaiKS(wsThucHanh, surveyContext, baiKhaoSats, deThucHanhThiNghiem, (int)TheSurveyType.PracticalSubjects);
-                ThongKeTungLoaiBaiKS(wsDoAn, surveyContext, baiKhaoSats, deDoAn, (int)TheSurveyType.AssignmentSubjects);
+                //ThongKeTungLoaiBaiKS(wsDoAn, surveyContext, baiKhaoSats, deDoAn, (int)TheSurveyType.AssignmentSubjects);
                 _logger.LogInformation($"ket xuat hoan thanh");
                 #endregion
 

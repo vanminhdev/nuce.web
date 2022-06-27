@@ -34,7 +34,7 @@ namespace Nuce.CTSV
                         string strPhanHoi = uuDai.PhanHoi ?? "";
                         strContent += "<tr>";
                         strContent += string.Format("<td style=\"text-align:center;\">{0}</td>", (i+1));
-                        strContent += string.Format("<td style=\"text-align:center;\">{0}</td>", uuDai.CreatedTime?.ToString("dd/Mm/yyyy"));
+                        strContent += string.Format("<td style=\"text-align:center;\">{0}</td>", uuDai.CreatedTime?.ToString("dd/MM/yyyy"));
                         //if(strPhanHoi.Trim()=="")
                         //    strContent += string.Format("<td>{0}</td>", dt.Rows[i]["LyDo"].ToString());
                         //else

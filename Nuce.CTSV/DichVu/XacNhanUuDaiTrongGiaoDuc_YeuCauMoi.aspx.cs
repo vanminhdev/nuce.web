@@ -66,11 +66,19 @@ namespace Nuce.CTSV
             //else
             //{
             string strRandom = nuce.web.tienich.email.RandomString(6, false);
+            string strMauSo = txtMauSo.Text;
+            if (string.IsNullOrEmpty(strMauSo))
+            {
+                divThongBao.InnerHtml = "Không được để trống mẫu";
+                return;
+            }
+
             var body = new AddDichVuModel()
             {
                 type = (int)DichVu.UuDaiGiaoDuc,
                 //kyLuat = strKyLuat.Trim(),
-                maXacNhan = strRandom
+                maXacNhan = strRandom,
+                mauSo = Convert.ToInt32(strMauSo),
             };
 
             var jsonBody = JsonConvert.SerializeObject(body);
@@ -96,5 +104,25 @@ namespace Nuce.CTSV
             }
             //}
         }
+
+        protected async void btnDownloadForm_Click(object sender, EventArgs e)
+        {
+            string strMauSo = txtMauSo.Text;
+            if (string.IsNullOrEmpty(strMauSo))
+            {
+                divThongBao.InnerHtml = "Không được để trống mẫu";
+                return;
+            }
+
+            string api = $"/api/DichVu/export-word/uu-dai/{strMauSo}";
+            var res = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, api, "");
+            byte[] content = await res.Content.ReadAsByteArrayAsync();
+            Response.ContentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            Response.AddHeader("Content-Disposition", "attachment; filename=myfile.docx");
+            Response.BinaryWrite(content);
+            Response.Flush();
+            Response.End();
+        }
+
     }
 }

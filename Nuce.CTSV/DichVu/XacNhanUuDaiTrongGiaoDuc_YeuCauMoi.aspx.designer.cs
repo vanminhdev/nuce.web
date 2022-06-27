@@ -24,6 +24,24 @@ namespace Nuce.CTSV
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divThongBao;
 
         /// <summary>
+        /// btnDownloadForm control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnDownloadForm;
+
+        /// <summary>
+        /// txtMauSo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtMauSo;
+
+        /// <summary>
         /// btnCapNhat control.
         /// </summary>
         /// <remarks>

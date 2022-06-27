@@ -117,6 +117,8 @@ namespace nuce.web.quanly.Models
         public List<DichVuExport> DichVuList { get; set; }
         public string ExportType { get; set; }
         public int DichVuType { get; set; }
+        public DateTime? Start { get; set; }
+        public DateTime? End { get; set; }
     }
 
     public class DichVuExport
