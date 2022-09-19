@@ -51,7 +51,7 @@
                 <label class="font-14-sm fw-600 font-18" for="VeViec">Về việc:</label>
                 <asp:TextBox ID="txtVeViec" runat="server" class="form-control" placeholder="Về việc ..."></asp:TextBox>
             </div>
-            <div class='g-recaptcha' data-sitekey='6Lf3Lc8ZAAAAANyHCgqSpM_NDwBTJQZIsEnUQJ1s'></div>
+            <div class='g-recaptcha' data-sitekey='6LfggP0hAAAAAIG-8MLoTa1pW4xeRSuNjMhSA_OT'></div>
             <div class="form-group">
                 <div style="display: none;">
                     <asp:Button class="btn btn-primary" ID="Button1" runat="server" Text="Gửi yêu cầu" OnClick="btnCapNhat_Click" />

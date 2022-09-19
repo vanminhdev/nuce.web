@@ -66,7 +66,7 @@
                 <asp:TextBox ID="textBoxSdt" runat="server" MaxLength="10">
                 </asp:TextBox>
             </div>
-            <div class='g-recaptcha mt-5' data-sitekey='6Lf3Lc8ZAAAAANyHCgqSpM_NDwBTJQZIsEnUQJ1s'></div>
+            <div class='g-recaptcha mt-5' data-sitekey='6LfggP0hAAAAAIG-8MLoTa1pW4xeRSuNjMhSA_OT'></div>
         </div>
         <div class="col-12 col-md-3 mt-4" runat="server" id="divBtnContainer">
             <button type="button" id="btnModalUpdate" 

@@ -308,11 +308,11 @@ namespace Nuce.CTSV
         ////your redirection url  
         //public static string lwg_redirection_url = "http://localhost:9000/Login";
         //public static string lwg_url = "https://accounts.google.com/o/oauth2/token";
-        public static string lwg_clientid = "834469135571-lin0veiq4vfl6i90tb7l8t28ccagojln.apps.googleusercontent.com";
+        public static string lwg_clientid = "24030653195-av8cdf8gb4pjktvciiuds5grksjc6b7r.apps.googleusercontent.com";
         //your client secret  
-        public static string lwg_clientsecret = "PGqQbo6WnK-a-jWD0OjSJwyB";
+        public static string lwg_clientsecret = "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";
         //your redirection url  
-        public static string lwg_redirection_url = "https://sv.nuce.edu.vn/Login";
+        public static string lwg_redirection_url = "https://sv.huce.edu.vn/Login";
         public static string lwg_url = "https://accounts.google.com/o/oauth2/token";
         #endregion
 
@@ -324,7 +324,7 @@ namespace Nuce.CTSV
         {
             var client = new System.Net.WebClient();
 
-            string PrivateKey = "6Lf3Lc8ZAAAAAAYtaO7VQ2tIfilYmmH8Sw8atDqU";
+            string PrivateKey = "6LfggP0hAAAAAFBfc-la1XfTG5kXTeiAtuAnwX2c";
 
             var GoogleReply = client.DownloadString(string.Format("https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}", PrivateKey, EncodedResponse));
 

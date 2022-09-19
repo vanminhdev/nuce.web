@@ -97,7 +97,7 @@
                     </div>
                 </a>
             </div>
-            <div class="col-12 col-md-4 service-avatar-wrp cursor-pointer">
+            <%--<div class="col-12 col-md-4 service-avatar-wrp cursor-pointer">
                 <a
                     href="/dichvu/caplaithesinhvien.aspx"
                     class="row justify-content-center">
@@ -110,7 +110,7 @@
                         cấp lại thẻ sinh viên
                     </div>
                 </a>
-            </div>
+            </div>--%>
             <div class="col-12 col-md-4 service-avatar-wrp cursor-pointer">
                 <a
                     href="/dichvu/muonhocbagoc.aspx"

@@ -46,7 +46,7 @@
                     <option value="Xin tạm hoãn nghĩa vụ quân sự">Xin tạm hoãn nghĩa vụ quân sự</option>
                     <option value="Xin tạm hoãn nghĩa vụ quân sự (đối với SV hết hạn chính khóa)">Xin tạm hoãn nghĩa vụ quân sự (đối với SV hết hạn chính khóa)</option>
                     <option value="Xin xác nhận để người nhà thi vào bộ đội, công an.">Xin xác nhận để người nhà thi vào bộ đội, công an</option>
-                    <option value="Xin xác nhận để người nhà kết hôn với người trong  lực lượng vũ trang: bộ đội, công an">Xin xác nhận để người nhà kết hôn với người trong  lực lượng vũ trang: bộ đội, công an</option>
+                    <option value="Xin xác nhận để người nhà kết hôn với người trong lực lượng vũ trang: bộ đội, công an">Xin xác nhận để người nhà kết hôn với người trong  lực lượng vũ trang: bộ đội, công an</option>
                     <option value="Xin xác nhận để thuê nhà ở sinh viên tại làng sinh viên Hacinco">Xin xác nhận để thuê nhà ở sinh viên tại làng sinh viên Hacinco</option>
                     <option value="Xin xác nhận để làm hồ sơ đi du học">Xin xác nhận để làm hồ sơ đi du học</option>
                     <option value="Xác nhận để làm visa đi du lịch nước ngoài">Xác nhận để làm visa đi du lịch nước ngoài</option>
@@ -58,7 +58,7 @@
             <div class="form-group mt-3" id="frmXacNhan" style="display:none;">
                 <asp:TextBox ID="txtLyDoXacNhan" runat="server" class="form-control" TextMode="MultiLine" placeholder="Bạn hãy nhập lý do khác" Text="Xin đăng ký tạm trú, tạm vắng"></asp:TextBox>
             </div>
-            <div class='g-recaptcha' data-sitekey='6Lf3Lc8ZAAAAANyHCgqSpM_NDwBTJQZIsEnUQJ1s'></div>
+            <div class='g-recaptcha' data-sitekey='6LfggP0hAAAAAIG-8MLoTa1pW4xeRSuNjMhSA_OT'></div>
             <%--<div class="form-group">
                 <button type="button" id="btnModalUpdate" class="btn btn-primary mt-2" data-toggle="modal" data-target="#myModalUpdate">Gửi yêu cầu</button>
             </div>--%>

@@ -37,7 +37,7 @@
             <div class="main-color text-uppercase font-15-sm fw-600 font-25 service-title">
                 đề nghị hỗ trợ học tập
             </div>
-            <div class='g-recaptcha' data-sitekey='6Lf3Lc8ZAAAAANyHCgqSpM_NDwBTJQZIsEnUQJ1s'></div>
+            <div class='g-recaptcha' data-sitekey='6LfggP0hAAAAAIG-8MLoTa1pW4xeRSuNjMhSA_OT'></div>
             <%--<div class="form-group">
                 <button type="button" id="btnModalUpdate" class="btn btn-primary mt-2" data-toggle="modal" data-target="#myModalUpdate">Gửi yêu cầu</button>
             </div>--%>

@@ -56,7 +56,7 @@
                 <div class="form-group mt-3" id="frmMauSo" style="display:none;">
                     <asp:TextBox ID="txtMauSo" runat="server" class="form-control" TextMode="MultiLine" placeholder="Bạn hãy nhập lý do khác" Text="1"></asp:TextBox>
                 </div>
-                <div class='g-recaptcha' data-sitekey='6Lf3Lc8ZAAAAANyHCgqSpM_NDwBTJQZIsEnUQJ1s'></div>
+                <div class='g-recaptcha' data-sitekey='6LfggP0hAAAAAIG-8MLoTa1pW4xeRSuNjMhSA_OT'></div>
                 <div class="form-group">
                     <div style="display: none;">
                         <asp:Button class="btn btn-primary" ID="btnCapNhat" runat="server" Text="Gửi yêu cầu" OnClick="btnCapNhat_Click" />

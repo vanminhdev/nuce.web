@@ -64,7 +64,7 @@
                     <label class="font-14-sm fw-600 font-18" for="cmtNgayCap">Ngày cấp:</label>
                     <asp:TextBox ID="txtNgayCap" runat="server" textmode="Date" class="form-control" placeholder="dd/mm/yyyy"></asp:TextBox>
                 </div>
-                <div class='g-recaptcha' data-sitekey='6Lf3Lc8ZAAAAANyHCgqSpM_NDwBTJQZIsEnUQJ1s'></div>
+                <div class='g-recaptcha' data-sitekey='6LfggP0hAAAAAIG-8MLoTa1pW4xeRSuNjMhSA_OT'></div>
                 <div class="form-group">
                     <div style="display: none;">
                         <asp:Button class="btn btn-primary" ID="btnCapNhat" runat="server" Text="Gửi yêu cầu" OnClick="btnCapNhat_Click" />

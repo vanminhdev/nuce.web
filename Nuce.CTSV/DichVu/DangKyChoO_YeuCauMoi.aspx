@@ -55,7 +55,7 @@
                     <asp:ListItem Value="NHOM_2">&nbsp;Nhóm 2: Sinh viên thuộc đối tượng chính sách, hoàn cảnh khó khăn; Sinh viên nữ</asp:ListItem>
                 </asp:RadioButtonList>
             </div>
-            <div class='g-recaptcha' data-sitekey='6Lf3Lc8ZAAAAANyHCgqSpM_NDwBTJQZIsEnUQJ1s'></div>
+            <div class='g-recaptcha' data-sitekey='6LfggP0hAAAAAIG-8MLoTa1pW4xeRSuNjMhSA_OT'></div>
             <%--<div class="form-group">
                 <button type="button" id="btnModalUpdate" class="btn btn-primary mt-2" data-toggle="modal" data-target="#myModalUpdate">Gửi yêu cầu</button>
             </div>--%>
