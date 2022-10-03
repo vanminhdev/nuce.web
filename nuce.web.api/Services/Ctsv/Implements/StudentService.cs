@@ -90,6 +90,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     namRaTruong = strNamhocs[1].Trim();
                 }
             }
+
             int namCuoi;
             if (int.TryParse(namRaTruong, out namCuoi) && (namCuoi < DateTime.Now.Year || (namCuoi == DateTime.Now.Year && 8 < DateTime.Now.Month)))
             {

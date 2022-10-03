@@ -7,11 +7,11 @@
         },
         "ad.sv.nuce.edu.vn": {
             mobile: "02438697004",
-            email: "ctsv@nuce.edu.vn",
+            email: "ctsv@huce.edu.vn",
         },
         default: {
             mobile: "02438697004",
-            email: "ctsv@nuce.edu.vn",
+            email: "ctsv@huce.edu.vn",
         },
     },
     getDomainConfig: function() {

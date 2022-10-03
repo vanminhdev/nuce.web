@@ -12,7 +12,7 @@
     <div class="container service-categories-wrp news-wrp">
         <div class="main-color font-weight-bold mb-3">
             Xem thêm tin tức tại 
-            <a href="http://ctsv.nuce.edu.vn" target="_blank">trang web</a> hoặc
+            <a href="http://ctsv.huce.edu.vn" target="_blank">trang web</a> hoặc
             <a href="https://www.facebook.com/Ph%C3%B2ng-C%C3%B4ng-t%C3%A1c-Ch%C3%ADnh-tr%E1%BB%8B-v%C3%A0-Qu%E1%BA%A3n-l%C3%BD-sinh-vi%C3%AAn-NUCE-113567187012488/?modal=admin_todo_tour" target="_blank">
                 fan page
             </a>

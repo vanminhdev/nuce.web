@@ -21,7 +21,7 @@
                 style="display: inline-block"
                 class="btn background-main-color w-100 text-light font-14-sm font-18 login-google-btn">
                 <i class="fab fa-google-f fa-fw"></i>
-                    Đăng nhập qua email @nuce.edu.vn
+                    Đăng nhập qua email nhà trường
             </a>
             <div class="row extra-part text-light">
             <div class="col-5 pr-0"><hr class="extra-line" /></div>
