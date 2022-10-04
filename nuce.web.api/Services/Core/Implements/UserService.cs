@@ -18,6 +18,7 @@ using nuce.web.api.Services.EduData.Implements;
 using nuce.web.api.Services.EduData.Interfaces;
 using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Base;
+using nuce.web.api.ViewModel.CDSConnect;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
 using nuce.web.shared;
 using nuce.web.shared.Common;
@@ -210,23 +211,30 @@ namespace nuce.web.api.Services.Core.Implements
                 //    checkCallServiceSoap = true;
                 //}
 
-                if (!isSuccess) //lấy trong local
+                if (!isSuccess) // Đăng nhập bên CDS
                 {
                     try
                     {
                         HttpClient clientAuth = new HttpClient()
                         {
-                            BaseAddress = new Uri(_configuration["ApiAuth"]),
+                            BaseAddress = new Uri(_configuration["CDSConnectUrl"]),
                             Timeout = TimeSpan.FromSeconds(60)
                         };
                         var json = JsonSerializer.Serialize(new
                         {
-                            MaND = model.Username,
-                            Pass = model.Password
+                            code = model.Username,
+                            password = model.Password
                         });
                         var content = new StringContent(json, Encoding.UTF8, MediaTypeNames.Application.Json);
-                        var res = await clientAuth.PostAsync("/api/Auth", content);
-                        isSuccess =  res.IsSuccessStatusCode;
+                        var res = await clientAuth.PostAsync("api/sv/validate", content);
+
+                        if (res.IsSuccessStatusCode)
+                        {
+                            var resContent = await res.Content.ReadAsStringAsync();
+                            var sv = JsonSerializer.Deserialize<ResponseValidateSvLoginDto>(resContent);
+
+                            isSuccess = sv?.Data?.MaSinhVien != null;
+                        }
                     }
                     catch (Exception ex)
                     {
