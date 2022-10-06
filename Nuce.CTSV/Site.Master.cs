@@ -10,8 +10,8 @@ namespace Nuce.CTSV
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            var refreshToken = Request.Cookies["JWT-refresh-token"].Values;
-            if (refreshToken == null || Session[Utils.session_sinhvien] == null)
+            //var refreshToken = Request.Cookies["JWT-refresh-token"].Values;
+            if (Session[Utils.session_sinhvien] == null)
             {
                 //Chuyển đến trang đăng nhập
                 Session.RemoveAll();

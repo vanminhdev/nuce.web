@@ -217,12 +217,13 @@ namespace Nuce.CTSV
                 {
                     await GetToken(Request.QueryString["code"].ToString());
                 }
-            } else
+            }
+            else
             {
-                if (ViewState["postGuids"].ToString() != Session["postGuid"].ToString())
-                {
-                    IsPageRefresh = true;
-                }
+                //if (ViewState["postGuids"].ToString() != Session["postGuid"].ToString())
+                //{
+                //    IsPageRefresh = true;
+                //}
                 Session["postGuid"] = System.Guid.NewGuid().ToString();
                 ViewState["postGuids"] = Session["postGuid"].ToString();
             }
@@ -237,8 +238,6 @@ namespace Nuce.CTSV
 
         protected async void btnDangNhap_Click(object sender, EventArgs e)
         {
-            if (!IsPageRefresh)
-            {
                 string strMaSV = txtMaDangNhap.Text.Trim();
                 string strMatKhau = txtMatKhau.Text.Trim();
 
@@ -296,7 +295,12 @@ namespace Nuce.CTSV
                                 Vui lòng đăng nhập qua email bằng cách nhấp chuột vào nút 'Đăng nhập qua email @nuce.edu.vn'");
                         return;
                     }
-                    else
+                    else if (res.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        showThongBao(@"Tài khoản không còn hoạt động, không tồn tại hoặc sai mật khẩu.");
+                        return;
+                    }
+                else
                     {
                         try
                         {
@@ -318,36 +322,35 @@ namespace Nuce.CTSV
                 {
                     student = await CustomizeHttp.DeserializeAsync<StudentModel>(studentResponse.Content);
                 }
-                if (student != null)
+            if (student != null)
+            {
+                nuce.web.model.SinhVien SinhVien = new nuce.web.model.SinhVien();
+                string strFullName = student.FulName;
+                string[] strFullNames = strFullName.Split(new char[] { ' ' });
+
+                SinhVien.Ho = strFullName;
+                SinhVien.Ten = strFullNames[strFullNames.Length - 1];
+                SinhVien.MaSV = student.Code;
+                SinhVien.SinhVienID = Convert.ToInt32(student.Id);
+                SinhVien.Email = student.EmailNhaTruong ?? "";
+                SinhVien.Mobile = student.Mobile ?? "";
+                string File1 = student.File1 ?? "";
+
+                if (!File1.Trim().Equals(""))
                 {
-                    nuce.web.model.SinhVien SinhVien = new nuce.web.model.SinhVien();
-                    string strFullName = student.FulName;
-                    string[] strFullNames = strFullName.Split(new char[] { ' ' });
-
-                    SinhVien.Ho = strFullName;
-                    SinhVien.Ten = strFullNames[strFullNames.Length - 1];
-                    SinhVien.MaSV = student.Code;
-                    SinhVien.SinhVienID = Convert.ToInt32(student.Id);
-                    SinhVien.Email = student.EmailNhaTruong ?? "";
-                    SinhVien.Mobile = student.Mobile ?? "";
-                    string File1 = student.File1 ?? "";
-
-                    if (!File1.Trim().Equals(""))
-                    {
-                        SinhVien.IMG = $"{CustomizeHttp.API_URI}/{File1}";
-                    }
-                    else
-                    {
-                        SinhVien.IMG = "/Data/images/noimage_human.png";
-                    }
-
-                    Session[Utils.session_sinhvien] = SinhVien;
-                    Response.Redirect("/DichVuSinhVien.aspx", false);
+                    SinhVien.IMG = $"{CustomizeHttp.API_URI}/{File1}";
                 }
                 else
                 {
-                    showThongBao("Không tồn tại dữ liệu sinh viên");
+                    SinhVien.IMG = "/Data/images/noimage_human.png";
                 }
+
+                Session[Utils.session_sinhvien] = SinhVien;
+                Response.Redirect("/DichVuSinhVien.aspx", false);
+            }
+            else
+            {
+                showThongBao("Không tồn tại dữ liệu sinh viên");
             }
         }
         

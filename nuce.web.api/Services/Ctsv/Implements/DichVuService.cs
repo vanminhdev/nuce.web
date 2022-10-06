@@ -4057,8 +4057,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
             var paramSet = _thamSoDichVuService.GetParameters(DichVu.ThueNha)
                                 .ToDictionary(x => x.Name, x => x.Value);
 
-            //string ChucDanhNguoiKy = paramSet.ContainsKey("ChucDanhNguoiKy") ? paramSet["ChucDanhNguoiKy"] : "";
-            //string TenNguoiKy = paramSet.ContainsKey("TenNguoiKy") ? paramSet["TenNguoiKy"] : "";
+            string ChucDanhNguoiKy = paramSet.ContainsKey("ChucDanhNguoiKy") ? paramSet["ChucDanhNguoiKy"] : "";
+            string TenNguoiKy = paramSet.ContainsKey("TenNguoiKy") ? paramSet["TenNguoiKy"] : "";
 
             string filePath = _pathProvider.MapPath($"Templates/Ctsv/don_de_nghi_thue_nha_ktx_phap_van.docx");
             string destination = _pathProvider.MapPath($"Templates/Ctsv/ktx-{DateTime.Now.ToFileTime()}.docx");
@@ -4099,6 +4099,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         replaceTextTemplate(text, "<cmnd>", studentInfo.Student.Cmt);
                         replaceTextTemplate(text, "<noi_cap>", studentInfo.Student.CmtNoiCap);
                         replaceTextTemplate(text, "<ngay_cap>", studentInfo.Student.CmtNgayCap?.ToString("dd/MM/yyyy"));
+                        replaceTextTemplate(text, "<mssv>", studentInfo.Student.Code);
                         replaceTextTemplate(text, "<lop>", studentInfo.Student.ClassCode);
                         replaceTextTemplate(text, "<khoa>", studentInfo.Faculty?.Name);
                         replaceTextTemplate(text, "<email>", studentInfo.Student?.EmailNhaTruong);
@@ -4107,6 +4108,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                         replaceTextTemplate(text, "<ngay_ky>", ngayKy);
                         replaceTextTemplate(text, "<thang_ky>", thangKy);
                         replaceTextTemplate(text, "<nam_ky>", namKy);
+                        replaceTextTemplate(text, "<chuc_danh_nguoi_ky>", ChucDanhNguoiKy);
+                        replaceTextTemplate(text, "<ten_nguoi_ky>", TenNguoiKy);
                     }
                     #endregion
                     mainPart.Document.Save();
