@@ -21,7 +21,7 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
         /// </summary>
         /// <param name="studentId"></param>
         /// <returns></returns>
-        public IQueryable<AsAcademyStudentSvXinMienGiamHocPhi> GetAllDangKyChoO(long studentId)
+        public IQueryable<AsAcademyStudentSvXinMienGiamHocPhi> GetAllDangKyChoO(string studentCode)
         {
             var dotActive = _context.AsAcademyStudentSvXinMienGiamHocPhiDot.FirstOrDefault(d => d.IsActive);
             long dotDangKy = 0;
@@ -30,7 +30,7 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
                 dotDangKy = dotActive.Id;
             }
             return _context.AsAcademyStudentSvXinMienGiamHocPhi.AsNoTracking()
-                    .Where(item => item.StudentId == studentId && item.DotDangKy == dotDangKy && (item.Deleted != null || !item.Deleted.Value))
+                    .Where(item => item.StudentCode == studentCode && item.DotDangKy == dotDangKy && (item.Deleted != null || !item.Deleted.Value))
                     .OrderByDescending(item => item.LastModifiedTime)
                     .AsQueryable();
         }

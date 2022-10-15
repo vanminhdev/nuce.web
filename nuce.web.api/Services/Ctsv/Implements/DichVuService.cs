@@ -590,33 +590,33 @@ namespace nuce.web.api.Services.Ctsv.Implements
         /// <returns></returns>
         public IQueryable GetAllByStudent(int dichVuType)
         {
-            long studentId = _userService.GetCurrentStudentID() ?? 0;
+            string studentCode = _userService.GetCurrentStudentCode();
             switch ((DichVu)dichVuType)
             {
                 case DichVu.XacNhan:
-                    return _xacNhanRepository.GetAll(studentId);
+                    return _xacNhanRepository.GetAll(studentCode);
                 case DichVu.GioiThieu:
-                    return _gioiThieuRepository.GetAll(studentId);
+                    return _gioiThieuRepository.GetAll(studentCode);
                 case DichVu.CapLaiThe:
-                    return _capLaiTheRepository.GetAll(studentId);
+                    return _capLaiTheRepository.GetAll(studentCode);
                 case DichVu.MuonHocBaGoc:
-                    return _muonHocBaRepository.GetAll(studentId);
+                    return _muonHocBaRepository.GetAll(studentCode);
                 case DichVu.UuDaiGiaoDuc:
-                    return _uuDaiRepository.GetAll(studentId);
+                    return _uuDaiRepository.GetAll(studentCode);
                 case DichVu.VayVonNganHang:
-                    return _vayVonRepository.GetAll(studentId);
+                    return _vayVonRepository.GetAll(studentCode);
                 case DichVu.ThueNha:
-                    return _thueNhaRepository.GetAll(studentId);
+                    return _thueNhaRepository.GetAll(studentCode);
                 case DichVu.VeBus:
-                    return _veXeBusRepository.GetAll(studentId);
+                    return _veXeBusRepository.GetAll(studentCode);
                 case DichVu.DangKyChoO:
-                    return _dangKyChoORepository.GetAllDangKyChoO(studentId);
+                    return _dangKyChoORepository.GetAllDangKyChoO(studentCode);
                 case DichVu.XinMienGiamHocPhi:
-                    return _xinMienGiamHocPhiRepository.GetAllDangKyChoO(studentId);
+                    return _xinMienGiamHocPhiRepository.GetAllDangKyChoO(studentCode);
                 case DichVu.DeNghiHoTroChiPhiHocTap:
-                    return _deNghiHoTroChiPhiRepository.GetAllDangKyChoO(studentId);
+                    return _deNghiHoTroChiPhiRepository.GetAllDangKyChoO(studentCode);
                 case DichVu.HoTroHocTap:
-                    return _hoTroHocTapRepository.GetAllDangKyChoO(studentId);
+                    return _hoTroHocTapRepository.GetAllDangKyChoO(studentCode);
                 default:
                     break;
             }

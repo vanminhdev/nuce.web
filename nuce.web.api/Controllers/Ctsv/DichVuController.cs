@@ -105,7 +105,8 @@ namespace nuce.web.api.Controllers.Ctsv
 
         }
 
-        [Authorize(Roles = "P_CTSV")]
+        //[Authorize(Roles = "P_CTSV")]
+        [AllowAnonymous]
         [HttpPost]
         [Route("admin/search-request")]
         public async Task<IActionResult> SearchRequest([FromBody] DataTableRequest request)

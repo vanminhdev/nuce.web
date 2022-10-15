@@ -10,7 +10,7 @@ namespace nuce.web.api.Repositories.Ctsv.Interfaces
     public interface IHoTroHocTapRepository : IBaseStudentServiceRepository<AsAcademyStudentSvDangKyHoTroHocTap>
     {
         Task<GetAllForAdminResponseRepo<AsAcademyStudentSvDangKyHoTroHocTap>> GetAllForAdminDangKyChoO(QuanLyDichVuDetailModel model);
-        IQueryable<AsAcademyStudentSvDangKyHoTroHocTap> GetAllDangKyChoO(long studentId);
+        IQueryable<AsAcademyStudentSvDangKyHoTroHocTap> GetAllDangKyChoO(string studentCode);
         Task AddDangKyNhaO(AsAcademyStudentSvDangKyHoTroHocTap model);
         Task<IEnumerable<YeuCauDichVuStudentModel<AsAcademyStudentSvDangKyHoTroHocTap>>> GetAllYeuCauDichVuTheoDot(long dotDangKy);
     }

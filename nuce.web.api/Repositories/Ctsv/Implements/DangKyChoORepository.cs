@@ -19,9 +19,9 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
         /// <summary>
         /// Lấy theo đợt mới nhất
         /// </summary>
-        /// <param name="studentId"></param>
+        /// <param name="studentCode"></param>
         /// <returns></returns>
-        public IQueryable<AsAcademyStudentSvDangKyChoO> GetAllDangKyChoO(long studentId)
+        public IQueryable<AsAcademyStudentSvDangKyChoO> GetAllDangKyChoO(string studentCode)
         {
             var dotActive = _context.AsAcademyStudentSvDangKyChoODot.FirstOrDefault(d => d.IsActive);
             long dotDangKy = 0;
@@ -30,7 +30,7 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
                 dotDangKy = dotActive.Id;
             }
             return _context.AsAcademyStudentSvDangKyChoO.AsNoTracking()
-                    .Where(item => item.StudentId == studentId && item.DotDangKy == dotDangKy && (item.Deleted != null || !item.Deleted.Value))
+                    .Where(item => item.StudentCode == studentCode && item.DotDangKy == dotDangKy && (item.Deleted != null || !item.Deleted.Value))
                     .OrderByDescending(item => item.LastModifiedTime)
                     .AsQueryable();
         }
@@ -68,7 +68,7 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
                             .FirstOrDefault(yr => (yr.Enabled ?? false) || (yr.IsCurrent ?? false));
             var joinStudent = (await _context.Set<AsAcademyStudentSvDangKyChoO>().AsNoTracking().Where(dk => dk.DotDangKy == dotDangKy).ToListAsync())
                         .Join(_context.AsAcademyStudent.AsNoTracking(),
-                                e => getValueString(e, "StudentId"),
+                                e => getValueString(e, "StudentCode"),
                                 student => student.Id.ToString(),
                                 (entity, student) => new { entity, student });
 #if DEBUG
