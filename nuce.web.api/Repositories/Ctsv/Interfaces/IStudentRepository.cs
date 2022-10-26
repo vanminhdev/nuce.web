@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using nuce.web.api.Models.Ctsv;
+using nuce.web.api.ViewModel.CDSConnect;
 using nuce.web.api.ViewModel.Ctsv;
 using System;
 using System.Collections.Generic;
@@ -15,5 +16,6 @@ namespace nuce.web.api.Repositories.Ctsv.Interfaces
         public AsAcademyStudent FindByEmailNhaTruong(string email);
         public DbSet<AsAcademyStudent> GetAll();
         public Task<StudentDichVuModel> GetStudentDichVuInfoAsync(string studentCode);
+        Task<ViewGetSvDto> GetSinhVienByCodeCDS(string masv);
     }
 }

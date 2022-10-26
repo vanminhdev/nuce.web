@@ -218,8 +218,16 @@ namespace nuce.web.api.Controllers.Ctsv
         [HttpPost]
         public async Task<FileStreamResult> ExportWord([FromBody] ExportModel model)
         {
-            var result = await _dichVuService.ExportWordAsync(model.DichVuType, model.DichVuList[0].ID);
-            return new FileStreamResult(new MemoryStream(result), "application/octet-stream");
+            try
+            {
+                var result = await _dichVuService.ExportWordAsync(model.DichVuType, model.DichVuList[0].ID);
+                return new FileStreamResult(new MemoryStream(result), "application/octet-stream");
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
         [Authorize(Roles = "P_CTSV")]

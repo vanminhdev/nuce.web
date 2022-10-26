@@ -1,10 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using nuce.web.api.Models.Ctsv;
 using nuce.web.api.Repositories.Ctsv.Interfaces;
+using nuce.web.api.ViewModel.CDSConnect;
 using nuce.web.api.ViewModel.Ctsv;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace nuce.web.api.Repositories.Ctsv.Implements
@@ -12,9 +16,11 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
     public class StudentRepository : IStudentRepository
     {
         private readonly CTSVNUCE_DATAContext _context;
-        public StudentRepository(CTSVNUCE_DATAContext _context)
+        private readonly IConfiguration _configuration;
+        public StudentRepository(CTSVNUCE_DATAContext _context, IConfiguration _configuration)
         {
             this._context = _context;
+            this._configuration = _configuration;
         }
 
         public AsAcademyStudent FindByCode(string studentCode)
@@ -70,6 +76,61 @@ namespace nuce.web.api.Repositories.Ctsv.Implements
                                         Academics = academic
                                     })
                         .FirstOrDefaultAsync(s => s.Student.Code == studentCode);
+            return result;
+        }
+
+        public async Task<ViewGetSvDto> GetSinhVienByCodeCDS(string masv)
+        {
+            var result = new ViewGetSvDto();
+
+            var localStudent = _context.AsAcademyStudent.FirstOrDefault(x => x.Code == masv);
+
+            HttpClient clientAuth = new HttpClient()
+            {
+                BaseAddress = new Uri(_configuration["CDSConnectUrl"]),
+                Timeout = TimeSpan.FromSeconds(60)
+            };
+            var res = await clientAuth.GetAsync($"api/sv/{masv}");
+
+            if (res.IsSuccessStatusCode)
+            {
+                var resContent = await res.Content.ReadAsStringAsync();
+
+                try
+                {
+                    var aaa = JsonSerializer.Deserialize<ResponseGetSvDto>(resContent);
+                }
+                catch (Exception ex)
+                {
+                    var ddddat = ex;
+                    throw ex;
+                }
+                var resOjbect = JsonSerializer.Deserialize<ResponseGetSvDto>(resContent);
+
+                var sinhVien = resOjbect?.Data;
+
+                if (sinhVien != null)
+                {
+                    sinhVien.SoCmnd = localStudent.Cmt;
+                    sinhVien.NoiCapCmnd = localStudent.CmtNoiCap;
+                    sinhVien.NgayCapCmnd = localStudent.CmtNgayCap;
+                    //sinhVien.GioiTinh = localStudent.GioiTinh;
+                    sinhVien.Email = localStudent.Email;
+                    sinhVien.TenHkttTinh = localStudent.HkttTinh;
+                    sinhVien.TenHkttHuyen = localStudent.HkttQuan;
+                    sinhVien.TenHkttPhuongXa = localStudent.HkttPhuong;
+                    sinhVien.HkttSoNha = localStudent.HkttSoNha;
+                    sinhVien.DiaChiCuThe = localStudent.DiaChiCuThe;
+                    sinhVien.EmailNhaTruong = localStudent.EmailNhaTruong;
+                    sinhVien.File1 = localStudent.File1;
+
+                    var lopHoc = _context.AsAcademyClass.FirstOrDefault(x => x.Code == sinhVien.MaLopChu);
+                    sinhVien.NienKhoa = lopHoc?.SchoolYear;
+                }
+
+                return sinhVien;
+            }
+
             return result;
         }
     }
