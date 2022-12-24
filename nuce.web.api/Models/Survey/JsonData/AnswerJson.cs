@@ -47,6 +47,10 @@ namespace nuce.web.api.Models.Survey.JsonData
         /// Tỉnh thành công tác
         /// </summary>
         public string City { get; set; }
+        /// <summary>
+        /// Mã sinh viên
+        /// </summary>
+        public string StudentCode { get; set; }
     }
 
     /// <summary>

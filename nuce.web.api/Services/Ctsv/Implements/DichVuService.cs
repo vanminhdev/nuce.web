@@ -2934,11 +2934,11 @@ namespace nuce.web.api.Services.Ctsv.Implements
             string specialReason = "Xin tạm hoãn nghĩa vụ quân sự (đối với SV hết hạn chính khóa)";
             if (LyDoXacNhan == specialReason)
             {
-                LyDoXacNhan = "Xin tạm hoãn nghĩa vụ quân sự (Sinh viên thuộc đối tượng được gia hạn thời gian học tập tại trường theo quy định tại khoản 3 Điều 6 Quyết định số 43/2007/QĐ-BGDĐT ngày 15/8/2007 của Bộ trưởng Bộ Giáo dục & Đào tạo)";
+                LyDoXacNhan = "Xin tạm hoãn nghĩa vụ quân sự (Sinh viên chưa hoàn thành các môn học theo chương trình đào tạo của Nhà trường và thuộc đối tượng được gia hạn thời gian học tập tại trường theo quy định tại khoản 3 Điều 6 Quyết định số 43/2007/QĐ-BGDĐT ngày 15/8/2007 của Bộ trưởng Bộ Giáo dục & Đào tạo)";
             }
             else
             {
-                LyDoXacNhan = LyDoXacNhan.Replace("\n", "").Replace("\r", "");
+                LyDoXacNhan = LyDoXacNhan.Replace("\n", "").Replace("\r", "").Replace("\t", "");
             }
 
             //ComponentInfo.SetLicense("DTZX-HTZ5-B7Q6-2GA6");
@@ -3285,7 +3285,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                      Size = 13
                  }
              }
-         , new GemboxRun(document, string.Format(" {0} ", LyDoXacNhan.Replace("\n", "").Replace("\r", "")))
+         , new GemboxRun(document, string.Format(" {0} ", LyDoXacNhan))
          {
              CharacterFormat = new CharacterFormat()
              {

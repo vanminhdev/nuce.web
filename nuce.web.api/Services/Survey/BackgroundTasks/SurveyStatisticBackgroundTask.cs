@@ -1381,7 +1381,7 @@ namespace nuce.web.api.Services.Survey.BackgroundTasks
             wsLyThuyet.Cells[1, 1, row, wsLyThuyet.Dimension.Columns].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
         }
 
-        private void ExportReportTotalNormalSurveyBG(List<Guid> surveyRoundIds)
+        private void ExportReportTotalNormalSurveyBG(List<Guid> surveyRoundIds) 
         {
             var scope = _scopeFactory.CreateScope();
             var surveyContext = scope.ServiceProvider.GetRequiredService<SurveyContext>();

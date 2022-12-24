@@ -16,15 +16,15 @@
         <div class="row">
             <div class="col-12 col-md-4 service-avatar-wrp cursor-pointer">
                 <a
-                href="/dichvu/xacnhan.aspx"
-                class="row justify-content-center">
-                <img
-                    src="/Data/icons/giay-xac-nhan.jpg"
-                    alt="service"
-                    class="service-avatar col-10" />
-                <div class="col-10 mt-2 text-center text-uppercase main-color fw-600 font-14-sm font-18-md font-18 title-service">
-                    giấy xác nhận
-                </div>
+                    href="/dichvu/xacnhan.aspx"
+                    class="row justify-content-center">
+                    <img
+                        src="/Data/icons/giay-xac-nhan.jpg"
+                        alt="service"
+                        class="service-avatar col-10" />
+                    <div class="col-10 mt-2 text-center text-uppercase main-color fw-600 font-14-sm font-18-md font-18 title-service">
+                        giấy xác nhận
+                    </div>
                 </a>
             </div>
             <div class="col-12 col-md-4 service-avatar-wrp cursor-pointer">

@@ -10,11 +10,13 @@ namespace nuce.web.api.Models.Survey.JsonData
         public Guid TheSurveyId { get; set; }
 
         public string QuestionCode { get; set; }
+        public string QuestionContent { get; set; }
 
         public string AnswerCode { get; set; }
 
         public int? Total { get; set; }
 
         public string Content { get; set; }
+        public string StudentCode { get; set; }
     }
 }
