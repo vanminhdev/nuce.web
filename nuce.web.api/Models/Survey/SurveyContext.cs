@@ -55,6 +55,16 @@ namespace nuce.web.api.Models.Survey
         public virtual DbSet<AsEduSurveyUndergraduateReportTotal> AsEduSurveyUndergraduateReportTotal { get; set; }
         public virtual DbSet<AsEduSurveyUndergraduateStudent> AsEduSurveyUndergraduateStudent { get; set; }
         public virtual DbSet<AsEduSurveyUndergraduateSurveyRound> AsEduSurveyUndergraduateSurveyRound { get; set; }
+        public virtual DbSet<AsEduUndergraduateReportTotalSv> AsEduUndergraduateReportTotalSv { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseSqlServer("Data Source=10.20.0.58;Initial Catalog=NUCE_SURVEY_PUBLISH;User ID=sa;Password=Huce@2021;MultipleActiveResultSets=True");
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -387,6 +397,9 @@ namespace nuce.web.api.Models.Survey
             {
                 entity.ToTable("AS_Academy_Subject");
 
+                entity.HasIndex(e => e.Code)
+                    .HasName("index_subject");
+
                 entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.Code)
@@ -407,6 +420,9 @@ namespace nuce.web.api.Models.Survey
             modelBuilder.Entity<AsAcademySubjectExtend>(entity =>
             {
                 entity.ToTable("AS_Academy_Subject_Extend");
+
+                entity.HasIndex(e => e.Code)
+                    .HasName("index_subject_extend");
 
                 entity.Property(e => e.Code)
                     .HasMaxLength(50)
@@ -1548,6 +1564,29 @@ namespace nuce.web.api.Models.Survey
                     .HasMaxLength(100);
 
                 entity.Property(e => e.Note).HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<AsEduUndergraduateReportTotalSv>(entity =>
+            {
+                entity.ToTable("AS_Edu_Undergraduate_ReportTotal_SV");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.AnswerCode).HasMaxLength(50);
+
+                entity.Property(e => e.ClassRoom)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.GioiTinh).HasMaxLength(50);
+
+                entity.Property(e => e.NgayLamKhaoSat).HasColumnType("datetime");
+
+                entity.Property(e => e.QuestionCode).HasMaxLength(50);
+
+                entity.Property(e => e.StudentCode).HasMaxLength(50);
+
+                entity.Property(e => e.StudentName).HasMaxLength(250);
             });
 
             OnModelCreatingPartial(modelBuilder);

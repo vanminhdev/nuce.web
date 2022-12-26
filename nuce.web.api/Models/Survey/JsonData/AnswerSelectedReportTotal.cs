@@ -18,5 +18,6 @@ namespace nuce.web.api.Models.Survey.JsonData
 
         public string Content { get; set; }
         public string StudentCode { get; set; }
+        public DateTime? NgayBatDauLamBai { get; set; }
     }
 }

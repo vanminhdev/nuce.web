@@ -103,7 +103,7 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
             try
             {
                 _reportTotalService.ReportTotalUndergraduateSurvey(surveyRoundId.Value, theSurveyId.Value, fromDate.Value, toDate.Value);
-                var data = await _reportTotalService.ExportReportTotalUndergraduateSurvey(surveyRoundId.Value, theSurveyId.Value, fromDate.Value, toDate.Value);
+                var data = await _reportTotalService.ExportReportUndergraduateSurvey(surveyRoundId.Value, theSurveyId.Value, fromDate.Value, toDate.Value);
                 return File(data, ContentTypes.Xlsx);
             }
             catch (RecordNotFoundException e)
@@ -132,16 +132,60 @@ namespace nuce.web.api.Controllers.Survey.Undergraduate
         }
         #endregion
 
-        [HttpGet("gen-report")]
+        /// <summary>
+        /// Tổng hợp dữ liệu thô
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("gen-report")]
         //[AppAuthorize(RoleNames.KhaoThi_Survey_Undergraduate)]
-        public IActionResult GenReport()
+        public async Task<IActionResult> GenReport(int loaiKs, [FromBody] List<string> listMasv)
         {
             try
             {
-                _reportTotalService.ReportTotalUnderGraduateSurveyCustom(Guid.NewGuid());
+                await _reportTotalService.ReportTotalUnderGraduateSurveyCustom(loaiKs, listMasv);
                 //var data = await _reportTotalService.ExportReportTotalUndergraduateSurvey(surveyRoundId.Value, theSurveyId.Value, fromDate.Value, toDate.Value);
                 //return File(data, ContentTypes.Xlsx);
                 return Ok();
+            }
+            catch (RecordNotFoundException e)
+            {
+                return NotFound(new { message = e.Message });
+            }
+            catch (InvalidInputDataException e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (TableBusyException e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (DbUpdateException e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+            }
+            catch (Exception e)
+            {
+                var mainMessage = UtilsException.GetMainMessage(e);
+                _logger.LogError(e, mainMessage);
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Không kết xuất được báo cáo", detailMessage = mainMessage });
+            }
+        }
+
+        /// <summary>
+        /// Xuất báo cáo
+        /// </summary>
+        /// <param name="theSurveyId"></param>
+        /// <param name="loaiKs"></param>
+        /// <returns></returns>
+        [HttpPost("export-report")]
+        //[AppAuthorize()]
+        public IActionResult ExportReportUndergraduateSurvey([Required] Guid theSurveyId, int loaiKs)
+        {
+            try
+            {
+                var data = _reportTotalService.ExportExcelUnderGraduateSurveyCustom(theSurveyId, loaiKs);
+                return File(data, ContentTypes.Xlsx);
             }
             catch (RecordNotFoundException e)
             {

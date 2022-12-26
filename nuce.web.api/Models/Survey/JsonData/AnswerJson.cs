@@ -51,6 +51,10 @@ namespace nuce.web.api.Models.Survey.JsonData
         /// Mã sinh viên
         /// </summary>
         public string StudentCode { get; set; }
+        /// <summary>
+        /// Ngày bắt đầu làm bài
+        /// </summary>
+        public DateTime? NgayBatDauLamBai { get; set; }
     }
 
     /// <summary>
