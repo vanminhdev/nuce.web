@@ -3,6 +3,7 @@ using nuce.web.data;
 using Nuce.CTSV.ApiModels;
 using System;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -47,6 +48,9 @@ namespace Nuce.CTSV
                     string DiaChiCuThe = (student.DiaChiCuThe ?? "").Trim();
                     string DiaChiChuyenPhatnhanh = (student.BaoTinDiaChiNhanChuyenPhatNhanh ?? "").Trim();
                     string DanToc = (student.DanToc ?? "").Trim();
+                    string CMT = (student.Cmt ?? "").Trim();
+                    string CMT_NoiCap = (student.CmtNoiCap ?? "").Trim();
+                    string CMT_NgayCap = student.CmtNgayCap?.ToString("yyyy-MM-dd");
 
                     txtEmail.Text = Email;
                     txtMobile.Text = Mobile;
@@ -58,6 +62,9 @@ namespace Nuce.CTSV
                     chkLaNoiTru.Checked = LaNoiTru;
                     txtDiaChiCuThe.Text = DiaChiCuThe;
                     txtBaoTin_DiaChiChuyenPhatNhanh.Text = DiaChiChuyenPhatnhanh;
+                    txtCMT.Text = CMT;
+                    txtCMT_NoiCap.Text = CMT_NoiCap;
+                    txtCMT_NgayCap.Value = CMT_NgayCap;
                     var dantocIndex = slDanToc.Items.IndexOf(slDanToc.Items.FindByText(DanToc));
                     slDanToc.SelectedIndex = dantocIndex;
 
@@ -87,6 +94,28 @@ namespace Nuce.CTSV
                 return;
             }
 
+            DateTime? ngayCap = DateTime.Now;
+            if (txtCMT_NgayCap.Value !=  null)
+            {
+                try
+                {
+                    ngayCap = Convert.ToDateTime(txtCMT_NgayCap.Value.Trim());
+                }
+                catch (Exception)
+                {
+                    DateTime tmpDate;
+                    var rs = DateTime.TryParseExact(txtCMT_NgayCap.Value, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out tmpDate);
+                    if (rs)
+                    {
+                        ngayCap = tmpDate;
+                    }
+                }
+            }
+            else
+            {
+                ngayCap = null;
+            }
+
             CapNhatHoSoModel model = new CapNhatHoSoModel
             {
                 DanToc = slDanToc.Items[slDanToc.SelectedIndex].Text.Trim() ?? "",
@@ -99,6 +128,9 @@ namespace Nuce.CTSV
                 MobileBaoTin = txtBaoTin_SoDienThoai.Text.Trim(),
                 EmailBaoTin = txtBaoTin_Email.Text.Trim(),
                 DiaChiCuThe = txtDiaChiCuThe.Text.Trim(),
+                CMT = txtCMT.Text.Trim(),
+                CMTNoiCap = txtCMT.Text.Trim(),
+                CMTNgayCap = Convert.ToDateTime(txtCMT_NgayCap.Value),
                 CoNoiOCuThe = chkLaNoiTru.Checked,
                 PhuongXa = Request.Form[slPhuong.UniqueID] ?? "",
                 QuanHuyen = Request.Form[slQuan.UniqueID] ?? "",

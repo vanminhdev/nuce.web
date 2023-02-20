@@ -265,6 +265,49 @@
                 </div>
             </div>
         </div>
+        <div class="row mt-3">
+            <div class="col-12 col-md-12">
+                <div class="form-group">
+                    <div class="fw-700 font-14-sm">
+                        <span class="sub-color">CMND/CCCD:</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12 col-md-12">
+                <div class="form-group">
+                    <div class="fw-700 font-14-sm">
+                        Số CMND/CCCD 
+                    </div>
+                    <asp:TextBox ID="txtCMT" runat="server" 
+                        class="form-control mt-3" name="subject" placeholder=""></asp:TextBox>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12 col-md-12">
+                <div class="form-group">
+                    <div class="fw-700 font-14-sm">
+                        Nơi cấp 
+                    </div>
+                    <asp:TextBox ID="txtCMT_NoiCap" runat="server" 
+                        class="form-control mt-3" name="subject" placeholder="Nơi cấp"></asp:TextBox>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12 col-md-12">
+                <div class="form-group">
+                    <div class="fw-700 font-14-sm">
+                        Ngày cấp
+                    </div>
+                    <input type="date" runat="server" class="form-control mt-3" id="txtCMT_NgayCap" />
+                    <%--<asp:TextBox ID="CMT_NgayCap" runat="server" 
+                        class="form-control mt-3" name="subject" placeholder="Ngày cấp" type="datetime" ></asp:TextBox>--%>
+                </div>
+            </div>
+        </div>
         <div class="row mt-3 justify-content-center">
             <div class="col-12 col-md-3">
                 <button

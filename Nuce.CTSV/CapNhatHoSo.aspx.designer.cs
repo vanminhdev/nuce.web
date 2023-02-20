@@ -159,6 +159,33 @@ namespace Nuce.CTSV
         protected global::System.Web.UI.HtmlControls.HtmlSelect slPhuong;
 
         /// <summary>
+        /// txtCMT control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtCMT;
+
+        /// <summary>
+        /// txtCMT_NoiCap control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtCMT_NoiCap;
+
+        /// <summary>
+        /// txtCMT_NgayCap control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl txtCMT_NgayCap;
+
+        /// <summary>
         /// btnCapNhat control.
         /// </summary>
         /// <remarks>

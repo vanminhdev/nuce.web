@@ -614,7 +614,7 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
                         }
                     }
 
-                    foreach (var question in QuestionJsonData.Where(q => q.Type == QuestionType.SA))
+                    foreach (var question in QuestionJsonData.Where(q => q.Type == QuestionType.SA || q.Type == QuestionType.CityC))
                     {
                         var cauTraText = selectedAnswers.Where(a => a.QuestionCode == question.Code);
 
@@ -635,107 +635,26 @@ namespace nuce.web.api.Services.Survey.Implements.Undergraduate
                     foreach (var question in QuestionJsonData.Where(q => q.Type == QuestionType.MC))
                     {
                         #region cmt
-                        //if (question.Answers == null)
-                        //    continue;
+                        if (question.Answers == null)
+                            continue;
 
-                        //int testSum = 0;
-                        //foreach (var answer in question.Answers)
-                        //{
-                        //    var listAnswer = selectedAnswers.Where(a => a.QuestionCode == question.Code && a.AnswerCode != null && a.AnswerCodes.Contains(answer.Code));
+                        var listAnswer = selectedAnswers.Where(a => a.QuestionCode == question.Code);
 
-                        //    foreach (var svTraLoi in listAnswer)
-                        //    {
-                        //        total.Add(new Models.Survey.JsonData.AnswerSelectedReportTotal
-                        //        {
-                        //            TheSurveyId = svTraLoi.TheSurveyId,
-                        //            QuestionCode = question.Code,
-                        //            QuestionContent = question.Content,
-                        //            AnswerCode = answer.Code,
-                        //            StudentCode = svTraLoi.StudentCode
-                        //            //Total = countAnswer
-                        //        });
-                        //    }
+                        foreach (var svTraLoi in listAnswer)
+                        {
+                            var listAnswerContent = question.Answers.Where(a => svTraLoi.AnswerCodes.Contains(a.Code)).Select(a => a.Content);
 
-
-                        //    if (answer.AnswerChildQuestion != null)
-                        //    {
-                        //        var cauTraLoiCon = selectedAnswers.Where(a => a.QuestionCode == answer.AnswerChildQuestion.Code);
-
-                        //        foreach (var svTraLoiCon in cauTraLoiCon)
-                        //        {
-                        //            total.Add(new AnswerSelectedReportTotal
-                        //            {
-                        //                TheSurveyId = svTraLoiCon.TheSurveyId,
-                        //                QuestionCode = question.Code,
-                        //                QuestionContent = question.Content,
-                        //                Content = svTraLoiCon.AnswerContent,
-                        //                StudentCode = svTraLoiCon.StudentCode,
-                        //            });
-                        //        }
-
-
-                        //        //if (cauTraLoiCon != null)
-                        //        //{
-                        //        //    total.Add(new Models.Survey.JsonData.AnswerSelectedReportTotal
-                        //        //    {
-                        //        //        TheSurveyId = baiLamDauTien.BaiKhaoSatId,
-                        //        //        QuestionCode = answer.AnswerChildQuestion.Code,
-                        //        //        QuestionContent = question.Content,
-                        //        //        Content = string.Join(";", strAllAnswerContent)
-                        //        //    });
-                        //        //}
-                        //    }
-                        //}                    //if (question.Answers == null)
-                        //    continue;
-
-                        //int testSum = 0;
-                        //foreach (var answer in question.Answers)
-                        //{
-                        //    var listAnswer = selectedAnswers.Where(a => a.QuestionCode == question.Code && a.AnswerCode != null && a.AnswerCodes.Contains(answer.Code));
-
-                        //    foreach (var svTraLoi in listAnswer)
-                        //    {
-                        //        total.Add(new Models.Survey.JsonData.AnswerSelectedReportTotal
-                        //        {
-                        //            TheSurveyId = svTraLoi.TheSurveyId,
-                        //            QuestionCode = question.Code,
-                        //            QuestionContent = question.Content,
-                        //            AnswerCode = answer.Code,
-                        //            StudentCode = svTraLoi.StudentCode
-                        //            //Total = countAnswer
-                        //        });
-                        //    }
-
-
-                        //    if (answer.AnswerChildQuestion != null)
-                        //    {
-                        //        var cauTraLoiCon = selectedAnswers.Where(a => a.QuestionCode == answer.AnswerChildQuestion.Code);
-
-                        //        foreach (var svTraLoiCon in cauTraLoiCon)
-                        //        {
-                        //            total.Add(new AnswerSelectedReportTotal
-                        //            {
-                        //                TheSurveyId = svTraLoiCon.TheSurveyId,
-                        //                QuestionCode = question.Code,
-                        //                QuestionContent = question.Content,
-                        //                Content = svTraLoiCon.AnswerContent,
-                        //                StudentCode = svTraLoiCon.StudentCode,
-                        //            });
-                        //        }
-
-
-                        //        //if (cauTraLoiCon != null)
-                        //        //{
-                        //        //    total.Add(new Models.Survey.JsonData.AnswerSelectedReportTotal
-                        //        //    {
-                        //        //        TheSurveyId = baiLamDauTien.BaiKhaoSatId,
-                        //        //        QuestionCode = answer.AnswerChildQuestion.Code,
-                        //        //        QuestionContent = question.Content,
-                        //        //        Content = string.Join(";", strAllAnswerContent)
-                        //        //    });
-                        //        //}
-                        //    }
-                        //}
+                            total.Add(new AnswerSelectedReportTotal
+                            {
+                                TheSurveyId = svTraLoi.TheSurveyId,
+                                QuestionCode = question.Code,
+                                QuestionContent = question.Content,
+                                AnswerCode = svTraLoi.AnswerCode,
+                                Content = String.Join(';', listAnswerContent),
+                                StudentCode = svTraLoi.StudentCode,
+                                NgayBatDauLamBai = svTraLoi.NgayBatDauLamBai,
+                            });
+                        }
                         #endregion
                     }
 

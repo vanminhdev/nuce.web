@@ -22,6 +22,9 @@ namespace nuce.web.api.ViewModel.Ctsv
         public string QuanHuyen { get; set; }
         public string TinhThanhPho { get; set; }
         public string DanToc { get; set; }
+        public string CMT { get; set; }
+        public DateTime? CMTNgayCap { get; set; }
+        public string CMTNoiCap { get; set; }
     }
     public class FullStudentModel
     {

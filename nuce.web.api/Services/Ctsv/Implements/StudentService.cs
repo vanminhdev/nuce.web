@@ -281,6 +281,10 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 student.HkttQuan = basicStudent.QuanHuyen.Trim();
                 student.HkttTinh = basicStudent.TinhThanhPho.Trim();
 
+                student.Cmt = basicStudent.CMT.Trim();
+                student.CmtNoiCap = basicStudent.CMTNoiCap.Trim();
+                student.CmtNgayCap = basicStudent.CMTNgayCap;
+
                 student.BaoTinDiaChiNhanChuyenPhatNhanh = basicStudent.DiaChiNhanChuyenPhatNhanh;
                 _studentRepository.Update(student);
                 await _unitOfWork.SaveAsync();
