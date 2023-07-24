@@ -38,6 +38,30 @@ namespace nuce.web.api.Common
             LienTuyen = 2
         }
 
+        /// <summary>
+        /// Các loại đăng ký xe bus
+        /// </summary>
+        public enum DichVuXeBusLoaiDangKy
+        {
+            /// <summary>
+            /// Đăng ký xe bus thường
+            /// </summary>
+            BinhThuong = 1,
+            /// <summary>
+            /// Đăng ký xe bus Vin
+            /// </summary>
+            Vin = 2
+        }
+
+        /// <summary>
+        /// Các loại đăng ký xe bus name
+        /// </summary>
+        public static Dictionary<DichVuXeBusLoaiDangKy, string> DichVuXeBusLoaiDangKyName = new Dictionary<DichVuXeBusLoaiDangKy, string>
+        {
+            { DichVuXeBusLoaiDangKy.BinhThuong, "Thường" },
+            { DichVuXeBusLoaiDangKy.Vin, "Vin" },
+        };
+
         public class NhuCauNhaO
         {
             public const string KTX = "KTX";

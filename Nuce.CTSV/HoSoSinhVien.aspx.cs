@@ -41,7 +41,15 @@ namespace Nuce.CTSV
                         }
                         catch (Exception)
                         {
-                            NgaySinh = DateTime.Parse(student.DateOfBirth).ToString("dd/MM/yyyy");
+                            try
+                            {
+                                var tmpNgaySinh = DateTime.ParseExact(student.DateOfBirth, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                                NgaySinh = tmpNgaySinh.ToString("dd/MM/yyyy");
+                            }
+                            catch (Exception)
+                            {
+                                NgaySinh = DateTime.Parse(student.DateOfBirth).ToString("dd/MM/yyyy");
+                            }
                         }
                     }
 

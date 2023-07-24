@@ -25,7 +25,8 @@ namespace nuce.web.api.ViewModel.Ctsv
         public string MaXacNhan { get; set; }
         public string PhanHoi { get; set; }
         /// <summary>
-        /// xe bus
+        /// xe bus Loại tuyến
+        /// <see cref="DichVuXeBusLoaiTuyen"/>
         /// </summary>
         public int VeBusTuyenType { get; set; }
         /// <summary>
@@ -40,6 +41,11 @@ namespace nuce.web.api.ViewModel.Ctsv
         /// xe bus
         /// </summary>
         public string VeBusNoiNhanThe { get; set; }
+        /// <summary>
+        /// xe bus Loại đăng ký
+        /// <see cref="DichVuXeBusLoaiDangKy"/>
+        /// </summary>
+        public int? VeBusLoaiDangKy { get; set; }
         /// <summary>
         /// mượn học bạ gốc
         /// </summary>

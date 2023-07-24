@@ -375,7 +375,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                                 TuyenType = model.VeBusTuyenType,
                                 TuyenCode = model.VeBusTuyenCode,
                                 TuyenName = model.VeBusTuyenName,
-                                NoiNhanThe = model.VeBusNoiNhanThe
+                                NoiNhanThe = model.VeBusNoiNhanThe,
+                                LoaiDangKy = model.VeBusLoaiDangKy,
                             };
                             await _veXeBusRepository.AddAsync(veXeBus);
                             break;
@@ -2063,6 +2064,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                 initHeaderCell(ws, firstRow, ++i, "Liên tuyến");
                 initHeaderCell(ws, firstRow, ++i, "Số tuyến");
                 initHeaderCell(ws, firstRow, ++i, "Nơi nộp đơn và nhận thẻ");
+                initHeaderCell(ws, firstRow, ++i, "Loại đăng ký");
 
                 initHeaderCell(ws, firstRow, ++i, "Ngày ký");
                 initHeaderCell(ws, firstRow, ++i, "Tháng ký");
@@ -2096,6 +2098,8 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     string soTuyen = yeuCau.YeuCauDichVu.TuyenCode;
                     string noiNhanThe = yeuCau.YeuCauDichVu.NoiNhanThe;
                     string diaChiNhanChuyenPhatNhanh = yeuCau.Student.BaoTinDiaChiNhanChuyenPhatNhanh ?? "";
+                    string loaiDangKy = "";
+                    DichVuXeBusLoaiDangKyName.TryGetValue((DichVuXeBusLoaiDangKy)yeuCau.YeuCauDichVu.LoaiDangKy, out loaiDangKy);
                     DateTime now = DateTime.Now;
                     int row = j + 2;
 
@@ -2117,6 +2121,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     ws.Cell(row, ++col).SetValue(lienTuyen);
                     ws.Cell(row, ++col).SetValue(soTuyen);
                     ws.Cell(row, ++col).SetValue(noiNhanThe);
+                    ws.Cell(row, ++col).SetValue(loaiDangKy);
 
                     ws.Cell(row, ++col).SetValue(now.Day);
                     ws.Cell(row, ++col).SetValue(now.Month);
@@ -4157,12 +4162,27 @@ namespace nuce.web.api.Services.Ctsv.Implements
             var loaiTuyen = (DichVuXeBusLoaiTuyen)veXeBus.TuyenType;
             string motTuyen = "";
             string lienTuyen = "";
+
             if (loaiTuyen == DichVuXeBusLoaiTuyen.MotTuyen)
             {
                 motTuyen = veXeBus.TuyenCode ?? "";
-            } else if (loaiTuyen == DichVuXeBusLoaiTuyen.LienTuyen)
+            } 
+            else if (loaiTuyen == DichVuXeBusLoaiTuyen.LienTuyen)
             {
                 lienTuyen = "x";
+            }
+
+            // Chọn mẫu thường hay vin
+            switch ((DichVuXeBusLoaiDangKy)veXeBus.LoaiDangKy)
+            {
+                case DichVuXeBusLoaiDangKy.BinhThuong:
+                    filePath = _pathProvider.MapPath($"Templates/Ctsv/ve_xe_bus.docx");
+                    break;
+                case DichVuXeBusLoaiDangKy.Vin:
+                    filePath = _pathProvider.MapPath($"Templates/Ctsv/ve_xe_bus_vin.docx");
+                    break;
+                default:
+                    break;
             }
 
             var ngaySinh = convertStudentDateOfBirth(studentInfo.NgaySinh2);

@@ -88,7 +88,8 @@
                     href="/dichvu/vexebus.aspx"
                     class="row justify-content-center">
                     <img
-                        src="/Data/icons/dich-vu-ho-tro.jpg"
+                        src="/Data/icons/bus.jpg"
+                        style="border: 1px solid"
                         alt="service"
                         class="service-avatar col-10"/>
                     <div

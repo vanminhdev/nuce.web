@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using static nuce.web.api.Common.Ctsv;
 
 namespace nuce.web.api.Models.Ctsv
 {
@@ -23,10 +24,17 @@ namespace nuce.web.api.Models.Ctsv
         public DateTime? NgayHenTuNgay { get; set; }
         public DateTime? NgayHenDenNgay { get; set; }
         public string MaXacNhan { get; set; }
+        /// <summary>
+        /// <see cref="DichVuXeBusLoaiTuyen"/>
+        /// </summary>
         public int? TuyenType { get; set; }
         public string TuyenCode { get; set; }
         public string TuyenName { get; set; }
         public string NoiNhanThe { get; set; }
         public bool? ChuyenPhatNhanh { get; set; }
+        /// <summary>
+        /// <see cref="DichVuXeBusLoaiDangKy"/>
+        /// </summary>
+        public int? LoaiDangKy { get; set; }
     }
 }

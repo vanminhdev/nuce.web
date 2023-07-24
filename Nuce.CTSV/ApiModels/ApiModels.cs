@@ -362,6 +362,7 @@ namespace Nuce.CTSV.ApiModels
         public string veBusTuyenCode { get; set; }
         public string veBusTuyenName { get; set; }
         public string veBusNoiNhanThe { get; set; }
+        public int? veBusLoaiDangKy { get; set; }
         public string thoiGianMuon { get; set; }
         public bool notSendEmail { get; set; }
         public string sdt { get; set; }
@@ -519,6 +520,21 @@ namespace Nuce.CTSV.ApiModels
     {
         MotTuyen = 1,
         LienTuyen = 2
+    }
+
+    /// <summary>
+    /// Các loại đăng ký xe bus
+    /// </summary>
+    public enum DichVuXeBusLoaiDangKy
+    {
+        /// <summary>
+        /// Đăng ký xe bus thường
+        /// </summary>
+        BinhThuong = 1,
+        /// <summary>
+        /// Đăng ký xe bus Vin
+        /// </summary>
+        Vin = 2
     }
     #endregion
 }

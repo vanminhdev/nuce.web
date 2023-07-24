@@ -46,260 +46,157 @@
                     <asp:ListItem Value="2" >Liên tuyến</asp:ListItem>
                 </asp:RadioButtonList>
             </div>
+            <div class="form-group" id="divLoaiDangKy">
+                <div class="font-14-sm fw-600 font-18">Loại đăng ký</div>
+                <select class="form-control mt-3" name="slLoaiDangKy" id="slLoaiDangKy" runat="server" onchange="onChangeLoaiDangKy(this)">
+                    <option value="1">Thường</option>
+                    <option value="2">Vin</option>
+                </select>
+            </div>
             <div class="form-group" id="divTuyen">
                 <div class="font-14-sm fw-600 font-18">Tuyến</div>
-                <select class="form-control mt-3" name="slTuyen" id="slTuyen" runat="server"> 
+                <select class="form-control mt-3" name="slTuyen_Thuong" id="slTuyen_Thuong" runat="server"> 
                     <option value="1">01-Bến xe Gia Lâm - Bến xe Yên Nghĩa</option>
                     <option value="2">02-Bác Cổ - Bến xe Yên Nghĩa</option>
                     <option value="3">03A-Bến xe Giáp Bát - Bến xe Gia Lâm</option>
                     <option value="803">03B-Bến xe Nước Ngầm - Giang Biên (Long Biên)</option>
                     <option value="4">04-Long Biên - Bệnh viện Nội tiết trung ương cơ sở 2</option>
-                                                    
                     <option value="5">05-KĐT Linh Đàm - Phú Diễn</option>
-                                                    
                     <option value="6">06A-Bến xe Giáp Bát - Cầu Giẽ</option>
-                                                    
                     <option value="806">06B-Bến xe Giáp Bát - Hồng Vân</option>
-                                                    
                     <option value="866">06C-Bến xe Giáp Bát - Phú Minh</option>
-                                                    
                     <option value="876">06D-Bến xe Giáp Bát - Tân Dân</option>
-                                                    
                     <option value="886">06E-Bến xe Giáp Bát - Phú Túc</option>
-                                                    
                     <option value="7">07-Cầu Giấy - Nội Bài</option>
-                                                    
                     <option value="8">08A-Long Biên - Đông Mỹ</option>
-                                                    
                     <option value="708">08B-Long Biên - Vạn Phúc</option>
-                                                    
                     <option value="409">09A-Bờ Hồ - Cầu Giấy - Khu Liên cơ quan Sở ngành HN</option>
-                                                    
                     <option value="609">09B-Bờ Hồ - Công viên Thống Nhất - Bến xe Mỹ Đình</option>
-                                                    
                     <option value="100">100-Long Biên - Khu đô thị Đặng Xá</option>
-                                                    
                     <option value="101">101A-Bến xe Giáp Bát - Vân Đình</option>
-                                                    
                     <option value="901">101B-Bến xe Giáp Bát - Đại Cường (Ứng Hòa)</option>
-                                                    
                     <option value="102">102-Bến xe Yên Nghĩa - Vân Đình</option>
-                                                    
                     <option value="103">103A-Bến xe Mỹ Đình - Hương Sơn</option>
-                                                    
                     <option value="903">103B-Bến xe Mỹ Đình - Hồng Quang - Hương Sơn</option>
-                                                    
                     <option value="104">104-Mỹ Đình - BX Nước Ngầm</option>
-                                                    
                     <option value="105">105-Đô Nghĩa - Cầu Giấy</option>
-                                                    
                     <option value="106">106-KĐT Mỗ Lao - TTTM Aeon Mall Long Biên</option>
-                                                    
                     <option value="107">107-Kim Mã - Làng văn hóa du lịch các dân tộc VN</option>
-                                                    
                     <option value="108">108-Bến xe Thường Tín - Minh Tân</option>
-                                                    
                     <option value="109">109-Mỹ Đình - Nội Bài</option>
-                                                    
                     <option value="10">10A-Long Biên - Từ Sơn</option>
-                                                    
                     <option value="810">10B-Long Biên - Trung Mầu</option>
-                                                    
                     <option value="11">11-Công viên Thống Nhất - Học Viện Nông Nghiệp</option>
-                                                    
                     <option value="110">110-BX Sơn Tây - Vườn Quốc gia Ba Vì - Đá Chông</option>
-                                                    
                     <option value="111">111-BX Sơn Tây - Bất Bạt</option>
-                                                    
                     <option value="112">112-Nam Thăng Long - Thạch Đà (Mê Linh)</option>
-                                                    
                     <option value="113">113-Đại Thắng (Phú Xuyên) - Bến đò Vườn Chuối</option>
-                                                    
                     <option value="12">12-Công viên Nghĩa Đô - Đại Áng</option>
-                                                    
                     <option value="13">13-CV nước Hồ Tây - Cổ Nhuế (HVCS)</option>
-                                                    
                     <option value="14">14-Bờ Hồ - Cổ Nhuế</option>
-                                                    
                     <option value="15">15-Bến xe Gia Lâm - Phố Nỉ</option>
-                                                    
                     <option value="816">16-Bến xe Mỹ Đình - Bến xe Nước Ngầm</option>
-                                                    
                     <option value="17">17-Long Biên - Nội Bài</option>
-                                                    
                     <option value="18">18-ĐH Kinh tế QD - ĐH Kinh tế QD</option>
-                                                    
                     <option value="19">19-Trần Khánh Dư - Học viện chính sách và phát triển</option>
-                                                    
                     <option value="20">20A-Cầu Giấy - Bến xe Sơn Tây</option>
-                                                    
                     <option value="820">20B-Nhổn - Bến xe Sơn Tây</option>
-                                                    
                     <option value="21">21A-Bến xe Giáp Bát - Bến xe Yên Nghĩa</option>
-                                                    
                     <option value="821">21B-Khu đô thị Pháp Vân - Bến xe Mỹ Đình</option>
-                                                    
                     <option value="22">22A-Bến xe Gia Lâm - KĐT Trung Văn</option>
-                                                    
                     <option value="822">22B-BX Mỹ Đình - KĐT Kiến Hưng</option>
-                                                    
                     <option value="922">22C-Bến xe Giáp Bát - Khu đô thị Dương Nội</option>
-                                                    
                     <option value="23">23-Nguyễn Công Trứ - Nguyễn Công Trứ</option>
-                                                    
                     <option value="24">24-Long Biên - Cầu Giấy</option>
-                                                    
                     <option value="25">25-BV Nhiệt đới TW Cơ sở 2 - Bến xe Giáp Bát</option>
-                                                    
                     <option value="26">26-Mai Động - SVĐ Quốc gia</option>
-                                                    
                     <option value="27">27-Bến xe Yên Nghĩa - Bến xe Nam Thăng Long</option>
-                                                    
                     <option value="28">28-BX Nước Ngầm - Đông Ngạc - Đại học Mỏ</option>
-                                                    
                     <option value="29">29-BX Giáp Bát - Tân Lập</option>
-                                                    
                     <option value="30">30-Khu đô thị Gamuda - Bến xe Mỹ Đình</option>
-                                                    
                     <option value="31">31-Bách Khoa - Chèm (ĐH Mỏ)</option>
-                                                    
                     <option value="32">32-Bến xe Giáp Bát - Nhổn</option>
-                                                    
                     <option value="33">33-Cụm Công nghiệp Thanh Oai - Xuân Đỉnh</option>
-                                                    
                     <option value="34">34-Bến xe Mỹ Đình - Bến xe Gia Lâm</option>
-                                                    
                     <option value="35">35A-Trần Khánh Dư - Nam Thăng Long</option>
-                                                    
                     <option value="835">35B-Nam Thăng Long - Thanh Lâm</option>
-                                                    
                     <option value="36">36-Yên Phụ - Khu đô thị Linh Đàm</option>
-                                                    
                     <option value="37">37-Bến xe Giáp Bát - Chương Mỹ</option>
-                                                    
                     <option value="38">38-BX Nam Thăng Long - Mai Động</option>
-                                                    
                     <option value="39">39-Công viên Nghĩa Đô - Bệnh viện Nội tiết TW CS II</option>
-                                                    
                     <option value="40">40-Công viên Thống Nhất - Văn Lâm</option>
-                                                    
                     <option value="41">41-Nghi Tàm - BX Giáp Bát</option>
-                                                    
                     <option value="42">42-Giáp Bát - Đức Giang</option>
-                                                    
                     <option value="43">43-Công viên Thống Nhất - Thị trấn Đông Anh</option>
-                                                    
                     <option value="44">44-Trần Khánh Dư - BX Mỹ Đình</option>
-                                                    
                     <option value="45">45-Time City - Bến xe Nam Thăng Long</option>
-                                                    
                     <option value="46">46-Bến xe Mỹ Đình - Thị trấn Đông Anh</option>
-                                                    
                     <option value="47">47A-Long Biên - Bát Tràng</option>
-                                                    
                     <option value="847">47B-Đại học Kinh tế Quốc dân - Kiêu Kỵ</option>
-                                                    
                     <option value="48">48-Bến xe Nước Ngầm - Chương Dương - Phúc Lợi (Long Biên)</option>
-                                                    
                     <option value="49">49-Trần Khánh Dư - Nhổn</option>
-                                                    
                     <option value="50">50-Long Biên - Khu đô thị Vân Canh</option>
-                                                    
                     <option value="51">51-Trần Khánh Dư - Trần Vỹ (Học vện Tư Pháp)</option>
-                                                    
                     <option value="52">52A-Công viên Thống nhất - Lệ Chi</option>
-                                                    
                     <option value="852">52B-Công viên Thống Nhất - Đặng Xá</option>
-                                                    
                     <option value="53">53A-Hoàng Quốc Việt - Đông Anh</option>
-                                                    
                     <option value="853">53B-Bến xe Mỹ Đình - Kim Hoa (Mê Linh)</option>
-                                                    
                     <option value="54">54-Long Biên - Bắc Ninh</option>
-                                                    
                     <option value="55">55A-Khu đô thị Times City - Cầu Giấy</option>
-                                                    
                     <option value="855">55B-TTTM Aeon Mall - Cầu Giấy</option>
-                                                    
                     <option value="56">56A-Bến xe Nam Thăng Long - Núi Đôi</option>
-                                                    
                     <option value="856">56B-Học viện Phật Giáo VN - Xuân Giang - Bắc Phú - Học viện Phật Giáo VN</option>
-                                                    
                     <option value="57">57-Nam Thăng Long - Khu công nghiệp Phú Nghĩa</option>
-                                                    
                     <option value="58">58-Long Biên - Thạch Đà</option>
-                                                    
                     <option value="59">59-TT Đông Anh - Học viện Nông nghiệp Việt Nam</option>
-                                                    
                     <option value="60">60A-KĐT Pháp Vân, Tứ Hiệp - Công Viên Nước Hồ Tây</option>
-                                                    
                     <option value="860">60B-Bến xe Nước Ngầm - BV Bệnh nhiệt đới TƯ (CS2)</option>
-                                                    
                     <option value="861">61-Vân Hà (Đông Anh) - CV Cầu Giấy</option>
-                                                    
                     <option value="62">62-Bến xe Yên Nghĩa - Bến xe Thường Tín</option>
-                                                    
                     <option value="63">63-Khu công nghiệp Bắc Thăng Long - Tiến Thịnh (Mê Linh)</option>
-                                                    
                     <option value="64">64-BX Mỹ Đình - Phố Nỉ - TTTM Bình An</option>
-                                                    
                     <option value="65">65-Thụy Lâm (Đông Anh) - Long Biên (ĐCT Long Biên)</option>
-                                                    
                     <option value="72">72-Bến xe Yên Nghĩa - Xuân Mai</option>
-                                                    
                     <option value="74">74-Bến xe Mỹ Đình - Xuân Khanh</option>
-                                                    
                     <option value="84">84-Cầu Diễn - Khu đô thị Linh Đàm</option>
-                                                    
                     <option value="85">85-Công viên Nghĩa Đô - Khu đô thị Thanh Hà</option>
-                                                    
                     <option value="87">87-Bến xe Mỹ Đình - Quốc Oai - Xuân Mai</option>
-                                                    
                     <option value="88">88-Bến xe Mỹ Đình - Hòa Lạc - Xuân Mai</option>
-                                                    
                     <option value="89">89-Bến xe Yên Nghĩa - Thạch Thất - Bến xe Sơn Tây</option>
-                                                    
                     <option value="90">90-Hào Nam - Cầu Nhật Tân - Sân bay Nội Bài</option>
-                                                    
                     <option value="91">91-Bến xe Yên Nghĩa - Kim Bài - Phú Túc</option>
-                                                    
                     <option value="92">92-Nhổn - Sơn Tây - Tây Đằng</option>
-                                                    
                     <option value="93">93-Nam Thăng Long - Bắc Sơn (Sóc Sơn)</option>
-                                                    
                     <option value="94">94-Bến xe Giáp Bát - Kim Bài</option>
-                                                    
                     <option value="95">95-Nam Thăng Long - Xuân Hòa</option>
-                                                    
                     <option value="96">96-Công viên Nghĩa Đô - Đông Anh</option>
-                                                    
                     <option value="97">97-Hoài Đức - Công viên Nghĩa Đô</option>
-                                                    
                     <option value="98">98-Yên Phụ - Gia Thụy - Aeon Mall Long Biên</option>
-                                                    
                     <option value="99">99-Kim Mã - Ngũ Hiệp (Thanh Trì)</option>
-                                                    
                     <option value="918">BRT01-Bến xe Yên Nghĩa - Kim Mã</option>
-                                                    
                     <option value="205">CNG01-Bến xe Mỹ Đình - Bến xe Sơn Tây</option>
-                                                    
                     <option value="206">CNG02-Bến xe Yên Nghĩa - Khu đô thị Đặng Xá</option>
-                                                    
                     <option value="207">CNG03-Bệnh viện Bệnh nhiệt đới Trung ương cơ sở 2 - Khu đô thị Times City.</option>
-                                                    
                     <option value="208">CNG04-Kim Lũ (Sóc Sơn) - Nam Thăng Long</option>
-                                                    
                     <option value="209">CNG05-Cầu Giấy - Tam Hiệp (Thanh Trì)</option>
-                                                    
                     <option value="210">CNG06-Nhổn - Thọ An (Đan Phượng)</option>
-                                                    
                     <option value="211">CNG07-BX Yên Nghĩa - Hoài Đức</option>
-                                                    
+                </select>
+                <select class="form-control mt-3" name="slTuyen_Thuong" id="slTuyen_Vin" runat="server" style="display: none"> 
+                    <option value="E01">E01 - Bến xe Mỹ Đình - KĐT Ocean Park </option>
+                    <option value="E02">E02 - Hào Nam - KĐT Ocean Park </option>
+                    <option value="E03">E03 - Mỹ Đình (Hàm Nghi) - KĐT Ocean Park </option>
+                    <option value="E04">E04 - KĐT Smart City - Vincom Long Biên </option>
+                    <option value="E05">E05 - Long Biên - Cầu Giấy - KĐT Smart City </option>
+                    <option value="E06">E06 - Bến xe Giáp Bát - KĐT Smart City </option>
+                    <option value="E07">E07 - Long Biên - Cửa Nam - KĐT Smart City </option>
+                    <option value="E08">E08 - Khu Liên Cơ Quan Sở Ngành HN - KĐT Times City </option>
+                    <option value="E09">E09 - KĐT Smart City - Công viên nước Hồ Tây </option>
                 </select>
             </div>
             <div class="form-group">
                 <div class="font-14-sm fw-600 font-18">Điểm nhận thẻ</div>
-                <select class="form-control mt-3" name="slNoiNhan" id="slNoiNhan" runat="server">
+                <select class="form-control mt-3" name="slNoiNhan_Thuong" id="slNoiNhan_Thuong" runat="server">
                     <option value="1">A1-BX Giáp Bát</option>
                     <option value="2">A2-Học viện Nông Nghiệp</option>
                     <option value="3">A3-Công viên Thống nhất</option>
@@ -344,49 +241,12 @@
                     <option value="42">A42-Kim Chung</option>
                     <option value="43">A43-BX Sơn Tây</option>
                     <option value="44">A44-Yên Viên</option>
-                    <option value="45">A45-Chèm</option>
-                    <%--<option value="1">A01-BX Giáp Bát</option>
-                                                    
-                    <option value="40">A02-Học viện Nông Nghiệp</option>
-                                                    
-                    <option value="2">A03-Công viên Thống nhất</option>
-                                                    
-                    <option value="3">A04-Công viên Thủ Lệ</option>
-                                                    
-                    <option value="4">A05-BX Gia Lâm</option>
-                                                    
-                    <option value="6">A07-Công viên Hòa Bình</option>
-                                                    
-                    <option value="46">A09-Bx Mỹ Đình</option>
-                                                    
-                    <option value="10">A11-Học viện Bưu chính viễn thông</option>
-                                                    
-                    <option value="11">A12-Học Viện Quân y</option>
-                                                    
-                    <option value="12">A13-Kim Ngưu</option>
-                                                    
-                    <option value="70">A14-Nguyễn Công Trứ</option>
-                                                    
-                    <option value="14">A15-Long Biên</option>
-                                                    
-                    <option value="16">A17-Bách Khoa</option>
-                                                    
-                    <option value="17">A18-BX Yên Nghĩa</option>
-                                                    
-                    <option value="53">A19-Kiều Mai</option>
-                                                    
-                    <option value="19">A20-Công viên Nghĩa Đô</option>
-                                                    
-                    <option value="68">A21-Giảng Võ</option>
-                                                    
-                    <option value="58">A22-Hoàng Đạo Thúy</option>
-                                                    
-                    <option value="42">A23-Siêu thị HC 549 Nguyễn Văn Cừ (Đức Giang)</option>
-                                                    
-                    <option value="45">A45-ĐH Lao động và Xã hội</option>
-                                                    
-                    <option value="44">A46-Kim Chung</option>--%>
-                                                    
+                    <option value="45">A45-Chèm</option>                                                   
+                </select>
+                 <select class="form-control mt-3" name="slNoiNhan_Vin" id="slNoiNhan_Vin" runat="server" style="display: none">
+                    <option value="Hà Nội - Ba Đình - Kim Mã - Phòng vé Tramoc, Số 1 Kim Mã">Hà Nội - Ba Đình - Kim Mã - Phòng vé Tramoc, Số 1 Kim Mã </option>
+                    <option value="Hà Nội - Gia Lâm - Đa Tốn - Depot OCP, Hải Âu 03, KĐT Vinhomes Ocean Park">Hà Nội - Gia Lâm - Đa Tốn - Depot OCP, Hải Âu 03, KĐT Vinhomes Ocean Park</option>
+                    <option value="Hà Nội - Nam Từ Liêm - Tây Mỗ - Depot SMC, Lô FS P03 Ngã tư Tây Mỗ Đại Mỗ">Hà Nội - Nam Từ Liêm - Tây Mỗ - Depot SMC, Lô FS P03 Ngã tư Tây Mỗ Đại Mỗ</option>                                             
                 </select>
             </div>
             <div class='g-recaptcha' data-sitekey='6LfggP0hAAAAAIG-8MLoTa1pW4xeRSuNjMhSA_OT'></div>
@@ -486,10 +346,18 @@
                 return ret.join("&").replace(/%20/g, "+");
             }
         })(jQuery);
+
         var onChangeLoaiThe = function(event){
             event.preventDefault();
             console.log($('#MainContent_radioLoaiThe').find(':checked').val());
         };
+
+        var onChangeLoaiDangKy = function (event) {
+            const loaiDangKy = event?.value;
+
+            initDataTheoLoaiDangKy(loaiDangKy)
+        }
+
         var xacnhan_yeucaumoi = {
             update: function () {
                 document.getElementById("<%=btnCapNhat.ClientID %>").click();
@@ -498,6 +366,21 @@
                 window.location.href = "/dichvu/vexebus";
             },
         };
+
+        var initDataTheoLoaiDangKy = function(loaiDangKy) {
+            if (loaiDangKy === '1') {
+                $('#<%= slTuyen_Vin.ClientID %>').css('display', 'none');
+                $('#<%= slNoiNhan_Vin.ClientID %>').css('display', 'none');
+                $('#<%= slTuyen_Thuong.ClientID %>').css('display', 'block');
+                $('#<%= slNoiNhan_Thuong.ClientID %>').css('display', 'block');
+            }
+            else if (loaiDangKy === '2') {
+                $('#<%= slTuyen_Thuong.ClientID %>').css('display', 'none');
+                $('#<%= slNoiNhan_Thuong.ClientID %>').css('display', 'none');
+                $('#<%= slTuyen_Vin.ClientID %>').css('display', 'block');
+                $('#<%= slNoiNhan_Vin.ClientID %>').css('display', 'block');
+            }
+        }
         
         var init = function() {
             var checkbox = $('#<%= radioLoaiThe.ClientID %>').find('input');

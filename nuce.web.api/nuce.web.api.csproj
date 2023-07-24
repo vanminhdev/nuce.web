@@ -69,5 +69,11 @@
   <ItemGroup>
     <WCFMetadata Include="Connected Services" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Templates\Ctsv\ve_xe_bus_vin.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   
 </Project>

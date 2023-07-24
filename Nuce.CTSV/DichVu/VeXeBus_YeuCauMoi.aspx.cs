@@ -12,7 +12,7 @@ namespace Nuce.CTSV
             if (!IsPostBack)
             {
                 divBtnContainer.Visible = false;
-                var studentResponse = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, $"{ApiModels.ApiEndPoint.GetStudentInfo}/{m_SinhVien.MaSV}", "");
+                var studentResponse = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, $"{ApiEndPoint.GetStudentInfo}/{m_SinhVien.MaSV}", "");
                 if (studentResponse.IsSuccessStatusCode)
                 {
                     var strResponse = await studentResponse.Content.ReadAsStringAsync();
@@ -56,8 +56,15 @@ namespace Nuce.CTSV
                     return;
                 }
             }
+            string selectedLoaiDangKy = slLoaiDangKy.Items[slLoaiDangKy.SelectedIndex].Value;
+            int? intLoaiDangKy = Convert.ToInt32(selectedLoaiDangKy);
 
-            string selectedNoiNhan = slNoiNhan.Items[slNoiNhan.SelectedIndex].Text;
+            string selectedNoiNhan = slNoiNhan_Thuong.Items[slNoiNhan_Thuong.SelectedIndex].Text;
+            bool useVin = intLoaiDangKy == (int)DichVuXeBusLoaiDangKy.Vin;
+            if (useVin)
+            {
+                selectedNoiNhan = slNoiNhan_Vin.Items[slNoiNhan_Vin.SelectedIndex].Text;
+            }
             string strNoiNhan = selectedNoiNhan.Split('-')[1];
 
             int intLoaiThe = Convert.ToInt32(radioLoaiThe.SelectedValue);
@@ -66,9 +73,14 @@ namespace Nuce.CTSV
 
             if ((DichVuXeBusLoaiTuyen)intLoaiThe == DichVuXeBusLoaiTuyen.MotTuyen)
             {
-                var tuyen = slTuyen.Items[slTuyen.SelectedIndex];
+                var tuyen = slTuyen_Thuong.Items[slTuyen_Thuong.SelectedIndex];
+                if (useVin)
+                {
+                    tuyen = slTuyen_Vin.Items[slTuyen_Vin.SelectedIndex];
+                }
                 strMaTuyen = tuyen.Value;
-                strTenTuyen = tuyen.Text.Split('-')[1];
+                strTenTuyen = tuyen.Text;
+                //strTenTuyen = tuyen.Text.Split('-')[1];
             }
 
             string strRandom = nuce.web.tienich.email.RandomString(6, false);
@@ -80,6 +92,7 @@ namespace Nuce.CTSV
                 veBusTuyenCode = strMaTuyen,
                 veBusTuyenName = strTenTuyen,
                 veBusNoiNhanThe = strNoiNhan,
+                veBusLoaiDangKy = intLoaiDangKy,
                 maXacNhan = strRandom
             };
 

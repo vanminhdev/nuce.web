@@ -33,22 +33,49 @@ namespace Nuce.CTSV
         protected global::System.Web.UI.WebControls.RadioButtonList radioLoaiThe;
 
         /// <summary>
-        /// slTuyen control.
+        /// slLoaiDangKy control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlSelect slTuyen;
+        protected global::System.Web.UI.HtmlControls.HtmlSelect slLoaiDangKy;
 
         /// <summary>
-        /// slNoiNhan control.
+        /// slTuyen_Thuong control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlSelect slNoiNhan;
+        protected global::System.Web.UI.HtmlControls.HtmlSelect slTuyen_Thuong;
+
+        /// <summary>
+        /// slTuyen_Vin control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlSelect slTuyen_Vin;
+
+        /// <summary>
+        /// slNoiNhan_Thuong control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlSelect slNoiNhan_Thuong;
+
+        /// <summary>
+        /// slNoiNhan_Vin control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlSelect slNoiNhan_Vin;
 
         /// <summary>
         /// divBtnContainer control.
