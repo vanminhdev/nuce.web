@@ -4792,7 +4792,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             string nambatdau = strNamhocs[0].Trim();
             int iNamBatDau = int.Parse(nambatdau);
             int iNamHienTai = DateTime.Now.Year;
-            if (DateTime.Now.Month > 8)
+            if (DateTime.Now.Month >= 8)
                 iNamHienTai++;
             int iReturn = iNamHienTai - iNamBatDau;
             iReturn = iReturn > 5 ? 5 : iReturn;

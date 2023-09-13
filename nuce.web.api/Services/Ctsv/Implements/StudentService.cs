@@ -82,6 +82,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             var nienKhoa = info.AcademyClass.SchoolYear;
             bool hetHanChinhKhoa = false;
             string namRaTruong = "";
+
             if (!string.IsNullOrEmpty(nienKhoa) && nienKhoa.Contains("-"))
             {
                 string[] strNamhocs = nienKhoa.Split(new char[] { '-' });
@@ -92,7 +93,7 @@ namespace nuce.web.api.Services.Ctsv.Implements
             }
 
             int namCuoi;
-            if (int.TryParse(namRaTruong, out namCuoi) && (namCuoi < DateTime.Now.Year || (namCuoi == DateTime.Now.Year && 8 < DateTime.Now.Month)))
+            if (int.TryParse(namRaTruong, out namCuoi) && (namCuoi < DateTime.Now.Year || (namCuoi == DateTime.Now.Year && 8 <= DateTime.Now.Month)))
             {
                 hetHanChinhKhoa = true;
             }
