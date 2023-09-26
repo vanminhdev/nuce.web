@@ -2880,8 +2880,6 @@ namespace nuce.web.api.Services.Ctsv.Implements
 
         private async Task<ExportFileOutputModel> ExportWordXacNhan(int id)
         {
-            
-
             var xacNhan = await _xacNhanRepository.FindByIdAsync(id);
             if (xacNhan == null)
             {
@@ -3635,6 +3633,12 @@ namespace nuce.web.api.Services.Ctsv.Implements
             string namNhapHoc = getNamNhapHoc(NienKhoa);
             string namRaTruong = getNamRaTruong(NienKhoa);
 
+            var now = DateTime.Now;
+
+            var ngayKy = now.ToString("dd");
+            var thangKy = now.Month.ToString();
+            var namKy = now.Year.ToString();
+
             int namNhapHocInt;
             int namRaTruongInt;
             int soThangHoc = 60;
@@ -3671,6 +3675,62 @@ namespace nuce.web.api.Services.Ctsv.Implements
                     {"Nữ", "☐" },
                 };
             GioiTinh[gioiTinh] = "☒";
+
+            string filePath = _pathProvider.MapPath($"Templates/Ctsv/vay_von.docx");
+            string destination = _pathProvider.MapPath($"Templates/Ctsv/vayvon_{studentInfo.MaSinhVien}_{DateTime.Now.ToFileTime()}.docx");
+
+            byte[] templateBytes = await File.ReadAllBytesAsync(filePath);
+            using (MemoryStream templateStream = new MemoryStream())
+            {
+                templateStream.Write(templateBytes, 0, templateBytes.Length);
+                using (WordprocessingDocument doc = WordprocessingDocument.Open(templateStream, true))
+                {
+                    doc.ChangeDocumentType(WordprocessingDocumentType.Document);
+                    var mainPart = doc.MainDocumentPart;
+                    #region handle text
+                    var textList = mainPart.Document.Descendants<Text>().ToList();
+                    foreach (var text in textList)
+                    {
+                        replaceTextTemplate(text, "<hoten>", HoVaTen);
+                        replaceTextTemplate(text, "<ngaysinh>", NgaySinh.ToString("dd/MM/yyyy"));
+                        replaceTextTemplate(text, "<nam>", GioiTinh["Nam"]);
+                        replaceTextTemplate(text, "<nu>", GioiTinh["Nữ"]);
+
+                        replaceTextTemplate(text, "<cmnd>", cmt);
+                        replaceTextTemplate(text, "<ngaycap>", cmtNgayCap);
+                        replaceTextTemplate(text, "<noicap>", cmtNoiCap);
+
+                        replaceTextTemplate(text, "<nganhhoc>", nghanhHoc);
+                        replaceTextTemplate(text, "<khoa>", khoa);
+                        replaceTextTemplate(text, "<lop>", Class);
+                        replaceTextTemplate(text, "<masv>", MaSV);
+                        replaceTextTemplate(text, "<khoaban>", TenKhoa);
+
+                        replaceTextTemplate(text, "<nien_khoa>", NienKhoa);
+                        replaceTextTemplate(text, "<namnhaphoc>", namNhapHoc);
+                        replaceTextTemplate(text, "<namratruong>", namRaTruong);
+                        replaceTextTemplate(text, "<thoigianhoc>", soThangHoc.ToString());
+                        replaceTextTemplate(text, "<hocphi>", hocPhi);
+
+                        replaceTextTemplate(text, "<khongmiengiam>", Dien["1"]);
+                        replaceTextTemplate(text, "<giamhocphi>", Dien["2"]);
+                        replaceTextTemplate(text, "<mienhocphi>", Dien["3"]);
+                        replaceTextTemplate(text, "<mocoi>", DoiTuong["1"]);
+                        replaceTextTemplate(text, "<komocoi>", DoiTuong["2"]);
+
+                        replaceTextTemplate(text, "<ngayki>", ngayKy);
+                        replaceTextTemplate(text, "<thangki>", thangKy);
+                        replaceTextTemplate(text, "<namki>", namKy);
+                        replaceTextTemplate(text, "<chucdanhki>", ChucDanhNguoiKy);
+                        replaceTextTemplate(text, "<tenki>", TenNguoiKy);
+                    }
+                    #endregion
+                    mainPart.Document.Save();
+                }
+                await File.WriteAllBytesAsync(destination, templateStream.ToArray());
+            }
+
+            return new ExportFileOutputModel { document = null, filePath = destination };
 
             ComponentInfo.SetLicense("FREE-LIMITED-KEY");
             DocumentModel document = new DocumentModel();
@@ -4054,7 +4114,6 @@ namespace nuce.web.api.Services.Ctsv.Implements
             document.Content.Replace(desChucDanhNguoiKy, ChucDanhNguoiKy);
             document.Content.Replace(desTenNguoiKy, TenNguoiKy);
 
-            string filePath = _pathProvider.MapPath($"Templates/Ctsv/vayvon_{studentInfo.MaSinhVien}_{DateTime.Now.ToFileTime()}.docx");
             return new ExportFileOutputModel { document = document, filePath = filePath };
         }
 
