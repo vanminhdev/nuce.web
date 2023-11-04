@@ -49,6 +49,11 @@ namespace nuce.web.api.Services.Core.Implements
         private readonly StudentEduDataService _studentEduDataService;
         private readonly ILogger<UserService> _logger;
 
+        /// <summary>
+        /// Đang học, bảo lưu, đình chỉ, chờ công nhận tốt nghiệp
+        /// </summary>
+        private readonly List<int?> LIST_TRANG_THAI_SV_DANG_NHAP = new List<int?> { 1,2,3,8 };
+
         public UserService(
                 ILogger<UserService> logger,
                 UserManager<ApplicationUser> _userManager,
@@ -233,7 +238,7 @@ namespace nuce.web.api.Services.Core.Implements
                             var resContent = await res.Content.ReadAsStringAsync();
                             var sv = JsonSerializer.Deserialize<ResponseValidateSvLoginDto>(resContent);
 
-                            isSuccess = sv?.Data?.MaSinhVien != null;
+                            isSuccess = sv?.Data?.MaSinhVien != null && LIST_TRANG_THAI_SV_DANG_NHAP.Contains(sv?.Data?.TrangThai);
                         }
                     }
                     catch (Exception ex)
@@ -270,6 +275,41 @@ namespace nuce.web.api.Services.Core.Implements
                 }
             }
         }
+
+        /// <summary>
+        /// Check trạng thái khi login qua email trường
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// <exception cref="CallEduWebServiceException"></exception>
+        public async Task<bool> UserLoginEduEmail(LoginModel model)
+        {
+            try
+            {
+                HttpClient clientAuth = new HttpClient()
+                {
+                    BaseAddress = new Uri(_configuration["CDSConnectUrl"]),
+                    Timeout = TimeSpan.FromSeconds(60)
+                };
+                var res = await clientAuth.GetAsync($"api/sv/{model.Username}");
+
+                if (res.IsSuccessStatusCode)
+                {
+                    var resContent = await res.Content.ReadAsStringAsync();
+                    var sv = JsonSerializer.Deserialize<ResponseGetSvDto>(resContent);
+
+                    return sv?.Data?.MaSinhVien != null && LIST_TRANG_THAI_SV_DANG_NHAP.Contains(sv?.Data?.TrangThai);
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "khong goi duoc api xac thuc local");
+                throw new CallEduWebServiceException("Hiện tại không thể kết nối đến Đào tạo");
+            }
+        }
+
         public string GetCurrentStudentCode()
         {
             return GetClaimByKey(UserParameters.UserCode);

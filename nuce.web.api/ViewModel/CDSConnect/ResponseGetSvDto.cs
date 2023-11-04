@@ -84,6 +84,9 @@ namespace nuce.web.api.ViewModel.CDSConnect
         [JsonPropertyName("tenPhongBan")]
         public string TenPhongBan { get; set; }
 
+        [JsonPropertyName("trangThai")]
+        public int? TrangThai { get; set; }
+
         public string NienKhoa { get; set; }
         public string DiaChiCuThe { get; set; }
         public string EmailNhaTruong { get; set; }

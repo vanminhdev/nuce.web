@@ -304,6 +304,12 @@ namespace nuce.web.api.Controllers.Core
 
             var user = new ApplicationUser { UserName = model.Username };
 
+            var loggedInSuccess = await _userService.UserLoginEduEmail(model);
+            if (!loggedInSuccess)
+            {
+                return NotFound("Sinh viên không được đăng nhập vào hệ thống");
+            }
+
             var authClaims = await _userService.AddClaimsAsync(model, user);
             var accessToken = _userService.CreateJWTAccessToken(authClaims);
             var refreshToken = _userService.CreateJWTRefreshToken(authClaims);

@@ -21,6 +21,7 @@ namespace nuce.web.api.Services.Core.Interfaces
         public JwtSecurityToken CreateJWTAccessToken(List<Claim> claims);
         public JwtSecurityToken CreateJWTRefreshToken(List<Claim> claims);
         public Task<bool> UserLogin(LoginModel model);
+        public Task<bool> UserLoginEduEmail(LoginModel model);
         public string GetCurrentStudentCode();
         public string GetClaimByKey(string key);
         public List<string> GetClaimListByKey(string key);
