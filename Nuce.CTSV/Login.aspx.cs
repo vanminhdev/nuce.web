@@ -209,6 +209,12 @@ namespace Nuce.CTSV
             //https://www.c-sharpcorner.com/Blogs/login-with-google-account-api-in-asp-net-and-get-google-plus-profile-details-in-c-sharp
             //747341024576-mud1ao0e5jij2dkm56sfu0i0fqv9ggc0.apps.googleusercontent.com
             //0TQze0o2lGXb4gUw77S2vw7l
+            if (!string.IsNullOrEmpty(Request.QueryString["key"]))
+            {
+                var key = Request.QueryString["key"];
+                await DangNhapTuMotCua(key);
+            }
+
             if (!IsPostBack)
             {
                 ViewState["postGuids"] = System.Guid.NewGuid().ToString();
@@ -238,90 +244,90 @@ namespace Nuce.CTSV
 
         protected async void btnDangNhap_Click(object sender, EventArgs e)
         {
-                string strMaSV = txtMaDangNhap.Text.Trim();
-                string strMatKhau = txtMatKhau.Text.Trim();
+            string strMaSV = txtMaDangNhap.Text.Trim();
+            string strMatKhau = txtMatKhau.Text.Trim();
 
-                bool maSvEmpty = string.IsNullOrEmpty(strMaSV);
-                bool matKhauEmpty = string.IsNullOrEmpty(strMatKhau);
-                if (maSvEmpty)
+            bool maSvEmpty = string.IsNullOrEmpty(strMaSV);
+            bool matKhauEmpty = string.IsNullOrEmpty(strMatKhau);
+            if (maSvEmpty)
+            {
+                txtMaDangNhap.Focus();
+            }
+            else if (matKhauEmpty)
+            {
+                txtMatKhau.Focus();
+            }
+            if (maSvEmpty || matKhauEmpty)
+            {
+                showThongBao("Bạn không được để trắng tên đăng nhập hoặc mật khẩu");
+                return;
+            }
+
+            //Kiểm tra đăng nhập
+
+            using (HttpClient httpClient = new HttpClient())
+            {
+                string body = JsonConvert.SerializeObject(new { username = strMaSV, password = strMatKhau, loginUserType = 1 });
+                var content = new StringContent(body, Encoding.UTF8, "application/json");
+
+                var res = await httpClient.PostAsync($"{CustomizeHttp.API_URI}/api/User/login", content);
+                if (res.IsSuccessStatusCode)
                 {
-                    txtMaDangNhap.Focus();
+                    var cookies = res.Headers.GetValues("Set-Cookie");
+                    foreach (var responseCookie in cookies)
+                    {
+                        var splited = responseCookie.Split(';');
+                        var value = splited[0].Split('=');
+                        var expires = splited[1].Split('=');
+                        var tmpCookie = new HttpCookie(value[0], value[1]);
+
+                        if (splited.Length > 1)
+                        {
+                            DateTime expireDate;
+                            bool parsed = DateTime.TryParse(expires[1], out expireDate);
+                            if (parsed)
+                            {
+                                tmpCookie.Expires = expireDate;
+                            }
+                        }
+
+                        Request.Cookies.Set(tmpCookie);
+                        Response.Cookies.Set(tmpCookie);
+                    }
                 }
-                else if (matKhauEmpty)
+                else if (res.StatusCode == HttpStatusCode.BadGateway)
                 {
-                    txtMatKhau.Focus();
-                }
-                if (maSvEmpty || matKhauEmpty)
-                {
-                    showThongBao("Bạn không được để trắng tên đăng nhập hoặc mật khẩu");
+                    showThongBao(@"Chức năng đăng nhập qua mã số sinh viên tạm thời đang nâng cấp. 
+                                Vui lòng đăng nhập qua email bằng cách nhấp chuột vào nút 'Đăng nhập qua email @nuce.edu.vn'");
                     return;
                 }
-
-                //Kiểm tra đăng nhập
-
-                using (HttpClient httpClient = new HttpClient())
+                else if (res.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    string body = JsonConvert.SerializeObject(new { username = strMaSV, password = strMatKhau, loginUserType = 1 });
-                    var content = new StringContent(body, Encoding.UTF8, "application/json");
-
-                    var res = await httpClient.PostAsync($"{CustomizeHttp.API_URI}/api/User/login", content);
-                    if (res.IsSuccessStatusCode)
-                    {
-                        var cookies = res.Headers.GetValues("Set-Cookie");
-                        foreach (var responseCookie in cookies)
-                        {
-                            var splited = responseCookie.Split(';');
-                            var value = splited[0].Split('=');
-                            var expires = splited[1].Split('=');
-                            var tmpCookie = new HttpCookie(value[0], value[1]);
-
-                            if (splited.Length > 1)
-                            {
-                                DateTime expireDate;
-                                bool parsed = DateTime.TryParse(expires[1], out expireDate);
-                                if (parsed)
-                                {
-                                    tmpCookie.Expires = expireDate;
-                                }
-                            }
-
-                            Request.Cookies.Set(tmpCookie);
-                            Response.Cookies.Set(tmpCookie);
-                        }
-                    }
-                    else if (res.StatusCode == HttpStatusCode.BadGateway)
-                    {
-                        showThongBao(@"Chức năng đăng nhập qua mã số sinh viên tạm thời đang nâng cấp. 
-                                Vui lòng đăng nhập qua email bằng cách nhấp chuột vào nút 'Đăng nhập qua email @nuce.edu.vn'");
-                        return;
-                    }
-                    else if (res.StatusCode == HttpStatusCode.Unauthorized)
-                    {
-                        showThongBao(@"Tài khoản không còn hoạt động, không tồn tại hoặc sai mật khẩu.");
-                        return;
-                    }
+                    showThongBao(@"Tài khoản không còn hoạt động, không tồn tại hoặc sai mật khẩu.");
+                    return;
+                }
                 else
-                    {
-                        try
-                        {
-                            var error = await CustomizeHttp.DeserializeAsync<ResponseBody>(res.Content);
-                            showThongBao(error.Message);
-                        }
-                        catch (Exception ex)
-                        {
-                            showThongBao("Thông tin đăng nhập sai");
-                        }
-                        return;
-                    }
-                }
-
-                StudentModel student = null;
-
-                var studentResponse = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, $"{ApiEndPoint.GetStudentInfo}/{strMaSV}", "");
-                if (studentResponse.IsSuccessStatusCode)
                 {
-                    student = await CustomizeHttp.DeserializeAsync<StudentModel>(studentResponse.Content);
+                    try
+                    {
+                        var error = await CustomizeHttp.DeserializeAsync<ResponseBody>(res.Content);
+                        showThongBao(error.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        showThongBao("Thông tin đăng nhập sai");
+                    }
+                    return;
                 }
+            }
+
+            StudentModel student = null;
+
+            var studentResponse = await CustomizeHttp.SendRequest(Request, Response, HttpMethod.Get, $"{ApiEndPoint.GetStudentInfo}/{strMaSV}", "");
+            if (studentResponse.IsSuccessStatusCode)
+            {
+                student = await CustomizeHttp.DeserializeAsync<StudentModel>(studentResponse.Content);
+            }
             if (student != null)
             {
                 nuce.web.model.SinhVien SinhVien = new nuce.web.model.SinhVien();
@@ -353,6 +359,73 @@ namespace Nuce.CTSV
                 showThongBao("Không tồn tại dữ liệu sinh viên");
             }
         }
-        
+
+        private async Task DangNhapTuMotCua(string key)
+        {
+            //Kiểm tra đăng nhập
+            StudentModel student = null;
+            using (HttpClient httpClient = new HttpClient())
+            {
+                string body = JsonConvert.SerializeObject(new { key });
+                var content = new StringContent(body, Encoding.UTF8, "application/json");
+
+                var res = await httpClient.PostAsync($"{CustomizeHttp.API_URI}/api/User/LoginStudentMotCua", content);
+                if (res.IsSuccessStatusCode)
+                {
+                    var cookies = res.Headers.GetValues("Set-Cookie");
+                    foreach (var responseCookie in cookies)
+                    {
+                        var splited = responseCookie.Split(';')[0].Split('=');
+                        Request.Cookies.Add(new HttpCookie(splited[0], splited[1]));
+                        Response.Cookies.Add(new HttpCookie(splited[0], splited[1]));
+                    }
+                    student = await CustomizeHttp.DeserializeAsync<StudentModel>(res.Content);
+                }
+                else if (res.StatusCode == HttpStatusCode.NotFound)
+                {
+                    spAlert.InnerHtml = string.Format(@"<div class='alert alert-warning alert-dismissible' style='position: absolute; top: 0; right: 0;'>
+                                            <a href = '#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+                {0}</div>", "Sinh viên không tồn tại");
+                    return;
+                }
+                else
+                {
+                    spAlert.InnerHtml = string.Format(@"<div class='alert alert-warning alert-dismissible' style='position: absolute; top: 0; right: 0;'>
+                                            <a href = '#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+                {0}</div>", "Lỗi hệ thống");
+                    return;
+                }
+            }
+
+            if (student != null)
+            {
+                nuce.web.model.SinhVien SinhVien = new nuce.web.model.SinhVien();
+                string strFullName = student.FulName;
+                string[] strFullNames = strFullName.Split(new char[] { ' ' });
+                SinhVien.Ho = strFullName;
+                SinhVien.Ten = strFullNames[strFullNames.Length - 1];
+                //SinhVien.TrangThai = int.Parse(dtData.Rows[0]["status"].ToString());
+                SinhVien.SinhVienID = (int)student.Id;
+                SinhVien.Email = student.EmailNhaTruong ?? "";
+                SinhVien.Mobile = student.Mobile ?? "";
+                SinhVien.MaSV = student.Code;
+                string File1 = student.File1 ?? "";
+                if (!File1.Trim().Equals(""))
+                {
+                    SinhVien.IMG = File1;
+                }
+                else
+                    SinhVien.IMG = "/Data/images/noimage_human.png";
+
+                Session[Utils.session_sinhvien] = SinhVien;
+                Response.Redirect("/login.aspx");
+            }
+            else
+            {
+                spAlert.InnerHtml = string.Format(@"<div class='alert alert-warning alert-dismissible' style='position: absolute; top: 0; right: 0;'>
+                                                <a href = '#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+                                        {0}</div>", "Không đúng tên đăng nhập");
+            }
+        }
     }
 }

@@ -10,6 +10,7 @@ namespace Nuce.CTSV
         protected override void OnInit(EventArgs e)
         {
             var refreshToken = Request.Cookies["JWT-refresh-token"];
+            var sv = Session[Utils.session_sinhvien];
             if (refreshToken == null || Session[Utils.session_sinhvien] == null)
             {
                 //Chuyển đến trang đăng nhập

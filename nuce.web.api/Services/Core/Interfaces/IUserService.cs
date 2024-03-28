@@ -11,6 +11,7 @@ using nuce.web.api.ViewModel;
 using Microsoft.AspNetCore.Mvc.Filters;
 using nuce.web.api.Models.Core;
 using nuce.web.api.ViewModel.Base;
+using nuce.web.api.ViewModel.MotCuaConnect;
 
 namespace nuce.web.api.Services.Core.Interfaces
 {
@@ -37,5 +38,7 @@ namespace nuce.web.api.Services.Core.Interfaces
         public Task UpdateUserAsync(string id, UserUpdateModel user);
         public Task ResetPasswordAsync(string id, string newPassword);
         public Task<ApplicationUser> CreateUser(UserCreateModel model);
+        public Task<ResponseMotCuaUsernameDto> UserLoginMotCua(GetMotCuaUsernameByKeyDto model);
+        public AsAcademyStudent GetStudentByCode(string code);
     }
 }

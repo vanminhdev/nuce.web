@@ -29,6 +29,7 @@ using nuce.web.api.Services.EduData.Interfaces;
 using nuce.web.api.Services.Survey.Implements;
 using nuce.web.shared.Common;
 using nuce.web.api.Services.EduData.Implements;
+using nuce.web.api.ViewModel.MotCuaConnect;
 
 namespace nuce.web.api.Controllers.Core
 {
@@ -325,6 +326,51 @@ namespace nuce.web.api.Controllers.Core
                 Username = model.Username,
                 LogCode = ActivityLogParameters.CODE_LOGIN_STUDENT_EDU_EMAIL,
                 LogMessage = $"Login bằng email {email}"
+            });
+            return Ok(student);
+        }
+
+        [HttpPost]
+        [Route("LoginStudentMotCua")]
+        public async Task<IActionResult> LoginStudentMotCua([FromBody] GetMotCuaUsernameByKeyDto dto)
+        {
+            var userMotCua = await _userService.UserLoginMotCua(dto);
+            //string email = model.Username;
+            var student = _userService.GetStudentByCode(userMotCua?.Username);
+            if (student == null)
+            {
+                return NotFound("Sinh viên không tồn tại");
+            }
+            var model = new LoginModel
+            {
+                Username = student.Code,
+                LoginUserType = LoginType.Student,
+            };
+
+            var user = new ApplicationUser { UserName = model.Username };
+
+            //var loggedInSuccess = true;
+            //var loggedInSuccess = await _userService.UserLoginEduEmail(model);
+            //if (!loggedInSuccess)
+            //{
+            //    return NotFound("Sinh viên không được đăng nhập vào hệ thống");
+            //}
+
+            var authClaims = await _userService.AddClaimsAsync(model, user);
+            var accessToken = _userService.CreateJWTAccessToken(authClaims);
+            var refreshToken = _userService.CreateJWTRefreshToken(authClaims);
+
+            //send token to http only cookies
+            Response.Cookies.Append(UserParameters.JwtAccessToken, new JwtSecurityTokenHandler().WriteToken(accessToken),
+                new CookieOptions() { HttpOnly = true, Expires = accessToken.ValidTo });
+            Response.Cookies.Append(UserParameters.JwtRefreshToken, new JwtSecurityTokenHandler().WriteToken(refreshToken),
+                new CookieOptions() { HttpOnly = true, Expires = refreshToken.ValidTo });
+
+            await _logService.WriteLog(new ActivityLogModel
+            {
+                Username = model.Username,
+                LogCode = ActivityLogParameters.CODE_LOGIN_STUDENT_EDU_EMAIL,
+                LogMessage = $"Login bằng mot cua key: {dto.Key}"
             });
             return Ok(student);
         }

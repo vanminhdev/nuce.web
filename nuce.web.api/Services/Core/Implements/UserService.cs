@@ -20,6 +20,7 @@ using nuce.web.api.ViewModel;
 using nuce.web.api.ViewModel.Base;
 using nuce.web.api.ViewModel.CDSConnect;
 using nuce.web.api.ViewModel.Core.NuceIdentity;
+using nuce.web.api.ViewModel.MotCuaConnect;
 using nuce.web.shared;
 using nuce.web.shared.Common;
 using System;
@@ -310,6 +311,42 @@ namespace nuce.web.api.Services.Core.Implements
             }
         }
 
+        /// <summary>
+        /// Get username mot cua by key
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// <exception cref="CallEduWebServiceException"></exception>
+        public async Task<ResponseMotCuaUsernameDto> UserLoginMotCua(GetMotCuaUsernameByKeyDto model)
+        {
+            try
+            {
+                HttpClient clientAuth = new HttpClient()
+                {
+                    BaseAddress = new Uri(_configuration["MotCuaApiUrl"]),
+                    Timeout = TimeSpan.FromSeconds(60)
+                };
+                var httpContent = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
+
+                var res = await clientAuth.PostAsync($"api/motcua/key/get", httpContent);
+
+                if (res.IsSuccessStatusCode)
+                {
+                    var resContent = await res.Content.ReadAsStringAsync();
+                    var data = JsonSerializer.Deserialize<ResponseMotCuaUsernameDto>(resContent);
+
+                    return data;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{nameof(UserLoginMotCua)}: key={model.Key}");
+                throw new CallEduWebServiceException("Hiện tại không thể kết nối đến Api mot cua");
+            }
+        }
+
         public string GetCurrentStudentCode()
         {
             return GetClaimByKey(UserParameters.UserCode);
@@ -359,6 +396,11 @@ namespace nuce.web.api.Services.Core.Implements
         public AsAcademyStudent GetStudentByEmail(string email)
         {
             return _studentRepository.FindByEmailNhaTruong(email);
+        }
+
+        public AsAcademyStudent GetStudentByCode(string code)
+        {
+            return _studentRepository.FindByCode(code);
         }
 
         public async Task<PaginationModel<UserModel>> GetAllAsync(UserFilter filter, int skip = 0, int pageSize = 20)

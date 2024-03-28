@@ -143,6 +143,7 @@
   <ItemGroup>
     <Content Include="CapNhatHoSoDayDu.aspx" />
     <Content Include="Default1.aspx" />
+    <Content Include="DieuHuong.aspx" />
     <Content Include="DichVu\HoTroHocTap.aspx" />
     <Content Include="DichVu\HoTroHocTap_YeuCauMoi.aspx" />
     <Content Include="DichVu\DeNghiHoTroChiPhiHocTap.aspx" />
@@ -2399,6 +2400,13 @@
     </Compile>
     <Compile Include="Default1.aspx.designer.cs">
       <DependentUpon>Default1.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="DieuHuong.aspx.cs">
+      <DependentUpon>DieuHuong.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DieuHuong.aspx.designer.cs">
+      <DependentUpon>DieuHuong.aspx</DependentUpon>
     </Compile>
     <Compile Include="DichVu\HoTroHocTap.aspx.cs">
       <DependentUpon>HoTroHocTap.aspx</DependentUpon>
